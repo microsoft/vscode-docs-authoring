@@ -1,0 +1,17 @@
+{
+    "name": "docs-authoring-pack",
+    "displayName": "Docs Authoring Pack",
+    "description": "Collection of extensions to assist with content development for docs.microsoft.com",
+    "version": "0.0.1",
+    "publisher": "jw",
+    "engines": {
+        "vscode": "^1.20.0"
+    },
+    "categories": [
+        "Extension Packs"
+    ],
+    "extensionDependencies": [ 
+        "DavidAnson.vscode-markdownlint", 
+        "ms-docfx.DocFX"
+    ]
+}
