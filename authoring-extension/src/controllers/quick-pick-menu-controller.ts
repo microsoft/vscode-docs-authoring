@@ -96,7 +96,7 @@ const items: vscode.QuickPickItem[] = [
         label: "$(code) Code",
     },
     {
-        description: "Insert note, important, warning, or tip",
+        description: "Insert note, tip, important, caution, or warning",
         label: "$(alert) Alert",
     },
     {
