@@ -32,46 +32,47 @@ export function markdownQuickPick() {
             return;
         }
 
-        const selectionWithoutIcon = selection.label.split(")")[1].trim();
+        const convertLabelToLowerCase = selection.label.toLowerCase();
+        const selectionWithoutIcon = convertLabelToLowerCase.split(")")[1].trim();
 
         switch (selectionWithoutIcon) {
-            case "Bold":
+            case "bold":
                 formatBold();
                 break;
-            case "Italic":
+            case "italic":
                 formatItalic();
                 break;
-            case "Code":
+            case "code":
                 formatCode();
                 break;
-            case "Alert":
+            case "alert":
                 insertAlert();
                 break;
-            case "Numbered List":
+            case "numbered list":
                 insertNumberedList();
                 break;
-            case "Bulletted List":
+            case "bulletted list":
                 insertBulletedList();
                 break;
-            case "Table":
+            case "table":
                 insertTable();
                 break;
-            case "Link":
+            case "link":
                 selectLinkType();
                 break;
-            case "Image":
+            case "image":
                 insertImage();
                 break;
-            case "Include":
+            case "include":
                 insertInclude();
                 break;
-            case "Snippets":
+            case "snippets":
                 insertSnippet();
                 break;
-            case "Video":
+            case "video":
                 insertVideo();
                 break;
-            case "Preview":
+            case "preview":
                 previewTopic();
                 break;
             default:
