@@ -2,7 +2,8 @@
 
 export enum AlertType {
     Note = 0,
-    Important,
-    Warning,
     Tip,
+    Important,
+    Caution,
+    Warning,
 }
