@@ -35,7 +35,7 @@ export function insertAlert() {
         "Tip - Optional information to help a user be more successful",
         "Important – Essential information required for user success",
         "Caution - Negative potential consequences of an action",
-        "Warning – Dangerous certain consequences of an action"
+        "Warning – Dangerous certain consequences of an action",
     ];
     vscode.window.showQuickPick(alertTypes).then((qpSelection) => {
         const formattedText = format(selectedText, alertTypes.indexOf(qpSelection));
@@ -74,9 +74,9 @@ export function format(content: string, alertType: AlertType) {
     const alertPlaceholderText = [
         "Information the user should notice even if skimming",
         "Optional information to help a user be more successful",
-        "Essental information required for user success",
+        "Essential information required for user success",
         "Negative potential consequences of an action",
-        "Dangerous certain consequences of an action"
+        "Dangerous certain consequences of an action",
     ];
     let selectedText = content;
     if (isAlert(content)) {
