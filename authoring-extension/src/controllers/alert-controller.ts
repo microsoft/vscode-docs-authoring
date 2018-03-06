@@ -31,10 +31,11 @@ export function insertAlert() {
     }
 
     const alertTypes = [
-        "Note – “By the way” info not critical to a task",
-        "Important – “Should do” info as best practice; “must do” to complete task",
-        "Warning – “Must do” info to avoid significant error",
-        "Tip - Shortcut or easy way to perform a task",
+        "Note – Information the user should notice even if skimming",
+        "Tip - Optional information to help a user be more successful",
+        "Important – Essential information required for user success",
+        "Caution - Negative potential consequences of an action",
+        "Warning – Dangerous certain consequences of an action",
     ];
     vscode.window.showQuickPick(alertTypes).then((qpSelection) => {
         const formattedText = format(selectedText, alertTypes.indexOf(qpSelection));
@@ -45,14 +46,17 @@ export function insertAlert() {
         if (qpSelection.startsWith("Note")) {
             reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".note" });
         }
+        if (qpSelection.startsWith("Tip")) {
+            reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".tip" });
+        }
         if (qpSelection.startsWith("Important")) {
             reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".important" });
         }
+        if (qpSelection.startsWith("Caution")) {
+            reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".caution" });
+        }
         if (qpSelection.startsWith("Warning")) {
             reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".warning" });
-        }
-        if (qpSelection.startsWith("Tip")) {
-            reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".tip" });
         }
     });
 }
@@ -68,10 +72,11 @@ export function insertAlert() {
 
 export function format(content: string, alertType: AlertType) {
     const alertPlaceholderText = [
-        "“By the way” info not critical to a task",
-        "“Should do” info as best practice; “must do” to complete task",
-        "“Must do” info to avoid significant error",
-        "Shortcut or easy way to perform a task",
+        "Information the user should notice even if skimming",
+        "Optional information to help a user be more successful",
+        "Essential information required for user success",
+        "Negative potential consequences of an action",
+        "Dangerous certain consequences of an action",
     ];
     let selectedText = content;
     if (isAlert(content)) {

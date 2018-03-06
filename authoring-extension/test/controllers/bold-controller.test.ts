@@ -1,5 +1,5 @@
-import { bold } from '../../src/controllers/bold-controller';
-import { expect } from 'chai';
+import { expect } from "chai";
+import { bold } from "../../src/controllers/bold-controller";
 
 describe("Bold controller", () => {
     describe("format function", () => {
@@ -7,7 +7,7 @@ describe("Bold controller", () => {
         const singleLineString = `This is single line of sample text.`;
         const multilineString = `This is sample text.\r\nIt has multiplelines in it.`;
         const nestedItalic = "This is sample text *there\r\nis nested italic* in this block.";
-        const nestedCode = "`This is sample text in a markdown code block.`"
+        const nestedCode = "`This is sample text in a markdown code block.`";
         const nestedCodeBlock = "This is sample text\r\n```\nThis is a\r\n code block\n```\nThere is code nested inside.";
 
         it("Should toggle bold with single line text.", () => {
