@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import * as common from "../helper/common";
 import { reporter } from "../telemetry/telemetry";
 
-const telemetryCommand: string = "previewTopic";
+const telemetryCommand: string = "preview topic";
 
 export function previewTopicCommand() {
     const commands = [
