@@ -99,7 +99,7 @@ export function isValidEditor(editor: vscode.TextEditor, testSelection: boolean,
     }
 
     if (testSelection && editor.selection.isEmpty) {
-        if (senderName === "format bold" || senderName === "format italic" || senderName === "format code" || senderName !== "preview topic") {
+        if (senderName === "format bold" || senderName === "format italic" || senderName === "format code") {
             log.debug("VS Code active editor has valid configuration to apply " + senderName + " to.");
             return true;
         }

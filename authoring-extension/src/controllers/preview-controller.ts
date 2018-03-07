@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import * as common from "../helper/common";
 import { reporter } from "../telemetry/telemetry";
 
-const telemetryCommand: string = "preview topic";
+const telemetryCommand: string = "previewTopic";
 
 export function previewTopicCommand() {
     const commands = [
@@ -18,7 +18,7 @@ export function previewTopic() {
 
     const editor = vscode.window.activeTextEditor;
 
-    if (!common.isValidEditor(editor, true, "previewTopic")) {
+    if (!common.isValidEditor(editor, false, "preview topic")) {
         return;
     }
 
