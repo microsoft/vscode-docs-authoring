@@ -12,6 +12,12 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# Extension output and files
+out
+node_modules
+*.vsix
+/package-lock.json
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
