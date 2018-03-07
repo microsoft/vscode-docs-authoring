@@ -18,7 +18,7 @@ export function previewTopic() {
 
     const editor = vscode.window.activeTextEditor;
 
-    if (!common.isValidEditor(editor, true, "previewTopic")) {
+    if (!common.isValidEditor(editor, false, "preview topic")) {
         return;
     }
 
