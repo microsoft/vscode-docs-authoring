@@ -69,7 +69,7 @@
       {
         "command": "automaticList",
         "key": "enter",
-        "mac": "return",
+        "mac": "enter",
         "when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible"
       },
       {
