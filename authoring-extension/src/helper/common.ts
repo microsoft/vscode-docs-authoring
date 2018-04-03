@@ -20,8 +20,7 @@ export function getActiveUser(this: any) {
 export function getOSPlatform(this: any) {
     if (this.osPlatform == null) {
         this.osPlatform = os.platform();
-        const osRelease = os.release();
-        this.osPlatform = this.osPlatform + "; Release: " + osRelease;
+        this.osPlatform = this.osPlatform;
     }
     return this.osPlatform;
 }

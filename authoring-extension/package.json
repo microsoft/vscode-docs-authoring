@@ -1,13 +1,17 @@
 {
   "name": "docs-markdown",
   "displayName": "docs-markdown",
-  "description": "Docs Authoring Extension",
+  "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
   "version": "0.0.1",
   "publisher": "Microsoft",
+  "bugs": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/authoring-extension/issues",
   "engines": {
     "vscode": "^1.5.0"
+  },
+  "repository": {
+    "url": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/authoring-extension"
   },
   "categories": [
     "Other"
@@ -18,10 +22,6 @@
   "main": "./out/src/extension",
   "contributes": {
     "commands": [
-      {
-        "command": "generateMasterRedirectionFile",
-        "title": "Docs Markdown Authoring: Generate master redirection file"
-      },
       {
         "command": "markdownQuickPick",
         "title": "Docs Markdown Authoring",

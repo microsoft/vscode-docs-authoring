@@ -18,7 +18,7 @@ export function previewTopic() {
 
     const editor = vscode.window.activeTextEditor;
 
-    if (!common.isValidEditor(editor, true, "previewTopic")) {
+    if (!common.isValidEditor(editor, false, "preview topic")) {
         return;
     }
 
@@ -26,8 +26,14 @@ export function previewTopic() {
         return;
     }
 
-    vscode.commands.executeCommand("DocFX.showDfmPreviewToSide").then(
-        // tslint:disable-next-line:no-console
-        (result) => console.log("preview launched."),
-        (err) => vscode.window.showErrorMessage("DocFX preview extension not installed or disabled."));
+    const osPlatform = common.getOSPlatform();
+    if (osPlatform === "win32") {
+        vscode.commands.executeCommand("DocFX.showDfmPreviewToSide").then(
+            // tslint:disable-next-line:no-console
+            (result) => console.log("preview launched."),
+            (err) => vscode.window.showErrorMessage("DocFX preview extension not installed or disabled."));
+    } else {
+        vscode.commands.executeCommand('markdown.showPreviewToSide');
+    }
+
 }

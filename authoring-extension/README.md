@@ -64,6 +64,12 @@ Former users of the extension code-named "Gauntlet" will notice that the authori
 1. Select User Settings to change the settings for all VS Code workspaces, or  Workspace Settings to change them for just the current workspace.
 1. In the Default Settings pane, find Docs Authoring Extension Configuration, and select the pencil icon next to the desired setting. Next, you will be prompted to select either `true` or `false`. Once you've made your selection, VS Code will automatically add the value to the settings.json file and you will be prompted to reload the window for the changes to take effect.
 
+## Known Issues
+
+- [DocFX Preview] MacOS and Linux: DocFX Preview does not launch preview correctly (preview defaults to VS Code markdown preview for these platforms).
+- [External bookmarks] Linux: File list is displayed but no headings are shown to select.
+- [Includes] Linux: File list is displayed but no link is added after selection is made.
+
 # Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
