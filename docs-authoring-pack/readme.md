@@ -1,13 +1,15 @@
-# README
-## This is the README for your extension pack "docs-authoring-pack"
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+# Docs Authoring Pack
 
-* Split the editor (`Cmd+\` on OSX or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on OSX or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (OSX) to see a list of Markdown snippets
+The Docs Authoring Pack is a collection of extensions to aid with Markdown authoring.
 
-### For more information
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+## Packaged Extensions
 
-**Enjoy!**
+The Docs Authoring Pack will install:
+
+* markdownlint: Markdown linting and style checking for Visual Studio Code.
+* DocFX: Markdown previewer for DocFX-based documentation.
+* docs-markdown: Provides Markdown authoring assistance for docs.microsoft.com content in the Open Publishing System (OPS), including basic Markdown support and support for custom Markdown syntax in OPS
+
+## License
+
+[MIT](LICENSE)
