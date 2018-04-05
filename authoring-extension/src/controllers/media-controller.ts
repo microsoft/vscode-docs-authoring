@@ -34,18 +34,14 @@ export function insertVideo() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommandMedia + ".video" });
     const editor = vscode.window.activeTextEditor;
     vscode.window.showInputBox({
-        placeHolder: "Enter URL; https://channel9.msdn.com or" +
-            "https://www.youtube.com is a required prefix for video URLs",
-        validateInput: (urlInput) => urlInput.startsWith("https://channel9.msdn.com") ||
+        placeHolder: "Enter URL; https://channel9.msdn.com or https://www.youtube.com is a required prefix for video URLs",
+        validateInput: (urlInput) => urlInput.startsWith("https://channel9.msdn.com") && urlInput.split('?')[0].endsWith("player") ||
             urlInput.startsWith("https://www.youtube.com/embed") ? "" :
-            "https://channel9.msdn.com or https://www.youtube.com/embed are required" +
-            "prefixes for video URLs. Link will not be added if prefix is not present.",
+            "https://channel9.msdn.com or https://www.youtube.com/embed are required prefixes for video URLs. Link will not be added if prefix is not present.",
     }).then((val) => {
         // If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
         if (val === undefined) {
-            common.postWarning("Incorrect link syntax. For YouTube videos, use the embed syntax, " +
-                "https://www.youtube.com/embed/<videoID>. " +
-                "For Channel9videos, use the player syntax, https://channel9.msdn.com/<videoID>/player");
+            common.postWarning("Incorrect link syntax. For YouTube videos, use the embed syntax, https://www.youtube.com/embed/<videoID>. For Channel9videos, use the player syntax, https://channel9.msdn.com/<videoID>/player");
             return;
         }
         const contentToInsert = utilityHelper.videoLinkBuilder(val);
