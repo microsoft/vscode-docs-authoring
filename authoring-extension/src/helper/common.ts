@@ -5,16 +5,6 @@ import * as vscode from "vscode";
 import * as log from "./log";
 
 /**
- * Provide alias of current active user.
- */
-export function getActiveUser(this: any) {
-    if (this.user == null) {
-        this.user = os.userInfo().username;
-    }
-    return this.user;
-}
-
-/**
  * Provide current os platform
  */
 export function getOSPlatform(this: any) {

@@ -35,7 +35,7 @@ export function insertVideo() {
     const editor = vscode.window.activeTextEditor;
     vscode.window.showInputBox({
         placeHolder: "Enter URL; https://channel9.msdn.com or https://www.youtube.com is a required prefix for video URLs",
-        validateInput: (urlInput) => urlInput.startsWith("https://channel9.msdn.com") && urlInput.endsWith("player") ||
+        validateInput: (urlInput) => urlInput.startsWith("https://channel9.msdn.com") && urlInput.split('?')[0].endsWith("player") ||
             urlInput.startsWith("https://www.youtube.com/embed") ? "" :
             "https://channel9.msdn.com or https://www.youtube.com/embed are required prefixes for video URLs. Link will not be added if prefix is not present.",
     }).then((val) => {
