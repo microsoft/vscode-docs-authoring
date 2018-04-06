@@ -67,6 +67,7 @@ Former users of the extension code-named "Gauntlet" will notice that the authori
 ## Known Issues
 
 - [DocFX Preview] MacOS and Linux: DocFX Preview does not launch preview correctly (preview defaults to VS Code Markdown preview for these platforms).
+- [DocFx Preview] All platforms: Some syntax, such as xref (cross-reference) links to APIs, do not render correctly in preview, in some cases leaving content gaps.
 - [External bookmarks] Linux: File list is displayed but no headings are shown to select.
 - [Includes] Linux: File list is displayed but no link is added after selection is made.
 
