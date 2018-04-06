@@ -24,17 +24,20 @@ export function validateTableRowAndColumnCount(size: number, colStr: string, row
     }
 
     if (size !== 2 || isNaN(col) || isNaN(row)) {
-        // const errorMsg = "Please input the number of columns and rows as C:R e.g. 3:4";
+        const errorMsg = "Please input the number of columns and rows as C:R e.g. 3:4";
+        common.postWarning(errorMsg);
         return false;
     } else if (col <= 0 || row <= 0) {
-        // const errorMsg = "The number of columns and rows cannot be zero or negatives.";
+        const errorMsg = "The number of columns and rows cannot be zero or negatives.";
+        common.postWarning(errorMsg);
         return false;
     } else if (col > 4) {
-        // const errorMsg = "Per Docs content guidelines, you can only insert up to four columns via the" +
-        // " Gauntlet extension. You can add more columns manually if necessary.";
+        const errorMsg = "Per Docs content guidelines, you can only insert up to four columns via the Docs authoring extension. You can add more columns manually if necessary.";
+        common.postWarning(errorMsg);
         return false;
     } else if (row >= 100) {
-        // const errorMsg = "You can only insert a table with fewer than one hundred rows via the Gauntlet extension.";
+        const errorMsg = "You can only insert a table with fewer than one hundred rows via the Gauntlet extension.";
+        common.postWarning(errorMsg);
         return false;
     } else {
         return true;
