@@ -36,7 +36,7 @@ export function validateTableRowAndColumnCount(size: number, colStr: string, row
         common.postWarning(errorMsg);
         return false;
     } else if (row >= 100) {
-        const errorMsg = "You can only insert a table with fewer than one hundred rows via the Gauntlet extension.";
+        const errorMsg = "You can only insert a table with fewer than one hundred rows via the Docs authoring extension extension.";
         common.postWarning(errorMsg);
         return false;
     } else {
