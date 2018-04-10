@@ -3,20 +3,20 @@
     "displayName": "Docs Authoring Pack",
     "description": "Collection of extensions to assist with content development for docs.microsoft.com",
     "icon": "images/docs-logo-ms.png",
-	"version": "0.0.1",
-	"publisher": "docsmsft",
-	"engines": {
-		"vscode": "^1.20.0"
-	},
-	"repository": {
-		"url": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-authoring-pack"
-	},
-	"categories": [
-		"Extension Packs"
-	],
-	"extensionDependencies": [
-		"DavidAnson.vscode-markdownlint",
-		"ms-docfx.DocFX",
-		"docsmsft.docs-markdown"
-	]
+    "version": "0.0.1",
+    "publisher": "docsmsft",
+    "engines": {
+        "vscode": "^1.20.0"
+    },
+    "repository": {
+        "url": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-authoring-pack"
+    },
+    "categories": [
+        "Extension Packs"
+    ],
+    "extensionDependencies": [
+        "DavidAnson.vscode-markdownlint",
+        "ms-docfx.DocFX",
+        "docsmsft.docs-markdown"
+    ]
 }
