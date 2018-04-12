@@ -1,12 +1,14 @@
 # vscode-docs-authoring
 
-This repo contains code for the Docs Markdown VS Code extension, which provides Markdown authoring assistance for contributing to docs.microsoft.com. The Docs Markdown extension ships in the VS Code Marketplace, either as an individual extension or bundled with other useful extensions as part of the Docs Authoring Pack.
+This repo contains code for the Docs Markdown VS Code extension, which provides Markdown authoring assistance for contributing to docs.microsoft.com. The Docs Markdown extension ships in the VS Code Marketplace, either as an [individual extension](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown) or bundled with other useful extensions as part of the [Docs Authoring Pack](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-authoring-pack).
 
-To accurately insert relative links, images, and other embedded content, you must have your VS Code workspace scoped to the root of your cloned OPS repo.
+The Docs Authoring Pack also includes [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint), a popular linter by David Anson, and [DocFx](https://marketplace.visualstudio.com/items?itemName=ms-docfx.DocFX) (beta), which enables a docs.microsoft.com-specific Markdown preview.
 
-Some syntax supported by the extension, such as alerts and snippets, are custom Markdown for OPS, and will not render correctly unless published via OPS.
+## Prerequisites and Assumptions
 
-## How to Use the Extension
+To accurately insert relative links, images, and other embedded content with Docs Markdown, you must have your VS Code workspace scoped to the root of your cloned OPS repo. Some syntax supported by the extension, such as alerts and snippets, are custom Markdown for OPS, and will not render correctly unless published via OPS.
+
+## How to Use the Docs Markdown Extension
 
 To access the Docs Markdown menu, type `ALT+M`. You can click or use up/down arrows to select the function you want, or type to start filtering, then hit `ENTER` when the function you want is highlighted in the menu. The following are available:
 
@@ -53,13 +55,13 @@ To access the Docs Markdown menu, type `ALT+M`. You can click or use up/down arr
 
 See [Keybindings](https://code.visualstudio.com/docs/getstarted/keybindings) in the VS Code docs for more information.
 
-## How to Show the "Gauntlet" Toolbar
+## How to Show the Legacy Toolbar
 
 Former users of the extension code-named "Gauntlet" will notice that the authoring toolbar no longer appears at the bottom of the VS Code window when the Docs Markdown Extension is installed. This is because the toolbar took up a lot of space on the VS Code status bar and did not follow best practices for extension UX, so it is deprecated in the new extension. However, you can optionally show the toolbar by updating your VS Code settings.json file as follows:
 
 1. In VS Code, go to File -> Preferences -> Settings (`CTRL+Comma`).
 1. Select User Settings to change the settings for all VS Code workspaces, or  Workspace Settings to change them for just the current workspace.
-1. In the Default Settings pane, find Docs Authoring Extension Configuration, and select the pencil icon next to the desired setting. Next, you will be prompted to select either `true` or `false`. Once you've made your selection, VS Code will automatically add the value to the settings.json file and you will be prompted to reload the window for the changes to take effect.
+1. In the Default Settings pane, find Docs Authoring Extension Configuration, click the pencil icon next to the desired setting, and select `true`. VS Code will automatically add the value to the settings.json file and you will be prompted to reload the window for the changes to take effect.
 
 ## Known Issues
 
