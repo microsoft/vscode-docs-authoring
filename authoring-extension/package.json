@@ -49,7 +49,7 @@
     },
     "configuration": {
       "type": "object",
-      "title": "Docs Authoring Extenstion Configuration",
+      "title": "Docs Markdown Extension Configuration",
       "properties": {
         "markdown.showToolbar": {
           "type": "boolean",
