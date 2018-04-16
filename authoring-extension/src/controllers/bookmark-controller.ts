@@ -35,7 +35,7 @@ export function insertBookmarkExternal() {
 
     const editor = vscode.window.activeTextEditor;
 
-    if (!common.hasValidWorkSpaceRootPath()) {
+    if (!common.hasValidWorkSpaceRootPath(telemetryCommand)) {
         return;
     }
 

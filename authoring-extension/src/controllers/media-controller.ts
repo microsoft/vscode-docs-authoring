@@ -35,7 +35,7 @@ export function insertVideo() {
     const editor = vscode.window.activeTextEditor;
     vscode.window.showInputBox({
         placeHolder: "Enter URL; https://channel9.msdn.com or https://www.youtube.com is a required prefix for video URLs",
-        validateInput: (urlInput) => urlInput.startsWith("https://channel9.msdn.com") && urlInput.split('?')[0].endsWith("player") ||
+        validateInput: (urlInput) => urlInput.startsWith("https://channel9.msdn.com") && urlInput.split("?")[0].endsWith("player") ||
             urlInput.startsWith("https://www.youtube.com/embed") ? "" :
             "https://channel9.msdn.com or https://www.youtube.com/embed are required prefixes for video URLs. Link will not be added if prefix is not present.",
     }).then((val) => {
@@ -71,7 +71,7 @@ export function insertURL() {
     }).then((val) => {
         // If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
         if (val === undefined) {
-            common.postWarning("Incorrect link syntax. Gauntlet has abandoned command.");
+            common.postWarning("Incorrect link syntax. Abandoning command.");
         } else {
             let contentToInsert;
             if (selection.isEmpty) {
@@ -220,7 +220,7 @@ export function Insert(isArt: any) {
         return;
     }
 
-    if (!common.hasValidWorkSpaceRootPath()) {
+    if (!common.hasValidWorkSpaceRootPath(telemetryCommandLink)) {
         return;
     }
 
@@ -239,9 +239,6 @@ export function Insert(isArt: any) {
             " is not saved.  Cannot accurately resolve path to create link.");
         return;
     }
-
-    /*     const selection = editor.selection;
-        const folderPath = vscode.workspace.rootPath; */
 
     // Determine if there is selected text.  If selected text, no action.
     if (isArt && selectedText === "") {

@@ -16,47 +16,6 @@ export function getOSPlatform(this: any) {
 }
 
 /**
- * Provide installed extension version
- */
-export async function getExtensionVersion(this: any) {
-    const extensionNameStr = "Microsoft.gauntlet";
-    if (this.extensionVer == null) {
-        if (this.extensionVer != null) {
-            this.extensionVer = this.extensionVer.substring(extensionNameStr.length);
-            const index = this.extensionVer.search("-");
-            this.extensionVer = this.extensionVer.substring(index + 1);
-        } else {
-            this.extensionVer = "Extension not found.";
-        }
-    }
-    return this.extensionVer;
-}
-
-export async function getExtensionEnvironment(this: any) {
-    const extensionNameStr = "Microsoft.gauntlet";
-    if (this.extensionEnv == null) {
-        if (this.extensionEnvName != null) {
-            const index = this.extensionEnvName.search("-");
-            this.extensionEnvName = this.extensionEnvName.substring(extensionNameStr.length, index);
-            // check name string
-            if (this.extensionEnvName.toLowerCase() === "") {
-                this.extensionEnv = log.extensionEnvironment.Production;
-            } else if (this.extensionEnvName.toLowerCase() === "staging") {
-                this.extensionEnv = log.extensionEnvironment.Staging;
-            } else if (this.extensionEnvName.toLowerCase() === "develop") {
-                this.extensionEnv = log.extensionEnvironment.Develop;
-            } else if (this.extensionEnvName.toLowerCase() === "test") {
-                this.extensionEnv = log.extensionEnvironment.Test;
-            }
-        } else {
-            this.extensionEnvName = "Extension not found.";
-            this.extensionEnv = log.extensionEnvironment.Unknown;
-        }
-    }
-    return this.extensionEnv;
-}
-
-/**
  * Create a posted warning message and applies the message to the log
  * @param {string} message - the message to post to the editor as an warning.
  */
@@ -72,6 +31,15 @@ export function postWarning(message: string) {
 export function postInformation(message: string) {
     log.debug(message);
     vscode.window.showInformationMessage(message);
+}
+
+/**
+ * Create a posted information message and applies the message to the log
+ * @param {string} message - the message to post to the editor as an information.
+ */
+export function postError(message: string) {
+    log.debug(message);
+    vscode.window.showErrorMessage(message);
 }
 
 /**
@@ -138,11 +106,11 @@ export function hasContentAlready(editor: any) {
     return true;
 }
 
-export function hasValidWorkSpaceRootPath() {
+export function hasValidWorkSpaceRootPath(senderName: string) {
     const folderPath = vscode.workspace.rootPath;
 
     if (folderPath == null) {
-        log.error("Please open a folder to find a list of files that can be linked");
+        postWarning("The " + senderName + " command requires an active workspace. Please open VS Code from the root of your clone to continue.");
         return false;
     }
 
@@ -274,14 +242,12 @@ export function rtrim(str: string, chr: string) {
 
 /**
  * Checks to see if the active file is markdown.
- * Gauntlet content manipulation commands should only run for markdown files.
+ * Commands should only run on markdown files.
  * @param {vscode.TextEditor} editor - the active editor in vs code.
  */
 export function isMarkdownFileCheck(editor: vscode.TextEditor, languageId: boolean) {
     if (editor.document.languageId !== "markdown") {
-        log.debug("Not a MD file.  Exiting");
-        log.debug(editor.document.languageId);
-        log.information("Gauntlet only works on Markdown files.");
+        postInformation("Extension only works on Markdown files.");
         return false;
     } else {
         return true;
