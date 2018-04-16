@@ -36,6 +36,10 @@ export function insertInclude() {
         return;
     }
 
+    if (!common.hasValidWorkSpaceRootPath(telemetryCommand)) {
+        return;
+    }
+
     if (folderPath == null) {
         return;
     }

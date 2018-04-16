@@ -38,6 +38,10 @@ export function insertSnippet() {
         return;
     }
 
+    if (!common.hasValidWorkSpaceRootPath(telemetryCommand)) {
+        return;
+    }
+
     const selected = editor.selection;
 
     // We need a file to search for, calls the searchRepo function.
