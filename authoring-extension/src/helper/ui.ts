@@ -6,7 +6,6 @@ import * as log from "./log";
 export class UiHelper {
 
     public LoadToolbar() {
-        log.debug("Loading the Gauntlet extension toolbar.");
 
         // toolbar only renders if markdown.showToolbar is true in user settings
         if (vscode.workspace.getConfiguration("markdown").showToolbar) {

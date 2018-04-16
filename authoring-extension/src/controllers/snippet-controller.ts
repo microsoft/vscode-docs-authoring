@@ -23,11 +23,6 @@ export function insertSnippet() {
     let dir = require("node-dir");
 
     const folderPath = vscode.workspace.rootPath;
-    if (folderPath == null) {
-        vscode.window.showErrorMessage("Please open a folder.");
-        return;
-    }
-
     const editor = vscode.window.activeTextEditor;
 
     if (!common.isValidEditor(editor, false, insertSnippet.name)) {
@@ -35,6 +30,10 @@ export function insertSnippet() {
     }
 
     if (!common.isMarkdownFileCheck(editor, false)) {
+        return;
+    }
+
+    if (!common.hasValidWorkSpaceRootPath(telemetryCommand)) {
         return;
     }
 

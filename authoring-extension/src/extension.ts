@@ -18,7 +18,6 @@ import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
 import { insertTableCommand } from "./controllers/table-controller";
-import { githubIssueCommand } from "./helper/bi";
 import * as log from "./helper/log";
 import { UiHelper } from "./helper/ui";
 import { Reporter } from "./telemetry/telemetry";
@@ -45,7 +44,6 @@ export function activate(context: vscode.ExtensionContext) {
     insertListsCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     insertSnippetCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     insertTableCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    githubIssueCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     boldFormattingCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     codeFormattingCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     italicFormattingCommand().forEach((cmd) => AuthoringCommands.push(cmd));
