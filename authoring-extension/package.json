@@ -14,7 +14,7 @@
     "url": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/authoring-extension"
   },
   "categories": [
-    "Other"
+    "Markdown"
   ],
   "activationEvents": [
     "onLanguage:markdown"
