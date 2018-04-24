@@ -12,7 +12,8 @@
         "url": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-authoring-pack"
     },
     "categories": [
-        "Extension Packs"
+        "Extension Packs",
+        "Markdown"
     ],
     "extensionDependencies": [
         "DavidAnson.vscode-markdownlint",
