@@ -1,7 +1,8 @@
-
 # Docs Markdown Extension
 
-Welcome to the Docs Markdown authoring extension. This extension provides Markdown authoring assistance for docs.microsoft.com content in the Open Publishing System (OPS), including basic Markdown support and support for custom Markdown syntax in OPS.
+Welcome to the Docs Markdown authoring extension. This extension provides Markdown authoring assistance for docs.microsoft.com content in the Open Publishing System (OPS), including basic Markdown support and support for custom Markdown syntax in OPS. Here is a quick demo:
+
+![demo](images/extension-demo.gif)
 
 ## Prerequisites and Assumptions
 
