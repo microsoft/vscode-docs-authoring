@@ -1,7 +1,10 @@
 # Change Log
-All notable changes to the "docs-authoring-pack" extension pack will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## 0.0.2 (April 30th, 2018)
+- Documentation updates
 
-## [Unreleased]
-- Initial release
+## 0.0.1 (April 3rd, 2018)
+First release that includes the following extensions:
+- DavidAnson.vscode-markdownlint
+- ms-docfx.DocFX
+- docsmsft.docs-markdown
