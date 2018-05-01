@@ -33,7 +33,7 @@ export function previewTopic() {
             (result) => console.log("preview launched."),
             (err) => vscode.window.showErrorMessage("DocFX preview extension not installed or disabled."));
     } else {
-        vscode.commands.executeCommand('markdown.showPreviewToSide');
+        vscode.commands.executeCommand("markdown.showPreviewToSide");
     }
 
 }
