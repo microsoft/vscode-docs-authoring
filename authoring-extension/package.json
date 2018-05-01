@@ -29,6 +29,10 @@
           "dark": "images/svg/markdown-light.svg",
           "light": "images/svg/markdown-dark.svg"
         }
+      },
+      {
+        "command": "generateMasterRedirectionFile",
+        "title": "Docs: Generate master redirection file"
       }
     ],
     "menus": {

@@ -7,6 +7,9 @@ import * as vscode from "vscode";
 import YAML = require("yamljs");
 import * as common from "../helper/common";
 import * as yamlMetadata from "../helper/yaml-metadata";
+import { reporter } from "../telemetry/telemetry";
+
+const telemetryCommand: string = "masterRedirect";
 
 export function getMasterRedirectionCommand() {
     const command = [
@@ -51,6 +54,7 @@ export class RedirectionFile {
 }
 
 function generateMasterRedirectionFile() {
+    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     const workspacePath = vscode.workspace.rootPath;
     const repoName = path.basename(workspacePath);
     const date = new Date(Date.now());
