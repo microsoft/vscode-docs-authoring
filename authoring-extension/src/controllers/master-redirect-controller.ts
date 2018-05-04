@@ -10,6 +10,7 @@ import * as yamlMetadata from "../helper/yaml-metadata";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "masterRedirect";
+import * as os from "os";
 
 export function getMasterRedirectionCommand() {
     const command = [
@@ -150,7 +151,6 @@ function generateMasterRedirectionFile() {
 
             if (masterRedirection.redirections.length > 0) {
                 fs.writeFileSync(masterRedirectionFilePath, JSON.stringify(masterRedirection, ["redirections", "source_path", "redirect_url", "redirect_document_id"], 4));
-                // const date = new Date(Date.now());
                 const currentYear = date.getFullYear();
                 const currentMonth = (date.getMonth() + 1);
                 const currentDay = date.getDate();
@@ -159,8 +159,16 @@ function generateMasterRedirectionFile() {
                 const currentMilliSeconds = date.getMilliseconds();
                 const timeStamp = currentYear + `-` + currentMonth + `-` + currentDay + `_` + currentHour + `-` + currentMinute + `-` + currentMilliSeconds;
                 const deletedRedirectsFolderName = repoName + "_deleted_redirects_" + timeStamp;
-                const deletedRedirectsPath = path.join(process.env.USERPROFILE, deletedRedirectsFolderName);
-                fs.mkdirSync(deletedRedirectsPath);
+                const docsAuthoringHomeDirectory = path.join(os.homedir(), "Docs Authoring");
+                const docsRedirectDirectory = path.join(docsAuthoringHomeDirectory, "Redirects");
+                const deletedRedirectsPath = path.join(docsRedirectDirectory, deletedRedirectsFolderName);
+                if (fs.existsSync(docsRedirectDirectory)) {
+                    fs.mkdirSync(deletedRedirectsPath);
+                } else {
+                    fs.mkdirSync(docsAuthoringHomeDirectory);
+                    fs.mkdirSync(docsRedirectDirectory);
+                    fs.mkdirSync(deletedRedirectsPath);
+                }
 
                 redirectionFiles.forEach((item) => {
                     const source = fs.createReadStream(item.fileFullPath);
