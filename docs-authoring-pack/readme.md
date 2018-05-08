@@ -1,4 +1,4 @@
-.# Docs Authoring Pack
+# Docs Authoring Pack
 
 The Docs Authoring Pack provides the following extensions to help author content for docs.microsoft.com:
 * [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint), a popular linter by David Anson
