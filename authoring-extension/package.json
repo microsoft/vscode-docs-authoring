@@ -77,19 +77,19 @@
         "command": "automaticList",
         "key": "enter",
         "mac": "enter",
-        "when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible"
+        "when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible && !vim.active"
       },
       {
         "command": "insertNestedList",
         "key": "tab",
         "mac": "tab",
-        "when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible"
+        "when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible && !vim.active"
       },
       {
         "command": "removeNestedList",
         "key": "backspace",
         "mac": "backspace",
-        "when": "editorTextFocus && editorLangId == 'markdown'"
+        "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active"
       }
     ]
   },
