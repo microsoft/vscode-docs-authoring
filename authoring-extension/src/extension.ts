@@ -13,6 +13,7 @@ import { codeFormattingCommand } from "./controllers/code-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
 import { italicFormattingCommand } from "./controllers/italic-controller";
 import { insertListsCommands } from "./controllers/list-controller";
+import { getMasterRedirectionCommand } from "./controllers/master-redirect-controller";
 import { insertLinksAndMediaCommands } from "./controllers/media-controller";
 import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
@@ -49,6 +50,7 @@ export function activate(context: vscode.ExtensionContext) {
     italicFormattingCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     quickPickMenuCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     previewTopicCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    getMasterRedirectionCommand().forEach((cmd) => AuthoringCommands.push(cmd));
 
     // Telemetry
     context.subscriptions.push(new Reporter(context));
