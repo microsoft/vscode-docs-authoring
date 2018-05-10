@@ -4,8 +4,8 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
-  "version": "0.0.1",
-  "publisher": "Microsoft",
+  "version": "0.0.2",
+  "publisher": "docsmsft",
   "bugs": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/authoring-extension/issues",
   "engines": {
     "vscode": "^1.5.0"
@@ -14,7 +14,10 @@
     "url": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/authoring-extension"
   },
   "categories": [
-    "Markdown"
+    "Other"
+  ],
+  "keywords": [
+    "markdown"
   ],
   "activationEvents": [
     "onLanguage:markdown"
@@ -104,20 +107,20 @@
     "node-dir": "^0.1.17",
     "octicons": "^4.4.0",
     "typescript-collections": "^1.2.3",
-    "yamljs": "^0.3.0",
-    "vscode-extension-telemetry": "^0.0.6"
+    "vscode-extension-telemetry": "^0.0.6",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
     "@types/lodash.merge": "^4.6.3",
     "@types/mocha": "^2.2.32",
-    "@types/node": "^7.0.0",
+    "@types/node": "^7.0.61",
     "@types/yamljs": "^0.2.30",
     "chai": "^3.5.0",
     "mocha": "^2.3.3",
     "octicons": "^4.4.0",
     "tslint": "^5.9.1",
-    "typescript": "^2.6.2",
-    "vscode": "^1.0.0"
+    "typescript": "^2.8.3",
+    "vscode": "^1.1.16"
   }
 }

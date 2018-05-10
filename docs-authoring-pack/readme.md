@@ -2,8 +2,8 @@
 
 The Docs Authoring Pack provides the following extensions to help author content for docs.microsoft.com:
 * [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint), a popular linter by David Anson
-* [DocFx](https://marketplace.visualstudio.com/items?itemName=ms-docfx.DocFX) (beta), which enables a docs.microsoft.com-specific Markdown preview
-* [Docs Markdown](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown), which provides Markdown authoring assistance including support for inserting custom Markdown syntax specific to docs.microsoft.com. The rest of this readme provides details on the Docs Markdown extension.
+* [DocFx](https://marketplace.visualstudio.com/items?itemName=ms-docfx.DocFX) (beta), which enables a docs.microsoft.com-specific Markdown preview.
+* [Docs Markdown](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown), which provides Markdown authoring assistance, including support for inserting custom Markdown syntax specific to docs.microsoft.com. The rest of this readme provides details on the Docs Markdown extension.
 
 ## Prerequisites and Assumptions
 

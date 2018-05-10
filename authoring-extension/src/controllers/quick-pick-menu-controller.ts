@@ -51,7 +51,7 @@ export function markdownQuickPick() {
             case "numbered list":
                 insertNumberedList();
                 break;
-            case "bulletted list":
+            case "bulleted list":
                 insertBulletedList();
                 break;
             case "table":
@@ -106,7 +106,7 @@ const items: vscode.QuickPickItem[] = [
     },
     {
         description: "",
-        label: "$(list-unordered) Bulletted list",
+        label: "$(list-unordered) Bulleted list",
     },
     {
         description: "",
