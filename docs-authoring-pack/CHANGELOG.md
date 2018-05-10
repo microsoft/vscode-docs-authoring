@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.3 (May 10th, 2018)
+- Update readme 
+
 ## 0.0.2 (April 30th, 2018)
 - Documentation updates
 

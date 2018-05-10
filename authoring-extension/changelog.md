@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.0.3 (May 10th, 2018)
+- Vim extension compatibility fix
+- Update QuickPick menu description
+
 ## 0.0.2 (April 30th, 2018)
 - Updates to active workspace verification
 - Documentation updates
