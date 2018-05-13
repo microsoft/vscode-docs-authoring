@@ -6,12 +6,15 @@
   "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
   "version": "0.0.2",
   "publisher": "docsmsft",
-  "bugs": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/authoring-extension/issues",
+  "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/authoring-extension",
+  "bugs": {
+    "url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
+  },
   "engines": {
     "vscode": "^1.5.0"
   },
   "repository": {
-    "url": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/authoring-extension"
+    "url": "https://github.com/Microsoft/vscode-docs-authoring.git"
   },
   "categories": [
     "Other"
@@ -123,5 +126,6 @@
     "tslint": "^5.9.1",
     "typescript": "^2.8.3",
     "vscode": "^1.1.16"
-  }
+  },
+  "license": "MIT"
 }
