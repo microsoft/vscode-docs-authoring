@@ -1,76 +1,64 @@
 {
-    "name": "docs-article-templates",
-    "displayName": "docs-article-templates",
-    "description": "Docs article templates",
-    "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
-    "version": "0.0.1",
-    "publisher": "docsmsft",
-    "engines": {
-        "vscode": "^1.23.0"
-    },
-    "categories": [
-        "Other"
+  "name": "docs-article-templates",
+  "displayName": "docs-article-templates",
+  "description": "Docs article templates",
+  "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
+  "version": "0.0.1",
+  "publisher": "docsmsft",
+  "engines": {
+    "vscode": "^1.23.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "applyTemplate",
+        "title": "Docs: Apply template",
+        "icon": "node_modules/octicons/build/svg/file.svg"
+      }
     ],
-    "activationEvents": [
-        "*"
-    ],
-    "main": "./out/extension",
-    "contributes": {
-        "commands": [
-            {
-                "command": "applyTemplate",
-                "title": "Docs: Apply template",
-                "icon": {
-                   "dark": "images/svg/file-light.svg",
-                   "light": "images/svg/file-dark.svg"
-                }
-            }
-        ],
-        "menus": {
-            "editor/title": [
-                {
-                    "command": "applyTemplate",
-                    "alt": "applyTemplate",
-                    "group": "navigation"
-                }
-            ]
-        },
-        "configuration": [
-            {
-                "title": "Docs Article Templates Extension Configuration",
-                "properties": {
-                    "docs.templates.alias": {
-                        "type": "string",
-                        "default": "",
-                        "description": "Microsoft alias"
-                    },
-                    "docs.templates.githubid": {
-                        "type": "string",
-                        "default": "",
-                        "description": "GitHub ID"
-                    }
-                }
-            }
-        ]
-    },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
-    },
-    "dependencies": {
-        "download-git-repo": "^1.0.2",
-        "node-dir": "^0.1.17",
-        "octicons": "^4.4.0",
-        "vscode-extension-telemetry": "^0.0.6"
-    },
-    "devDependencies": {
-        "@types/chai": "^3.4.34",
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
-        "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
+    "menus": {
+      "editor/title": [
+        {
+          "command": "applyTemplate",
+          "alt": "applyTemplate",
+          "group": "navigation"
+        }
+      ]
     }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+  },
+  "dependencies": {
+    "download-git-repo": "^1.0.2",
+    "node-dir": "^0.1.17",
+    "octicons": "^4.4.0",
+    "vscode-extension-telemetry": "^0.0.6"
+  },
+  "devDependencies": {
+    "typescript": "^2.6.1",
+    "vscode": "^1.1.6",
+    "@types/node": "^7.0.43",
+    "@types/mocha": "^2.2.42"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Microsoft/vscode-docs-authoring.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
+  },
+  "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-article-templates"
 }
