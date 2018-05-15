@@ -24,12 +24,31 @@
             }
         ],
         "menus": {
-            "editor/title": [{
-                "command": "applyTemplate",
-                "alt": "applyTemplate",
-                "group": "navigation"
-            }]
-        }
+            "editor/title": [
+                {
+                    "command": "applyTemplate",
+                    "alt": "applyTemplate",
+                    "group": "navigation"
+                }
+            ]
+        },
+        "configuration": [
+            {
+                "title": "Docs Article Templates Extension Configuration",
+                "properties": {
+                    "docs.templates.alias": {
+                        "type": "string",
+                        "default": "",
+                        "description": "Microsoft alias"
+                    },
+                    "docs.templates.githubid": {
+                        "type": "string",
+                        "default": "",
+                        "description": "GitHub ID"
+                    }
+                }
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
@@ -45,6 +64,7 @@
         "vscode-extension-telemetry": "^0.0.6"
     },
     "devDependencies": {
+        "@types/chai": "^3.4.34",
         "typescript": "^2.6.1",
         "vscode": "^1.1.6",
         "@types/node": "^7.0.43",

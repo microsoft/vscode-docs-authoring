@@ -23,10 +23,23 @@ export function activate(context: vscode.ExtensionContext) {
         // tslint:disable-next-line:no-console
         console.log("Error registering commands with vscode extension context: " + error);
     }
+    // if the user changes markdown.showToolbar in settings.json, display message telling them to reload.
+    vscode.workspace.onDidChangeConfiguration((e: any) => {
 
+        if (e.affectsConfiguration("docs.templates.githubID" || "docs.templates.alias")) {
+
+            vscode.window.showInformationMessage("Your updated configuration has been recorded, but you must reload to see its effects.", "Reload")
+                .then((res) => {
+                    if (res === "Reload") {
+                        vscode.commands.executeCommand("workbench.action.reloadWindow");
+                    }
+                });
+        }
+    });
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-    // placeholder comment
+    // tslint:disable-next-line:no-console
+    console.log("Deactivating extension.");
 }
