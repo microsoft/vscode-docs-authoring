@@ -20,7 +20,10 @@
             {
                 "command": "applyTemplate",
                 "title": "Docs: Apply template",
-                "icon": "node_modules/octicons/build/svg/file.svg"
+                "icon": {
+                   "dark": "images/svg/file-light.svg",
+                   "light": "images/svg/file-dark.svg"
+                }
             }
         ],
         "menus": {
