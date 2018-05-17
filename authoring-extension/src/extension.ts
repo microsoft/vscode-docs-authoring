@@ -23,6 +23,8 @@ import * as log from "./helper/log";
 import { UiHelper } from "./helper/ui";
 import { Reporter } from "./telemetry/telemetry";
 
+export let output: any;
+
 /**
  * Provides the commands to the extension. This method is called when extension is activated.
  * Extension is activated the very first time the command is executed.
@@ -36,6 +38,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Places "Docs Markdown Authoring" into the Toolbar
     new UiHelper().LoadToolbar();
+
+    // create global output channel to pass information to the user.
+    createOutputChannel();
 
     // Creates an array of commands from each command file.
     const AuthoringCommands: any = [];
@@ -81,6 +86,11 @@ export function activate(context: vscode.ExtensionContext) {
                 });
         }
     });
+}
+
+// global output channel to pass information to the user.
+export function createOutputChannel() {
+    output = vscode.window.createOutputChannel("Docs Markdown");
 }
 
 // this method is called when your extension is deactivated
