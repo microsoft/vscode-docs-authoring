@@ -83,16 +83,17 @@ export function markdownQuickPick() {
     );
     // check for active docs-article-templates extension.  if active, add to quickpick menu.
     try {
-        if (vscode.extensions.getExtension("docsmsft.docs-article-templates").isActive === true) {
+        if (vscode.extensions.getExtension("docsmsft.docs-article-templates").isActive) {
             items.push({
                 description: "",
                 label: "$(diff) Template",
             });
         }
     } catch (error) {
-        common.generateTimestamp();
-        output.appendLine(common.msTimeValue + " - The docs-article-templates extension is not installed.");
+        const { msTimeValue } = common.generateTimestamp();
+        output.appendLine("[" + msTimeValue + "]" + " - The docs-article-templates extension is not installed.");
     }
+
     vscode.window.showQuickPick(items, opts).then((selection) => {
         if (!selection) {
             return;
@@ -150,8 +151,8 @@ export function markdownQuickPick() {
                 applyTemplate();
                 break;
             default:
-                common.generateTimestamp();
-                output.appendLine(common.msTimeValue + " - No quickpick case was hit.");
+                const { msTimeValue } = common.generateTimestamp();
+                output.appendLine(msTimeValue + " - No quickpick case was hit.");
         }
     });
 }

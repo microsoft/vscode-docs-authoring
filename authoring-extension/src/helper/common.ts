@@ -4,9 +4,6 @@ import os = require("os");
 import * as vscode from "vscode";
 import * as log from "./log";
 
-export let msDateValue: string = "";
-export let msTimeValue: string = "";
-
 /**
  * Provide current os platform
  */
@@ -269,13 +266,8 @@ export enum LogType {
  */
 export function generateTimestamp() {
     const date = new Date(Date.now());
-    const currentYear = date.getFullYear();
-    // In Javascript, the month starts from 0 to 11, so we must add 1 to get the current month
-    const currentMonth = (date.getMonth() + 1);
-    const currentDay = date.getDate();
-    const currentHour = date.getHours();
-    const currentMinute = date.getMinutes();
-    const currentSeconds = date.getSeconds();
-    msDateValue = currentMonth + "/" + currentDay + "/" + currentYear;
-    msTimeValue = currentHour + ":" + currentMinute + ":" + currentSeconds;
+    return {
+        msDateValue: date.toLocaleDateString("en-us"),
+        msTimeValue: date.toLocaleTimeString([], { hour12: false }),
+    };
 }
