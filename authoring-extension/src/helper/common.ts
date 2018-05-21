@@ -260,3 +260,14 @@ export function isMarkdownFileCheck(editor: vscode.TextEditor, languageId: boole
 export enum LogType {
     Telemetry, Trace,
 }
+
+/**
+ * Create timestamp
+ */
+export function generateTimestamp() {
+    const date = new Date(Date.now());
+    return {
+        msDateValue: date.toLocaleDateString("en-us"),
+        msTimeValue: date.toLocaleTimeString([], { hour12: false }),
+    };
+}
