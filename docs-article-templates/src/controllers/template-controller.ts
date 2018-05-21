@@ -57,18 +57,19 @@ export function applyTemplate() {
                         const content = fs.readFileSync(qpFullPath, "utf8");
                         textEditor.edit((edit) => {
                             let updatedContent;
+                            const { msDateValue } = common.generateTimestamp();
                             // replace metadata placeholder values with user settings and dynamic values then write template content to new file.
                             if (!metadata.gitHubID && !metadata.alias) {
-                                updatedContent = content.replace("{@date}", common.msDateValue).replace("{github-id}", metadata.missingValue).replace("{ms-alias}", metadata.missingValue);
+                                updatedContent = content.replace("{@date}", msDateValue).replace("{github-id}", metadata.missingValue).replace("{ms-alias}", metadata.missingValue);
                                 edit.insert(new vscode.Position(0, 0), updatedContent);
                             } else if (!metadata.gitHubID) {
-                                updatedContent = content.replace("{@date}", common.msDateValue).replace("{github-id}", metadata.missingValue).replace("{ms-alias}", metadata.alias);
+                                updatedContent = content.replace("{@date}", msDateValue).replace("{github-id}", metadata.missingValue).replace("{ms-alias}", metadata.alias);
                                 edit.insert(new vscode.Position(0, 0), updatedContent);
                             } else if (!metadata.alias) {
-                                updatedContent = content.replace("{@date}", common.msDateValue).replace("{github-id}", metadata.gitHubID).replace("{ms-alias}", metadata.missingValue);
+                                updatedContent = content.replace("{@date}", msDateValue).replace("{github-id}", metadata.gitHubID).replace("{ms-alias}", metadata.missingValue);
                                 edit.insert(new vscode.Position(0, 0), updatedContent);
                             } else {
-                                updatedContent = content.replace("{@date}", common.msDateValue).replace("{github-id}", metadata.gitHubID).replace("{ms-alias}", metadata.alias);
+                                updatedContent = content.replace("{@date}", msDateValue).replace("{github-id}", metadata.gitHubID).replace("{ms-alias}", metadata.alias);
                                 edit.insert(new vscode.Position(0, 0), updatedContent);
                             }
                         });
