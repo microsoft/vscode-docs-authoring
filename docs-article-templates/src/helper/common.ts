@@ -2,8 +2,6 @@
 
 import * as vscode from "vscode";
 
-export let msDateValue: string = "";
-
 /**
  * Create a posted warning message and applies the message to the log
  * @param {string} message - the message to post to the editor as an warning.
@@ -50,11 +48,13 @@ export function debug(message: any) {
     process.stdout.write(message + "\n");
 }
 
+/**
+ * Create timestamp
+ */
 export function generateTimestamp() {
     const date = new Date(Date.now());
-    const currentYear = date.getFullYear();
-    // In Javascript, the month starts from 0 to 11, so we must add 1 to get the current month
-    const currentMonth = (date.getMonth() + 1);
-    const currentDay = date.getDate();
-    msDateValue = currentMonth + "/" + currentDay + "/" + currentYear;
+    return {
+        msDateValue: date.toLocaleDateString("en-us"),
+        msTimeValue: date.toLocaleTimeString([], { hour12: false }),
+    };
 }
