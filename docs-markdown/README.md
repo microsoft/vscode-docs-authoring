@@ -2,7 +2,7 @@
 
 Welcome to the Docs Markdown authoring extension. This extension provides Markdown authoring assistance for docs.microsoft.com content in the Open Publishing System (OPS), including basic Markdown support and support for custom Markdown syntax in OPS. Here is a quick demo - the rest of the readme provides details about using the extension:
 
-![demo](https://github.com/Microsoft/vscode-docs-authoring/raw/master/authoring-extension/images/extension-demo.gif )
+![demo](https://github.com/Microsoft/vscode-docs-authoring/raw/master/docs-markdown/images/extension-demo.gif )
 
 ## Prerequisites and Assumptions
 
