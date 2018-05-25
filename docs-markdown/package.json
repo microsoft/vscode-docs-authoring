@@ -6,7 +6,7 @@
   "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
   "version": "0.0.3",
   "publisher": "docsmsft",
-  "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/authoring-extension",
+  "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
     "url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
   },
