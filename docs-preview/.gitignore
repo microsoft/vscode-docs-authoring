@@ -1,0 +1,8 @@
+node_modules/
+out/
+.markdocs/
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+install.Lock
