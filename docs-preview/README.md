@@ -1,15 +1,10 @@
-# markdocs
-[![Current Version](https://vsmarketplacebadge.apphb.com/version/qezhu.markdocs.svg)](https://marketplace.visualstudio.com/items?itemName=qezhu.markdocs)
+# Docs Preview Extension
 
-Markdown preview tool that supports docfx flavored markdown and CommonMark syntax.
-
-## Install
-
-Press `F1`, type `ext install markdocs`
+Markdown preview tool for CommonMark syntax and markdown extension syntax supported in Docs.
 
 ## Usage
 
-<img src="https://github.com/qinezh/vscode-markdocs/raw/master/images/howto.gif" width="600"/>
+<img src="https://github.com/Microsoft/vscode-docs-authoring/raw/master/images/howto.gif" width="600"/>
 
 ## Supported markdown snippets
 
@@ -55,9 +50,3 @@ Press `F1`, type `ext install markdocs`
        :::column-end:::
     :::row-end:::
    ```
-
-## To Do List
-- [x] Enable TypeScript linter
-- [ ] Supports bidirectional scrolling
-- [ ] Enable chromeless css
-- [ ] Reduce the size of runtime dependency if dotnet core has already been installed 
