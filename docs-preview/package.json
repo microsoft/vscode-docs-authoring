@@ -1,0 +1,152 @@
+{
+  "name": "markdocs",
+  "displayName": "markdocs",
+  "description": "Markdown preview tool that supports docfx flavored markdown and CommonMark",
+  "version": "0.3.11",
+  "publisher": "qezhu",
+  "author": {
+    "name": "Qinen Zhu",
+    "email": "qezhu@outlook.com"
+  },
+  "icon": "images/logo.png",
+  "bugs": {
+    "url": "https://github.com/qinezh/vscode-markdocs/issues",
+    "email": "qezhu@outlook.com"
+  },
+  "homepage": "https://github.com/qinezh/vscode-markdocs/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qinezh/vscode-markdocs.git"
+  },
+  "engines": {
+    "vscode": "^1.18.x"
+  },
+  "categories": [
+    "Snippets",
+    "Other"
+  ],
+  "keywords": [
+    "markdown",
+    "commonmark",
+    "dfm",
+    "docfx"
+  ],
+  "activationEvents": [
+    "onCommand:markdocs.showPreview",
+    "onCommand:markdocs.showPreviewToSide",
+    "onLanguage:markdown"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "markdocs.showPreviewToSide",
+        "title": "Markdocs preview",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "markdocs.showPreview",
+        "title": "Markdocs preview in current tab",
+        "when": "editorTextFocus"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "markdocs.showPreviewToSide",
+          "group": "navigation",
+          "when": "editorTextFocus"
+        }
+      ]
+    },
+    "snippets": [
+      {
+        "language": "markdown",
+        "path": "./snippets/dfm.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "typescript": "^2.5.2",
+    "vscode": "^1.1.18",
+    "mocha": "^2.3.3",
+    "@types/node": "^6.0.40",
+    "@types/mocha": "^2.2.32"
+  },
+  "dependencies": {
+    "axios": "^0.17.1",
+    "child_process": "^1.0.2",
+    "file-url": "^2.0.2",
+    "highlightjs": "^9.10.0",
+    "http-proxy-agent": "^2.0.0",
+    "https-proxy-agent": "^2.1.1",
+    "jquery": "^3.2.1",
+    "mkdirp": "^0.5.1",
+    "tmp": "0.0.33",
+    "vscode-languageclient": "^3.4.2",
+    "yauzl": "^2.9.1"
+  },
+  "runtimeDependencies": [
+    {
+      "description": "MarkdocsService for Windows (x86)",
+      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x86.zip",
+      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x86.zip",
+      "installPath": ".markdocs",
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86"
+      ],
+      "installTestPath": "./.markdocs/MarkdocsService.exe"
+    },
+    {
+      "description": "MarkdocsService for Windows (x64)",
+      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x64.zip",
+      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x64.zip",
+      "installPath": ".markdocs",
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "installTestPath": "./.markdocs/MarkdocsService.exe"
+    },
+    {
+      "description": "MarkdocsService for macOS (x64)",
+      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/darwin_x64.zip",
+      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/darwin_x64.zip",
+      "installPath": ".markdocs",
+      "platforms": [
+        "darwin"
+      ],
+      "binaries": [
+        "./MarkdocsService"
+      ],
+      "installTestPath": "./.markdocs/MarkdocsService"
+    },
+    {
+      "description": "MarkdocsService for Linux (x64)",
+      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/linux_x64.zip",
+      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/linux_x64.zip",
+      "installPath": ".markdocs",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "binaries": [
+        "./MarkdocsService"
+      ],
+      "installTestPath": "./.markdocs/MarkdocsService"
+    }
+  ]
+}

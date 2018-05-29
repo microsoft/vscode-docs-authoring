@@ -125,7 +125,7 @@
     "octicons": "^4.4.0",
     "tslint": "^5.9.1",
     "typescript": "^2.8.3",
-    "vscode": "^1.1.16"
+    "vscode": "^1.1.18"
   },
   "license": "MIT"
 }
