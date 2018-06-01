@@ -97,7 +97,6 @@ export function tableBuilder(col: number, row: number) {
 export function search(editor: vscode.TextEditor, selection: vscode.Selection, searchTerm: string, folderPath: string, fullPath?: string) {
     const dir = require("node-dir");
     const path = require("path");
-    const os = require("os");
 
     if (fullPath == null) {
         fullPath = folderPath;
@@ -114,37 +113,24 @@ export function search(editor: vscode.TextEditor, selection: vscode.Selection, s
         for (const file in files) {
             if (files.hasOwnProperty(file)) {
                 const baseName: string = (path.parse(files[file]).base);
-                let fileName: string = files[file];
-                fileName = fileName.toLowerCase();
+                const fileName: string = files[file];
                 if (fileName.includes(searchTerm)) {
-                    fileOptions.push({ label: baseName, description: files[file] });
+                    fileOptions.push({ label: baseName, description: fileName });
                 }
             }
         }
 
         // select from all files found that match search term.
         vscode.window.showQuickPick(fileOptions).then(function searchType(selected) {
-            const pathDelimited = vscode.window.activeTextEditor.document.fileName.split(".");
-            const activeFilePath = pathDelimited[0];
-            let relativePath = "";
-
-            if (os.type() === "Windows_NT") {
-                relativePath = path.relative(activeFilePath, selected.description.split("\\").join("\\\\"));
-                relativePath = relativePath.replace("..\\", "");
-            }
-            if (os.type() === "Darwin") {
-                relativePath = path.relative(activeFilePath, selected.description.split("//").join("//"));
-                relativePath = relativePath.replace("../", "");
-            }
-
+            const activeFilePath = (path.parse(vscode.window.activeTextEditor.document.fileName).dir);
             const target = path.parse(selected.description);
+            const relativePath = path.relative(activeFilePath, target.dir);
             const ext: string = target.ext;
-
-            // Now we need to build and insert the Snippet.
-            // NOTE: The selection.label still has the file extension, it needs to be removed.
-            // NOTE: still do not have context on how to generate the language.
-            const snippet: string = snippetBuilder(ext.substr(1), target.name, relativePath);
+            // change path separator syntax for commonmark
+            const snippetLink = path.join(relativePath, target.base).replace(/\\/g, "/");
+            const snippet: string = snippetBuilder(ext.substr(1), target.name, snippetLink);
             const range = new vscode.Range(selection.start.line, selection.start.character, selection.end.line, selection.end.character);
+
             common.insertContentToEditor(editor, search.name, snippet, true, range);
         });
     });
