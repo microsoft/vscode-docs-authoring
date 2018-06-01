@@ -9,8 +9,7 @@ import { reporter } from "../telemetry/telemetry";
 const telemetryCommand: string = "insertBookmark";
 const markdownExtensionFilter = [".md"];
 
-export const h1TextRegex = /\n {0,3}(#{1,6})(.*)/;
-export const headingTextRegex = /^(#+)[\s](.*)[\r][\n]/gm;
+export const headingTextRegex = /^ {0,3}(#{1,6})(.*)/gm;
 export const yamlTextRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
 
 export function insertBookmarkCommands() {
@@ -76,7 +75,14 @@ export function insertBookmarkExternal() {
             let bookmark = "";
 
             // gets the content for chosen file with utf-8 format
-            const fullPath = qpSelection.description + "\\" + qpSelection.label;
+            let fullPath;
+
+            if (os.type() === "Windows_NT") {
+                fullPath = qpSelection.description + "\\" + qpSelection.label;
+            } else {
+                fullPath = qpSelection.description + "//" + qpSelection.label;
+            }
+
             const content = fs.readFileSync(fullPath, "utf8");
             const headings = content.match(headingTextRegex);
             if (!headings) {
@@ -93,8 +99,7 @@ export function insertBookmarkExternal() {
                     if (os.type() === "Windows_NT") {
                         result = path.relative(activeFilePath, path.join
                             (qpSelection.description, qpSelection.label).split("\\").join("\\\\"));
-                    }
-                    if (os.type() === "Darwin") {
+                    } else {
                         result = path.relative(activeFilePath, path.join
                             (qpSelection.description, qpSelection.label).split("//").join("//"));
                     }
