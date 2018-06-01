@@ -2,10 +2,6 @@
 
 Markdown preview tool for CommonMark syntax and markdown extension syntax supported in Docs.
 
-## Usage
-
-<img src="https://github.com/Microsoft/vscode-docs-authoring/raw/master/images/howto.gif" width="600"/>
-
 ## Supported markdown snippets
 
 > Note
