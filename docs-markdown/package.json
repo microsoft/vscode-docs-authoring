@@ -142,8 +142,8 @@
         },
         {
           "command": "formatItalic",
-          "title": "Italic",
-          "category": "Docs"
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
         },
         {
           "command": "formatCode",
