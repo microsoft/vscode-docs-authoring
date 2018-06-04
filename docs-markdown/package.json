@@ -38,7 +38,78 @@
       },
       {
         "command": "generateMasterRedirectionFile",
-        "title": "Docs: Generate master redirection file"
+        "title": "Generate master redirection file",
+        "category": "Docs"
+      },
+      {
+        "command": "formatBold",
+        "title": "Bold",
+        "category": "Docs"
+      },
+      {
+        "command": "formatItalic",
+        "title": "Italic",
+        "category": "Docs"
+      },
+      {
+        "command": "formatCode",
+        "title": "Code",
+        "category": "Docs"
+      },
+      {
+        "command": "insertAlert",
+        "title": "Alert",
+        "category": "Docs"
+      },
+      {
+        "command": "insertNumberedList",
+        "title": "Numbered list",
+        "category": "Docs"
+      },
+      {
+        "command": "insertBulletedList",
+        "title": "Bulleted list",
+        "category": "Docs"
+      },
+      {
+        "command": "insertTable",
+        "title": "Table",
+        "category": "Docs"
+      },
+      {
+        "command": "selectLinkType",
+        "title": "Link",
+        "category": "Docs"
+      },
+      {
+        "command": "insertImage",
+        "title": "Image",
+        "category": "Docs"
+      },
+      {
+        "command": "insertInclude",
+        "title": "Include",
+        "category": "Docs"
+      },
+      {
+        "command": "insertSnippet",
+        "title": "Snippets",
+        "category": "Docs"
+      },
+      {
+        "command": "insertVideo",
+        "title": "Video",
+        "category": "Docs"
+      },
+      {
+        "command": "previewTopic",
+        "title": "Preview",
+        "category": "Docs"
+      },
+      {
+        "command": "applyTemplate",
+        "title": "Template",
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -54,6 +125,85 @@
           "command": "markdownQuickPick",
           "alt": "markdownQuickPick",
           "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "markdownQuickPick"
+        },
+        {
+          "command": "generateMasterRedirectionFile",
+          "group": "Docs"
+        },
+        {
+          "command": "formatBold",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "formatItalic",
+          "title": "Italic",
+          "category": "Docs"
+        },
+        {
+          "command": "formatCode",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "insertAlert",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "insertNumberedList",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "insertBulletedList",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "insertTable",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "selectLinkType",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "insertImage",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "insertInclude",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "insertSnippet",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "insertVideo",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "previewTopic",
+          "group": "Docs",
+          "when": "resourceLangId == markdown && vscode.extensions.getExtension('docsmsft.docs-preview') && vscode.extensions.getExtension('docsmsft.docs-preview').active"
+        },
+        {
+          "command": "applyTemplate",
+          "group": "Docs",
+          "when": "resourceLangId == markdown && vscode.extensions.getExtension('docsmsft.docs-preview') && vscode.extensions.getExtension('docsmsft.docs-article-templates').active"
         }
       ]
     },
@@ -93,6 +243,30 @@
         "key": "backspace",
         "mac": "backspace",
         "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active"
+      },
+      {
+        "command": "formatBold",
+        "key": "Alt+D B",
+        "mac": "Alt+D B",
+        "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active"
+      },
+      {
+        "command": "formatItalic",
+        "key": "Alt+D I",
+        "mac": "Alt+D I",
+        "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active"
+      },
+      {
+        "command": "selectLinkType",
+        "key": "Alt+D K",
+        "mac": "Alt+D K",
+        "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active"
+      },
+      {
+        "command": "previewTopic",
+        "key": "Alt+D P",
+        "mac": "Alt+D P",
+        "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active && vscode.extensions.getExtension('docsmsft.docs-preview') && vscode.extensions.getExtension('docsmsft.docs-preview').active"
       }
     ]
   },
