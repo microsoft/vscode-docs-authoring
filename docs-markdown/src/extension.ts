@@ -101,7 +101,7 @@ export function installedExtensionsCheck() {
     // create a list to house docs extension names, loop through
     const docsExtensions = [
         "docsmsft.docs-article-templates",
-        "docsmsft.preview",
+        "docsmsft.docs-preview",
     ];
     const { msTimeValue } = generateTimestamp();
     docsExtensions.forEach((extensionName) => {
