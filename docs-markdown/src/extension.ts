@@ -19,6 +19,7 @@ import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
 import { insertTableCommand } from "./controllers/table-controller";
+import { checkExtension, generateTimestamp } from "./helper/common";
 import * as log from "./helper/log";
 import { UiHelper } from "./helper/ui";
 import { Reporter } from "./telemetry/telemetry";
@@ -41,6 +42,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     // create global output channel to pass information to the user.
     createOutputChannel();
+
+    // check for docs extensions
+    installedExtensionsCheck();
 
     // Creates an array of commands from each command file.
     const AuthoringCommands: any = [];
@@ -91,6 +95,20 @@ export function activate(context: vscode.ExtensionContext) {
 // global output channel to pass information to the user.
 export function createOutputChannel() {
     output = vscode.window.createOutputChannel("Docs Markdown");
+}
+
+export function installedExtensionsCheck() {
+    // create a list to house docs extension names, loop through
+    const docsExtensions = [
+        "docsmsft.docs-article-templates",
+        "docsmsft.preview",
+    ];
+    const { msTimeValue } = generateTimestamp();
+    docsExtensions.forEach((extensionName) => {
+        const friendlyName = extensionName.split(".").reverse()[0];
+        const inactiveMessage = `[${msTimeValue}] - The ${friendlyName} extension is not installed.`;
+        checkExtension(extensionName, inactiveMessage);
+    });
 }
 
 // this method is called when your extension is deactivated

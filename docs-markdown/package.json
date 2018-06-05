@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -142,8 +142,8 @@
         },
         {
           "command": "formatItalic",
-          "title": "Italic",
-          "category": "Docs"
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
         },
         {
           "command": "formatCode",

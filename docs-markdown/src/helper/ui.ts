@@ -1,6 +1,7 @@
 "use-strict";
 
 import * as vscode from "vscode";
+import * as common from "../helper/common";
 import * as log from "./log";
 
 export class UiHelper {
@@ -13,6 +14,10 @@ export class UiHelper {
             try {
                 this.uiMessage();
                 log.debug("Loaded UI Message Text");
+                if (common.checkExtension("docsmsft.docs-article-templates")) {
+                    this.uiTemplate();
+                    log.debug("Loaded UI Apply Template");
+                }
                 this.uiBold();
                 log.debug("Loaded UI Format Bold");
                 this.uiItalic();
@@ -35,8 +40,10 @@ export class UiHelper {
                 log.debug("Loaded UI Insert Include");
                 this.uiSnippet();
                 log.debug("Loaded UI Insert Snippet");
-                this.uiPreview();
-                log.debug("Loaded UI Insert Preview");
+                if (common.checkExtension("docsmsft.docs-preview")) {
+                    this.uiPreview();
+                    log.debug("Loaded UI Insert Preview");
+                }
             } catch (error) {
                 log.error("Failed to load UI: " + error);
             }
@@ -171,5 +178,15 @@ export class UiHelper {
         statusBarItem.tooltip = "Preview";
         statusBarItem.show();
         statusBarItem.command = "previewTopic";
+    }
+
+    private uiTemplate() {
+        let statusBarItem: vscode.StatusBarItem;
+        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        statusBarItem.text = "$(file-text)";
+        statusBarItem.color = "white";
+        statusBarItem.tooltip = "Template";
+        statusBarItem.show();
+        statusBarItem.command = "applyTemplate";
     }
 }
