@@ -75,23 +75,21 @@ export function markdownQuickPick() {
         {
             description: "",
             label: "$(device-camera-video) Video",
-        },
-        {
+        }
+    );
+
+    if (checkExtension("docsmsft.docs-preview")) {
+        items.push({
             description: "",
             label: "$(browser) Preview",
-        },
-    );
+        });
+    }
     // check for active docs-article-templates extension.  if active, add to quickpick menu.
-    try {
-        if (vscode.extensions.getExtension("docsmsft.docs-article-templates").isActive) {
-            items.push({
-                description: "",
-                label: "$(diff) Template",
-            });
-        }
-    } catch (error) {
-        const { msTimeValue } = common.generateTimestamp();
-        output.appendLine("[" + msTimeValue + "]" + " - The docs-article-templates extension is not installed.");
+    if (checkExtension("docsmsft.docs-article-templates")) {
+        items.push({
+            description: "",
+            label: "$(diff) Template",
+        });
     }
 
     vscode.window.showQuickPick(items, opts).then((selection) => {
@@ -155,4 +153,15 @@ export function markdownQuickPick() {
                 output.appendLine(msTimeValue + " - No quickpick case was hit.");
         }
     });
+}
+
+function checkExtension (extensionName: string) {
+    const friendlyName = extensionName.split('.').reverse()[0];
+    try {
+        return vscode.extensions.getExtension(extensionName).isActive;
+    } catch (error) {
+        const { msTimeValue } = common.generateTimestamp();
+        output.appendLine(`[${msTimeValue}] - The ${friendlyName} extension is not installed.`);
+        return false;
+    }
 }
