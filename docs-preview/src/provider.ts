@@ -16,7 +16,7 @@ import MarkdownPreviewConfig from "./util/markdownPreviewConfig";
 import PreviewConfigManager from "./util/previewConfigManager";
 
 export class DocumentContentProvider implements TextDocumentContentProvider {
-    public static readonly scheme = "markdocs";
+    public static readonly scheme = "docsPreview";
     private sourceUri: Uri;
     private onDidChangeEvent = new EventEmitter<Uri>();
     private waiting = false;

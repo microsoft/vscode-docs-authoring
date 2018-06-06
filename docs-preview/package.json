@@ -1,22 +1,17 @@
 {
-  "name": "markdocs",
-  "displayName": "markdocs",
-  "description": "Markdown preview tool that supports docfx flavored markdown and CommonMark",
-  "version": "0.3.11",
-  "publisher": "qezhu",
-  "author": {
-    "name": "Qinen Zhu",
-    "email": "qezhu@outlook.com"
-  },
+  "name": "docs-preview",
+  "displayName": "docs-preview",
+  "description": "Docs Markdown Preview Extension",
+  "version": "0.3.12",
+  "publisher": "docsmsft",
   "icon": "images/logo.png",
   "bugs": {
-    "url": "https://github.com/qinezh/vscode-markdocs/issues",
-    "email": "qezhu@outlook.com"
+    "url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
   },
-  "homepage": "https://github.com/qinezh/vscode-markdocs/blob/master/README.md",
+  "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-preview",
   "repository": {
     "type": "git",
-    "url": "https://github.com/qinezh/vscode-markdocs.git"
+    "url": "https://github.com/Microsoft/vscode-docs-authoring.git"
   },
   "engines": {
     "vscode": "^1.18.x"
@@ -32,28 +27,28 @@
     "docfx"
   ],
   "activationEvents": [
-    "onCommand:markdocs.showPreview",
-    "onCommand:markdocs.showPreviewToSide",
+    "onCommand:docs.showPreview",
+    "onCommand:docs.showPreviewToSide",
     "onLanguage:markdown"
   ],
   "main": "./out/src/extension",
   "contributes": {
     "commands": [
       {
-        "command": "markdocs.showPreviewToSide",
-        "title": "Markdocs preview",
+        "command": "docs.showPreviewToSide",
+        "title": "Docs preview",
         "when": "editorTextFocus"
       },
       {
-        "command": "markdocs.showPreview",
-        "title": "Markdocs preview in current tab",
+        "command": "docs.showPreview",
+        "title": "Docs preview in current tab",
         "when": "editorTextFocus"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "command": "markdocs.showPreviewToSide",
+          "command": "docs.showPreviewToSide",
           "group": "navigation",
           "when": "editorTextFocus"
         }
