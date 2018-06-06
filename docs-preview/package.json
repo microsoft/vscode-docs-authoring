@@ -4,7 +4,7 @@
   "description": "Docs Markdown Preview Extension",
   "version": "0.3.12",
   "publisher": "docsmsft",
-  "icon": "images/logo.png",
+  "icon": "images/docs-logo-ms.png",
   "bugs": {
     "url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
   },
