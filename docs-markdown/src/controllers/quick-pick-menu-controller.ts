@@ -27,6 +27,14 @@ export function markdownQuickPick() {
     log.telemetry(markdownQuickPick.name, "");
     const opts: vscode.QuickPickOptions = { placeHolder: "Which Markdown command would you like to run?" };
     const items: vscode.QuickPickItem[] = [];
+
+    if (common.checkExtension("docsmsft.docs-preview")) {
+        items.push({
+            description: "",
+            label: "$(browser) Preview",
+        });
+    }
+
     items.push(
         {
             description: "",
@@ -77,13 +85,6 @@ export function markdownQuickPick() {
             label: "$(device-camera-video) Video",
         },
     );
-
-    if (common.checkExtension("docsmsft.docs-preview")) {
-        items.push({
-            description: "",
-            label: "$(browser) Preview",
-        });
-    }
 
     if (common.checkExtension("docsmsft.docs-article-templates")) {
         items.push({
