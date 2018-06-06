@@ -36,12 +36,12 @@
     "commands": [
       {
         "command": "docs.showPreviewToSide",
-        "title": "Docs preview",
+        "title": "Docs: Preview",
         "when": "editorTextFocus"
       },
       {
         "command": "docs.showPreview",
-        "title": "Docs preview in current tab",
+        "title": "Docs: Preview in current tab",
         "when": "editorTextFocus"
       }
     ],
