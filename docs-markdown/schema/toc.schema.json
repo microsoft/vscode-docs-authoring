@@ -1,0 +1,67 @@
+{
+	"title": "TOC",
+	"$schema": "https://dotnet.github.io/docfx/schemas/v1.0/schema.json#",
+	"version": "1.0.0",
+	"description": "The schema for a table of contents object.",
+	"id": "https://github.com/dotnet/docfx/test/schemas/Toc.schema.json",
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"items"
+	],
+	"properties": {
+		"items": {
+			"type": "array",
+			"items": {
+				"$ref": "#definitions/tocNode"
+			}
+		},
+		"metadata": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"pdf_absolute_path": {
+					"type": "string"
+				},
+				"pdf_name": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"definitions": {
+		"tocNode": {
+			"properties": {
+				"displayName": {
+					"type": "string",
+					"tags": [
+						"localizable"
+					]
+				},
+				"expanded": {
+					"type": "boolean"
+				},
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#definitions/tocNode"
+					}
+				},
+				"name": {
+					"type": "string",
+					"tags": [
+						"localizable"
+					]
+				},
+				"href": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"name"
+			],
+			"type": "object"
+		}
+	}
+}
