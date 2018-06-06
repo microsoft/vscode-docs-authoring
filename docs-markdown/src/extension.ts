@@ -24,7 +24,7 @@ import * as log from "./helper/log";
 import { UiHelper } from "./helper/ui";
 import { Reporter } from "./telemetry/telemetry";
 
-export let output: any;
+export const output = vscode.window.createOutputChannel("docs-article-templates");
 
 /**
  * Provides the commands to the extension. This method is called when extension is activated.
@@ -39,9 +39,6 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Places "Docs Markdown Authoring" into the Toolbar
     new UiHelper().LoadToolbar();
-
-    // create global output channel to pass information to the user.
-    createOutputChannel();
 
     // check for docs extensions
     installedExtensionsCheck();
@@ -92,16 +89,11 @@ export function activate(context: vscode.ExtensionContext) {
     });
 }
 
-// global output channel to pass information to the user.
-export function createOutputChannel() {
-    output = vscode.window.createOutputChannel("docs-markdown");
-}
-
 export function installedExtensionsCheck() {
     // create a list to house docs extension names, loop through
     const docsExtensions = [
         "docsmsft.docs-article-templates",
-        "docsmsft.preview",
+        "docsmsft.docs-preview",
     ];
     const { msTimeValue } = generateTimestamp();
     docsExtensions.forEach((extensionName) => {
@@ -113,5 +105,5 @@ export function installedExtensionsCheck() {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-    log.debug("Deactivating Authoring Extension.");
+    output.appendLine("Deactivating extension.");
 }
