@@ -94,7 +94,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 // global output channel to pass information to the user.
 export function createOutputChannel() {
-    output = vscode.window.createOutputChannel("Docs Markdown");
+    output = vscode.window.createOutputChannel("docs-markdown");
 }
 
 export function installedExtensionsCheck() {
