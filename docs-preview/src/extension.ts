@@ -24,12 +24,12 @@ let server: MarkdocsServer = null;
 
 export async function activate(context: ExtensionContext) {
 
-    const extensionId = "qezhu.markdocs";
+    const extensionId = "docsmsft.docs-preview";
     const extension = extensions.getExtension(extensionId);
 
     util.setExtensionPath(extension.extensionPath);
 
-    channel = window.createOutputChannel("markdocs");
+    channel = window.createOutputChannel("docs-preview");
     const logger = new Logger((text) => channel.append(text));
 
     server = new MarkdocsServer(context);
@@ -41,16 +41,16 @@ export async function activate(context: ExtensionContext) {
 
     const registration = workspace.registerTextDocumentContentProvider(DocumentContentProvider.scheme, provider);
 
-    const disposableSidePreview = commands.registerCommand("markdocs.showPreviewToSide", (uri) => {
+    const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
         preview(uri, ViewColumn.Two, provider);
     });
-    const disposableStandalonePreview = commands.registerCommand("markdocs.showPreview", (uri) => {
+    const disposableStandalonePreview = commands.registerCommand("docs.showPreview", (uri) => {
         preview(uri, ViewColumn.One, provider);
     });
-    const disposableDidClick = commands.registerCommand("markdocs.didClick", (uri, line) => {
+    const disposableDidClick = commands.registerCommand("docs.didClick", (uri, line) => {
         click(uri, line);
     });
-    const disposableRevealLink = commands.registerCommand("markdocs.revealLine", (uri, line) => {
+    const disposableRevealLink = commands.registerCommand("docs.revealLine", (uri, line) => {
         reveal(uri, line);
     });
 

@@ -243,7 +243,7 @@
         const offset = event.pageY;
         const line = getEditorLineNumberForPageOffset(offset);
         if (!isNaN(line)) {
-            postMessage('markdocs.didClick', [settings.source, line]);
+            postMessage('docs.didClick', [settings.source, line]);
         }
     });
 
@@ -254,7 +254,7 @@
             } else {
                 const line = getEditorLineNumberForPageOffset(window.scrollY);
                 if (!isNaN(line)) {
-                    postMessage('markdocs.revealLine', [settings.source, line]);
+                    postMessage('docs.revealLine', [settings.source, line]);
                 }
             }
         }, 50));

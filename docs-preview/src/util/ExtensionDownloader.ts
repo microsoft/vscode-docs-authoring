@@ -23,7 +23,7 @@ export class ExtensionDownloader {
     }
 
     public installRuntimeDependencies(): Promise<boolean> {
-        this.logger.append("Installing markdocs dependencies...");
+        this.logger.append("Installing docs preview extension's dependencies...");
         this.channel.show();
 
         const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
