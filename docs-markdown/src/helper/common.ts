@@ -2,6 +2,7 @@
 
 import os = require("os");
 import * as vscode from "vscode";
+import { output } from "../extension";
 import * as log from "./log";
 
 /**
@@ -270,4 +271,18 @@ export function generateTimestamp() {
         msDateValue: date.toLocaleDateString("en-us"),
         msTimeValue: date.toLocaleTimeString([], { hour12: false }),
     };
+}
+
+/**
+ * Check for active extensions
+ */
+export function checkExtension(extensionName: string, notInstalledMessage?: string) {
+    try {
+        return vscode.extensions.getExtension(extensionName).isActive;
+    } catch (error) {
+        if (notInstalledMessage) {
+            output.appendLine(notInstalledMessage);
+        }
+        return false;
+    }
 }
