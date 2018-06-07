@@ -27,13 +27,15 @@ export function previewTopic() {
     }
 
     const osPlatform = common.getOSPlatform();
-    if (osPlatform === "win32") {
-        vscode.commands.executeCommand("DocFX.showDfmPreviewToSide").then(
-            // tslint:disable-next-line:no-console
-            (result) => console.log("preview launched."),
-            (err) => vscode.window.showErrorMessage("DocFX preview extension not installed or disabled."));
-    } else {
-        vscode.commands.executeCommand("markdown.showPreviewToSide");
+    const extensionName = "docsmsft.docs-preview";
+    const { msTimeValue } = common.generateTimestamp();
+    const friendlyName = "docsmsft.docs-preview".split(".").reverse()[0];
+    const inactiveMessage = `[${msTimeValue}] - The ${friendlyName} extension is not installed.`;
+    if (common.checkExtension(extensionName, inactiveMessage)) {
+        if (osPlatform === "win32") {
+            vscode.commands.executeCommand("docs.showPreviewToSide");
+        } else {
+            vscode.commands.executeCommand("markdown.showPreviewToSide");
+        }
     }
-
 }
