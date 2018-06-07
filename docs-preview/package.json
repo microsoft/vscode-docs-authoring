@@ -45,15 +45,6 @@
         "when": "editorTextFocus"
       }
     ],
-    "menus": {
-      "editor/context": [
-        {
-          "command": "docs.showPreviewToSide",
-          "group": "navigation",
-          "when": "editorTextFocus"
-        }
-      ]
-    },
     "snippets": [
       {
         "language": "markdown",
