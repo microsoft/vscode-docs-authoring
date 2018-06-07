@@ -266,7 +266,7 @@
         "command": "previewTopic",
         "key": "Alt+D P",
         "mac": "Alt+D P",
-        "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active && vscode.extensions.getExtension('docsmsft.docs-preview') && vscode.extensions.getExtension('docsmsft.docs-preview').active"
+        "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active"
       }
     ]
   },
