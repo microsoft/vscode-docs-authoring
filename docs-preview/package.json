@@ -80,7 +80,7 @@
   },
   "runtimeDependencies": [
     {
-      "description": "MarkdocsService for Windows (x86)",
+      "description": "docs-previewService for Windows (x86)",
       "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x86.zip",
       "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x86.zip",
       "installPath": ".markdocs",
@@ -93,7 +93,7 @@
       "installTestPath": "./.markdocs/MarkdocsService.exe"
     },
     {
-      "description": "MarkdocsService for Windows (x64)",
+      "description": "docs-previewService for Windows (x64)",
       "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x64.zip",
       "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x64.zip",
       "installPath": ".markdocs",
@@ -106,7 +106,7 @@
       "installTestPath": "./.markdocs/MarkdocsService.exe"
     },
     {
-      "description": "MarkdocsService for macOS (x64)",
+      "description": "docs-previewService for macOS (x64)",
       "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/darwin_x64.zip",
       "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/darwin_x64.zip",
       "installPath": ".markdocs",
@@ -119,7 +119,7 @@
       "installTestPath": "./.markdocs/MarkdocsService"
     },
     {
-      "description": "MarkdocsService for Linux (x64)",
+      "description": "docs-previewService for Linux (x64)",
       "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/linux_x64.zip",
       "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/linux_x64.zip",
       "installPath": ".markdocs",
