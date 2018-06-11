@@ -40,7 +40,8 @@ export class UiHelper {
                 log.debug("Loaded UI Insert Include");
                 this.uiSnippet();
                 log.debug("Loaded UI Insert Snippet");
-                if (common.checkExtension("docsmsft.docs-preview")) {
+                // this returns false until an activation event is initiated.
+                if (!common.checkExtension("docsmsft.docs-preview")) {
                     this.uiPreview();
                     log.debug("Loaded UI Insert Preview");
                 }

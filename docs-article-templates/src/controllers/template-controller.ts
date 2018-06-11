@@ -5,6 +5,7 @@ import * as dir from "node-dir";
 import * as os from "os";
 import * as path from "path";
 import * as vscode from "vscode";
+import { output } from "../extension";
 import * as common from "../helper/common";
 import * as github from "../helper/github";
 import * as metadata from "../helper/user-metadata";
@@ -79,6 +80,7 @@ export function applyTemplate() {
                 });
             }, (error: any) => {
                 vscode.window.showWarningMessage(error);
+                output.appendLine(error);
             });
         });
     });

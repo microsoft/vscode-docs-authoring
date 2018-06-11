@@ -5,6 +5,8 @@ import { applyTemplateCommand } from "./controllers/template-controller";
 import { postError } from "./helper/common";
 import { Reporter } from "./telemetry/telemetry";
 
+export const output = vscode.window.createOutputChannel("docs-article-templates");
+
 export function activate(context: vscode.ExtensionContext) {
     // Creates an array of commands from each command file.
     const TemplateCommands: any = [];
@@ -20,8 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
             context.subscriptions.push(command);
         });
     } catch (error) {
-        // tslint:disable-next-line:no-console
-        console.log("Error registering commands with vscode extension context: " + error);
+        output.appendLine("Error registering commands with vscode extension context: " + error);
     }
     // if the user changes markdown.showToolbar in settings.json, display message telling them to reload.
     vscode.workspace.onDidChangeConfiguration((e: any) => {
@@ -40,6 +41,5 @@ export function activate(context: vscode.ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-    // tslint:disable-next-line:no-console
-    console.log("Deactivating extension.");
+    output.appendLine("Deactivating extension.");
 }

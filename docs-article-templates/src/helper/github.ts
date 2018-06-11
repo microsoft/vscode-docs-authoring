@@ -4,10 +4,9 @@ import * as fs from "fs";
 import os = require("os");
 import * as path from "path";
 import * as vscode from "vscode";
+import { output } from "../extension";
 import * as common from "./common";
 
-// to-do: change the console output to another form of user notification prior to production release.
-/* tslint:disable:no-console */
 const docsAuthoringDirectory = path.join(os.homedir(), "Docs Authoring");
 export const templateDirectory = path.join(docsAuthoringDirectory, "Templates");
 
@@ -18,6 +17,7 @@ export function downloadRepo() {
     download(templateRepo, docsAuthoringDirectory, (err) => {
         if (err) {
             common.postWarning(err ? "Error: Cannot connect to " + templateRepo : "Success");
+            output.appendLine(err ? "Error: Cannot connect to " + templateRepo : "Success");
         }
     });
 }
@@ -29,11 +29,10 @@ export function cleanupDownloadFiles() {
             const fullFilePath = path.join(docsAuthoringDirectory, file);
             fs.stat(path.join(fullFilePath), (error, stats) => {
                 if (stats.isFile()) {
-                    console.log(fullFilePath);
                     fs.unlinkSync(fullFilePath);
                 }
                 if (error) {
-                    console.log("Error: " + error);
+                    output.appendLine("Error: " + error);
                 }
             });
         });
