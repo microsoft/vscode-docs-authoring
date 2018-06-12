@@ -30,11 +30,7 @@
     "commands": [
       {
         "command": "markdownQuickPick",
-        "title": "Docs Markdown Authoring",
-        "icon": {
-          "dark": "images/svg/markdown-light.svg",
-          "light": "images/svg/markdown-dark.svg"
-        }
+        "title": "Docs: Markdown authoring menu"
       },
       {
         "command": "generateMasterRedirectionFile",
