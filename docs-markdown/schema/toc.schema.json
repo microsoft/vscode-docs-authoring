@@ -2,8 +2,8 @@
 	"title": "TOC",
 	"$schema": "https://dotnet.github.io/docfx/schemas/v1.0/schema.json#",
 	"version": "1.0.0",
-	"description": "The schema for a table of contents object.",
-	"id": "https://github.com/dotnet/docfx/test/schemas/Toc.schema.json",
+	"description": "The schema for a TOC object.",
+	"id": "https://github.com/dotnet/docfx/test/schemas/toc.schema.json",
 	"type": "object",
 	"additionalProperties": false,
 	"required": [
@@ -13,13 +13,25 @@
 		"items": {
 			"type": "array",
 			"items": {
-				"$ref": "#definitions/tocNode"
+				"$ref": "#/definitions/tocNode"
 			}
 		},
 		"metadata": {
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
+				"universal_ref_toc": {
+					"type": "string"
+				},
+				"universal_conceptual_toc": {
+					"type": "string"
+				},
+				"nodes_to_expand": {
+					"type": "string"
+				},
+				"pdf_url_template": {
+					"type": "string"
+				},
 				"pdf_absolute_path": {
 					"type": "string"
 				},
@@ -41,10 +53,16 @@
 				"expanded": {
 					"type": "boolean"
 				},
+				"href": {
+					"type": "string"
+				},
+				"homepage": {
+					"type": "string"
+				},
 				"items": {
 					"type": "array",
 					"items": {
-						"$ref": "#definitions/tocNode"
+						"$ref": "#/definitions/tocNode"
 					}
 				},
 				"name": {
@@ -53,7 +71,19 @@
 						"localizable"
 					]
 				},
-				"href": {
+				"preserveContext": {
+					"type": "boolean"
+				},
+				"tocHref": {
+					"type": "string"
+				},
+				"topicHref": {
+					"type": "string"
+				},
+				"topicUid": {
+					"type": "string"
+				},
+				"type": {
 					"type": "string"
 				}
 			},
