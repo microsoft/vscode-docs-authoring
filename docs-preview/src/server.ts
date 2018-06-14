@@ -48,7 +48,7 @@ export class MarkdocsServer {
         }
 
         try {
-            this.spawnProcess = this.spawn(serverPath, {});
+            this.spawnProcess = childProcess.spawn(serverPath);
         } catch (err) {
             window.showErrorMessage(`[Markdocs Error]: ${err}`);
             return;
@@ -71,7 +71,10 @@ export class MarkdocsServer {
     }
 
     public stopMarkdocsServer() {
-        this.spawnProcess.kill();
+        if (this.hasAlreadyStartAsync())
+        {
+            this.spawnProcess.kill();
+        }
     }
 
     private async ensureMarkdocsServerWorkAsync(): Promise<void> {
@@ -114,22 +117,5 @@ export class MarkdocsServer {
                 return p;
             }
         }
-    }
-
-    private spawn(command: string, options): childProcess.ChildProcess {
-        let file;
-        let args;
-        if (process.platform === "win32") {
-            file = "cmd.exe";
-            // execute chcp 65001 to make sure console's code page supports UTF8
-            // https://github.com/nodejs/node-v0.x-archive/issues/2190
-            args = ["/s", "/c", '"chcp 65001 >NUL & ' + command + '"'];
-            options = Object.assign({}, options);
-            options.windowsVerbatimArguments = true;
-        } else {
-            file = "/bin/sh";
-            args = ["-c", command];
-        }
-        return childProcess.spawn(file, args, options);
     }
 }
