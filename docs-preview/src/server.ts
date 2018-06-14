@@ -71,7 +71,10 @@ export class MarkdocsServer {
     }
 
     public stopMarkdocsServer() {
-        this.spawnProcess.kill();
+        if (this.hasAlreadyStartAsync())
+        {
+            this.spawnProcess.kill();
+        }
     }
 
     private async ensureMarkdocsServerWorkAsync(): Promise<void> {
