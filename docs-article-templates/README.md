@@ -7,7 +7,7 @@ For the first release of the Docs Article Templates extension, only simple Markd
 ## To apply a template in VS Code
 
 1. Ensure the Docs Article Templates extension is installed and enabled.
-1. If you don't have the Docs Markdown extension installed, hit F1 to open the command palette, start typing "template" to filter, then click `Docs: Template`. If you do have Docs Markdown installed, you can user either the command palette or click `Alt+M` to bring up the Docs Markdown QuickPick menu, then select Template from the list.
+1. If you don't have the Docs Markdown extension installed, hit F1 to open the command palette, start typing "template" to filter, then click `Docs: Template`. If you do have Docs Markdown installed, you can use either the command palette or click `Alt+M` to bring up the Docs Markdown QuickPick menu, then select Template from the list.
 1. Select the desired template from the list that appears.
 
 ![apply template](../media/video/apply-template.gif)
