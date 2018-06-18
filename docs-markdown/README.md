@@ -77,7 +77,7 @@ Users of the pre-release version of the extension will notice that the authoring
 
    ![toolbar](../media/image/legacy-toolbar.png)
 
-## Known Issues
+## Known issues
 
 - [Docs Preview] Code blocks only preview in Dark theme, and some colorized text is unreadable in Light theme.
 - [External bookmarks] Linux: File list is displayed but no headings are shown to select.
