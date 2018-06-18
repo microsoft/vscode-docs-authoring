@@ -1,7 +1,7 @@
 # Change Log
 
-## 0.1.0 (------)
+## 0.1.0 (June 18th, 2018)
 
 First release with the following functionality:
 
-- Download Docs article templates from MicrosoftDocs/content-templates repo
+- Download and apply Docs article templates from MicrosoftDocs/content-templates repo

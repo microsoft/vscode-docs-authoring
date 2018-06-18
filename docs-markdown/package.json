@@ -27,8 +27,7 @@
   ],
   "main": "./out/src/extension",
   "contributes": {
-    "commands": [
-      {
+    "commands": [{
         "command": "markdownQuickPick",
         "title": "Docs: Markdown authoring menu"
       },
@@ -109,8 +108,7 @@
       }
     ],
     "menus": {
-      "editor/title": [
-        {
+      "editor/title": [{
           "when": "resourceLangId == markdown",
           "command": "markdown.showPreview",
           "alt": "markdown.showPreviewToSide",
@@ -123,8 +121,7 @@
           "group": "navigation"
         }
       ],
-      "commandPalette": [
-        {
+      "commandPalette": [{
           "command": "markdownQuickPick"
         },
         {
@@ -194,12 +191,12 @@
         {
           "command": "previewTopic",
           "group": "Docs",
-          "when": "resourceLangId == markdown && vscode.extensions.getExtension('docsmsft.docs-preview') && vscode.extensions.getExtension('docsmsft.docs-preview').active"
+          "when": "resourceLangId == markdown && vscode.extensions.getExtension('docsmsft.docs-preview').active"
         },
         {
           "command": "applyTemplate",
           "group": "Docs",
-          "when": "resourceLangId == markdown && vscode.extensions.getExtension('docsmsft.docs-preview') && vscode.extensions.getExtension('docsmsft.docs-article-templates').active"
+          "when": "vscode.extensions.getExtension('docsmsft.docs-article-templates').active"
         }
       ]
     },
@@ -215,8 +212,7 @@
         }
       }
     },
-    "keybindings": [
-      {
+    "keybindings": [{
         "command": "markdownQuickPick",
         "key": "Alt+M",
         "mac": "Alt+M",
@@ -265,12 +261,10 @@
         "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active"
       }
     ],
-    "yamlValidation": [
-      {
-        "fileMatch": "toc.yml",
-        "url": "./schema/toc.schema.json"
-      }
-    ]
+    "yamlValidation": [{
+      "fileMatch": "toc.yml",
+      "url": "./schema/toc.schema.json"
+    }]
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",

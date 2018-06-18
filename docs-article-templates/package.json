@@ -23,7 +23,23 @@
         "title": "Docs: Apply template",
         "icon": "node_modules/octicons/build/svg/file.svg"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Docs Article Templates Extension Configuration",
+      "properties": {
+        "docs.templates.alias": {
+          "type": "string",
+          "default": "",
+          "description": "Microsoft alias"
+        },
+        "docs.templates.githubid": {
+          "type": "string",
+          "default": "",
+          "description": "GitHub ID"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -33,6 +49,7 @@
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },
   "dependencies": {
+    "@types/node-dir": "0.0.32",
     "download-git-repo": "^1.0.2",
     "node-dir": "^0.1.17",
     "octicons": "^4.4.0",
