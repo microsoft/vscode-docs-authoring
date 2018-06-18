@@ -4,11 +4,11 @@ The Docs Authoring Pack provides the following extensions to help author content
 
 * [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint), a popular linter by David Anson.
 * [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker), a fully offline spell checker by Street Side Software. 
-* [Docs Preview](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-preview), which uses the docs.microsoft.com CSS for more accurate Markdown preview, including custom Markdown. <!-- link when available -->
+* [Docs Preview](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-preview), which uses the docs.microsoft.com CSS for more accurate Markdown preview, including custom Markdown.
 * [Docs Markdown](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown), which provides Markdown authoring assistance, including support for inserting custom Markdown syntax specific to docs.microsoft.com. The rest of this readme provides details on the Docs Markdown extension.
-* Docs Article Templates, which allows users to apply Markdown skeleton content to new files. <!-- add link when available -->
+* [Docs Article Templates](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-article-templates), which allows users to apply Markdown skeleton content to new files.
 
-## Prerequisites and Assumptions
+## Prerequisites and assumptions
 
 To accurately insert relative links, images, and other embedded content with Docs Markdown, you must have your VS Code workspace scoped to the root of your cloned OPS repo. Some syntax supported by the extension, such as alerts and snippets, are custom Markdown for OPS, and will not render correctly unless published via OPS.
 
@@ -79,7 +79,7 @@ Users of the pre-release version of the extension will notice that the authoring
 
    ![toolbar](../media/image/legacy-toolbar.png)
 
-## Known Issues
+## Known issues
 
 - [Docs Preview] Code blocks only preview in Dark theme, and some colorized text is unreadable in Light theme.
 - [External bookmarks] Linux: File list is displayed but no headings are shown to select.
