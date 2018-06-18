@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.1.0 (-------)
+## 0.1.0 (June 18th, 2018)
 
 - Template extension integration
 - Fix paths related to docs-markdown folder rename
