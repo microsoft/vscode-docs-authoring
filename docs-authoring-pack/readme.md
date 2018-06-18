@@ -4,7 +4,7 @@ The Docs Authoring Pack provides the following extensions to help author content
 
 * [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint), a popular linter by David Anson.
 * [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker), a fully offline spell checker by Street Side Software. 
-* Docs Preview, which uses the docs.microsoft.com CSS for more accurate Markdown preview, including custom Markdown. <!-- link when available -->
+* [Docs Preview](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-preview), which uses the docs.microsoft.com CSS for more accurate Markdown preview, including custom Markdown. <!-- link when available -->
 * [Docs Markdown](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown), which provides Markdown authoring assistance, including support for inserting custom Markdown syntax specific to docs.microsoft.com. The rest of this readme provides details on the Docs Markdown extension.
 * Docs Article Templates, which allows users to apply Markdown skeleton content to new files. <!-- add link when available -->
 
