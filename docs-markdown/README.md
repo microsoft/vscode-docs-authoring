@@ -2,7 +2,7 @@
 
 Welcome to the Docs Markdown authoring extension! This extension provides Markdown authoring assistance for docs.microsoft.com content in the Open Publishing System (OPS), including basic Markdown support and support for custom Markdown syntax in OPS. Here is a quick demo - the rest of the readme provides details about using the extension:
 
-![demo](../media/video/extension-demo.gif)
+![demo](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/video/extension-demo.gif)
 
 ## Prerequisites and assumptions
 
@@ -16,7 +16,7 @@ To access the Docs Markdown menu, type `ALT+M`. You can click or use up/down arr
 
 You can also now access the Docs commands from the VS Code command palette. Hit F1 to open the command palette and start typing to filter. All the Docs commands begin with "Docs":
 
-![Docs commands](../media/image/docs-command-palette.png)
+![Docs commands](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/docs-command-palette.png)
 
 The following are available:
 

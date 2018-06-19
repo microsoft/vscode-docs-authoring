@@ -10,7 +10,7 @@ For the first release of the Docs Article Templates extension, only simple Markd
 1. If you don't have the Docs Markdown extension installed, hit F1 to open the command palette, start typing "template" to filter, then click `Docs: Template`. If you do have Docs Markdown installed, you can use either the command palette or click `Alt+M` to bring up the Docs Markdown QuickPick menu, then select Template from the list.
 1. Select the desired template from the list that appears.
 
-![apply template](../media/video/apply-template.gif)
+![apply template](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/video/apply-template.gif)
 
 ## To add your GitHub ID and/or Microsoft alias to your VS Code settings
 
@@ -28,13 +28,13 @@ To set `author` and/or `ms.author`:
 1. Select User Settings to change the settings for all VS Code workspaces, or  Workspace Settings to change them for just the current workspace.
 1. In the Default Settings pane on the left, find Docs Article Templates Extension Configuration, click the pencil icon next to the desired setting, then click `Replace in Settings`. 
 
-   ![edit settings](../media/video/edit-settings.gif) 
+   ![edit settings](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/video/edit-settings.gif) 
  
 1. The User Settings pane will open side-by-side, with a new entry at the bottom.
 1. Add your GitHub ID or Microsoft email alias, as appropriate, and save the file.
 1. The updated settings might looks something like this:
 
-   ![updated settings](../media/image/updated-template-settings.png)
+   ![updated settings](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/updated-template-settings.png)
 
 1. You might need to close and restart VS Code for the changes to take effect.
 1. Now, when you apply a template that uses dynamic fields, your GitHub ID and/or Microsoft alias will be auto-populated in the metadata header.
