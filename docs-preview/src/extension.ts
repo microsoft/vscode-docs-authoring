@@ -89,7 +89,7 @@ export async function activate(context: ExtensionContext) {
 }
 
 export function deactivate() {
-    server.stopMarkdocsServer();
+    return server.stopMarkdocsServerAsync();
 }
 
 function getPreviewUri(uri: Uri) {
