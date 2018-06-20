@@ -75,7 +75,7 @@ Users of the pre-release version of the extension will notice that the authoring
 1. In the Default Settings pane on the left, find Docs Markdown Extension Configuration, and select the pencil icon next to the desired setting, and select `true`. VS Code will automatically add the value to the settings.json file and you will be prompted to reload the window for the changes to take effect.
 1. Now you will see the toolbar at the bottom of your VS Code window:
 
-   ![toolbar](../media/image/legacy-toolbar.png)
+   ![toolbar](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/legacy-toolbar.png)
 
 ## Known issues
 
