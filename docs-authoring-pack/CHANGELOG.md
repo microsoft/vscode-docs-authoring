@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.1 (June 20th, 2018)
+
+- Update readme links
+
 ## 0.1.0 (June 18th, 2018)
 
 Added the following extensions to authoring pack:
