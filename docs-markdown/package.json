@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -27,7 +27,8 @@
   ],
   "main": "./out/src/extension",
   "contributes": {
-    "commands": [{
+    "commands": [
+      {
         "command": "markdownQuickPick",
         "title": "Docs: Markdown authoring menu"
       },
@@ -108,7 +109,8 @@
       }
     ],
     "menus": {
-      "editor/title": [{
+      "editor/title": [
+        {
           "when": "resourceLangId == markdown",
           "command": "markdown.showPreview",
           "alt": "markdown.showPreviewToSide",
@@ -121,7 +123,8 @@
           "group": "navigation"
         }
       ],
-      "commandPalette": [{
+      "commandPalette": [
+        {
           "command": "markdownQuickPick"
         },
         {
@@ -212,7 +215,8 @@
         }
       }
     },
-    "keybindings": [{
+    "keybindings": [
+      {
         "command": "markdownQuickPick",
         "key": "Alt+M",
         "mac": "Alt+M",
@@ -261,10 +265,12 @@
         "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active"
       }
     ],
-    "yamlValidation": [{
-      "fileMatch": "toc.yml",
-      "url": "./schema/toc.schema.json"
-    }]
+    "yamlValidation": [
+      {
+        "fileMatch": "toc.yml",
+        "url": "./schema/toc.schema.json"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
@@ -278,7 +284,6 @@
     "lodash.merge": "^4.6.0",
     "matcher": "^1.0.0",
     "node-dir": "^0.1.17",
-    "octicons": "^4.4.0",
     "typescript-collections": "^1.2.3",
     "vscode-extension-telemetry": "^0.0.6",
     "yamljs": "^0.3.0"
@@ -291,7 +296,7 @@
     "@types/node-dir": "0.0.32",
     "@types/yamljs": "^0.2.30",
     "chai": "^3.5.0",
-    "mocha": "^2.3.3",
+    "mocha": "^5.2.0",
     "octicons": "^4.4.0",
     "tslint": "^5.9.1",
     "typescript": "^2.8.3",
