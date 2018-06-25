@@ -72,8 +72,7 @@ export class MarkdocsServer {
 
     public async stopMarkdocsServerAsync() {
         const hasStarted = await this.hasAlreadyStartAsync();
-        if (hasStarted)
-        {
+        if (hasStarted) {
             this.spawnProcess.kill();
         }
     }
