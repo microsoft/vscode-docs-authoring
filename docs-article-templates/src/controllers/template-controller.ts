@@ -1,13 +1,7 @@
 "use strict";
 
-import * as vscode from "vscode";
-import { showTemplates } from "../controllers/quick-pick-controller";
-import * as common from "../helper/common";
-import * as github from "../helper/github";
-
-const markdownExtensionFilter = [".md"];
-const editor = vscode.window.activeTextEditor;
-const telemetryCommand: string = "applyTemplate";
+import { generateTimestamp } from "../helper/common";
+import { cleanupDownloadFiles, downloadRepo } from "../helper/github";
 
 export function applyTemplateCommand() {
     const commands = [
@@ -18,10 +12,7 @@ export function applyTemplateCommand() {
 
 export async function applyTemplate() {
     // generate current date/time for timestamp, clean up template directory and download copy of the template repo.
-    common.generateTimestamp();
-    github.cleanupDownloadFiles(true);
-    github.downloadRepo();
-    setTimeout(() => {
-        showTemplates();
-    }, 500);
+    generateTimestamp();
+    cleanupDownloadFiles(true);
+    downloadRepo();
 }
