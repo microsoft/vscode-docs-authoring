@@ -6,7 +6,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { output } from "../extension";
 import * as common from "../helper/common";
-import * as github from "../helper/github";
+import { cleanupDownloadFiles, templateDirectory } from "../helper/github";
 import * as metadata from "../helper/user-metadata";
 
 const markdownExtensionFilter = [".md"];
@@ -18,14 +18,11 @@ export async function showTemplates() {
     // parse the repo directory for markdown files, sort them and push them to the quick pick menu.
     vscode.workspace.openTextDocument(newFile).then((textDocument: vscode.TextDocument) => {
         vscode.window.showTextDocument(textDocument, 1, false).then((textEditor) => {
-            dir.files(github.templateDirectory, (err, files) => {
+            dir.files(templateDirectory, (err, files) => {
                 if (err) {
                     output.appendLine(err);
                     throw err;
                 }
-                output.appendLine(github.templateDirectory);
-                // tslint:disable-next-line:no-console
-                console.log(files);
                 const items: vscode.QuickPickItem[] = [];
                 files.sort();
                 {
@@ -69,5 +66,5 @@ export async function showTemplates() {
         });
     });
 
-    github.cleanupDownloadFiles();
+    cleanupDownloadFiles();
 }

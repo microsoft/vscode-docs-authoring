@@ -3,6 +3,7 @@
 import * as fs from "fs";
 import os = require("os");
 import * as path from "path";
+import { showTemplates } from "../controllers/quick-pick-controller";
 import { output } from "../extension";
 import * as common from "./common";
 
@@ -17,12 +18,14 @@ export async function downloadRepo() {
         if (err) {
             common.postWarning(err ? "Error: Cannot connect to " + templateRepo : "Success");
             output.appendLine(err ? "Error: Cannot connect to " + templateRepo : "Success");
+        } else {
+            showTemplates();
         }
     });
 }
 
 // the download process is on a repo-level so this function will be used to delete any files pulled down by the download process.
-export async function cleanupDownloadFiles(templates?: boolean) {
+export function cleanupDownloadFiles(templates?: boolean) {
     let workingDirectory: string;
 
     if (templates) {
