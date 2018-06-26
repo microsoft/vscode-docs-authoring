@@ -70,9 +70,9 @@ export class MarkdocsServer {
         await this.ensureMarkdocsServerWorkAsync();
     }
 
-    public stopMarkdocsServer() {
-        if (this.hasAlreadyStartAsync())
-        {
+    public async stopMarkdocsServerAsync() {
+        const hasStarted = await this.hasAlreadyStartAsync();
+        if (hasStarted) {
             this.spawnProcess.kill();
         }
     }
