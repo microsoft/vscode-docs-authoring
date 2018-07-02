@@ -1,7 +1,6 @@
 "use strict";
 
 import * as vscode from "vscode";
-// import { LinkMessages } from "../constants/log-messages";
 import { insertBookmarkExternal, insertBookmarkInternal } from "../controllers/bookmark-controller";
 import * as common from "../helper/common";
 import * as log from "../helper/log";
@@ -59,16 +58,15 @@ export function insertURL() {
     const selection = editor.selection;
     const selectedText = editor.document.getText(selection);
 
-    // const position = editor.selection.active;
-
-    // URL link syntax for reference: [http://www.github.com](http://www.github.com)
-    // Open input box and verify that the link starts with http(s).
-    // If not, the user will be notified in the prompt to change link syntax.
-    vscode.window.showInputBox({
-        placeHolder: "Enter URL; http:// or https:// is required for URLs",
+    const options: vscode.InputBoxOptions = {
+        placeHolder: "Enter URL",
         validateInput: (urlInput) => urlInput.startsWith("http://") || urlInput.startsWith("https://") ? "" :
             "http:// or https:// is required for URLs. Link will not be added if prefix is not present.",
-    }).then((val) => {
+        value: "https://",
+        valueSelection: [8, 8],
+    };
+
+    vscode.window.showInputBox(options).then((val) => {
         // If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
         if (val === undefined) {
             common.postWarning("Incorrect link syntax. Abandoning command.");
@@ -275,15 +273,13 @@ export function selectLinkType() {
         return;
     }
 
-    const linkTypes = ["External", "Internal", "Bookmark in this file", "Bookmark in another file"];
+    const linkTypes = ["Internal", "Bookmark in this file", "Bookmark in another file"];
     vscode.window.showQuickPick(linkTypes).then((qpSelection) => {
         if (qpSelection === linkTypes[0]) {
-            insertURL();
-        } else if (qpSelection === linkTypes[1]) {
             Insert(false);
-        } else if (qpSelection === linkTypes[2]) {
+        } else if (qpSelection === linkTypes[1]) {
             insertBookmarkInternal();
-        } else if (qpSelection === linkTypes[3]) {
+        } else if (qpSelection === linkTypes[2]) {
             insertBookmarkExternal();
         }
     });

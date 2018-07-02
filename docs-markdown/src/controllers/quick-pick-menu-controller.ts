@@ -10,7 +10,7 @@ import { formatCode } from "./code-controller";
 import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
-import { insertImage, insertVideo, selectLinkType } from "./media-controller";
+import { insertImage, insertURL, insertVideo, selectLinkType } from "./media-controller";
 import { previewTopic } from "./preview-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
@@ -65,8 +65,12 @@ export function markdownQuickPick() {
             label: "$(diff-added) Table",
         },
         {
-            description: "Insert internal or external link",
+            description: "Insert internal link or bookmark",
             label: "$(link) Link",
+        },
+        {
+            description: " Link to web page",
+            label: "$(link) Link to web page",
         },
         {
             description: "",
@@ -130,6 +134,9 @@ export function markdownQuickPick() {
                 break;
             case "link":
                 selectLinkType();
+                break;
+            case "link to web page":
+                insertURL();
                 break;
             case "image":
                 insertImage();
