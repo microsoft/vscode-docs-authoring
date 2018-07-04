@@ -82,8 +82,8 @@
   "runtimeDependencies": [
     {
       "description": "docs-previewService for .NET Core",
-      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.16/netcore.zip",
-      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.16/netcore.zip",
+      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.18/netcore.zip",
+      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.18/netcore.zip",
       "installPath": ".markdocs",
       "platforms": [
         "netcore"
