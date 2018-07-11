@@ -1,3 +1,4 @@
+import * as cheerio from "cheerio";
 import * as fs from "fs";
 import * as path from "path";
 import {
@@ -99,6 +100,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
         let body = await MarkdownService.markupAsync(markdown, filePath, basePath);
         body = this.filterYamlHeader(body);
         body = this.fixLinks(body, uri);
+        body = this.transformXref(body);
 
         const result = `<!DOCTYPE html>
         <html>
@@ -120,6 +122,17 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
 
     private filterYamlHeader(body: string): string {
         return body.replace(this.yamlHeaderRegex, "");
+    }
+
+    private transformXref(body: string): string {
+        const $ = cheerio.load(body);
+
+        $("xref").each((_, elem) => {
+            const source = $(elem).data("raw-source");
+            $(elem).replaceWith(source);
+        });
+
+        return $("body").html();
     }
 
     private getDocsetRoot(dir: string): string {

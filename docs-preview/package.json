@@ -66,8 +66,11 @@
     "vscode": "^1.1.18"
   },
   "dependencies": {
+    "@types/cheerio": "^0.22.8",
     "axios": "^0.17.1",
+    "cheerio": "^1.0.0-rc.2",
     "child_process": "^1.0.2",
+    "command-exists": "^1.2.7",
     "file-url": "^2.0.2",
     "highlightjs": "^9.10.0",
     "http-proxy-agent": "^2.1.0",
@@ -79,6 +82,19 @@
     "yauzl": "^2.9.1"
   },
   "runtimeDependencies": [
+    {
+      "description": "docs-previewService for .NET Core",
+      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.18/netcore.zip",
+      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.18/netcore.zip",
+      "installPath": ".markdocs",
+      "platforms": [
+        "netcore"
+      ],
+      "architectures": [
+        "netcore"
+      ],
+      "installTestPath": "./.markdocs/MarkdocsService.dll"
+    },
     {
       "description": "docs-previewService for Windows (x86)",
       "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x86.zip",
