@@ -47,22 +47,22 @@ export function insertAlert() {
             }
             if (editor) {
                 common.insertContentToEditor(editor, insertAlert.name, formattedText, true);
-            }
 
-            if (qpSelection.startsWith("Note")) {
-                reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".note" });
-            }
-            if (qpSelection.startsWith("Tip")) {
-                reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".tip" });
-            }
-            if (qpSelection.startsWith("Important")) {
-                reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".important" });
-            }
-            if (qpSelection.startsWith("Caution")) {
-                reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".caution" });
-            }
-            if (qpSelection.startsWith("Warning")) {
-                reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".warning" });
+                if (qpSelection.startsWith("Note")) {
+                    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".note" });
+                }
+                if (qpSelection.startsWith("Tip")) {
+                    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".tip" });
+                }
+                if (qpSelection.startsWith("Important")) {
+                    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".important" });
+                }
+                if (qpSelection.startsWith("Caution")) {
+                    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".caution" });
+                }
+                if (qpSelection.startsWith("Warning")) {
+                    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".warning" });
+                }
             }
         });
     }
