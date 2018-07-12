@@ -20,45 +20,52 @@ export function insertAlertCommand() {
  */
 export function insertAlert() {
     const editor = vscode.window.activeTextEditor;
-    const selection = editor.selection;
-    const selectedText = editor.document.getText(selection);
-    if (!common.isValidEditor(editor, false, "insert alert")) {
+    if (!editor) {
+        common.noActiveEditorMessage();
         return;
-    }
+    } else {
+        const selection = editor.selection;
+        const selectedText = editor.document.getText(selection);
+        let formattedText;
 
-    if (!common.isMarkdownFileCheck(editor, false)) {
-        return;
-    }
-
-    const alertTypes = [
-        "Note – Information the user should notice even if skimming",
-        "Tip - Optional information to help a user be more successful",
-        "Important – Essential information required for user success",
-        "Caution - Negative potential consequences of an action",
-        "Warning – Dangerous certain consequences of an action",
-    ];
-    vscode.window.showQuickPick(alertTypes).then((qpSelection) => {
-        const formattedText = format(selectedText, alertTypes.indexOf(qpSelection));
-        if (!qpSelection) {
+        if (!common.isMarkdownFileCheck(editor, false)) {
             return;
         }
-        common.insertContentToEditor(editor, insertAlert.name, formattedText, true);
-        if (qpSelection.startsWith("Note")) {
-            reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".note" });
-        }
-        if (qpSelection.startsWith("Tip")) {
-            reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".tip" });
-        }
-        if (qpSelection.startsWith("Important")) {
-            reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".important" });
-        }
-        if (qpSelection.startsWith("Caution")) {
-            reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".caution" });
-        }
-        if (qpSelection.startsWith("Warning")) {
-            reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".warning" });
-        }
-    });
+
+        const alertTypes = [
+            "Note – Information the user should notice even if skimming",
+            "Tip - Optional information to help a user be more successful",
+            "Important – Essential information required for user success",
+            "Caution - Negative potential consequences of an action",
+            "Warning – Dangerous certain consequences of an action",
+        ];
+        vscode.window.showQuickPick(alertTypes).then((qpSelection) => {
+            if (!qpSelection) {
+                return;
+            } else {
+                formattedText = format(selectedText, alertTypes.indexOf(qpSelection));
+            }
+            if (editor) {
+                common.insertContentToEditor(editor, insertAlert.name, formattedText, true);
+            }
+
+            if (qpSelection.startsWith("Note")) {
+                reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".note" });
+            }
+            if (qpSelection.startsWith("Tip")) {
+                reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".tip" });
+            }
+            if (qpSelection.startsWith("Important")) {
+                reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".important" });
+            }
+            if (qpSelection.startsWith("Caution")) {
+                reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".caution" });
+            }
+            if (qpSelection.startsWith("Warning")) {
+                reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".warning" });
+            }
+        });
+    }
 }
 
 /**

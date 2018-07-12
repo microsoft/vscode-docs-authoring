@@ -33,6 +33,7 @@ export class MasterRedirection {
 export class RedirectionFile {
     public fileFullPath: string;
     public isAlreadyInMasterRedirectionFile: boolean = false;
+    public resource: any;
 
     // Members mapping to JSON elements in master redirection file
     public source_path: string;
@@ -46,151 +47,166 @@ export class RedirectionFile {
     }
 
     public getRelativePathToRoot(filePath: any): string {
-        try {
-            return path.relative(vscode.workspace.rootPath, filePath).replace(/\\/g, "/");
-        } catch (err) {
-            throw new Error("Failed to resolve relative path to repo root folder for file " + filePath + ". Original error: " + err.toString());
+        const editor = vscode.window.activeTextEditor;
+        let folder;
+        if (editor) {
+            const resource = editor.document.uri;
+            folder = vscode.workspace.getWorkspaceFolder(resource);
+        }
+        if (folder) {
+            return path.relative(folder.uri.fsPath, filePath).replace(/\\/g, "/");
+        } else {
+            throw new Error("Failed to resolve relative path to repo root folder for file " + filePath + ". Original error: " + Error.toString());
         }
     }
 }
 
 function generateMasterRedirectionFile() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
-    const workspacePath = vscode.workspace.rootPath;
-    const repoName = path.basename(workspacePath);
-    const date = new Date(Date.now());
-    const output = vscode.window.createOutputChannel("Master Redirect " + date.getMilliseconds());
+    const editor = vscode.window.activeTextEditor;
+    if (editor) {
+        const resource = editor.document.uri;
+        const folder = vscode.workspace.getWorkspaceFolder(resource);
 
-    if (workspacePath == null) {
-        common.postError("No workspace is opened.");
-        return;
-    }
+        if (folder) {
+            const repoName = folder.name;
+            const workspacePath = folder.uri.fsPath;
 
-    // Check if the current workspace is the root folder of a repo by checking if the .git folder is present
-    const gitDir = path.join(workspacePath, ".git");
-    if (!fs.existsSync(gitDir)) {
-        common.postError("Current workspace is not root folder of a repo.");
-        return;
-    }
+            const date = new Date(Date.now());
+            const output = vscode.window.createOutputChannel("Master Redirect " + date.getMilliseconds());
 
-    dir.files(workspacePath, (err: any, files: any) => {
-        if (err) {
-            vscode.window.showErrorMessage(err);
-            return;
-        }
+            if (workspacePath == null) {
+                common.postError("No workspace is opened.");
+                return;
+            }
 
-        const redirectionFiles: RedirectionFile[] = [];
-        const errorFiles: any[] = [];
+            // Check if the current workspace is the root folder of a repo by checking if the .git folder is present
+            const gitDir = path.join(workspacePath, ".git");
+            if (!fs.existsSync(gitDir)) {
+                common.postError("Current workspace is not root folder of a repo.");
+                return;
+            }
 
-        // Will likely remove the information message once feedback is received from PM team.
-        common.postInformation("Generating Master Redirection file.");
-        output.appendLine("Generating Master Redirection file.");
-
-        files.filter((file: any) => path.extname(file.toLowerCase()) === ".md").forEach((file: any) => {
-            const content = fs.readFileSync(file, "utf8");
-            const mdContent = new yamlMetadata.MarkdownFileMetadataContent(content, file);
-
-            try {
-                const metadataContent = mdContent.getYamlMetadataContent();
-
-                if (metadataContent !== "") {
-                    const yamlHeader = YAML.parse(metadataContent.toLowerCase());
-
-                    if (yamlHeader != null && yamlHeader.redirect_url != null) {
-                        redirectionFiles.push(new RedirectionFile(file, yamlHeader.redirect_url));
-                    }
+            dir.files(workspacePath, (err: any, files: any) => {
+                if (err) {
+                    vscode.window.showErrorMessage(err);
+                    return;
                 }
-            } catch (error) {
-                errorFiles.push({
-                    errorMessage: error,
-                    fileName: file,
-                });
-            }
-        });
 
-        if (redirectionFiles.length === 0) {
-            output.appendLine("No redirection files found.");
-            output.show(false);
-        }
+                const redirectionFiles: RedirectionFile[] = [];
+                const errorFiles: any[] = [];
 
-        if (redirectionFiles.length > 0) {
-            let masterRedirection: MasterRedirection | null;
-            const masterRedirectionFilePath: string = path.join(workspacePath, ".openpublishing.redirection.json");
+                // Will likely remove the information message once feedback is received from PM team.
+                common.postInformation("Generating Master Redirection file.");
+                output.appendLine("Generating Master Redirection file.");
 
-            // If there is already a master redirection file, read its content to load into masterRedirection variable
-            if (fs.existsSync(masterRedirectionFilePath)) {
-                masterRedirection = JSON.parse(fs.readFileSync(masterRedirectionFilePath, "utf8"));
-            } else {
-                masterRedirection = null;
-                output.appendLine("Created new redirection file.");
-                output.show();
-            }
+                files.filter((file: any) => path.extname(file.toLowerCase()) === ".md").forEach((file: any) => {
+                    const content = fs.readFileSync(file, "utf8");
+                    const mdContent = new yamlMetadata.MarkdownFileMetadataContent(content, file);
 
-            if (masterRedirection == null) {
-                // This means there is no existing master redirection file, we will create master redirection file and write all scanned result into it
-                masterRedirection = new MasterRedirection(redirectionFiles);
-            } else {
-                const existingSourcePath: string[] = [];
+                    try {
+                        const metadataContent = mdContent.getYamlMetadataContent();
 
-                masterRedirection.redirections.forEach((item) => {
-                    existingSourcePath.push(item.source_path.toLowerCase());
-                });
+                        if (metadataContent !== "") {
+                            const yamlHeader = YAML.parse(metadataContent.toLowerCase());
 
-                redirectionFiles.forEach((item) => {
-                    if (existingSourcePath.indexOf(item.source_path.toLowerCase()) >= 0) {
-                        item.isAlreadyInMasterRedirectionFile = true;
-                    } else {
-                        if (masterRedirection != null) {
-                            masterRedirection.redirections.push(item);
-                        } else {
-                            output.appendLine("No redirection files found to add.");
+                            if (yamlHeader != null && yamlHeader.redirect_url != null) {
+                                redirectionFiles.push(new RedirectionFile(file, yamlHeader.redirect_url));
+                            }
                         }
+                    } catch (error) {
+                        errorFiles.push({
+                            errorMessage: error,
+                            fileName: file,
+                        });
                     }
                 });
-            }
 
-            if (masterRedirection.redirections.length > 0) {
-                fs.writeFileSync(masterRedirectionFilePath, JSON.stringify(masterRedirection, ["redirections", "source_path", "redirect_url", "redirect_document_id"], 4));
-                const currentYear = date.getFullYear();
-                const currentMonth = (date.getMonth() + 1);
-                const currentDay = date.getDate();
-                const currentHour = date.getHours();
-                const currentMinute = date.getMinutes();
-                const currentMilliSeconds = date.getMilliseconds();
-                const timeStamp = currentYear + `-` + currentMonth + `-` + currentDay + `_` + currentHour + `-` + currentMinute + `-` + currentMilliSeconds;
-                const deletedRedirectsFolderName = repoName + "_deleted_redirects_" + timeStamp;
-                const docsAuthoringHomeDirectory = path.join(os.homedir(), "Docs Authoring");
-                const docsRedirectDirectory = path.join(docsAuthoringHomeDirectory, "Redirects");
-                const deletedRedirectsPath = path.join(docsRedirectDirectory, deletedRedirectsFolderName);
-                if (fs.existsSync(docsRedirectDirectory)) {
-                    fs.mkdirSync(deletedRedirectsPath);
-                } else {
-                    fs.mkdirSync(docsAuthoringHomeDirectory);
-                    fs.mkdirSync(docsRedirectDirectory);
-                    fs.mkdirSync(deletedRedirectsPath);
+                if (redirectionFiles.length === 0) {
+                    output.appendLine("No redirection files found.");
+                    output.show(false);
                 }
 
-                redirectionFiles.forEach((item) => {
-                    const source = fs.createReadStream(item.fileFullPath);
-                    const dest = fs.createWriteStream(path.join(deletedRedirectsPath, path.basename(item.source_path)));
+                if (redirectionFiles.length > 0) {
+                    let masterRedirection: MasterRedirection | null;
+                    const masterRedirectionFilePath: string = path.join(workspacePath, ".openpublishing.redirection.json");
 
-                    source.pipe(dest);
-                    source.on("end", () => {
-                        fs.unlink(item.fileFullPath);
-                    });
-                });
-
-                redirectionFiles.forEach((item) => {
-                    if (item.isAlreadyInMasterRedirectionFile) {
-                        output.appendLine("Already in master redirection file: " + item.fileFullPath);
+                    // If there is already a master redirection file, read its content to load into masterRedirection variable
+                    if (fs.existsSync(masterRedirectionFilePath)) {
+                        masterRedirection = JSON.parse(fs.readFileSync(masterRedirectionFilePath, "utf8"));
                     } else {
-                        output.appendLine("Added to master redirection file. " + item.fileFullPath);
+                        masterRedirection = null;
+                        output.appendLine("Created new redirection file.");
+                        output.show();
                     }
-                });
-                output.appendLine("Redirected files copied to " + deletedRedirectsPath);
-                common.postInformation("Master direct file has been created.");
-                output.show();
-            }
+
+                    if (masterRedirection == null) {
+                        // This means there is no existing master redirection file, we will create master redirection file and write all scanned result into it
+                        masterRedirection = new MasterRedirection(redirectionFiles);
+                    } else {
+                        const existingSourcePath: string[] = [];
+
+                        masterRedirection.redirections.forEach((item) => {
+                            existingSourcePath.push(item.source_path.toLowerCase());
+                        });
+
+                        redirectionFiles.forEach((item) => {
+                            if (existingSourcePath.indexOf(item.source_path.toLowerCase()) >= 0) {
+                                item.isAlreadyInMasterRedirectionFile = true;
+                            } else {
+                                if (masterRedirection != null) {
+                                    masterRedirection.redirections.push(item);
+                                } else {
+                                    output.appendLine("No redirection files found to add.");
+                                }
+                            }
+                        });
+                    }
+
+                    if (masterRedirection.redirections.length > 0) {
+                        fs.writeFileSync(masterRedirectionFilePath, JSON.stringify(masterRedirection, ["redirections", "source_path", "redirect_url", "redirect_document_id"], 4));
+                        const currentYear = date.getFullYear();
+                        const currentMonth = (date.getMonth() + 1);
+                        const currentDay = date.getDate();
+                        const currentHour = date.getHours();
+                        const currentMinute = date.getMinutes();
+                        const currentMilliSeconds = date.getMilliseconds();
+                        const timeStamp = currentYear + `-` + currentMonth + `-` + currentDay + `_` + currentHour + `-` + currentMinute + `-` + currentMilliSeconds;
+                        const deletedRedirectsFolderName = repoName + "_deleted_redirects_" + timeStamp;
+                        const docsAuthoringHomeDirectory = path.join(os.homedir(), "Docs Authoring");
+                        const docsRedirectDirectory = path.join(docsAuthoringHomeDirectory, "Redirects");
+                        const deletedRedirectsPath = path.join(docsRedirectDirectory, deletedRedirectsFolderName);
+                        if (fs.existsSync(docsRedirectDirectory)) {
+                            fs.mkdirSync(deletedRedirectsPath);
+                        } else {
+                            fs.mkdirSync(docsAuthoringHomeDirectory);
+                            fs.mkdirSync(docsRedirectDirectory);
+                            fs.mkdirSync(deletedRedirectsPath);
+                        }
+
+                        redirectionFiles.forEach((item) => {
+                            const source = fs.createReadStream(item.fileFullPath);
+                            const dest = fs.createWriteStream(path.join(deletedRedirectsPath, path.basename(item.source_path)));
+
+                            source.pipe(dest);
+                            source.on("end", () => {
+                                fs.unlink(item.fileFullPath);
+                            });
+                        });
+
+                        redirectionFiles.forEach((item) => {
+                            if (item.isAlreadyInMasterRedirectionFile) {
+                                output.appendLine("Already in master redirection file: " + item.fileFullPath);
+                            } else {
+                                output.appendLine("Added to master redirection file. " + item.fileFullPath);
+                            }
+                        });
+                        output.appendLine("Redirected files copied to " + deletedRedirectsPath);
+                        common.postInformation("Master direct file has been created.");
+                        output.show();
+                    }
+                }
+            });
         }
-    });
+    }
 }

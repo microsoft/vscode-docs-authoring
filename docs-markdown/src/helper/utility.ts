@@ -122,16 +122,20 @@ export function search(editor: vscode.TextEditor, selection: vscode.Selection, s
 
         // select from all files found that match search term.
         vscode.window.showQuickPick(fileOptions).then(function searchType(selected) {
-            const activeFilePath = (path.parse(vscode.window.activeTextEditor.document.fileName).dir);
-            const target = path.parse(selected.description);
-            const relativePath = path.relative(activeFilePath, target.dir);
-            const ext: string = target.ext;
-            // change path separator syntax for commonmark
-            const snippetLink = path.join(relativePath, target.base).replace(/\\/g, "/");
-            const snippet: string = snippetBuilder(ext.substr(1), target.name, snippetLink);
-            const range = new vscode.Range(selection.start.line, selection.start.character, selection.end.line, selection.end.character);
+            const activeFilePath = (path.parse(editor.document.fileName).dir);
+            if (!selected) {
+                return;
+            } else {
+                const target = path.parse(selected.description);
+                const relativePath = path.relative(activeFilePath, target.dir);
+                const ext: string = target.ext;
+                // change path separator syntax for commonmark
+                const snippetLink = path.join(relativePath, target.base).replace(/\\/g, "/");
+                const snippet: string = snippetBuilder(ext.substr(1), target.name, snippetLink);
+                const range = new vscode.Range(selection.start.line, selection.start.character, selection.end.line, selection.end.character);
 
-            common.insertContentToEditor(editor, search.name, snippet, true, range);
+                common.insertContentToEditor(editor, search.name, snippet, true, range);
+            }
         });
     });
 }

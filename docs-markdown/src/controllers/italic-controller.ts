@@ -23,40 +23,45 @@ export function formatItalic() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
 
     const editor = vscode.window.activeTextEditor;
-    if (!common.isValidEditor(editor, true, "format italic")) {
+    if (!editor) {
+        common.noActiveEditorMessage();
         return;
-    }
-
-    if (!common.isMarkdownFileCheck(editor, false)) {
-        return;
-    }
-
-    const selection = editor.selection;
-    const selectedText = editor.document.getText(selection);
-    let range;
-
-    // if unselect text, add italic syntax without any text
-    if (selectedText === "") {
-        const cursorPosition = editor.selection.active;
-
-        // assumes the range of italic syntax
-        range = new vscode.Range(cursorPosition.with(cursorPosition.line,
-            cursorPosition.character - 1 < 0 ? 0 : cursorPosition.character - 1),
-            cursorPosition.with(cursorPosition.line, cursorPosition.character + 1));
-
-        // calls formatter and returns selectedText as MD bold
-        const formattedText = italicize(selectedText, range);
-        insertUnselectedText(editor, formatItalic.name, formattedText, range);
     } else {
-        log.debug("Found: " + selectedText);
-        const cursorPosition = editor.selection.active;
-        range = new vscode.Range(cursorPosition.with(cursorPosition.line,
-            cursorPosition.character - 1 < 0 ? 0 : cursorPosition.character - 1),
-            cursorPosition.with(cursorPosition.line, cursorPosition.character + 1));
+        if (!common.isValidEditor(editor, true, "format italic")) {
+            return;
+        }
 
-        // calls formatter and returns selectedText as MD Italic
-        const formattedText = italicize(selectedText, range);
-        common.insertContentToEditor(editor, formatItalic.name, formattedText, true);
+        if (!common.isMarkdownFileCheck(editor, false)) {
+            return;
+        }
+
+        const selection = editor.selection;
+        const selectedText = editor.document.getText(selection);
+        let range;
+
+        // if unselect text, add italic syntax without any text
+        if (selectedText === "") {
+            const cursorPosition = editor.selection.active;
+
+            // assumes the range of italic syntax
+            range = new vscode.Range(cursorPosition.with(cursorPosition.line,
+                cursorPosition.character - 1 < 0 ? 0 : cursorPosition.character - 1),
+                cursorPosition.with(cursorPosition.line, cursorPosition.character + 1));
+
+            // calls formatter and returns selectedText as MD bold
+            const formattedText = italicize(selectedText, range);
+            insertUnselectedText(editor, formatItalic.name, formattedText, range);
+        } else {
+            log.debug("Found: " + selectedText);
+            const cursorPosition = editor.selection.active;
+            range = new vscode.Range(cursorPosition.with(cursorPosition.line,
+                cursorPosition.character - 1 < 0 ? 0 : cursorPosition.character - 1),
+                cursorPosition.with(cursorPosition.line, cursorPosition.character + 1));
+
+            // calls formatter and returns selectedText as MD Italic
+            const formattedText = italicize(selectedText, range);
+            common.insertContentToEditor(editor, formatItalic.name, formattedText, true);
+        }
     }
 }
 

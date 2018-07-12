@@ -11,7 +11,7 @@
     "url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
   },
   "engines": {
-    "vscode": "^1.5.0"
+    "vscode": "^1.22.0"
   },
   "repository": {
     "url": "https://github.com/Microsoft/vscode-docs-authoring.git"
@@ -27,7 +27,8 @@
   ],
   "main": "./out/src/extension",
   "contributes": {
-    "commands": [{
+    "commands": [
+      {
         "command": "markdownQuickPick",
         "title": "Docs: Markdown authoring menu"
       },
@@ -108,7 +109,8 @@
       }
     ],
     "menus": {
-      "editor/title": [{
+      "editor/title": [
+        {
           "when": "resourceLangId == markdown",
           "command": "markdown.showPreview",
           "alt": "markdown.showPreviewToSide",
@@ -121,7 +123,8 @@
           "group": "navigation"
         }
       ],
-      "commandPalette": [{
+      "commandPalette": [
+        {
           "command": "markdownQuickPick"
         },
         {
@@ -212,7 +215,8 @@
         }
       }
     },
-    "keybindings": [{
+    "keybindings": [
+      {
         "command": "markdownQuickPick",
         "key": "Alt+M",
         "mac": "Alt+M",
@@ -261,10 +265,12 @@
         "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active"
       }
     ],
-    "yamlValidation": [{
-      "fileMatch": "toc.yml",
-      "url": "./schema/toc.schema.json"
-    }]
+    "yamlValidation": [
+      {
+        "fileMatch": "toc.yml",
+        "url": "./schema/toc.schema.json"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",

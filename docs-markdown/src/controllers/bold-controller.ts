@@ -21,42 +21,41 @@ export function boldFormattingCommand() {
  */
 export function formatBold() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
-
     const editor = vscode.window.activeTextEditor;
-
-    if (!common.isValidEditor(editor, true, "format italic")) {
+    if (!editor) {
+        common.noActiveEditorMessage();
         return;
-    }
-
-    if (!common.isMarkdownFileCheck(editor, false)) {
-        return;
-    }
-
-    const selection = editor.selection;
-    const selectedText = editor.document.getText(selection);
-    let range;
-
-    // if unselect text, add bold syntax without any text
-    if (selectedText === "") {
-        const cursorPosition = editor.selection.active;
-
-        // assumes the range of bold syntax
-        range = new vscode.Range(cursorPosition.with(cursorPosition.line,
-            cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
-            cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
-
-        // calls formatter and returns selectedText as MD bold
-        const formattedText = bold(selectedText);
-        insertUnselectedText(editor, formatBold.name, formattedText, range);
     } else {
-        log.debug("Found: " + selectedText);
-        const cursorPosition = editor.selection.active;
-        range = new vscode.Range(cursorPosition.with(cursorPosition.line,
-            cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
-            cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
-        // calls formatter and returns selectedText as MD Bold
-        const formattedText = bold(selectedText);
-        common.insertContentToEditor(editor, formatBold.name, formattedText, true);
+        if (!common.isMarkdownFileCheck(editor, false)) {
+            return;
+        }
+
+        const selection = editor.selection;
+        const selectedText = editor.document.getText(selection);
+        let range;
+
+        // if unselect text, add bold syntax without any text
+        if (selectedText === "") {
+            const cursorPosition = editor.selection.active;
+
+            // assumes the range of bold syntax
+            range = new vscode.Range(cursorPosition.with(cursorPosition.line,
+                cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
+                cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
+
+            // calls formatter and returns selectedText as MD bold
+            const formattedText = bold(selectedText);
+            insertUnselectedText(editor, formatBold.name, formattedText, range);
+        } else {
+            log.debug("Found: " + selectedText);
+            const cursorPosition = editor.selection.active;
+            range = new vscode.Range(cursorPosition.with(cursorPosition.line,
+                cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
+                cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
+            // calls formatter and returns selectedText as MD Bold
+            const formattedText = bold(selectedText);
+            common.insertContentToEditor(editor, formatBold.name, formattedText, true);
+        }
     }
 }
 
