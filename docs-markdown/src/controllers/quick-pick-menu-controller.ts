@@ -10,7 +10,7 @@ import { formatCode } from "./code-controller";
 import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
-import { insertImage, insertURL, insertVideo, selectLinkType } from "./media-controller";
+import { Insert, insertImage, insertURL, insertVideo, selectLinkType } from "./media-controller";
 import { previewTopic } from "./preview-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
@@ -65,12 +65,16 @@ export function markdownQuickPick() {
             label: "$(diff-added) Table",
         },
         {
-            description: "Insert internal link or bookmark",
-            label: "$(link) Link",
+            description: "",
+            label: "$(file-symlink-directory) Link to file in repo",
         },
         {
-            description: " Link to web page",
-            label: "$(link) Link to web page",
+            description: "",
+            label: "$(globe) Link to web page",
+        },
+        {
+            description: "",
+            label: "$(link) Link to heading",
         },
         {
             description: "",
@@ -132,11 +136,14 @@ export function markdownQuickPick() {
             case "table":
                 insertTable();
                 break;
-            case "link":
-                selectLinkType();
+            case "link to file in repo":
+                Insert(false);
                 break;
             case "link to web page":
                 insertURL();
+                break;
+            case "link to heading":
+                selectLinkType();
                 break;
             case "image":
                 insertImage();

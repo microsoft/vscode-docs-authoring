@@ -24,7 +24,7 @@ import * as log from "./helper/log";
 import { UiHelper } from "./helper/ui";
 import { Reporter } from "./telemetry/telemetry";
 
-export const output = vscode.window.createOutputChannel("docs-article-templates");
+export const output = vscode.window.createOutputChannel("docs-markdown");
 
 /**
  * Provides the commands to the extension. This method is called when extension is activated.

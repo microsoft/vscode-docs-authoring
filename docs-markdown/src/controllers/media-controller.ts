@@ -298,18 +298,17 @@ export function selectLinkType() {
             return;
         }
 
-        const linkTypes = ["Internal", "Bookmark in this file", "Bookmark in another file"];
+        const linkTypes = ["Heading in this file", "Heading in another file"];
         vscode.window.showQuickPick(linkTypes).then((qpSelection) => {
             if (qpSelection === linkTypes[0]) {
-                Insert(false);
-            } else if (qpSelection === linkTypes[1]) {
                 insertBookmarkInternal();
-            } else if (qpSelection === linkTypes[2]) {
+            } else if (qpSelection === linkTypes[1]) {
                 insertBookmarkExternal();
             }
         });
     }
 }
+
 /**
  * Creates an entry point for creating an internal (link type) or external link (url type).
  */
