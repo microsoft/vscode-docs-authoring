@@ -2,7 +2,7 @@
   "name": "docs-preview",
   "displayName": "docs-preview",
   "description": "Docs Markdown Preview Extension",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "publisher": "docsmsft",
   "icon": "images/docs-logo-ms.png",
   "bugs": {
@@ -59,19 +59,22 @@
     "test": "node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
-    "typescript": "^2.5.2",
-    "vscode": "^1.1.18",
-    "mocha": "^2.3.3",
+    "@types/mocha": "^2.2.32",
     "@types/node": "^6.0.40",
-    "@types/mocha": "^2.2.32"
+    "mocha": "^5.2.0",
+    "typescript": "^2.5.2",
+    "vscode": "^1.1.18"
   },
   "dependencies": {
+    "@types/cheerio": "^0.22.8",
     "axios": "^0.17.1",
+    "cheerio": "^1.0.0-rc.2",
     "child_process": "^1.0.2",
+    "command-exists": "^1.2.7",
     "file-url": "^2.0.2",
     "highlightjs": "^9.10.0",
-    "http-proxy-agent": "^2.0.0",
-    "https-proxy-agent": "^2.1.1",
+    "http-proxy-agent": "^2.1.0",
+    "https-proxy-agent": "^2.2.1",
     "jquery": "^3.2.1",
     "mkdirp": "^0.5.1",
     "tmp": "0.0.33",
@@ -79,6 +82,19 @@
     "yauzl": "^2.9.1"
   },
   "runtimeDependencies": [
+    {
+      "description": "docs-previewService for .NET Core",
+      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.18/netcore.zip",
+      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.18/netcore.zip",
+      "installPath": ".markdocs",
+      "platforms": [
+        "netcore"
+      ],
+      "architectures": [
+        "netcore"
+      ],
+      "installTestPath": "./.markdocs/MarkdocsService.dll"
+    },
     {
       "description": "docs-previewService for Windows (x86)",
       "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x86.zip",

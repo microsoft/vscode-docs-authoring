@@ -1,12 +1,18 @@
+import * as commandExists from "command-exists";
 import * as os from "os";
 import * as util from "./common";
 import { LinuxDistribution } from "./platform";
 
 export class PlatformInformation {
-    public static GetCurrent(): Promise<PlatformInformation> {
+    public static async GetCurrent(): Promise<PlatformInformation> {
         const platform = os.platform();
         let architecturePromise: Promise<string>;
         let distributionPromise: Promise<LinuxDistribution>;
+
+        const supportNetcore = await this.IsSupportNetCore();
+        if (supportNetcore) {
+            return Promise.resolve(new PlatformInformation("netcore", "netcore", null));
+        }
 
         switch (platform) {
             case "win32":
@@ -53,6 +59,12 @@ export class PlatformInformation {
 
                 return null;
             });
+    }
+
+    private static IsSupportNetCore(): Promise<boolean> {
+        return commandExists("dotnet")
+            .then(() => Promise.resolve(true))
+            .catch(() => Promise.resolve(false));
     }
 
     public constructor(
