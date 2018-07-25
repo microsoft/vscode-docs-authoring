@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.1.2 (June 20th, 2018)
+## 0.1.2 (July 3rd, 2018)
 
 - Remove quickpick button from navigation menu
 
