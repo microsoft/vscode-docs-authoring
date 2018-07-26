@@ -126,20 +126,19 @@ export function insertBookmarkInternal() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         return;
-    } else {
-        const content = editor.document.getText();
-        const items = content.match(headingTextRegex);
-        if (!items) {
-            vscode.window.showErrorMessage("No headings found in file, cannot insert bookmark!");
-            return;
-        }
-
-        // put number to duplicate names in position order
-        const adjustedItems = addbookmarkIdentifier(items);
-        output.appendLine("Internal Headings: " + adjustedItems.toString());
-        vscode.window.showQuickPick(adjustedItems).then((qpSelection) => {
-            const bookmark = bookmarkBuilder(editor.document.getText(editor.selection), qpSelection, "");
-            insertContentToEditor(editor, "InsertBookmarkInternal", bookmark, true, editor.selection);
-        });
     }
+    const content = editor.document.getText();
+    const items = content.match(headingTextRegex);
+    if (!items) {
+        vscode.window.showErrorMessage("No headings found in file, cannot insert bookmark!");
+        return;
+    }
+
+    // put number to duplicate names in position order
+    const adjustedItems = addbookmarkIdentifier(items);
+    output.appendLine("Internal Headings: " + adjustedItems.toString());
+    vscode.window.showQuickPick(adjustedItems).then((qpSelection) => {
+        const bookmark = bookmarkBuilder(editor.document.getText(editor.selection), qpSelection, "");
+        insertContentToEditor(editor, "InsertBookmarkInternal", bookmark, true, editor.selection);
+    });
 }

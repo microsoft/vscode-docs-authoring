@@ -48,41 +48,40 @@ export function searchRepo(searchTerm: any) {
     if (!editor) {
         noActiveEditorMessage();
         return;
-    } else {
-        const folderPath: any = vscode.workspace.rootPath;
-        const selected = editor.selection;
-        // There are two kinds of repo searching, whole repo, and scoped folder (both recursive)
-        const scopeOptions: vscode.QuickPickItem[] = [];
-
-        scopeOptions.push({ label: "Full Search", description: "Look in all directories for snippet" });
-        scopeOptions.push({ label: "Scoped Search", description: "Look in specific directories for snippet" });
-
-        vscode.window.showQuickPick(scopeOptions).then(function searchType(selection) {
-            if (!selection) {
-                return;
-            }
-            const searchSelection = selection.label;
-
-            if (searchSelection === "Full Search") {
-                search(editor, selected, searchTerm, folderPath);
-            } else {
-
-                // gets all subdirectories to populate the scope search function.
-                dir.subdirs(folderPath, (err: any, subdirs: any) => {
-                    if (err) {
-                        vscode.window.showErrorMessage(err);
-                        throw err;
-                    }
-
-                    const dirOptions: vscode.QuickPickItem[] = [];
-
-                    for (const folders in subdirs) {
-                        if (subdirs.hasOwnProperty(folders)) {
-                            dirOptions.push({ label: subdirs[folders], description: "sub directory" });
-                        }
-                    }
-                });
-            }
-        });
     }
+    const folderPath: any = vscode.workspace.rootPath;
+    const selected = editor.selection;
+    // There are two kinds of repo searching, whole repo, and scoped folder (both recursive)
+    const scopeOptions: vscode.QuickPickItem[] = [];
+
+    scopeOptions.push({ label: "Full Search", description: "Look in all directories for snippet" });
+    scopeOptions.push({ label: "Scoped Search", description: "Look in specific directories for snippet" });
+
+    vscode.window.showQuickPick(scopeOptions).then(function searchType(selection) {
+        if (!selection) {
+            return;
+        }
+        const searchSelection = selection.label;
+
+        if (searchSelection === "Full Search") {
+            search(editor, selected, searchTerm, folderPath);
+        } else {
+
+            // gets all subdirectories to populate the scope search function.
+            dir.subdirs(folderPath, (err: any, subdirs: any) => {
+                if (err) {
+                    vscode.window.showErrorMessage(err);
+                    throw err;
+                }
+
+                const dirOptions: vscode.QuickPickItem[] = [];
+
+                for (const folders in subdirs) {
+                    if (subdirs.hasOwnProperty(folders)) {
+                        dirOptions.push({ label: subdirs[folders], description: "sub directory" });
+                    }
+                }
+            });
+        }
+    });
 }
