@@ -1,10 +1,9 @@
 "use strict";
 
 import * as vscode from "vscode";
-import * as common from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBoldAndItalic, isItalic } from "../helper/format-styles";
-import * as log from "../helper/log";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "formatItalic";
@@ -24,14 +23,14 @@ export function formatItalic() {
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
-        if (!common.isValidEditor(editor, true, "format italic")) {
+        if (!isValidEditor(editor, true, "format italic")) {
             return;
         }
 
-        if (!common.isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
 
@@ -52,7 +51,6 @@ export function formatItalic() {
             const formattedText = italicize(selectedText, range);
             insertUnselectedText(editor, formatItalic.name, formattedText, range);
         } else {
-            log.debug("Found: " + selectedText);
             const cursorPosition = editor.selection.active;
             range = new vscode.Range(cursorPosition.with(cursorPosition.line,
                 cursorPosition.character - 1 < 0 ? 0 : cursorPosition.character - 1),
@@ -60,7 +58,7 @@ export function formatItalic() {
 
             // calls formatter and returns selectedText as MD Italic
             const formattedText = italicize(selectedText, range);
-            common.insertContentToEditor(editor, formatItalic.name, formattedText, true);
+            insertContentToEditor(editor, formatItalic.name, formattedText, true);
         }
     }
 }

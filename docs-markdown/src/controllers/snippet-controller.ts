@@ -2,8 +2,8 @@
 
 import * as dir from "node-dir";
 import * as vscode from "vscode";
-import * as common from "../helper/common";
-import * as utilityHelper from "../helper/utility";
+import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { search } from "../helper/utility";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "insertSnippet";
@@ -24,20 +24,20 @@ export function insertSnippet() {
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
-    } else {
-        if (!common.isValidEditor(editor, false, insertSnippet.name)) {
-            return;
-        }
+    }
 
-        if (!common.isMarkdownFileCheck(editor, false)) {
-            return;
-        }
+    if (!isValidEditor(editor, false, insertSnippet.name)) {
+        return;
+    }
 
-        if (!common.hasValidWorkSpaceRootPath(telemetryCommand)) {
-            return;
-        }
+    if (!isMarkdownFileCheck(editor, false)) {
+        return;
+    }
+
+    if (!hasValidWorkSpaceRootPath(telemetryCommand)) {
+        return;
     }
 
     vscode.window.showInputBox({ prompt: "Enter snippet search terms." }).then(searchRepo);
@@ -46,7 +46,7 @@ export function insertSnippet() {
 export function searchRepo(searchTerm: any) {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
         const folderPath: any = vscode.workspace.rootPath;
@@ -60,29 +60,28 @@ export function searchRepo(searchTerm: any) {
         vscode.window.showQuickPick(scopeOptions).then(function searchType(selection) {
             if (!selection) {
                 return;
+            }
+            const searchSelection = selection.label;
+
+            if (searchSelection === "Full Search") {
+                search(editor, selected, searchTerm, folderPath);
             } else {
-                const searchSelection = selection.label;
 
-                if (searchSelection === "Full Search") {
-                    utilityHelper.search(editor, selected, searchTerm, folderPath);
-                } else {
+                // gets all subdirectories to populate the scope search function.
+                dir.subdirs(folderPath, (err: any, subdirs: any) => {
+                    if (err) {
+                        vscode.window.showErrorMessage(err);
+                        throw err;
+                    }
 
-                    // gets all subdirectories to populate the scope search function.
-                    dir.subdirs(folderPath, (err: any, subdirs: any) => {
-                        if (err) {
-                            vscode.window.showErrorMessage(err);
-                            throw err;
+                    const dirOptions: vscode.QuickPickItem[] = [];
+
+                    for (const folders in subdirs) {
+                        if (subdirs.hasOwnProperty(folders)) {
+                            dirOptions.push({ label: subdirs[folders], description: "sub directory" });
                         }
-
-                        const dirOptions: vscode.QuickPickItem[] = [];
-
-                        for (const folders in subdirs) {
-                            if (subdirs.hasOwnProperty(folders)) {
-                                dirOptions.push({ label: subdirs[folders], description: "sub directory" });
-                            }
-                        }
-                    });
-                }
+                    }
+                });
             }
         });
     }

@@ -2,10 +2,9 @@
 
 import * as vscode from "vscode";
 import { DocsCodeLanguages } from "../constants/docs-code-languages";
-import * as common from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
-import * as log from "../helper/log";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "formatCode";
@@ -24,14 +23,14 @@ export function formatCode() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
-        if (!common.isValidEditor(editor, true, "format code")) {
+        if (!isValidEditor(editor, true, "format code")) {
             return;
         }
 
-        if (!common.isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
 
@@ -45,11 +44,9 @@ export function formatCode() {
                 showSupportedLanguages(selectedText, selection);
             } else {
                 applyCodeFormatting(selectedText, selection, "");
-                log.telemetry(formatCode.name, "");
             }
         } else {
             applyCodeFormatting(selectedText, selection, "");
-            log.telemetry(formatCode.name, "");
         }
     }
 }
@@ -113,7 +110,7 @@ export function applyCodeFormatting(content: string, selectedContent: any, codeL
     const selectedText = content.trim();
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
         const emptyRange = new vscode.Range(editor.selection.active, editor.selection.active);
@@ -129,12 +126,10 @@ export function applyCodeFormatting(content: string, selectedContent: any, codeL
 
             insertUnselectedText(editor, formatCode.name, formattedText, range);
         } else {
-            log.debug("Found: " + selectedText);
-
             // calls formatter and returns selectedText as MD Code
             const formattedText = format(selectedText, codeLang, selectedContent.isSingleLine, emptyRange);
 
-            common.insertContentToEditor(editor, formatCode.name, formattedText, true);
+            insertContentToEditor(editor, formatCode.name, formattedText, true);
         }
     }
 }

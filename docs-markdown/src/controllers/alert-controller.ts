@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import { AlertTags } from "../constants/alert-tags";
 import { AlertType } from "../constants/alert-type";
-import * as common from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "insertAlert";
@@ -21,14 +21,14 @@ export function insertAlertCommand() {
 export function insertAlert() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
         const selection = editor.selection;
         const selectedText = editor.document.getText(selection);
         let formattedText;
 
-        if (!common.isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
 
@@ -46,7 +46,7 @@ export function insertAlert() {
                 formattedText = format(selectedText, alertTypes.indexOf(qpSelection));
             }
             if (editor) {
-                common.insertContentToEditor(editor, insertAlert.name, formattedText, true);
+                insertContentToEditor(editor, insertAlert.name, formattedText, true);
 
                 if (qpSelection.startsWith("Note")) {
                     reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".note" });

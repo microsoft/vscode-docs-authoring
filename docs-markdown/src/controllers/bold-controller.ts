@@ -1,10 +1,9 @@
 "use strict";
 
 import * as vscode from "vscode";
-import * as common from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBold, isBoldAndItalic } from "../helper/format-styles";
-import * as log from "../helper/log";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "formatBold";
@@ -23,10 +22,10 @@ export function formatBold() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
-        if (!common.isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
 
@@ -47,14 +46,13 @@ export function formatBold() {
             const formattedText = bold(selectedText);
             insertUnselectedText(editor, formatBold.name, formattedText, range);
         } else {
-            log.debug("Found: " + selectedText);
             const cursorPosition = editor.selection.active;
             range = new vscode.Range(cursorPosition.with(cursorPosition.line,
                 cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
                 cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
             // calls formatter and returns selectedText as MD Bold
             const formattedText = bold(selectedText);
-            common.insertContentToEditor(editor, formatBold.name, formattedText, true);
+            insertContentToEditor(editor, formatBold.name, formattedText, true);
         }
     }
 }

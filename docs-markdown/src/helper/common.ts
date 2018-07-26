@@ -287,7 +287,6 @@ export function checkExtension(extensionName: string, notInstalledMessage?: stri
             output.appendLine(notInstalledMessage);
         }
         return false;
-    } else {
-        return extensionValue.isActive;
     }
+    return extensionValue.isActive;
 }

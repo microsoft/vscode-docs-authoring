@@ -2,8 +2,7 @@
 
 import * as vscode from "vscode";
 import { output } from "../extension";
-import * as common from "../helper/common";
-import * as log from "../helper/log";
+import { checkExtension, generateTimestamp } from "../helper/common";
 import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
 import { formatCode } from "./code-controller";
@@ -24,11 +23,10 @@ export function quickPickMenuCommand() {
 }
 
 export function markdownQuickPick() {
-    log.telemetry(markdownQuickPick.name, "");
     const opts: vscode.QuickPickOptions = { placeHolder: "Which Markdown command would you like to run?" };
     const items: vscode.QuickPickItem[] = [];
 
-    if (common.checkExtension("docsmsft.docs-preview")) {
+    if (checkExtension("docsmsft.docs-preview")) {
         items.push({
             description: "",
             label: "$(browser) Preview",
@@ -94,7 +92,7 @@ export function markdownQuickPick() {
         },
     );
 
-    if (common.checkExtension("docsmsft.docs-article-templates")) {
+    if (checkExtension("docsmsft.docs-article-templates")) {
         items.push({
             description: "",
             label: "$(diff) Template",
@@ -164,7 +162,7 @@ export function markdownQuickPick() {
                 applyTemplate();
                 break;
             default:
-                const { msTimeValue } = common.generateTimestamp();
+                const { msTimeValue } = generateTimestamp();
                 output.appendLine(msTimeValue + " - No quickpick case was hit.");
         }
     });

@@ -1,8 +1,8 @@
 "use strict";
 
 import * as vscode from "vscode";
-import * as common from "../helper/common";
-import * as utilityHelper from "../helper/utility";
+import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { includeBuilder } from "../helper/utility";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "insertInclude";
@@ -26,17 +26,17 @@ export function insertInclude() {
     const os = require("os");
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
         const activeFileDir = path.dirname(editor.document.fileName);
         const folderPath = vscode.workspace.rootPath;
 
-        if (!common.isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
 
-        if (!common.hasValidWorkSpaceRootPath(telemetryCommand)) {
+        if (!hasValidWorkSpaceRootPath(telemetryCommand)) {
             return;
         }
 
@@ -72,11 +72,11 @@ export function insertInclude() {
                     // Strip markdown extension from label text.
                     const includeText = qpSelection.label.replace(".md", "");
                     if (os.type() === "Windows_NT") {
-                        result = utilityHelper.includeBuilder((path.relative(activeFileDir, path.join
+                        result = includeBuilder((path.relative(activeFileDir, path.join
                             (qpSelection.description, qpSelection.label).split("\\").join("\\\\"))), includeText);
                     }
                     if (os.type() === "Darwin") {
-                        result = utilityHelper.includeBuilder((path.relative(activeFileDir, path.join
+                        result = includeBuilder((path.relative(activeFileDir, path.join
                             (qpSelection.description, qpSelection.label).split("//").join("//"))), includeText);
                     }
                 }

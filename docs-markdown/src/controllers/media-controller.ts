@@ -2,9 +2,8 @@
 
 import * as vscode from "vscode";
 import { insertBookmarkExternal, insertBookmarkInternal } from "../controllers/bookmark-controller";
-import * as common from "../helper/common";
-import * as log from "../helper/log";
-import * as utilityHelper from "../helper/utility";
+import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, setCursorPosition } from "../helper/common";
+import { externalLinkBuilder, internalLinkBuilder, videoLinkBuilder } from "../helper/utility";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommandMedia: string = "insertMedia";
@@ -33,7 +32,7 @@ export function insertVideo() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommandMedia + ".video" });
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
         vscode.window.showInputBox({
@@ -44,11 +43,11 @@ export function insertVideo() {
         }).then((val) => {
             // If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
             if (val === undefined) {
-                common.postWarning("Incorrect link syntax. For YouTube videos, use the embed syntax, https://www.youtube.com/embed/<videoID>. For Channel9videos, use the player syntax, https://channel9.msdn.com/<videoID>/player");
+                postWarning("Incorrect link syntax. For YouTube videos, use the embed syntax, https://www.youtube.com/embed/<videoID>. For Channel9videos, use the player syntax, https://channel9.msdn.com/<videoID>/player");
                 return;
             }
-            const contentToInsert = utilityHelper.videoLinkBuilder(val);
-            common.insertContentToEditor(editor, insertVideo.name, contentToInsert);
+            const contentToInsert = videoLinkBuilder(val);
+            insertContentToEditor(editor, insertVideo.name, contentToInsert);
         });
     }
 }
@@ -61,37 +60,36 @@ export function insertURL() {
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
-    } else {
-        const selection = editor.selection;
-        const selectedText = editor.document.getText(selection);
-
-        const options: vscode.InputBoxOptions = {
-            placeHolder: "Enter URL",
-            validateInput: (urlInput) => urlInput.startsWith("http://") || urlInput.startsWith("https://") ? "" :
-                "http:// or https:// is required for URLs. Link will not be added if prefix is not present.",
-            value: "https://",
-            valueSelection: [8, 8],
-        };
-
-        vscode.window.showInputBox(options).then((val) => {
-            // If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
-            if (val === undefined) {
-                common.postWarning("Incorrect link syntax. Abandoning command.");
-            } else {
-                let contentToInsert;
-                if (selection.isEmpty) {
-                    contentToInsert = utilityHelper.externalLinkBuilder(val);
-                    common.insertContentToEditor(editor, insertURL.name, contentToInsert);
-                } else {
-                    contentToInsert = utilityHelper.externalLinkBuilder(val, selectedText);
-                    common.insertContentToEditor(editor, insertURL.name, contentToInsert, true);
-                }
-                common.setCursorPosition(editor, selection.start.line, selection.start.character + contentToInsert.length);
-            }
-        });
     }
+    const selection = editor.selection;
+    const selectedText = editor.document.getText(selection);
+
+    const options: vscode.InputBoxOptions = {
+        placeHolder: "Enter URL",
+        validateInput: (urlInput) => urlInput.startsWith("http://") || urlInput.startsWith("https://") ? "" :
+            "http:// or https:// is required for URLs. Link will not be added if prefix is not present.",
+        value: "https://",
+        valueSelection: [8, 8],
+    };
+
+    vscode.window.showInputBox(options).then((val) => {
+        // If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
+        if (val === undefined) {
+            postWarning("Incorrect link syntax. Abandoning command.");
+        } else {
+            let contentToInsert;
+            if (selection.isEmpty) {
+                contentToInsert = externalLinkBuilder(val);
+                insertContentToEditor(editor, insertURL.name, contentToInsert);
+            } else {
+                contentToInsert = externalLinkBuilder(val, selectedText);
+                insertContentToEditor(editor, insertURL.name, contentToInsert, true);
+            }
+            setCursorPosition(editor, selection.start.line, selection.start.character + contentToInsert.length);
+        }
+    });
 }
 
 /**
@@ -117,95 +115,93 @@ export function getFilesShowQuickPick(isArt: any, altText: string) {
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
-    } else {
-        const selection = editor.selection;
-        const folderPath = vscode.workspace.rootPath;
-        let selectedText = editor.document.getText(selection);
+    }
+    const selection = editor.selection;
+    const folderPath = vscode.workspace.rootPath;
+    let selectedText = editor.document.getText(selection);
 
-        const activeFileDir = path.dirname(editor.document.fileName);
+    const activeFileDir = path.dirname(editor.document.fileName);
 
-        // recursively get all the files from the root folder
-        dir.files(folderPath, (err: any, files: any) => {
-            if (err) {
-                vscode.window.showErrorMessage(err);
-                throw err;
-            }
+    // recursively get all the files from the root folder
+    dir.files(folderPath, (err: any, files: any) => {
+        if (err) {
+            vscode.window.showErrorMessage(err);
+            throw err;
+        }
 
-            const items: vscode.QuickPickItem[] = [];
-            files.sort();
+        const items: vscode.QuickPickItem[] = [];
+        files.sort();
 
-            if (isArt) {
+        if (isArt) {
 
-                files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+            files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+                items.push({ label: path.basename(file), description: path.dirname(file) });
+
+            });
+        } else {
+            files.filter((file: any) => markdownExtensionFilter.indexOf(path.extname(file.toLowerCase()))
+                !== -1).forEach((file: any) => {
                     items.push({ label: path.basename(file), description: path.dirname(file) });
-
                 });
+        }
+
+        // show the quick pick menu
+        const selectionPick = vscode.window.showQuickPick(items);
+        selectionPick.then((qpSelection) => {
+            if (!qpSelection) {
+                return;
             } else {
-                files.filter((file: any) => markdownExtensionFilter.indexOf(path.extname(file.toLowerCase()))
-                    !== -1).forEach((file: any) => {
-                        items.push({ label: path.basename(file), description: path.dirname(file) });
-                    });
-            }
-
-            // show the quick pick menu
-            const selectionPick = vscode.window.showQuickPick(items);
-            selectionPick.then((qpSelection) => {
-                if (!qpSelection) {
-                    return;
-                } else {
-                    let result: any;
-                    const altTextFileName = qpSelection.label;
-                    // Gets the H1 content as default name if unselected text. Will filter undefinition H1, non-MD file.
-                    if (!isArt && selectedText === "") {
-                        // gets the content for chosen file with utf-8 format
-                        const fullPath = path.join(qpSelection.description, qpSelection.label);
-                        let content = fs.readFileSync(fullPath, "utf8");
-                        // Separation yaml.
-                        const yamlMatch = content.match(yamlTextRegex);
-                        if (yamlMatch != null) {
-                            content = yamlMatch[2];
-                        }
-                        content = "\n" + content;
-                        const match = content.match(h1TextRegex);
-                        if (match != null) {
-                            selectedText = match[2].trim();
-                            log.debug("Find H1 text " + selectedText + "in " + fullPath + " file");
-                        }
+                let result: any;
+                const altTextFileName = qpSelection.label;
+                // Gets the H1 content as default name if unselected text. Will filter undefinition H1, non-MD file.
+                if (!isArt && selectedText === "") {
+                    // gets the content for chosen file with utf-8 format
+                    const fullPath = path.join(qpSelection.description, qpSelection.label);
+                    let content = fs.readFileSync(fullPath, "utf8");
+                    // Separation yaml.
+                    const yamlMatch = content.match(yamlTextRegex);
+                    if (yamlMatch != null) {
+                        content = yamlMatch[2];
                     }
-
-                    // Construct and write out links
-                    if (isArt && altText) {
-                        if (altText.length > 70) {
-                            vscode.window.showWarningMessage("Alt text exceeds 70 characters!");
-                        } else {
-                            result = utilityHelper.internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
-                                (qpSelection.description, qpSelection.label).split("\\").join("\\\\")), altText);
-                        }
-
-                    } else if (isArt && altText === "") {
-                        result = utilityHelper.internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
-                            (qpSelection.description, qpSelection.label).split("\\").join("\\\\")), altTextFileName);
-                    } else if (!isArt) {
-                        result = utilityHelper.internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
-                            (qpSelection.description, qpSelection.label).split("\\").join("\\\\")), selectedText);
-                    }
-
-                    if (os.type() === "Darwin") {
-                        result = utilityHelper.internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
-                            (qpSelection.description, qpSelection.label).split("//").join("//")), selectedText);
-                    }
-
-                    // Insert content into topic
-                    common.insertContentToEditor(editor, Insert.name, result, true);
-                    if (!isArt) {
-                        common.setCursorPosition(editor, selection.start.line, selection.start.character + result.length);
+                    content = "\n" + content;
+                    const match = content.match(h1TextRegex);
+                    if (match != null) {
+                        selectedText = match[2].trim();
                     }
                 }
-            });
+
+                // Construct and write out links
+                if (isArt && altText) {
+                    if (altText.length > 70) {
+                        vscode.window.showWarningMessage("Alt text exceeds 70 characters!");
+                    } else {
+                        result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
+                            (qpSelection.description, qpSelection.label).split("\\").join("\\\\")), altText);
+                    }
+
+                } else if (isArt && altText === "") {
+                    result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
+                        (qpSelection.description, qpSelection.label).split("\\").join("\\\\")), altTextFileName);
+                } else if (!isArt) {
+                    result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
+                        (qpSelection.description, qpSelection.label).split("\\").join("\\\\")), selectedText);
+                }
+
+                if (os.type() === "Darwin") {
+                    result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
+                        (qpSelection.description, qpSelection.label).split("//").join("//")), selectedText);
+                }
+
+                // Insert content into topic
+                insertContentToEditor(editor, Insert.name, result, true);
+                if (!isArt) {
+                    setCursorPosition(editor, selection.start.line, selection.start.character + result.length);
+                }
+            }
         });
-    }
+    });
 }
 
 /**
@@ -218,7 +214,7 @@ export function Insert(isArt: any) {
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
         const selectedText = editor.document.getText(editor.selection);
@@ -226,22 +222,21 @@ export function Insert(isArt: any) {
         // determines the name to set in the ValidEditor check
         if (isArt) {
             actionType = "Art";
-            log.telemetry(insertImage.name, "");
         } else {
             actionType = "Link";
             reporter.sendTelemetryEvent("command", { command: telemetryCommandLink + ".internal" });
         }
 
         // checks for valid environment
-        if (!common.isValidEditor(editor, false, actionType)) {
+        if (!isValidEditor(editor, false, actionType)) {
             return;
         }
 
-        if (!common.isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
 
-        if (!common.hasValidWorkSpaceRootPath(telemetryCommandLink)) {
+        if (!hasValidWorkSpaceRootPath(telemetryCommandLink)) {
             return;
         }
 
@@ -287,14 +282,14 @@ export function Insert(isArt: any) {
 export function selectLinkType() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
-        if (!common.isValidEditor(editor, false, "insert link")) {
+        if (!isValidEditor(editor, false, "insert link")) {
             return;
         }
 
-        if (!common.isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
 
@@ -315,14 +310,14 @@ export function selectLinkType() {
 export function selectMediaType() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
-        if (!common.isValidEditor(editor, false, "insert media")) {
+        if (!isValidEditor(editor, false, "insert media")) {
             return;
         }
 
-        if (!common.isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
 

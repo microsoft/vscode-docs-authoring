@@ -2,9 +2,13 @@
 
 import * as vscode from "vscode";
 import { ListType } from "../constants/list-type";
-import * as common from "../helper/common";
-import * as listHelper from "../helper/list";
-import * as log from "../helper/log";
+import { output } from "../extension";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import {
+    addIndent, autolistAlpha, autolistNumbered, checkEmptyLine, checkEmptySelection, CountIndent, createBulletedListFromText, createNumberedListFromText,
+    fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, insertList, isBulletedLine,
+    nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern,
+} from "../helper/list";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "insertList";
@@ -28,21 +32,21 @@ export function insertNumberedList() {
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
-        if (!common.isValidEditor(editor, false, "insert numbered list")) {
+        if (!isValidEditor(editor, false, "insert numbered list")) {
             return;
         }
 
-        if (!common.isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
 
-        if (listHelper.checkEmptyLine(editor) || listHelper.checkEmptySelection(editor)) {
-            listHelper.insertList(editor, ListType.Numbered);
+        if (checkEmptyLine(editor) || checkEmptySelection(editor)) {
+            insertList(editor, ListType.Numbered);
         } else {
-            listHelper.createNumberedListFromText(editor);
+            createNumberedListFromText(editor);
         }
     }
 }
@@ -55,25 +59,25 @@ export function insertBulletedList() {
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
-        if (!common.isValidEditor(editor, false, "insert bulleted list")) {
+        if (!isValidEditor(editor, false, "insert bulleted list")) {
             return;
         }
 
-        if (!common.isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
 
         try {
-            if (listHelper.checkEmptyLine(editor)) {
-                listHelper.insertList(editor, ListType.Bulleted);
+            if (checkEmptyLine(editor)) {
+                insertList(editor, ListType.Bulleted);
             } else {
-                listHelper.createBulletedListFromText(editor);
+                createBulletedListFromText(editor);
             }
         } catch (error) {
-            log.debug(error);
+            output.appendLine(error);
         }
     }
 }
@@ -84,48 +88,48 @@ export function insertBulletedList() {
 export function automaticList() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
         try {
-            if (!common.isValidEditor(editor, false, "automatic list")) {
+            if (!isValidEditor(editor, false, "automatic list")) {
                 return;
             }
 
-            if (!common.isMarkdownFileCheck(editor, false)) {
+            if (!isMarkdownFileCheck(editor, false)) {
                 return;
             }
 
             const cursorPosition = editor.selection.active;
-            const numbered = listHelper.getNumberedLine(editor.document.lineAt(cursorPosition.line)
+            const numbered = getNumberedLine(editor.document.lineAt(cursorPosition.line)
                 .text.substring(0, cursorPosition.character));
-            const alphabet = listHelper.getAlphabetLine(editor.document.lineAt(cursorPosition.line)
+            const alphabet = getAlphabetLine(editor.document.lineAt(cursorPosition.line)
                 .text.substring(0, cursorPosition.character));
 
             if (numbered > 0) {
-                listHelper.autolistNumbered(editor, cursorPosition, numbered);
+                autolistNumbered(editor, cursorPosition, numbered);
             } else if (alphabet > 0) {
-                listHelper.autolistAlpha(editor, cursorPosition, alphabet);
-            } else if (listHelper.isBulletedLine(editor.document.lineAt(cursorPosition.line).text.trim())
+                autolistAlpha(editor, cursorPosition, alphabet);
+            } else if (isBulletedLine(editor.document.lineAt(cursorPosition.line).text.trim())
                 && !cursorPosition.isEqual(cursorPosition.with(cursorPosition.line, 0))) {
                 // Check if the line is a bulleted line
                 const strLine = editor.document.lineAt(cursorPosition.line).text;
                 let insertText = "";
-                const indent = listHelper.addIndent(editor.document.lineAt(cursorPosition.line).text);
+                const indent = addIndent(editor.document.lineAt(cursorPosition.line).text);
                 if (strLine.trim() === "-" && (strLine.indexOf("-") === strLine.length - 1)) {
                     insertText = " \n" + indent + "- ";
                 } else {
                     insertText = "\n" + indent + "- ";
                 }
-                common.insertContentToEditor(editor, automaticList.name, insertText, false);
+                insertContentToEditor(editor, automaticList.name, insertText, false);
             } else {
                 // default case
                 const defaultText = "\n";
-                common.insertContentToEditor(editor, automaticList.name, defaultText, false);
+                insertContentToEditor(editor, automaticList.name, defaultText, false);
             }
         } catch (Exception) {
             const exceptionText = "\n";
-            common.insertContentToEditor(editor, automaticList.name + ": catch exception handling",
+            insertContentToEditor(editor, automaticList.name + ": catch exception handling",
                 exceptionText, false);
         }
     }
@@ -137,16 +141,16 @@ export function automaticList() {
 export function insertNestedList() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
         const cursorPosition = editor.selection.active;
 
-        if (!common.isValidEditor(editor, false, "insert nested list")) {
+        if (!isValidEditor(editor, false, "insert nested list")) {
             return;
         }
 
-        if (!common.isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
 
@@ -160,7 +164,7 @@ export function insertNestedList() {
             for (let i = startSelected.line; i <= endSelected.line; i++) {
                 const lineText = editor.document.lineAt(i).text;
 
-                selectedLines.push(listHelper.tabPattern + lineText);
+                selectedLines.push(tabPattern + lineText);
             }
 
             // Replace editor's text
@@ -168,28 +172,28 @@ export function insertNestedList() {
                 endSelected.line, editor.document.lineAt(endSelected.line).text.length);
             const updateText =
                 selectedLines.join("\n");
-            common.insertContentToEditor(editor, insertNestedList.name, updateText, true, range);
-        } else if (!listHelper.checkEmptyLine(editor)) {
+            insertContentToEditor(editor, insertNestedList.name, updateText, true, range);
+        } else if (!checkEmptyLine(editor)) {
             const text = editor.document.getText(new vscode.Range(cursorPosition.with(cursorPosition.line, 0),
                 cursorPosition.with(cursorPosition.line, editor.selection.end.character)));
-            const indentCount = listHelper.CountIndent(editor.document.lineAt(cursorPosition.line).text);
-            const numberedRegex = new RegExp(listHelper.fixedNumberedListWithIndentRegexTemplate.replace("{0}"
+            const indentCount = CountIndent(editor.document.lineAt(cursorPosition.line).text);
+            const numberedRegex = new RegExp(fixedNumberedListWithIndentRegexTemplate.replace("{0}"
                 , indentCount.toString()));
 
             // Handle nested list of bullet
-            if (listHelper.fixedBulletedListRegex.exec(text) != null) {
+            if (fixedBulletedListRegex.exec(text) != null) {
                 editor.edit((update) => {
                     update.insert(cursorPosition.with(cursorPosition.line, 0),
-                        listHelper.tabPattern);
+                        tabPattern);
                 });
-            } else if (listHelper.getNumberedLineWithRegex(numberedRegex, text) > 0) {
-                listHelper.nestedNumberedList(editor, cursorPosition, indentCount);
-                common.insertContentToEditor(editor, insertNestedList.name, listHelper.tabPattern, false);
+            } else if (getNumberedLineWithRegex(numberedRegex, text) > 0) {
+                nestedNumberedList(editor, cursorPosition, indentCount);
+                insertContentToEditor(editor, insertNestedList.name, tabPattern, false);
             } else {
-                common.insertContentToEditor(editor, insertNestedList.name, listHelper.tabPattern, false);
+                insertContentToEditor(editor, insertNestedList.name, tabPattern, false);
             }
         } else {
-            common.insertContentToEditor(editor, insertNestedList.name, listHelper.tabPattern, false);
+            insertContentToEditor(editor, insertNestedList.name, tabPattern, false);
         }
     }
 }
@@ -200,10 +204,10 @@ export function insertNestedList() {
 export function removeNestedList() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        common.noActiveEditorMessage();
+        noActiveEditorMessage();
         return;
     } else {
-        if (!common.isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
 
@@ -211,10 +215,10 @@ export function removeNestedList() {
         if (!editor.selection.isSingleLine) {
 
             // Delete multiple line
-            listHelper.removeNestedListMultipleLine(editor);
+            removeNestedListMultipleLine(editor);
 
         } else {
-            listHelper.removeNestedListSingleLine(editor);
+            removeNestedListSingleLine(editor);
         }
     }
 }
