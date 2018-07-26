@@ -48,7 +48,11 @@ export class MarkdocsServer {
         }
 
         try {
-            this.spawnProcess = childProcess.spawn(serverPath);
+            if (serverPath.indexOf("MarkdocsService.dll") !== -1) {
+                this.spawnProcess = childProcess.spawn("dotnet", [serverPath]);
+            } else {
+                this.spawnProcess = childProcess.spawn(serverPath);
+            }
         } catch (err) {
             window.showErrorMessage(`[Markdocs Error]: ${err}`);
             return;
@@ -70,9 +74,9 @@ export class MarkdocsServer {
         await this.ensureMarkdocsServerWorkAsync();
     }
 
-    public stopMarkdocsServer() {
-        if (this.hasAlreadyStartAsync())
-        {
+    public async stopMarkdocsServerAsync() {
+        const hasStarted = await this.hasAlreadyStartAsync();
+        if (hasStarted) {
             this.spawnProcess.kill();
         }
     }
@@ -107,6 +111,7 @@ export class MarkdocsServer {
 
     private getServerPath() {
         const serverPaths = [
+            ".markdocs/MarkdocsService.dll",
             ".markdocs/MarkdocsService.exe",
             ".markdocs/MarkdocsService",
         ];
