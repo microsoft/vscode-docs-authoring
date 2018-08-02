@@ -2,15 +2,14 @@
 
 import * as vscode from "vscode";
 import { output } from "../extension";
-import * as common from "../helper/common";
-import * as log from "../helper/log";
+import { checkExtension, generateTimestamp } from "../helper/common";
 import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
 import { formatCode } from "./code-controller";
 import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
-import { insertImage, insertVideo, selectLinkType } from "./media-controller";
+import { Insert, insertImage, insertURL, insertVideo, selectLinkType } from "./media-controller";
 import { previewTopic } from "./preview-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
@@ -24,11 +23,10 @@ export function quickPickMenuCommand() {
 }
 
 export function markdownQuickPick() {
-    log.telemetry(markdownQuickPick.name, "");
     const opts: vscode.QuickPickOptions = { placeHolder: "Which Markdown command would you like to run?" };
     const items: vscode.QuickPickItem[] = [];
 
-    if (common.checkExtension("docsmsft.docs-preview")) {
+    if (checkExtension("docsmsft.docs-preview")) {
         items.push({
             description: "",
             label: "$(browser) Preview",
@@ -65,8 +63,16 @@ export function markdownQuickPick() {
             label: "$(diff-added) Table",
         },
         {
-            description: "Insert internal or external link",
-            label: "$(link) Link",
+            description: "",
+            label: "$(file-symlink-directory) Link to file in repo",
+        },
+        {
+            description: "",
+            label: "$(globe) Link to web page",
+        },
+        {
+            description: "",
+            label: "$(link) Link to heading",
         },
         {
             description: "",
@@ -86,7 +92,7 @@ export function markdownQuickPick() {
         },
     );
 
-    if (common.checkExtension("docsmsft.docs-article-templates")) {
+    if (checkExtension("docsmsft.docs-article-templates")) {
         items.push({
             description: "",
             label: "$(diff) Template",
@@ -128,7 +134,13 @@ export function markdownQuickPick() {
             case "table":
                 insertTable();
                 break;
-            case "link":
+            case "link to file in repo":
+                Insert(false);
+                break;
+            case "link to web page":
+                insertURL();
+                break;
+            case "link to heading":
                 selectLinkType();
                 break;
             case "image":
@@ -150,7 +162,7 @@ export function markdownQuickPick() {
                 applyTemplate();
                 break;
             default:
-                const { msTimeValue } = common.generateTimestamp();
+                const { msTimeValue } = generateTimestamp();
                 output.appendLine(msTimeValue + " - No quickpick case was hit.");
         }
     });

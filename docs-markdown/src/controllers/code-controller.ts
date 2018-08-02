@@ -2,10 +2,9 @@
 
 import * as vscode from "vscode";
 import { DocsCodeLanguages } from "../constants/docs-code-languages";
-import * as common from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
-import * as log from "../helper/log";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "formatCode";
@@ -22,32 +21,33 @@ export function codeFormattingCommand() {
  */
 export function formatCode() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
-
     const editor = vscode.window.activeTextEditor;
-
-    if (!common.isValidEditor(editor, true, "format code")) {
+    if (!editor) {
+        noActiveEditorMessage();
         return;
-    }
+    } else {
+        if (!isValidEditor(editor, true, "format code")) {
+            return;
+        }
 
-    if (!common.isMarkdownFileCheck(editor, false)) {
-        return;
-    }
+        if (!isMarkdownFileCheck(editor, false)) {
+            return;
+        }
 
-    const selection = editor.selection;
-    const selectedText = editor.document.getText(selection);
-    // Show code language list if the selected text spans multiple lines and is not already formatted as code block.
-    // If the selected text is already in a code block, delete the fenced code wrapper.
-    // Single line selections will not include a code language.
-    if (!selection.isSingleLine) {
-        if (!isMultiLineCode(selectedText)) {
-            showSupportedLanguages(selectedText, selection);
+        const selection = editor.selection;
+        const selectedText = editor.document.getText(selection);
+        // Show code language list if the selected text spans multiple lines and is not already formatted as code block.
+        // If the selected text is already in a code block, delete the fenced code wrapper.
+        // Single line selections will not include a code language.
+        if (!selection.isSingleLine) {
+            if (!isMultiLineCode(selectedText)) {
+                showSupportedLanguages(selectedText, selection);
+            } else {
+                applyCodeFormatting(selectedText, selection, "");
+            }
         } else {
             applyCodeFormatting(selectedText, selection, "");
-            log.telemetry(formatCode.name, "");
         }
-    } else {
-        applyCodeFormatting(selectedText, selection, "");
-        log.telemetry(formatCode.name, "");
     }
 }
 
@@ -89,7 +89,7 @@ export function format(content: string, codeLang: string, isSingleLine: boolean,
  */
 
 export function showSupportedLanguages(content: string, selectedContent: any) {
-    let selectedCodeLang;
+    let selectedCodeLang: any;
     const supportedLanguages: any = [];
     supportedLanguages.push("none");
     DocsCodeLanguages.sort().forEach((codeLang) => {
@@ -101,7 +101,7 @@ export function showSupportedLanguages(content: string, selectedContent: any) {
         if (!qpSelection || qpSelection === "none") {
             selectedCodeLang = "";
         }
-        log.telemetry(formatCode.name, selectedCodeLang);
+
         applyCodeFormatting(content, selectedContent, selectedCodeLang);
     });
 }
@@ -109,24 +109,27 @@ export function showSupportedLanguages(content: string, selectedContent: any) {
 export function applyCodeFormatting(content: string, selectedContent: any, codeLang: string) {
     const selectedText = content.trim();
     const editor = vscode.window.activeTextEditor;
-    const emptyRange = new vscode.Range(editor.selection.active, editor.selection.active);
-
-    if (selectedText === "") {
-        const cursorPosition = editor.selection.active;
-        // assumes the range of code syntax
-        const range = new vscode.Range(cursorPosition.with(cursorPosition.line, cursorPosition.character - 1
-            < 0 ? 0 : cursorPosition.character - 1), cursorPosition.with
-                (cursorPosition.line, cursorPosition.character + 1));
-
-        const formattedText = format(selectedText, "", selectedContent.isSingleLine, range);
-
-        insertUnselectedText(editor, formatCode.name, formattedText, range);
+    if (!editor) {
+        noActiveEditorMessage();
+        return;
     } else {
-        log.debug("Found: " + selectedText);
+        const emptyRange = new vscode.Range(editor.selection.active, editor.selection.active);
 
-        // calls formatter and returns selectedText as MD Code
-        const formattedText = format(selectedText, codeLang, selectedContent.isSingleLine, emptyRange);
+        if (selectedText === "") {
+            const cursorPosition = editor.selection.active;
+            // assumes the range of code syntax
+            const range = new vscode.Range(cursorPosition.with(cursorPosition.line, cursorPosition.character - 1
+                < 0 ? 0 : cursorPosition.character - 1), cursorPosition.with
+                    (cursorPosition.line, cursorPosition.character + 1));
 
-        common.insertContentToEditor(editor, formatCode.name, formattedText, true);
+            const formattedText = format(selectedText, "", selectedContent.isSingleLine, range);
+
+            insertUnselectedText(editor, formatCode.name, formattedText, range);
+        } else {
+            // calls formatter and returns selectedText as MD Code
+            const formattedText = format(selectedText, codeLang, selectedContent.isSingleLine, emptyRange);
+
+            insertContentToEditor(editor, formatCode.name, formattedText, true);
+        }
     }
 }
