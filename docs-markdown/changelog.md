@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.1.3 (August 2nd, 2018)
+
+- Link UI updates
+- Output stream update
+- VSCode engine update
+
 ## 0.1.2 (July 3rd, 2018)
 
 - Remove quickpick button from navigation menu
