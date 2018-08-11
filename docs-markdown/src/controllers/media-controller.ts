@@ -16,6 +16,7 @@ export function insertLinksAndMediaCommands() {
         { command: insertLink.name, callback: insertLink },
         { command: insertImage.name, callback: insertImage },
         { command: selectLinkType.name, callback: selectLinkType },
+        { command: selectLinkTypeToolbar.name, callback: selectLinkTypeToolbar },
         { command: selectMediaType.name, callback: selectMediaType },
     ];
     return commands;
@@ -298,6 +299,38 @@ export function selectLinkType() {
             if (qpSelection === linkTypes[0]) {
                 insertBookmarkInternal();
             } else if (qpSelection === linkTypes[1]) {
+                insertBookmarkExternal();
+            }
+        });
+    }
+}
+
+/**
+ * Creates an entry point for creating an internal (link type) or external link (url type).
+ */
+export function selectLinkTypeToolbar() {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        noActiveEditorMessage();
+        return;
+    } else {
+        if (!isValidEditor(editor, false, "insert link")) {
+            return;
+        }
+
+        if (!isMarkdownFileCheck(editor, false)) {
+            return;
+        }
+
+        const linkTypes = ["External", "Internal", "Bookmark in this file", "Bookmark in another file"];
+        vscode.window.showQuickPick(linkTypes).then((qpSelection) => {
+            if (qpSelection === linkTypes[0]) {
+                insertURL();
+            } else if (qpSelection === linkTypes[1]) {
+                Insert(false);
+            } else if (qpSelection === linkTypes[2]) {
+                insertBookmarkInternal();
+            } else if (qpSelection === linkTypes[3]) {
                 insertBookmarkExternal();
             }
         });
