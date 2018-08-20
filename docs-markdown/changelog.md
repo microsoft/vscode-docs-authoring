@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.1.4 (TBD)
+## 0.1.4 (August 20th, 2018)
 
 - Update toolbar link options
 - Bookmarks/headings no longer link to H1; H2-H6 are still supported
