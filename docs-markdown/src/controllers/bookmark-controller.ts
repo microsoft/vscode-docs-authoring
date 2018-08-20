@@ -9,7 +9,7 @@ import { reporter } from "../telemetry/telemetry";
 const telemetryCommand: string = "insertBookmark";
 const markdownExtensionFilter = [".md"];
 
-export const headingTextRegex = /^ {0,3}(#{1,6})(.*)/gm;
+export const headingTextRegex = /^ {0,3}(#{2,6})(.*)/gm;
 export const yamlTextRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
 
 export function insertBookmarkCommands() {

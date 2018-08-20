@@ -68,7 +68,7 @@ export class UiHelper {
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Insert Link";
         statusBarItem.show();
-        statusBarItem.command = "selectLinkType";
+        statusBarItem.command = "selectLinkTypeToolbar";
     }
 
     private uiImage() {
