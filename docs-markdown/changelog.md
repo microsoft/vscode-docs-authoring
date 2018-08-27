@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.5 (TBD)
+
+- Bookmark/heading quickpick update
+
 ## 0.1.4 (August 20th, 2018)
 
 - Update toolbar link options
