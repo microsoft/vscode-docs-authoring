@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.1.5 (TBD)
+## 0.1.5 (September 25th, 2018)
 
 - Bookmark/heading quickpick update
 
