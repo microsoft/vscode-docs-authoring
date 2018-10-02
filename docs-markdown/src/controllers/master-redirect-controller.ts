@@ -40,12 +40,13 @@ export class RedirectionFile {
     // Members mapping to JSON elements in master redirection file
     public source_path: string;
     public redirect_url: string;
-    public redirect_document_id: boolean = false;
+    public redirect_document_id: boolean;
 
-    constructor(filePath: string, redirectUrl: string) {
+    constructor(filePath: string, redirectUrl: string, redirectDocumentId: boolean) {
         this.fileFullPath = filePath;
         this.source_path = this.getRelativePathToRoot(filePath);
         this.redirect_url = redirectUrl;
+        this.redirect_document_id = redirectDocumentId;
     }
 
     public getRelativePathToRoot(filePath: any): string {
@@ -122,7 +123,11 @@ function generateMasterRedirectionFile() {
                             const yamlHeader = YAML.parse(metadataContent.toLowerCase());
 
                             if (yamlHeader != null && yamlHeader.redirect_url != null) {
-                                redirectionFiles.push(new RedirectionFile(file, yamlHeader.redirect_url));
+                                if (yamlHeader.redirect_document_id != null) {
+                                    redirectionFiles.push(new RedirectionFile(file, yamlHeader.redirect_url, yamlHeader.redirect_document_id));
+                                } else {
+                                    redirectionFiles.push(new RedirectionFile(file, yamlHeader.redirect_url, false));
+                                }
                                 showStatusMessage("Added " + file + " to list.");
                             }
                         }
