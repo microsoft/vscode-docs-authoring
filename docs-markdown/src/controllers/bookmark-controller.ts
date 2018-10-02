@@ -1,7 +1,6 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { output } from "../extension";
 import { insertContentToEditor, noActiveEditorMessage } from "../helper/common";
 import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/utility";
 import { reporter } from "../telemetry/telemetry";
@@ -75,45 +74,48 @@ export function insertBookmarkExternal() {
 
             if (!qpSelection) {
                 return;
-            } else {
-                if (os.type() === "Windows_NT") {
-                    fullPath = qpSelection.description + "\\" + qpSelection.label;
-                } else {
-                    fullPath = qpSelection.description + "//" + qpSelection.label;
-                }
+            }
 
-                const content = fs.readFileSync(fullPath, "utf8");
-                const headings = content.match(headingTextRegex);
-                if (!headings) {
-                    vscode.window.showErrorMessage("No headings found in file, cannot insert bookmark!");
+            if (os.type() === "Windows_NT") {
+                fullPath = qpSelection.description + "\\" + qpSelection.label;
+            } else {
+                fullPath = qpSelection.description + "//" + qpSelection.label;
+            }
+
+            const content = fs.readFileSync(fullPath, "utf8");
+            const headings = content.match(headingTextRegex);
+
+            if (!headings) {
+                vscode.window.showErrorMessage("No headings found in file, cannot insert bookmark!");
+                return;
+            }
+
+            const adjustedHeadingsItems: vscode.QuickPickItem[] = [];
+            const adjustedHeadings = addbookmarkIdentifier(headings);
+            adjustedHeadings.forEach((adjustedHeading: string) => {
+                adjustedHeadingsItems.push({ label: adjustedHeading, detail: " " });
+            });
+
+            vscode.window.showQuickPick(adjustedHeadingsItems).then((headingSelection) => {
+                if (!headingSelection) {
                     return;
                 }
-
-                const adjustedHeadings = addbookmarkIdentifier(headings);
-                // output.appendLine("External headings: " + adjustedHeadings.toString());
-                // tslint:disable-next-line:no-console
-                console.log("Adjusted Headings: " + adjustedHeadings);
-                vscode.window.showQuickPick(adjustedHeadings).then((headingSelection) => {
-                    if (!qpSelection.description) {
-                        return;
+                if (path.resolve(activeFilePath) === path.resolve(qpSelection.label.split("\\").join("\\\\")) && path.basename(activeFileName) === qpSelection.label) {
+                    bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, "");
+                } else {
+                    if (os.type() === "Windows_NT") {
+                        result = path.relative(activeFilePath, path.join
+                            (qpSelection.description, qpSelection.label).split("\\").join("\\\\"));
                     } else {
-                        if (path.resolve(activeFilePath) === path.resolve(qpSelection.description.split("\\").join("\\\\")) && path.basename(activeFileName) === qpSelection.label) {
-                            bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection, "");
-                        } else {
-                            if (os.type() === "Windows_NT") {
-                                result = path.relative(activeFilePath, path.join
-                                    (qpSelection.description, qpSelection.label).split("\\").join("\\\\"));
-                            } else {
-                                result = path.relative(activeFilePath, path.join
-                                    (qpSelection.description, qpSelection.label).split("//").join("//"));
-                            }
-                            bookmark = bookmarkBuilder
-                                (editor.document.getText(editor.selection), headingSelection, result);
-                        }
-                        insertContentToEditor(editor, "InsertBookmarkExternal", bookmark, true, editor.selection);
+                        result = path.relative(activeFilePath, path.join
+                            (qpSelection.description, qpSelection.label).split("//").join("//"));
                     }
-                });
-            }
+                    bookmark = bookmarkBuilder
+                        (editor.document.getText(editor.selection), headingSelection.label, result);
+                }
+                insertContentToEditor(editor, "InsertBookmarkExternal", bookmark, true, editor.selection);
+
+            });
         });
     });
 }
@@ -128,17 +130,24 @@ export function insertBookmarkInternal() {
         return;
     }
     const content = editor.document.getText();
-    const items = content.match(headingTextRegex);
-    if (!items) {
+    const headings = content.match(headingTextRegex);
+    if (!headings) {
         vscode.window.showErrorMessage("No headings found in file, cannot insert bookmark!");
         return;
     }
 
     // put number to duplicate names in position order
-    const adjustedItems = addbookmarkIdentifier(items);
-    output.appendLine("Internal Headings: " + adjustedItems.toString());
-    vscode.window.showQuickPick(adjustedItems).then((qpSelection) => {
-        const bookmark = bookmarkBuilder(editor.document.getText(editor.selection), qpSelection, "");
+    const adjustedHeadings = addbookmarkIdentifier(headings);
+    const adjustedHeadingsItems: vscode.QuickPickItem[] = [];
+    adjustedHeadings.forEach((heading: string) => {
+        adjustedHeadingsItems.push({ label: heading, detail: " " });
+    });
+
+    vscode.window.showQuickPick(adjustedHeadingsItems).then((headingSelection) => {
+        if (!headingSelection) {
+            return;
+        }
+        const bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, "");
         insertContentToEditor(editor, "InsertBookmarkInternal", bookmark, true, editor.selection);
     });
 }
