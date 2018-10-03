@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.1.3 (September 25th, 2018)
+## 0.1.3 (October 3rd, 2018)
 
 - Remove vscode-extension-telemetry dependency
 - Update command name
