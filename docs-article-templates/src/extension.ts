@@ -3,7 +3,6 @@
 import * as vscode from "vscode";
 import { applyTemplateCommand } from "./controllers/template-controller";
 import { postError } from "./helper/common";
-import { Reporter } from "./telemetry/telemetry";
 
 export const output = vscode.window.createOutputChannel("docs-article-templates");
 
@@ -11,9 +10,6 @@ export function activate(context: vscode.ExtensionContext) {
     // Creates an array of commands from each command file.
     const TemplateCommands: any = [];
     applyTemplateCommand().forEach((cmd) => TemplateCommands.push(cmd));
-
-    // Telemetry
-    context.subscriptions.push(new Reporter(context));
 
     try {
         TemplateCommands.map((cmd: any) => {
