@@ -69,6 +69,10 @@ export function isValidEditor(editor: vscode.TextEditor, testSelection: boolean,
     return true;
 }
 
+export function noActiveEditorMessage() {
+    postWarning("No active editor. Abandoning command.");
+}
+
 export function GetEditorText(editor: vscode.TextEditor, senderName: string): string {
     let content = "";
     const emptyString = "";
@@ -277,12 +281,12 @@ export function generateTimestamp() {
  * Check for active extensions
  */
 export function checkExtension(extensionName: string, notInstalledMessage?: string) {
-    try {
-        return vscode.extensions.getExtension(extensionName).isActive;
-    } catch (error) {
+    const extensionValue = vscode.extensions.getExtension(extensionName);
+    if (!extensionValue) {
         if (notInstalledMessage) {
             output.appendLine(notInstalledMessage);
         }
         return false;
     }
+    return extensionValue.isActive;
 }

@@ -1,5 +1,24 @@
 # Change Log
 
+## 0.1.5 (October 3rd, 2018)
+
+- Bookmark/heading quickpick update
+
+## 0.1.4 (August 20th, 2018)
+
+- Update toolbar link options
+- Bookmarks/headings no longer link to H1; H2-H6 are still supported
+
+## 0.1.3 (August 2nd, 2018)
+
+- Link UI updates
+- Output stream update
+- VSCode engine update
+
+## 0.1.2 (July 3rd, 2018)
+
+- Remove quickpick button from navigation menu
+
 ## 0.1.1 (June 20th, 2018)
 
 - Update readme links

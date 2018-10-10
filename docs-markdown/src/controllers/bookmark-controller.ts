@@ -1,15 +1,14 @@
 "use strict";
 
 import * as vscode from "vscode";
-import * as common from "../helper/common";
-import * as log from "../helper/log";
-import * as utilityHelper from "../helper/utility";
+import { insertContentToEditor, noActiveEditorMessage } from "../helper/common";
+import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/utility";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "insertBookmark";
 const markdownExtensionFilter = [".md"];
 
-export const headingTextRegex = /^ {0,3}(#{1,6})(.*)/gm;
+export const headingTextRegex = /^ {0,3}(#{2,6})(.*)/gm;
 export const yamlTextRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
 
 export function insertBookmarkCommands() {
@@ -33,14 +32,11 @@ export function insertBookmarkExternal() {
     const fs = require("fs");
 
     const editor = vscode.window.activeTextEditor;
-
-    if (!common.hasValidWorkSpaceRootPath(telemetryCommand)) {
+    if (!editor) {
+        noActiveEditorMessage();
         return;
     }
-
-    // The active file should be used as the origin for relative links.
-    // The path is split so the file type is not included when resolving the path.
-    const activeFileName = vscode.window.activeTextEditor.document.fileName;
+    const activeFileName = editor.document.fileName;
     const activeFilePath = path.dirname(activeFileName);
 
     // Check to see if the active file has been saved.  If it has not been saved, warn the user.
@@ -48,8 +44,7 @@ export function insertBookmarkExternal() {
     const fileExists = require("file-exists");
 
     if (!fileExists(activeFileName)) {
-        vscode.window.showWarningMessage(activeFilePath +
-            " is not saved.  Cannot accurately resolve path to create link.");
+        vscode.window.showWarningMessage(`${activeFilePath} is not saved.  Cannot accurately resolve path to create link.`);
         return;
     }
     const folderPath = vscode.workspace.rootPath;
@@ -77,6 +72,10 @@ export function insertBookmarkExternal() {
             // gets the content for chosen file with utf-8 format
             let fullPath;
 
+            if (!qpSelection) {
+                return;
+            }
+
             if (os.type() === "Windows_NT") {
                 fullPath = qpSelection.description + "\\" + qpSelection.label;
             } else {
@@ -85,16 +84,24 @@ export function insertBookmarkExternal() {
 
             const content = fs.readFileSync(fullPath, "utf8");
             const headings = content.match(headingTextRegex);
+
             if (!headings) {
-                log.debug("InsertBookmarkExternal: No headings found in file " + fullPath);
                 vscode.window.showErrorMessage("No headings found in file, cannot insert bookmark!");
                 return;
             }
 
-            const adjustedHeadings = utilityHelper.addbookmarkIdentifier(headings);
-            vscode.window.showQuickPick(adjustedHeadings).then((headingSelection) => {
-                if (path.resolve(activeFilePath) === path.resolve(qpSelection.description.split("\\").join("\\\\")) && path.basename(activeFileName) === qpSelection.label) {
-                    bookmark = utilityHelper.bookmarkBuilder(editor.document.getText(editor.selection), headingSelection, "");
+            const adjustedHeadingsItems: vscode.QuickPickItem[] = [];
+            const adjustedHeadings = addbookmarkIdentifier(headings);
+            adjustedHeadings.forEach((adjustedHeading: string) => {
+                adjustedHeadingsItems.push({ label: adjustedHeading, detail: " " });
+            });
+
+            vscode.window.showQuickPick(adjustedHeadingsItems).then((headingSelection) => {
+                if (!headingSelection) {
+                    return;
+                }
+                if (path.resolve(activeFilePath) === path.resolve(qpSelection.label.split("\\").join("\\\\")) && path.basename(activeFileName) === qpSelection.label) {
+                    bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, "");
                 } else {
                     if (os.type() === "Windows_NT") {
                         result = path.relative(activeFilePath, path.join
@@ -103,10 +110,11 @@ export function insertBookmarkExternal() {
                         result = path.relative(activeFilePath, path.join
                             (qpSelection.description, qpSelection.label).split("//").join("//"));
                     }
-                    bookmark = utilityHelper.bookmarkBuilder
-                        (editor.document.getText(editor.selection), headingSelection, result);
+                    bookmark = bookmarkBuilder
+                        (editor.document.getText(editor.selection), headingSelection.label, result);
                 }
-                common.insertContentToEditor(editor, "InsertBookmarkExternal", bookmark, true, editor.selection);
+                insertContentToEditor(editor, "InsertBookmarkExternal", bookmark, true, editor.selection);
+
             });
         });
     });
@@ -118,20 +126,28 @@ export function insertBookmarkExternal() {
 export function insertBookmarkInternal() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".internal" });
     const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return;
+    }
     const content = editor.document.getText();
-    const items = content.match(headingTextRegex);
-    if (!items) {
-        log.debug("InsertBookmarkInternal: No headings found in file");
+    const headings = content.match(headingTextRegex);
+    if (!headings) {
         vscode.window.showErrorMessage("No headings found in file, cannot insert bookmark!");
         return;
     }
 
     // put number to duplicate names in position order
-    const adjustedItems = utilityHelper.addbookmarkIdentifier(items);
-    vscode.window.showQuickPick(adjustedItems).then((qpSelection) => {
-        log.debug("Inserting internal bookmark at line " + editor.selection.start.line
-            + " and character " + editor.selection.start.character);
-        const bookmark = utilityHelper.bookmarkBuilder(editor.document.getText(editor.selection), qpSelection, "");
-        common.insertContentToEditor(editor, "InsertBookmarkInternal", bookmark, true, editor.selection);
+    const adjustedHeadings = addbookmarkIdentifier(headings);
+    const adjustedHeadingsItems: vscode.QuickPickItem[] = [];
+    adjustedHeadings.forEach((heading: string) => {
+        adjustedHeadingsItems.push({ label: heading, detail: " " });
+    });
+
+    vscode.window.showQuickPick(adjustedHeadingsItems).then((headingSelection) => {
+        if (!headingSelection) {
+            return;
+        }
+        const bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, "");
+        insertContentToEditor(editor, "InsertBookmarkInternal", bookmark, true, editor.selection);
     });
 }
