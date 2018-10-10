@@ -111,9 +111,9 @@ export class MarkdocsServer {
 
     private getServerPath() {
         const serverPaths = [
-            ".markdocs/MarkdocsService.dll",
-            ".markdocs/MarkdocsService.exe",
-            ".markdocs/MarkdocsService",
+            ".markdocs/MarkdocsService", // for macOS/Linux
+            ".markdocs/MarkdocsService.exe", // for Windows
+            ".markdocs/MarkdocsService.dll" // for .NET Core
         ];
 
         for (let p of serverPaths) {
