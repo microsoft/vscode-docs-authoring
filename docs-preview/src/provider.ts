@@ -129,7 +129,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
 
         $("xref").each((_, elem) => {
             const source = $(elem).data("raw-source");
-            $(elem).replaceWith(source);
+            $(elem).replaceWith(this.htmlEscape(source));
         });
 
         return $("body").html();
@@ -235,6 +235,15 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
 
         // otherwise look relative to the markdown file
         return href;
+    }
+
+    private htmlEscape(str): string {
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
     }
 }
 
