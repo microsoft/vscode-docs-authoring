@@ -151,8 +151,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
     private getStyles(resource: Uri, nonce: string, config: MarkdownPreviewConfig): string {
         const baseStyles = [
             this.getMediaPath("markdown.css"),
-            this.getMediaPath("tomorrow.css"),
-            this.getNodeModulePath("highlightjs/styles/tomorrow-night-bright.css"),
+            this.getMediaPath("highlight.css"),
             this.getMediaPath("docfx.css"),
         ].concat(this.extraStyles.map((style) => style.toString()));
 

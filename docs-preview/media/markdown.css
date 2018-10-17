@@ -98,8 +98,11 @@ img {
 }
 
 a {
-	color: #4080D0;
 	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
 }
 
 a:focus,
@@ -137,11 +140,6 @@ h6 code {
 	line-height: auto;
 }
 
-a:hover {
-	color: #4080D0;
-	text-decoration: underline;
-}
-
 table {
 	border-collapse: collapse;
 }
@@ -165,7 +163,8 @@ table > tbody > tr + tr > td {
 blockquote {
 	margin: 0 7px 0 5px;
 	padding: 0 16px 0 10px;
-	border-left: 5px solid;
+	border-left-width: 5px;
+	border-left-style: solid;
 }
 
 code {
@@ -183,43 +182,29 @@ body.wordWrap pre {
 	line-height: 18px;
 }
 
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
 /** Theming */
 
-.vscode-light,
-.vscode-light pre code {
-	color: rgb(30, 30, 30);
+pre code {
+	color: var(--vscode-editor-foreground);
 }
 
-.vscode-dark,
-.vscode-dark pre code {
-	color: #DDD;
-}
 
-.vscode-high-contrast,
-.vscode-high-contrast pre code {
-	color: white;
-}
-
-.vscode-light code {
-	color: #A31515;
-}
-
-.vscode-dark code {
-	color: #D7BA7D;
-}
-
-.vscode-light pre:not(.hljs),
-.vscode-light code > div {
+.vscode-light pre {
 	background-color: rgba(220, 220, 220, 0.4);
 }
 
-.vscode-dark pre:not(.hljs),
-.vscode-dark code > div {
+.vscode-dark pre {
 	background-color: rgba(10, 10, 10, 0.4);
 }
 
-.vscode-high-contrast pre:not(.hljs),
-.vscode-high-contrast code > div {
+.vscode-high-contrast pre {
 	background-color: rgb(0, 0, 0);
 }
 
@@ -246,7 +231,6 @@ body.wordWrap pre {
 .vscode-dark table > tbody > tr + tr > td {
 	border-color: rgba(255, 255, 255, 0.18);
 }
-
 .vscode-light blockquote,
 .vscode-dark blockquote {
 	background: rgba(127, 127, 127, 0.1);
@@ -256,84 +240,4 @@ body.wordWrap pre {
 .vscode-high-contrast blockquote {
 	background: transparent;
 	border-color: #fff;
-}
-
-.NOTE {
-	margin: 0 7px 0 5px;
-	padding: 0 16px 0 10px;
-	border-left: 5px solid;
-}
-
-.vscode-light .NOTE {
-	background: rgba(127, 127, 127, 0.1);
-	border-color: rgba(0, 122, 204, 0.5);
-}
-
-.vscode-dark .NOTE {
-	background: rgba(217, 246, 255, 0.1);
-	border-color: rgba(0, 122, 204, 0.5);
-}
-  
-.WARNING {
-    margin: 0 7px 0 5px;
-    padding: 0 16px 0 10px;
-    border-left: 5px solid;
-}
-
-.vscode-light .WARNING {
-	background: rgba(127, 127, 127, 0.1);
-	border-color: rgba(126, 17, 22, 0.89);
-}
-
-.vscode-dark .WARNING {
-	background: rgba(253, 237, 238, 0.1);
-	border-color: rgba(126, 17, 22, 0.89);
-}
-
-.IMPORTANT {
-    margin: 0 7px 0 5px;
-    padding: 0 16px 0 10px;
-    border-left: 5px solid;
-}
-
-.vscode-light .IMPORTANT {
-	background: rgba(127, 127, 127, 0.1);
-	border-color: rgba(103, 58, 183, 0.89);
-}
-
-.vscode-dark .IMPORTANT {
-	background: rgba(238, 233, 248, 0.1);
-	border-color: rgba(103, 58, 183, 0.89);
-}
-
-.CAUTION {
-    margin: 0 7px 0 5px;
-    padding: 0 16px 0 10px;
-    border-left: 5px solid;
-}
-
-.vscode-light .CAUTION {
-	background: rgba(127, 127, 127, 0.1);
-	border-color: rgba(218, 58, 26, 0.89);
-}
-
-.vscode-dark .CAUTION {
-	background: rgba(253, 239, 236, 0.1);
-	border-color: rgba(218, 58, 26, 0.89);
-}
-
-.TIP {
-    margin: 0 7px 0 5px;
-    padding: 0 16px 0 10px;
-    border-left: 5px solid;
-}
-
-.vscode-light .TIP {
-	background: rgba(127, 127, 127, 0.1);
-	border-color: rgba(0, 100, 73, 0.89);
-}
-
-.vscode-dark .TIP {
-	background: rgba(233, 250, 245, 0.1);
-	border-color: rgba(0, 100, 73, 0.89);
 }
