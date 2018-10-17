@@ -1,4 +1,3 @@
-import * as cheerio from "cheerio";
 import * as fs from "fs";
 import * as path from "path";
 import {
@@ -15,6 +14,7 @@ import {
 import MarkdownService from "./markdownService";
 import MarkdownPreviewConfig from "./util/markdownPreviewConfig";
 import PreviewConfigManager from "./util/previewConfigManager";
+import { XrefService } from "./xref/xrefResolver";
 
 export class DocumentContentProvider implements TextDocumentContentProvider {
     public static readonly scheme = "docsPreview";
@@ -100,7 +100,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
         let body = await MarkdownService.markupAsync(markdown, filePath, basePath);
         body = this.filterYamlHeader(body);
         body = this.fixLinks(body, uri);
-        body = this.transformXref(body);
+        body = await XrefService.resolveAsync(body);
 
         const result = `<!DOCTYPE html>
         <html>
@@ -122,17 +122,6 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
 
     private filterYamlHeader(body: string): string {
         return body.replace(this.yamlHeaderRegex, "");
-    }
-
-    private transformXref(body: string): string {
-        const $ = cheerio.load(body);
-
-        $("xref").each((_, elem) => {
-            const source = $(elem).data("raw-source");
-            $(elem).replaceWith(this.htmlEscape(source));
-        });
-
-        return $("body").html();
     }
 
     private getDocsetRoot(dir: string): string {
@@ -235,15 +224,6 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
 
         // otherwise look relative to the markdown file
         return href;
-    }
-
-    private htmlEscape(str): string {
-        return str
-            .replace(/&/g, "&amp;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#39;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
     }
 }
 
