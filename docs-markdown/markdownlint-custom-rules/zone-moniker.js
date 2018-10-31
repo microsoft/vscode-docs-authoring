@@ -2,24 +2,24 @@
 
 "use strict";
 
-// Syntax
+// Expected values
 const zoneMonikerOpen = /^:(.*?)(zone|moniker)/gm;
-const tripleColonSyntax = /^:::/gm;
-const validTripleColon = /^:::\s+/gm;
+const validTripleColon = /^:::\s+(zone|moniker)/gm;
 const syntaxZone = /^:::\s+zone\s+target/gm;
 const syntaxMoniker = /^:::\s+moniker\s+range/gm;
+
+// Used for linting conditions
+const singleColon = /^:/gm;
+const tripleColonSyntax = /^:::/gm;
 const acceptableValue = /^:::\s+(moniker\s+range|zone\s+target)/gm;
-// Render
 const renderZone = /^:::\s+zone\s+target="/gm;
-// Range
 const rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
-// Value
 const valueZone = /^:::\s+zone\s+target="(chromeless|docs)"/gm;
 
 module.exports = {
     "names": ["zone-moniker"],
     "description": `Zone/moniker linting.`,
-    "tags": ["test"],
+    "tags": ["validation"],
     "function": function rule(params, onError) {
         params.tokens.filter(function filterToken(token) {
             return token.type === "inline";
@@ -28,26 +28,31 @@ module.exports = {
                 return child.type === "text";
             }).forEach(function forChild(text) {
                 const content = text.content.toLowerCase();
-                if (content.match(zoneMonikerOpen)) {
-                    if (!content.match(tripleColonSyntax)) {
+                // Begin linting when a colon is at the beginning of a line.
+                if (content.match(singleColon)) {
+                    // Condition: Line begins with fewer or more than three colons.
+                    if (!content.match(tripleColonSyntax) && content.match(zoneMonikerOpen)) {
                         onError({
                             "lineNumber": text.lineNumber,
                             "detail": `Bad syntax for zone/moniker. Begin with "::: ".`
                         });
                     }
-                    if (!content.match(validTripleColon)) {
+                    // Condition: Three colons are followed by fewer or more than one space.
+                    if (!content.match(validTripleColon) && content.match(zoneMonikerOpen)) {
                         onError({
                             "lineNumber": text.lineNumber,
                             "detail": `Bad syntax for zone/moniker. One space required after ":::".`
                         });
                     }
-                    if (!content.match(acceptableValue)) {
+                    // Condition: After three colons and a space, text is other than "zone target" or "moniker range".
+                    if (!content.match(acceptableValue) && content.match(tripleColonSyntax)) {
                         onError({
                             "lineNumber": text.lineNumber,
                             "detail": `Bad syntax for zone/moniker. Only "zone target" and "moniker range" are supported.`
                         });
                     }
-                    if (content.match(syntaxZone)) {
+                    // Condition: "zone target" followed by characters other than =".
+                    if (content.match(syntaxZone) && content.match(zoneMonikerOpen)) {
                         if (!content.match(renderZone)) {
                             onError({
                                 "lineNumber": text.lineNumber,
@@ -55,7 +60,8 @@ module.exports = {
                             });
                         }
                     }
-                    if (content.match(syntaxMoniker)) {
+                    // Condition: "moniker range" followed by characters other than =", <=", or >=".
+                    if (content.match(syntaxMoniker) && content.match(zoneMonikerOpen)) {
                         if (!content.match(rangeMoniker)) {
                             onError({
                                 "lineNumber": text.lineNumber,
@@ -63,7 +69,8 @@ module.exports = {
                             });
                         }
                     }
-                    if (content.match(syntaxZone)) {
+                    // Condition: Value of "zone target=" is other than "chromeless" or "docs".
+                    if (content.match(syntaxZone) && content.match(zoneMonikerOpen)) {
                         if (!content.match(valueZone)) {
                             onError({
                                 "lineNumber": text.lineNumber,
