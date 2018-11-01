@@ -11,7 +11,7 @@ const syntaxMoniker = /^:::\s+moniker\s+range/gm;
 // Used for linting conditions
 const singleColon = /^:/gm;
 const tripleColonSyntax = /^:::/gm;
-const acceptableValue = /^:::\s+(moniker\s+range|zone\s+target)/gm;
+const acceptableValue = /^:::\s+(moniker\s+range|zone\s+target|zone-end)/gm;
 const renderZone = /^:::\s+zone\s+target="/gm;
 const rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
 const valueZone = /^:::\s+zone\s+target="(chromeless|docs)"/gm;
