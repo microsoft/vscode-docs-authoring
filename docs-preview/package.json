@@ -2,7 +2,7 @@
   "name": "docs-preview",
   "displayName": "docs-preview",
   "description": "Docs Markdown Preview Extension",
-  "version": "0.3.13",
+  "version": "0.3.16",
   "publisher": "docsmsft",
   "icon": "images/docs-logo-ms.png",
   "bugs": {

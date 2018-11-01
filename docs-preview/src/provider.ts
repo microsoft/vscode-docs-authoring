@@ -1,4 +1,3 @@
-import * as cheerio from "cheerio";
 import * as fs from "fs";
 import * as path from "path";
 import {
@@ -15,6 +14,7 @@ import {
 import MarkdownService from "./markdownService";
 import MarkdownPreviewConfig from "./util/markdownPreviewConfig";
 import PreviewConfigManager from "./util/previewConfigManager";
+import { XrefService } from "./xref/xrefResolver";
 
 export class DocumentContentProvider implements TextDocumentContentProvider {
     public static readonly scheme = "docsPreview";
@@ -100,7 +100,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
         let body = await MarkdownService.markupAsync(markdown, filePath, basePath);
         body = this.filterYamlHeader(body);
         body = this.fixLinks(body, uri);
-        body = this.transformXref(body);
+        body = await XrefService.resolveAsync(body);
 
         const result = `<!DOCTYPE html>
         <html>
@@ -124,17 +124,6 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
         return body.replace(this.yamlHeaderRegex, "");
     }
 
-    private transformXref(body: string): string {
-        const $ = cheerio.load(body);
-
-        $("xref").each((_, elem) => {
-            const source = $(elem).data("raw-source");
-            $(elem).replaceWith(source);
-        });
-
-        return $("body").html();
-    }
-
     private getDocsetRoot(dir: string): string {
         if (dir && path.dirname(dir) !== dir) {
             const config = path.join(dir, "docfx.json");
@@ -151,8 +140,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
     private getStyles(resource: Uri, nonce: string, config: MarkdownPreviewConfig): string {
         const baseStyles = [
             this.getMediaPath("markdown.css"),
-            this.getMediaPath("tomorrow.css"),
-            this.getNodeModulePath("highlightjs/styles/tomorrow-night-bright.css"),
+            this.getMediaPath("highlight.css"),
             this.getMediaPath("docfx.css"),
         ].concat(this.extraStyles.map((style) => style.toString()));
 
