@@ -39,9 +39,9 @@ export class RedirectionFile {
     // Members mapping to JSON elements in master redirection file
     public source_path: string;
     public redirect_url: string;
-    public redirect_document_id: string;
+    public redirect_document_id: boolean = false;
 
-    constructor(filePath: string, redirectUrl: string, redirectDocumentId: string) {
+    constructor(filePath: string, redirectUrl: string, redirectDocumentId: boolean) {
         this.fileFullPath = filePath;
         this.source_path = this.getRelativePathToRoot(filePath);
         this.redirect_url = redirectUrl;
@@ -204,7 +204,7 @@ function generateMasterRedirectionFile() {
 
                             source.pipe(dest);
                             source.on("end", () => {
-                                // fs.unlink(item.fileFullPath);
+                                fs.unlink(item.fileFullPath);
                             });
                         });
 
