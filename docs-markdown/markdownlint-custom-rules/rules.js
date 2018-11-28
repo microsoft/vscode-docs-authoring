@@ -3,5 +3,7 @@
 "use strict";
 
 module.exports = [
-  require("./zone-moniker")
+  require("./syntax"),
+  require("./zone"),
+  require("./moniker")
 ];
