@@ -9,7 +9,7 @@ module.exports.validTripleColon = /^:::\s+/gm;
 
 // Markdown extensions (add valid/supported extensions to list)
 module.exports.openExtension = /^:(.*?)(zone|moniker)/gm;
-module.exports.supportedExtensions = /^:::\s+(zone|moniker)/gm;
+module.exports.supportedExtensions = /^:::\s+(zone|moniker|row|column|form)/gm;
 module.exports.unsupportedExtensionRegex = /^:::\s+(.*)/gm;
 
 // Zones
