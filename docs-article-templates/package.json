@@ -20,7 +20,8 @@
     "commands": [
       {
         "command": "applyTemplate",
-        "title": "Docs: Template",
+        "title": "Template",
+        "category": "Docs",
         "icon": "node_modules/octicons/build/svg/file.svg"
       }
     ],
@@ -39,6 +40,14 @@
           "description": "GitHub ID"
         }
       }
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "applyTemplate",
+          "group": "Docs"
+        }
+      ]
     }
   },
   "scripts": {
