@@ -22,16 +22,18 @@ module.exports = {
                     if (content.match(common.syntaxMoniker) && content.match(common.openMoniker)) {
                         if (!content.match(common.rangeMoniker)) {
                             onError({
-                                "lineNumber": text.lineNumber,
-                                "detail": `Bad syntax for range argument. Use =, <=, or >=, and put value in quotes.`
+                                lineNumber: text.lineNumber,
+                                detail: `Bad syntax for range argument. Use =, <=, or >=, and put value in quotes.`,
+                                context: text.line
                             });
                         }
                     }
                     // Condition: After three colons and a space, text is other than "moniker range".
                     if (content.match(common.openMoniker) && !content.match(common.syntaxMoniker)) {
                         onError({
-                            "lineNumber": text.lineNumber,
-                            "detail": `Bad syntax for zone. Only "moniker range" is supported.`
+                            lineNumber: text.lineNumber,
+                            detail: `Bad syntax for moniker. Only "moniker range" is supported.`,
+                            context: text.line
                         });
                     }
                 }

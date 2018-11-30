@@ -21,26 +21,28 @@ module.exports = {
                     // Condition: Line begins with fewer or more than three colons.
                     if (!content.match(common.tripleColonSyntax) && content.match(common.openExtension)) {
                         onError({
-                            "lineNumber": text.lineNumber,
-                            "detail": `Bad syntax for markdown extension. Begin with "::: ".`
+                            lineNumber: text.lineNumber,
+                            detail: `Bad syntax for markdown extension. Begin with "::: ".`,
+                            context: text.line
                         });
                     }
-                    // Condition: Three colons are followed by fewer or more than one space.
-                    if (!content.match(common.validTripleColon) && content.match(common.openExtension)) {
-                        onError({
-                            "lineNumber": text.lineNumber,
-                            "detail": `Bad syntax for markdown extension. One space required after ":::".`
-                        });
-                    }
-                    // Condition: After three colons and a space, text is not a supported extension.
-                    if (content.match(common.validTripleColon) && !content.match(common.supportedExtensions)) {
-                        const unsupportedExtension = content.match(common.unsupportedExtensionRegex);
-                        const unsupportedExtensionMessage = `Bad syntax for markdown extension. "${unsupportedExtension}" is not a supported extension.`
-                        onError({
-                            "lineNumber": text.lineNumber,
-                            "detail": unsupportedExtensionMessage,
-                        });
-                    }
+                }
+                // Condition: Three colons are followed by fewer or more than one space.
+                if (!content.match(common.validTripleColon) && content.match(common.openExtension)) {
+                    onError({
+                        lineNumber: text.lineNumber,
+                        detail: `Bad syntax for markdown extension. One space required after ":::".`,
+                        context: text.line
+                    });
+                }
+                // Condition: After three colons and a space, text is not a supported extension.
+                if (content.match(common.validTripleColon) && !content.match(common.supportedExtensions)) {
+                    const unsupportedExtension = content.match(common.unsupportedExtensionRegex);
+                    onError({
+                        lineNumber: text.lineNumber,
+                        detail: `Bad syntax for markdown extension. "${unsupportedExtension}" is not supported.`,
+                        context: text.line
+                    });
                 }
             });
         });

@@ -21,16 +21,18 @@ module.exports = {
                     // Condition: After three colons and a space, text is other than "zone target" or "zone-end".
                     if (content.match(common.openZone) && !content.match(common.syntaxZone) && !content.match(common.endZone)) {
                         onError({
-                            "lineNumber": text.lineNumber,
-                            "detail": `Bad syntax for zone. Only "zone target" or "zone-end" are supported.`
+                            lineNumber: text.lineNumber,
+                            detail: `Bad syntax for zone. Only "zone target" or "zone-end" are supported.`,
+                            context: text.line
                         });
                     }
                     // Condition: "zone target" followed by characters other than =".
                     if (content.match(common.syntaxZone) && content.match(common.openZone)) {
                         if (!content.match(common.renderZone)) {
                             onError({
-                                "lineNumber": text.lineNumber,
-                                "detail": `Bad syntax for render argument. Use "=" and put value in quotes.`
+                                lineNumber: text.lineNumber,
+                                detail: `Bad syntax for render argument. Use "=" and put value in quotes.`,
+                                context: text.line
                             });
                         }
                     }
@@ -38,8 +40,9 @@ module.exports = {
                     if (content.match(common.syntaxZone) && content.match(common.openZone)) {
                         if (!content.match(common.validZone)) {
                             onError({
-                                "lineNumber": text.lineNumber,
-                                "detail": `Bad value for zone target. Only "chromeless" and "docs" are supported.`
+                                lineNumber: text.lineNumber,
+                                detail: `Bad value for zone target. Only "chromeless" and "docs" are supported.`,
+                                context: text.line
                             });
                         }
                     }
