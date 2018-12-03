@@ -302,7 +302,6 @@
   "dependencies": {
     "file-exists": "^5.0.1",
     "fs-exists-sync": "^0.1.0",
-    "jest": "^23.6.0",
     "lodash.merge": "^4.6.0",
     "markdownlint": "^0.11.0",
     "matcher": "^1.0.0",
@@ -319,6 +318,7 @@
     "@types/node-dir": "0.0.32",
     "@types/yamljs": "^0.2.30",
     "chai": "^3.5.0",
+    "jest": "^23.6.0",
     "mocha": "^5.2.0",
     "octicons": "^7.3.0",
     "tslint": "^5.9.1",
