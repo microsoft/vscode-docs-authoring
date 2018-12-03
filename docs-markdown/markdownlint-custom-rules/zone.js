@@ -3,6 +3,7 @@
 "use strict";
 
 const common = require("./common");
+const detailStrings = require("./strings");
 
 module.exports = {
     "names": ["docsmd.zone"],
@@ -22,7 +23,7 @@ module.exports = {
                     if (content.match(common.openZone) && !content.match(common.syntaxZone) && !content.match(common.endZone)) {
                         onError({
                             lineNumber: text.lineNumber,
-                            detail: `Bad syntax for zone. Only "zone target" or "zone-end" are supported.`,
+                            detail: detailStrings.zoneSyntax,
                             context: text.line
                         });
                     }
@@ -31,7 +32,7 @@ module.exports = {
                         if (!content.match(common.renderZone)) {
                             onError({
                                 lineNumber: text.lineNumber,
-                                detail: `Bad syntax for render argument. Use "=" and put value in quotes.`,
+                                detail: detailStrings.zoneRender,
                                 context: text.line
                             });
                         }
@@ -41,7 +42,7 @@ module.exports = {
                         if (!content.match(common.validZone)) {
                             onError({
                                 lineNumber: text.lineNumber,
-                                detail: `Bad value for zone target. Only "chromeless" and "docs" are supported.`,
+                                detail: detailStrings.zoneValue,
                                 context: text.line
                             });
                         }

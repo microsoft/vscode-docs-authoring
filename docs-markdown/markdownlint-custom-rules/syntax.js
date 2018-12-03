@@ -3,6 +3,7 @@
 "use strict";
 
 const common = require("./common");
+const detailStrings = require("./strings");
 
 module.exports = {
     "names": ["docsmd.syntax"],
@@ -22,16 +23,17 @@ module.exports = {
                     if (!content.match(common.tripleColonSyntax) && content.match(common.openExtension)) {
                         onError({
                             lineNumber: text.lineNumber,
-                            detail: `Bad syntax for markdown extension. Begin with "::: ".`,
+                            detail: detailStrings.syntaxCount,
                             context: text.line
                         });
+
                     }
                 }
                 // Condition: Three colons are followed by fewer or more than one space.
                 if (!content.match(common.validTripleColon) && content.match(common.openExtension)) {
                     onError({
                         lineNumber: text.lineNumber,
-                        detail: `Bad syntax for markdown extension. One space required after ":::".`,
+                        detail: detailStrings.syntaxSpace,
                         context: text.line
                     });
                 }
@@ -40,7 +42,7 @@ module.exports = {
                     const unsupportedExtension = content.match(common.unsupportedExtensionRegex);
                     onError({
                         lineNumber: text.lineNumber,
-                        detail: `Bad syntax for markdown extension. "${unsupportedExtension}" is not supported.`,
+                        detail: detailStrings.syntaxUnsupportedExtension,
                         context: text.line
                     });
                 }

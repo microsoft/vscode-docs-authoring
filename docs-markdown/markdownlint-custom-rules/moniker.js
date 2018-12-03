@@ -3,6 +3,7 @@
 "use strict";
 
 const common = require("./common");
+const detailStrings = require("./strings");
 
 module.exports = {
     "names": ["docsmd.moniker"],
@@ -23,7 +24,7 @@ module.exports = {
                         if (!content.match(common.rangeMoniker)) {
                             onError({
                                 lineNumber: text.lineNumber,
-                                detail: `Bad syntax for range argument. Use =, <=, or >=, and put value in quotes.`,
+                                detail: detailStrings.monikerRange,
                                 context: text.line
                             });
                         }
@@ -32,7 +33,7 @@ module.exports = {
                     if (content.match(common.openMoniker) && !content.match(common.syntaxMoniker)) {
                         onError({
                             lineNumber: text.lineNumber,
-                            detail: `Bad syntax for moniker. Only "moniker range" is supported.`,
+                            detail: detailStrings.monikerSyntax,
                             context: text.line
                         });
                     }
