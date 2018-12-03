@@ -84,7 +84,7 @@ export function markdownQuickPick() {
         },
         {
             description: "",
-            label: "$(file-code) Snippets",
+            label: "$(file-code) Snippet",
         },
         {
             description: "",
