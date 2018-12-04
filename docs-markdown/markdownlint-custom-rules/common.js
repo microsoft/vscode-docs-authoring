@@ -13,11 +13,13 @@ module.exports.supportedExtensions = /^:::\s+(zone|moniker|row|column|form)/gm;
 module.exports.unsupportedExtensionRegex = /^:::\s+(.*)/gm;
 
 // Zones
+// to-do: update regex to support zone pivot once requirements are ready.
 module.exports.openZone = /^:::\s+zone/gm;
 module.exports.syntaxZone = /^:::\s+zone\s+target/gm;
 module.exports.renderZone = /^:::\s+zone\s+target="/gm;
 module.exports.validZone = /^:::\s+zone\s+target="(chromeless|docs)"/gm;
 module.exports.endZone = /^:::\s+zone-end/gm;
+module.exports.zonePivot = /^:::\s+zone\s+pivot/gm;
 
 // Moniker
 module.exports.openMoniker = /^:::\s+moniker/gm;

@@ -20,7 +20,7 @@ module.exports = {
                 // Begin linting when a colon is at the beginning of a line.
                 if (content.match(common.singleColon)) {
                     // Condition: After three colons and a space, text is other than "zone target" or "zone-end".
-                    if (content.match(common.openZone) && !content.match(common.syntaxZone) && !content.match(common.endZone)) {
+                    if (content.match(common.openZone) && !content.match(common.syntaxZone) && !content.match(common.endZone) && !content.match(common.zonePivot)) {
                         onError({
                             lineNumber: text.lineNumber,
                             detail: detailStrings.zoneSyntax,
@@ -29,7 +29,7 @@ module.exports = {
                     }
                     // Condition: "zone target" followed by characters other than =".
                     if (content.match(common.syntaxZone) && content.match(common.openZone)) {
-                        if (!content.match(common.renderZone)) {
+                        if (!content.match(common.renderZone) && !content.match(common.zonePivot)) {
                             onError({
                                 lineNumber: text.lineNumber,
                                 detail: detailStrings.zoneRender,
@@ -39,7 +39,7 @@ module.exports = {
                     }
                     // Condition: Value of "zone target=" is other than "chromeless" or "docs".
                     if (content.match(common.syntaxZone) && content.match(common.openZone)) {
-                        if (!content.match(common.validZone)) {
+                        if (!content.match(common.validZone) && !content.match(common.zonePivot)) {
                             onError({
                                 lineNumber: text.lineNumber,
                                 detail: detailStrings.zoneValue,

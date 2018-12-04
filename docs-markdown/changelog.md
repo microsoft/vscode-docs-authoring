@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.0 (December 3rd, 2018)
+
+- Markdownlint custom rule integration
+- Quickpick update
+
 ## 0.1.5 (October 3rd, 2018)
 
 - Bookmark/heading quickpick update

@@ -8,6 +8,6 @@ module.exports.monikerRange = `Bad syntax for range argument. Use =, <=, or >=, 
 module.exports.monikerSyntax = `Bad syntax for moniker. Only "moniker range" is supported.`;
 
 // zone
-module.exports.zoneSyntax = `Bad syntax for zone. Only "zone target" and "zone-end" are supported.`;
+module.exports.zoneSyntax = `Bad syntax for zone. Only "zone target", "zone pivot" and "zone-end" are supported.`;
 module.exports.zoneRender = `Bad syntax for render argument. Use "=" and put value in quotes.`;
 module.exports.zoneValue = `Bad value for zone target. Only "chromeless" and "docs" are supported.`;
