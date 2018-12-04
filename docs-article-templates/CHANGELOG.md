@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.4 (December 3rd, 2018)
+
+- Update command palette
+
 ## 0.1.3 (October 3rd, 2018)
 
 - Remove vscode-extension-telemetry dependency
