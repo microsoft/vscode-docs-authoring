@@ -5,5 +5,6 @@
 module.exports = [
   require("./syntax"),
   require("./zone"),
-  require("./moniker")
+  require("./moniker",),
+  require("./securelinks")
 ];
