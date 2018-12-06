@@ -28,6 +28,6 @@ module.exports.rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
 
 // Alert
 module.exports.alertOpener = /^>\s+\[!/gm; // regex to find "> [!"
-module.exports.snippetOpener = /^>\s+\[!code-/gm ; //regex to identify code snippet in text block, starting with "> [!code-"
-module.exports.includeOpener = /^>\s+\[!INCLUDE/gm; //regex to identify include in text block, starting with "> [!INCLUDE"
-module.exports.alertType = /^>\s+\[!(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]/gm; //regex to identify valid alert types (all caps)
+module.exports.snippetOpener = /^>\s+\[!code-/gm ; //identify code snippet in text block, starting with "> [!code-"
+module.exports.includeOpener = /^>\s+\[!INCLUDE/gm; //identify include in text block, starting with "> [!INCLUDE"
+module.exports.alertType = /^>\s+\[!(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]/gm; //identify valid alert types (all caps)
