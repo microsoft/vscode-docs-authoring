@@ -11,3 +11,6 @@ module.exports.monikerSyntax = `Bad syntax for moniker. Only "moniker range" is 
 module.exports.zoneSyntax = `Bad syntax for zone. Only "zone target", "zone pivot" and "zone-end" are supported.`;
 module.exports.zoneRender = `Bad syntax for render argument. Use "=" and put value in quotes.`;
 module.exports.zoneValue = `Bad value for zone target. Only "chromeless" and "docs" are supported.`;
+
+// alert
+module.exports.alertType = `Bad alert type. Only NOTE, TIP, IMPORTANT, CAUTION, and WARNING are supported. Case-sensitive.`
