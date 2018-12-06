@@ -16,12 +16,11 @@ module.exports = {
             inline.children.filter(function filterChild(child) {
                 return child.type === "text";
             }).forEach(function forChild(text) {
+                // Use the line child so ">" isn't stripped.
                 const content = text.line;
                 // Rule to verify that alert is of valid type.
                 // Begin linting when "> [!" is at the beginning of a line.
-                console.log(content);
                 if (content.match(common.alertOpener)) {
-
                     // Condition: The text is not valid alert type
                     if (!content.match(common.snippetOpener) && !content.match(common.includeOpener) && !content.match(common.alertType)) {
                         onError({
