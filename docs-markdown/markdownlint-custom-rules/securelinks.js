@@ -6,7 +6,7 @@ const common = require("./common");
 const detailStrings = require("./strings");
 
 module.exports = {
-  "names": ["secure-links"],
+  "names": ["docsmd.securelinks"],
   "description": "All links to Microsoft properties should be secure",
   "tags": ["compliance"],
   "function": function rule(params, onError) {
@@ -17,9 +17,11 @@ module.exports = {
         return child.type === "link_open";
       }).forEach(function forToken(link) {
         if (link.attrs[0] && link.attrs[0][0] == "href") {
+
           const linkPattern = /^(http:\/\/www\.|http:\/\/)([^\/]*)\/.*$/;
 
-          const href = link.attrs[0][1];
+          const originalHref = link.attrs[0][1];
+          let href = originalHref.toLowerCase();
           if (href.startsWith("http://")) {
             let match = href.match(linkPattern);
             let domain = "";
@@ -30,7 +32,7 @@ module.exports = {
                 || domain.includes("visualstudio.com")
                 || domain.includes("msdn.com")) {
                 let range = null;
-                let column = link.line.indexOf(href);
+                let column = link.line.indexOf(originalHref);
                 let length = href.length;
                 range = [column, length];
                 onError({

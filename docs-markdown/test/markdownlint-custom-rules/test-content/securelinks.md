@@ -14,8 +14,8 @@
 
 ## Insecure Link to VS
 
-[Go get Visual Studio](http://www.visualstudio.com/foo/test)
+[Go get Visual Studio](htTp://www.visualstudio.com/foo/test)
 
 ## Secure Link to VS
 
-[Go get Visual Studio](https://www.visualstudio.com/foo/test.txt)
+[Go get Visual Studio](hTtps://www.visualstudio.com/foo/test.txt)
