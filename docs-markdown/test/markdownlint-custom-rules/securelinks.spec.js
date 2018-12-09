@@ -16,15 +16,15 @@ test('validate extension', () => {
             "errorRange": [25, 37],
             "lineNumber": 5,
             "ruleDescription": "All links to Microsoft properties should be secure",
-            "ruleNames": ["secure-links"]
+            "ruleNames": ["docsmd.securelinks"]
         },
         {
-            "errorContext": "[Go get Visual Studio](http://www.visualstudio.com/foo/test)",
+            "errorContext": "[Go get Visual Studio](htTp://www.visualstudio.com/foo/test)",
             "errorDetail": "Link http://www.visualstudio.com/foo/test",
             "errorRange": [23, 36],
             "lineNumber": 17,
             "ruleDescription": "All links to Microsoft properties should be secure",
-            "ruleNames": ["secure-links"]
+            "ruleNames": ["docsmd.securelinks"]
         }
     ]);
 });
