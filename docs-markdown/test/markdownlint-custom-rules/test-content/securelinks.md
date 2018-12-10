@@ -19,3 +19,7 @@
 ## Secure Link to VS
 
 [Go get Visual Studio](hTtps://www.visualstudio.com/foo/test.txt)
+
+## Insecure Link to aka.ms
+
+[Go get Visual Studio](http://aka.ms/learn)

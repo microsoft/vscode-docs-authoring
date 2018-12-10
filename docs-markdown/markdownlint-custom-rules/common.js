@@ -25,3 +25,6 @@ module.exports.zonePivot = /^:::\s+zone\s+pivot/gm;
 module.exports.openMoniker = /^:::\s+moniker/gm;
 module.exports.syntaxMoniker = /^:::\s+moniker\s+range/gm;
 module.exports.rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
+
+//Links
+module.exports.linkPattern = /(http:\/\/(|www\.))(visualstudio\.com|msdn\.com|microsoft\.com|office\.com|azure\.com|aka\.ms).*/;
