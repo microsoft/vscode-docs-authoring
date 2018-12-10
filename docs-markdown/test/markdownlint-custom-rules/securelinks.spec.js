@@ -25,6 +25,14 @@ test('validate extension', () => {
             "lineNumber": 17,
             "ruleDescription": "All links to Microsoft properties should be secure",
             "ruleNames": ["docsmd.securelinks"]
+        },
+        {
+            "errorContext": "[Go get Visual Studio](http://aka.ms/learn)",
+            "errorDetail": "Link http://aka.ms/learn",
+            "errorRange": [23, 19],
+            "lineNumber": 25,
+            "ruleDescription": "All links to Microsoft properties should be secure",
+            "ruleNames": ["docsmd.securelinks"]
         }
     ]);
 });

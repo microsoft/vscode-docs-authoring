@@ -28,6 +28,9 @@ module.exports.rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
 
 // Alert
 module.exports.alertOpener = /^>\s+\[!/gm; // regex to find "> [!"
-module.exports.snippetOpener = /^>\s+\[!code-/gm ; //identify code snippet in text block, starting with "> [!code-"
+module.exports.snippetOpener = /^>\s+\[!code-/gm; //identify code snippet in text block, starting with "> [!code-"
 module.exports.includeOpener = /^>\s+\[!INCLUDE/gm; //identify include in text block, starting with "> [!INCLUDE"
 module.exports.alertType = /^>\s+\[!(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]/gm; //identify valid alert types (all caps)
+
+//Links
+module.exports.linkPattern = /(http:\/\/(|www\.))(visualstudio\.com|msdn\.com|microsoft\.com|office\.com|azure\.com|aka\.ms).*/;
