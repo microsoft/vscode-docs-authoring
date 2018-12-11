@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.1 (December 10th, 2018)
+
+- New custom markdownlint rules (alerts, secure links)
+- UI update for external link command
+
 ## 0.2.0 (December 3rd, 2018)
 
 - Markdownlint custom rule integration
