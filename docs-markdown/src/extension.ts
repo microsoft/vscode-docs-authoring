@@ -25,7 +25,6 @@ import { Reporter } from "./telemetry/telemetry";
 
 export const output = window.createOutputChannel("docs-markdown");
 export const masterRedirectOutput = window.createOutputChannel("docs-markdown-master-redirect");
-const { msTimeValue } = generateTimestamp();
 
 /**
  * Provides the commands to the extension. This method is called when extension is activated.
@@ -36,6 +35,7 @@ const { msTimeValue } = generateTimestamp();
  * param {vscode.ExtensionContext} the context the extension runs in, provided by vscode on activation of the extension.
  */
 export function activate(context: ExtensionContext) {
+    const { msTimeValue } = generateTimestamp();
     output.appendLine(`[${msTimeValue}] - Activating docs markdown extension.`);
 
     // Places "Docs Markdown Authoring" into the Toolbar
@@ -94,6 +94,7 @@ export function activate(context: ExtensionContext) {
 }
 
 export function installedExtensionsCheck() {
+    const { msTimeValue } = generateTimestamp();
     // create a list to house docs extension names, loop through
     const docsExtensions = [
         "docsmsft.docs-article-templates",
@@ -111,6 +112,7 @@ export function installedExtensionsCheck() {
  * Checks for markdownlint.customRules property.  If markdownlint isn't installed, do nothing.  If markdownlint is installed, check for custom property values.
  */
 export function checkMarkdownlintCustomProperty() {
+    const { msTimeValue } = generateTimestamp();
     const customProperty = "markdownlint.customRules";
     const customRuleset = "{docsmsft.docs-markdown}/markdownlint-custom-rules/rules.js";
     const customPropertyData = workspace.getConfiguration().inspect(customProperty);

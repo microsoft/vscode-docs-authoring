@@ -1,5 +1,7 @@
-import { isBold, isItalic, isBoldAndItalic, isInlineCode, isMultiLineCode } from '../../src/helper/format-styles';
-import { expect } from 'chai';
+import { expect } from "chai";
+import { isBold, isBoldAndItalic, isInlineCode, isItalic, isMultiLineCode } from "../../src/helper/format-styles";
+
+/* tslint:disable:no-unused-expression */
 
 describe("Format style type checking,", () => {
     const bolded = `**This is sample text in markdown bold format.**`;
@@ -49,7 +51,6 @@ describe("Format style type checking,", () => {
             expect(isMultiLineCode(nonMultiline)).to.be.false;
         });
     });
-
 
     describe("isBold function", () => {
 
