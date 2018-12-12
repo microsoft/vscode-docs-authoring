@@ -1,36 +1,36 @@
 // @ts-check
 
-"use strict";
+'use strict'
 
-const common = require("./common");
-const detailStrings = require("./strings");
+const common = require('./common')
+const detailStrings = require('./strings')
 
 module.exports = {
-    "names": ["docsmd.alert"],
-    "description": `Alert linting.`,
-    "tags": ["validation"],
-    "function": function rule(params, onError) {
-        params.tokens.filter(function filterToken(token) {
-            return token.type === "inline";
-        }).forEach(function forToken(inline) {
-            inline.children.filter(function filterChild(child) {
-                return child.type === "text";
-            }).forEach(function forChild(text) {
-                // Use the line child so ">" isn't stripped.
-                const content = text.line;
-                // Rule to verify that alert is of valid type.
-                // Begin linting when "> [!" is at the beginning of a line.
-                if (content.match(common.alertOpener)) {
-                    // Condition: The text is not valid alert type
-                    if (!content.match(common.snippetOpener) && !content.match(common.includeOpener) && !content.match(common.alertType)) {
-                        onError({
-                            lineNumber: text.lineNumber,
-                            detail: detailStrings.alertType,
-                            context: text.line
-                        });
-                    }
-                }
-            });
-        });
-    }
-};
+  'names': ['docsmd.alert'],
+  'description': `Alert linting.`,
+  'tags': ['validation'],
+  'function': function rule (params, onError) {
+    params.tokens.filter(function filterToken (token) {
+      return token.type === 'inline'
+    }).forEach(function forToken (inline) {
+      inline.children.filter(function filterChild (child) {
+        return child.type === 'text'
+      }).forEach(function forChild (text) {
+        // Use the line child so ">" isn't stripped.
+        const content = text.line
+        // Rule to verify that alert is of valid type.
+        // Begin linting when "> [!" is at the beginning of a line.
+        if (content.match(common.alertOpener)) {
+          // Condition: The text is not valid alert type
+          if (!content.match(common.snippetOpener) && !content.match(common.includeOpener) && !content.match(common.alertType)) {
+            onError({
+              lineNumber: text.lineNumber,
+              detail: detailStrings.alertType,
+              context: text.line
+            })
+          }
+        }
+      })
+    })
+  }
+}

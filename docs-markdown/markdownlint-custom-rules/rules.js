@@ -1,11 +1,11 @@
 // @ts-check
 
-"use strict";
+'use strict'
 
 module.exports = [
-  require("./syntax"),
-  require("./zone"),
-  require("./moniker"),
-  require("./alert"),
-  require("./securelinks")
-];
+  require('./syntax'),
+  require('./zone'),
+  require('./moniker'),
+  require('./alert'),
+  require('./securelinks')
+]
