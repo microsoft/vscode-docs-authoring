@@ -30,6 +30,31 @@ module.exports = {
                         });
                     }
                 }
+                // Rule to verify that alert is preceded by "> "
+                // Begin linting when "[!" is at the beginning of a line
+                if (content.match(common.bracketExclam)) {
+                    // Condition: The text is trying to be an alert
+                    if (content.match(common.alertTypeNoOpen)) {
+                        onError({
+                            lineNumber: text.lineNumber,
+                            detail: detailStrings.alertNoOpen,
+                            context: text.line
+                        });
+                    }
+                }
+                // Rule to catch alert content on the same line as alert identifier.
+                // Begin linting when line starts with an alert.
+                //if (content.match(common.alertType)) {
+                // Condition: Any text follows alert identifier.
+                //}
+                // Rule to catch alert identifier missing exclamation point.
+                if (content.match(common.alertNoExclam)) {
+                    onError({
+                        lineNumber: text.lineNumber,
+                        detail: detailStrings.alertNoExclam,
+                        context: text.line
+                    })
+                }
             });
         });
     }

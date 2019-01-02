@@ -14,3 +14,5 @@ module.exports.zoneValue = `Bad value for zone target. Only "chromeless" and "do
 
 // alert
 module.exports.alertType = `Bad alert type. Only NOTE, TIP, IMPORTANT, CAUTION, and WARNING are supported. Case-sensitive.`;
+module.exports.alertNoOpen = `Missing block opener. Alerts must be preceded by ">" plus a space.`;
+module.exports.alertNoExclam = `Bad alert syntax. Alerts must include exclamation point within brackets, such as "> [!NOTE]"`;

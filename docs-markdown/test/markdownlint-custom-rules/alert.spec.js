@@ -33,6 +33,30 @@ test('validate extension', () => {
             errorDetail: errorDetailStrings.alertType,
             errorContext: '> [!tip]',
             errorRange: null
+        },
+        {
+            lineNumber: 19,
+            ruleNames: ['docsmd.alert'],
+            ruleDescription: 'Alert linting.',
+            errorDetail: errorDetailStrings.alertNoOpen,
+            errorContext: '[!NOTE]',
+            errorRange: null
+        },
+        {
+            lineNumber: 21,
+            ruleNames: ['docsmd.alert'],
+            ruleDescription: 'Alert linting.',
+            errorDetail: errorDetailStrings.alertNoOpen,
+            errorContext: '[!CAUTION]',
+            errorRange: null
+        },
+        {
+            lineNumber: 38,
+            ruleNames: ['docsmd.alert'],
+            ruleDescription: 'Alert linting.',
+            errorDetail: errorDetailStrings.alertNoExclam,
+            errorContext: '> [NOTE]',
+            errorRange: null
         }
     ]);
 });
