@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.2 (January 17th, 2018)
+
+- Custom markdownlint rule updates (temporarily disable alert linting)
+
 ## 0.2.1 (December 10th, 2018)
 
 - New custom markdownlint rules (alerts, secure links)
