@@ -5,11 +5,12 @@
 
 // The module 'assert' provides assertion methods from node
 // import * as assert from 'assert';
-import { expect } from 'chai';
+import { expect } from "chai";
 
 describe("Ensure Chai Mocha Test Samples Run Correctly", () => {
 
     it("Hey, true returns true! Incredible.", () => {
+        // tslint:disable-next-line:no-unused-expression
         expect(true).to.be.true;
     });
 

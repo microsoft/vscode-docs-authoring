@@ -71,8 +71,6 @@ export function insertURL() {
         placeHolder: "Enter URL",
         validateInput: (urlInput) => urlInput.startsWith("http://") || urlInput.startsWith("https://") ? "" :
             "http:// or https:// is required for URLs. Link will not be added if prefix is not present.",
-        value: "https://",
-        valueSelection: [8, 8],
     };
 
     vscode.window.showInputBox(options).then((val) => {

@@ -10,13 +10,14 @@
 // to report the results back to the caller. When the tests are finished, return
 // a possible error to the callback or null if none.
 
-var testRunner = require('vscode/lib/testrunner');
+// tslint:disable-next-line:no-var-requires
+let testRunner = require("vscode/lib/testrunner");
 
 // You can directly control Mocha options by uncommenting the following lines
 // See https://github.com/mochajs/mocha/wiki/Using-mocha-programmatically#set-options for more info
 testRunner.configure({
-    ui: 'bdd', 		// the BDD UI is being used in extension.test.ts (describe, it, should)
-    useColors: true // colored output from test results
+    ui: "bdd", 		// the BDD UI is being used in extension.test.ts (describe, it, should)
+    useColors: true, // colored output from test results
 });
 
 module.exports = testRunner;

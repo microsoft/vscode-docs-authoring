@@ -1,5 +1,23 @@
 # Change Log
 
+## 0.2.2 (January 17th, 2018)
+
+- Custom markdownlint rule updates (temporarily disable alert linting)
+
+## 0.2.1 (December 10th, 2018)
+
+- New custom markdownlint rules (alerts, secure links)
+- UI update for external link command
+
+## 0.2.0 (December 3rd, 2018)
+
+- Markdownlint custom rule integration
+- Quickpick update
+
+## 0.1.5 (October 3rd, 2018)
+
+- Bookmark/heading quickpick update
+
 ## 0.1.4 (August 20th, 2018)
 
 - Update toolbar link options
