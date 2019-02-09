@@ -10,7 +10,6 @@ import { cleanupDownloadFiles, templateDirectory } from "../helper/github";
 import * as metadata from "../helper/user-metadata";
 
 const markdownExtensionFilter = [".md"];
-const editor = vscode.window.activeTextEditor;
 
 export async function showTemplates() {
     // create a new markdown file.
@@ -24,19 +23,38 @@ export async function showTemplates() {
                     throw err;
                 }
                 const items: vscode.QuickPickItem[] = [];
+                const learnModule: string = "Learn Module";
+                items.push({ label: learnModule });
                 files.sort();
                 {
                     files.filter((file: any) => markdownExtensionFilter.indexOf(path.extname(file.toLowerCase()))
                         !== -1).forEach((file: any) => {
                             if (path.basename(file).toLowerCase() !== "readme.md") {
-                                items.push({ label: path.basename(file), description: path.dirname(file) });
+                                items.push({ label: path.basename(file) });
                             }
                         });
                 }
                 vscode.window.showQuickPick(items).then((qpSelection) => {
                     if (!qpSelection) {
                         return;
-                    } else {
+                    }
+                    // let module;
+
+                    if (qpSelection.label === learnModule) {
+                        // const repoRoot = `${vscode.workspace.workspaceFolders[0].uri.fsPath}\\`;
+                        const getModuleName = vscode.window.showInputBox({
+                            prompt: "Enter module name.",
+                        });
+                        getModuleName.then((moduleName) => {
+                            // build module name
+                            const module = moduleName.replace(/ /g, "-").toLowerCase();
+                            // tslint:disable-next-line:no-console
+                            console.log(`This is the module name ${module}`);
+                            getProductName(module);
+                        });
+                    }
+
+                    if (qpSelection.label && qpSelection.label !== learnModule) {
                         const qpFullPath = path.join(qpSelection.description, qpSelection.label);
                         const content = fs.readFileSync(qpFullPath, "utf8");
                         textEditor.edit((edit) => {
@@ -67,4 +85,58 @@ export async function showTemplates() {
     });
 
     cleanupDownloadFiles();
+}
+
+export function getProductName(module: string) {
+    const getProductName = vscode.window.showInputBox({
+        prompt: "Enter product name.",
+    });
+    getProductName.then((productName) => {
+        // tslint:disable-next-line:no-console
+        console.log(`This is the product name ${productName}`);
+        createModuleDirectory(module, productName)
+    });
+}
+
+export function createModuleDirectory(module: string, product: string) {
+    // fs.mkdirSync(path.join(repoRoot, product, module));
+    try {
+        const repoRoot = `${vscode.workspace.workspaceFolders[0].uri.fsPath}\\`;
+        
+        const productPath = path.join(repoRoot, product);
+        if (!fs.existsSync(productPath)) {
+            fs.mkdirSync(productPath);
+        }
+
+        const modulePath = path.join(repoRoot, product, module);
+        if (!fs.existsSync(modulePath)) {
+            fs.mkdirSync(modulePath);
+        }
+        
+        // fs.mkdirSync(modulePath);
+        fs.mkdirSync(path.join(repoRoot, product, module, "includes"));
+        fs.mkdirSync(path.join(repoRoot, product, module, "media"));
+        addModuleFiles(modulePath, module);
+    } catch (error) {
+        console.log(`Function: createModuleDirectory ${error}`);
+    }
+
+}
+
+export function addModuleFiles(modulePath: string, module: string) {
+    try {
+        const introductionSrc = "E:\\GitHub\\vscode-docs-authoring\\docs-article-templates\\src\\learn-templates\\1-introduction.yml";
+        const introductionDest = path.join(modulePath, "1-introduction.yml");
+        const introductionContent = fs.readFileSync(introductionSrc,"utf8");
+        const updatedIntro = introductionContent.replace("{module}", module);
+        fs.writeFileSync(introductionDest, updatedIntro, "utf8");
+
+        const indexSrc = "E:\\GitHub\\vscode-docs-authoring\\docs-article-templates\\src\\learn-templates\\index.yml";
+        const indexDest = path.join(modulePath, "index.yml");
+        const indexContent = fs.readFileSync(indexSrc,"utf8");
+        const updatedIndex = indexContent.replace(/{module}/g, module);
+        fs.writeFileSync(indexDest, updatedIndex, "utf8");
+    } catch (error) {
+        console.log(`Function: addModuleFiles ${error}`);
+    }
 }
