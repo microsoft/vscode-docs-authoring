@@ -3,7 +3,7 @@
 import * as fs from "fs";
 import os = require("os");
 import * as path from "path";
-import { showTemplates } from "../controllers/quick-pick-controller";
+import { displayTemplates } from "../controllers/quick-pick-controller";
 import { output } from "../extension";
 import * as common from "./common";
 
@@ -14,12 +14,13 @@ export const templateDirectory = path.join(docsAuthoringDirectory, "templates");
 export async function downloadRepo() {
     const download = require("download-git-repo");
     const templateRepo = "MicrosoftDocs/content-templates";
+    displayTemplates();
     download(templateRepo, docsAuthoringDirectory, (err) => {
         if (err) {
             common.postWarning(err ? "Error: Cannot connect to " + templateRepo : "Success");
             output.appendLine(err ? "Error: Cannot connect to " + templateRepo : "Success");
         } else {
-            showTemplates();
+            displayTemplates();
         }
     });
 }
