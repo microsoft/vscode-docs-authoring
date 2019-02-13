@@ -8,9 +8,11 @@ import { output } from "../extension";
 import { generateTimestamp } from "../helper/common";
 import { cleanupDownloadFiles, templateDirectory } from "../helper/github";
 import { formatModuleName } from "../helper/module-builder";
-import { alias, gitHubID, missingValue } from "../helper/user-metadata";
+import { alias, gitHubID, missingValue } from "../helper/user-settings";
+import { enterModuleName, moduleQuickPick, templateNameMetadata } from "../strings";
 
 const markdownExtensionFilter = [".md"];
+export let moduleTitle;
 
 export function displayTemplates() {
     let templateName;
@@ -19,9 +21,10 @@ export function displayTemplates() {
             output.appendLine(err);
             throw err;
         }
-        const items: QuickPickItem[] = [];
-        const learnModule: string = "Learn Module";
-        items.push({ label: learnModule });
+
+        const templates: QuickPickItem[] = [];
+        templates.push({ label: moduleQuickPick });
+
         const fm = require('front-matter');
 
         {
@@ -33,60 +36,61 @@ export function displayTemplates() {
                             const fileContent = readFileSync(filePath, "utf8");
                             const updatedContent = fileContent.replace("{@date}", "{date}");
                             const yamlContent = fm(updatedContent);
-                            templateName = yamlContent.attributes["ms.template"];
+                            templateName = yamlContent.attributes[templateNameMetadata];
 
                             if (templateName) {
-                                items.push({ label: templateName, description: path.join(path.dirname(file), path.basename(file)) });
+                                templates.push({ label: templateName, description: path.join(path.dirname(file), path.basename(file)) });
                             }
                             if (!templateName) {
-                                items.push({ label: path.basename(file), description: path.join(path.dirname(file), path.basename(file)) });
+                                templates.push({ label: path.basename(file), description: path.join(path.dirname(file), path.basename(file)) });
                             }
                         } catch (error) {
                             console.log(error)
                         }
                     }
                 });
+        }
+
+        templates.sort(function (a, b) {
+            var firstLabel = a.label.toUpperCase();
+            var secondLabel = b.label.toUpperCase();
+            if (firstLabel < secondLabel) {
+                return -1;
+            }
+            if (firstLabel > secondLabel) {
+                return 1;
+            }
+            return 0;
+        })
+
+        window.showQuickPick(templates).then((qpSelection) => {
+            if (!qpSelection) {
+                return;
             }
 
-            items.sort(function(a, b) {
-                var firstLabel = a.label.toUpperCase();
-                var secondLabel = b.label.toUpperCase();
-                if (firstLabel < secondLabel) {
-                    return -1;
-                }
-                if (firstLabel > secondLabel) {
-                    return 1;
-                }
-                return 0;
-            })
+            if (qpSelection.label === moduleQuickPick) {
+                const getModuleName = window.showInputBox({
+                    prompt: enterModuleName,
+                });
+                getModuleName.then((moduleName) => {
+                    if (!moduleName) {
+                        return;
+                    }
+                    moduleTitle = moduleName;
+                    formatModuleName(moduleName);
+                });
+            }
 
-            window.showQuickPick(items).then((qpSelection) => {
-                if (!qpSelection) {
-                    return;
-                }
-
-                if (qpSelection.label === learnModule) {
-                    const getModuleName = window.showInputBox({
-                        prompt: "Enter module name.",
-                    });
-                    getModuleName.then((moduleName) => {
-                        if (!moduleName) {
-                            return;
-                        }
-                        formatModuleName(moduleName)
-                    });
-                }
-
-                if (qpSelection.label && qpSelection.label !== learnModule) {
-                    const template = qpSelection.label;
-                    const templatePath = qpSelection.description;
-                    applyDocsTemplate(templatePath, template);
-                }
-            }, (error: any) => {
-                window.showWarningMessage(error);
-                output.appendLine(error);
-            });
+            if (qpSelection.label && qpSelection.label !== moduleQuickPick) {
+                const template = qpSelection.label;
+                const templatePath = qpSelection.description;
+                applyDocsTemplate(templatePath, template);
+            }
+        }, (error: any) => {
+            window.showWarningMessage(error);
+            output.appendLine(error);
         });
+    });
 }
 
 export function applyDocsTemplate(templatePath: string, template?: string, ) {

@@ -58,3 +58,10 @@ export function generateTimestamp() {
         msTimeValue: date.toLocaleTimeString([], { hour12: false }),
     };
 }
+
+export function formatLearnNames(name: string) {
+    const formattedName = name.replace(/ /g, "-").toLowerCase();
+    return {
+        formattedName
+    }
+}

@@ -1,16 +1,18 @@
-import { window, workspace } from "vscode";
-import * as path from "path";
 import { existsSync, mkdirSync } from "fs";
-import {createUnits} from "../helper/unit-builder";
+import * as path from "path";
+import { window, workspace } from "vscode";
+import { formatLearnNames } from "../helper/common";
+import { getUnitName } from "../helper/unit-builder";
+import { enterParentFolderName } from "../strings";
 
 export function formatModuleName(moduleName: string) {
-    const module = moduleName.replace(/ /g, "-").toLowerCase();
-    getProductName(module);
+    const {formattedName} = formatLearnNames(moduleName);
+    getParentFolderName(formattedName);
 }
 
-export function getProductName(module: string) {
+export function getParentFolderName(module: string) {
     const getProductName = window.showInputBox({
-        prompt: "Enter product name.",
+        prompt: enterParentFolderName,
     });
     getProductName.then((productName) => {
         if (!productName) {
@@ -35,5 +37,5 @@ export function createModuleDirectory(module: string, product: string) {
 
     mkdirSync(path.join(repoRoot, product, module, "includes"));
     mkdirSync(path.join(repoRoot, product, module, "media"));
-    createUnits(modulePath, module);
+    getUnitName(modulePath, module);
 }
