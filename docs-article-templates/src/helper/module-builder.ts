@@ -5,37 +5,44 @@ import { formatLearnNames } from "../helper/common";
 import { getUnitName } from "../helper/unit-builder";
 import { enterParentFolderName } from "../strings";
 
+export let formattedModuleName: string;
+export let parentFolder: string;
+export let modulePath: string;
+let repoRoot: string;
+
 export function formatModuleName(moduleName: string) {
+    repoRoot = `${workspace.workspaceFolders[0].uri.fsPath}\\`;
     const {formattedName} = formatLearnNames(moduleName);
-    getParentFolderName(formattedName);
+    formattedModuleName = formattedName
+    getParentFolderName();
 }
 
-export function getParentFolderName(module: string) {
+export function getParentFolderName() {
     const getProductName = window.showInputBox({
         prompt: enterParentFolderName,
     });
-    getProductName.then((productName) => {
-        if (!productName) {
-            return;
+    getProductName.then((parent) => {
+        if (!parent) {
+            parent = repoRoot;
+            // return;
         }
-        createModuleDirectory(module, productName)
+        parentFolder = parent;
+        createModuleDirectory()
     });
 }
 
-export function createModuleDirectory(module: string, product: string) {
-    const repoRoot = `${workspace.workspaceFolders[0].uri.fsPath}\\`;
-
-    const productPath = path.join(repoRoot, product);
-    if (!existsSync(productPath)) {
-        mkdirSync(productPath);
+export function createModuleDirectory() {
+    const parentPath = path.join(repoRoot, parentFolder);
+    if (!existsSync(parentPath)) {
+        mkdirSync(parentPath);
     }
 
-    const modulePath = path.join(repoRoot, product, module);
+    modulePath = path.join(repoRoot, parentFolder, formattedModuleName);
     if (!existsSync(modulePath)) {
         mkdirSync(modulePath);
     }
 
-    mkdirSync(path.join(repoRoot, product, module, "includes"));
-    mkdirSync(path.join(repoRoot, product, module, "media"));
-    getUnitName(modulePath, module);
+    mkdirSync(path.join(modulePath, "includes"));
+    mkdirSync(path.join(modulePath, "media"));
+    getUnitName();
 }

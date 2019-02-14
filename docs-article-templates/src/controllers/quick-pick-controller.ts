@@ -11,8 +11,9 @@ import { formatModuleName } from "../helper/module-builder";
 import { alias, gitHubID, missingValue } from "../helper/user-settings";
 import { enterModuleName, moduleQuickPick, templateNameMetadata } from "../strings";
 
-const markdownExtensionFilter = [".md"];
 export let moduleTitle;
+const fm = require('front-matter');
+const markdownExtensionFilter = [".md"];
 
 export function displayTemplates() {
     let templateName;
@@ -24,8 +25,6 @@ export function displayTemplates() {
 
         const templates: QuickPickItem[] = [];
         templates.push({ label: moduleQuickPick });
-
-        const fm = require('front-matter');
 
         {
             files.filter((file: any) => markdownExtensionFilter.indexOf(path.extname(file.toLowerCase()))
@@ -74,7 +73,8 @@ export function displayTemplates() {
                 });
                 getModuleName.then((moduleName) => {
                     if (!moduleName) {
-                        return;
+                        moduleName = "default module"
+                        // return;
                     }
                     moduleTitle = moduleName;
                     formatModuleName(moduleName);
