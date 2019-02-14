@@ -6,7 +6,7 @@ import { moduleTitle } from "../controllers/quick-pick-controller";
 import { extensionPath } from "../extension";
 import { formatLearnNames } from "../helper/common";
 import { formattedUnitName, getUnitName } from "../helper/unit-builder";
-import { learnRepoIid } from "../helper/user-settings";
+import { learnLevel, learnProduct, learnRepoId, learnRole } from "../helper/user-settings";
 import { enterParentFolderName, validateParentName } from "../strings";
 
 export let formattedModuleName: string;
@@ -58,17 +58,19 @@ export function createModuleDirectory() {
 
 export function updateModule() {
     const moduleTemplate = path.join(templateSource, "index.yml");
-    const indexDest = path.join(modulePath, "index.yml");
+    const moduleLocation = path.join(modulePath, "index.yml");
     const indexContent = readFileSync(moduleTemplate, "utf8");
-    if (!learnRepoIid) {
-        learnRepo = repoName;
+    if (learnRepoId) {
+        learnRepo = learnRepoId;
     } else {
-        learnRepo = learnRepoIid;
+        learnRepo = repoName;
     }
     const updatedModule = indexContent.replace(/{module}/g, formattedModuleName)
-    .replace(/{unit}/g, formattedUnitName)
     .replace(/{repo}/g, learnRepo)
-    .replace(/{unformattedModuleTitle}/g, moduleTitle)
-    .replace(/'/g, " ");
-    writeFileSync(indexDest, updatedModule, "utf8");
+    .replace(/{unit}/g, formattedUnitName)
+    .replace(/{level}/g, learnLevel)
+    .replace(/{role}/g, learnRole)
+    .replace(/{product}/g, learnProduct)
+    .replace(/{unformattedModuleTitle}/g, moduleTitle);
+    writeFileSync(moduleLocation, updatedModule, "utf8");
 }

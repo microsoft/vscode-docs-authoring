@@ -1,17 +1,17 @@
 ### YamlMime:Module
-uid: '{repo}.{module}'
-title: '{unformattedModuleTitle}'
-summary: A brief summary describing what the module is about. 
+uid: {repo}.{module}
+title: {unformattedModuleTitle}
+summary: ... 
 abstract: Module learning objectives
 prerequisites: Suggested courses to complete prior to starting module.
-iconUrl: The link to the module image shown on the module landing page.
+iconUrl: https://...
 levels: 
-- beginner
+- {level}
 roles:
-- developer
+- {role}
 products:
-- azure
+- {product}
 units:
-- '{repo}.{module}-{unit}'
+- {repo}.{module}.{unit}
 badge:
-  uid: '{repo}.{module}.badge'
+  uid: {repo}.{module}.badge

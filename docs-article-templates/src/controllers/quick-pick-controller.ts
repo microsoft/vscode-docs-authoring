@@ -26,7 +26,7 @@ export function displayTemplates() {
         }
 
         const templates: QuickPickItem[] = [];
-        templates.push({ label: moduleQuickPick });
+        templates.push({ label: moduleQuickPick, description: `Create a Learn module and unit` });
 
         {
             files.filter((file: any) => markdownExtensionFilter.indexOf(path.extname(file.toLowerCase()))
