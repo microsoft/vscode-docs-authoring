@@ -38,6 +38,11 @@
           "type": "string",
           "default": "",
           "description": "GitHub ID"
+        },
+        "docs.templates.learnrepouid": {
+          "type": "string",
+          "default": "",
+          "description": "Default Learn repo"
         }
       }
     },
@@ -60,6 +65,7 @@
   "dependencies": {
     "@types/node-dir": "0.0.32",
     "download-git-repo": "^1.0.2",
+    "front-matter": "^3.0.1",
     "node-dir": "^0.1.17",
     "octicons": "^4.4.0"
   },

@@ -9,14 +9,16 @@ import { generateTimestamp } from "../helper/common";
 import { cleanupDownloadFiles, templateDirectory } from "../helper/github";
 import { formatModuleName } from "../helper/module-builder";
 import { alias, gitHubID, missingValue } from "../helper/user-settings";
-import { enterModuleName, moduleQuickPick, templateNameMetadata } from "../strings";
+import { enterModuleName, moduleQuickPick, templateNameMetadata, validateModuleName } from "../strings";
 
 export let moduleTitle;
-const fm = require('front-matter');
+// tslint:disable-next-line:no-var-requires
+const fm = require("front-matter");
 const markdownExtensionFilter = [".md"];
 
 export function displayTemplates() {
     let templateName;
+    // tslint:disable-next-line:no-shadowed-variable
     files(templateDirectory, (err, files) => {
         if (err) {
             output.appendLine(err);
@@ -44,15 +46,18 @@ export function displayTemplates() {
                                 templates.push({ label: path.basename(file), description: path.join(path.dirname(file), path.basename(file)) });
                             }
                         } catch (error) {
-                            console.log(error)
+                            output.appendLine(error);
                         }
                     }
                 });
         }
 
-        templates.sort(function (a, b) {
-            var firstLabel = a.label.toUpperCase();
-            var secondLabel = b.label.toUpperCase();
+        // tslint:disable-next-line:only-arrow-functions
+        templates.sort(function(a, b) {
+            // tslint:disable-next-line:prefer-const
+            let firstLabel = a.label.toUpperCase();
+            // tslint:disable-next-line:prefer-const
+            let secondLabel = b.label.toUpperCase();
             if (firstLabel < secondLabel) {
                 return -1;
             }
@@ -60,7 +65,7 @@ export function displayTemplates() {
                 return 1;
             }
             return 0;
-        })
+        });
 
         window.showQuickPick(templates).then((qpSelection) => {
             if (!qpSelection) {
@@ -70,11 +75,11 @@ export function displayTemplates() {
             if (qpSelection.label === moduleQuickPick) {
                 const getModuleName = window.showInputBox({
                     prompt: enterModuleName,
+                    validateInput: (userInput) => userInput.length > 0 ? "" : validateModuleName,
                 });
                 getModuleName.then((moduleName) => {
                     if (!moduleName) {
-                        moduleName = "default module"
-                        // return;
+                        return;
                     }
                     moduleTitle = moduleName;
                     formatModuleName(moduleName);
@@ -93,7 +98,7 @@ export function displayTemplates() {
     });
 }
 
-export function applyDocsTemplate(templatePath: string, template?: string, ) {
+export function applyDocsTemplate(templatePath: string, template?: string ) {
     const newFile = Uri.parse("untitled:" + "New-Topic.md");
     workspace.openTextDocument(newFile).then((textDocument: TextDocument) => {
         window.showTextDocument(textDocument, 1, false).then((textEditor) => {
@@ -117,7 +122,7 @@ export function applyDocsTemplate(templatePath: string, template?: string, ) {
                         edit.insert(new Position(0, 0), updatedContent);
                     }
                 } catch (error) {
-                    console.log(error);
+                     output.appendLine(error);
                 }
             });
         }, (error: any) => {

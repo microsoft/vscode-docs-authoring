@@ -1,12 +1,11 @@
 "use-strict";
 
 import { readdir, stat, unlinkSync } from "fs";
+import os = require("os");
 import * as path from "path";
 import { displayTemplates } from "../controllers/quick-pick-controller";
 import { output } from "../extension";
 import { postWarning } from "../helper/common";
-import os = require("os");
-
 
 export const docsAuthoringDirectory = path.join(os.homedir(), "Docs Authoring");
 export const templateDirectory = path.join(docsAuthoringDirectory, "Templates");

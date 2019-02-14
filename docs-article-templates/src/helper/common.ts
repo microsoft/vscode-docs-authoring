@@ -62,6 +62,6 @@ export function generateTimestamp() {
 export function formatLearnNames(name: string) {
     const formattedName = name.replace(/ /g, "-").toLowerCase();
     return {
-        formattedName
-    }
+        formattedName,
+    };
 }

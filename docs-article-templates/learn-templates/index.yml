@@ -1,6 +1,6 @@
 ### YamlMime:Module
-uid: learn.{module}
-title: unformattedModuleTitle
+uid: '{repo}.{module}'
+title: '{unformattedModuleTitle}'
 summary: A brief summary describing what the module is about. 
 abstract: Module learning objectives
 prerequisites: Suggested courses to complete prior to starting module.
@@ -12,6 +12,6 @@ roles:
 products:
 - azure
 units:
-- learn.{module}-{unit}
+- '{repo}.{module}-{unit}'
 badge:
-  uid: learn.{module}.badge
+  uid: '{repo}.{module}.badge'

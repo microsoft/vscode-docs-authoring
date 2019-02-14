@@ -1,4 +1,4 @@
 ### YamlMime:ModuleUnit
-uid: learn.{module}-{unit}
-title: Unit title
+uid: '{repo}.{module}-{unit}'
+title: '{unformattedUnitTitle}'
 durationInMinutes: 1
