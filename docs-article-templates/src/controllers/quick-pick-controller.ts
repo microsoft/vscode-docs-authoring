@@ -2,14 +2,14 @@
 
 import { readFileSync } from "fs";
 import { files } from "node-dir";
-import * as path from "path";
+import {basename, dirname, extname, join} from "path";
 import { Position, QuickPickItem, TextDocument, Uri, window, workspace } from "vscode";
 import { output } from "../extension";
 import { generateTimestamp } from "../helper/common";
 import { cleanupDownloadFiles, templateDirectory } from "../helper/github";
-import { formatModuleName } from "../helper/module-builder";
+import { showLearnFolderSelector } from "../helper/module-builder";
 import { alias, gitHubID, missingValue } from "../helper/user-settings";
-import { enterModuleName, moduleQuickPick, templateNameMetadata, validateModuleName } from "../strings";
+import { moduleQuickPick, templateNameMetadata } from "../strings";
 
 export let moduleTitle;
 // tslint:disable-next-line:no-var-requires
@@ -29,21 +29,21 @@ export function displayTemplates() {
         templates.push({ label: moduleQuickPick, description: `Create a Learn module and unit` });
 
         {
-            files.filter((file: any) => markdownExtensionFilter.indexOf(path.extname(file.toLowerCase()))
+            files.filter((file: any) => markdownExtensionFilter.indexOf(extname(file.toLowerCase()))
                 !== -1).forEach((file: any) => {
-                    if (path.basename(file).toLowerCase() !== "readme.md") {
+                    if (basename(file).toLowerCase() !== "readme.md") {
                         try {
-                            const filePath = path.join(path.dirname(file), path.basename(file));
+                            const filePath = join(dirname(file), basename(file));
                             const fileContent = readFileSync(filePath, "utf8");
                             const updatedContent = fileContent.replace("{@date}", "{date}");
                             const yamlContent = fm(updatedContent);
                             templateName = yamlContent.attributes[templateNameMetadata];
 
                             if (templateName) {
-                                templates.push({ label: templateName, description: path.join(path.dirname(file), path.basename(file)) });
+                                templates.push({ label: templateName, description: join(dirname(file), basename(file)) });
                             }
                             if (!templateName) {
-                                templates.push({ label: path.basename(file), description: path.join(path.dirname(file), path.basename(file)) });
+                                templates.push({ label: basename(file), description: join(dirname(file), basename(file)) });
                             }
                         } catch (error) {
                             output.appendLine(error);
@@ -54,10 +54,8 @@ export function displayTemplates() {
 
         // tslint:disable-next-line:only-arrow-functions
         templates.sort(function(a, b) {
-            // tslint:disable-next-line:prefer-const
-            let firstLabel = a.label.toUpperCase();
-            // tslint:disable-next-line:prefer-const
-            let secondLabel = b.label.toUpperCase();
+            const firstLabel = a.label.toUpperCase();
+            const secondLabel = b.label.toUpperCase();
             if (firstLabel < secondLabel) {
                 return -1;
             }
@@ -73,17 +71,7 @@ export function displayTemplates() {
             }
 
             if (qpSelection.label === moduleQuickPick) {
-                const getModuleName = window.showInputBox({
-                    prompt: enterModuleName,
-                    validateInput: (userInput) => userInput.length > 0 ? "" : validateModuleName,
-                });
-                getModuleName.then((moduleName) => {
-                    if (!moduleName) {
-                        return;
-                    }
-                    moduleTitle = moduleName;
-                    formatModuleName(moduleName);
-                });
+                showLearnFolderSelector();
             }
 
             if (qpSelection.label && qpSelection.label !== moduleQuickPick) {

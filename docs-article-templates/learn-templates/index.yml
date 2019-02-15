@@ -2,9 +2,8 @@
 uid: {repo}.{module}
 title: {unformattedModuleTitle}
 summary: ... 
-abstract: Module learning objectives
-prerequisites: Suggested courses to complete prior to starting module.
-iconUrl: https://...
+abstract: ...
+iconUrl: /media/learn/module.svg
 levels: 
 - {level}
 roles:

@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from "fs";
-import * as path from "path";
+import { join } from "path";
 import { window } from "vscode";
 import { extensionPath } from "../extension";
 import { formatLearnNames } from "../helper/common";
@@ -13,7 +13,7 @@ let templateSource: string;
 let unitTitle: string;
 
 export function getUnitName() {
-    templateSource = path.join(extensionPath, "learn-templates");
+    templateSource = join(extensionPath, "learn-templates");
     const getUnitNameInput = window.showInputBox({
         prompt: enterUnitName,
         validateInput: (userInput) => userInput.length > 0 ? "" : validateUnitName,
@@ -30,15 +30,19 @@ export function getUnitName() {
 }
 
 export function createUnits() {
-    const unitTemplate = path.join(templateSource, "unit.yml");
-    const unitPath = path.join(modulePath, `${formattedUnitName}.yml`);
+    const unitTemplate = join(templateSource, "unit.yml");
+    const unitPath = join(modulePath, `${formattedUnitName}.yml`);
     const unitContent = readFileSync(unitTemplate, "utf8");
     if (!learnRepoId) {
         learnRepo = repoName;
     } else {
         learnRepo = learnRepoId;
     }
-    const updatedUnit = unitContent.replace(/{module}/g, formattedModuleName).replace(/{unit}/g, formattedUnitName).replace(/{repo}/g, learnRepo).replace(/{unformattedUnitTitle}/g, unitTitle).replace(/'/g, " ");
+    const updatedUnit = unitContent.replace(/{module}/g, formattedModuleName)
+        .replace(/{unit}/g, formattedUnitName)
+        .replace(/{repo}/g, learnRepo)
+        .replace(/{unformattedUnitTitle}/g, unitTitle)
+        .replace(/'/g, " ");
     writeFileSync(unitPath, updatedUnit, "utf8");
     updateModule();
 }
