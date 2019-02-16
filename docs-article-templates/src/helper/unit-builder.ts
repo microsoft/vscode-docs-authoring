@@ -1,9 +1,9 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { window } from "vscode";
-import { extensionPath } from "../extension";
+import { commands, window } from "vscode";
+import { extensionPath, output } from "../extension";
 import { formatLearnNames } from "../helper/common";
-import { formattedModuleName, modulePath, repoName, updateModule } from "../helper/module-builder";
+import { formattedModuleName, includesDirectory, modulePath, repoName, updateModule } from "../helper/module-builder";
 import { learnRepoId } from "../helper/user-settings";
 import { enterUnitName, validateUnitName } from "../strings";
 
@@ -29,7 +29,7 @@ export function getUnitName() {
     });
 }
 
-export function createUnits() {
+export async function createUnits() {
     window.showInformationMessage("Create a new unit?", "Yes").then((result) => {
         if (result === "Yes") {
             getUnitName();
@@ -43,10 +43,31 @@ export function createUnits() {
     } else {
         learnRepo = learnRepoId;
     }
-    const updatedUnit = unitContent.replace(/{module}/g, formattedModuleName)
-        .replace(/{unit}/g, formattedUnitName)
-        .replace(/{repo}/g, learnRepo)
-        .replace(/{unformattedUnitTitle}/g, unitTitle);
-    writeFileSync(unitPath, updatedUnit, "utf8");
+    /* tslint:disable:object-literal-sort-keys */
+    const yaml = require("write-yaml");
+    const data = {
+        header: `### YamlMime:ModuleUnit`,
+        uid: `${learnRepo}.${formattedModuleName}.${formattedUnitName}`,
+        title: `${unitTitle}`,
+        durationInMinutes: `1`,
+    };
+    yaml.sync(unitPath, data);
+    const includeFile = join(includesDirectory, `${formattedUnitName}.md`);
+    writeFileSync(includeFile, "");
+    let uri = includeFile
+    let success = await commands.executeCommand('vscode.openFile', uri);
+    cleanupUnit(unitPath);
     updateModule();
+}
+
+export function cleanupUnit(generatedUnit: string) {
+    try {
+        const moduleContent = readFileSync(generatedUnit, "utf8");
+        const updatedModule = moduleContent.replace("header: ", "")
+            .replace(/'/g, "");
+        writeFileSync(generatedUnit, updatedModule, "utf8");
+    } catch (error) {
+        output.appendLine(error);
+    }
+
 }

@@ -12,6 +12,7 @@ export let parentFolder: string;
 export let modulePath: string;
 export let repoName: string;
 export let moduleTitle;
+export let includesDirectory: string;
 let learnRepo: string;
 let repoRoot: string;
 let templateSource: string;
@@ -69,8 +70,8 @@ export function createModuleDirectory() {
     if (!existsSync(modulePath)) {
         mkdirSync(modulePath);
     }
-
-    mkdirSync(join(modulePath, "includes"));
+    includesDirectory = join(modulePath, "includes");
+    mkdirSync(includesDirectory);
     mkdirSync(join(modulePath, "media"));
     getUnitName();
 }
