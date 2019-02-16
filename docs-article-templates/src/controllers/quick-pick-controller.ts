@@ -80,7 +80,6 @@ export function displayTemplates() {
                 applyDocsTemplate(templatePath, template);
             }
         }, (error: any) => {
-            window.showWarningMessage(error);
             output.appendLine(error);
         });
     });

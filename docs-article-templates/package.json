@@ -39,22 +39,22 @@
           "default": "",
           "description": "GitHub ID"
         },
-        "docs.templates.learnrepouid": {
+        "docs.templates.learn_repo_id": {
           "type": "string",
           "default": "",
           "description": "Default Learn repo"
         },
-        "docs.templates.learnlevel": {
+        "docs.templates.learn_level": {
           "type": "string",
           "default": "beginner",
           "description": "Default Learn level"
         },
-        "docs.templates.learnrole": {
+        "docs.templates.learn_role": {
           "type": "string",
           "default": "developer",
           "description": "Default Learn role"
         },
-        "docs.templates.learnproduct": {
+        "docs.templates.learn_product": {
           "type": "string",
           "default": "azure",
           "description": "Default Learn product"
@@ -82,7 +82,8 @@
     "download-git-repo": "^1.0.2",
     "front-matter": "^3.0.1",
     "node-dir": "^0.1.17",
-    "octicons": "^4.4.0"
+    "octicons": "^4.4.0",
+    "write-yaml": "^1.0.0"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.42",

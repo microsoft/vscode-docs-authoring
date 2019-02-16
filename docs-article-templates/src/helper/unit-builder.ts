@@ -30,6 +30,11 @@ export function getUnitName() {
 }
 
 export function createUnits() {
+    window.showInformationMessage("Create a new unit?", "Yes").then((result) => {
+        if (result === "Yes") {
+            getUnitName();
+        }
+    });
     const unitTemplate = join(templateSource, "unit.yml");
     const unitPath = join(modulePath, `${formattedUnitName}.yml`);
     const unitContent = readFileSync(unitTemplate, "utf8");
@@ -41,8 +46,7 @@ export function createUnits() {
     const updatedUnit = unitContent.replace(/{module}/g, formattedModuleName)
         .replace(/{unit}/g, formattedUnitName)
         .replace(/{repo}/g, learnRepo)
-        .replace(/{unformattedUnitTitle}/g, unitTitle)
-        .replace(/'/g, " ");
+        .replace(/{unformattedUnitTitle}/g, unitTitle);
     writeFileSync(unitPath, updatedUnit, "utf8");
     updateModule();
 }

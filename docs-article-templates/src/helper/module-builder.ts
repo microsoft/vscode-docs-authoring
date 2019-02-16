@@ -1,7 +1,7 @@
 import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { QuickPickItem, QuickPickOptions, window, workspace } from "vscode";
-import { extensionPath } from "../extension";
+import { extensionPath, output } from "../extension";
 import { formatLearnNames } from "../helper/common";
 import { formattedUnitName, getUnitName } from "../helper/unit-builder";
 import { learnLevel, learnProduct, learnRepoId, learnRole } from "../helper/user-settings";
@@ -84,12 +84,36 @@ export function updateModule() {
     } else {
         learnRepo = repoName;
     }
-    const updatedModule = indexContent.replace(/{module}/g, formattedModuleName)
-        .replace(/{repo}/g, learnRepo)
-        .replace(/{unit}/g, formattedUnitName)
-        .replace(/{level}/g, learnLevel)
-        .replace(/{role}/g, learnRole)
-        .replace(/{product}/g, learnProduct)
-        .replace(/{unformattedModuleTitle}/g, moduleTitle);
-    writeFileSync(moduleLocation, updatedModule, "utf8");
+    /* tslint:disable:object-literal-sort-keys */
+    const yaml = require("write-yaml");
+    const data = {
+        header: `### YamlMime:Module`,
+        uid: `${learnRepo}.${formattedModuleName}`,
+        title: moduleTitle,
+        summary: `...`,
+        abstract: `...`,
+        iconUrl: `/media/learn/module.svg`,
+        levels: [learnLevel],
+        roles: [learnRole],
+        products: [learnProduct],
+        units: [`${learnRepo}.${formattedModuleName}.${formattedUnitName}`],
+        badge: [`{badge}`],
+    };
+    yaml.sync(moduleLocation, data);
+    cleanupModule(moduleLocation);
+}
+
+export function cleanupModule(generatedModule: string) {
+    try {
+        const moduleContent = readFileSync(generatedModule, "utf8");
+        const updatedModule = moduleContent.replace("header: ", "")
+            .replace(`{badge}`, `uid: ${learnRepo}.${formattedModuleName}.badge`)
+            .replace(/  -/g, "-")
+            .replace(/'/g, "")
+            .replace(`- uid: `, "  ");
+        writeFileSync(generatedModule, updatedModule, "utf8");
+    } catch (error) {
+        output.appendLine(error);
+    }
+
 }
