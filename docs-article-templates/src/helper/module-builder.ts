@@ -1,9 +1,9 @@
 import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { QuickPickItem, QuickPickOptions, window, workspace } from "vscode";
-import { extensionPath, output } from "../extension";
+import { output } from "../extension";
 import { formatLearnNames } from "../helper/common";
-import { getUnitName } from "../helper/unit-builder";
+import { getUnitName, unitList } from "../helper/unit-builder";
 import { learnLevel, learnProduct, learnRepoId, learnRole } from "../helper/user-settings";
 import { enterModuleName, parentFolderPrompt, validateModuleName } from "../strings";
 
@@ -11,14 +11,15 @@ export let formattedModuleName: string;
 export let parentFolder: string;
 export let modulePath: string;
 export let repoName: string;
-export let moduleTitle;
 export let includesDirectory: string;
+let moduleTitle;
 let learnRepo: string;
 let repoRoot: string;
-let templateSource: string;
 
 export function showLearnFolderSelector() {
-    templateSource = join(extensionPath, "learn-templates");
+    if (unitList) {
+        unitList.length = 0;
+    }
     repoRoot = `${workspace.workspaceFolders[0].uri.fsPath}\\`;
     const parentFolders: QuickPickItem[] = [];
     const options: QuickPickOptions = { placeHolder: parentFolderPrompt };
@@ -77,9 +78,6 @@ export function createModuleDirectory() {
 }
 
 export function updateModule(units) {
-    const moduleTemplate = join(templateSource, "index.yml");
-    const moduleLocation = join(modulePath, "index.yml");
-    const indexContent = readFileSync(moduleTemplate, "utf8");
     if (learnRepoId) {
         learnRepo = learnRepoId;
     } else {
@@ -88,7 +86,7 @@ export function updateModule(units) {
 
     /* tslint:disable:object-literal-sort-keys */
     const yaml = require("write-yaml");
-    const data = {
+    const moduleContent = {
         header: `### YamlMime:Module`,
         uid: `${learnRepo}.${formattedModuleName}`,
         title: moduleTitle,
@@ -101,8 +99,9 @@ export function updateModule(units) {
         units: units,
         badge: [`{badge}`],
     };
-    yaml.sync(moduleLocation, data);
-    cleanupModule(moduleLocation);
+    const moduleIndex = join(modulePath, "index.yml");
+    yaml.sync(moduleIndex, moduleContent);
+    cleanupModule(moduleIndex);
 }
 
 export function cleanupModule(generatedModule: string) {
@@ -117,5 +116,4 @@ export function cleanupModule(generatedModule: string) {
     } catch (error) {
         output.appendLine(error);
     }
-
 }
