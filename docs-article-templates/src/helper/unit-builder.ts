@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { commands, window } from "vscode";
+import { window } from "vscode";
 import { extensionPath, output } from "../extension";
 import { formatLearnNames } from "../helper/common";
 import { formattedModuleName, includesDirectory, modulePath, repoName, updateModule } from "../helper/module-builder";
@@ -11,6 +11,7 @@ export let formattedUnitName: string;
 let learnRepo: string;
 let templateSource: string;
 let unitTitle: string;
+export const unitList = [];
 
 export function getUnitName() {
     templateSource = join(extensionPath, "learn-templates");
@@ -25,16 +26,27 @@ export function getUnitName() {
         unitTitle = unitName;
         const { formattedName } = formatLearnNames(unitName);
         formattedUnitName = formattedName;
+        unitList.push(formattedUnitName);
         createUnits();
     });
 }
 
+export function promptForNumberOfUnits() {
+    const promptForUnits = window.showInputBox({
+        prompt: `Enter number of units.`
+    });
+    promptForUnits.then((units) => {
+        console.log(units);
+    })
+
+}
+
 export async function createUnits() {
-    window.showInformationMessage("Create a new unit?", "Yes").then((result) => {
+    /* window.showInformationMessage("Create a new unit?", "Yes", "No").then((result) => {
         if (result === "Yes") {
             getUnitName();
         }
-    });
+    }); */
     const unitTemplate = join(templateSource, "unit.yml");
     const unitPath = join(modulePath, `${formattedUnitName}.yml`);
     const unitContent = readFileSync(unitTemplate, "utf8");
@@ -54,10 +66,10 @@ export async function createUnits() {
     yaml.sync(unitPath, data);
     const includeFile = join(includesDirectory, `${formattedUnitName}.md`);
     writeFileSync(includeFile, "");
-    let uri = includeFile
-    let success = await commands.executeCommand('vscode.openFile', uri);
+    // let uri = includeFile
+    // let success = await commands.executeCommand('vscode.openFile', uri);
     cleanupUnit(unitPath);
-    updateModule();
+    updateModule(unitList);
 }
 
 export function cleanupUnit(generatedUnit: string) {

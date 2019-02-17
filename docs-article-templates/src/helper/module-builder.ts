@@ -3,7 +3,7 @@ import { join } from "path";
 import { QuickPickItem, QuickPickOptions, window, workspace } from "vscode";
 import { extensionPath, output } from "../extension";
 import { formatLearnNames } from "../helper/common";
-import { formattedUnitName, getUnitName } from "../helper/unit-builder";
+import { getUnitName } from "../helper/unit-builder";
 import { learnLevel, learnProduct, learnRepoId, learnRole } from "../helper/user-settings";
 import { enterModuleName, parentFolderPrompt, validateModuleName } from "../strings";
 
@@ -76,7 +76,7 @@ export function createModuleDirectory() {
     getUnitName();
 }
 
-export function updateModule() {
+export function updateModule(units) {
     const moduleTemplate = join(templateSource, "index.yml");
     const moduleLocation = join(modulePath, "index.yml");
     const indexContent = readFileSync(moduleTemplate, "utf8");
@@ -85,6 +85,7 @@ export function updateModule() {
     } else {
         learnRepo = repoName;
     }
+
     /* tslint:disable:object-literal-sort-keys */
     const yaml = require("write-yaml");
     const data = {
@@ -97,7 +98,7 @@ export function updateModule() {
         levels: [learnLevel],
         roles: [learnRole],
         products: [learnProduct],
-        units: [`${learnRepo}.${formattedModuleName}.${formattedUnitName}`],
+        units: units,
         badge: [`{badge}`],
     };
     yaml.sync(moduleLocation, data);
