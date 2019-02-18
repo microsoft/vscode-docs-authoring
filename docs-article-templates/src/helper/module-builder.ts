@@ -111,7 +111,7 @@ export function cleanupModule(generatedModule: string) {
             .replace(`{badge}`, `uid: ${learnRepo}.${formattedModuleName}.badge`)
             .replace(/  -/g, "-")
             .replace(/'/g, "")
-            .replace(`- uid: `, "  ");
+            .replace(`- uid: `, "  uid: ");
         writeFileSync(generatedModule, updatedModule, "utf8");
     } catch (error) {
         output.appendLine(error);

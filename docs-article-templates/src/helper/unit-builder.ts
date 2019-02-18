@@ -25,14 +25,13 @@ export function getUnitName() {
         unitTitle = unitName;
         const { formattedName } = formatLearnNames(unitName);
         formattedUnitName = formattedName;
-        unitList.push(formattedUnitName);
         createUnits();
     });
 }
 
 export async function createUnits() {
     const options: MessageOptions = {modal: true};
-    window.showInformationMessage("Create a new unit?", options, "Yes").then((result) => {
+    window.showInformationMessage("Create a new unit?", options, "Yes", "No").then((result) => {
         if (result === "Yes") {
             getUnitName();
         }
@@ -52,6 +51,7 @@ export async function createUnits() {
         durationInMinutes: `1`,
     };
     yaml.sync(unitPath, data);
+    unitList.push(`${learnRepo}.${formattedModuleName}.${formattedUnitName}`);
     includeFile = join(includesDirectory, `${formattedUnitName}.md`);
     writeFileSync(includeFile, "");
     cleanupUnit(unitPath);
