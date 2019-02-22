@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { MessageOptions, window } from "vscode";
+import { MessageOptions, window, Uri, ViewColumn, TextDocumentShowOptions } from "vscode";
 import { output } from "../extension";
 import { formatLearnNames } from "../helper/common";
 import { formattedModuleName, includesDirectory, modulePath, repoName, updateModule } from "../helper/module-builder";
@@ -13,6 +13,7 @@ let learnRepo: string;
 let includeFile: string;
 let unitTitle: string;
 
+// input box used to gather unit name.  input is validated and if no name is entered, exit the function.
 export function getUnitName() {
     const getUnitNameInput = window.showInputBox({
         prompt: enterUnitName,
@@ -29,9 +30,10 @@ export function getUnitName() {
     });
 }
 
+// data used to create the unit(s) yml file.
 export async function createUnits() {
     const options: MessageOptions = {modal: true};
-    window.showInformationMessage("Create a new unit?", options, "Yes", "No").then((result) => {
+    window.showInformationMessage(`Create a new unit? Previous unit: ${unitTitle}`, options, "Yes", "No").then((result) => {
         if (result === "Yes") {
             getUnitName();
         }
@@ -57,12 +59,20 @@ export async function createUnits() {
     cleanupUnit(unitPath);
 }
 
-export function cleanupUnit(generatedUnit: string) {
+// cleanup unnecessary characters, replace values and open unit in new tab after it's written to disk.
+export async function cleanupUnit(generatedUnit: string) {
     try {
         const moduleContent = readFileSync(generatedUnit, "utf8");
         const updatedModule = moduleContent.replace("header: ", "")
             .replace(/'/g, "");
         writeFileSync(generatedUnit, updatedModule, "utf8");
+        const uri = Uri.file(generatedUnit);
+        const options: TextDocumentShowOptions = {
+            preserveFocus: false,
+            preview: false,
+            viewColumn: ViewColumn.One,
+          };
+        window.showTextDocument(uri, options);
         updateModule(unitList);
     } catch (error) {
         output.appendLine(error);

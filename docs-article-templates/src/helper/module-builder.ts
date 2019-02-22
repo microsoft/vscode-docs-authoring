@@ -1,6 +1,6 @@
 import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { QuickPickItem, QuickPickOptions, window, workspace } from "vscode";
+import { QuickPickItem, QuickPickOptions, TextDocumentShowOptions, Uri, ViewColumn, window, workspace } from "vscode";
 import { output } from "../extension";
 import { formatLearnNames } from "../helper/common";
 import { getUnitName, unitList } from "../helper/unit-builder";
@@ -16,6 +16,7 @@ let moduleTitle;
 let learnRepo: string;
 let repoRoot: string;
 
+// function to display subdirectories (module parent) for user to select from.
 export function showLearnFolderSelector() {
     if (unitList) {
         unitList.length = 0;
@@ -40,6 +41,7 @@ export function showLearnFolderSelector() {
     });
 }
 
+// input box used to gather module name.  input is validated and if no name is entered, exit the function.
 export function getModuleName() {
     const getUserInput = window.showInputBox({
         prompt: enterModuleName,
@@ -77,6 +79,8 @@ export function createModuleDirectory() {
     getUnitName();
 }
 
+// data used to create the module yml file.
+// check settings.json for repo value.  if there's no value, the root path directory will be considered the repo name.
 export function updateModule(units) {
     if (learnRepoId) {
         learnRepo = learnRepoId;
@@ -92,7 +96,7 @@ export function updateModule(units) {
         title: moduleTitle,
         summary: `...`,
         abstract: `...`,
-        iconUrl: `/media/learn/module.svg`,
+        iconUrl: `https://docs.microsoft.com/media/learn/module.svg`,
         levels: [learnLevel],
         roles: [learnRole],
         products: [learnProduct],
@@ -104,6 +108,7 @@ export function updateModule(units) {
     cleanupModule(moduleIndex);
 }
 
+// cleanup unnecessary characters, replace values and open module in new tab after it's written to disk.
 export function cleanupModule(generatedModule: string) {
     try {
         const moduleContent = readFileSync(generatedModule, "utf8");
@@ -113,6 +118,13 @@ export function cleanupModule(generatedModule: string) {
             .replace(/'/g, "")
             .replace(`- uid: `, "  uid: ");
         writeFileSync(generatedModule, updatedModule, "utf8");
+        const uri = Uri.file(generatedModule);
+        const options: TextDocumentShowOptions = {
+            preserveFocus: false,
+            preview: false,
+            viewColumn: ViewColumn.One,
+          };
+        window.showTextDocument(uri, options);
     } catch (error) {
         output.appendLine(error);
     }

@@ -1,7 +1,6 @@
 "use strict";
 
-// import * as vscode from "vscode";
-import {workspace, window, ExtensionContext, commands, extensions} from "vscode";
+import {commands, ExtensionContext, window, workspace} from "vscode";
 import { applyTemplateCommand } from "./controllers/template-controller";
 
 export const output = window.createOutputChannel("docs-article-templates");
@@ -25,7 +24,8 @@ export function activate(context: ExtensionContext) {
     // if the user changes markdown.showToolbar in settings.json, display message telling them to reload.
     workspace.onDidChangeConfiguration((e: any) => {
 
-        if (e.affectsConfiguration("docs.templates.githubID" || "docs.templates.alias")) {
+        if (e.affectsConfiguration("docs.templates.githubID" || "docs.templates.alias" || "docs.templates.learn_repo_id" || "docs.templates.learn_product"
+        || "docs.templates.learn_level" || "docs.templates.learn_role")) {
 
             window.showInformationMessage("Your updated configuration has been recorded, but you must reload to see its effects.", "Reload")
                 .then((res) => {
