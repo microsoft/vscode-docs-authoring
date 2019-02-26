@@ -2,7 +2,7 @@
 
 import { readFileSync } from "fs";
 import { files } from "node-dir";
-import {basename, dirname, extname, join} from "path";
+import { basename, dirname, extname, join } from "path";
 import { Position, QuickPickItem, TextDocument, Uri, window, workspace } from "vscode";
 import { output } from "../extension";
 import { generateTimestamp } from "../helper/common";
@@ -25,14 +25,15 @@ export function displayTemplates() {
             throw err;
         }
 
-        const templates: QuickPickItem[] = [];
-        templates.push({ label: moduleQuickPick, description: `Create a Learn module and unit` });
+        // data structure used to store file name and path info for quick pick and template source.
+        const quickPickMap = new Map();
 
         {
             files.filter((file: any) => markdownExtensionFilter.indexOf(extname(file.toLowerCase()))
                 !== -1).forEach((file: any) => {
                     if (basename(file).toLowerCase() !== "readme.md") {
                         try {
+                            quickPickMap.set(basename(file), join(dirname(file), basename(file)));
                             const filePath = join(dirname(file), basename(file));
                             const fileContent = readFileSync(filePath, "utf8");
                             const updatedContent = fileContent.replace("{@date}", "{date}");
@@ -40,16 +41,23 @@ export function displayTemplates() {
                             templateName = yamlContent.attributes[templateNameMetadata];
 
                             if (templateName) {
-                                templates.push({ label: templateName, description: join(dirname(file), basename(file)) });
+                                quickPickMap.set(templateName, join(dirname(file), basename(file)));
                             }
                             if (!templateName) {
-                                templates.push({ label: basename(file), description: join(dirname(file), basename(file)) });
+                                quickPickMap.set(basename(file), join(dirname(file), basename(file)));
                             }
                         } catch (error) {
                             output.appendLine(error);
                         }
                     }
                 });
+        }
+
+        // push quickMap keys to QuickPickItems
+        const templates: QuickPickItem[] = [];
+        templates.push({ label: moduleQuickPick });
+        for (const key of quickPickMap.keys()) {
+            templates.push({ label: key});
         }
 
         // tslint:disable-next-line:only-arrow-functions
@@ -76,7 +84,7 @@ export function displayTemplates() {
 
             if (qpSelection.label && qpSelection.label !== moduleQuickPick) {
                 const template = qpSelection.label;
-                const templatePath = qpSelection.description;
+                const templatePath = quickPickMap.get(template);
                 applyDocsTemplate(templatePath, template);
             }
         }, (error: any) => {
@@ -85,7 +93,7 @@ export function displayTemplates() {
     });
 }
 
-export function applyDocsTemplate(templatePath: string, template?: string ) {
+export function applyDocsTemplate(templatePath: string, template?: string) {
     const newFile = Uri.parse("untitled:" + "New-Topic.md");
     workspace.openTextDocument(newFile).then((textDocument: TextDocument) => {
         window.showTextDocument(textDocument, 1, false).then((textEditor) => {
@@ -109,7 +117,7 @@ export function applyDocsTemplate(templatePath: string, template?: string ) {
                         edit.insert(new Position(0, 0), updatedContent);
                     }
                 } catch (error) {
-                     output.appendLine(error);
+                    output.appendLine(error);
                 }
             });
         }, (error: any) => {

@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { MessageOptions, window, Uri, ViewColumn, TextDocumentShowOptions } from "vscode";
+import { MessageOptions, TextDocumentShowOptions, Uri, ViewColumn, window } from "vscode";
 import { output } from "../extension";
 import { formatLearnNames } from "../helper/common";
 import { formattedModuleName, includesDirectory, modulePath, repoName, updateModule } from "../helper/module-builder";
