@@ -1,12 +1,13 @@
 "use strict";
 
-import * as vscode from "vscode";
+import {commands, ExtensionContext, window, workspace} from "vscode";
 import { applyTemplateCommand } from "./controllers/template-controller";
-import { postError } from "./helper/common";
 
-export const output = vscode.window.createOutputChannel("docs-article-templates");
+export const output = window.createOutputChannel("docs-article-templates");
+export let extensionPath: string;
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: ExtensionContext) {
+    extensionPath = context.extensionPath;
     // Creates an array of commands from each command file.
     const TemplateCommands: any = [];
     applyTemplateCommand().forEach((cmd) => TemplateCommands.push(cmd));
@@ -14,21 +15,22 @@ export function activate(context: vscode.ExtensionContext) {
     try {
         TemplateCommands.map((cmd: any) => {
             const commandName = cmd.command;
-            const command = vscode.commands.registerCommand(commandName, cmd.callback);
+            const command = commands.registerCommand(commandName, cmd.callback);
             context.subscriptions.push(command);
         });
     } catch (error) {
         output.appendLine("Error registering commands with vscode extension context: " + error);
     }
     // if the user changes markdown.showToolbar in settings.json, display message telling them to reload.
-    vscode.workspace.onDidChangeConfiguration((e: any) => {
+    workspace.onDidChangeConfiguration((e: any) => {
 
-        if (e.affectsConfiguration("docs.templates.githubID" || "docs.templates.alias")) {
+        if (e.affectsConfiguration("docs.templates.githubID" || "docs.templates.alias" || "docs.templates.learn_repo_id" || "docs.templates.learn_product"
+        || "docs.templates.learn_level" || "docs.templates.learn_role")) {
 
-            vscode.window.showInformationMessage("Your updated configuration has been recorded, but you must reload to see its effects.", "Reload")
+            window.showInformationMessage("Your updated configuration has been recorded, but you must reload to see its effects.", "Reload")
                 .then((res) => {
                     if (res === "Reload") {
-                        vscode.commands.executeCommand("workbench.action.reloadWindow");
+                        commands.executeCommand("workbench.action.reloadWindow");
                     }
                 });
         }
