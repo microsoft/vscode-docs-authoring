@@ -33,7 +33,6 @@ export function displayTemplates() {
                 !== -1).forEach((file: any) => {
                     if (basename(file).toLowerCase() !== "readme.md") {
                         try {
-                            quickPickMap.set(basename(file), join(dirname(file), basename(file)));
                             const filePath = join(dirname(file), basename(file));
                             const fileContent = readFileSync(filePath, "utf8");
                             const updatedContent = fileContent.replace("{@date}", "{date}");
@@ -43,6 +42,7 @@ export function displayTemplates() {
                             if (templateName) {
                                 quickPickMap.set(templateName, join(dirname(file), basename(file)));
                             }
+
                             if (!templateName) {
                                 quickPickMap.set(basename(file), join(dirname(file), basename(file)));
                             }
@@ -57,11 +57,11 @@ export function displayTemplates() {
         const templates: QuickPickItem[] = [];
         templates.push({ label: moduleQuickPick });
         for (const key of quickPickMap.keys()) {
-            templates.push({ label: key});
+            templates.push({ label: key });
         }
 
         // tslint:disable-next-line:only-arrow-functions
-        templates.sort(function(a, b) {
+        templates.sort(function (a, b) {
             const firstLabel = a.label.toUpperCase();
             const secondLabel = b.label.toUpperCase();
             if (firstLabel < secondLabel) {

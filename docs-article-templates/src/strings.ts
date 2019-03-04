@@ -1,5 +1,5 @@
 // metadata
-export const templateNameMetadata = "template_name";
+export const templateNameMetadata = "docs_authoring_template_name";
 
 // quickpick, input
 export const enterModuleName = "Enter module name";
