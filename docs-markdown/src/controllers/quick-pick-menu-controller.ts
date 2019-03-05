@@ -14,6 +14,7 @@ import { previewTopic } from "./preview-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
+import { applyCleanup } from "./cleanup-controller";
 
 export function quickPickMenuCommand() {
     const commands = [
@@ -97,6 +98,10 @@ export function markdownQuickPick() {
             description: "",
             label: "$(diff) Template",
         });
+        items.push({
+            description: "",
+            label: "$(tasklist) Cleanup...",
+        });
     }
 
     vscode.window.showQuickPick(items, opts).then((selection) => {
@@ -160,6 +165,9 @@ export function markdownQuickPick() {
                 break;
             case "template":
                 applyTemplate();
+                break;
+            case "cleanup...":
+                applyCleanup();
                 break;
             default:
                 const { msTimeValue } = generateTimestamp();
