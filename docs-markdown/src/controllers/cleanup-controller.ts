@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import { reporter } from "../telemetry/telemetry";
 import { window, workspace } from "vscode";
-import { readdir, stat, unlinkSync, readFile, writeFile, write } from "fs";
+import { readdir, stat, unlinkSync, readFile, writeFile, write, readFileSync, writeFileSync } from "fs";
 import { join, resolve, dirname, basename } from "path";
 import { output } from "../extension";
 const jsyaml = require("js-yaml");
@@ -276,25 +276,57 @@ function capaitalizationOfMetadata() {
                             });
                         } else {
                             if (file.endsWith(".md")) {
-                                readFile(file, "utf8", (err, data) => {
-                                    let metadata = data.match(/(ms.author:\s?)(.*\s)/g)
-                                    if (metadata) {
-                                        // let author = metadata[2];
-                                        let regex = new RegExp(/(ms.author:\s?)(.*\s)/g);
-                                        let authorParts = regex.exec(data);
-                                        let author = ''
-                                        if (authorParts && authorParts.length > 2) {
-                                            author = authorParts[2].toLowerCase();
-                                        }
-                                        replace({
-                                            files: file,
-                                            from: /(ms.author:\s?)(.*\s)/g,
-                                            to: `ms.author: ${author}`,
-                                        }).catch((error: any) => {
-                                            console.error('Error occurred:', error);
-                                        });
+                                let data = readFileSync(file, "utf8")
+                                let regex = new RegExp(`^(---\\s)([^]+)(\\s---)`, 'gm');
+                                let metadataMatch = data.match(regex)
+                                if (metadataMatch) {
+                                    let metadata = data.substr(3, metadataMatch[0].length - 6)
+                                    let yamlMetadata = jsyaml.load(metadata);
+                                    let msAuthor = yamlMetadata["ms.author"]
+                                    if (msAuthor) {
+                                        yamlMetadata["ms.author"] = msAuthor.toLowerCase();
                                     }
-                                })
+                                    let author = yamlMetadata["author"]
+                                    if (author) {
+                                        yamlMetadata["author"] = author.toLowerCase();
+                                    }
+                                    let msProd = yamlMetadata["ms.prod"]
+                                    if (msProd) {
+                                        yamlMetadata["ms.prod"] = msProd.toLowerCase();
+                                    }
+                                    let msService = yamlMetadata["ms.service"]
+                                    if (msService) {
+                                        yamlMetadata["ms.service"] = msService.toLowerCase();
+                                    }
+                                    let msSubservice = yamlMetadata["ms.subservice"]
+                                    if (msSubservice) {
+                                        yamlMetadata["ms.subservice"] = msSubservice.toLowerCase();
+                                    }
+                                    let msTechnology = yamlMetadata["ms.technology"]
+                                    if (msTechnology) {
+                                        yamlMetadata["ms.technology"] = msTechnology.toLowerCase();
+                                    }
+                                    let msTopic = yamlMetadata["ms.topic"]
+                                    if (msTopic) {
+                                        yamlMetadata["ms.topic"] = msTopic.toLowerCase();
+                                    }
+                                    let yamlString = `---\r\n${jsyaml.dump(yamlMetadata, {
+                                        'lineWidth': 1000,
+                                        'noCompatMode': true,
+                                        'noArrayIndent': true,
+                                        'skipInvalid': true
+                                    })}\r\n---`;
+                                    let update = data.replace(regex, yamlString)
+                                    writeFileSync(file, update)
+                                }
+                                // var data = readFileSync(file, "utf8")
+                                // lowerCaseMetadata(file, data, "ms.author")
+                                // lowerCaseMetadata(file, data, "author")
+                                // lowerCaseMetadata(file, data, "ms.prod")
+                                // lowerCaseMetadata(file, data, "ms.service")
+                                // lowerCaseMetadata(file, data, "ms.subservice")
+                                // lowerCaseMetadata(file, data, "ms.technology")
+                                // lowerCaseMetadata(file, data, "ms.topic")
                                 if (!--pending) done(null, results);
                             }
                         }
@@ -302,7 +334,57 @@ function capaitalizationOfMetadata() {
                 });
             });
     };
+    // let file = "C:/users/brharney/source/repos/samples/azure-docs/articles/azure-glossary-cloud-terminology.md"
+    // readFile(file, "utf8", (err, data) => {
+    //     lowerCaseMetadata(file, data, "ms.author")
+    //     lowerCaseMetadata(file, data, "author")
+    //     lowerCaseMetadata(file, data, "ms.prod")
+    //     lowerCaseMetadata(file, data, "ms.service")
+    //     lowerCaseMetadata(file, data, "ms.subservice")
+    //     lowerCaseMetadata(file, data, "ms.technology")
+    //     lowerCaseMetadata(file, data, "ms.topic")
+    // })
     walk(workspace.rootPath, function (err: any, res: any) {
         output.appendLine(res);
     })
 }
+function lowerCaseMetadata(file: string, data: any, variable: string) {
+    let regex = new RegExp(`^(${variable}:\\s?)(.*\\s)`, 'gm');
+    let metadata = data.match(regex)
+    if (metadata) {
+        let captureParts = regex.exec(data);
+        let value = ''
+        if (captureParts && captureParts.length > 2) {
+            value = captureParts[2].toLowerCase();
+            try {
+                const changes = replace.sync({
+                    files: file,
+                    from: regex,
+                    to: `${variable}: ${value}`,
+                });
+                console.log('Modified files:', changes.join(', '));
+            }
+            catch (error) {
+                console.error('Error occurred:', error);
+            }
+        }
+    }
+}
+
+// function lowerCaseMeta()
+// {
+//     let variable = "ms.author"
+//                                         let regex = new RegExp(`^(---\\s)([^]+)(\\s---)`, 'gm');
+//                                         let metadataMatch = data.match(regex)
+//                                         if (metadataMatch) {
+//                                             let metadata = data.substr(3, metadataMatch[0].length - 6)
+//                                             let yamlMetadata = yaml.parse(metadata);
+//                                             yamlMetadata[variable] = yamlMetadata[variable].toLowerCase();
+//                                             metadataMatch[0] = `---\r\n${yaml.stringify(yamlMetadata)}\r\n---`
+//                                             writeFile(file, data, function (err) {
+//                                                 if (err) {
+//                                                     output.appendLine(`Error: ${err}`)
+//                                                 }
+//                                             })
+//                                         }
+// }
