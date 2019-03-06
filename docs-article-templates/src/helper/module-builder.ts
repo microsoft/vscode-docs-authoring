@@ -21,7 +21,7 @@ export function showLearnFolderSelector() {
     if (unitList) {
         unitList.length = 0;
     }
-    repoRoot = `${workspace.workspaceFolders[0].uri.fsPath}\\`;
+    repoRoot = `${workspace.workspaceFolders[0].uri.fsPath}`;
     const parentFolders: QuickPickItem[] = [];
     const options: QuickPickOptions = { placeHolder: parentFolderPrompt };
 
