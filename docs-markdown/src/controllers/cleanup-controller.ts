@@ -3,13 +3,13 @@
 import * as vscode from "vscode";
 import { reporter } from "../telemetry/telemetry";
 import { window, workspace } from "vscode";
-import { readdir, stat, unlinkSync, readFile, writeFile, write, readFileSync, writeFileSync } from "fs";
+import { readdir, stat, unlinkSync, writeFile, write } from "fs";
+import { readFileSync, writeFileSync, readFile } from "graceful-fs";
 import { join, resolve, dirname, basename } from "path";
 import { output } from "../extension";
 const jsyaml = require("js-yaml");
 const telemetryCommand: string = "applyCleanup";
 const replace = require('replace-in-file');
-const yaml = require('yaml')
 
 export function applyCleanupCommand() {
     const commands = [
@@ -100,11 +100,10 @@ function traverseConfigFiles(dir: any, done: any) {
         });
 };
 
-function fixMetadata(file: string) {
-    readFile(file, "utf8", (err, data) => {
-        if (err) {
-            output.appendLine(`Error: ${err}`)
-        }
+function fixMetadataYaml(file: string) {
+    try {
+        let data = readFileSync(file, "utf8")
+
         let yamlContent = jsyaml.load(data);
         let author = handleSingleItemArray(yamlContent.metadata["author"])
         if (author) {
@@ -154,20 +153,93 @@ function fixMetadata(file: string) {
         });
 
         yamlContent = "### YamlMime:YamlDocument\n" + yamlContent
-        ////If we want to remove null
-        // let regex = new RegExp(/(?!\: )null/g)
-        // yamlContent = yamlContent.replace(regex, '')
-        writeFile(file, yamlContent, function (err: any) {
-            if (err) {
-                output.appendLine(`Error: ${err}`);
-            }
-        });
-    });
+        //If we want to remove null
+        let regex = new RegExp(/\: null/g)
+        yamlContent = yamlContent.replace(regex, ':')
+        try {
+            let changes = writeFileSync(file, yamlContent);
+            console.log(changes);
+        } catch (error) {
+            console.log(error);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+function fixMetadata(file: string) {
+    try {
+        let data = readFileSync(file, "utf8")
+        let yamlContent = jsyaml.load(data);
+        let author = handleSingleItemArray(yamlContent.metadata["author"])
+        if (author) {
+            data = singleValueData(data, author, "author")
+        }
+        let msAuthor = handleSingleItemArray(yamlContent.metadata["ms.author"])
+        if (msAuthor) {
+            data = singleValueData(data, msAuthor, "ms.author")
+        }
+        let msComponent = handleSingleItemArray(yamlContent.metadata["ms.component"])
+        if (msComponent) {
+            data = singleValueData(data, msComponent, "ms.component")
+        }
+        let msDate = handleSingleItemArray(yamlContent.metadata["ms.date"])
+        if (msDate) {
+            data = singleValueData(data, msDate, "ms.date")
+        }
+        let msProd = handleSingleItemArray(yamlContent.metadata["ms.prod"])
+        if (msProd) {
+            data = singleValueData(data, msProd, "ms.prod")
+        }
+        let msService = handleSingleItemArray(yamlContent.metadata["ms.service"])
+        if (msService) {
+            data = singleValueData(data, msService, "ms.service")
+        }
+        let msSubservice = handleSingleItemArray(yamlContent.metadata["ms.subservice"])
+        if (msSubservice) {
+            data = singleValueData(data, msSubservice, "ms.subservice")
+        }
+        let msTechnology = handleSingleItemArray(yamlContent.metadata["ms.technology"])
+        if (msTechnology) {
+            data = singleValueData(data, msTechnology, "ms.technology")
+        }
+        let msTopic = handleSingleItemArray(yamlContent.metadata["ms.topic"])
+        if (msTopic) {
+            data = singleValueData(data, msTopic, "ms.topic")
+        }
+        let msTitle = handleSingleItemArray(yamlContent.metadata["ms.title"])
+        if (msTitle) {
+            data = singleValueData(data, msTitle, "ms.title")
+        }
+        try {
+            let changes = writeFileSync(file, data);
+            console.log(changes);
+        } catch (error) {
+            console.log(error);
+        }
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 function handleSingleItemArray(content: string | undefined) {
-    if (content && Array.isArray(content) && content.length == 1) {
-        return content[0];
+    if (content) {
+        if (Array.isArray(content) && content.length == 1) {
+            return content[0];
+        }
+    }
+}
+
+function singleValueData(data: any, value: string, variable: string) {
+    let dashMatch = new RegExp(`${variable}:\\s+-\\s[A-Za-z0-9\\-\\_]+`, 'gs');
+    let bracketMatch = new RegExp(`${variable}:\\s+\\[.*\\]`, 'gs');
+    if (dashMatch) {
+        return data.replace(dashMatch, `${variable}: ${value}`)
+
+    } else if (bracketMatch) {
+        return data.replace(bracketMatch, `${variable}: ${value}`)
+    } else {
+        return data;
     }
 }
 
@@ -199,43 +271,27 @@ function microsoftLinks() {
                             });
                         } else {
                             if (file.endsWith(".md")) {
-                                replace({
-                                    files: file,
-                                    from: /^http:\/\//g,
-                                    to: 'https://',
-                                }).then((changes: any) => {
-                                    console.log('Modified files:', changes.join(', '));
-                                }).catch((error: any) => {
-                                    console.error('Error occurred:', error);
-                                });
-                                replace({
-                                    files: file,
-                                    from: /https:\/\/docs.microsoft.com\/en-us/g,
-                                    to: 'https://docs.microsoft.com',
-                                }).catch((error: any) => {
-                                    console.error('Error occurred:', error);
-                                });
-                                replace({
-                                    files: file,
-                                    from: /https:\/\/azure.microsoft.com\/en-us/g,
-                                    to: 'https://azure.microsoft.com',
-                                }).catch((error: any) => {
-                                    console.error('Error occurred:', error);
-                                });
-                                replace({
-                                    files: file,
-                                    from: /https:\/\/msdn.microsoft.com\/en-us/g,
-                                    to: 'https://msdn.microsoft.com',
-                                }).catch((error: any) => {
-                                    console.error('Error occurred:', error);
-                                });
-                                replace({
-                                    files: file,
-                                    from: /https:\/\/technet.microsoft.com\/en-us/g,
-                                    to: 'https://technet.microsoft.com',
-                                }).catch((error: any) => {
-                                    console.error('Error occurred:', error);
-                                });
+                                try {
+                                    let data = readFileSync(file, "utf8")
+                                    let regex = new RegExp(/^http:\/\//g)
+                                    data = data.replace(regex, "https://")
+                                    let docsRegex = new RegExp(/https:\/\/docs.microsoft.com\/([A-Za-z]{2}-[A-Za-z]{2})/g)
+                                    data = data.replace(docsRegex, "https://docs.microsoft.com")
+                                    let azureRegex = new RegExp(/https:\/\/azure.microsoft.com\/([A-Za-z]{2}-[A-Za-z]{2})/g)
+                                    data = data.replace(azureRegex, "https://azure.microsoft.com")
+                                    let msdnRegex = new RegExp(/https:\/\/msdn.microsoft.com\/([A-Za-z]{2}-[A-Za-z]{2})/g)
+                                    data = data.replace(msdnRegex, "https://msdn.microsoft.com")
+                                    let technetRegex = new RegExp(/https:\/\/technet.microsoft.com\/([A-Za-z]{2}-[A-Za-z]{2})/g)
+                                    data = data.replace(technetRegex, "https://technet.microsoft.com")
+                                    try {
+                                        let changes = writeFileSync(file, data);
+                                        console.log(changes);
+                                    } catch (error) {
+                                        console.log(error);
+                                    }
+                                } catch (error) {
+                                    console.log(error);
+                                }
                                 if (!--pending) done(null, results);
                             }
                         }
@@ -276,58 +332,29 @@ function capaitalizationOfMetadata() {
                             });
                         } else {
                             if (file.endsWith(".md")) {
-                                let data = readFileSync(file, "utf8")
-                                let regex = new RegExp(`^(---\\s)([^]+)(\\s---)`, 'gm');
-                                let metadataMatch = data.match(regex)
-                                if (metadataMatch) {
-                                    let metadata = data.substr(3, metadataMatch[0].length - 6)
-                                    let yamlMetadata = jsyaml.load(metadata);
-                                    let msAuthor = yamlMetadata["ms.author"]
-                                    if (msAuthor) {
-                                        yamlMetadata["ms.author"] = msAuthor.toLowerCase();
+                                try {
+                                    let data = readFileSync(file, "utf8")
+                                    if (data.startsWith("---\r\n")) {
+                                        data = lowerCaseData(file, data, "ms.author")
+                                        data = lowerCaseData(file, data, "author")
+                                        data = lowerCaseData(file, data, "ms.prod")
+                                        data = lowerCaseData(file, data, "ms.service")
+                                        data = lowerCaseData(file, data, "ms.subservice")
+                                        data = lowerCaseData(file, data, "ms.technology")
+                                        data = lowerCaseData(file, data, "ms.topic")
+                                        try {
+                                            const changes = writeFileSync(file, data)
+                                            console.log(changes)
+                                        } catch (error) {
+                                            console.log(error);
+                                        }
+                                        if (!--pending) {
+                                            done(null, results);
+                                        }
                                     }
-                                    let author = yamlMetadata["author"]
-                                    if (author) {
-                                        yamlMetadata["author"] = author.toLowerCase();
-                                    }
-                                    let msProd = yamlMetadata["ms.prod"]
-                                    if (msProd) {
-                                        yamlMetadata["ms.prod"] = msProd.toLowerCase();
-                                    }
-                                    let msService = yamlMetadata["ms.service"]
-                                    if (msService) {
-                                        yamlMetadata["ms.service"] = msService.toLowerCase();
-                                    }
-                                    let msSubservice = yamlMetadata["ms.subservice"]
-                                    if (msSubservice) {
-                                        yamlMetadata["ms.subservice"] = msSubservice.toLowerCase();
-                                    }
-                                    let msTechnology = yamlMetadata["ms.technology"]
-                                    if (msTechnology) {
-                                        yamlMetadata["ms.technology"] = msTechnology.toLowerCase();
-                                    }
-                                    let msTopic = yamlMetadata["ms.topic"]
-                                    if (msTopic) {
-                                        yamlMetadata["ms.topic"] = msTopic.toLowerCase();
-                                    }
-                                    let yamlString = `---\r\n${jsyaml.dump(yamlMetadata, {
-                                        'lineWidth': 1000,
-                                        'noCompatMode': true,
-                                        'noArrayIndent': true,
-                                        'skipInvalid': true
-                                    })}\r\n---`;
-                                    let update = data.replace(regex, yamlString)
-                                    writeFileSync(file, update)
+                                } catch (error) {
+                                    console.log(error);
                                 }
-                                // var data = readFileSync(file, "utf8")
-                                // lowerCaseMetadata(file, data, "ms.author")
-                                // lowerCaseMetadata(file, data, "author")
-                                // lowerCaseMetadata(file, data, "ms.prod")
-                                // lowerCaseMetadata(file, data, "ms.service")
-                                // lowerCaseMetadata(file, data, "ms.subservice")
-                                // lowerCaseMetadata(file, data, "ms.technology")
-                                // lowerCaseMetadata(file, data, "ms.topic")
-                                if (!--pending) done(null, results);
                             }
                         }
                     });
@@ -344,10 +371,38 @@ function capaitalizationOfMetadata() {
     //     lowerCaseMetadata(file, data, "ms.technology")
     //     lowerCaseMetadata(file, data, "ms.topic")
     // })
+    // var data = readFileSync(file, "utf8")
+    // lowerCaseMetadata(file, data, "ms.author")
+    // lowerCaseMetadata(file, data, "author")
+    // lowerCaseMetadata(file, data, "ms.prod")
+    // lowerCaseMetadata(file, data, "ms.service")
+    // lowerCaseMetadata(file, data, "ms.subservice")
+    // lowerCaseMetadata(file, data, "ms.technology")
+    // lowerCaseMetadata(file, data, "ms.topic")
     walk(workspace.rootPath, function (err: any, res: any) {
         output.appendLine(res);
     })
 }
+function lowerCaseData(file: string, data: any, variable: string) {
+    let regex = new RegExp(`^(${variable}:\\s?)(.*\\s)`, 'm');
+    let metadata = data.match(regex)
+    if (metadata) {
+        let captureParts = regex.exec(data);
+        let value = ''
+        if (captureParts && captureParts.length > 2) {
+            value = captureParts[2].toLowerCase();
+            try {
+                return data.replace(regex, `${variable}: ${value}`)
+            }
+            catch (error) {
+                console.error('Error occurred:', error);
+            }
+        }
+    }
+
+    return data;
+}
+
 function lowerCaseMetadata(file: string, data: any, variable: string) {
     let regex = new RegExp(`^(${variable}:\\s?)(.*\\s)`, 'gm');
     let metadata = data.match(regex)
@@ -371,20 +426,48 @@ function lowerCaseMetadata(file: string, data: any, variable: string) {
     }
 }
 
-// function lowerCaseMeta()
-// {
-//     let variable = "ms.author"
-//                                         let regex = new RegExp(`^(---\\s)([^]+)(\\s---)`, 'gm');
-//                                         let metadataMatch = data.match(regex)
-//                                         if (metadataMatch) {
-//                                             let metadata = data.substr(3, metadataMatch[0].length - 6)
-//                                             let yamlMetadata = yaml.parse(metadata);
-//                                             yamlMetadata[variable] = yamlMetadata[variable].toLowerCase();
-//                                             metadataMatch[0] = `---\r\n${yaml.stringify(yamlMetadata)}\r\n---`
-//                                             writeFile(file, data, function (err) {
-//                                                 if (err) {
-//                                                     output.appendLine(`Error: ${err}`)
-//                                                 }
-//                                             })
-//                                         }
-// }
+function lowerCaseMetadataChunk(file: string) {
+    let data = readFileSync(file, "utf8")
+    let regex = new RegExp(`^(---\\s)([^]+)(\\s---)`, 'gm');
+    let metadataMatch = data.match(regex)
+    if (metadataMatch) {
+        let metadata = data.substr(3, metadataMatch[0].length - 6)
+        let yamlMetadata = jsyaml.load(metadata);
+        let msAuthor = yamlMetadata["ms.author"]
+        if (msAuthor) {
+            yamlMetadata["ms.author"] = msAuthor.toLowerCase();
+        }
+        let author = yamlMetadata["author"]
+        if (author) {
+            yamlMetadata["author"] = author.toLowerCase();
+        }
+        let msProd = yamlMetadata["ms.prod"]
+        if (msProd) {
+            yamlMetadata["ms.prod"] = msProd.toLowerCase();
+        }
+        let msService = yamlMetadata["ms.service"]
+        if (msService) {
+            yamlMetadata["ms.service"] = msService.toLowerCase();
+        }
+        let msSubservice = yamlMetadata["ms.subservice"]
+        if (msSubservice) {
+            yamlMetadata["ms.subservice"] = msSubservice.toLowerCase();
+        }
+        let msTechnology = yamlMetadata["ms.technology"]
+        if (msTechnology) {
+            yamlMetadata["ms.technology"] = msTechnology.toLowerCase();
+        }
+        let msTopic = yamlMetadata["ms.topic"]
+        if (msTopic) {
+            yamlMetadata["ms.topic"] = msTopic.toLowerCase();
+        }
+        let yamlString = `---\r\n${jsyaml.dump(yamlMetadata, {
+            'lineWidth': 1000,
+            'noCompatMode': true,
+            'noArrayIndent': true,
+            'skipInvalid': true
+        })}\r\n---`;
+        let update = data.replace(regex, yamlString)
+        writeFileSync(file, update)
+    }
+}
