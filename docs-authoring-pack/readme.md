@@ -16,7 +16,7 @@ To accurately insert relative links, images, and other embedded content with Doc
 
 To access the Docs Markdown Authoring menu, type `ALT+M`. You can click or use up/down arrows to select the function you want, or type to start filtering, then hit `ENTER` when the function you want is highlighted in the menu. 
 
-You can also access the Docs commands from the VS Code command palette by hitting H1 and typing to filter. All the Docs commands begin with "Docs":
+You can also access the Docs commands from the VS Code command palette by hitting `F1` and typing to filter. All the Docs commands begin with "Docs":
 
 ![docs commands](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/docs-command-palette.png)
 

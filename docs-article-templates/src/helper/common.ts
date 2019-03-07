@@ -58,3 +58,14 @@ export function generateTimestamp() {
         msTimeValue: date.toLocaleTimeString([], { hour12: false }),
     };
 }
+
+/**
+ * Formats unit and module names.  Replaces spaces with dashes and set text to lowercase.
+ * @param {string} name - Friendly name.
+ */
+export function formatLearnNames(name: string) {
+    const formattedName = name.replace(/ /g, "-").toLowerCase();
+    return {
+        formattedName,
+    };
+}
