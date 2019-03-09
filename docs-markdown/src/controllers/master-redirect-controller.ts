@@ -69,7 +69,7 @@ function showStatusMessage(message: string) {
     masterRedirectOutput.show();
 }
 
-function generateMasterRedirectionFile() {
+export function generateMasterRedirectionFile() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     const editor = window.activeTextEditor;
     if (editor) {
