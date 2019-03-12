@@ -5,7 +5,6 @@ import { reporter } from "../telemetry/telemetry";
 import { window, workspace, ProgressLocation } from "vscode";
 import { readFileSync, writeFileSync, readdir, stat } from "fs";
 import { resolve } from "path";
-import { output } from "../extension";
 import { generateMasterRedirectionFile } from "./master-redirect-controller";
 import { postError, showStatusMessage } from "../helper/common";
 const jsyaml = require("js-yaml");
@@ -112,16 +111,18 @@ function traverseFiles(dir: any, callback: { (file: string): void }) {
         || !dir.endsWith(".git")) {
         readdir(dir, function (err, list) {
             if (err) {
-                output.appendLine(`Error: ${err}`);
+                postError(`Error: ${err}`);
             }
             var pending = list.length;
             if (!pending) {
-                showStatusMessage("Completed searching through directories for Metadata.");
                 return;
             }
             list.map(function (file: string) {
                 file = resolve(dir, file);
                 stat(file, function (err, stat) {
+                    if (err) {
+                        postError(`Error: ${err}`);
+                    }
                     if (stat && stat.isDirectory()) {
                         traverseFiles(file, callback);
                     } else {
@@ -142,29 +143,34 @@ function traverseFiles(dir: any, callback: { (file: string): void }) {
  */
 function runAll() {
     traverseFiles(workspace.rootPath, (file: string) => {
-        if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
-            try {
+        try {
+            if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
                 let data = readFileSync(file, "utf8")
                 data = handleYamlMetadata(data);
                 writeFileSync(file, data);
-                showStatusMessage("Fixing metadata.. Writing file.");
-            } catch (error) {
-                postError(error);
+                showStatusMessage("Searching metadata...");
+            } else if (file.endsWith(".md")) {
+                let data = readFileSync(file, "utf8")
+                data = handleLinksWithRegex(data)
+                if (data.startsWith("---\r\n")) {
+                    data = lowerCaseData(data, "ms.author")
+                    data = lowerCaseData(data, "author")
+                    data = lowerCaseData(data, "ms.prod")
+                    data = lowerCaseData(data, "ms.service")
+                    data = lowerCaseData(data, "ms.subservice")
+                    data = lowerCaseData(data, "ms.technology")
+                    data = lowerCaseData(data, "ms.topic")
+                    let regex = new RegExp(`^^(---)([^>]+?)(---)$`, 'm');
+                    let metadataMatch = data.match(regex)
+                    if (metadataMatch) {
+                        data = handleMarkdownMetadata(data, metadataMatch[2]);
+                    }
+                }
+                writeFileSync(file, data);
+                showStatusMessage("Searching metadata...");
             }
-        } else if (file.endsWith(".md")) {
-            let data = readFileSync(file, "utf8")
-            data = handleLinksWithRegex(data)
-            if (data.startsWith("---\r\n")) {
-                data = lowerCaseData(data, "ms.author")
-                data = lowerCaseData(data, "author")
-                data = lowerCaseData(data, "ms.prod")
-                data = lowerCaseData(data, "ms.service")
-                data = lowerCaseData(data, "ms.subservice")
-                data = lowerCaseData(data, "ms.technology")
-                data = lowerCaseData(data, "ms.topic")
-            }
-            writeFileSync(file, data);
-            showStatusMessage("Fixing metadata...");
+        } catch (error) {
+            postError(error);
         }
     });
     generateMasterRedirectionFile();
@@ -182,9 +188,67 @@ function handleSingValuedMetadata() {
             let data = readFileSync(file, "utf8")
             data = handleYamlMetadata(data);
             writeFileSync(file, data);
-            showStatusMessage("Fixing metadata...");
+            showStatusMessage("Searching metadata...");
+        } else if (file.endsWith(".md")) {
+            let data = readFileSync(file, "utf8")
+            if (data.startsWith("---")) {
+                let regex = new RegExp(`^^(---)([^>]+?)(---)$`, 'm');
+                let metadataMatch = data.match(regex)
+                if (metadataMatch) {
+                    data = handleMarkdownMetadata(data, metadataMatch[2]);
+                    writeFileSync(file, data);
+                    showStatusMessage("Searching metadata...");
+                }
+            }
         }
     })
+}
+
+/**
+ * Takes in markdown data string and parses the file. 
+ * Then perform operations to handle single item arrays
+ * and convert them to single item values then return the data.
+ * @param data data as yaml string from file
+ */
+function handleMarkdownMetadata(data: string, metadata: string) {
+    try {
+        let yamlContent = jsyaml.load(metadata);
+        if (yamlContent) {
+            if (handleSingleItemArray(yamlContent["author"])) {
+                data = singleValueMetadata(data, "author")
+            }
+            if (handleSingleItemArray(yamlContent["ms.author"])) {
+                data = singleValueMetadata(data, "ms.author")
+            }
+            if (handleSingleItemArray(yamlContent["ms.component"])) {
+                data = singleValueMetadata(data, "ms.component")
+            }
+            if (handleSingleItemArray(yamlContent["ms.date"])) {
+                data = singleValueMetadata(data, "ms.date")
+            }
+            if (handleSingleItemArray(yamlContent["ms.prod"])) {
+                data = singleValueMetadata(data, "ms.prod")
+            }
+            if (handleSingleItemArray(yamlContent["ms.service"])) {
+                data = singleValueMetadata(data, "ms.service")
+            }
+            if (handleSingleItemArray(yamlContent["ms.subservice"])) {
+                data = singleValueMetadata(data, "ms.subservice")
+            }
+            if (handleSingleItemArray(yamlContent["ms.technology"])) {
+                data = singleValueMetadata(data, "ms.technology")
+            }
+            if (handleSingleItemArray(yamlContent["ms.topic"])) {
+                data = singleValueMetadata(data, "ms.topic")
+            }
+            if (handleSingleItemArray(yamlContent["ms.title"])) {
+                data = singleValueMetadata(data, "ms.title")
+            }
+        }
+    } catch (error) {
+        postError(error);
+    }
+    return data;
 }
 
 /**
@@ -197,45 +261,35 @@ function handleYamlMetadata(data: string) {
     try {
         let yamlContent = jsyaml.load(data);
         if (yamlContent.metadata) {
-            let author = handleSingleItemArray(yamlContent.metadata["author"])
-            if (author) {
-                data = singleValueData(data, author, "author")
+            if (handleSingleItemArray(yamlContent.metadata["author"])) {
+                data = singleValueMetadata(data, "author")
             }
-            let msAuthor = handleSingleItemArray(yamlContent.metadata["ms.author"])
-            if (msAuthor) {
-                data = singleValueData(data, msAuthor, "ms.author")
+            if (handleSingleItemArray(yamlContent.metadata["ms.author"])) {
+                data = singleValueMetadata(data, "ms.author")
             }
-            let msComponent = handleSingleItemArray(yamlContent.metadata["ms.component"])
-            if (msComponent) {
-                data = singleValueData(data, msComponent, "ms.component")
+            if (handleSingleItemArray(yamlContent.metadata["ms.component"])) {
+                data = singleValueMetadata(data, "ms.component")
             }
-            let msDate = handleSingleItemArray(yamlContent.metadata["ms.date"])
-            if (msDate) {
-                data = singleValueData(data, msDate, "ms.date")
+            if (handleSingleItemArray(yamlContent.metadata["ms.date"])) {
+                data = singleValueMetadata(data, "ms.date")
             }
-            let msProd = handleSingleItemArray(yamlContent.metadata["ms.prod"])
-            if (msProd) {
-                data = singleValueData(data, msProd, "ms.prod")
+            if (handleSingleItemArray(yamlContent.metadata["ms.prod"])) {
+                data = singleValueMetadata(data, "ms.prod")
             }
-            let msService = handleSingleItemArray(yamlContent.metadata["ms.service"])
-            if (msService) {
-                data = singleValueData(data, msService, "ms.service")
+            if (handleSingleItemArray(yamlContent.metadata["ms.service"])) {
+                data = singleValueMetadata(data, "ms.service")
             }
-            let msSubservice = handleSingleItemArray(yamlContent.metadata["ms.subservice"])
-            if (msSubservice) {
-                data = singleValueData(data, msSubservice, "ms.subservice")
+            if (handleSingleItemArray(yamlContent.metadata["ms.subservice"])) {
+                data = singleValueMetadata(data, "ms.subservice")
             }
-            let msTechnology = handleSingleItemArray(yamlContent.metadata["ms.technology"])
-            if (msTechnology) {
-                data = singleValueData(data, msTechnology, "ms.technology")
+            if (handleSingleItemArray(yamlContent.metadata["ms.technology"])) {
+                data = singleValueMetadata(data, "ms.technology")
             }
-            let msTopic = handleSingleItemArray(yamlContent.metadata["ms.topic"])
-            if (msTopic) {
-                data = singleValueData(data, msTopic, "ms.topic")
+            if (handleSingleItemArray(yamlContent.metadata["ms.topic"])) {
+                data = singleValueMetadata(data, "ms.topic")
             }
-            let msTitle = handleSingleItemArray(yamlContent.metadata["ms.title"])
-            if (msTitle) {
-                data = singleValueData(data, msTitle, "ms.title")
+            if (handleSingleItemArray(yamlContent.metadata["ms.title"])) {
+                data = singleValueMetadata(data, "ms.title")
             }
         }
     } catch (error) {
@@ -262,13 +316,15 @@ function handleSingleItemArray(content: string | undefined) {
  * @param value value to replace regex match of metadata
  * @param variable metadata key as variable
  */
-function singleValueData(data: any, value: string, variable: string) {
-    let dashMatch = new RegExp(`${variable}:\\s+-\\s[A-Za-z0-9\\-\\_]+`, 'gs');
-    let bracketMatch = new RegExp(`${variable}:\\s+\\[.*\\]`, 'gs');
-    if (dashMatch.exec(data)) {
-        return data.replace(dashMatch, `${variable}: ${value}`)
-    } else if (bracketMatch.exec(data)) {
-        return data.replace(bracketMatch, `${variable}: ${value}`)
+function singleValueMetadata(data: any, variable: string) {
+    let dashRegex = new RegExp(`${variable}:\\s+-\\s(["'\\sA-Za-z0-9\\-\\_]+)$`, 'm');
+    let bracketRegex = new RegExp(`${variable}:\\s+\\[(["'\\sA-Za-z0-9\\-\\_]+)\\]$`, 'm');
+    let dashMatches = dashRegex.exec(data)
+    let bracketMatch = bracketRegex.exec(data)
+    if (dashMatches) {
+        return data.replace(dashRegex, `${variable}: ${dashMatches[1]}`)
+    } else if (bracketMatch) {
+        return data.replace(bracketMatch, `${variable}: ${bracketMatch[1]}`)
     } else {
         return data;
     }
@@ -284,7 +340,7 @@ function microsoftLinks() {
                 let data = readFileSync(file, "utf8")
                 data = handleLinksWithRegex(data)
                 writeFileSync(file, data);
-                showStatusMessage("Fixing metadata...");
+                showStatusMessage("Searching metadata...");
             } catch (error) {
                 postError(error);
             }
@@ -335,6 +391,7 @@ function capitalizationOfMetadata() {
                     data = lowerCaseData(data, "ms.technology")
                     data = lowerCaseData(data, "ms.topic")
                     writeFileSync(file, data)
+                    showStatusMessage("Searching metadata...");
                 }
             } catch (error) {
                 postError(error);
