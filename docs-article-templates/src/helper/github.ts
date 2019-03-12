@@ -1,7 +1,7 @@
 "use-strict";
 
 import { readdir, stat, unlinkSync } from "fs";
-import {homedir} from "os";
+import { homedir } from "os";
 import { join } from "path";
 import { displayTemplates } from "../controllers/quick-pick-controller";
 import { output } from "../extension";

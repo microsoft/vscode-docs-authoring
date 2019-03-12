@@ -2,7 +2,7 @@
 
 This repo contains code for the Docs Markdown VS Code extension, which provides Markdown authoring assistance for contributing to docs.microsoft.com. The Docs Markdown extension ships in the VS Code Marketplace, either as an [individual extension](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown) or bundled with other useful extensions as part of the [Docs Authoring Pack](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-authoring-pack).
 
-The Docs Authoring Pack also includes [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint), a popular linter by David Anson, and [DocFx](https://marketplace.visualstudio.com/items?itemName=ms-docfx.DocFX) (beta), which enables a docs.microsoft.com-specific Markdown preview. The Docs engineering team is now extending markdownlint to catch issues in custom Docs Markdown, starting with the `zone` and `monikers` extensions. More custom linting is coming soon!
+The Docs Authoring Pack also includes [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint), a popular linter by David Anson, and [Docs Preview](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-preview). The Docs engineering team is now extending markdownlint to catch issues in custom Docs Markdown, starting with the `zone` and `monikers` extensions. More custom linting is coming soon!
 
 ## Prerequisites and Assumptions
 
@@ -65,8 +65,6 @@ Former users of the extension code-named "Gauntlet" will notice that the authori
 
 ## Known Issues
 
-- [DocFX Preview] MacOS and Linux: DocFX Preview does not launch preview correctly (preview defaults to VS Code Markdown preview for these platforms).
-- [DocFx Preview] All platforms: Some syntax, such as xref (cross-reference) links to APIs, do not render correctly in preview, in some cases leaving content gaps.
 - [External bookmarks] Linux: File list is displayed but no headings are shown to select.
 - [Includes] Linux: File list is displayed but no link is added after selection is made.
 
