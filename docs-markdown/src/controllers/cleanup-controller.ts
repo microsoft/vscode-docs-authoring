@@ -56,7 +56,7 @@ export function applyCleanup() {
             });
             switch (selection.label.toLowerCase()) {
                 case "single-valued metadata":
-                    await handleSingValuedMetadata();
+                    await handleSingleValuedMetadata();
                     break;
                 case "microsoft links":
                     await microsoftLinks();
@@ -160,7 +160,7 @@ function runAll() {
                     data = lowerCaseData(data, "ms.subservice")
                     data = lowerCaseData(data, "ms.technology")
                     data = lowerCaseData(data, "ms.topic")
-                    let regex = new RegExp(`^^(---)([^>]+?)(---)$`, 'm');
+                    let regex = new RegExp(`^(---)([^>]+?)(---)$`, 'm');
                     let metadataMatch = data.match(regex)
                     if (metadataMatch) {
                         data = handleMarkdownMetadata(data, metadataMatch[2]);
@@ -181,7 +181,7 @@ function runAll() {
  * and cleans up Yaml Metadata values that have single array items
  * then converts the array to single item.
  */
-function handleSingValuedMetadata() {
+function handleSingleValuedMetadata() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     traverseFiles(workspace.rootPath, (file: string) => {
         if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
