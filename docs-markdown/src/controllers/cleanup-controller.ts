@@ -192,7 +192,7 @@ function handleSingleValuedMetadata() {
         } else if (file.endsWith(".md")) {
             let data = readFileSync(file, "utf8")
             if (data.startsWith("---")) {
-                let regex = new RegExp(`^^(---)([^>]+?)(---)$`, 'm');
+                let regex = new RegExp(`^(---)([^>]+?)(---)$`, 'm');
                 let metadataMatch = data.match(regex)
                 if (metadataMatch) {
                     data = handleMarkdownMetadata(data, metadataMatch[2]);
