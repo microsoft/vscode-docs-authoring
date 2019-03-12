@@ -48,7 +48,7 @@ export function applyCleanup() {
         }
         window.withProgress({
             location: ProgressLocation.Notification,
-            title: "Fixing Metadata",
+            title: "Running Cleanup",
             cancellable: true
         }, async (progress, token) => {
             token.onCancellationRequested(() => {
@@ -148,7 +148,7 @@ function runAll() {
                 let data = readFileSync(file, "utf8")
                 data = handleYamlMetadata(data);
                 writeFileSync(file, data);
-                showStatusMessage("Searching metadata...");
+                showStatusMessage("Running Cleanup...");
             } else if (file.endsWith(".md")) {
                 let data = readFileSync(file, "utf8")
                 data = handleLinksWithRegex(data)
@@ -167,7 +167,7 @@ function runAll() {
                     }
                 }
                 writeFileSync(file, data);
-                showStatusMessage("Searching metadata...");
+                showStatusMessage("Running Cleanup...");
             }
         } catch (error) {
             postError(error);
@@ -188,7 +188,7 @@ function handleSingValuedMetadata() {
             let data = readFileSync(file, "utf8")
             data = handleYamlMetadata(data);
             writeFileSync(file, data);
-            showStatusMessage("Searching metadata...");
+            showStatusMessage("Running Cleanup...");
         } else if (file.endsWith(".md")) {
             let data = readFileSync(file, "utf8")
             if (data.startsWith("---")) {
@@ -197,7 +197,7 @@ function handleSingValuedMetadata() {
                 if (metadataMatch) {
                     data = handleMarkdownMetadata(data, metadataMatch[2]);
                     writeFileSync(file, data);
-                    showStatusMessage("Searching metadata...");
+                    showStatusMessage("Running Cleanup...");
                 }
             }
         }
@@ -340,7 +340,7 @@ function microsoftLinks() {
                 let data = readFileSync(file, "utf8")
                 data = handleLinksWithRegex(data)
                 writeFileSync(file, data);
-                showStatusMessage("Searching metadata...");
+                showStatusMessage("Running Cleanup...");
             } catch (error) {
                 postError(error);
             }
@@ -391,7 +391,7 @@ function capitalizationOfMetadata() {
                     data = lowerCaseData(data, "ms.technology")
                     data = lowerCaseData(data, "ms.topic")
                     writeFileSync(file, data)
-                    showStatusMessage("Searching metadata...");
+                    showStatusMessage("Running Cleanup...");
                 }
             } catch (error) {
                 postError(error);
