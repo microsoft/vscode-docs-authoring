@@ -15,6 +15,8 @@ export let includesDirectory: string;
 let moduleTitle;
 let learnRepo: string;
 let repoRoot: string;
+let author: string;
+let msAuthor: string;
 
 // function to display subdirectories (module parent) for user to select from.
 export function showLearnFolderSelector() {
@@ -90,12 +92,24 @@ export function updateModule(units) {
 
     /* tslint:disable:object-literal-sort-keys */
     const yaml = require("write-yaml");
+    // tslint:disable-next-line: one-variable-per-declaration
+    const moduleMetadata = {
+        "title": moduleTitle,
+        "description": `...`,
+        "ms.date": `...`,
+        "author": `...`,
+        "ms.author": `...`,
+        "ms.topic": `...`,
+        "ms.prod": `...`,
+    };
     const moduleContent = {
         header: `### YamlMime:Module`,
         uid: `${learnRepo}.${formattedModuleName}`,
+        metadata: moduleMetadata,
         title: moduleTitle,
         summary: `...`,
         abstract: `...`,
+        prerequisites: `...`,
         iconUrl: `https://docs.microsoft.com/media/learn/module.svg`,
         levels: [learnLevel],
         roles: [learnRole],

@@ -4,7 +4,7 @@ import { MessageOptions, TextDocumentShowOptions, Uri, ViewColumn, window } from
 import { output } from "../extension";
 import { formatLearnNames } from "../helper/common";
 import { formattedModuleName, includesDirectory, modulePath, repoName, updateModule } from "../helper/module-builder";
-import { learnRepoId, gitHubID, alias } from "../helper/user-settings";
+import { learnRepoId } from "../helper/user-settings";
 import { enterUnitName, validateUnitName } from "../strings";
 
 export const unitList = [];
@@ -46,16 +46,6 @@ export async function createUnits() {
     } else {
         learnRepo = learnRepoId;
     }
-    if (!gitHubID) {
-        author = gitHubID;
-    } else {
-        author = `...`;
-    }
-    if (!alias) {
-        msAuthor = alias;
-    } else {
-        msAuthor = `...`;
-    }
 
     /* tslint:disable:object-literal-sort-keys */
     const yaml = require("write-yaml");
@@ -64,18 +54,20 @@ export async function createUnits() {
         "title": unitTitle,
         "description": `...`,
         "ms.date": `...`,
-        "author": author,
-        "ms.author": msAuthor,
+        "author": `...`,
+        "ms.author": `...`,
         "ms.topic": `...`,
         "ms.prod": `...`,
         "ROBOTS": `NOINDEX`,
     };
+
     const data = {
         header: `### YamlMime:ModuleUnit`,
         uid: `${learnRepo}.${formattedModuleName}.${formattedUnitName}`,
         metadata: unitMetadata,
         title: `${unitTitle}`,
         durationInMinutes: `1`,
+        content: `\n[!include[](includes/${formattedUnitName}.md)]`,
     };
     yaml.sync(unitPath, data);
     unitList.push(`${learnRepo}.${formattedModuleName}.${formattedUnitName}`);
@@ -89,7 +81,9 @@ export async function cleanupUnit(generatedUnit: string) {
     try {
         const moduleContent = readFileSync(generatedUnit, "utf8");
         const updatedModule = moduleContent.replace("header: ", "")
-            .replace(/'/g, "");
+            .replace(/'/g, "")
+            .replace(`content: |-`, "content: |")
+            .replace(/^\s*[\r\n]/gm, "");
         writeFileSync(generatedUnit, updatedModule, "utf8");
         const uri = Uri.file(generatedUnit);
         const options: TextDocumentShowOptions = {
