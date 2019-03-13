@@ -27,7 +27,7 @@
     "docsmsft.docs-markdown",
     "docsmsft.docs-article-templates",
     "streetsidesoftware.code-spell-checker",
-    "Gizmos.docs-yaml"
+    "docsmsft.docs-yaml"
   ],
   "license": "MIT",
   "dependencies": {
