@@ -5,6 +5,7 @@ import { output } from "../extension";
 import { checkExtension, generateTimestamp } from "../helper/common";
 import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
+import { applyCleanup } from "./cleanup-controller";
 import { formatCode } from "./code-controller";
 import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
@@ -14,7 +15,6 @@ import { previewTopic } from "./preview-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
-import { applyCleanup } from "./cleanup-controller";
 
 export function quickPickMenuCommand() {
     const commands = [
@@ -91,16 +91,16 @@ export function markdownQuickPick() {
             description: "",
             label: "$(device-camera-video) Video",
         },
+        {
+            description: "",
+            label: "$(tasklist) Cleanup...",
+        }
     );
 
     if (checkExtension("docsmsft.docs-article-templates")) {
         items.push({
             description: "",
             label: "$(diff) Template",
-        });
-        items.push({
-            description: "",
-            label: "$(tasklist) Cleanup...",
         });
     }
 

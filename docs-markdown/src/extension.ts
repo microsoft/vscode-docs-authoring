@@ -9,6 +9,7 @@
 import { commands, ConfigurationTarget, ExtensionContext, window, workspace } from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
+import { applyCleanupCommand } from "./controllers/cleanup-controller";
 import { codeFormattingCommand } from "./controllers/code-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
 import { italicFormattingCommand } from "./controllers/italic-controller";
@@ -61,6 +62,7 @@ export function activate(context: ExtensionContext) {
     quickPickMenuCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     previewTopicCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     getMasterRedirectionCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    applyCleanupCommand().forEach((cmd) => AuthoringCommands.push(cmd));
 
     // Telemetry
     context.subscriptions.push(new Reporter(context));
