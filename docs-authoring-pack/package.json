@@ -26,7 +26,11 @@
     "docsmsft.docs-preview",
     "docsmsft.docs-markdown",
     "docsmsft.docs-article-templates",
-    "streetsidesoftware.code-spell-checker"
+    "streetsidesoftware.code-spell-checker",
+    "Gizmos.docs-yaml"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "vsce": "^1.58.0"
+  }
 }

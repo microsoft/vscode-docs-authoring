@@ -1,0 +1,6 @@
+name: item
+label: TOC item
+description: TOC item in TOC
+body: |2
+  - name: ${1:name}
+    href: ${2:href}

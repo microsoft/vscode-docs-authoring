@@ -1,0 +1,11 @@
+name: YamlMime Achievements
+label: YamlMime Achievements
+description: Create an Achievements YAML
+body: |2
+  ### YamlMime:Achievements
+  achievements:
+    - uid: $1
+      type: $2
+      title: $3
+      summary: $4
+      iconUrl: $5
