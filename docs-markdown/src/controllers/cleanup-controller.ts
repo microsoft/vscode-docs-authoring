@@ -104,34 +104,34 @@ export function applyCleanup() {
  * @param {void => (file: string)} callback - function callback that takes in file as arg.
  */
 function traverseFiles(dir: any, callback: { (file: string): void }) {
-    if (!dir.endsWith("node_modules")
-        || !dir.endsWith(".github")
-        || !dir.endsWith(".vs")
-        || !dir.endsWith(".vscode")
-        || !dir.endsWith(".git")) {
-        readdir(dir, function (err, list) {
-            if (err) {
-                postError(`Error: ${err}`);
-            }
-            var pending = list.length;
-            if (!pending) {
-                return;
-            }
-            list.map(function (file: string) {
-                file = resolve(dir, file);
-                stat(file, function (err, stat) {
-                    if (err) {
-                        postError(`Error: ${err}`);
-                    }
-                    if (stat && stat.isDirectory()) {
-                        traverseFiles(file, callback);
-                    } else {
-                        callback(file);
-                    }
-                });
+    readdir(dir, function (err, list) {
+        if (err) {
+            postError(`Error: ${err}`);
+        }
+        var pending = list.length;
+        if (!pending) {
+            return;
+        }
+        list.filter((file: string) => {
+            return !file.includes(".git")
+                && !file.includes(".github")
+                && !file.includes(".vscode")
+                && !file.includes(".vs")
+                && !file.includes("node_module")
+        }).map(function (file: string) {
+            file = resolve(dir, file);
+            stat(file, function (err, stat) {
+                if (err) {
+                    postError(`Error: ${err}`);
+                }
+                if (stat && stat.isDirectory()) {
+                    traverseFiles(file, callback);
+                } else {
+                    callback(file);
+                }
             });
         });
-    }
+    });
 };
 
 /**
@@ -324,7 +324,7 @@ function singleValueMetadata(data: any, variable: string) {
     if (dashMatches) {
         return data.replace(dashRegex, `${variable}: ${dashMatches[1]}`)
     } else if (bracketMatch) {
-        return data.replace(bracketMatch, `${variable}: ${bracketMatch[1]}`)
+        return data.replace(bracketRegex, `${variable}: ${bracketMatch[1]}`)
     } else {
         return data;
     }
