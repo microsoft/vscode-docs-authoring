@@ -1,6 +1,6 @@
-import * as path from 'path';
-import * as util from "./yaml-util";
-import * as vscode from 'vscode';
+import {join, dirname} from 'path';
+import {loadJson} from "./yaml-util";
+import {Uri} from 'vscode';
 
 export class DocsSchemaHolder {
     // The schemas definitions for Docs
@@ -10,7 +10,7 @@ export class DocsSchemaHolder {
 
     // Load Docs schema config
     public loadSchema(schemaConfigFile: string): void{
-        const schemaConfig = util.loadJson(schemaConfigFile);
+        const schemaConfig = loadJson(schemaConfigFile);
         this.configFilePath = schemaConfigFile;
         const rawDefinitions = schemaConfig.definitions;
         for(let yamlMime of Object.keys(rawDefinitions)){
@@ -37,6 +37,6 @@ export class DocsSchemaHolder {
     }
 
     private convertSchemaFilePath(schemaFilePath: string): string{
-        return vscode.Uri.file(path.join(path.dirname(this.configFilePath), schemaFilePath)).toString();
+        return Uri.file(join(dirname(this.configFilePath), schemaFilePath)).toString();
     }
 }

@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import {readFileSync, existsSync} from 'fs';
 
 /**
  * Load json data from a json file.
@@ -6,9 +6,9 @@ import * as fs from 'fs';
  * @returns the parsed data if no error occurs, otherwise undefined is returned
  */
 export function loadJson(file: string): any {
-    if (fs.existsSync(file)) {
+    if (existsSync(file)) {
         try {
-            return JSON.parse(fs.readFileSync(file, 'utf-8'));
+            return JSON.parse(readFileSync(file, 'utf-8'));
         } catch (err) {
             // ignore
         }

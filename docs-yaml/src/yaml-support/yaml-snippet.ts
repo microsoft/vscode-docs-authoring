@@ -1,12 +1,13 @@
-import * as vscode from 'vscode';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as yaml from 'js-yaml';
-import * as fuzzysearch from 'fuzzysearch';
+import {CompletionItemProvider, TextDocument, Position, 
+    CompletionItem, CompletionItemKind, SnippetString} from 'vscode';
+import {join} from 'path';
+import {readdirSync, readFileSync} from 'fs';
+import {safeLoad} from 'js-yaml';
+import {fuzzysearch} from 'fuzzysearch';
 
 import { SNIPPETS_ROOT_PATH } from "./yaml-constant";
 
-/// Internal representation of a yaml code snippet corresponding to vscode.CompletionItemProvider
+/// Internal representation of a yaml code snippet corresponding to CompletionItemProvider
 export interface CodeSnippet {
     readonly name: string;
     readonly label: string;
@@ -17,7 +18,7 @@ export interface CodeSnippet {
 /**
  * A docs-yaml completion provider provides yaml code snippets for docs-yaml, eg: Achievements, Module.
  */
-export class DocsYamlCompletionProvider implements vscode.CompletionItemProvider {
+export class DocsYamlCompletionProvider implements CompletionItemProvider {
     // Storing all loaded yaml code snippets from snippets folder
     private snippets: CodeSnippet[] = [];
 
@@ -27,13 +28,13 @@ export class DocsYamlCompletionProvider implements vscode.CompletionItemProvider
     }
 
     // Provide code snippets for vscode
-    public provideCompletionItems(doc: vscode.TextDocument, pos: vscode.Position) {
+    public provideCompletionItems(doc: TextDocument, pos: Position) {
         const wordPos = doc.getWordRangeAtPosition(pos);
         const word = doc.getText(wordPos);
 
-        return this.filterCodeSnippets(word).map((snippet: CodeSnippet): vscode.CompletionItem =>  {
-            const item = new vscode.CompletionItem(snippet.label, vscode.CompletionItemKind.Snippet);
-            item.insertText = new vscode.SnippetString(snippet.body);
+        return this.filterCodeSnippets(word).map((snippet: CodeSnippet): CompletionItem =>  {
+            const item = new CompletionItem(snippet.label, CompletionItemKind.Snippet);
+            item.insertText = new SnippetString(snippet.body);
             item.documentation = snippet.description;
             return item;
         });
@@ -41,9 +42,9 @@ export class DocsYamlCompletionProvider implements vscode.CompletionItemProvider
 
     // Load yaml code snippets from snippets folder
     private loadCodeSnippets(): void {
-        this.snippets  = fs.readdirSync(SNIPPETS_ROOT_PATH)
+        this.snippets  = readdirSync(SNIPPETS_ROOT_PATH)
             .filter((filename: string): boolean => filename.endsWith('.yaml'))
-            .map((filename: string): CodeSnippet => this.readYamlCodeSnippet(path.join(SNIPPETS_ROOT_PATH, filename)));
+            .map((filename: string): CodeSnippet => this.readYamlCodeSnippet(join(SNIPPETS_ROOT_PATH, filename)));
     }
 
     // Filter all internal code snippets using the parameter word
@@ -54,6 +55,6 @@ export class DocsYamlCompletionProvider implements vscode.CompletionItemProvider
 
     // Parse a yaml snippet file into a CodeSnippet
     private readYamlCodeSnippet(filename: string): CodeSnippet {
-        return <CodeSnippet>yaml.safeLoad(fs.readFileSync(filename, 'utf-8'));
+        return <CodeSnippet>safeLoad(readFileSync(filename, 'utf-8'));
     }
 }

@@ -1,5 +1,5 @@
 'use strict';
-import * as vscode from 'vscode';
+import {languages, workspace, ConfigurationTarget, ExtensionContext} from 'vscode';
 
 import { DocsYamlCompletionProvider } from "./yaml-support/yaml-snippet";
 import { registerYamlSchemaSupport } from './yaml-support/yaml-schema';
@@ -7,10 +7,10 @@ import { YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION, TOC_SCHEMA_FILE, TOC_
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export async function activate(context: vscode.ExtensionContext) {
+export async function activate(context: ExtensionContext) {
     const subscriptions = [
         // Completion providers
-        vscode.languages.registerCompletionItemProvider('yaml', new DocsYamlCompletionProvider()),
+        languages.registerCompletionItemProvider('yaml', new DocsYamlCompletionProvider()),
     ];
 
     await addTocSchemaToConfig();
@@ -21,14 +21,14 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 async function addTocSchemaToConfig() {
-    const config = vscode.workspace.getConfiguration().inspect(YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION);
-    await addTocSchemaToConfigAtScope(TOC_SCHEMA_FILE, TOC_FILE_GLOBAL_PATTERN, vscode.ConfigurationTarget.Global, config.globalValue);
+    const config = workspace.getConfiguration().inspect(YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION);
+    await addTocSchemaToConfigAtScope(TOC_SCHEMA_FILE, TOC_FILE_GLOBAL_PATTERN, ConfigurationTarget.Global, config.globalValue);
 
     // this code should be mantian for two verison
-    await removeTocSchemaFromConfigAtScope(TOC_FILE_GLOBAL_PATTERN, vscode.ConfigurationTarget.Workspace, config.workspaceValue)
+    await removeTocSchemaFromConfigAtScope(TOC_FILE_GLOBAL_PATTERN, ConfigurationTarget.Workspace, config.workspaceValue)
 }
 
-async function addTocSchemaToConfigAtScope(key: string, value: string, scope: vscode.ConfigurationTarget, valueAtScope: any) {
+async function addTocSchemaToConfigAtScope(key: string, value: string, scope: ConfigurationTarget, valueAtScope: any) {
     let newValue: any = {};
     if (valueAtScope) {
         newValue = Object.assign({}, valueAtScope);
@@ -40,10 +40,10 @@ async function addTocSchemaToConfigAtScope(key: string, value: string, scope: vs
         }
     })
     newValue[key] = value;
-    await vscode.workspace.getConfiguration().update(YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION, newValue, scope);
+    await workspace.getConfiguration().update(YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION, newValue, scope);
 }
 
-async function removeTocSchemaFromConfigAtScope(value: string, scope: vscode.ConfigurationTarget, valueAtScope: any) {
+async function removeTocSchemaFromConfigAtScope(value: string, scope: ConfigurationTarget, valueAtScope: any) {
     if (!valueAtScope) {
         return;
     }
@@ -57,7 +57,7 @@ async function removeTocSchemaFromConfigAtScope(value: string, scope: vscode.Con
             delete newValue[configKey];
         }
     })
-    await vscode.workspace.getConfiguration().update(YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION, newValue, scope);
+    await workspace.getConfiguration().update(YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION, newValue, scope);
 }
 
 // this method is called when your extension is deactivated

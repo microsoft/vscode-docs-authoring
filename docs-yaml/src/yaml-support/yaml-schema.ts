@@ -1,9 +1,9 @@
-import * as vscode from 'vscode';
+import {window, TextDocument, extensions, Extension} from 'vscode';
 import {
     VSCODE_YAML_EXTENSION_ID,
     SCHEMA_CONFIG_FILE
 } from "./yaml-constant";
-import * as util from './yaml-util';
+import {getYamlMime} from './yaml-util';
 import { DocsSchemaHolder } from "./yaml-schem-Holder";
 
 // The function signature exposed by vscode-yaml:
@@ -30,29 +30,29 @@ export async function registerYamlSchemaSupport(): Promise<void> {
 
 // See docs from YamlSchemaContributor
 function requestYamlSchemaUriCallback(resource: string): string {
-    const textEditor = vscode.window.visibleTextEditors.find((editor) => editor.document.uri.toString() === resource);
+    const textEditor = window.visibleTextEditors.find((editor) => editor.document.uri.toString() === resource);
     if (textEditor) {
         return getSchemaUri(textEditor.document);
     }
 }
 
 // Get schema uri of this textDocument
-function getSchemaUri(textDocument: vscode.TextDocument) {
-    var yamlMime = util.getYamlMime(textDocument.getText());
+function getSchemaUri(textDocument: TextDocument) {
+    var yamlMime = getYamlMime(textDocument.getText());
     return docsSchemaHolder.lookup(yamlMime);
 }
 
 // Find redhat.vscode-yaml extension and try to activate it to get the yaml contributor
 async function activateYamlExtension(): Promise<{ registerContributor: YamlSchemaContributor }> {
-    const ext: vscode.Extension<any> = vscode.extensions.getExtension(VSCODE_YAML_EXTENSION_ID);
+    const ext: Extension<any> = extensions.getExtension(VSCODE_YAML_EXTENSION_ID);
     if (!ext) {
-        vscode.window.showWarningMessage('Please install \'YAML Support by Red Hat\' via the Extensions pane.');
+        window.showWarningMessage('Please install \'YAML Support by Red Hat\' via the Extensions pane.');
         return;
     }
     const yamlPlugin = await ext.activate();
 
     if (!yamlPlugin || !yamlPlugin.registerContributor) {
-        vscode.window.showWarningMessage('The installed Red Hat YAML extension doesn\'t support Kubernetes Intellisense. Please upgrade \'YAML Support by Red Hat\' via the Extensions pane.');
+        window.showWarningMessage('The installed Red Hat YAML extension doesn\'t support Kubernetes Intellisense. Please upgrade \'YAML Support by Red Hat\' via the Extensions pane.');
         return;
     }
     return yamlPlugin;

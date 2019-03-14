@@ -313,6 +313,7 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.11",
     "@types/chai": "^3.4.34",
     "@types/lodash.merge": "^4.6.3",
     "@types/mocha": "^2.2.48",
