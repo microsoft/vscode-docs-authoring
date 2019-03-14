@@ -13,7 +13,7 @@ export let modulePath: string;
 export let repoName: string;
 export let includesDirectory: string;
 let moduleTitle;
-let learnRepo: string;
+let learnRepo: string = learnRepoId;
 let repoRoot: string;
 let author: string = gitHubID;
 let msAuthor: string = alias;
