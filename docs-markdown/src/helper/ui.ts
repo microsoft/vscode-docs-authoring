@@ -17,6 +17,8 @@ export class UiHelper {
                 if (common.checkExtension("docsmsft.docs-article-templates")) {
                     this.uiTemplate();
                     log.debug("Loaded UI Apply Template");
+                    this.uiCleanup();
+                    log.debug("Loaded UI Apply Cleanup");
                 }
                 this.uiBold();
                 log.debug("Loaded UI Format Bold");
@@ -189,5 +191,15 @@ export class UiHelper {
         statusBarItem.tooltip = "Template";
         statusBarItem.show();
         statusBarItem.command = "applyTemplate";
+    }
+
+    private uiCleanup() {
+        let statusBarItem: vscode.StatusBarItem;
+        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        statusBarItem.text = "$(tasklist)";
+        statusBarItem.color = "white";
+        statusBarItem.tooltip = "Cleanup...";
+        statusBarItem.show();
+        statusBarItem.command = "applyCleanup";
     }
 }

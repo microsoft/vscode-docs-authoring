@@ -116,6 +116,11 @@
         "command": "applyTemplate",
         "title": "Template",
         "category": "Docs"
+      },
+      {
+        "command": "applyCleanup",
+        "title": "Cleanup...",
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -214,6 +219,11 @@
           "command": "applyTemplate",
           "group": "Docs",
           "when": "vscode.extensions.getExtension('docsmsft.docs-article-templates').active"
+        },
+        {
+          "command": "applyCleanup",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
         }
       ]
     },
@@ -303,6 +313,7 @@
   "dependencies": {
     "file-exists": "^5.0.1",
     "fs-exists-sync": "^0.1.0",
+    "js-yaml": "^3.12.2",
     "lodash.merge": "^4.6.0",
     "markdownlint": "^0.11.0",
     "matcher": "^1.0.0",
