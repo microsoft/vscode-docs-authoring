@@ -25,8 +25,7 @@
     "DavidAnson.vscode-markdownlint",
     "docsmsft.docs-preview",
     "docsmsft.docs-markdown",
-    "docsmsft.docs-article-templates",
-    "streetsidesoftware.code-spell-checker"
+    "docsmsft.docs-article-templates"
   ],
   "license": "MIT"
 }
