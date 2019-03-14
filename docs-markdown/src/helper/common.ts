@@ -290,3 +290,13 @@ export function checkExtension(extensionName: string, notInstalledMessage?: stri
     }
     return extensionValue.isActive;
 }
+
+/**
+ * Output message with timestamp
+ * @param message 
+ */
+export function showStatusMessage(message: string) {
+    const { msTimeValue } = generateTimestamp();
+    output.appendLine(`[${msTimeValue}] - ` + message);
+    output.show();
+}
