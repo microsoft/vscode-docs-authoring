@@ -5,6 +5,7 @@ import { output } from "../extension";
 import { checkExtension, generateTimestamp } from "../helper/common";
 import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
+import { applyCleanup } from "./cleanup-controller";
 import { formatCode } from "./code-controller";
 import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
@@ -90,6 +91,10 @@ export function markdownQuickPick() {
             description: "",
             label: "$(device-camera-video) Video",
         },
+        {
+            description: "",
+            label: "$(tasklist) Cleanup...",
+        }
     );
 
     if (checkExtension("docsmsft.docs-article-templates")) {
@@ -160,6 +165,9 @@ export function markdownQuickPick() {
                 break;
             case "template":
                 applyTemplate();
+                break;
+            case "cleanup...":
+                applyCleanup();
                 break;
             default:
                 const { msTimeValue } = generateTimestamp();
