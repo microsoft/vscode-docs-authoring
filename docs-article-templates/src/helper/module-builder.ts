@@ -102,7 +102,7 @@ export function updateModule(units) {
         "description": `...`,
         "ms.date": `...`,
         "author": author,
-        "ms.author": alias,
+        "ms.author": msAuthor,
         "ms.topic": `...`,
         "ms.prod": `...`,
     };
