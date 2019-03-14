@@ -4,16 +4,16 @@ import { MessageOptions, TextDocumentShowOptions, Uri, ViewColumn, window } from
 import { output } from "../extension";
 import { formatLearnNames } from "../helper/common";
 import { formattedModuleName, includesDirectory, modulePath, repoName, updateModule } from "../helper/module-builder";
-import { learnRepoId } from "../helper/user-settings";
+import { alias, gitHubID, learnRepoId } from "../helper/user-settings";
 import { enterUnitName, validateUnitName } from "../strings";
 
 export const unitList = [];
 export let formattedUnitName: string;
-let learnRepo: string;
+let learnRepo: string = learnRepoId;
 let includeFile: string;
 let unitTitle: string;
-let author: string;
-let msAuthor: string;
+let author: string = gitHubID;
+let msAuthor: string = alias;
 
 // input box used to gather unit name.  input is validated and if no name is entered, exit the function.
 export function getUnitName() {
@@ -43,8 +43,12 @@ export async function createUnits() {
     const unitPath = join(modulePath, `${formattedUnitName}.yml`);
     if (!learnRepoId) {
         learnRepo = repoName;
-    } else {
-        learnRepo = learnRepoId;
+    }
+    if (!gitHubID) {
+        author = `...`;
+    }
+    if (!alias) {
+        msAuthor = `...`;
     }
 
     /* tslint:disable:object-literal-sort-keys */
@@ -54,13 +58,12 @@ export async function createUnits() {
         "title": unitTitle,
         "description": `...`,
         "ms.date": `...`,
-        "author": `...`,
-        "ms.author": `...`,
+        "author": author,
+        "ms.author": msAuthor,
         "ms.topic": `...`,
         "ms.prod": `...`,
         "ROBOTS": `NOINDEX`,
     };
-
     const data = {
         header: `### YamlMime:ModuleUnit`,
         uid: `${learnRepo}.${formattedModuleName}.${formattedUnitName}`,
@@ -97,3 +100,4 @@ export async function cleanupUnit(generatedUnit: string) {
         output.appendLine(error);
     }
 }
+

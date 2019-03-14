@@ -4,7 +4,7 @@ import { QuickPickItem, QuickPickOptions, TextDocumentShowOptions, Uri, ViewColu
 import { output } from "../extension";
 import { formatLearnNames } from "../helper/common";
 import { getUnitName, unitList } from "../helper/unit-builder";
-import { learnLevel, learnProduct, learnRepoId, learnRole } from "../helper/user-settings";
+import { alias, gitHubID, learnLevel, learnProduct, learnRepoId, learnRole } from "../helper/user-settings";
 import { enterModuleName, parentFolderPrompt, validateModuleName } from "../strings";
 
 export let formattedModuleName: string;
@@ -15,8 +15,8 @@ export let includesDirectory: string;
 let moduleTitle;
 let learnRepo: string;
 let repoRoot: string;
-let author: string;
-let msAuthor: string;
+let author: string = gitHubID;
+let msAuthor: string = alias;
 
 // function to display subdirectories (module parent) for user to select from.
 export function showLearnFolderSelector() {
@@ -84,10 +84,14 @@ export function createModuleDirectory() {
 // data used to create the module yml file.
 // check settings.json for repo value.  if there's no value, the root path directory will be considered the repo name.
 export function updateModule(units) {
-    if (learnRepoId) {
-        learnRepo = learnRepoId;
-    } else {
+    if (!learnRepoId) {
         learnRepo = repoName;
+    }
+    if (!gitHubID) {
+        author = `...`;
+    }
+    if (!alias) {
+        msAuthor = `...`;
     }
 
     /* tslint:disable:object-literal-sort-keys */
@@ -97,8 +101,8 @@ export function updateModule(units) {
         "title": moduleTitle,
         "description": `...`,
         "ms.date": `...`,
-        "author": `...`,
-        "ms.author": `...`,
+        "author": author,
+        "ms.author": alias,
         "ms.topic": `...`,
         "ms.prod": `...`,
     };
@@ -114,7 +118,7 @@ export function updateModule(units) {
         levels: [learnLevel],
         roles: [learnRole],
         products: [learnProduct],
-        units: units,
+        units: { units },
         badge: [`{badge}`],
     };
     const moduleIndex = join(modulePath, "index.yml");
@@ -137,7 +141,7 @@ export function cleanupModule(generatedModule: string) {
             preserveFocus: false,
             preview: false,
             viewColumn: ViewColumn.One,
-          };
+        };
         window.showTextDocument(uri, options);
     } catch (error) {
         output.appendLine(error);
