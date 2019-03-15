@@ -311,6 +311,7 @@
     "test-core": "node ./node_modules/vscode/bin/test"
   },
   "dependencies": {
+    "@types/jest": "^24.0.11",
     "file-exists": "^5.0.1",
     "fs-exists-sync": "^0.1.0",
     "js-yaml": "^3.12.2",
@@ -323,9 +324,10 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.11",
     "@types/chai": "^3.4.34",
     "@types/lodash.merge": "^4.6.3",
-    "@types/mocha": "^2.2.32",
+    "@types/mocha": "^2.2.48",
     "@types/node": "^7.0.61",
     "@types/node-dir": "0.0.32",
     "@types/yamljs": "^0.2.30",
