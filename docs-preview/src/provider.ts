@@ -83,8 +83,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
             await setTimeout(async () => {
                 this.waiting = false;
 
-                if (panelMap.has(uri.fsPath))
-                {
+                if (panelMap.has(uri.fsPath)) {
                     const panel = panelMap.get(uri.fsPath);
                     panel.webview.html = await this.provideTextDocumentContent(uri);
                 }
@@ -185,11 +184,11 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
     }
 
     private getMediaPath(mediaFile: string): string {
-        return Uri.file(this.context.asAbsolutePath(path.join("media", mediaFile))).with({scheme: 'vscode-resource'}).toString();
+        return Uri.file(this.context.asAbsolutePath(path.join("media", mediaFile))).with({ scheme: 'vscode-resource' }).toString();
     }
 
     private getNodeModulePath(file: string): string {
-        return Uri.file(this.context.asAbsolutePath(path.join("node_modules", file))).with({scheme: 'vscode-resource'}).toString();
+        return Uri.file(this.context.asAbsolutePath(path.join("node_modules", file))).with({ scheme: 'vscode-resource' }).toString();
     }
 
     private fixLinks(document: string, resource: Uri): string {

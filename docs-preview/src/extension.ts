@@ -125,8 +125,8 @@ async function preview(uri: Uri, viewColumn: number, provider: DocumentContentPr
             enableCommandUris: true,
             enableScripts: true,
             localResourceRoots: [
-				Uri.file(path.join(context.extensionPath, 'media'))
-			]
+                Uri.file(path.join(context.extensionPath, 'media'))
+            ]
         }
     );
 
