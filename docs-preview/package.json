@@ -2,7 +2,7 @@
   "name": "docs-preview",
   "displayName": "docs-preview",
   "description": "Docs Markdown Preview Extension",
-  "version": "0.3.16",
+  "version": "0.3.17",
   "publisher": "docsmsft",
   "icon": "images/docs-logo-ms.png",
   "bugs": {
@@ -84,8 +84,8 @@
   "runtimeDependencies": [
     {
       "description": "docs-previewService for .NET Core",
-      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.18/netcore.zip",
-      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.18/netcore.zip",
+      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.44/netcore.zip",
+      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.44/netcore.zip",
       "installPath": ".markdocs",
       "platforms": [
         "netcore"
@@ -93,12 +93,12 @@
       "architectures": [
         "netcore"
       ],
-      "installTestPath": "./.markdocs/MarkdocsService.dll"
+      "installTestPath": "./.markdocs/DocsPreviewService.dll"
     },
     {
       "description": "docs-previewService for Windows (x86)",
-      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x86.zip",
-      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x86.zip",
+      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.44/win32_x86.zip",
+      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.44/win32_x86.zip",
       "installPath": ".markdocs",
       "platforms": [
         "win32"
@@ -106,12 +106,12 @@
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.markdocs/MarkdocsService.exe"
+      "installTestPath": "./.markdocs/DocsPreviewService.exe"
     },
     {
       "description": "docs-previewService for Windows (x64)",
-      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x64.zip",
-      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x64.zip",
+      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.44/win32_x64.zip",
+      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.44/win32_x64.zip",
       "installPath": ".markdocs",
       "platforms": [
         "win32"
@@ -119,25 +119,25 @@
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.markdocs/MarkdocsService.exe"
+      "installTestPath": "./.markdocs/DocsPreviewService.exe"
     },
     {
       "description": "docs-previewService for macOS (x64)",
-      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/darwin_x64.zip",
-      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/darwin_x64.zip",
+      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.44/darwin_x64.zip",
+      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.44/darwin_x64.zip",
       "installPath": ".markdocs",
       "platforms": [
         "darwin"
       ],
       "binaries": [
-        "./MarkdocsService"
+        "./DocsPreviewService"
       ],
-      "installTestPath": "./.markdocs/MarkdocsService"
+      "installTestPath": "./.markdocs/DocsPreviewService"
     },
     {
       "description": "docs-previewService for Linux (x64)",
-      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/linux_x64.zip",
-      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/linux_x64.zip",
+      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.44/linux_x64.zip",
+      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.44/linux_x64.zip",
       "installPath": ".markdocs",
       "platforms": [
         "linux"
@@ -146,9 +146,9 @@
         "x86_64"
       ],
       "binaries": [
-        "./MarkdocsService"
+        "./DocsPreviewService"
       ],
-      "installTestPath": "./.markdocs/MarkdocsService"
+      "installTestPath": "./.markdocs/DocsPreviewService"
     }
   ]
 }
