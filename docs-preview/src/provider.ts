@@ -10,6 +10,7 @@ import {
     Uri,
     window,
     workspace,
+    WebviewPanel,
 } from "vscode";
 import MarkdownService from "./markdownService";
 import MarkdownPreviewConfig from "./util/markdownPreviewConfig";
@@ -34,7 +35,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
         this.context = context;
     }
 
-    public provideTextDocumentContent(uri: Uri): ProviderResult<string> {
+    public async provideTextDocumentContent(uri: Uri): Promise<string> {
         this.sourceUri = Uri.parse(uri.query);
 
         let initialLine: number | undefined;
@@ -57,33 +58,36 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
 
         const workspaceRoot = workspace.rootPath;
 
-        return workspace.openTextDocument(this.sourceUri)
-            .then((document) => {
-                const content = document.getText();
+        var document = await workspace.openTextDocument(this.sourceUri);
+        const content = document.getText();
 
-                if (!workspaceRoot) {
-                    return this.markupAsync(content, path.basename(document.fileName), path.dirname(document.fileName), document.uri);
-                }
+        if (!workspaceRoot) {
+            return await this.markupAsync(content, path.basename(document.fileName), path.dirname(document.fileName), document.uri);
+        }
 
-                const basePath = path.dirname(document.fileName);
-                let docsetRoot = this.getDocsetRoot(basePath) || workspaceRoot;
-                const filePath = path.relative(docsetRoot, document.fileName);
-                docsetRoot = docsetRoot.replace(/\\/g, "/");
+        const basePath = path.dirname(document.fileName);
+        let docsetRoot = this.getDocsetRoot(basePath) || workspaceRoot;
+        const filePath = path.relative(docsetRoot, document.fileName);
+        docsetRoot = docsetRoot.replace(/\\/g, "/");
 
-                return this.markupAsync(content, filePath, docsetRoot, document.uri);
-            });
+        return await this.markupAsync(content, filePath, docsetRoot, document.uri);
     }
 
     get onDidChange(): Event<Uri> {
         return this.onDidChangeEvent.event;
     }
 
-    public update(uri: Uri) {
+    public async update(uri: Uri, panelMap: Map<string, WebviewPanel>) {
         if (!this.waiting) {
             this.waiting = true;
-            setTimeout(() => {
+            await setTimeout(async () => {
                 this.waiting = false;
-                this.onDidChangeEvent.fire(uri);
+
+                if (panelMap.has(uri.fsPath))
+                {
+                    const panel = panelMap.get(uri.fsPath);
+                    panel.webview.html = await this.provideTextDocumentContent(uri);
+                }
             }, 50);
         }
     }
@@ -181,11 +185,11 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
     }
 
     private getMediaPath(mediaFile: string): string {
-        return Uri.file(this.context.asAbsolutePath(path.join("media", mediaFile))).toString();
+        return Uri.file(this.context.asAbsolutePath(path.join("media", mediaFile))).with({scheme: 'vscode-resource'}).toString();
     }
 
     private getNodeModulePath(file: string): string {
-        return Uri.file(this.context.asAbsolutePath(path.join("node_modules", file))).toString();
+        return Uri.file(this.context.asAbsolutePath(path.join("node_modules", file))).with({scheme: 'vscode-resource'}).toString();
     }
 
     private fixLinks(document: string, resource: Uri): string {
