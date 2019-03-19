@@ -1,0 +1,58 @@
+{
+    "name": "docs-yaml",
+    "displayName": "docs-yaml",
+    "description": "YAML schema validation and auto-completion for docs.microsoft.com authoring",
+    "version": "0.1.11",
+    "preview": true,
+    "publisher": "docsmsft",
+    "engines": {
+        "vscode": "^1.25.0"
+    },
+    "license": "MIT",
+    "categories": [
+        "Azure",
+        "Snippets",
+        "Programming Languages",
+        "Other"
+    ],
+    "keywords": [
+        "yaml",
+        "YamlMime",
+        "azure",
+        "docs"
+    ],
+    "icon": "images/docs-logo-ms.png",
+    "bugs": {
+        "url": "https://github.com/928PJY/docs-yaml/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Microsoft/vscode-docs-authoring.git"
+    },
+    "activationEvents": [
+        "onLanguage:yaml"
+    ],
+    "main": "./out/src/extension",
+    "contributes": {},
+    "extensionDependencies": [
+        "redhat.vscode-yaml"
+    ],
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "dependencies": {
+        "fuzzysearch": "^1.0.3",
+        "js-yaml": "^3.8.2"
+    },
+    "devDependencies": {
+        "@types/mocha": "^2.2.32",
+        "@types/node": "^6.0.40",
+        "mocha": "^4.1.0",
+        "typescript": "^2.2.32",
+        "vscode": "^1.1.30"
+    }
+}
