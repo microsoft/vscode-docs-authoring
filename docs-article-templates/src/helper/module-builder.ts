@@ -94,9 +94,9 @@ export function updateModule(units) {
         msAuthor = `...`;
     }
 
-    /* tslint:disable:object-literal-sort-keys */
-    const yaml = require("write-yaml");
-    // tslint:disable-next-line: one-variable-per-declaration
+    /* tslint:disable:object-literal-sort-keys one-variable-per-declaration */
+    const yaml = require('js-yaml');
+
     const moduleMetadata = {
         "title": moduleTitle,
         "description": `...`,
@@ -106,7 +106,7 @@ export function updateModule(units) {
         "ms.topic": `...`,
         "ms.prod": `...`,
     };
-    const moduleContent = {
+    const moduleData = {
         header: `### YamlMime:Module`,
         uid: `${learnRepo}.${formattedModuleName}`,
         metadata: moduleMetadata,
@@ -122,7 +122,8 @@ export function updateModule(units) {
         badge: [`{badge}`],
     };
     const moduleIndex = join(modulePath, "index.yml");
-    yaml.sync(moduleIndex, moduleContent);
+    const moduleContent = yaml.dump(moduleData);
+    writeFileSync(moduleIndex, moduleContent)
     cleanupModule(moduleIndex);
 }
 

@@ -51,9 +51,9 @@ export async function createUnits() {
         msAuthor = `...`;
     }
 
-    /* tslint:disable:object-literal-sort-keys */
-    const yaml = require("write-yaml");
-    // tslint:disable-next-line: one-variable-per-declaration
+    /* tslint:disable:object-literal-sort-keys one-variable-per-declaration */
+    const yaml = require('js-yaml');
+
     const unitMetadata = {
         "title": unitTitle,
         "description": `...`,
@@ -64,7 +64,7 @@ export async function createUnits() {
         "ms.prod": `...`,
         "ROBOTS": `NOINDEX`,
     };
-    const data = {
+    const unitData = {
         header: `### YamlMime:ModuleUnit`,
         uid: `${learnRepo}.${formattedModuleName}.${formattedUnitName}`,
         metadata: unitMetadata,
@@ -72,7 +72,8 @@ export async function createUnits() {
         durationInMinutes: `1`,
         content: `\n[!include[](includes/${formattedUnitName}.md)]`,
     };
-    yaml.sync(unitPath, data);
+    const unitContent = yaml.dump(unitData);
+    writeFileSync(unitPath, unitContent);
     unitList.push(`${learnRepo}.${formattedModuleName}.${formattedUnitName}`);
     includeFile = join(includesDirectory, `${formattedUnitName}.md`);
     writeFileSync(includeFile, "");

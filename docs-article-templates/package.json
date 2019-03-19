@@ -83,7 +83,7 @@
     "front-matter": "^3.0.1",
     "node-dir": "^0.1.17",
     "octicons": "^4.4.0",
-    "write-yaml": "^1.0.0"
+    "js-yaml": "^3.12.2"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.42",
