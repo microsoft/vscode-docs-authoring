@@ -14,7 +14,7 @@
     "url": "https://github.com/Microsoft/vscode-docs-authoring.git"
   },
   "engines": {
-    "vscode": "^1.18.x"
+    "vscode": "^1.23.0"
   },
   "categories": [
     "Snippets",
