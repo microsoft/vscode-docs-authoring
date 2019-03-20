@@ -4,7 +4,7 @@ import { QuickPickItem, QuickPickOptions, TextDocumentShowOptions, Uri, ViewColu
 import { output } from "../extension";
 import { formatLearnNames } from "../helper/common";
 import { getUnitName, unitList } from "../helper/unit-builder";
-import { learnLevel, learnProduct, learnRepoId, learnRole } from "../helper/user-settings";
+import { alias, gitHubID, learnLevel, learnProduct, learnRepoId, learnRole } from "../helper/user-settings";
 import { enterModuleName, parentFolderPrompt, validateModuleName } from "../strings";
 
 export let formattedModuleName: string;
@@ -13,8 +13,10 @@ export let modulePath: string;
 export let repoName: string;
 export let includesDirectory: string;
 let moduleTitle;
-let learnRepo: string;
+let learnRepo: string = learnRepoId;
 let repoRoot: string;
+let author: string = gitHubID;
+let msAuthor: string = alias;
 
 // function to display subdirectories (module parent) for user to select from.
 export function showLearnFolderSelector() {
@@ -82,29 +84,46 @@ export function createModuleDirectory() {
 // data used to create the module yml file.
 // check settings.json for repo value.  if there's no value, the root path directory will be considered the repo name.
 export function updateModule(units) {
-    if (learnRepoId) {
-        learnRepo = learnRepoId;
-    } else {
+    if (!learnRepoId) {
         learnRepo = repoName;
     }
+    if (!gitHubID) {
+        author = `...`;
+    }
+    if (!alias) {
+        msAuthor = `...`;
+    }
 
-    /* tslint:disable:object-literal-sort-keys */
-    const yaml = require("write-yaml");
-    const moduleContent = {
+    /* tslint:disable:object-literal-sort-keys one-variable-per-declaration */
+    const yaml = require('js-yaml');
+
+    const moduleMetadata = {
+        "title": moduleTitle,
+        "description": `...`,
+        "ms.date": `...`,
+        "author": author,
+        "ms.author": msAuthor,
+        "ms.topic": `...`,
+        "ms.prod": `...`,
+    };
+    const moduleData = {
         header: `### YamlMime:Module`,
         uid: `${learnRepo}.${formattedModuleName}`,
+        metadata: moduleMetadata,
         title: moduleTitle,
         summary: `...`,
         abstract: `...`,
+        prerequisites: `...`,
         iconUrl: `https://docs.microsoft.com/media/learn/module.svg`,
         levels: [learnLevel],
         roles: [learnRole],
         products: [learnProduct],
-        units: units,
+        units: { units },
         badge: [`{badge}`],
     };
     const moduleIndex = join(modulePath, "index.yml");
-    yaml.sync(moduleIndex, moduleContent);
+    const moduleContent = yaml.dump(moduleData);
+    writeFileSync(moduleIndex, moduleContent)
     cleanupModule(moduleIndex);
 }
 
@@ -123,7 +142,7 @@ export function cleanupModule(generatedModule: string) {
             preserveFocus: false,
             preview: false,
             viewColumn: ViewColumn.One,
-          };
+        };
         window.showTextDocument(uri, options);
     } catch (error) {
         output.appendLine(error);

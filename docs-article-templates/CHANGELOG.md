@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.0 (March 20th, 2019)
+
+- Learn scaffolding functionality
+- Template friendly name support
+
 ## 0.1.4 (December 3rd, 2018)
 
 - Update command palette
