@@ -17,8 +17,8 @@ For the first release of the Docs Article Templates extension, only simple Markd
 1. In VSC open to the root working folder of your repository containing the achievements, path, and "product" folders.
 1. If you don't have the Docs Markdown extension installed, hit F1 to open the command palette, start typing "template" to filter, then click `Docs: Template`. If you do have Docs Markdown installed, you can use either the command palette or click `Alt+M` to bring up the Docs Markdown QuickPick menu, then select Template from the list.
 1. From the drop-down list of templates select `Learn module`.
-1. SWhen prompted select the module's parent folder.
-1. EIn the "Enter module name" prompt enter your module's name. This is used to create the module, media, and include folders, the index.yml, and the module uid. Example: Module with the friendly name `What is m365` will automatically be formatted as `what-is-m365` by the template extension for the applicable fields.
+1. When prompted select the module's parent folder.
+1. In the "Enter module name" prompt enter your module's name. This is used to create the module, media, and include folders, the index.yml, and the module uid. Example: Module with the friendly name `What is m365` will automatically be formatted as `what-is-m365` by the template extension for the applicable fields.
 1. In the "Enter unit name" prompt enter the first unit name. This will be used to create the unit yml and content .md file with the same name, for example introduction.
 1. Answer `Yes` to the message dialog for your next unit name.
 1. Repeat steps 7 and 8 for each new unit yml you need to create. Once all units have been created,select `No` to exit.
