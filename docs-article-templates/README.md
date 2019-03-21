@@ -54,7 +54,7 @@ To set `author` and/or `ms.author`:
 
 Some Learn module and unit properties can be modified using VS Code settings.
 
-Field      |Value  |
+|Field      |Value  |
 |-----------|-------|
 |`learn_repo_id`   |Default Learn repo.  If no value is present, repo root folder will be used.|
 |`learn_level`|Default Learn level. Represents the target level for the module i.e. `beginner`.|         
