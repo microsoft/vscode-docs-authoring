@@ -319,6 +319,7 @@
     "markdownlint": "^0.11.0",
     "matcher": "^1.0.0",
     "node-dir": "^0.1.17",
+    "recursive-readdir": "^2.2.2",
     "typescript-collections": "^1.2.3",
     "vscode-extension-telemetry": "^0.0.6",
     "yamljs": "^0.3.0"
@@ -330,6 +331,7 @@
     "@types/mocha": "^2.2.48",
     "@types/node": "^7.0.61",
     "@types/node-dir": "0.0.32",
+    "@types/recursive-readdir": "^2.2.0",
     "@types/yamljs": "^0.2.30",
     "chai": "^3.5.0",
     "jest": "^24.1.0",

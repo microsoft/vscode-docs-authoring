@@ -3,10 +3,10 @@
 import * as vscode from "vscode";
 import { reporter } from "../telemetry/telemetry";
 import { window, workspace, ProgressLocation } from "vscode";
-import { readFileSync, writeFileSync, readdir, stat } from "fs";
-import { resolve } from "path";
+import { readFileSync, writeFileSync } from "fs";
 import { generateMasterRedirectionFile } from "./master-redirect-controller";
 import { postError, showStatusMessage } from "../helper/common";
+var recursive = require("recursive-readdir");
 const jsyaml = require("js-yaml");
 const telemetryCommand: string = "applyCleanup";
 
@@ -48,91 +48,35 @@ export function applyCleanup() {
         }
         window.withProgress({
             location: ProgressLocation.Notification,
-            title: "Running Cleanup",
+            title: "Cleanup...",
             cancellable: true
-        }, async (progress, token) => {
+        }, (progress, token) => {
             token.onCancellationRequested(() => {
-                postError("User canceled the long running operation")
+                console.log("User canceled the long running operation")
             });
-            switch (selection.label.toLowerCase()) {
-                case "single-valued metadata":
-                    await handleSingleValuedMetadata();
-                    break;
-                case "microsoft links":
-                    await microsoftLinks();
-                    break;
-                case "capitalization of metadata values":
-                    await capitalizationOfMetadata();
-                    break;
-                case "master redirection file":
-                    await generateMasterRedirectionFile();
-                    break;
-                case "everything":
-                    runAll();
-                    break;
-            }
             progress.report({ increment: 0 });
-
-            setTimeout(() => {
-                progress.report({ increment: 20, message: "in progress." });
-            }, 4000);
-
-            setTimeout(() => {
-                progress.report({ increment: 50, message: "cleaning up." });
-            }, 80000);
-
-            setTimeout(() => {
-                progress.report({ increment: 70, message: "almost there..." });
-            }, 13000);
-
-            var p = new Promise(resolve => {
-                setTimeout(() => {
-                    resolve();
-                }, 15000);
-            });
-
-            return p;
-        });
+            return new Promise(async resolve => {
+                switch (selection.label.toLowerCase()) {
+                    case "single-valued metadata":
+                        await handleSingleValuedMetadata(progress, resolve);
+                        break;
+                    case "microsoft links":
+                        microsoftLinks(progress, resolve);
+                        break;
+                    case "capitalization of metadata values":
+                        capitalizationOfMetadata(progress, resolve);
+                        break;
+                    case "master redirection file":
+                        generateMasterRedirectionFile();
+                        break;
+                    case "everything":
+                        runAll(progress, resolve);
+                        break;
+                }
+            })
+        })
     })
 }
-
-/**
- * Traverse directory and subdirectories.Performs callback method on each
- * file, else if the directory contains folders, it will traverse
- * those directories until it has performed callback on each file.
- * @param {string} dir - directory.
- * @param {void => (file: string)} callback - function callback that takes in file as arg.
- */
-function traverseFiles(dir: any, callback: { (file: string): void }) {
-    readdir(dir, function (err, list) {
-        if (err) {
-            postError(`Error: ${err}`);
-        }
-        var pending = list.length;
-        if (!pending) {
-            return;
-        }
-        list.filter((file: string) => {
-            return !file.includes(".git")
-                && !file.includes(".github")
-                && !file.includes(".vscode")
-                && !file.includes(".vs")
-                && !file.includes("node_module")
-        }).map(function (file: string) {
-            file = resolve(dir, file);
-            stat(file, function (err, stat) {
-                if (err) {
-                    postError(`Error: ${err}`);
-                }
-                if (stat && stat.isDirectory()) {
-                    traverseFiles(file, callback);
-                } else {
-                    callback(file);
-                }
-            });
-        });
-    });
-};
 
 /**
  * Run all Cleanup... scripts.
@@ -141,39 +85,75 @@ function traverseFiles(dir: any, callback: { (file: string): void }) {
  * capitalizationOfMetadata() => lower cases all metadata found in .md files
  * generateMasterRedirectionFile() => creates master redirection file for root.
  */
-function runAll() {
-    traverseFiles(workspace.rootPath, (file: string) => {
-        try {
-            if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
-                let data = readFileSync(file, "utf8")
-                data = handleYamlMetadata(data);
-                writeFileSync(file, data);
-                showStatusMessage("Running Cleanup...");
-            } else if (file.endsWith(".md")) {
-                let data = readFileSync(file, "utf8")
-                data = handleLinksWithRegex(data)
-                if (data.startsWith("---\r\n")) {
-                    data = lowerCaseData(data, "ms.author")
-                    data = lowerCaseData(data, "author")
-                    data = lowerCaseData(data, "ms.prod")
-                    data = lowerCaseData(data, "ms.service")
-                    data = lowerCaseData(data, "ms.subservice")
-                    data = lowerCaseData(data, "ms.technology")
-                    data = lowerCaseData(data, "ms.topic")
-                    let regex = new RegExp(`^(---)([^>]+?)(---)$`, 'm');
-                    let metadataMatch = data.match(regex)
-                    if (metadataMatch) {
-                        data = handleMarkdownMetadata(data, metadataMatch[2]);
-                    }
-                }
-                writeFileSync(file, data);
-                showStatusMessage("Running Cleanup...");
+function runAll(progress: any, resolve: any) {
+    showStatusMessage("Running Cleanup: Everything");
+    recursive(workspace.rootPath,
+        [".git", ".github", ".vscode", ".vs", "node_module"],
+        (err: any, files: string[]) => {
+            if (err) {
+                postError(err);
             }
-        } catch (error) {
-            postError(error);
-        }
-    });
+            let percentComplete = 0;
+            files.map((file, index) => {
+                try {
+                    if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
+                        let data = readFileSync(file, "utf8")
+                        let origin = data;
+                        data = handleYamlMetadata(data);
+                        percentComplete = writeFileShowProgress(index, origin, data, files, file, percentComplete)
+                    } else if (file.endsWith(".md")) {
+                        let data = readFileSync(file, "utf8")
+                        let origin = data;
+                        data = handleLinksWithRegex(data)
+                        if (data.startsWith("---\r\n")) {
+                            data = lowerCaseData(data, "ms.author")
+                            data = lowerCaseData(data, "author")
+                            data = lowerCaseData(data, "ms.prod")
+                            data = lowerCaseData(data, "ms.service")
+                            data = lowerCaseData(data, "ms.subservice")
+                            data = lowerCaseData(data, "ms.technology")
+                            data = lowerCaseData(data, "ms.topic")
+                            let regex = new RegExp(`^(---)([^>]+?)(---)$`, 'm');
+                            let metadataMatch = data.match(regex)
+                            if (metadataMatch) {
+                                data = handleMarkdownMetadata(data, metadataMatch[2]);
+                            }
+                        }
+                        percentComplete = writeFileShowProgress(index, origin, data, files, file, percentComplete)
+                    }
+                } catch (error) {
+                    postError(error);
+                }
+                progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+            })
+            showStatusMessage(`Everything completed.`);
+            resolve();
+        })
     generateMasterRedirectionFile();
+}
+
+/**
+ * check if the data origin is the same as updated data
+ * Write file if change occured. Calculate the percent complete
+ * If the percentage complete has changed, report the value
+ * And output percentage complete to output console.
+ * @param index index of current loop used to get completed percentage
+ * @param origin original data 
+ * @param data updated data
+ * @param files list of files
+ * @param file current iteration file
+ * @param percentComplete percentage complete for program
+ */
+function writeFileShowProgress(index: number, origin: string, data: string, files: string[], file: string, percentComplete: number) {
+    if (origin.localeCompare(data)) {
+        writeFileSync(file, data);
+        let currentCompletedPercent = Math.round(((index / files.length) * 100))
+        if (percentComplete !== currentCompletedPercent) {
+            percentComplete = currentCompletedPercent
+            showStatusMessage(`Cleanup... ${percentComplete}%`);
+        }
+    }
+    return percentComplete;
 }
 
 /**
@@ -181,27 +161,40 @@ function runAll() {
  * and cleans up Yaml Metadata values that have single array items
  * then converts the array to single item.
  */
-function handleSingleValuedMetadata() {
+function handleSingleValuedMetadata(progress: any, resolve: any) {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
-    traverseFiles(workspace.rootPath, (file: string) => {
-        if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
-            let data = readFileSync(file, "utf8")
-            data = handleYamlMetadata(data);
-            writeFileSync(file, data);
-            showStatusMessage("Running Cleanup...");
-        } else if (file.endsWith(".md")) {
-            let data = readFileSync(file, "utf8")
-            if (data.startsWith("---")) {
-                let regex = new RegExp(`^(---)([^>]+?)(---)$`, 'm');
-                let metadataMatch = data.match(regex)
-                if (metadataMatch) {
-                    data = handleMarkdownMetadata(data, metadataMatch[2]);
-                    writeFileSync(file, data);
-                    showStatusMessage("Running Cleanup...");
-                }
+    showStatusMessage("Running Cleanup: Single Valued Metadata");
+    recursive(workspace.rootPath,
+        [".git", ".github", ".vscode", ".vs", "node_module"],
+        (err: any, files: string[]) => {
+            if (err) {
+                postError(err);
             }
+            let percentComplete = 0;
+            files.map((file, index) => {
+                if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
+                    let data = readFileSync(file, "utf8")
+                    let origin = data;
+                    data = handleYamlMetadata(data);
+                    percentComplete = writeFileShowProgress(index, origin, data, files, file, percentComplete)
+                } else if (file.endsWith(".md")) {
+                    let data = readFileSync(file, "utf8")
+                    if (data.startsWith("---")) {
+                        let regex = new RegExp(`^(---)([^>]+?)(---)$`, 'm');
+                        let metadataMatch = data.match(regex)
+                        if (metadataMatch) {
+                            let origin = data;
+                            data = handleMarkdownMetadata(data, metadataMatch[2]);
+                            percentComplete = writeFileShowProgress(index, origin, data, files, file, percentComplete)
+                        }
+                    }
+                }
+                progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+            })
+            showStatusMessage(`Single Valued Metadata completed.`);
+            resolve();
         }
-    })
+    )
 }
 
 /**
@@ -333,19 +326,32 @@ function singleValueMetadata(data: any, variable: string) {
 /**
  * Converts http:// to https:// for all microsoft links.
  */
-function microsoftLinks() {
-    traverseFiles(workspace.rootPath, (file: string) => {
-        if (file.endsWith(".md")) {
-            try {
-                let data = readFileSync(file, "utf8")
-                data = handleLinksWithRegex(data)
-                writeFileSync(file, data);
-                showStatusMessage("Running Cleanup...");
-            } catch (error) {
-                postError(error);
+function microsoftLinks(progress: any, resolve: any) {
+    showStatusMessage("Running Cleanup: Microsoft Links");
+    recursive(workspace.rootPath,
+        [".git", ".github", ".vscode", ".vs", "node_module"],
+        (err: any, files: string[]) => {
+            if (err) {
+                postError(err);
             }
+            let percentComplete = 0;
+            files.map((file, index) => {
+                if (file.endsWith(".md")) {
+                    try {
+                        let data = readFileSync(file, "utf8")
+                        let origin = data;
+                        data = handleLinksWithRegex(data)
+                        percentComplete = writeFileShowProgress(index, origin, data, files, file, percentComplete)
+                    } catch (error) {
+                        postError(error);
+                    }
+                    progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+                }
+            })
+            showStatusMessage(`Microsoft Links completed.`);
+            resolve();
         }
-    })
+    )
 }
 
 /**
@@ -377,27 +383,39 @@ function handleLinksWithRegex(data: string) {
 /**
  * Lower cases all metadata found in .md files
  */
-function capitalizationOfMetadata() {
-    traverseFiles(workspace.rootPath, (file: string) => {
-        if (file.endsWith(".md")) {
-            try {
-                let data = readFileSync(file, "utf8")
-                if (data.startsWith("---\r\n")) {
-                    data = lowerCaseData(data, "ms.author")
-                    data = lowerCaseData(data, "author")
-                    data = lowerCaseData(data, "ms.prod")
-                    data = lowerCaseData(data, "ms.service")
-                    data = lowerCaseData(data, "ms.subservice")
-                    data = lowerCaseData(data, "ms.technology")
-                    data = lowerCaseData(data, "ms.topic")
-                    writeFileSync(file, data)
-                    showStatusMessage("Running Cleanup...");
-                }
-            } catch (error) {
-                postError(error);
+function capitalizationOfMetadata(progress: any, resolve: any) {
+    showStatusMessage("Running Cleanup: Capitalization of Metadata Values");
+    recursive(workspace.rootPath,
+        [".git", ".github", ".vscode", ".vs", "node_module"],
+        (err: any, files: string[]) => {
+            if (err) {
+                postError(err);
             }
-        }
-    })
+            let percentComplete = 0;
+            files.map((file, index) => {
+                if (file.endsWith(".md")) {
+                    try {
+                        let data = readFileSync(file, "utf8")
+                        if (data.startsWith("---\r\n")) {
+                            let origin = data;
+                            data = lowerCaseData(data, "ms.author")
+                            data = lowerCaseData(data, "author")
+                            data = lowerCaseData(data, "ms.prod")
+                            data = lowerCaseData(data, "ms.service")
+                            data = lowerCaseData(data, "ms.subservice")
+                            data = lowerCaseData(data, "ms.technology")
+                            data = lowerCaseData(data, "ms.topic")
+                            percentComplete = writeFileShowProgress(index, origin, data, files, file, percentComplete)
+                        }
+                    } catch (error) {
+                        postError(error);
+                    }
+                    progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+                }
+            })
+            showStatusMessage(`Capitalization of Metadata Values completed.`);
+            resolve();
+        })
 }
 
 /**
