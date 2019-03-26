@@ -48,17 +48,17 @@ export function applyCleanup() {
         }
         window.withProgress({
             location: ProgressLocation.Notification,
-            title: "Cleanup...",
+            title: "Running Cleanup...",
             cancellable: true
         }, (progress, token) => {
             token.onCancellationRequested(() => {
-                console.log("User canceled the long running operation")
+                postError("User canceled the long running operation")
             });
             progress.report({ increment: 0 });
-            return new Promise(async resolve => {
+            return new Promise(resolve => {
                 switch (selection.label.toLowerCase()) {
                     case "single-valued metadata":
-                        await handleSingleValuedMetadata(progress, resolve);
+                        handleSingleValuedMetadata(progress, resolve);
                         break;
                     case "microsoft links":
                         microsoftLinks(progress, resolve);
@@ -100,7 +100,10 @@ function runAll(progress: any, resolve: any) {
                         let data = readFileSync(file, "utf8")
                         let origin = data;
                         data = handleYamlMetadata(data);
-                        percentComplete = writeFileShowProgress(index, origin, data, files, file, percentComplete)
+                        if (origin.localeCompare(data)) {
+                            writeFileSync(file, data);
+                            percentComplete = showProgress(index, files, percentComplete)
+                        }
                     } else if (file.endsWith(".md")) {
                         let data = readFileSync(file, "utf8")
                         let origin = data;
@@ -119,7 +122,10 @@ function runAll(progress: any, resolve: any) {
                                 data = handleMarkdownMetadata(data, metadataMatch[2]);
                             }
                         }
-                        percentComplete = writeFileShowProgress(index, origin, data, files, file, percentComplete)
+                        if (origin.localeCompare(data)) {
+                            writeFileSync(file, data);
+                            percentComplete = showProgress(index, files, percentComplete)
+                        }
                     }
                 } catch (error) {
                     postError(error);
@@ -138,21 +144,16 @@ function runAll(progress: any, resolve: any) {
  * If the percentage complete has changed, report the value
  * And output percentage complete to output console.
  * @param index index of current loop used to get completed percentage
- * @param origin original data 
- * @param data updated data
  * @param files list of files
- * @param file current iteration file
  * @param percentComplete percentage complete for program
  */
-function writeFileShowProgress(index: number, origin: string, data: string, files: string[], file: string, percentComplete: number) {
-    if (origin.localeCompare(data)) {
-        writeFileSync(file, data);
-        let currentCompletedPercent = Math.round(((index / files.length) * 100))
-        if (percentComplete !== currentCompletedPercent) {
-            percentComplete = currentCompletedPercent
-            showStatusMessage(`Cleanup... ${percentComplete}%`);
-        }
+function showProgress(index: number, files: string[], percentComplete: number) {
+    let currentCompletedPercent = Math.round(((index / files.length) * 100))
+    if (percentComplete !== currentCompletedPercent) {
+        percentComplete = currentCompletedPercent
+        showStatusMessage(`Running Cleanup... ${percentComplete}%`);
     }
+
     return percentComplete;
 }
 
@@ -176,7 +177,10 @@ function handleSingleValuedMetadata(progress: any, resolve: any) {
                     let data = readFileSync(file, "utf8")
                     let origin = data;
                     data = handleYamlMetadata(data);
-                    percentComplete = writeFileShowProgress(index, origin, data, files, file, percentComplete)
+                    if (origin.localeCompare(data)) {
+                        writeFileSync(file, data);
+                        percentComplete = showProgress(index, files, percentComplete)
+                    }
                 } else if (file.endsWith(".md")) {
                     let data = readFileSync(file, "utf8")
                     if (data.startsWith("---")) {
@@ -185,7 +189,10 @@ function handleSingleValuedMetadata(progress: any, resolve: any) {
                         if (metadataMatch) {
                             let origin = data;
                             data = handleMarkdownMetadata(data, metadataMatch[2]);
-                            percentComplete = writeFileShowProgress(index, origin, data, files, file, percentComplete)
+                            if (origin.localeCompare(data)) {
+                                writeFileSync(file, data);
+                                percentComplete = showProgress(index, files, percentComplete)
+                            }
                         }
                     }
                 }
@@ -341,7 +348,10 @@ function microsoftLinks(progress: any, resolve: any) {
                         let data = readFileSync(file, "utf8")
                         let origin = data;
                         data = handleLinksWithRegex(data)
-                        percentComplete = writeFileShowProgress(index, origin, data, files, file, percentComplete)
+                        if (origin.localeCompare(data)) {
+                            writeFileSync(file, data);
+                            percentComplete = showProgress(index, files, percentComplete)
+                        }
                     } catch (error) {
                         postError(error);
                     }
@@ -405,7 +415,10 @@ function capitalizationOfMetadata(progress: any, resolve: any) {
                             data = lowerCaseData(data, "ms.subservice")
                             data = lowerCaseData(data, "ms.technology")
                             data = lowerCaseData(data, "ms.topic")
-                            percentComplete = writeFileShowProgress(index, origin, data, files, file, percentComplete)
+                            if (origin.localeCompare(data)) {
+                                writeFileSync(file, data);
+                                percentComplete = showProgress(index, files, percentComplete)
+                            }
                         }
                     } catch (error) {
                         postError(error);
@@ -426,18 +439,15 @@ function capitalizationOfMetadata(progress: any, resolve: any) {
  */
 function lowerCaseData(data: any, variable: string) {
     let regex = new RegExp(`^(${variable}:\\s?)(.*\\s)`, 'm');
-    let metadata = data.match(regex)
-    if (metadata) {
-        let captureParts = regex.exec(data);
-        let value = ''
-        if (captureParts && captureParts.length > 2) {
-            value = captureParts[2].toLowerCase();
-            try {
-                return data.replace(regex, `${variable}: ${value}`)
-            }
-            catch (error) {
-                postError(`Error occurred: ${error}`);
-            }
+    let captureParts = regex.exec(data);
+    let value = ''
+    if (captureParts && captureParts.length > 2) {
+        value = captureParts[2].toLowerCase();
+        try {
+            return data.replace(regex, `${variable}: ${value}`)
+        }
+        catch (error) {
+            postError(`Error occurred: ${error}`);
         }
     }
 
