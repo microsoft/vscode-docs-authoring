@@ -48,7 +48,7 @@ export function applyCleanup() {
         }
         window.withProgress({
             location: ProgressLocation.Notification,
-            title: "Running Cleanup...",
+            title: "Running Cleanup",
             cancellable: true
         }, (progress, token) => {
             token.onCancellationRequested(() => {
@@ -195,12 +195,14 @@ function handleSingleValuedMetadata(progress: any, resolve: any) {
                 postError(err);
             }
             let percentComplete = 0;
-            let promises = files.map((file, index) => {
-                new Promise((resolve) => {
-                    if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
+            let promises: Promise<{} | void>[] = [];
+            files.map((file, index) => {
+                if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
+                    promises.push(new Promise((resolve, reject) => {
                         readFile(file, "utf8", (err, data) => {
                             if (err) {
                                 postError(`Error: ${err}`)
+                                reject()
                             }
                             let origin = data;
                             data = handleYamlMetadata(data);
@@ -208,15 +210,23 @@ function handleSingleValuedMetadata(progress: any, resolve: any) {
                                 writeFile(file, data, (err) => {
                                     if (err) {
                                         postError(`Error: ${err}`)
+                                        reject()
                                     }
-                                });
+                                    progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+                                    percentComplete = showProgress(index, files, percentComplete)
+                                    resolve();
+                                })
                             }
                         })
-
-                    } else if (file.endsWith(".md")) {
+                    }).catch(err => {
+                        postError(err);
+                    }))
+                } else if (file.endsWith(".md")) {
+                    promises.push(new Promise((resolve, reject) => {
                         readFile(file, "utf8", (err, data) => {
                             if (err) {
                                 postError(`Error: ${err}`)
+                                reject()
                             }
                             if (data.startsWith("---")) {
                                 let regex = new RegExp(`^(---)([^>]+?)(---)$`, 'm');
@@ -225,24 +235,30 @@ function handleSingleValuedMetadata(progress: any, resolve: any) {
                                     let origin = data;
                                     data = handleMarkdownMetadata(data, metadataMatch[2]);
                                     if (origin.localeCompare(data)) {
-                                        writeFile(file, data, (err) => {
+                                        writeFile(file, data, err => {
                                             if (err) {
                                                 postError(`Error: ${err}`)
+                                                reject()
                                             }
-                                        });
+                                            progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+                                            percentComplete = showProgress(index, files, percentComplete)
+                                            resolve();
+                                        })
                                     }
                                 }
                             }
                         })
-                    }
-                    progress.report({ increment: percentComplete, message: `${percentComplete}%` })
-                    percentComplete = showProgress(index, files, percentComplete)
-                    resolve();
-                })
+                    }).catch(err => {
+                        postError(err);
+                    }))
+                }
             })
             Promise.all(promises).then(() => {
                 showStatusMessage(`Single Valued Metadata completed.`);
+                progress.report({ increment: 100, message: `100%` })
                 resolve();
+            }).catch(err => {
+                postError(err);
             })
         }
     )
@@ -394,7 +410,12 @@ function microsoftLinks(progress: any, resolve: any) {
                                 let origin = data;
                                 data = handleLinksWithRegex(data)
                                 if (origin.localeCompare(data)) {
-                                    writeFile(file, data);
+                                    writeFile(file, data, err => {
+                                        if (err) {
+                                            postError(`Error: ${err}`)
+                                        }
+                                        resolve();
+                                    });
                                 }
                             })
                         } catch (error) {
@@ -402,7 +423,6 @@ function microsoftLinks(progress: any, resolve: any) {
                         }
                         percentComplete = showProgress(index, files, percentComplete)
                         progress.report({ increment: percentComplete, message: `${percentComplete}%` })
-                        resolve();
                     }
                 })
             })
@@ -474,6 +494,7 @@ function capitalizationOfMetadata(progress: any, resolve: any) {
                                             if (err) {
                                                 postError(`Error: ${err}`)
                                             }
+                                            resolve();
                                         });
                                     }
                                 }
@@ -483,7 +504,6 @@ function capitalizationOfMetadata(progress: any, resolve: any) {
                         }
                         percentComplete = showProgress(index, files, percentComplete)
                         progress.report({ increment: percentComplete, message: `${percentComplete}%` })
-                        resolve();
                     }
                 })
             })
