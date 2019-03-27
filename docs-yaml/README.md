@@ -5,18 +5,15 @@
 [![Install-Count](https://vsmarketplacebadge.apphb.com/installs/docsmsft.docs-yaml.svg)](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml)
 [![Open-Issues](https://vsmarketplacebadge.apphb.com/rating/docsmsft.docs-yaml.svg)](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml)
 
-Provides Docs-YAML support via [yaml-language-server](https://github.com/redhat-developer/yaml-language-server).
+Provides Docs YAML support via [yaml-language-server](https://github.com/redhat-developer/yaml-language-server).
 
 ## Schemas supported to validate
 
-There are two categories of files that we run schema validation against:
+There are two types of files that we run schema validation against:
 
-1. For YAMLMime-based YAML file, we use the the YAMLMime to match the schema which we will use to do validation according to our [config](https://raw.githubusercontent.com/928PJY/docs-yaml/master/config/schema_config.json).  
-Those schemas are hold on this [repository](https://github.com/MicrosoftDocs/schemas), Once schema files get updated, the extension will automatically pick up the latest version after a small latency (around 10min). There is no need to reopen or reload the extension.  
-**But if a new schema is added to this repository, to use it, we need to update this [config](https://raw.githubusercontent.com/928PJY/docs-yaml/master/config/schema_config.json) and release extension with new version**
+1. For YAMLMime-based YAML files, we use the the YAMLMime to identify the schema to validate against according to our [config](https://raw.githubusercontent.com/928PJY/docs-yaml/master/config/schema_config.json). These schemas are stored in the [schemas repository](https://github.com/MicrosoftDocs/schemas). When schema files get updated, the extension will automatically pick up the latest version after a small latency (around 10 min). There is no need to reopen or reload the extension. **When a new schema is added to this repository, we will to update the [config](https://raw.githubusercontent.com/928PJY/docs-yaml/master/config/schema_config.json) and release a new version of the extension.**
 
-2. For toc file, there is no YAMLMime in the beginning of file, we use the filename to match the schema, and it is case-sensitive, `toc.yml` and `TOC.yml` will both be applied schema validation(*but `toc.yaml` will not*).  
-The [schema](https://github.com/928PJY/docs-yaml/blob/master/schemas/toc.schema.json) used for toc YAML file is now built in the extension, and we are going to move it to schema repository in the future.
+2. For TOC files, there is no YAMLMime at the beginning of the file, so we use the filename to identify the schema. The file name is case-sensitive; `toc.yml` and `TOC.yml` will both be be validated against the TOC schema, but `toc.yaml` and other variations will not.
 
 ## Features
 
