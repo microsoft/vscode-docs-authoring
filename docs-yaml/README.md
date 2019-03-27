@@ -20,7 +20,7 @@ There are two types of files that we run schema validation against:
 ### New features:
 
 * The code intellisense is more intelligent now; the extension can provide the intellisense according to the schema structure, not just text mapping. (v0.1.8 and later)
-* The extension can generate an input template for `object` (including required propertied and optional properties with default value). (v0.1.8 and later)
+* The extension can generate an input template for `object` (including required properties and optional properties with default value). (v0.1.8 and later)
 * You can type a `-` to trigger the intellisense for generating a new array item. (v0.1.8 and later)
 
 ### 1. YAML validation
