@@ -11,7 +11,7 @@ Provides Docs YAML support via [yaml-language-server](https://github.com/redhat-
 
 There are two types of files that we run schema validation against:
 
-1. For YAMLMime-based YAML files, we use the the YAMLMime to identify the schema to validate against according to our [config](https://raw.githubusercontent.com/928PJY/docs-yaml/master/config/schema_config.json). These schemas are stored in the [schemas repository](https://github.com/MicrosoftDocs/schemas). When schema files get updated, the extension will automatically pick up the latest version after a small latency (around 10 min). There is no need to reopen or reload the extension. **When a new schema is added to this repository, we will to update the [config](https://raw.githubusercontent.com/928PJY/docs-yaml/master/config/schema_config.json) and release a new version of the extension.**
+1. For YAMLMime-based YAML files, we use the the YAMLMime to identify the schema to validate against according to our [config](https://github.com/Microsoft/vscode-docs-authoring/blob/master/docs-yaml/config/schema_config.json). These schemas are stored in the [schemas repository](https://github.com/MicrosoftDocs/schemas). When schema files get updated, the extension will automatically pick up the latest version after a small latency (around 10 min). There is no need to reopen or reload the extension. **When a new schema is added to this repository, we will to update the [config](https://github.com/Microsoft/vscode-docs-authoring/blob/master/docs-yaml/config/schema_config.json) and release a new version of the extension.**
 
 2. For TOC files, there is no YAMLMime at the beginning of the file, so we use the filename to identify the schema. The file name is case-sensitive; `toc.yml` and `TOC.yml` will both be be validated against the TOC schema, but `toc.yaml` and other variations will not.
 
@@ -19,9 +19,9 @@ There are two types of files that we run schema validation against:
 
 ### New features:
 
-* The code intellisense is more intelligent now, extension can provide the intellisense according to the schema structure but not just text mapping.(v0.1.8 and later)
-* Extension can generate input template for `object`(including required propertied and optional properties with default value).(v0.1.8 and later)
-* You can type a `-` to trigger the intellisense for generating a new array item.(v0.1.8 and later)
+* The code intellisense is more intelligent now; the extension can provide the intellisense according to the schema structure, not just text mapping. (v0.1.8 and later)
+* The extension can generate an input template for `object` (including required propertied and optional properties with default value). (v0.1.8 and later)
+* You can type a `-` to trigger the intellisense for generating a new array item. (v0.1.8 and later)
 
 ### 1. YAML validation
 
@@ -38,14 +38,14 @@ There are two types of files that we run schema validation against:
 
 * Generate input template for whole YAML file
 
-> **For now, the VSCode don't support auto-completion on a comment, so do not type `#` to get intellisense, just type `YamlMime` or YAMLMime type.**
+> **For now, VS Code doesn't support auto-completion on a comment, so don't type `#` to get intellisense, just type `YamlMime` or YAMLMime type.**
 
-* Generate input template for an object(*if provided by schema*)  
+* Generate input template for an object (*if provided by schema*)  
 
 > **Including required properties and optional properties with default value**
 
-* Support properties intellisense(*if provided by schema*)
-* Enumerated property value recommendation(*if provided by schema*)
+* Support properties intellisense (*if provided by schema*)
+* Enumerated property value recommendation (*if provided by schema*)
 
 > **Intellisense is automatically triggered by what you have typed, but you can  also hit *<kbd>Ctrl</kbd> + <kbd>Space</kbd>* to get what you can type**.
 
@@ -53,16 +53,15 @@ There are two types of files that we run schema validation against:
 
 ### 3. Hover support
 
-* Hovering over a property shows description *if provided by schema*
+* Hovering over a property shows description (*if provided by schema*)
 
 ![screencast](https://raw.githubusercontent.com/928PJY/docs-yaml/master/images/docs-yaml-extension-hover.gif)
 
-## Extra Knowledge
+## Extra knowledge
 
 ### **YAMLMime**
 
-A YAML syntax to identify the mime type of this YAML document, which will decide the applied schema type
-e.g.
+A YAML syntax to identify the mime type of this YAML document, which will decide the applied schema type, such as:
 
 ```yaml
 ### YamlMime:Module
@@ -73,7 +72,7 @@ e.g.
 * There are should be a space between triple `#` and case-sensitive `YamlMime`
 * There are should not be extra space between `YamlMime`, Mime-type and `:`
 
-## Developer Support
+## Developer support
 
 ### Developing the client side
 
