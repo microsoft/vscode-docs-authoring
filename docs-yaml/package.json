@@ -2,7 +2,7 @@
     "name": "docs-yaml",
     "displayName": "docs-yaml",
     "description": "YAML schema validation and auto-completion for docs.microsoft.com authoring",
-    "version": "0.1.11",
+    "version": "0.2.0",
     "preview": true,
     "publisher": "docsmsft",
     "engines": {
