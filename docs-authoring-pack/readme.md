@@ -7,6 +7,7 @@ The Docs Authoring Pack provides the following extensions to help author content
 * [Docs Preview](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-preview), which uses the docs.microsoft.com CSS for more accurate Markdown preview, including custom Markdown.
 * [Docs Markdown](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown), which provides Markdown authoring assistance, including support for inserting custom Markdown syntax specific to docs.microsoft.com. The rest of this readme provides details on the Docs Markdown extension.
 * [Docs Article Templates](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-article-templates), which allows users to apply Markdown skeleton content to new files.
+* [Docs YAML](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml), which validates Docs .yml files against the appropriate YAML schemas.
 
 ## Prerequisites and assumptions
 
