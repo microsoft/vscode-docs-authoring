@@ -129,7 +129,6 @@ export function addUnitToModule(existingModulePath: string) {
     /* tslint:disable:object-literal-sort-keys one-variable-per-declaration */
     const yaml = require('js-yaml');
     const config = yaml.safeLoad(readFileSync(existingModulePath, 'utf8'));
-    // console.log(`This is the uid: ${config.uid}`);
 
     const unitMetadata = {
         "title": unitTitle,
