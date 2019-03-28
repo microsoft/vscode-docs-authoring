@@ -8,6 +8,7 @@ import { generateMasterRedirectionFile } from "./master-redirect-controller";
 import { postError, showStatusMessage } from "../helper/common";
 const recursive = require("recursive-readdir");
 const jsyaml = require("js-yaml");
+const jsdiff = require('diff');
 const telemetryCommand: string = "applyCleanup";
 
 export function applyCleanupCommand() {
@@ -94,71 +95,98 @@ function runAll(progress: any, resolve: any) {
                 postError(err);
             }
             let percentComplete = 0;
-            let promises = files.map((file, index) => {
-                new Promise((resolve) => {
-                    try {
-                        if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
-                            readFile(file, "utf8", (err, data) => {
-                                if (err) {
-                                    postError(`Error: ${err}`)
-                                }
-                                let origin = data;
-                                data = handleYamlMetadata(data);
-                                if (origin.localeCompare(data)) {
+            let promises: Promise<{} | void>[] = [];
+            files.map((file, index) => {
+                if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
+                    promises.push(new Promise((resolve, reject) => {
+                        readFile(file, "utf8", (err, data) => {
+                            if (err) {
+                                postError(`Error: ${err}`)
+                                reject();
+                            }
+                            let origin = data;
+                            data = handleYamlMetadata(data);
+                            let diff = jsdiff.diffChars(origin, data)
+                                .some((part: { added: any; removed: any; }) => {
+                                    return part.added || part.removed
+                                })
+                            if (diff) {
+                                promises.push(new Promise((resolve, reject) => {
                                     writeFile(file, data, (err) => {
                                         if (err) {
                                             postError(`Error: ${err}`)
+                                            reject();
                                         }
                                         percentComplete = showProgress(index, files, percentComplete)
+                                        progress.report({ increment: percentComplete, message: `${percentComplete}%` })
                                         resolve();
                                     })
-                                }
-                            })
-                        } else if (file.endsWith(".md")) {
-                            readFile(file, "utf8", (err, data) => {
-                                if (err) {
-                                    postError(`Error: ${err}`)
-                                }
-                                let origin = data;
-                                data = handleLinksWithRegex(data)
-                                if (data.startsWith("---\r\n")) {
-                                    data = lowerCaseData(data, "ms.author")
-                                    data = lowerCaseData(data, "author")
-                                    data = lowerCaseData(data, "ms.prod")
-                                    data = lowerCaseData(data, "ms.service")
-                                    data = lowerCaseData(data, "ms.subservice")
-                                    data = lowerCaseData(data, "ms.technology")
-                                    data = lowerCaseData(data, "ms.topic")
-                                    let regex = new RegExp(`^(---)([^>]+?)(---)$`, 'm');
-                                    let metadataMatch = data.match(regex)
-                                    if (metadataMatch) {
-                                        data = handleMarkdownMetadata(data, metadataMatch[2]);
-                                    }
-                                }
-                                if (origin.localeCompare(data)) {
-                                    writeFile(file, data, (err) => {
-                                        if (err) {
-                                            postError(`Error: ${err}`)
-                                        }
-                                        percentComplete = showProgress(index, files, percentComplete)
-                                        resolve();
-                                    })
-                                }
-                            })
-                        }
-                    } catch (error) {
+                                }).catch(error => {
+                                    postError(error);
+                                }))
+                            }
+                            resolve();
+                        })
+                    }).catch(error => {
                         postError(error);
-                    }
-                    progress.report({ increment: percentComplete, message: `${percentComplete}%` })
-                })
+                    }))
+                } else if (file.endsWith(".md")) {
+                    promises.push(new Promise((resolve, reject) => {
+                        readFile(file, "utf8", (err, data) => {
+                            if (err) {
+                                postError(`Error: ${err}`)
+                                reject()
+                            }
+                            let origin = data;
+                            data = handleLinksWithRegex(data)
+                            if (data.startsWith("---\r\n")) {
+                                data = lowerCaseData(data, "ms.author")
+                                data = lowerCaseData(data, "author")
+                                data = lowerCaseData(data, "ms.prod")
+                                data = lowerCaseData(data, "ms.service")
+                                data = lowerCaseData(data, "ms.subservice")
+                                data = lowerCaseData(data, "ms.technology")
+                                data = lowerCaseData(data, "ms.topic")
+                                let regex = new RegExp(`^(---)([^>]+?)(---)$`, 'm');
+                                let metadataMatch = data.match(regex)
+                                if (metadataMatch) {
+                                    data = handleMarkdownMetadata(data, metadataMatch[2]);
+                                }
+                            }
+                            let diff = jsdiff.diffChars(origin, data)
+                                .some((part: { added: any; removed: any; }) => {
+                                    return part.added || part.removed
+                                })
+                            if (diff) {
+                                promises.push(new Promise((resolve, reject) => {
+                                    writeFile(file, data, (err) => {
+                                        if (err) {
+                                            postError(`Error: ${err}`)
+                                            reject()
+                                        }
+                                        percentComplete = showProgress(index, files, percentComplete)
+                                        progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+                                        resolve();
+                                    })
+                                }).catch(error => {
+                                    postError(error);
+                                }))
+                            }
+                            resolve();
+                        })
+                    }).catch(error => {
+                        postError(error);
+                    }))
+                }
             })
-
             Promise.all(promises).then(() => {
+                generateMasterRedirectionFile(resolve);
                 showStatusMessage(`Everything completed.`);
-                resolve();
+            }).catch(error => {
+                postError(error);
             })
-        })
-    generateMasterRedirectionFile();
+        }
+    )
 }
 
 /**
@@ -172,7 +200,7 @@ function runAll(progress: any, resolve: any) {
  */
 function showProgress(index: number, files: string[], percentComplete: number) {
     let currentCompletedPercent = Math.round(((index / files.length) * 100))
-    if (percentComplete !== currentCompletedPercent) {
+    if (percentComplete < currentCompletedPercent) {
         percentComplete = currentCompletedPercent
         showStatusMessage(`Running Cleanup... ${percentComplete}%`);
     }
@@ -195,7 +223,7 @@ function handleSingleValuedMetadata(progress: any, resolve: any) {
                 postError(err);
             }
             let percentComplete = 0;
-            let promises: Promise<{} | void>[] = [];
+            let promises: Promise<{} | void>[] = []
             files.map((file, index) => {
                 if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
                     promises.push(new Promise((resolve, reject) => {
@@ -206,27 +234,35 @@ function handleSingleValuedMetadata(progress: any, resolve: any) {
                             }
                             let origin = data;
                             data = handleYamlMetadata(data);
-                            if (origin.localeCompare(data)) {
+                            let diff = jsdiff.diffChars(origin, data)
+                                .some((part: { added: any; removed: any; }) => {
+                                    return part.added || part.removed
+                                })
+                            if (diff) {
                                 writeFile(file, data, (err) => {
-                                    if (err) {
-                                        postError(`Error: ${err}`)
-                                        reject()
-                                    }
-                                    progress.report({ increment: percentComplete, message: `${percentComplete}%` })
-                                    percentComplete = showProgress(index, files, percentComplete)
-                                    resolve();
+                                    promises.push(new Promise((resolve, reject) => {
+                                        if (err) {
+                                            postError(`Error: ${err}`)
+                                            reject();
+                                        }
+                                        progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+                                        percentComplete = showProgress(index, files, percentComplete)
+                                        resolve();
+                                    }).catch(error => {
+                                        postError(error);
+                                    }))
                                 })
                             }
+                            resolve();
                         })
-                    }).catch(err => {
-                        postError(err);
+                    }).catch(error => {
+                        postError(error);
                     }))
                 } else if (file.endsWith(".md")) {
                     promises.push(new Promise((resolve, reject) => {
                         readFile(file, "utf8", (err, data) => {
                             if (err) {
                                 postError(`Error: ${err}`)
-                                reject()
                             }
                             if (data.startsWith("---")) {
                                 let regex = new RegExp(`^(---)([^>]+?)(---)$`, 'm');
@@ -234,22 +270,31 @@ function handleSingleValuedMetadata(progress: any, resolve: any) {
                                 if (metadataMatch) {
                                     let origin = data;
                                     data = handleMarkdownMetadata(data, metadataMatch[2]);
-                                    if (origin.localeCompare(data)) {
+                                    let diff = jsdiff.diffChars(origin, data)
+                                        .some((part: { added: any; removed: any; }) => {
+                                            return part.added || part.removed
+                                        })
+                                    if (diff) {
                                         writeFile(file, data, err => {
-                                            if (err) {
-                                                postError(`Error: ${err}`)
-                                                reject()
-                                            }
-                                            progress.report({ increment: percentComplete, message: `${percentComplete}%` })
-                                            percentComplete = showProgress(index, files, percentComplete)
-                                            resolve();
+                                            promises.push(new Promise((resolve, reject) => {
+
+                                                if (err) {
+                                                    postError(`Error: ${err}`)
+                                                    reject();
+                                                }
+                                                progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+                                                percentComplete = showProgress(index, files, percentComplete)
+                                            }).catch(error => {
+                                                postError(error);
+                                            }))
                                         })
                                     }
                                 }
                             }
+                            resolve();
                         })
-                    }).catch(err => {
-                        postError(err);
+                    }).catch(error => {
+                        postError(error);
                     }))
                 }
             })
@@ -402,33 +447,44 @@ function microsoftLinks(progress: any, resolve: any) {
                 postError(err);
             }
             let percentComplete = 0;
-            let promises = files.map((file, index) => {
-                new Promise((resolve) => {
-                    if (file.endsWith(".md")) {
-                        try {
-                            readFile(file, "utf8", (err, data) => {
-                                let origin = data;
-                                data = handleLinksWithRegex(data)
-                                if (origin.localeCompare(data)) {
+            let promises: Promise<{} | void>[] = [];
+            files.map((file, index) => {
+                if (file.endsWith(".md")) {
+                    promises.push(new Promise((resolve, reject) => {
+                        readFile(file, "utf8", (err, data) => {
+                            let origin = data;
+                            data = handleLinksWithRegex(data)
+                            let diff = jsdiff.diffChars(origin, data)
+                                .some((part: { added: any; removed: any; }) => {
+                                    return part.added || part.removed
+                                })
+                            if (diff) {
+                                promises.push(new Promise((resolve, reject) => {
                                     writeFile(file, data, err => {
                                         if (err) {
                                             postError(`Error: ${err}`)
                                         }
+                                        percentComplete = showProgress(index, files, percentComplete)
+                                        progress.report({ increment: percentComplete, message: `${percentComplete}%` })
                                         resolve();
                                     });
-                                }
-                            })
-                        } catch (error) {
-                            postError(error);
-                        }
-                        percentComplete = showProgress(index, files, percentComplete)
-                        progress.report({ increment: percentComplete, message: `${percentComplete}%` })
-                    }
-                })
+                                }).catch(error => {
+                                    postError(error);
+                                }))
+                            }
+                            resolve();
+                        })
+                    }).catch(error => {
+                        postError(error);
+                    }))
+                }
             })
+
             Promise.all(promises).then(() => {
                 showStatusMessage(`Microsoft Links completed.`);
                 resolve();
+            }).catch(error => {
+                postError(error);
             })
         }
     )
@@ -472,44 +528,54 @@ function capitalizationOfMetadata(progress: any, resolve: any) {
                 postError(err);
             }
             let percentComplete = 0;
-            let promises = files.map((file, index) => {
-                new Promise((resolve) => {
-                    if (file.endsWith(".md")) {
-                        try {
-                            readFile(file, "utf8", (err, data) => {
-                                if (err) {
-                                    postError(`Error: ${err}`)
-                                }
-                                if (data.startsWith("---\r\n")) {
-                                    let origin = data;
-                                    data = lowerCaseData(data, "ms.author")
-                                    data = lowerCaseData(data, "author")
-                                    data = lowerCaseData(data, "ms.prod")
-                                    data = lowerCaseData(data, "ms.service")
-                                    data = lowerCaseData(data, "ms.subservice")
-                                    data = lowerCaseData(data, "ms.technology")
-                                    data = lowerCaseData(data, "ms.topic")
-                                    if (origin.localeCompare(data)) {
+            let promises: Promise<{} | void>[] = [];
+            files.map((file, index) => {
+                if (file.endsWith(".md")) {
+                    promises.push(new Promise((resolve) => {
+                        readFile(file, "utf8", (err, data) => {
+                            if (err) {
+                                postError(`Error: ${err}`)
+                            }
+                            if (data.startsWith("---\r\n")) {
+                                let origin = data;
+                                data = lowerCaseData(data, "ms.author")
+                                data = lowerCaseData(data, "author")
+                                data = lowerCaseData(data, "ms.prod")
+                                data = lowerCaseData(data, "ms.service")
+                                data = lowerCaseData(data, "ms.subservice")
+                                data = lowerCaseData(data, "ms.technology")
+                                data = lowerCaseData(data, "ms.topic")
+                                let diff = jsdiff.diffChars(origin, data)
+                                    .some((part: { added: any; removed: any; }) => {
+                                        return part.added || part.removed
+                                    })
+                                if (diff) {
+                                    promises.push(new Promise((resolve) => {
                                         writeFile(file, data, (err) => {
                                             if (err) {
                                                 postError(`Error: ${err}`)
                                             }
+                                            percentComplete = showProgress(index, files, percentComplete)
+                                            progress.report({ increment: percentComplete, message: `${percentComplete}%` })
                                             resolve();
                                         });
-                                    }
+                                    }).catch(error => {
+                                        postError(error);
+                                    }))
                                 }
-                            })
-                        } catch (error) {
-                            postError(error);
-                        }
-                        percentComplete = showProgress(index, files, percentComplete)
-                        progress.report({ increment: percentComplete, message: `${percentComplete}%` })
-                    }
-                })
+                            }
+                            resolve();
+                        })
+                    }).catch(error => {
+                        postError(error);
+                    }))
+                }
             })
             Promise.all(promises).then(() => {
                 showStatusMessage(`Capitalization of Metadata Values completed.`);
                 resolve();
+            }).catch(error => {
+                postError(error);
             })
         })
 }
