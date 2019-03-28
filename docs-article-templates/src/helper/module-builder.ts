@@ -118,7 +118,7 @@ export function updateModule(units) {
         levels: [learnLevel],
         roles: [learnRole],
         products: [learnProduct],
-        units: { units },
+        units: units,
         badge: [`{badge}`],
     };
     const moduleIndex = join(modulePath, "index.yml");
