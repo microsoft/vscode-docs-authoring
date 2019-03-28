@@ -31,7 +31,7 @@ For the first release of the Docs Article Templates extension, only simple Markd
 1. From the drop-down list of templates select `Add unit to active module`.
 1. In the "Enter unit name" prompt enter the first unit name. This will be used to create the unit yml and content .md file with the same name, for example introduction.
 1. Answer `Yes` to the message dialog for your next unit name.
-1. Repeat steps 7 and 8 for each new unit yml you need to create. Once all units have been created,select `No` to exit.
+1. Repeat steps 6 and 7 for each new unit yml you need to create. Once all units have been created,select `No` to exit.
 
 ## To add your GitHub ID and/or Microsoft alias to your VS Code settings
 
