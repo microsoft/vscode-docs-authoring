@@ -6,7 +6,7 @@ import { window, workspace, ProgressLocation } from "vscode";
 import { writeFile, readFile } from "graceful-fs";
 import { generateMasterRedirectionFile } from "./master-redirect-controller";
 import { postError, showStatusMessage } from "../helper/common";
-var recursive = require("recursive-readdir");
+const recursive = require("recursive-readdir");
 const jsyaml = require("js-yaml");
 const telemetryCommand: string = "applyCleanup";
 
@@ -67,7 +67,7 @@ export function applyCleanup() {
                         capitalizationOfMetadata(progress, resolve);
                         break;
                     case "master redirection file":
-                        generateMasterRedirectionFile();
+                        generateMasterRedirectionFile(resolve);
                         break;
                     case "everything":
                         runAll(progress, resolve);

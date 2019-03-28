@@ -69,7 +69,7 @@ function showStatusMessage(message: string) {
     masterRedirectOutput.show();
 }
 
-export function generateMasterRedirectionFile() {
+export function generateMasterRedirectionFile(resolve?: any) {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     const editor = window.activeTextEditor;
     if (editor) {
@@ -193,9 +193,15 @@ export function generateMasterRedirectionFile() {
                         if (fs.existsSync(docsRedirectDirectory)) {
                             fs.mkdirSync(deletedRedirectsPath);
                         } else {
-                            fs.mkdirSync(docsAuthoringHomeDirectory);
-                            fs.mkdirSync(docsRedirectDirectory);
-                            fs.mkdirSync(deletedRedirectsPath);
+                            if (!fs.existsSync(docsAuthoringHomeDirectory)) {
+                                fs.mkdirSync(docsAuthoringHomeDirectory);
+                            }
+                            if (!fs.existsSync(docsRedirectDirectory)) {
+                                fs.mkdirSync(docsRedirectDirectory);
+                            }
+                            if (!fs.existsSync(deletedRedirectsPath)) {
+                                fs.mkdirSync(deletedRedirectsPath);
+                            }
                         }
 
                         redirectionFiles.forEach((item) => {
@@ -217,6 +223,8 @@ export function generateMasterRedirectionFile() {
                         });
                         showStatusMessage("Redirected files copied to " + deletedRedirectsPath);
                         showStatusMessage("Done");
+                        if (resolve) resolve();
+
                     }
                 }
             });
