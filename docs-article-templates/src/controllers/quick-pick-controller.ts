@@ -2,14 +2,15 @@
 
 import { readFileSync } from "fs";
 import { files } from "node-dir";
-import { basename, dirname, extname, join } from "path";
+import { basename, dirname, extname, join, parse } from "path";
 import { Position, QuickPickItem, TextDocument, Uri, window, workspace } from "vscode";
 import { output } from "../extension";
 import { generateTimestamp } from "../helper/common";
 import { cleanupDownloadFiles, templateDirectory } from "../helper/github";
 import { showLearnFolderSelector } from "../helper/module-builder";
+import { getUnitName } from "../helper/unit-builder";
 import { alias, gitHubID, missingValue } from "../helper/user-settings";
-import { moduleQuickPick, templateNameMetadata } from "../strings";
+import { addUnitToQuickPick, moduleQuickPick, templateNameMetadata } from "../strings";
 
 export let moduleTitle;
 // tslint:disable-next-line:no-var-requires
@@ -56,6 +57,11 @@ export function displayTemplates() {
         // push quickMap keys to QuickPickItems
         const templates: QuickPickItem[] = [];
         templates.push({ label: moduleQuickPick });
+        const activeFilePath = window.activeTextEditor.document.fileName;
+        const activeFile = parse(activeFilePath).base;
+        if (activeFile === "index.yml") {
+            templates.push({ label: addUnitToQuickPick });
+        }
         for (const key of quickPickMap.keys()) {
             templates.push({ label: key });
         }
@@ -82,15 +88,19 @@ export function displayTemplates() {
                 showLearnFolderSelector();
             }
 
-            if (qpSelection.label && qpSelection.label !== moduleQuickPick) {
-                const template = qpSelection.label;
-                const templatePath = quickPickMap.get(template);
-                applyDocsTemplate(templatePath, template);
+            if (qpSelection.label === addUnitToQuickPick) {
+                getUnitName(true, activeFilePath);
             }
-        }, (error: any) => {
-            output.appendLine(error);
-        });
+
+            if (qpSelection.label && qpSelection.label !== moduleQuickPick && qpSelection.label !== addUnitToQuickPick) {
+            const template = qpSelection.label;
+            const templatePath = quickPickMap.get(template);
+            applyDocsTemplate(templatePath, template);
+        }
+    }, (error: any) => {
+        output.appendLine(error);
     });
+});
 }
 
 export function applyDocsTemplate(templatePath: string, template?: string) {
