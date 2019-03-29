@@ -3,9 +3,10 @@
 import * as vscode from "vscode";
 import { reporter } from "../telemetry/telemetry";
 import { window, workspace, ProgressLocation } from "vscode";
-import { writeFile, readFile } from "graceful-fs";
+import { writeFile, readFile, existsSync } from "graceful-fs";
 import { generateMasterRedirectionFile } from "./master-redirect-controller";
 import { postError, showStatusMessage } from "../helper/common";
+import { join } from "path";
 const recursive = require("recursive-readdir");
 const jsyaml = require("js-yaml");
 const jsdiff = require('diff');
@@ -56,23 +57,45 @@ export function applyCleanup() {
                 postError("User canceled the long running operation")
             });
             progress.report({ increment: 0 });
-            return new Promise(resolve => {
-                switch (selection.label.toLowerCase()) {
-                    case "single-valued metadata":
-                        handleSingleValuedMetadata(progress, resolve);
-                        break;
-                    case "microsoft links":
-                        microsoftLinks(progress, resolve);
-                        break;
-                    case "capitalization of metadata values":
-                        capitalizationOfMetadata(progress, resolve);
-                        break;
-                    case "master redirection file":
-                        generateMasterRedirectionFile(resolve);
-                        break;
-                    case "everything":
-                        runAll(progress, resolve);
-                        break;
+            return new Promise((resolve, reject) => {
+                const editor = window.activeTextEditor;
+                if (editor) {
+                    const resource = editor.document.uri;
+                    let folder = workspace.getWorkspaceFolder(resource);
+
+                    if (folder) {
+                        const workspacePath = folder.uri.fsPath;
+
+                        if (workspacePath == null) {
+                            postError("No workspace is opened.");
+                            reject();
+                        }
+
+                        // Check if the current workspace is the root folder of a repo by checking if the .git folder is present
+                        const gitDir = join(workspacePath, ".git");
+                        if (!existsSync(gitDir)) {
+                            postError("Current workspace is not root folder of a repo.");
+                            reject();
+                        }
+
+                        switch (selection.label.toLowerCase()) {
+                            case "single-valued metadata":
+                                handleSingleValuedMetadata(workspacePath, progress, resolve);
+                                break;
+                            case "microsoft links":
+                                microsoftLinks(workspacePath, progress, resolve);
+                                break;
+                            case "capitalization of metadata values":
+                                capitalizationOfMetadata(workspacePath, progress, resolve);
+                                break;
+                            case "master redirection file":
+                                generateMasterRedirectionFile(workspacePath, resolve);
+                                break;
+                            case "everything":
+                                runAll(workspacePath, progress, resolve);
+                                break;
+                        }
+                    }
                 }
             })
         })
@@ -86,9 +109,9 @@ export function applyCleanup() {
  * capitalizationOfMetadata() => lower cases all metadata found in .md files
  * generateMasterRedirectionFile() => creates master redirection file for root.
  */
-function runAll(progress: any, resolve: any) {
+function runAll(workspacePath: string, progress: any, resolve: any) {
     showStatusMessage("Running Cleanup: Everything");
-    recursive(workspace.rootPath,
+    recursive(workspacePath,
         [".git", ".github", ".vscode", ".vs", "node_module"],
         (err: any, files: string[]) => {
             if (err) {
@@ -180,7 +203,7 @@ function runAll(progress: any, resolve: any) {
                 }
             })
             Promise.all(promises).then(() => {
-                generateMasterRedirectionFile(resolve);
+                generateMasterRedirectionFile(workspacePath, resolve);
                 showStatusMessage(`Everything completed.`);
             }).catch(error => {
                 postError(error);
@@ -213,10 +236,10 @@ function showProgress(index: number, files: string[], percentComplete: number) {
  * and cleans up Yaml Metadata values that have single array items
  * then converts the array to single item.
  */
-function handleSingleValuedMetadata(progress: any, resolve: any) {
+function handleSingleValuedMetadata(workspacePath: string, progress: any, resolve: any) {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     showStatusMessage("Running Cleanup: Single Valued Metadata");
-    recursive(workspace.rootPath,
+    recursive(workspacePath,
         [".git", ".github", ".vscode", ".vs", "node_module"],
         (err: any, files: string[]) => {
             if (err) {
@@ -438,9 +461,9 @@ function singleValueMetadata(data: any, variable: string) {
 /**
  * Converts http:// to https:// for all microsoft links.
  */
-function microsoftLinks(progress: any, resolve: any) {
+function microsoftLinks(workspacePath: string, progress: any, resolve: any) {
     showStatusMessage("Running Cleanup: Microsoft Links");
-    recursive(workspace.rootPath,
+    recursive(workspacePath,
         [".git", ".github", ".vscode", ".vs", "node_module"],
         (err: any, files: string[]) => {
             if (err) {
@@ -519,9 +542,9 @@ function handleLinksWithRegex(data: string) {
 /**
  * Lower cases all metadata found in .md files
  */
-function capitalizationOfMetadata(progress: any, resolve: any) {
+function capitalizationOfMetadata(workspacePath: string, progress: any, resolve: any) {
     showStatusMessage("Running Cleanup: Capitalization of Metadata Values");
-    recursive(workspace.rootPath,
+    recursive(workspacePath,
         [".git", ".github", ".vscode", ".vs", "node_module"],
         (err: any, files: string[]) => {
             if (err) {

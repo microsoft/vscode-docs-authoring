@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
-import { window, workspace } from "vscode";
+import { window, workspace, Uri, WorkspaceFolder } from "vscode";
 import YAML = require("yamljs");
 import { masterRedirectOutput } from "../extension";
 import { generateTimestamp, postError } from "../helper/common";
@@ -41,20 +41,14 @@ export class RedirectionFile {
     public redirect_url: string;
     public redirect_document_id: boolean = false;
 
-    constructor(filePath: string, redirectUrl: string, redirectDocumentId: boolean) {
+    constructor(filePath: string, redirectUrl: string, redirectDocumentId: boolean, folder: WorkspaceFolder | undefined) {
         this.fileFullPath = filePath;
-        this.source_path = this.getRelativePathToRoot(filePath);
+        this.source_path = this.getRelativePathToRoot(filePath, folder);
         this.redirect_url = redirectUrl;
         this.redirect_document_id = redirectDocumentId;
     }
 
-    public getRelativePathToRoot(filePath: any): string {
-        const editor = window.activeTextEditor;
-        let folder;
-        if (editor) {
-            const resource = editor.document.uri;
-            folder = workspace.getWorkspaceFolder(resource);
-        }
+    public getRelativePathToRoot(filePath: any, folder: WorkspaceFolder | undefined): string {
         if (folder) {
             return relative(folder.uri.fsPath, filePath).replace(/\\/g, "/");
         } else {
@@ -69,16 +63,19 @@ function showStatusMessage(message: string) {
     masterRedirectOutput.show();
 }
 
-export function generateMasterRedirectionFile(resolve?: any) {
+export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     const editor = window.activeTextEditor;
+    let workspacePath: string
     if (editor) {
         const resource = editor.document.uri;
-        const folder = workspace.getWorkspaceFolder(resource);
-
+        let folder = workspace.getWorkspaceFolder(resource);
+        if (!folder && rootPath) {
+            folder = workspace.getWorkspaceFolder(Uri.file(rootPath));
+        }
         if (folder) {
             const repoName = folder.name.toLowerCase();
-            const workspacePath = folder.uri.fsPath;
+            workspacePath = folder.uri.fsPath;
 
             const date = new Date(Date.now());
 
@@ -119,7 +116,7 @@ export function generateMasterRedirectionFile(resolve?: any) {
                                 if (yamlHeader.redirect_document_id !== true) {
                                     yamlHeader.redirect_document_id = false;
                                 }
-                                redirectionFiles.push(new RedirectionFile(file, yamlHeader.redirect_url, yamlHeader.redirect_document_id));
+                                redirectionFiles.push(new RedirectionFile(file, yamlHeader.redirect_url, yamlHeader.redirect_document_id, folder));
                             }
                         }
                     } catch (error) {
@@ -223,10 +220,9 @@ export function generateMasterRedirectionFile(resolve?: any) {
                         });
                         showStatusMessage("Redirected files copied to " + deletedRedirectsPath);
                         showStatusMessage("Done");
-                        if (resolve) resolve();
-
                     }
                 }
+                if (resolve) resolve();
             });
         }
     }
