@@ -23,6 +23,16 @@ For the first release of the Docs Article Templates extension, only simple Markd
 1. Answer `Yes` to the message dialog for your next unit name.
 1. Repeat steps 7 and 8 for each new unit yml you need to create. Once all units have been created,select `No` to exit.
 
+## To add units to an existing Learn module in VS Code
+
+1. In VSC open to the root working folder of your repository containing the achievements, path, and "product" folders.
+1. Open a module topic (index.yml).
+1. If you don't have the Docs Markdown extension installed, hit F1 to open the command palette, start typing "template" to filter, then click `Docs: Template`. If you do have Docs Markdown installed, you can use either the command palette or click `Alt+M` to bring up the Docs Markdown QuickPick menu, then select Template from the list.
+1. From the drop-down list of templates select `Add unit to active module`.
+1. In the "Enter unit name" prompt enter the first unit name. This will be used to create the unit yml and content .md file with the same name, for example introduction.
+1. Answer `Yes` to the message dialog for your next unit name.
+1. Repeat steps 6 and 7 for each new unit yml you need to create. Once all units have been created,select `No` to exit.
+
 ## To add your GitHub ID and/or Microsoft alias to your VS Code settings
 
 The Templates extension supports three dynamic metadata fields: `author`, `ms.author`, and `ms.date`. That means that if a template creator uses these fields in the metadata header of a Markdown template, they will be auto-populated in your file when you apply the template, as follows:
