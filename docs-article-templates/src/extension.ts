@@ -1,13 +1,15 @@
 "use strict";
 
-import {commands, ExtensionContext, window, workspace} from "vscode";
+import { commands, ExtensionContext, window, workspace } from "vscode";
 import { applyTemplateCommand } from "./controllers/template-controller";
+import { Reporter } from "./helper/telemetry";
 
 export const output = window.createOutputChannel("docs-article-templates");
 export let extensionPath: string;
 
 export function activate(context: ExtensionContext) {
     extensionPath = context.extensionPath;
+    context.subscriptions.push(new Reporter(context));
     // Creates an array of commands from each command file.
     const TemplateCommands: any = [];
     applyTemplateCommand().forEach((cmd) => TemplateCommands.push(cmd));
