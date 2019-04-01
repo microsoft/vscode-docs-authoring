@@ -129,6 +129,7 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
 
                 if (redirectionFiles.length === 0) {
                     showStatusMessage("No redirection files found.");
+                    if (resolve) resolve();
                 }
 
                 if (redirectionFiles.length > 0) {
@@ -170,6 +171,7 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
                                     masterRedirection.redirections.push(item);
                                 } else {
                                     showStatusMessage("No redirection files found to add.");
+                                    if (resolve) resolve();
                                 }
                             }
                         });
@@ -206,8 +208,12 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
                             const dest = fs.createWriteStream(join(deletedRedirectsPath, basename(item.source_path)));
 
                             source.pipe(dest);
-                            source.on("end", () => {
-                                fs.unlink(item.fileFullPath);
+                            source.on("close", () => {
+                                fs.unlink(item.fileFullPath, (err) => {
+                                    if (err) {
+                                        postError(`Error: ${err}`)
+                                    }
+                                });
                             });
                         });
 
@@ -218,11 +224,12 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
                                 showStatusMessage("Added to master redirection file. " + item.fileFullPath);
                             }
                         });
+
                         showStatusMessage("Redirected files copied to " + deletedRedirectsPath);
                         showStatusMessage("Done");
+                        if (resolve) resolve();
                     }
                 }
-                if (resolve) resolve();
             });
         }
     }

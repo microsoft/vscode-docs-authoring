@@ -202,9 +202,12 @@ function runAll(workspacePath: string, progress: any, resolve: any) {
                     }))
                 }
             })
-            Promise.all(promises).then(() => {
+            promises.push(new Promise((resolve, reject) => {
                 generateMasterRedirectionFile(workspacePath, resolve);
+            }));
+            Promise.all(promises).then(() => {
                 showStatusMessage(`Everything completed.`);
+                resolve();
             }).catch(error => {
                 postError(error);
             })
