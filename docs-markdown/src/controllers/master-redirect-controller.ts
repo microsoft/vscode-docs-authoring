@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
-import { window, workspace } from "vscode";
+import { window, workspace, Uri, WorkspaceFolder } from "vscode";
 import YAML = require("yamljs");
 import { masterRedirectOutput } from "../extension";
 import { generateTimestamp, postError } from "../helper/common";
@@ -41,20 +41,14 @@ export class RedirectionFile {
     public redirect_url: string;
     public redirect_document_id: boolean = false;
 
-    constructor(filePath: string, redirectUrl: string, redirectDocumentId: boolean) {
+    constructor(filePath: string, redirectUrl: string, redirectDocumentId: boolean, folder: WorkspaceFolder | undefined) {
         this.fileFullPath = filePath;
-        this.source_path = this.getRelativePathToRoot(filePath);
+        this.source_path = this.getRelativePathToRoot(filePath, folder);
         this.redirect_url = redirectUrl;
         this.redirect_document_id = redirectDocumentId;
     }
 
-    public getRelativePathToRoot(filePath: any): string {
-        const editor = window.activeTextEditor;
-        let folder;
-        if (editor) {
-            const resource = editor.document.uri;
-            folder = workspace.getWorkspaceFolder(resource);
-        }
+    public getRelativePathToRoot(filePath: any, folder: WorkspaceFolder | undefined): string {
         if (folder) {
             return relative(folder.uri.fsPath, filePath).replace(/\\/g, "/");
         } else {
@@ -69,16 +63,19 @@ function showStatusMessage(message: string) {
     masterRedirectOutput.show();
 }
 
-export function generateMasterRedirectionFile() {
+export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     const editor = window.activeTextEditor;
+    let workspacePath: string
     if (editor) {
         const resource = editor.document.uri;
-        const folder = workspace.getWorkspaceFolder(resource);
-
+        let folder = workspace.getWorkspaceFolder(resource);
+        if (!folder && rootPath) {
+            folder = workspace.getWorkspaceFolder(Uri.file(rootPath));
+        }
         if (folder) {
             const repoName = folder.name.toLowerCase();
-            const workspacePath = folder.uri.fsPath;
+            workspacePath = folder.uri.fsPath;
 
             const date = new Date(Date.now());
 
@@ -119,7 +116,7 @@ export function generateMasterRedirectionFile() {
                                 if (yamlHeader.redirect_document_id !== true) {
                                     yamlHeader.redirect_document_id = false;
                                 }
-                                redirectionFiles.push(new RedirectionFile(file, yamlHeader.redirect_url, yamlHeader.redirect_document_id));
+                                redirectionFiles.push(new RedirectionFile(file, yamlHeader.redirect_url, yamlHeader.redirect_document_id, folder));
                             }
                         }
                     } catch (error) {
@@ -132,6 +129,7 @@ export function generateMasterRedirectionFile() {
 
                 if (redirectionFiles.length === 0) {
                     showStatusMessage("No redirection files found.");
+                    if (resolve) resolve();
                 }
 
                 if (redirectionFiles.length > 0) {
@@ -173,6 +171,7 @@ export function generateMasterRedirectionFile() {
                                     masterRedirection.redirections.push(item);
                                 } else {
                                     showStatusMessage("No redirection files found to add.");
+                                    if (resolve) resolve();
                                 }
                             }
                         });
@@ -193,9 +192,15 @@ export function generateMasterRedirectionFile() {
                         if (fs.existsSync(docsRedirectDirectory)) {
                             fs.mkdirSync(deletedRedirectsPath);
                         } else {
-                            fs.mkdirSync(docsAuthoringHomeDirectory);
-                            fs.mkdirSync(docsRedirectDirectory);
-                            fs.mkdirSync(deletedRedirectsPath);
+                            if (!fs.existsSync(docsAuthoringHomeDirectory)) {
+                                fs.mkdirSync(docsAuthoringHomeDirectory);
+                            }
+                            if (!fs.existsSync(docsRedirectDirectory)) {
+                                fs.mkdirSync(docsRedirectDirectory);
+                            }
+                            if (!fs.existsSync(deletedRedirectsPath)) {
+                                fs.mkdirSync(deletedRedirectsPath);
+                            }
                         }
 
                         redirectionFiles.forEach((item) => {
@@ -203,8 +208,12 @@ export function generateMasterRedirectionFile() {
                             const dest = fs.createWriteStream(join(deletedRedirectsPath, basename(item.source_path)));
 
                             source.pipe(dest);
-                            source.on("end", () => {
-                                fs.unlink(item.fileFullPath);
+                            source.on("close", () => {
+                                fs.unlink(item.fileFullPath, (err) => {
+                                    if (err) {
+                                        postError(`Error: ${err}`)
+                                    }
+                                });
                             });
                         });
 
@@ -215,8 +224,10 @@ export function generateMasterRedirectionFile() {
                                 showStatusMessage("Added to master redirection file. " + item.fileFullPath);
                             }
                         });
+
                         showStatusMessage("Redirected files copied to " + deletedRedirectsPath);
                         showStatusMessage("Done");
+                        if (resolve) resolve();
                     }
                 }
             });

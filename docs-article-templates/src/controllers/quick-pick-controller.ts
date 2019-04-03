@@ -8,6 +8,7 @@ import { output } from "../extension";
 import { generateTimestamp } from "../helper/common";
 import { cleanupDownloadFiles, templateDirectory } from "../helper/github";
 import { showLearnFolderSelector } from "../helper/module-builder";
+import { reporter } from "../helper/telemetry";
 import { getUnitName } from "../helper/unit-builder";
 import { alias, gitHubID, missingValue } from "../helper/user-settings";
 import { addUnitToQuickPick, moduleQuickPick, templateNameMetadata } from "../strings";
@@ -86,16 +87,19 @@ export function displayTemplates() {
 
             if (qpSelection.label === moduleQuickPick) {
                 showLearnFolderSelector();
+                reporter.sendTelemetryEvent(`templateSelected.new-module`, null, null);
             }
 
             if (qpSelection.label === addUnitToQuickPick) {
                 getUnitName(true, activeFilePath);
+                reporter.sendTelemetryEvent(`templateSelected.additional-unit`, null, null);
             }
 
             if (qpSelection.label && qpSelection.label !== moduleQuickPick && qpSelection.label !== addUnitToQuickPick) {
             const template = qpSelection.label;
             const templatePath = quickPickMap.get(template);
             applyDocsTemplate(templatePath, template);
+            reporter.sendTelemetryEvent(`templateSelected.${template}`, null , null);
         }
     }, (error: any) => {
         output.appendLine(error);

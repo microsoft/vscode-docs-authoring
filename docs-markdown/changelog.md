@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.3 (April 1st, 2019)
+
+- Added Cleanup Tasks to Quickpick
+
 ## 0.2.2 (January 17th, 2018)
 
 - Custom markdownlint rule updates (temporarily disable alert linting)
