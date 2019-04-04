@@ -1,8 +1,9 @@
 # Change Log
 
-## 0.2.2 (TBD)
+## 0.2.2 (April 4th, 2019)
 
 - Telemetry: Basic usage data
+- Learn metadata updates
 
 ## 0.2.1 (March 28th, 2019)
 
