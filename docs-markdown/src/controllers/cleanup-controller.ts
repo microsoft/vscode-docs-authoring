@@ -163,7 +163,7 @@ function runAll(workspacePath: string, progress: any, resolve: any) {
                             }
                             let origin = data;
                             data = handleLinksWithRegex(data)
-                            if (data.startsWith("---\r\n")) {
+                            if (data.startsWith("---")) {
                                 data = lowerCaseData(data, "ms.author")
                                 data = lowerCaseData(data, "author")
                                 data = lowerCaseData(data, "ms.prod")
@@ -567,7 +567,7 @@ function capitalizationOfMetadata(workspacePath: string, progress: any, resolve:
                             if (err) {
                                 postError(`Error: ${err}`)
                             }
-                            if (data.startsWith("---\r\n")) {
+                            if (data.startsWith("---")) {
                                 let origin = data;
                                 data = lowerCaseData(data, "ms.author")
                                 data = lowerCaseData(data, "author")
