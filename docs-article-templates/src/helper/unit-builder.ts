@@ -64,7 +64,7 @@ export function createUnits() {
         "ms.date": `...`,
         "author": author,
         "ms.author": msAuthor,
-        "ms.topic": `...`,
+        "ms.topic": `interactive-tutorial`,
         "ms.prod": `...`,
         "ROBOTS": `NOINDEX`,
     };
@@ -136,7 +136,7 @@ export function addUnitToModule(existingModulePath: string) {
         "ms.date": `...`,
         "author": author,
         "ms.author": msAuthor,
-        "ms.topic": `...`,
+        "ms.topic": `interactive-tutorial`,
         "ms.prod": `...`,
         "ROBOTS": `NOINDEX`,
     };

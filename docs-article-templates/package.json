@@ -43,21 +43,6 @@
           "type": "string",
           "default": "",
           "description": "Default Learn repo"
-        },
-        "docs.templates.learn_level": {
-          "type": "string",
-          "default": "beginner",
-          "description": "Default Learn level"
-        },
-        "docs.templates.learn_role": {
-          "type": "string",
-          "default": "developer",
-          "description": "Default Learn role"
-        },
-        "docs.templates.learn_product": {
-          "type": "string",
-          "default": "azure",
-          "description": "Default Learn product"
         }
       }
     },
