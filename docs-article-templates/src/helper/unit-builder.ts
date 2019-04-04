@@ -85,7 +85,7 @@ export function createUnits() {
 }
 
 // cleanup unnecessary characters, replace values and open unit in new tab after it's written to disk.
-export function cleanupUnit(generatedUnit: string) {
+export function cleanupUnit(generatedUnit: string, preserveValues?: boolean) {
     try {
         const moduleContent = readFileSync(generatedUnit, "utf8");
         const updatedModule = moduleContent.replace("header: ", "")
@@ -100,7 +100,11 @@ export function cleanupUnit(generatedUnit: string) {
             viewColumn: ViewColumn.One,
         };
         window.showTextDocument(uri, options);
-        updateModule(unitList);
+        if (preserveValues) {
+            window.showInformationMessage(`${generatedUnit} created.  Please add unit to index file.`);
+        } else {
+            updateModule(unitList);
+        }
     } catch (error) {
         output.appendLine(error);
     }
@@ -109,12 +113,6 @@ export function cleanupUnit(generatedUnit: string) {
 // data used to create the unit(s) yml file.
 export function addUnitToModule(existingModulePath: string) {
     let unitPath;
-    const options: MessageOptions = { modal: true };
-    window.showInformationMessage(`Create a new unit? Previous unit: ${unitTitle}`, options, "Yes", "No").then((result) => {
-        if (result === "Yes") {
-            getUnitName();
-        }
-    });
 
     unitList.push(`${learnRepo}.${formattedModuleName}.${formattedUnitName}`);
     const moduleDirectory = parse(existingModulePath).dir;
@@ -153,5 +151,5 @@ export function addUnitToModule(existingModulePath: string) {
     const includeDirectory = join(moduleDirectory, "includes");
     includeFile = join(includeDirectory, `${formattedUnitName}.md`);
     writeFileSync(includeFile, "");
-    cleanupUnit(unitPath);
+    cleanupUnit(unitPath, true);
 }
