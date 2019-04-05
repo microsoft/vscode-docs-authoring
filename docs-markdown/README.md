@@ -12,7 +12,7 @@ Some syntax supported by the extension, such as alerts and snippets, are custom 
 
 ## How to use the extension
 
-To access the Docs Markdown menu, type `ALT+M`. You can click or use up/down arrows to select the function you want, or type to start filtering, then hit `ENTER` when the function you want is highlighted in the menu. 
+To access the Docs Markdown menu, type `ALT+M`. You can click or use up/down arrows to select the function you want, or type to start filtering, then hit `ENTER` when the function you want is highlighted in the menu.
 
 You can also now access the Docs commands from the VS Code command palette. Hit F1 to open the command palette and start typing to filter. All the Docs commands begin with "Docs":
 
@@ -46,7 +46,7 @@ Default keyboard shortcuts are available for some commands, as noted in the tabl
 1. Click the plus that appears near the command name when you mouse over the line.
 1. After a new input box is visible, type the keyboard shortcut you want to bind to that particular command. For example, to use the common shortcut for bold, type `ctrl+b`.
 1. It's a good idea to insert a `when` clause into your keybinding, so it won't be available in files other than Markdown. To do this, open keybindings.json and insert the following line below the command name (be sure to add a comma between lines):
-   
+
     `"when": "editorTextFocus && editorLangId == 'markdown'"`
 
     Your completed custom keybinding should look like this in keybindings.json:
@@ -77,6 +77,17 @@ Users of the pre-release version of the extension will notice that the authoring
 
    ![toolbar](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/legacy-toolbar.png)
 
+## Cleanup Scripts
+
+Cleanup functionality has been added to docs-markdown to move the experience of fixing validation closer to your development environment. Instead of having to wait until build time, you can proactively reduce the number of validation errors and warnings by running these cleanup scripts. Get started by hitting `F1` and typing `Docs: Cleanup` or hit `Alt+M` and navigate to `Cleanup...` in the quick pick menu.
+
+Cleanup scripts available:
+
+- Single-valued metadata: converts single value arrays of metadata, into inline properties and without array brackets.
+- Microsoft Links: converts http:// to https:// for microsoft docs, azure, technet, and msdn. Removes hardcoded local from url.
+- Capitalization of metadata values: lowercases certain metadata properties.
+- Master redirection file: generate redirect_url entries for master redirect file.
+
 ## Known issues
 
 - [Docs Preview] Code blocks only preview in Dark theme, and some colorized text is unreadable in Light theme.
@@ -85,9 +96,7 @@ Users of the pre-release version of the extension will notice that the authoring
 
 # Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to and actually do, grant us the rights to use your contribution. For details, visit our [Contributor License Agreement (CLA)](https://cla.microsoft.com).
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
 a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
