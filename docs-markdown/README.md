@@ -83,10 +83,10 @@ Cleanup functionality has been added to docs-markdown to move the experience of 
 
 Cleanup scripts available:
 
-- Single-valued metadata
-- Microsoft Links
-- Capitalization of metadata values
-- Master redirection file
+- Single-valued metadata: converts single value arrays of meta-data, converting them to single value properties.
+- Microsoft Links: converters http:// to https:// for microsoft docs, azure, technet, and msdn. Removes hardcoded local from url.
+- Capitalization of metadata values: lowercases certain metadata properties.
+- Master redirection file: generate redirect_url entries for master redirect file.
 
 ## Known issues
 
