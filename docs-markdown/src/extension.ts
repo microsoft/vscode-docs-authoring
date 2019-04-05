@@ -25,7 +25,6 @@ import { UiHelper } from "./helper/ui";
 import { Reporter } from "./telemetry/telemetry";
 
 export const output = window.createOutputChannel("docs-markdown");
-export const masterRedirectOutput = window.createOutputChannel("docs-markdown-master-redirect");
 
 /**
  * Provides the commands to the extension. This method is called when extension is activated.

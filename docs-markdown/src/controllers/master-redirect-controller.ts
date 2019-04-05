@@ -6,7 +6,7 @@ import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
 import { window, workspace, Uri, WorkspaceFolder } from "vscode";
 import YAML = require("yamljs");
-import { masterRedirectOutput } from "../extension";
+import { output } from "../extension";
 import { generateTimestamp, postError } from "../helper/common";
 import * as yamlMetadata from "../helper/yaml-metadata";
 import { reporter } from "../telemetry/telemetry";
@@ -59,8 +59,8 @@ export class RedirectionFile {
 
 function showStatusMessage(message: string) {
     const { msTimeValue } = generateTimestamp();
-    masterRedirectOutput.appendLine(`[${msTimeValue}] - ` + message);
-    masterRedirectOutput.show();
+    output.appendLine(`[${msTimeValue}] - ` + message);
+    output.show();
 }
 
 export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) {

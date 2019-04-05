@@ -50,7 +50,7 @@ export function applyCleanup() {
         }
         window.withProgress({
             location: ProgressLocation.Notification,
-            title: "Running Cleanup",
+            title: "Cleanup",
             cancellable: true
         }, (progress, token) => {
             token.onCancellationRequested(() => {
@@ -110,7 +110,9 @@ export function applyCleanup() {
  * generateMasterRedirectionFile() => creates master redirection file for root.
  */
 function runAll(workspacePath: string, progress: any, resolve: any) {
-    showStatusMessage("Running Cleanup: Everything");
+    showStatusMessage("Cleanup: Everything started.");
+    let message = "Everything"
+    progress.report({ increment: 0, message: message })
     recursive(workspacePath,
         [".git", ".github", ".vscode", ".vs", "node_module"],
         (err: any, files: string[]) => {
@@ -140,8 +142,7 @@ function runAll(workspacePath: string, progress: any, resolve: any) {
                                             postError(`Error: ${err}`)
                                             reject();
                                         }
-                                        percentComplete = showProgress(index, files, percentComplete)
-                                        progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+                                        percentComplete = showProgress(index, files, percentComplete, progress, message)
                                         resolve();
                                     })
                                 }).catch(error => {
@@ -162,7 +163,7 @@ function runAll(workspacePath: string, progress: any, resolve: any) {
                             }
                             let origin = data;
                             data = handleLinksWithRegex(data)
-                            if (data.startsWith("---\r\n")) {
+                            if (data.startsWith("---")) {
                                 data = lowerCaseData(data, "ms.author")
                                 data = lowerCaseData(data, "author")
                                 data = lowerCaseData(data, "ms.prod")
@@ -187,8 +188,7 @@ function runAll(workspacePath: string, progress: any, resolve: any) {
                                             postError(`Error: ${err}`)
                                             reject()
                                         }
-                                        percentComplete = showProgress(index, files, percentComplete)
-                                        progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+                                        percentComplete = showProgress(index, files, percentComplete, progress, message)
                                         resolve();
                                     })
                                 }).catch(error => {
@@ -206,7 +206,8 @@ function runAll(workspacePath: string, progress: any, resolve: any) {
                 generateMasterRedirectionFile(workspacePath, resolve);
             }));
             Promise.all(promises).then(() => {
-                showStatusMessage(`Everything completed.`);
+                progress.report({ increment: 100, message: "Everything completed." })
+                showStatusMessage(`Cleanup: Everything completed.`);
                 resolve();
             }).catch(error => {
                 postError(error);
@@ -224,13 +225,12 @@ function runAll(workspacePath: string, progress: any, resolve: any) {
  * @param files list of files
  * @param percentComplete percentage complete for program
  */
-function showProgress(index: number, files: string[], percentComplete: number) {
+function showProgress(index: number, files: string[], percentComplete: number, progress: any, message: string) {
     let currentCompletedPercent = Math.round(((index / files.length) * 100))
     if (percentComplete < currentCompletedPercent) {
         percentComplete = currentCompletedPercent
-        showStatusMessage(`Running Cleanup... ${percentComplete}%`);
+        progress.report({ increment: percentComplete, message: `${message} ${percentComplete}%` })
     }
-
     return percentComplete;
 }
 
@@ -241,7 +241,9 @@ function showProgress(index: number, files: string[], percentComplete: number) {
  */
 function handleSingleValuedMetadata(workspacePath: string, progress: any, resolve: any) {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
-    showStatusMessage("Running Cleanup: Single Valued Metadata");
+    showStatusMessage("Cleanup: Single-Valued metadata started.");
+    let message = "Single-Valued metadata"
+    progress.report({ increment: 0, message: message })
     recursive(workspacePath,
         [".git", ".github", ".vscode", ".vs", "node_module"],
         (err: any, files: string[]) => {
@@ -271,8 +273,7 @@ function handleSingleValuedMetadata(workspacePath: string, progress: any, resolv
                                             postError(`Error: ${err}`)
                                             reject();
                                         }
-                                        progress.report({ increment: percentComplete, message: `${percentComplete}%` })
-                                        percentComplete = showProgress(index, files, percentComplete)
+                                        percentComplete = showProgress(index, files, percentComplete, progress, message)
                                         resolve();
                                     }).catch(error => {
                                         postError(error);
@@ -308,8 +309,7 @@ function handleSingleValuedMetadata(workspacePath: string, progress: any, resolv
                                                     postError(`Error: ${err}`)
                                                     reject();
                                                 }
-                                                progress.report({ increment: percentComplete, message: `${percentComplete}%` })
-                                                percentComplete = showProgress(index, files, percentComplete)
+                                                percentComplete = showProgress(index, files, percentComplete, progress, message)
                                             }).catch(error => {
                                                 postError(error);
                                             }))
@@ -325,7 +325,8 @@ function handleSingleValuedMetadata(workspacePath: string, progress: any, resolv
                 }
             })
             Promise.all(promises).then(() => {
-                showStatusMessage(`Single Valued Metadata completed.`);
+                progress.report({ increment: 100, message: "Single-Valued metadata completed." })
+                showStatusMessage(`Cleanup: Single-Valued metadata completed.`);
                 progress.report({ increment: 100, message: `100%` })
                 resolve();
             }).catch(err => {
@@ -465,7 +466,9 @@ function singleValueMetadata(data: any, variable: string) {
  * Converts http:// to https:// for all microsoft links.
  */
 function microsoftLinks(workspacePath: string, progress: any, resolve: any) {
-    showStatusMessage("Running Cleanup: Microsoft Links");
+    showStatusMessage("Cleanup: Microsoft Links started.");
+    let message = "Microsoft Links"
+    progress.report({ increment: 0, message: message })
     recursive(workspacePath,
         [".git", ".github", ".vscode", ".vs", "node_module"],
         (err: any, files: string[]) => {
@@ -490,8 +493,7 @@ function microsoftLinks(workspacePath: string, progress: any, resolve: any) {
                                         if (err) {
                                             postError(`Error: ${err}`)
                                         }
-                                        percentComplete = showProgress(index, files, percentComplete)
-                                        progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+                                        percentComplete = showProgress(index, files, percentComplete, progress, message)
                                         resolve();
                                     });
                                 }).catch(error => {
@@ -507,7 +509,8 @@ function microsoftLinks(workspacePath: string, progress: any, resolve: any) {
             })
 
             Promise.all(promises).then(() => {
-                showStatusMessage(`Microsoft Links completed.`);
+                progress.report({ increment: 100, message: "Microsoft Links completed." })
+                showStatusMessage(`Cleanup: Microsoft Links completed.`);
                 resolve();
             }).catch(error => {
                 postError(error);
@@ -546,7 +549,9 @@ function handleLinksWithRegex(data: string) {
  * Lower cases all metadata found in .md files
  */
 function capitalizationOfMetadata(workspacePath: string, progress: any, resolve: any) {
-    showStatusMessage("Running Cleanup: Capitalization of Metadata Values");
+    showStatusMessage("Cleanup: Capitalization of metadata values started.");
+    let message = "Capitalization of metadata values"
+    progress.report({ increment: 0, message: message })
     recursive(workspacePath,
         [".git", ".github", ".vscode", ".vs", "node_module"],
         (err: any, files: string[]) => {
@@ -562,7 +567,7 @@ function capitalizationOfMetadata(workspacePath: string, progress: any, resolve:
                             if (err) {
                                 postError(`Error: ${err}`)
                             }
-                            if (data.startsWith("---\r\n")) {
+                            if (data.startsWith("---")) {
                                 let origin = data;
                                 data = lowerCaseData(data, "ms.author")
                                 data = lowerCaseData(data, "author")
@@ -581,8 +586,7 @@ function capitalizationOfMetadata(workspacePath: string, progress: any, resolve:
                                             if (err) {
                                                 postError(`Error: ${err}`)
                                             }
-                                            percentComplete = showProgress(index, files, percentComplete)
-                                            progress.report({ increment: percentComplete, message: `${percentComplete}%` })
+                                            percentComplete = showProgress(index, files, percentComplete, progress, message)
                                             resolve();
                                         });
                                     }).catch(error => {
@@ -598,7 +602,8 @@ function capitalizationOfMetadata(workspacePath: string, progress: any, resolve:
                 }
             })
             Promise.all(promises).then(() => {
-                showStatusMessage(`Capitalization of Metadata Values completed.`);
+                progress.report({ increment: 100, message: "Capitalization of metadata values completed." })
+                showStatusMessage(`Cleanup: Capitalization of metadata values completed.`);
                 resolve();
             }).catch(error => {
                 postError(error);
@@ -618,6 +623,9 @@ function lowerCaseData(data: any, variable: string) {
     let value = ''
     if (captureParts && captureParts.length > 2) {
         value = captureParts[2].toLowerCase();
+        if (value.match(/^\s*$/) !== null) {
+            return data
+        }
         try {
             return data.replace(regex, `${variable}: ${value}`)
         }
