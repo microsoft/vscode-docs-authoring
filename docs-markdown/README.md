@@ -84,7 +84,7 @@ Cleanup functionality has been added to docs-markdown to move the experience of 
 Cleanup scripts available:
 
 - Single-valued metadata: converts single value arrays of metadata, into inline properties and without array brackets.
-- Microsoft Links: converts http:// to https:// for microsoft docs, azure, technet, and msdn. Removes hardcoded local from url.
+- Microsoft Links: converts http:// to https:// for microsoft docs, azure, technet, and msdn. Removes hardcoded locale from url.
 - Capitalization of metadata values: lowercases certain metadata properties.
 - Master redirection file: generate redirect_url entries for master redirect file.
 
