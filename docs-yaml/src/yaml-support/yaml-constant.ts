@@ -1,6 +1,8 @@
 import { join } from 'path';
 import { Uri } from 'vscode';
 
+export const SCHEMA_CONFIG_FILE = 'https://static.docs.com/ui/latest/schemas/schema_config.json';
+
 export const VSCODE_YAML_EXTENSION_ID = 'redhat.vscode-yaml';
 
 export const SNIPPETS_ROOT_PATH = join(__dirname, '../../../snippets');

@@ -1,7 +1,7 @@
 'use strict';
 import { ConfigurationTarget, ExtensionContext, languages, window, workspace } from 'vscode';
 import * as WebRequest from 'web-request';
-import { TOC_FILE_GLOBAL_PATTERN, TOC_SCHEMA_FILE, YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION } from "./yaml-support/yaml-constant";
+import { SCHEMA_CONFIG_FILE, TOC_FILE_GLOBAL_PATTERN, TOC_SCHEMA_FILE, YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION } from "./yaml-support/yaml-constant";
 import { registerYamlSchemaSupport } from './yaml-support/yaml-schema';
 import { DocsYamlCompletionProvider } from "./yaml-support/yaml-snippet";
 
@@ -64,7 +64,7 @@ async function removeTocSchemaFromConfigAtScope(value: string, scope: Configurat
 
 // retrieve mapping file data and store the data in variable
 export async function loadSchemaConfig() {
-    const getResult = await WebRequest.get('https://static.docs.com/ui/latest/schemas/schema_config.json');
+    const getResult = await WebRequest.get(SCHEMA_CONFIG_FILE);
     mappingData = getResult.content;
 }
 
