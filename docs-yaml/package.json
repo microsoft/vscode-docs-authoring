@@ -2,7 +2,7 @@
     "name": "docs-yaml",
     "displayName": "docs-yaml",
     "description": "YAML schema validation and auto-completion for docs.microsoft.com authoring",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "publisher": "docsmsft",
     "engines": {
         "vscode": "^1.25.0"
@@ -22,7 +22,7 @@
     ],
     "icon": "images/docs-logo-ms.png",
     "bugs": {
-        "url": "https://github.com/928PJY/docs-yaml/issues"
+        "url": "https://github.com/vscode-docs-authoring/docs-yaml/issues"
     },
     "repository": {
         "type": "git",
@@ -45,7 +45,8 @@
     },
     "dependencies": {
         "fuzzysearch": "^1.0.3",
-        "js-yaml": "^3.8.2"
+        "js-yaml": "^3.13.1",
+        "web-request": "^1.0.7"
     },
     "devDependencies": {
         "@types/mocha": "^2.2.32",

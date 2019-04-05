@@ -1,10 +1,8 @@
-import {window, TextDocument, extensions, Extension} from 'vscode';
-import {
-    VSCODE_YAML_EXTENSION_ID,
-    SCHEMA_CONFIG_FILE
-} from "./yaml-constant";
-import {getYamlMime} from './yaml-util';
+import { Extension, extensions, TextDocument, window } from 'vscode';
+import { mappingData } from '../extension';
+import { VSCODE_YAML_EXTENSION_ID } from "./yaml-constant";
 import { DocsSchemaHolder } from "./yaml-schem-Holder";
+import { getYamlMime } from './yaml-util';
 
 // The function signature exposed by vscode-yaml:
 // 1. the requestSchema api will be called by vscode-yaml extension to decide whether the schema can be handled by this
@@ -18,7 +16,7 @@ declare type YamlSchemaContributor = (schema: string,
 const docsSchemaHolder = new DocsSchemaHolder();
 
 export async function registerYamlSchemaSupport(): Promise<void> {
-    docsSchemaHolder.loadSchema(SCHEMA_CONFIG_FILE);
+    docsSchemaHolder.loadSchema(mappingData);
     const yamlPlugin: any = await activateYamlExtension();
     if (!yamlPlugin || !yamlPlugin.registerContributor) {
         // activateYamlExtension has already alerted to users for errors.

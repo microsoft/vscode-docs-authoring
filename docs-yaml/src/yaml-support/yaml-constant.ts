@@ -1,7 +1,5 @@
-import {join} from 'path';
-import {Uri} from 'vscode'
-
-export const SCHEMA_CONFIG_FILE = join(__dirname, `../../../config/schema_config.json`);
+import { join } from 'path';
+import { Uri } from 'vscode';
 
 export const VSCODE_YAML_EXTENSION_ID = 'redhat.vscode-yaml';
 
