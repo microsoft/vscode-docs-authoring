@@ -1,10 +1,12 @@
 'use strict';
-import {languages, workspace, ConfigurationTarget, ExtensionContext} from 'vscode';
-
-import { DocsYamlCompletionProvider } from "./yaml-support/yaml-snippet";
+import { ConfigurationTarget, ExtensionContext, languages, window, workspace } from 'vscode';
+import * as WebRequest from 'web-request';
+import { SCHEMA_CONFIG_FILE, TOC_FILE_GLOBAL_PATTERN, TOC_SCHEMA_FILE, YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION } from "./yaml-support/yaml-constant";
 import { registerYamlSchemaSupport } from './yaml-support/yaml-schema';
-import { YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION, TOC_SCHEMA_FILE, TOC_FILE_GLOBAL_PATTERN } from "./yaml-support/yaml-constant";
+import { DocsYamlCompletionProvider } from "./yaml-support/yaml-snippet";
 
+export const output = window.createOutputChannel("docs-yaml");
+export let mappingData: string;
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: ExtensionContext) {
@@ -12,7 +14,7 @@ export async function activate(context: ExtensionContext) {
         // Completion providers
         languages.registerCompletionItemProvider('yaml', new DocsYamlCompletionProvider()),
     ];
-
+    await loadSchemaConfig();
     await addTocSchemaToConfig();
     await registerYamlSchemaSupport();
     subscriptions.forEach((element) => {
@@ -58,6 +60,12 @@ async function removeTocSchemaFromConfigAtScope(value: string, scope: Configurat
         }
     })
     await workspace.getConfiguration().update(YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION, newValue, scope);
+}
+
+// retrieve mapping file data and store the data in variable
+export async function loadSchemaConfig() {
+    const getResult = await WebRequest.get(SCHEMA_CONFIG_FILE);
+    mappingData = getResult.content;
 }
 
 // this method is called when your extension is deactivated
