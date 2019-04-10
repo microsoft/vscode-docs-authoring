@@ -56,7 +56,7 @@ export function bookmarkBuilder(selectedText: string, bookmarkText: string, path
 
     // If there is no link text, use the bookmark text without the leading "#"
     if (selectedText.length === 0) {
-        selectedText = bookmarkText.trim().replace(/\n|\r/g, "").split(" ").slice(1).join("");
+        selectedText = bookmarkText.trim().replace(/\n|\r/g, "").split(" ").slice(1).join(" ");
     }
 
     // Syntax for bookmarks is #bookmark-text-without-spaces-or-special-characters-underscores-are-allowed
