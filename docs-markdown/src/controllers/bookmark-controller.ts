@@ -4,8 +4,8 @@ import { readFileSync } from "fs";
 import { files } from "node-dir";
 import { basename, dirname, extname, join, relative, resolve } from "path";
 import { QuickPickItem, window, workspace } from "vscode";
+import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/bookmark-builder";
 import { insertContentToEditor, noActiveEditorMessage } from "../helper/common";
-import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/utility";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "insertBookmark";
@@ -101,11 +101,9 @@ export function insertBookmarkExternal() {
                     if (qpSelection.description) {
                         result = relative(activeFilePath, join(qpSelection.description, qpSelection.label).split("\\").join("\\\\"));
                     }
-                    bookmark = bookmarkBuilder
-                        (editor.document.getText(editor.selection), headingSelection.label, result);
+                    bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, result);
                 }
                 insertContentToEditor(editor, "InsertBookmarkExternal", bookmark, true, editor.selection);
-
             });
         });
     });
