@@ -56,11 +56,11 @@ export function bookmarkBuilder(selectedText: string, bookmarkText: string, path
 
     // If there is no link text, use the bookmark text without the leading "#"
     if (selectedText.length === 0) {
-        selectedText = bookmarkText.trim().replace(/\n|\r/g, "").split(" ").slice(1).join(" ");
+        selectedText = bookmarkText.trim().replace(/\n|\r/g, "").split(" ").slice(1).join("");
     }
 
-    // Syntax for bookmarks is #bookmark-text-without-spaces-or-special-characters
-    bookmark = bookmarkText.trim().replace(/\n|\r|[^A-Za-z0-9-\s]/g, "").toLocaleLowerCase().split(" ").slice(1).join("-");
+    // Syntax for bookmarks is #bookmark-text-without-spaces-or-special-characters-underscores-are-allowed
+    bookmark = bookmarkText.trim().replace(/\s\s+/g, " ").replace(/\n|\r|[^A-Za-z0-9-_\s]/g, "").toLocaleLowerCase().split(" ").slice(1).join("-");
 
     if (pathSelection) {
         if (os.type() === "Windows_NT") {
