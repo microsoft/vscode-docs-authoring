@@ -13,7 +13,7 @@ describe("Bookmark style testing,", () => {
     const underscoresInHeading = `## Windows_Mac_Linux`;
     const underscoresInHeadingExpected = `[${selectedText}](bookmarks.md#windows_mac_linux)`;
 
-    describe("ookmarkBuilder function", () => {
+    describe("bookmarkBuilder function", () => {
 
         it("format a simple heading (no extra spaces or underscores).", () => {
             expect(bookmarkBuilder(selectedText, simpleHeading, pathSelection)).to.equal(simpleHeadingExpected);
