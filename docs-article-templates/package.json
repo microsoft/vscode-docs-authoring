@@ -3,8 +3,8 @@
   "displayName": "docs-article-templates",
   "description": "Docs article templates",
   "icon": "images/docs-logo-ms.png",
-  "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
-  "version": "0.2.0",
+  "aiKey": "85ed760d-c958-4bc2-bd1e-fb7e1e0b9ef8",
+  "version": "0.2.2",
   "publisher": "docsmsft",
   "engines": {
     "vscode": "^1.23.0"
@@ -43,21 +43,6 @@
           "type": "string",
           "default": "",
           "description": "Default Learn repo"
-        },
-        "docs.templates.learn_level": {
-          "type": "string",
-          "default": "beginner",
-          "description": "Default Learn level"
-        },
-        "docs.templates.learn_role": {
-          "type": "string",
-          "default": "developer",
-          "description": "Default Learn role"
-        },
-        "docs.templates.learn_product": {
-          "type": "string",
-          "default": "azure",
-          "description": "Default Learn product"
         }
       }
     },
@@ -81,9 +66,10 @@
     "@types/node-dir": "0.0.32",
     "download-git-repo": "^1.0.2",
     "front-matter": "^3.0.1",
+    "js-yaml": "^3.13.0",
     "node-dir": "^0.1.17",
     "octicons": "^4.4.0",
-    "js-yaml": "^3.12.2"
+    "vscode-extension-telemetry": "^0.1.1"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.42",

@@ -4,7 +4,7 @@ import { QuickPickItem, QuickPickOptions, TextDocumentShowOptions, Uri, ViewColu
 import { output } from "../extension";
 import { formatLearnNames } from "../helper/common";
 import { getUnitName, unitList } from "../helper/unit-builder";
-import { alias, gitHubID, learnLevel, learnProduct, learnRepoId, learnRole } from "../helper/user-settings";
+import { alias, gitHubID, learnRepoId } from "../helper/user-settings";
 import { enterModuleName, parentFolderPrompt, validateModuleName } from "../strings";
 
 export let formattedModuleName: string;
@@ -115,10 +115,10 @@ export function updateModule(units) {
         abstract: `...`,
         prerequisites: `...`,
         iconUrl: `https://docs.microsoft.com/media/learn/module.svg`,
-        levels: [learnLevel],
-        roles: [learnRole],
-        products: [learnProduct],
-        units: { units },
+        levels: `...`,
+        roles: `...`,
+        products: `...`,
+        units: units,
         badge: [`{badge}`],
     };
     const moduleIndex = join(modulePath, "index.yml");

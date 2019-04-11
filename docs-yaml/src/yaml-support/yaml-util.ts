@@ -1,17 +1,15 @@
-import {readFileSync, existsSync} from 'fs';
+import { output } from "../extension";
 
 /**
  * Load json data from a json file.
  * @param {string} file
  * @returns the parsed data if no error occurs, otherwise undefined is returned
  */
-export function loadJson(file: string): any {
-    if (existsSync(file)) {
-        try {
-            return JSON.parse(readFileSync(file, 'utf-8'));
-        } catch (err) {
-            // ignore
-        }
+export function loadJson(mappingFile: string): any {
+    try {
+        return JSON.parse(mappingFile);
+    } catch (error) {
+        output.appendLine(error);
     }
     return undefined;
 }

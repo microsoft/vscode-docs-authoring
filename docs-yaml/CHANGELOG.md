@@ -1,5 +1,13 @@
 # Change Log
 
+## **0.2.1**
+
+- Update schema mapping file path
+
+## **0.2.0**
+
+- docs-yaml is now part of the [Microsoft Docs Authoring Pack](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-authoring-pack).
+
 ## **0.1.9**
 
 - Update README file with **new features** filed
