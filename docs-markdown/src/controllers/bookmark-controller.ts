@@ -1,8 +1,11 @@
 "use strict";
 
-import * as vscode from "vscode";
+import { readFileSync } from "fs";
+import { files } from "node-dir";
+import { basename, dirname, extname, join, relative, resolve } from "path";
+import { QuickPickItem, window, workspace } from "vscode";
+import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/bookmark-builder";
 import { insertContentToEditor, noActiveEditorMessage } from "../helper/common";
-import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/utility";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "insertBookmark";
@@ -24,97 +27,83 @@ export function insertBookmarkCommands() {
  */
 export function insertBookmarkExternal() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".external" });
+    let folderPath: string = "";
+    let fullPath: string = "";
 
-    // Modules used to access file system
-    const path = require("path");
-    const dir = require("node-dir");
-    const os = require("os");
-    const fs = require("fs");
-
-    const editor = vscode.window.activeTextEditor;
+    const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
         return;
     }
     const activeFileName = editor.document.fileName;
-    const activeFilePath = path.dirname(activeFileName);
+    const activeFilePath = dirname(activeFileName);
 
     // Check to see if the active file has been saved.  If it has not been saved, warn the user.
     // The user will still be allowed to add a link but it the relative path will not be resolved.
     const fileExists = require("file-exists");
 
     if (!fileExists(activeFileName)) {
-        vscode.window.showWarningMessage(`${activeFilePath} is not saved.  Cannot accurately resolve path to create link.`);
+        window.showWarningMessage(`${activeFilePath} is not saved.  Cannot accurately resolve path to create link.`);
         return;
     }
-    const folderPath = vscode.workspace.rootPath;
+    if (workspace.workspaceFolders) {
+        folderPath = workspace.workspaceFolders[0].uri.fsPath;
+    }
 
     // recursively get all the files from the root folder
-    dir.files(folderPath, (err: any, files: any) => {
+    files(folderPath, (err: any, files: any) => {
         if (err) {
-            vscode.window.showErrorMessage(err);
+            window.showErrorMessage(err);
             throw err;
         }
 
-        const items: vscode.QuickPickItem[] = [];
+        const items: QuickPickItem[] = [];
         files.sort();
-        files.filter((file: any) => markdownExtensionFilter.indexOf(path.extname
-            (file.toLowerCase())) !== -1).forEach((file: any) => {
-                items.push({ label: path.basename(file), description: path.dirname(file) });
-            });
+        files.filter((file: any) => markdownExtensionFilter.indexOf(extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+            items.push({ label: basename(file), description: dirname(file) });
+        });
 
         // show the quick pick menu
-        const selectionPick = vscode.window.showQuickPick(items);
+        const selectionPick = window.showQuickPick(items);
         selectionPick.then((qpSelection) => {
             let result = "";
             let bookmark = "";
-
-            // gets the content for chosen file with utf-8 format
-            let fullPath;
 
             if (!qpSelection) {
                 return;
             }
 
-            if (os.type() === "Windows_NT") {
-                fullPath = qpSelection.description + "\\" + qpSelection.label;
-            } else {
-                fullPath = qpSelection.description + "//" + qpSelection.label;
+            if (qpSelection.description) {
+                fullPath = join(qpSelection.description, qpSelection.label);
             }
 
-            const content = fs.readFileSync(fullPath, "utf8");
+            const content = readFileSync(fullPath, "utf8");
             const headings = content.match(headingTextRegex);
 
             if (!headings) {
-                vscode.window.showErrorMessage("No headings found in file, cannot insert bookmark!");
+                window.showErrorMessage("No headings found in file, cannot insert bookmark!");
                 return;
             }
 
-            const adjustedHeadingsItems: vscode.QuickPickItem[] = [];
+            const adjustedHeadingsItems: QuickPickItem[] = [];
             const adjustedHeadings = addbookmarkIdentifier(headings);
             adjustedHeadings.forEach((adjustedHeading: string) => {
                 adjustedHeadingsItems.push({ label: adjustedHeading, detail: " " });
             });
 
-            vscode.window.showQuickPick(adjustedHeadingsItems).then((headingSelection) => {
+            window.showQuickPick(adjustedHeadingsItems).then((headingSelection) => {
                 if (!headingSelection) {
                     return;
                 }
-                if (path.resolve(activeFilePath) === path.resolve(qpSelection.label.split("\\").join("\\\\")) && path.basename(activeFileName) === qpSelection.label) {
+                if (resolve(activeFilePath) === resolve(qpSelection.label.split("\\").join("\\\\")) && basename(activeFileName) === qpSelection.label) {
                     bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, "");
                 } else {
-                    if (os.type() === "Windows_NT") {
-                        result = path.relative(activeFilePath, path.join
-                            (qpSelection.description, qpSelection.label).split("\\").join("\\\\"));
-                    } else {
-                        result = path.relative(activeFilePath, path.join
-                            (qpSelection.description, qpSelection.label).split("//").join("//"));
+                    if (qpSelection.description) {
+                        result = relative(activeFilePath, join(qpSelection.description, qpSelection.label).split("\\").join("\\\\"));
                     }
-                    bookmark = bookmarkBuilder
-                        (editor.document.getText(editor.selection), headingSelection.label, result);
+                    bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, result);
                 }
                 insertContentToEditor(editor, "InsertBookmarkExternal", bookmark, true, editor.selection);
-
             });
         });
     });
@@ -125,25 +114,25 @@ export function insertBookmarkExternal() {
  */
 export function insertBookmarkInternal() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".internal" });
-    const editor = vscode.window.activeTextEditor;
+    const editor = window.activeTextEditor;
     if (!editor) {
         return;
     }
     const content = editor.document.getText();
     const headings = content.match(headingTextRegex);
     if (!headings) {
-        vscode.window.showErrorMessage("No headings found in file, cannot insert bookmark!");
+        window.showErrorMessage("No headings found in file, cannot insert bookmark!");
         return;
     }
 
     // put number to duplicate names in position order
     const adjustedHeadings = addbookmarkIdentifier(headings);
-    const adjustedHeadingsItems: vscode.QuickPickItem[] = [];
+    const adjustedHeadingsItems: QuickPickItem[] = [];
     adjustedHeadings.forEach((heading: string) => {
         adjustedHeadingsItems.push({ label: heading, detail: " " });
     });
 
-    vscode.window.showQuickPick(adjustedHeadingsItems).then((headingSelection) => {
+    window.showQuickPick(adjustedHeadingsItems).then((headingSelection) => {
         if (!headingSelection) {
             return;
         }
