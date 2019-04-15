@@ -42,10 +42,12 @@ export async function activate(context: ExtensionContext) {
     const registration = workspace.registerTextDocumentContentProvider(DocumentContentProvider.scheme, provider);
 
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
-        preview(uri, ViewColumn.Two, provider);
+        // preview(uri, ViewColumn.Two, provider);
+        commands.executeCommand("markdown.showPreviewToSide");
     });
     const disposableStandalonePreview = commands.registerCommand("docs.showPreview", (uri) => {
-        preview(uri, ViewColumn.One, provider);
+        // preview(uri, ViewColumn.One, provider);
+        commands.executeCommand("markdown.showPreview");
     });
     const disposableDidClick = commands.registerCommand("docs.didClick", (uri, line) => {
         click(uri, line);
