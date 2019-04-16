@@ -2,7 +2,7 @@
   "name": "docs-preview",
   "displayName": "docs-preview",
   "description": "Docs Markdown Preview Extension",
-  "version": "0.3.16",
+  "version": "0.3.17",
   "publisher": "docsmsft",
   "icon": "images/docs-logo-ms.png",
   "bugs": {
@@ -14,7 +14,7 @@
     "url": "https://github.com/Microsoft/vscode-docs-authoring.git"
   },
   "engines": {
-    "vscode": "^1.18.x"
+    "vscode": "^1.23.0"
   },
   "categories": [
     "Snippets",

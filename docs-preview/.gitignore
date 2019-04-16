@@ -4,5 +4,5 @@ out/
 **/bin/
 **/obj/
 **/.vs/
-**/.vscode/
 *.vsix
+install.Lock

@@ -1,19 +1,5 @@
 import * as path from "path";
-import {
-    commands,
-    Extension,
-    ExtensionContext,
-    extensions,
-    OutputChannel,
-    Position,
-    Range,
-    Selection,
-    TextEditorRevealType,
-    Uri,
-    ViewColumn,
-    window,
-    workspace,
-} from "vscode";
+import { commands, ExtensionContext, extensions, OutputChannel, Position, Range, Selection, TextEditorRevealType, Uri, window, workspace } from "vscode";
 import { DocumentContentProvider, isMarkdownFile } from "./provider";
 import { MarkdocsServer } from "./server";
 import * as util from "./util/common";
@@ -42,10 +28,12 @@ export async function activate(context: ExtensionContext) {
     const registration = workspace.registerTextDocumentContentProvider(DocumentContentProvider.scheme, provider);
 
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
-        preview(uri, ViewColumn.Two, provider);
+        // preview(uri, ViewColumn.Two, provider);
+        commands.executeCommand("markdown.showPreviewToSide");
     });
     const disposableStandalonePreview = commands.registerCommand("docs.showPreview", (uri) => {
-        preview(uri, ViewColumn.One, provider);
+        // preview(uri, ViewColumn.One, provider);
+        commands.executeCommand("markdown.showPreview");
     });
     const disposableDidClick = commands.registerCommand("docs.didClick", (uri, line) => {
         click(uri, line);
