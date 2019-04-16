@@ -1,5 +1,7 @@
 # Docs Preview Extension
 
+**Note: Version 0.3.17 uses the VS Code markdown preview environment.  The vscode.previewHtml command was [deprecated](https://github.com/Microsoft/vscode/issues/62630) and the docs-preview service is being updated to support this change.  Custom markdown rendering will be affected until a new version of the extension is released.**
+
 This extension uses the docs.microsoft.com CSS to provide more accurate preview for Markdown published to Docs via the Open Publishing System (OPS). This includes all Markdown as supported by the CommonMark specification, as well as custom Markdown syntax for Docs, such as:
 
 - Alerts (note, tip, important, caution, and warning).
