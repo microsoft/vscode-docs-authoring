@@ -22,7 +22,7 @@ export default class MarkdownPreviewConfig {
     private constructor(resource: vscode.Uri) {
         const editorConfig = vscode.workspace.getConfiguration("editor", resource);
         const markdownConfig = vscode.workspace.getConfiguration("markdown", resource);
-        const markdownEditorConfig = vscode.workspace.getConfiguration("[markdown]");
+        const markdownEditorConfig = vscode.workspace.getConfiguration("[markdown]", resource);
 
         this.scrollBeyondLastLine = editorConfig.get<boolean>("scrollBeyondLastLine", false);
 
