@@ -1,5 +1,5 @@
 import * as path from "path";
-import { commands, ExtensionContext, extensions, OutputChannel, Position, Range, Selection, TextEditorRevealType, Uri, window, workspace } from "vscode";
+import { commands, ExtensionContext, extensions, OutputChannel, Position, Range, Selection, TextEditorRevealType, Uri, ViewColumn, WebviewPanel, window, workspace } from "vscode";
 import { DocumentContentProvider, isMarkdownFile } from "./provider";
 import { MarkdocsServer } from "./server";
 import * as util from "./util/common";
@@ -7,6 +7,7 @@ import { Logger } from "./util/logger";
 
 let channel: OutputChannel = null;
 let server: MarkdocsServer = null;
+let panelMap: Map<string, WebviewPanel> = new Map();
 
 export async function activate(context: ExtensionContext) {
 
@@ -28,12 +29,10 @@ export async function activate(context: ExtensionContext) {
     const registration = workspace.registerTextDocumentContentProvider(DocumentContentProvider.scheme, provider);
 
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
-        // preview(uri, ViewColumn.Two, provider);
-        commands.executeCommand("markdown.showPreviewToSide");
+        preview(uri, ViewColumn.Two, provider, context);
     });
     const disposableStandalonePreview = commands.registerCommand("docs.showPreview", (uri) => {
-        // preview(uri, ViewColumn.One, provider);
-        commands.executeCommand("markdown.showPreview");
+        preview(uri, ViewColumn.One, provider, context);
     });
     const disposableDidClick = commands.registerCommand("docs.didClick", (uri, line) => {
         click(uri, line);
@@ -52,14 +51,14 @@ export async function activate(context: ExtensionContext) {
     context.subscriptions.push(workspace.onDidChangeTextDocument((event) => {
         if (isMarkdownFile(event.document)) {
             const uri = getPreviewUri(event.document.uri);
-            provider.update(uri);
+            provider.update(uri, panelMap);
         }
     }));
 
     context.subscriptions.push(workspace.onDidSaveTextDocument((document) => {
         if (isMarkdownFile(document)) {
             const uri = getPreviewUri(document.uri);
-            provider.update(uri);
+            provider.update(uri, panelMap);
         }
     }));
 
@@ -67,11 +66,11 @@ export async function activate(context: ExtensionContext) {
         if (isMarkdownFile(event.textEditor.document)) {
             const markdownFile = getPreviewUri(event.textEditor.document.uri);
 
-            commands.executeCommand("_workbench.htmlPreview.postMessage",
-                markdownFile,
-                {
-                    line: event.selections[0].active.line,
-                });
+            this.editor.webview.postMessage({
+                type: 'onDidChangeTextEditorSelection',
+                line: event.selections[0].active.line,
+                source: markdownFile
+            });
         }
     }));
 }
@@ -92,7 +91,7 @@ function getPreviewUri(uri: Uri) {
     });
 }
 
-function preview(uri: Uri, viewColumn: number, provider: DocumentContentProvider) {
+async function preview(uri: Uri, viewColumn: number, provider: DocumentContentProvider, context: ExtensionContext) {
     if (window.activeTextEditor) {
         uri = uri || window.activeTextEditor.document.uri;
     }
@@ -102,8 +101,22 @@ function preview(uri: Uri, viewColumn: number, provider: DocumentContentProvider
     }
 
     const previewUri = getPreviewUri(uri);
-    provider.update(previewUri);
-    return commands.executeCommand("vscode.previewHtml", previewUri, viewColumn, `view ${path.basename(uri.fsPath)}`);
+
+    const panel = window.createWebviewPanel(
+        previewUri.fsPath,
+        `view ${path.basename(uri.fsPath)}`,
+        viewColumn,
+        {
+            enableCommandUris: true,
+            enableScripts: true,
+            localResourceRoots: [
+                Uri.file(path.join(context.extensionPath, 'media'))
+            ]
+        }
+    );
+
+    panel.webview.html = await provider.provideTextDocumentContent(previewUri);
+    panelMap.set(previewUri.fsPath, panel);
 }
 
 function click(uri: string, line: number) {

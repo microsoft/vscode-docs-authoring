@@ -1,13 +1,6 @@
 import * as childProcess from "child_process";
 import * as fs from "fs";
-import * as path from "path";
-import {
-    Extension,
-    ExtensionContext,
-    OutputChannel,
-    window,
-    workspace,
-} from "vscode";
+import { Extension, ExtensionContext, OutputChannel, window } from "vscode";
 import { HttpClient } from "./httpClient";
 import * as util from "./util/common";
 import { ExtensionDownloader } from "./util/ExtensionDownloader";
@@ -16,7 +9,6 @@ import { Logger } from "./util/logger";
 export class MarkdocsServer {
     private spawnProcess: childProcess.ChildProcess;
     private started: boolean = false;
-    private readonly serverPath;
     private context: ExtensionContext;
 
     constructor(context: ExtensionContext) {
@@ -43,23 +35,23 @@ export class MarkdocsServer {
 
         const serverPath = this.getServerPath();
         if (!serverPath) {
-            window.showErrorMessage(`[Markdocs Error]: Markdocs server can't be found.`);
+            window.showErrorMessage(`[DocsPreview Error]: DocsPreview service can't be found.`);
             return;
         }
 
         try {
-            if (serverPath.indexOf("MarkdocsService.dll") !== -1) {
+            if (serverPath.indexOf("DocsPreviewService.dll") !== -1) {
                 this.spawnProcess = childProcess.spawn("dotnet", [serverPath]);
             } else {
                 this.spawnProcess = childProcess.spawn(serverPath);
             }
         } catch (err) {
-            window.showErrorMessage(`[Markdocs Error]: ${err}`);
+            window.showErrorMessage(`[DocsPreview Error]: ${err}`);
             return;
         }
 
         if (!this.spawnProcess.pid) {
-            window.showErrorMessage(`[Markdocs Error] Error occurs while spawning markdocs local server.`);
+            window.showErrorMessage(`[DocsPreview Error] Error occurs while spawning markdocs local server.`);
             return;
         }
 
@@ -68,7 +60,7 @@ export class MarkdocsServer {
         });
 
         this.spawnProcess.stderr.on("data", (data) => {
-            window.showErrorMessage(`[Markdocs Server Error]: ${data.toString()}`);
+            window.showErrorMessage(`[DocsPreview Error]: ${data.toString()}`);
         });
 
         await this.ensureMarkdocsServerWorkAsync();
@@ -111,9 +103,9 @@ export class MarkdocsServer {
 
     private getServerPath() {
         const serverPaths = [
-            ".markdocs/MarkdocsService", // for macOS/Linux
-            ".markdocs/MarkdocsService.exe", // for Windows
-            ".markdocs/MarkdocsService.dll", // for .NET Core
+            ".markdocs/DocsPreviewService", // for macOS/Linux
+            ".markdocs/DocsPreviewService.exe", // for Windows
+            ".markdocs/DocsPreviewService.dll", // for .NET Core
         ];
 
         for (let p of serverPaths) {
