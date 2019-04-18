@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.4 (April 17th, 2019)
+
+- Bookmark update
+
 ## 0.2.3 (April 1st, 2019)
 
 - Added Cleanup Tasks to Quickpick
