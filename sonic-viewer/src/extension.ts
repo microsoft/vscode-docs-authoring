@@ -57,7 +57,7 @@ export function isMarkdownFile(document: TextDocument) {
 function codeSnippets(md, options) {
     let root = options.root
     function replaceCodeSnippetWithContents(src, rootdir) {
-        var codeRegex = /\[\!code-(.*)\[(.*)\]\((.*)\)\]/gm;
+        var codeRegex = /\[\!code-(.*)\[(.*)\]\((.*)\)\]/gmi;
         var captureGroup = codeRegex.exec(src)
         var filePath = resolve(rootdir, captureGroup[3].trim());
         var mdSrc = readFileSync(filePath, 'utf8');
