@@ -11,7 +11,8 @@ import {
 import { resolve, basename } from 'path';
 import { readFileSync } from 'fs';
 
-
+const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i
+const CODE_RE = /\[\!code-(.*)\[(.*)\]\((.*)\)\]/gmi
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
@@ -38,9 +39,9 @@ export function activate(context: ExtensionContext) {
 
     return {
         extendMarkdownIt(md) {
-            var filePath = window.activeTextEditor.document.fileName;
-            var workingPath = filePath.replace(basename(filePath), '')
-            return md.use(require('markdown-it-include'), { root: workingPath, includeRe: /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i })
+            let filePath = window.activeTextEditor.document.fileName;
+            const workingPath = filePath.replace(basename(filePath), '')
+            return md.use(require('markdown-it-include'), { root: workingPath, includeRe: INCLUDE_RE })
                 .use(codeSnippets, { root: workingPath })
         }
     }
@@ -55,20 +56,25 @@ export function isMarkdownFile(document: TextDocument) {
 }
 
 function codeSnippets(md, options) {
-    let root = options.root
-    function replaceCodeSnippetWithContents(src, rootdir) {
-        var codeRegex = /\[\!code-(.*)\[(.*)\]\((.*)\)\]/gmi;
-        var captureGroup = codeRegex.exec(src)
-        var filePath = resolve(rootdir, captureGroup[3].trim());
-        var mdSrc = readFileSync(filePath, 'utf8');
+    const replaceCodeSnippetWithContents = (src, rootdir) => {
+        let captureGroup = CODE_RE.exec(src)
+        //captureGroup[1] = programming langugage (cs, js, ruby etc..)
+        //captureGroup[3] = relativePathFileName
+        const filePath = resolve(rootdir, captureGroup[3].trim());
+        let mdSrc = readFileSync(filePath, 'utf8');
+        //```cs
+        // ...
+        // code block
+        // ...
+        //```
         mdSrc = `\`\`\`${captureGroup[1].trim()}\r\n${mdSrc}\r\n\`\`\``
         src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
         return src;
     }
 
-    function importCodeSnippet(state) {
+    const importCodeSnippet = (state) => {
         try {
-            state.src = replaceCodeSnippetWithContents(state.src, root)
+            state.src = replaceCodeSnippetWithContents(state.src, options.root)
         } catch (error) {
             console.log(error)
         }
