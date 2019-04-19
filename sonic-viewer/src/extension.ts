@@ -1,13 +1,18 @@
 'use strict';
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import {commands, 
-        window, 
-        workspace,
-        ExtensionContext,
-        TextDocument} from 'vscode';
-import * as path from 'path';
+import {
+    commands,
+    window,
+    ExtensionContext,
+    TextDocument
+} from 'vscode';
 
+import { resolve, basename } from 'path';
+import { readFileSync } from 'fs';
+
+const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i
+const CODE_RE = /\[\!code-(.*)\[(.*)\]\((.*)\)\]/gmi
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
@@ -34,10 +39,10 @@ export function activate(context: ExtensionContext) {
 
     return {
         extendMarkdownIt(md) {
-            var filePath = window.activeTextEditor.document.fileName;
-            var workingPath = filePath.replace(path.basename(filePath), '')
-            return md.use(require('markdown-it-include'), {root:workingPath, includeRe:/\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i})
-                     .use(require('markdown-it-include'), {root:workingPath, includeRe:/\[!code-cs\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i});
+            let filePath = window.activeTextEditor.document.fileName;
+            const workingPath = filePath.replace(basename(filePath), '')
+            return md.use(require('markdown-it-include'), { root: workingPath, includeRe: INCLUDE_RE })
+                .use(codeSnippets, { root: workingPath })
         }
     }
 }
@@ -48,4 +53,32 @@ export function deactivate() {
 
 export function isMarkdownFile(document: TextDocument) {
     return document.languageId === "markdown"; // prevent processing of own documents
+}
+
+function codeSnippets(md, options) {
+    const replaceCodeSnippetWithContents = (src, rootdir) => {
+        let captureGroup = CODE_RE.exec(src)
+        //captureGroup[1] = programming langugage (cs, js, ruby etc..)
+        //captureGroup[3] = relativePathFileName
+        const filePath = resolve(rootdir, captureGroup[3].trim());
+        let mdSrc = readFileSync(filePath, 'utf8');
+        //```cs
+        // ...
+        // code block
+        // ...
+        //```
+        mdSrc = `\`\`\`${captureGroup[1].trim()}\r\n${mdSrc}\r\n\`\`\``
+        src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
+        return src;
+    }
+
+    const importCodeSnippet = (state) => {
+        try {
+            state.src = replaceCodeSnippetWithContents(state.src, options.root)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    md.core.ruler.before('normalize', 'codesnippet', importCodeSnippet);
 }
