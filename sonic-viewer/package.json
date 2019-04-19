@@ -4,6 +4,9 @@
     "description": "sandbox",
     "version": "0.0.1",
     "publisher": "sv",
+    "keywords": [
+        "markdown"
+    ],
     "engines": {
         "vscode": "^1.33.0"
     },
@@ -15,6 +18,7 @@
     ],
     "main": "./out/extension",
     "contributes": {
+        "markdown.markdownItPlugins": true,
         "commands": [
             {
                 "command": "extension.sayHello",
@@ -34,5 +38,9 @@
         "vscode": "^1.1.6",
         "@types/node": "^7.0.43",
         "@types/mocha": "^2.2.42"
+    },
+    "dependencies": {
+        "markdown-it": "^8.4.2",
+        "markdown-it-include": "^1.1.0"
     }
 }
