@@ -1,12 +1,16 @@
 'use strict';
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import {commands, 
-        window, 
-        workspace,
-        ExtensionContext,
-        TextDocument} from 'vscode';
-import * as path from 'path';
+import {
+    commands,
+    window,
+    ExtensionContext,
+    TextDocument
+} from 'vscode';
+
+import { resolve, basename } from 'path';
+import { readFileSync } from 'fs';
+
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -35,9 +39,9 @@ export function activate(context: ExtensionContext) {
     return {
         extendMarkdownIt(md) {
             var filePath = window.activeTextEditor.document.fileName;
-            var workingPath = filePath.replace(path.basename(filePath), '')
-            return md.use(require('markdown-it-include'), {root:workingPath, includeRe:/\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i})
-                     .use(require('markdown-it-include'), {root:workingPath, includeRe:/\[!code-cs\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i});
+            var workingPath = filePath.replace(basename(filePath), '')
+            return md.use(require('markdown-it-include'), { root: workingPath, includeRe: /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i })
+                .use(codeSnippets, { root: workingPath })
         }
     }
 }
@@ -48,4 +52,27 @@ export function deactivate() {
 
 export function isMarkdownFile(document: TextDocument) {
     return document.languageId === "markdown"; // prevent processing of own documents
+}
+
+function codeSnippets(md, options) {
+    let root = options.root
+    function replaceCodeSnippetWithContents(src, rootdir) {
+        var codeRegex = /\[\!code-(.*)\[(.*)\]\((.*)\)\]/gm;
+        var captureGroup = codeRegex.exec(src)
+        var filePath = resolve(rootdir, captureGroup[3].trim());
+        var mdSrc = readFileSync(filePath, 'utf8');
+        mdSrc = `\`\`\`${captureGroup[1].trim()}\r\n${mdSrc}\r\n\`\`\``
+        src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
+        return src;
+    }
+
+    function importCodeSnippet(state) {
+        try {
+            state.src = replaceCodeSnippetWithContents(state.src, root)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    md.core.ruler.before('normalize', 'codesnippet', importCodeSnippet);
 }
