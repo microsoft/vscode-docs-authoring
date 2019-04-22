@@ -58,6 +58,7 @@
     "@types/mocha": "^2.2.32",
     "@types/node": "^6.0.40",
     "mocha": "^5.2.0",
+    "tslint": "^5.16.0",
     "typescript": "^2.5.2",
     "vscode": "^1.1.33"
   },
@@ -65,7 +66,6 @@
     "chai": "^4.2.0",
     "markdown-it": "^8.4.2",
     "markdown-it-include": "^1.1.0",
-    "tslint": "^5.16.0",
     "vscode-extension-telemetry": "^0.1.1"
   }
 }
