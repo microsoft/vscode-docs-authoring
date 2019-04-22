@@ -2,7 +2,8 @@
   "name": "docs-preview",
   "displayName": "docs-preview",
   "description": "Docs Markdown Preview Extension",
-  "version": "0.3.17",
+  "aiKey": "85ed760d-c958-4bc2-bd1e-fb7e1e0b9ef8",
+  "version": "0.3.18",
   "publisher": "docsmsft",
   "icon": "images/docs-logo-ms.png",
   "bugs": {
@@ -33,6 +34,7 @@
   ],
   "main": "./out/src/extension",
   "contributes": {
+    "markdown.markdownItPlugins": true,
     "commands": [
       {
         "command": "docs.showPreviewToSide",
@@ -43,12 +45,6 @@
         "command": "docs.showPreview",
         "title": "Docs: Preview in current tab",
         "when": "editorTextFocus"
-      }
-    ],
-    "snippets": [
-      {
-        "language": "markdown",
-        "path": "./snippets/dfm.json"
       }
     ]
   },
@@ -61,94 +57,15 @@
   "devDependencies": {
     "@types/mocha": "^2.2.32",
     "@types/node": "^6.0.40",
+    "chai": "^4.2.0",
     "mocha": "^5.2.0",
+    "tslint": "^5.16.0",
     "typescript": "^2.5.2",
     "vscode": "^1.1.33"
   },
   "dependencies": {
-    "@types/cheerio": "^0.22.8",
-    "axios": "^0.17.1",
-    "cheerio": "^1.0.0-rc.2",
-    "child_process": "^1.0.2",
-    "command-exists": "^1.2.7",
-    "file-url": "^2.0.2",
-    "highlightjs": "^9.10.0",
-    "http-proxy-agent": "^2.1.0",
-    "https-proxy-agent": "^2.2.1",
-    "jquery": "^3.2.1",
-    "mkdirp": "^0.5.1",
-    "tmp": "0.0.33",
-    "vscode-languageclient": "^3.4.2",
-    "yauzl": "^2.9.1"
-  },
-  "runtimeDependencies": [
-    {
-      "description": "docs-previewService for .NET Core",
-      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.18/netcore.zip",
-      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.18/netcore.zip",
-      "installPath": ".markdocs",
-      "platforms": [
-        "netcore"
-      ],
-      "architectures": [
-        "netcore"
-      ],
-      "installTestPath": "./.markdocs/MarkdocsService.dll"
-    },
-    {
-      "description": "docs-previewService for Windows (x86)",
-      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x86.zip",
-      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x86.zip",
-      "installPath": ".markdocs",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86"
-      ],
-      "installTestPath": "./.markdocs/MarkdocsService.exe"
-    },
-    {
-      "description": "docs-previewService for Windows (x64)",
-      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x64.zip",
-      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/win32_x64.zip",
-      "installPath": ".markdocs",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "installTestPath": "./.markdocs/MarkdocsService.exe"
-    },
-    {
-      "description": "docs-previewService for macOS (x64)",
-      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/darwin_x64.zip",
-      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/darwin_x64.zip",
-      "installPath": ".markdocs",
-      "platforms": [
-        "darwin"
-      ],
-      "binaries": [
-        "./MarkdocsService"
-      ],
-      "installTestPath": "./.markdocs/MarkdocsService"
-    },
-    {
-      "description": "docs-previewService for Linux (x64)",
-      "url": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/linux_x64.zip",
-      "fallbackUrl": "https://github.com/qinezh/markdocs-server/releases/download/v1.0.14/linux_x64.zip",
-      "installPath": ".markdocs",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "binaries": [
-        "./MarkdocsService"
-      ],
-      "installTestPath": "./.markdocs/MarkdocsService"
-    }
-  ]
+    "markdown-it": "^8.4.2",
+    "markdown-it-include": "^1.1.0",
+    "vscode-extension-telemetry": "^0.1.1"
+  }
 }

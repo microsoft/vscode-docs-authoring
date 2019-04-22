@@ -1,139 +1,64 @@
-import * as path from "path";
-import { commands, ExtensionContext, extensions, OutputChannel, Position, Range, Selection, TextEditorRevealType, Uri, window, workspace } from "vscode";
-import { DocumentContentProvider, isMarkdownFile } from "./provider";
-import { MarkdocsServer } from "./server";
-import * as util from "./util/common";
-import { Logger } from "./util/logger";
+"use strict";
 
-let channel: OutputChannel = null;
-let server: MarkdocsServer = null;
+import { readFileSync } from "fs";
+import { basename, resolve } from "path";
+import { commands, ExtensionContext, TextDocument, window } from "vscode";
+import { Reporter, reporter } from "./helper/telemetry";
 
-export async function activate(context: ExtensionContext) {
+export const output = window.createOutputChannel("docs-preview");
+export let extensionPath: string;
+export const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
+export const CODE_RE = /\[\!code-(.*)\[(.*)\]\((.*)\)\]/gmi;
 
-    const extensionId = "docsmsft.docs-preview";
-    const extension = extensions.getExtension(extensionId);
-
-    util.setExtensionPath(extension.extensionPath);
-
-    channel = window.createOutputChannel("docs-preview");
-    const logger = new Logger((text) => channel.append(text));
-
-    server = new MarkdocsServer(context);
-
-    const provider = new DocumentContentProvider(context);
-    await server.ensureRuntimeDependencies(extension, channel, logger);
-
-    await server.startMarkdocsServerAsync();
-
-    const registration = workspace.registerTextDocumentContentProvider(DocumentContentProvider.scheme, provider);
-
+export function activate(context: ExtensionContext) {
+    extensionPath = context.extensionPath;
+    context.subscriptions.push(new Reporter(context));
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
-        // preview(uri, ViewColumn.Two, provider);
         commands.executeCommand("markdown.showPreviewToSide");
+        reporter.sendTelemetryEvent(`preview.show-preview-to-side`, null, null);
     });
     const disposableStandalonePreview = commands.registerCommand("docs.showPreview", (uri) => {
-        // preview(uri, ViewColumn.One, provider);
         commands.executeCommand("markdown.showPreview");
+        reporter.sendTelemetryEvent(`preview.show-preview-tab`, null, null);
     });
-    const disposableDidClick = commands.registerCommand("docs.didClick", (uri, line) => {
-        click(uri, line);
-    });
-    const disposableRevealLink = commands.registerCommand("docs.revealLine", (uri, line) => {
-        reveal(uri, line);
-    });
-
     context.subscriptions.push(
         disposableSidePreview,
-        disposableStandalonePreview,
-        disposableDidClick,
-        disposableRevealLink,
-        registration);
-
-    context.subscriptions.push(workspace.onDidChangeTextDocument((event) => {
-        if (isMarkdownFile(event.document)) {
-            const uri = getPreviewUri(event.document.uri);
-            provider.update(uri);
+        disposableStandalonePreview);
+    return {
+        extendMarkdownIt(md) {
+            const filePath = window.activeTextEditor.document.fileName;
+            const workingPath = filePath.replace(basename(filePath), "");
+            return md.use(require("markdown-it-include"), { root: workingPath, includeRe: INCLUDE_RE })
+                .use(codeSnippets, { root: workingPath });
         }
-    }));
-
-    context.subscriptions.push(workspace.onDidSaveTextDocument((document) => {
-        if (isMarkdownFile(document)) {
-            const uri = getPreviewUri(document.uri);
-            provider.update(uri);
-        }
-    }));
-
-    context.subscriptions.push(window.onDidChangeTextEditorSelection((event) => {
-        if (isMarkdownFile(event.textEditor.document)) {
-            const markdownFile = getPreviewUri(event.textEditor.document.uri);
-
-            commands.executeCommand("_workbench.htmlPreview.postMessage",
-                markdownFile,
-                {
-                    line: event.selections[0].active.line,
-                });
-        }
-    }));
+    };
 }
 
+// this method is called when your extension is deactivated
 export function deactivate() {
-    return server.stopMarkdocsServerAsync();
+    output.appendLine("Deactivating extension.");
 }
 
-function getPreviewUri(uri: Uri) {
-    if (uri.scheme === DocumentContentProvider.scheme) {
-        return uri;
-    }
-
-    return uri.with({
-        path: uri.fsPath + ".rendered",
-        query: uri.toString(),
-        scheme: DocumentContentProvider.scheme,
-    });
+export function isMarkdownFile(document: TextDocument) {
+    return document.languageId === "markdown"; // prevent processing of own documents
 }
 
-function preview(uri: Uri, viewColumn: number, provider: DocumentContentProvider) {
-    if (window.activeTextEditor) {
-        uri = uri || window.activeTextEditor.document.uri;
-    }
+export function codeSnippets(md, options) {
+    const replaceCodeSnippetWithContents = (src, rootdir) => {
+        const captureGroup = CODE_RE.exec(src);
+        const filePath = resolve(rootdir, captureGroup[3].trim());
+        let mdSrc = readFileSync(filePath, "utf8");
+        mdSrc = `\`\`\`${captureGroup[1].trim()}\r\n${mdSrc}\r\n\`\`\``;
+        src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
+        return src;
+    };
 
-    if (!uri) {
-        return;
-    }
-
-    const previewUri = getPreviewUri(uri);
-    provider.update(previewUri);
-    return commands.executeCommand("vscode.previewHtml", previewUri, viewColumn, `view ${path.basename(uri.fsPath)}`);
-}
-
-function click(uri: string, line: number) {
-    const sourceUri = Uri.parse(decodeURIComponent(uri));
-    return workspace.openTextDocument(sourceUri)
-        .then((document) => window.showTextDocument(document))
-        .then((editor) =>
-            commands.executeCommand("revealLine", { lineNumber: Math.floor(line), at: "center" })
-                .then(() => editor))
-        .then((editor) => {
-            if (editor) {
-                editor.selection = new Selection(
-                    new Position(Math.floor(line), 0),
-                    new Position(Math.floor(line), 0));
-            }
-        });
-}
-
-function reveal(uri: string, line: number) {
-    const sourceUri = Uri.parse(decodeURIComponent(uri));
-
-    window.visibleTextEditors
-        .filter((editor) => isMarkdownFile(editor.document) && editor.document.uri.toString() === sourceUri.toString())
-        .forEach((editor) => {
-            const sourceLine = Math.floor(line);
-            const fraction = line - sourceLine;
-            const text = editor.document.lineAt(sourceLine).text;
-            const start = Math.floor(fraction * text.length);
-            editor.revealRange(
-                new Range(sourceLine, start, sourceLine + 1, 0),
-                TextEditorRevealType.AtTop);
-        });
+    const importCodeSnippet = (state) => {
+        try {
+            state.src = replaceCodeSnippetWithContents(state.src, options.root);
+        } catch (error) {
+            output.appendLine(error);
+        }
+    };
+    md.core.ruler.before("normalize", "codesnippet", importCodeSnippet);
 }
