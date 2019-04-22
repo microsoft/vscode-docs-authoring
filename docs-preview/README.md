@@ -23,6 +23,10 @@ If you also have the [Docs Markdown](https://marketplace.visualstudio.com/items?
 
 To install both Docs Preview and Docs Markdown, along with other useful extensions for authoring Markdown for docs.microsoft.com, install the [Docs Authoring Pack](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-authoring-pack).
 
+## Known Issues
+
+1. Alerts are styled incorrectly. A fix for this issue is under development.
+
 <!--
 ## Supported markdown snippets
 
