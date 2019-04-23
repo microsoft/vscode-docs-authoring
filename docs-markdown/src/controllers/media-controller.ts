@@ -3,8 +3,8 @@
 import * as vscode from "vscode";
 import { insertBookmarkExternal, insertBookmarkInternal } from "../controllers/bookmark-controller";
 import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, setCursorPosition } from "../helper/common";
+import { reporter } from "../helper/telemetry";
 import { externalLinkBuilder, internalLinkBuilder, videoLinkBuilder } from "../helper/utility";
-import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommandMedia: string = "insertMedia";
 const telemetryCommandLink: string = "insertLink";
@@ -30,7 +30,7 @@ export const headingTextRegex = /^(#+)[\s](.*)[\r]?[\n]/gm;
 export const yamlTextRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
 
 export function insertVideo() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommandMedia + ".video" });
+    reporter.sendTelemetryEvent(`${telemetryCommandMedia}.video`, undefined, undefined);
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -57,7 +57,7 @@ export function insertVideo() {
  * Creates an external URL with the current selection.
  */
 export function insertURL() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommandLink + ".external" });
+    reporter.sendTelemetryEvent(`${telemetryCommandLink}.external`, undefined, undefined);
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
@@ -102,7 +102,7 @@ export function insertLink() {
  * Triggers the insert function and passes in the true value to signify it is an art insert.
  */
 export function insertImage() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommandMedia + ".art" });
+    reporter.sendTelemetryEvent(`${telemetryCommandMedia}.art`, undefined, undefined);
     Insert(true);
 }
 
@@ -223,7 +223,7 @@ export function Insert(isArt: any) {
             actionType = "Art";
         } else {
             actionType = "Link";
-            reporter.sendTelemetryEvent("command", { command: telemetryCommandLink + ".internal" });
+            reporter.sendTelemetryEvent(`${telemetryCommandLink}.internal`, undefined, undefined);
         }
 
         // checks for valid environment

@@ -6,7 +6,7 @@ import { basename, dirname, extname, join, relative, resolve } from "path";
 import { QuickPickItem, window, workspace } from "vscode";
 import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/bookmark-builder";
 import { insertContentToEditor, noActiveEditorMessage } from "../helper/common";
-import { reporter } from "../telemetry/telemetry";
+import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertBookmark";
 const markdownExtensionFilter = [".md"];
@@ -26,7 +26,7 @@ export function insertBookmarkCommands() {
  * Creates a bookmark to another file at the cursor position
  */
 export function insertBookmarkExternal() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".external" });
+    reporter.sendTelemetryEvent(`${telemetryCommand}.external`, undefined, undefined);
     let folderPath: string = "";
     let fullPath: string = "";
 
@@ -113,7 +113,7 @@ export function insertBookmarkExternal() {
  * Creates a bookmark at the current cursor position
  */
 export function insertBookmarkInternal() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".internal" });
+    reporter.sendTelemetryEvent(`${telemetryCommand}.internal`, undefined, undefined);
     const editor = window.activeTextEditor;
     if (!editor) {
         return;

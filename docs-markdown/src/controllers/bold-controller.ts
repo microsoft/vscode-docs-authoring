@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBold, isBoldAndItalic } from "../helper/format-styles";
-import { reporter } from "../telemetry/telemetry";
+import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "formatBold";
 
@@ -19,7 +19,7 @@ export function boldFormattingCommand() {
  * Replaces current selection with MD bold formated selection
  */
 export function formatBold() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
+    reporter.sendTelemetryEvent(`${telemetryCommand}`, undefined, undefined);
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
