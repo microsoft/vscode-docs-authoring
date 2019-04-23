@@ -355,7 +355,7 @@
     ]
   },
   "jest-junit": {
-    "output": "test-results.xml",
+    "output": "test-results-jest.xml",
     "usePathForSuiteName": "true"
   },
   "license": "MIT"

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Mocha Tests" time="0" tests="1" failures="0">
-  <testsuite name="Root Suite" timestamp="2019-04-23T17:55:41" tests="0" failures="0" time="0">
-  </testsuite>
-  <testsuite name="Ensure Chai Mocha Test Samples Run Correctly" timestamp="2019-04-23T17:55:41" tests="1" file="C:\Users\brharney\source\repos\vscode-docs-authoring\docs-markdown\test\extension.test.ts" failures="0" time="0">
-    <testcase name="Ensure Chai Mocha Test Samples Run Correctly Hey, true returns true! Incredible." time="0" classname="Hey, true returns true! Incredible.">
-    </testcase>
-  </testsuite>
-</testsuites>
