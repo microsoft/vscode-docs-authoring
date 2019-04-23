@@ -304,11 +304,11 @@
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test --reporter mocha-junit-reporter --reporter-options mochaFile=./test-results-mocha.xml && jest tests ./test/markdownlint-custom-rules",
-    "test-rules": "jest tests ./test/markdownlint-custom-rules",
-    "test-core": "node ./node_modules/vscode/bin/test --reporter mocha-junit-reporter --reporter-options mochaFile=./test-results-mocha.xml"
+    "test": "jest",
+    "test-rules": "jest tests ./test/markdownlint-custom-rules"
   },
   "dependencies": {
     "diff": "^4.0.1",
@@ -328,6 +328,7 @@
   "devDependencies": {
     "@types/chai": "^3.4.34",
     "@types/graceful-fs": "^2.0.30",
+    "@types/jest": "^23.3.13",
     "@types/lodash.merge": "^4.6.3",
     "@types/mocha": "^2.2.48",
     "@types/node": "^7.0.61",
@@ -340,12 +341,20 @@
     "mocha": "^5.2.0",
     "mocha-junit-reporter": "^1.22.0",
     "octicons": "^7.3.0",
-    "ts-node": "^8.1.0",
+    "ts-jest": "^24.0.2",
     "tslint": "^5.9.1",
     "typescript": "^2.8.3",
     "vscode": "^1.1.33"
   },
   "jest": {
+    "preset": "ts-jest",
+    "roots": [
+      "test"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
     "coverageReporters": [
       "text"
     ],
@@ -355,7 +364,7 @@
     ]
   },
   "jest-junit": {
-    "output": "test-results-jest.xml",
+    "output": "test-results.xml",
     "usePathForSuiteName": "true"
   },
   "license": "MIT"

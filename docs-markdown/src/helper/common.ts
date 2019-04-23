@@ -1,7 +1,7 @@
 "use-strict";
 
 import os = require("os");
-import * as vscode from "vscode";
+import { window, TextEditor, workspace, Selection, Range, extensions } from "vscode";
 import { output } from "../extension";
 import * as log from "./log";
 
@@ -22,7 +22,7 @@ export function getOSPlatform(this: any) {
  */
 export function postWarning(message: string) {
     log.debug(message);
-    vscode.window.showWarningMessage(message);
+    window.showWarningMessage(message);
 }
 
 /**
@@ -31,7 +31,7 @@ export function postWarning(message: string) {
  */
 export function postInformation(message: string) {
     log.debug(message);
-    vscode.window.showInformationMessage(message);
+    window.showInformationMessage(message);
 }
 
 /**
@@ -40,7 +40,7 @@ export function postInformation(message: string) {
  */
 export function postError(message: string) {
     log.debug(message);
-    vscode.window.showErrorMessage(message);
+    window.showErrorMessage(message);
 }
 
 /**
@@ -50,7 +50,7 @@ export function postError(message: string) {
  * @param {boolean} testSelection - test to see if the selection includes text in addition to testing a editor is open.
  * @param {string} senderName - the name of the command running the test.
  */
-export function isValidEditor(editor: vscode.TextEditor, testSelection: boolean, senderName: string) {
+export function isValidEditor(editor: TextEditor, testSelection: boolean, senderName: string) {
     if (editor === undefined) {
         log.error("Please open a document to apply " + senderName + " to.");
         return false;
@@ -73,7 +73,7 @@ export function noActiveEditorMessage() {
     postWarning("No active editor. Abandoning command.");
 }
 
-export function GetEditorText(editor: vscode.TextEditor, senderName: string): string {
+export function GetEditorText(editor: TextEditor, senderName: string): string {
     let content = "";
     const emptyString = "";
     if (isValidEditor(editor, false, senderName)) {
@@ -87,7 +87,7 @@ export function GetEditorText(editor: vscode.TextEditor, senderName: string): st
     return emptyString;
 }
 
-export function GetEditorFileName(editor: vscode.TextEditor, senderName: string): string {
+export function GetEditorFileName(editor: TextEditor, senderName: string): string {
     const emptyString = "";
     if (editor !== undefined && editor.document !== undefined) {
         const fileName = editor.document.fileName;
@@ -112,7 +112,7 @@ export function hasContentAlready(editor: any) {
 }
 
 export function hasValidWorkSpaceRootPath(senderName: string) {
-    const folderPath = vscode.workspace.rootPath;
+    const folderPath = workspace.rootPath;
 
     if (folderPath == null) {
         postWarning("The " + senderName + " command requires an active workspace. Please open VS Code from the root of your clone to continue.");
@@ -134,7 +134,7 @@ export function hasValidWorkSpaceRootPath(senderName: string) {
  * If provided will insert or update at the given range.
  */
 
-export function insertContentToEditor(editor: vscode.TextEditor, senderName: string, content: string, overwrite: boolean = false, selection: vscode.Range = null!) {
+export function insertContentToEditor(editor: TextEditor, senderName: string, content: string, overwrite: boolean = false, selection: Range = null!) {
     log.debug("Adding content to the active editor: " + content);
 
     if (selection == null) {
@@ -167,7 +167,7 @@ export function insertContentToEditor(editor: vscode.TextEditor, senderName: str
  * @param {string} senderName - the name of the the function that called the removal
  * @param {string} content - the content that is being removed.
  */
-export function removeContentFromEditor(editor: vscode.TextEditor, senderName: string, content: string) {
+export function removeContentFromEditor(editor: TextEditor, senderName: string, content: string) {
     try {
         editor.edit((update) => {
             update.delete(editor.selection);
@@ -184,22 +184,22 @@ export function removeContentFromEditor(editor: vscode.TextEditor, senderName: s
  * @param {number} yPosition -
  * @param {number} xPosition -
  */
-export function setCursorPosition(editor: vscode.TextEditor, yPosition: number, xPosition: number) {
+export function setCursorPosition(editor: TextEditor, yPosition: number, xPosition: number) {
     const cursorPosition = editor.selection.active;
     const newPosition = cursorPosition.with(yPosition, xPosition);
-    const newSelection = new vscode.Selection(newPosition, newPosition);
+    const newSelection = new Selection(newPosition, newPosition);
     editor.selection = newSelection;
 }
 
-export function setSelectorPosition(editor: vscode.TextEditor, fromLine: number, fromCharacter: number, toLine: number, toCharacter: number) {
+export function setSelectorPosition(editor: TextEditor, fromLine: number, fromCharacter: number, toLine: number, toCharacter: number) {
     const cursorPosition = editor.selection.active;
     const fromPosition = cursorPosition.with(fromLine, fromCharacter);
     const toPosition = cursorPosition.with(toLine, toCharacter);
-    const newSelection = new vscode.Selection(fromPosition, toPosition);
+    const newSelection = new Selection(fromPosition, toPosition);
     editor.selection = newSelection;
 }
 
-export function setNewPosition(editor: vscode.TextEditor, offset: number, startLine: number, endLine: number) {
+export function setNewPosition(editor: TextEditor, offset: number, startLine: number, endLine: number) {
     const selection = editor.selection;
     let newCursorPosition = selection.active.character + offset;
     newCursorPosition = newCursorPosition < 0 ? 0 : newCursorPosition;
@@ -250,7 +250,7 @@ export function rtrim(str: string, chr: string) {
  * Commands should only run on markdown files.
  * @param {vscode.TextEditor} editor - the active editor in vs code.
  */
-export function isMarkdownFileCheck(editor: vscode.TextEditor, languageId: boolean) {
+export function isMarkdownFileCheck(editor: TextEditor, languageId: boolean) {
     if (editor.document.languageId !== "markdown") {
         postInformation("The docs-markdown extension only works on Markdown files.");
         return false;
@@ -281,7 +281,7 @@ export function generateTimestamp() {
  * Check for active extensions
  */
 export function checkExtension(extensionName: string, notInstalledMessage?: string) {
-    const extensionValue = vscode.extensions.getExtension(extensionName);
+    const extensionValue = extensions.getExtension(extensionName);
     if (!extensionValue) {
         if (notInstalledMessage) {
             output.appendLine(notInstalledMessage);

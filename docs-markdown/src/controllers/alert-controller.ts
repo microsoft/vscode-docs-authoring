@@ -1,6 +1,6 @@
 "use strict";
 
-import * as vscode from "vscode";
+import { window } from "vscode";
 import { AlertTags } from "../constants/alert-tags";
 import { AlertType } from "../constants/alert-type";
 import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
@@ -19,7 +19,7 @@ export function insertAlertCommand() {
  * Formats current selection as an alert
  */
 export function insertAlert() {
-    const editor = vscode.window.activeTextEditor;
+    const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -39,7 +39,7 @@ export function insertAlert() {
             "Caution - Negative potential consequences of an action",
             "Warning – Dangerous certain consequences of an action",
         ];
-        vscode.window.showQuickPick(alertTypes).then((qpSelection) => {
+        window.showQuickPick(alertTypes).then((qpSelection) => {
             if (!qpSelection) {
                 return;
             } else {

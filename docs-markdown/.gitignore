@@ -294,5 +294,4 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-test-results-jest.xml
-test-results-mocha.xml
+test-results.xml

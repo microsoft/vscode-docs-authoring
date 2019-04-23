@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { isBold, isBoldAndItalic, isInlineCode, isItalic, isMultiLineCode } from "../../src/helper/format-styles";
 
 /* tslint:disable:no-unused-expression */
@@ -19,18 +18,18 @@ describe("Format style type checking,", () => {
 
         it("returns true if text is inline code in any way.", () => {
 
-            expect(isInlineCode(inlineCode)).to.be.true;
-            expect(isInlineCode(multilineCode)).to.be.true;
+            expect(isInlineCode(inlineCode)).toBe(true);
+            expect(isInlineCode(multilineCode)).toBe(true);
         });
 
         it("returns false if there is no inline code formatting in the text.", () => {
 
-            expect(isInlineCode(bolded)).to.be.false;
-            expect(isInlineCode(mulitlineBolded)).to.be.false;
-            expect(isInlineCode(italized)).to.be.false;
-            expect(isInlineCode(italizedMultiline)).to.be.false;
-            expect(isInlineCode(non)).to.be.false;
-            expect(isInlineCode(nonMultiline)).to.be.false;
+            expect(isInlineCode(bolded)).toBe(false);
+            expect(isInlineCode(mulitlineBolded)).toBe(false);
+            expect(isInlineCode(italized)).toBe(false);
+            expect(isInlineCode(italizedMultiline)).toBe(false);
+            expect(isInlineCode(non)).toBe(false);
+            expect(isInlineCode(nonMultiline)).toBe(false);
         });
     });
 
@@ -38,17 +37,17 @@ describe("Format style type checking,", () => {
 
         it("returns true if text is a code block.", () => {
 
-            expect(isMultiLineCode(multilineCode)).to.be.true;
+            expect(isMultiLineCode(multilineCode)).toBe(true);
         });
 
         it("returns false if there is no code block.", () => {
 
-            expect(isMultiLineCode(bolded)).to.be.false;
-            expect(isMultiLineCode(mulitlineBolded)).to.be.false;
-            expect(isMultiLineCode(italized)).to.be.false;
-            expect(isMultiLineCode(italizedMultiline)).to.be.false;
-            expect(isMultiLineCode(non)).to.be.false;
-            expect(isMultiLineCode(nonMultiline)).to.be.false;
+            expect(isMultiLineCode(bolded)).toBe(false);
+            expect(isMultiLineCode(mulitlineBolded)).toBe(false);
+            expect(isMultiLineCode(italized)).toBe(false);
+            expect(isMultiLineCode(italizedMultiline)).toBe(false);
+            expect(isMultiLineCode(non)).toBe(false);
+            expect(isMultiLineCode(nonMultiline)).toBe(false);
         });
     });
 
@@ -56,16 +55,16 @@ describe("Format style type checking,", () => {
 
         it("returns true if text is bold in any way.", () => {
 
-            expect(isBold(bolded)).to.be.true;
-            expect(isBold(mulitlineBolded)).to.be.true;
+            expect(isBold(bolded)).toBe(true);
+            expect(isBold(mulitlineBolded)).toBe(true);
         });
 
         it("returns false if there is no bold formatting in the text.", () => {
 
-            expect(isBold(italized)).to.be.false;
-            expect(isBold(non)).to.be.false;
-            expect(isBold(italizedMultiline)).to.be.false;
-            expect(isBold(nonMultiline)).to.be.false;
+            expect(isBold(italized)).toBe(false);
+            expect(isBold(non)).toBe(false);
+            expect(isBold(italizedMultiline)).toBe(false);
+            expect(isBold(nonMultiline)).toBe(false);
         });
 
     });
@@ -74,22 +73,22 @@ describe("Format style type checking,", () => {
 
         it("returns true if text is italic in any way.", () => {
 
-            expect(isItalic(italized)).to.be.true;
-            expect(isItalic(italizedMultiline)).to.be.true;
+            expect(isItalic(italized)).toBe(true);
+            expect(isItalic(italizedMultiline)).toBe(true);
         });
 
         it("returns false if there is no italic formatting in the text.", () => {
 
-            expect(isItalic(bolded)).to.be.false;
-            expect(isItalic(mulitlineBolded)).to.be.false;
-            expect(isItalic(non)).to.be.false;
-            expect(isItalic(nonMultiline)).to.be.false;
+            expect(isItalic(bolded)).toBe(false);
+            expect(isItalic(mulitlineBolded)).toBe(false);
+            expect(isItalic(non)).toBe(false);
+            expect(isItalic(nonMultiline)).toBe(false);
         });
 
         it("return true if the text is both bold and italic", () => {
 
-            expect(isItalic(boldAndItalic)).to.be.true;
-            expect(isItalic(boldAndItalicMultiline)).to.be.true;
+            expect(isItalic(boldAndItalic)).toBe(true);
+            expect(isItalic(boldAndItalicMultiline)).toBe(true);
         });
     });
 
@@ -97,26 +96,26 @@ describe("Format style type checking,", () => {
 
         it("returns true if text is both bold and italic.", () => {
 
-            expect(isBoldAndItalic(boldAndItalic)).to.be.true;
-            expect(isBoldAndItalic(boldAndItalicMultiline)).to.be.true;
+            expect(isBoldAndItalic(boldAndItalic)).toBe(true);
+            expect(isBoldAndItalic(boldAndItalicMultiline)).toBe(true);
         });
 
         it("returns false the text is only bold", () => {
 
-            expect(isBoldAndItalic(bolded)).to.be.false;
-            expect(isBoldAndItalic(mulitlineBolded)).to.be.false;
+            expect(isBoldAndItalic(bolded)).toBe(false);
+            expect(isBoldAndItalic(mulitlineBolded)).toBe(false);
         });
 
         it("returns false the text is only italic", () => {
 
-            expect(isBoldAndItalic(italized)).to.be.false;
-            expect(isBoldAndItalic(italizedMultiline)).to.be.false;
+            expect(isBoldAndItalic(italized)).toBe(false);
+            expect(isBoldAndItalic(italizedMultiline)).toBe(false);
         });
 
         it("returns false the text is not formatted", () => {
 
-            expect(isBoldAndItalic(non)).to.be.false;
-            expect(isBoldAndItalic(nonMultiline)).to.be.false;
+            expect(isBoldAndItalic(non)).toBe(false);
+            expect(isBoldAndItalic(nonMultiline)).toBe(false);
         });
     });
 });

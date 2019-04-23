@@ -1,6 +1,6 @@
 "use strict";
 
-import * as vscode from "vscode";
+import { window, Range } from "vscode";
 import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBold, isBoldAndItalic } from "../helper/format-styles";
@@ -20,7 +20,7 @@ export function boldFormattingCommand() {
  */
 export function formatBold() {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
-    const editor = vscode.window.activeTextEditor;
+    const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -38,7 +38,7 @@ export function formatBold() {
             const cursorPosition = editor.selection.active;
 
             // assumes the range of bold syntax
-            range = new vscode.Range(cursorPosition.with(cursorPosition.line,
+            range = new Range(cursorPosition.with(cursorPosition.line,
                 cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
                 cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
 
@@ -47,7 +47,7 @@ export function formatBold() {
             insertUnselectedText(editor, formatBold.name, formattedText, range);
         } else {
             const cursorPosition = editor.selection.active;
-            range = new vscode.Range(cursorPosition.with(cursorPosition.line,
+            range = new Range(cursorPosition.with(cursorPosition.line,
                 cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
                 cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
             // calls formatter and returns selectedText as MD Bold
@@ -62,7 +62,7 @@ export function formatBold() {
  * @param {string} content - selected text
  * @param {vscode.Range} range - If provided will get the text at the given range.
  */
-export function bold(content: string, range?: vscode.Range) {
+export function bold(content: string, range?: Range) {
     // Clean up string if it is already formatted
     const selectedText = content.trim();
 

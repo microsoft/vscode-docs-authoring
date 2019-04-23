@@ -12,7 +12,10 @@
             "es6",
         ],
         "sourceMap": true,
-        "rootDir": "."
+        "rootDir": "src",
+        "types": [
+            "jest"
+        ]
     },
     "exclude": [
         "node_modules",
