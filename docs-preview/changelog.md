@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.3.18 (TBD)
+## 0.3.18 (April 22nd, 2019)
 
 - Add basic usage data
 - Bug fixes
