@@ -20,7 +20,7 @@ export function codeFormattingCommand() {
  * Replaces current single or multiline selection with MD code formated selection
  */
 export function formatCode() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();

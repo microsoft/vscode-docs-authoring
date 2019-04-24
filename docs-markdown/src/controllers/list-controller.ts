@@ -28,7 +28,7 @@ export function insertListsCommands() {
  * Creates a numbered (numerical) list in the vscode editor.
  */
 export function insertNumberedList() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}.numbered`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommand}.numbered`);
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
@@ -55,7 +55,7 @@ export function insertNumberedList() {
  * Creates a bulleted (dash) list in the vscode editor.
  */
 export function insertBulletedList() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}.bulleted`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommand}.bulleted`);
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {

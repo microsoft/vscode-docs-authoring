@@ -45,7 +45,7 @@ export function insertTable() {
                 const row = Number.parseInt(size[1]);
                 const str = tableBuilder(col, row);
                 const logTableMessage = "." + col + ":" + row;
-                reporter.sendTelemetryEvent(`${telemetryCommand}${logTableMessage}`, undefined, undefined);
+                reporter.sendTelemetryEvent(`${telemetryCommand}${logTableMessage}`);
 
                 insertContentToEditor(editor, insertTable.name, str);
             } else {

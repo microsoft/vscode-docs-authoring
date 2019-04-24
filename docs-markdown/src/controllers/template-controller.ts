@@ -14,7 +14,7 @@ export function applyTemplateCommand() {
 }
 
 export function applyTemplate() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
     const extensionName = "docsmsft.docs-article-templates";
     const { msTimeValue } = generateTimestamp();
     const friendlyName = "docsmsft.docs-article-templates".split(".").reverse()[0];

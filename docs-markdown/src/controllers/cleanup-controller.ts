@@ -83,23 +83,23 @@ export function applyCleanup() {
                         switch (selection.label.toLowerCase()) {
                             case "single-valued metadata":
                                 handleSingleValuedMetadata(workspacePath, progress, resolve);
-                                reporter.sendTelemetryEvent(`${telemetryCommand}.singleValue`, undefined, undefined);
+                                reporter.sendTelemetryEvent(`${telemetryCommand}.singleValue`);
                                 break;
                             case "microsoft links":
                                 microsoftLinks(workspacePath, progress, resolve);
-                                reporter.sendTelemetryEvent(`${telemetryCommand}.links`, undefined, undefined);
+                                reporter.sendTelemetryEvent(`${telemetryCommand}.links`);
                                 break;
                             case "capitalization of metadata values":
                                 capitalizationOfMetadata(workspacePath, progress, resolve);
-                                reporter.sendTelemetryEvent(`${telemetryCommand}.capitalization`, undefined, undefined);
+                                reporter.sendTelemetryEvent(`${telemetryCommand}.capitalization`);
                                 break;
                             case "master redirection file":
                                 generateMasterRedirectionFile(workspacePath, resolve);
-                                reporter.sendTelemetryEvent(`${telemetryCommand}.redirects`, undefined, undefined);
+                                reporter.sendTelemetryEvent(`${telemetryCommand}.redirects`);
                                 break;
                             case "everything":
                                 runAll(workspacePath, progress, resolve);
-                                reporter.sendTelemetryEvent(`${telemetryCommand}.all`, undefined, undefined);
+                                reporter.sendTelemetryEvent(`${telemetryCommand}.all`);
                                 break;
                         }
                     }

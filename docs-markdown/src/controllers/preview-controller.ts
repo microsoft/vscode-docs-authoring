@@ -14,7 +14,7 @@ export function previewTopicCommand() {
 }
 
 export function previewTopic() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {

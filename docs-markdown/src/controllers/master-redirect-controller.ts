@@ -64,7 +64,7 @@ function showStatusMessage(message: string) {
 }
 
 export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
     const editor = window.activeTextEditor;
     let workspacePath: string;
     if (editor) {

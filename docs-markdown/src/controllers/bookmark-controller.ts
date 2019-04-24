@@ -26,7 +26,7 @@ export function insertBookmarkCommands() {
  * Creates a bookmark to another file at the cursor position
  */
 export function insertBookmarkExternal() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}.external`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommand}.external`);
     let folderPath: string = "";
     let fullPath: string = "";
 
@@ -113,7 +113,7 @@ export function insertBookmarkExternal() {
  * Creates a bookmark at the current cursor position
  */
 export function insertBookmarkInternal() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}.internal`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommand}.internal`);
     const editor = window.activeTextEditor;
     if (!editor) {
         return;

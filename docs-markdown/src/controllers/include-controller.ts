@@ -19,7 +19,7 @@ export function insertIncludeCommand() {
  * transforms the current selection into an include.
  */
 export function insertInclude() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
 
     const path = require("path");
     const dir = require("node-dir");

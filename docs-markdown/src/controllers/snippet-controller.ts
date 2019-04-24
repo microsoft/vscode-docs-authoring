@@ -19,7 +19,7 @@ export function insertSnippetCommand() {
  * Creates a snippet at the current cursor position.
  */
 export function insertSnippet() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {

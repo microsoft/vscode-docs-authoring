@@ -30,7 +30,7 @@ export const headingTextRegex = /^(#+)[\s](.*)[\r]?[\n]/gm;
 export const yamlTextRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
 
 export function insertVideo() {
-    reporter.sendTelemetryEvent(`${telemetryCommandMedia}.video`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommandMedia}.video`);
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -57,7 +57,7 @@ export function insertVideo() {
  * Creates an external URL with the current selection.
  */
 export function insertURL() {
-    reporter.sendTelemetryEvent(`${telemetryCommandLink}.external`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommandLink}.external`);
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
@@ -102,7 +102,7 @@ export function insertLink() {
  * Triggers the insert function and passes in the true value to signify it is an art insert.
  */
 export function insertImage() {
-    reporter.sendTelemetryEvent(`${telemetryCommandMedia}.art`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommandMedia}.art`);
     Insert(true);
 }
 
@@ -223,7 +223,7 @@ export function Insert(isArt: any) {
             actionType = "Art";
         } else {
             actionType = "Link";
-            reporter.sendTelemetryEvent(`${telemetryCommandLink}.internal`, undefined, undefined);
+            reporter.sendTelemetryEvent(`${telemetryCommandLink}.internal`);
         }
 
         // checks for valid environment

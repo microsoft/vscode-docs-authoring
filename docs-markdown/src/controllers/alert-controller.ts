@@ -48,19 +48,19 @@ export function insertAlert() {
             if (editor) {
                 insertContentToEditor(editor, insertAlert.name, formattedText, true);
                 if (qpSelection.startsWith("Note")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.note`, undefined, undefined);
+                    reporter.sendTelemetryEvent(`${telemetryCommand}.note`);
                 }
                 if (qpSelection.startsWith("Tip")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.tip`, undefined, undefined);
+                    reporter.sendTelemetryEvent(`${telemetryCommand}.tip`);
                 }
                 if (qpSelection.startsWith("Important")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.important`, undefined, undefined);
+                    reporter.sendTelemetryEvent(`${telemetryCommand}.important`);
                 }
                 if (qpSelection.startsWith("Caution")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.caution`, undefined, undefined);
+                    reporter.sendTelemetryEvent(`${telemetryCommand}.caution`);
                 }
                 if (qpSelection.startsWith("Warning")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.warning`, undefined, undefined);
+                    reporter.sendTelemetryEvent(`${telemetryCommand}.warning`);
                 }
             }
         });

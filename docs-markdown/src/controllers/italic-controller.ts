@@ -19,7 +19,7 @@ export function italicFormattingCommand() {
  * Replaces current selection with MD italic formated selection
  */
 export function formatItalic() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`, undefined, undefined);
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
