@@ -2,7 +2,7 @@ const markdownlint = require('markdownlint');
 const securelinks = require('../../markdownlint-custom-rules/securelinks');
 const errorDetailStrings = require("../../markdownlint-custom-rules/strings");
 
-test('validate extension', () => {
+test('Secure Links markdown lint', () => {
     const src = `${__dirname}/test-content/securelinks.md`;
     const results = markdownlint.sync({
         customRules: securelinks,

@@ -2,7 +2,7 @@ const markdownlint = require('markdownlint');
 const moniker = require('../../markdownlint-custom-rules/moniker');
 const errorDetailStrings = require("../../markdownlint-custom-rules/strings");
 
-test('validate extension', () => {
+test('Moniker markdown lint', () => {
     const src = `${__dirname}/test-content/markdown-extensions.md`;
     const results = markdownlint.sync({
         customRules: moniker,
