@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.5 (TBD)
+
+- Telemetry: basic usage data
+
 ## 0.2.4 (April 17th, 2019)
 
 - Bookmark update

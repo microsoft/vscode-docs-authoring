@@ -21,10 +21,11 @@ import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
 import { insertTableCommand } from "./controllers/table-controller";
 import { checkExtension, generateTimestamp } from "./helper/common";
+import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
-import { Reporter } from "./telemetry/telemetry";
 
 export const output = window.createOutputChannel("docs-markdown");
+export let extensionPath: string;
 
 /**
  * Provides the commands to the extension. This method is called when extension is activated.
@@ -35,6 +36,8 @@ export const output = window.createOutputChannel("docs-markdown");
  * param {vscode.ExtensionContext} the context the extension runs in, provided by vscode on activation of the extension.
  */
 export function activate(context: ExtensionContext) {
+    extensionPath = context.extensionPath;
+    context.subscriptions.push(new Reporter(context));
     const { msTimeValue } = generateTimestamp();
     output.appendLine(`[${msTimeValue}] - Activating docs markdown extension.`);
 
