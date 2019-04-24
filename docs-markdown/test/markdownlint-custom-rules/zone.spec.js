@@ -2,7 +2,7 @@ const markdownlint = require('markdownlint');
 const zone = require('../../markdownlint-custom-rules/zone');
 const errorDetailStrings = require("../../markdownlint-custom-rules/strings");
 
-test('validate extension', () => {
+test('Zone markdown lint', () => {
     const src = `${__dirname}/test-content/markdown-extensions.md`;
     const results = markdownlint.sync({
         customRules: zone,
