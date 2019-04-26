@@ -2,7 +2,7 @@ const markdownlint = require('markdownlint');
 const alert = require('../../markdownlint-custom-rules/alert');
 const errorDetailStrings = require("../../markdownlint-custom-rules/strings");
 
-test('validate extension', () => {
+test('Alert markdown lint', () => {
     const src = `${__dirname}/test-content/alerts.md`;
     const results = markdownlint.sync({
         customRules: alert,

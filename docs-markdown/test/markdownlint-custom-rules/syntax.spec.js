@@ -2,7 +2,7 @@ const markdownlint = require('markdownlint');
 const syntax = require('../../markdownlint-custom-rules/syntax');
 const errorDetailStrings = require("../../markdownlint-custom-rules/strings");
 
-test('validate extension', () => {
+test('Syntax markdown lint', () => {
     const src = `${__dirname}/test-content/markdown-extensions.md`;
     const results = markdownlint.sync({
         customRules: syntax,

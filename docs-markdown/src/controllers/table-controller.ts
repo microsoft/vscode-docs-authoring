@@ -3,8 +3,8 @@
 import * as vscode from "vscode";
 import { output } from "../extension";
 import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { reporter } from "../helper/telemetry";
 import { tableBuilder, validateTableRowAndColumnCount } from "../helper/utility";
-import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "insertTable";
 
@@ -45,7 +45,7 @@ export function insertTable() {
                 const row = Number.parseInt(size[1]);
                 const str = tableBuilder(col, row);
                 const logTableMessage = "." + col + ":" + row;
-                reporter.sendTelemetryEvent("command", { command: telemetryCommand + logTableMessage });
+                reporter.sendTelemetryEvent(`${telemetryCommand}${logTableMessage}`);
 
                 insertContentToEditor(editor, insertTable.name, str);
             } else {

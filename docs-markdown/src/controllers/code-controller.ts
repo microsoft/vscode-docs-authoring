@@ -5,7 +5,7 @@ import { DocsCodeLanguages } from "../constants/docs-code-languages";
 import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
-import { reporter } from "../telemetry/telemetry";
+import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "formatCode";
 
@@ -20,7 +20,7 @@ export function codeFormattingCommand() {
  * Replaces current single or multiline selection with MD code formated selection
  */
 export function formatCode() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();

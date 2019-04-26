@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 import { checkExtension, generateTimestamp, getOSPlatform, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
-import { reporter } from "../telemetry/telemetry";
+import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "previewTopic";
 
@@ -14,7 +14,7 @@ export function previewTopicCommand() {
 }
 
 export function previewTopic() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
