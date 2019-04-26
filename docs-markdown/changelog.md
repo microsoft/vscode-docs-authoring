@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.5 (TBD)
+## 0.2.5 (April 26th, 2019)
 
 - Telemetry: basic usage data
 
