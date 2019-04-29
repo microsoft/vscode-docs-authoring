@@ -331,7 +331,6 @@
     "@types/graceful-fs": "^2.0.30",
     "@types/jest": "^23.3.13",
     "@types/lodash.merge": "^4.6.3",
-    "@types/mocha": "^2.2.48",
     "@types/node": "^7.0.61",
     "@types/node-dir": "0.0.32",
     "@types/recursive-readdir": "^2.2.0",
