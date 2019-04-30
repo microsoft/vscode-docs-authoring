@@ -4,12 +4,12 @@ import * as fs from "fs";
 import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
-import { window, workspace, Uri, WorkspaceFolder } from "vscode";
+import { Uri, window, workspace, WorkspaceFolder } from "vscode";
 import YAML = require("yamljs");
 import { output } from "../extension";
 import { generateTimestamp, postError } from "../helper/common";
+import { reporter } from "../helper/telemetry";
 import * as yamlMetadata from "../helper/yaml-metadata";
-import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "masterRedirect";
 
@@ -64,9 +64,9 @@ function showStatusMessage(message: string) {
 }
 
 export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
     const editor = window.activeTextEditor;
-    let workspacePath: string
+    let workspacePath: string;
     if (editor) {
         const resource = editor.document.uri;
         let folder = workspace.getWorkspaceFolder(resource);

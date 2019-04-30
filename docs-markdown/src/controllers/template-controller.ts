@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 import { checkExtension, generateTimestamp } from "../helper/common";
-import { reporter } from "../telemetry/telemetry";
+import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "applyTemplate";
 
@@ -14,7 +14,7 @@ export function applyTemplateCommand() {
 }
 
 export function applyTemplate() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
     const extensionName = "docsmsft.docs-article-templates";
     const { msTimeValue } = generateTimestamp();
     const friendlyName = "docsmsft.docs-article-templates".split(".").reverse()[0];

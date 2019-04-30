@@ -2,8 +2,8 @@
 
 import * as vscode from "vscode";
 import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { reporter } from "../helper/telemetry";
 import { includeBuilder } from "../helper/utility";
-import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "insertInclude";
 const markdownExtensionFilter = [".md"];
@@ -19,7 +19,7 @@ export function insertIncludeCommand() {
  * transforms the current selection into an include.
  */
 export function insertInclude() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
 
     const path = require("path");
     const dir = require("node-dir");

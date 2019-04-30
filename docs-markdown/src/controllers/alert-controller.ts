@@ -46,21 +46,20 @@ export function insertAlert() {
             }
             if (editor) {
                 insertContentToEditor(editor, insertAlert.name, formattedText, true);
-
                 if (qpSelection.startsWith("Note")) {
-                    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".note" });
+                    reporter.sendTelemetryEvent(`${telemetryCommand}.note`);
                 }
                 if (qpSelection.startsWith("Tip")) {
-                    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".tip" });
+                    reporter.sendTelemetryEvent(`${telemetryCommand}.tip`);
                 }
                 if (qpSelection.startsWith("Important")) {
-                    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".important" });
+                    reporter.sendTelemetryEvent(`${telemetryCommand}.important`);
                 }
                 if (qpSelection.startsWith("Caution")) {
-                    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".caution" });
+                    reporter.sendTelemetryEvent(`${telemetryCommand}.caution`);
                 }
                 if (qpSelection.startsWith("Warning")) {
-                    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".warning" });
+                    reporter.sendTelemetryEvent(`${telemetryCommand}.warning`);
                 }
             }
         });

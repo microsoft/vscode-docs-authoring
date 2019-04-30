@@ -19,7 +19,7 @@ export function boldFormattingCommand() {
  * Replaces current selection with MD bold formated selection
  */
 export function formatBold() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();

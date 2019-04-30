@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.5 (April 26th, 2019)
+
+- Telemetry: basic usage data
+
 ## 0.2.4 (April 17th, 2019)
 
 - Bookmark update

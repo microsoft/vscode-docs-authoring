@@ -9,7 +9,7 @@ import {
     fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, insertList, isBulletedLine,
     nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern,
 } from "../helper/list";
-import { reporter } from "../telemetry/telemetry";
+import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertList";
 
@@ -28,7 +28,7 @@ export function insertListsCommands() {
  * Creates a numbered (numerical) list in the vscode editor.
  */
 export function insertNumberedList() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".numbered" });
+    reporter.sendTelemetryEvent(`${telemetryCommand}.numbered`);
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
@@ -55,7 +55,7 @@ export function insertNumberedList() {
  * Creates a bulleted (dash) list in the vscode editor.
  */
 export function insertBulletedList() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand + ".bulleted" });
+    reporter.sendTelemetryEvent(`${telemetryCommand}.bulleted`);
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {

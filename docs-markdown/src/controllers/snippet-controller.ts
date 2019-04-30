@@ -3,11 +3,10 @@
 import * as dir from "node-dir";
 import * as vscode from "vscode";
 import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { reporter } from "../helper/telemetry";
 import { search } from "../helper/utility";
-import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "insertSnippet";
-// let dir = require("node-dir");
 
 export function insertSnippetCommand() {
     const commands = [
@@ -20,7 +19,7 @@ export function insertSnippetCommand() {
  * Creates a snippet at the current cursor position.
  */
 export function insertSnippet() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
+    reporter.sendTelemetryEvent(`${telemetryCommand}`);
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
