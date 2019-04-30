@@ -347,7 +347,11 @@
     ],
     "moduleFileExtensions": [
       "ts",
-      "js"
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
     ],
     "coverageReporters": [
       "text"
@@ -355,7 +359,8 @@
     "reporters": [
       "default",
       "jest-junit"
-    ]
+    ],
+    "collectCoverage": true
   },
   "jest-junit": {
     "output": "test-results-jest.xml",
