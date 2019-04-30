@@ -326,7 +326,7 @@
   },
   "devDependencies": {
     "@types/graceful-fs": "^2.0.30",
-    "@types/jest": "^23.3.14",
+    "@types/jest": "24.0.12",
     "@types/lodash.merge": "^4.6.3",
     "@types/node": "^7.10.5",
     "@types/node-dir": "0.0.32",
@@ -337,7 +337,7 @@
     "octicons": "^7.3.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.9.1",
-    "typescript": "^2.9.2",
+    "typescript": "3.4.5",
     "vscode": "^1.1.33"
   },
   "jest": {
