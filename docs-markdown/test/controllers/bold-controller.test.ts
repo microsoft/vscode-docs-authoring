@@ -1,4 +1,4 @@
-import { bold } from "../../src/controllers/bold-controller";
+import { bold } from "../../src/helper/format-styles";
 
 describe("Bold controller", () => {
     describe("format function", () => {
