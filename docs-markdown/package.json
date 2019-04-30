@@ -352,7 +352,8 @@
       "node"
     ],
     "coverageReporters": [
-      "text"
+      "text",
+      "cobertura"
     ],
     "reporters": [
       "default",
