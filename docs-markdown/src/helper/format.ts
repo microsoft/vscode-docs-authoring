@@ -1,6 +1,7 @@
 import { AlertTags } from "../constants/alert-tags";
 import { AlertType } from "../constants/alert-type";
-import { isAlert, getAlertType } from "../controllers/alert-controller";
+import { getAlertType, isAlert } from "../helper/alerts";
+
 /**
  *  Returns input string formatted as the alert type
  * If input string is an alert of the same type as alertType, it removes the formatting
@@ -25,8 +26,7 @@ export function format(content: string, alertType: AlertType) {
             // remove the first item (which contains the alert type)
             const paragraphsAlert = selectedText.split("\r\n").map((text) => text.substring(2)).slice(1);
             return paragraphsAlert.join("\r\n");
-        }
-        else {
+        } else {
             // split the text into paragraphs and remove the first item (which contains the alert type)
             const paragraphsGeneric = selectedText.split("\r\n").slice(1);
             const resultParagraphsGeneric = AlertTags[alertType] + paragraphsGeneric.join("\r\n");
