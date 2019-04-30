@@ -94,3 +94,19 @@ export function isItalic(content: string) {
 
     return false;
 }
+
+export function makeBold(content: string) {
+
+    // Clean up string if it is already formatted
+    const selectedText = content.trim();
+
+    if (isBold(content) || isBoldAndItalic(content)) {
+
+        return selectedText.substring(2, selectedText.length - 2);
+    }
+
+
+    // Set sytax for bold formatting and replace original string with formatted string
+    const styleBold = `**${selectedText}**`;
+    return styleBold;
+}
