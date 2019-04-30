@@ -95,7 +95,12 @@ export function isItalic(content: string) {
     return false;
 }
 
-export function makeBold(content: string) {
+/**
+ * Returns input string formatted MD Bold.
+ * @param {string} content - selected text
+ * @param {vscode.Range} range - If provided will get the text at the given range.
+ */
+export function bold(content: string) {
 
     // Clean up string if it is already formatted
     const selectedText = content.trim();
@@ -104,7 +109,6 @@ export function makeBold(content: string) {
 
         return selectedText.substring(2, selectedText.length - 2);
     }
-
 
     // Set sytax for bold formatting and replace original string with formatted string
     const styleBold = `**${selectedText}**`;

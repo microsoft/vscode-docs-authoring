@@ -1,4 +1,4 @@
-import { makeBold } from "../../src/helper/format-styles";
+import { bold } from "../../src/helper/format-styles";
 
 describe("Bold controller", () => {
     describe("format function", () => {
@@ -11,32 +11,32 @@ describe("Bold controller", () => {
 
         it("Should toggle bold with single line text.", () => {
 
-            const bolded = makeBold(singleLineString);
+            const bolded = bold(singleLineString);
 
             expect(bolded).toBe(`**${singleLineString}**`);
-            expect(makeBold(bolded)).toBe(singleLineString);
+            expect(bold(bolded)).toBe(singleLineString);
         });
 
         it("Should toggle bold with multiline text.", () => {
 
-            const bolded = makeBold(multilineString);
+            const bolded = bold(multilineString);
 
             expect(bolded).toBe(`**${multilineString}**`);
-            expect(makeBold(bolded)).toBe(multilineString);
+            expect(bold(bolded)).toBe(multilineString);
         });
 
         it("Should toggle bold without effecting italic/code formatting", () => {
 
-            const boldedItalic = makeBold(nestedItalic);
-            const boldedCode = makeBold(nestedCode);
-            const boldedCodeBlock = makeBold(nestedCodeBlock);
+            const boldedItalic = bold(nestedItalic);
+            const boldedCode = bold(nestedCode);
+            const boldedCodeBlock = bold(nestedCodeBlock);
 
             expect(boldedItalic).toBe(`**${nestedItalic}**`);
-            expect(makeBold(boldedItalic)).toBe(nestedItalic);
+            expect(bold(boldedItalic)).toBe(nestedItalic);
             expect(boldedCode).toBe(`**${nestedCode}**`);
-            expect(makeBold(boldedCode)).toBe(nestedCode);
+            expect(bold(boldedCode)).toBe(nestedCode);
             expect(boldedCodeBlock).toBe(`**${nestedCodeBlock}**`);
-            expect(makeBold(boldedCodeBlock)).toBe(nestedCodeBlock);
+            expect(bold(boldedCodeBlock)).toBe(nestedCodeBlock);
         });
     });
 });

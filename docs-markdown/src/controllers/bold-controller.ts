@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
-import { isBold, isBoldAndItalic, makeBold } from "../helper/format-styles";
+import { bold } from "../helper/format-styles";
 import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "formatBold";
@@ -43,7 +43,7 @@ export function formatBold() {
                 cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
 
             // calls formatter and returns selectedText as MD bold
-            const formattedText = makeBold(selectedText);
+            const formattedText = bold(selectedText);
             insertUnselectedText(editor, formatBold.name, formattedText, range);
         } else {
             const cursorPosition = editor.selection.active;
@@ -51,20 +51,8 @@ export function formatBold() {
                 cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
                 cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
             // calls formatter and returns selectedText as MD Bold
-            const formattedText = makeBold(selectedText);
+            const formattedText = bold(selectedText);
             insertContentToEditor(editor, formatBold.name, formattedText, true);
         }
     }
-}
-
-/**
- * Returns input string formatted MD Bold.
- * @param {string} content - selected text
- * @param {vscode.Range} range - If provided will get the text at the given range.
- */
-export function bold(content: string, range?: vscode.Range) {
-
-    // Set sytax for bold formatting and replace original string with formatted string
-    // const styleBold = `**${selectedText}**`;
-    // return styleBold;
 }
