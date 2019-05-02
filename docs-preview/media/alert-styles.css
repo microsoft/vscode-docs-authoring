@@ -1,16 +1,74 @@
 blockquote.NOTE {
-	font: 14px/20px italic Times, serif;
-	padding: 8px;
-	background-color: #bcc0fa;
-	border-top: 1px solid #bcc0fa;
-	border-bottom: 1px solid #bcc0fa;
-	margin: 5px;
-	background-position: top left;
-	background-repeat: no-repeat;
-	text-indent: 23px;
-	}
-	blockquote.NOTE span {
-		  display: block;
-		  background-repeat: no-repeat;
-		  background-position: bottom right;
-		}
+  font: 14px/20px italic Times, serif;
+  padding: 8px;
+  background: rgba(0, 122, 204, 0.5);
+  margin: 5px;
+  background-position: top left;
+  background-repeat: no-repeat;
+  text-indent: 23px;
+}
+blockquote.NOTE span {
+  display: block;
+  background-repeat: no-repeat;
+  background-position: bottom right;
+}
+
+blockquote.TIP {
+  font: 14px/20px italic Times, serif;
+  padding: 8px;
+  background: rgba(0, 100, 73, 0.89);
+  margin: 5px;
+  background-position: top left;
+  background-repeat: no-repeat;
+  text-indent: 23px;
+}
+blockquote.TIP span {
+  display: block;
+  background-repeat: no-repeat;
+  background-position: bottom right;
+}
+
+blockquote.IMPORTANT {
+  font: 14px/20px italic Times, serif;
+  padding: 8px;
+  background: rgba(103, 58, 183, 0.89);
+  margin: 5px;
+  background-position: top left;
+  background-repeat: no-repeat;
+  text-indent: 23px;
+}
+blockquote.IMPORTANT span {
+  display: block;
+  background-repeat: no-repeat;
+  background-position: bottom right;
+}
+
+blockquote.CAUTION {
+  font: 14px/20px italic Times, serif;
+  padding: 8px;
+  background: rgba(218, 58, 26, 0.89);
+  margin: 5px;
+  background-position: top left;
+  background-repeat: no-repeat;
+  text-indent: 23px;
+}
+blockquote.CAUTION span {
+  display: block;
+  background-repeat: no-repeat;
+  background-position: bottom right;
+}
+
+blockquote.WARNING {
+  color: rgba(126, 17, 22, 0.89);
+  padding: 8px;
+  background: #da9901;
+  margin: 5px;
+  background-position: top left;
+  background-repeat: no-repeat;
+  text-indent: 23px;
+}
+blockquote.WARNING span {
+  display: block;
+  background-repeat: no-repeat;
+  background-position: bottom right;
+}
