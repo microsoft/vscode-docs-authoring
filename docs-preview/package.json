@@ -38,7 +38,7 @@
       "./media/alert-styles.js"
     ],
     "markdown.previewStyles": [
-      "./media/docfx.css"
+      "./media/alert-styles.css"
     ],
     "markdown.markdownItPlugins": true,
     "commands": [
