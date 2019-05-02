@@ -34,6 +34,12 @@
   ],
   "main": "./out/src/extension",
   "contributes": {
+    "markdown.previewScripts": [
+      "./media/alert-styles.js"
+    ],
+    "markdown.previewStyles": [
+      "./media/docfx.css"
+    ],
     "markdown.markdownItPlugins": true,
     "commands": [
       {
