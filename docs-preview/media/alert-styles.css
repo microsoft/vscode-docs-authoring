@@ -1,11 +1,12 @@
 blockquote.NOTE {
-  font: 14px/20px italic Times, serif;
+  color: #38225d;
   padding: 8px;
-  background: rgba(0, 122, 204, 0.5);
+  background: #f2f2f2;
   margin: 5px;
   background-position: top left;
   background-repeat: no-repeat;
-  text-indent: 23px;
+  text-indent: 0px;
+  border-left: 0px solid #f2f2f2;
 }
 blockquote.NOTE span {
   display: block;
@@ -14,13 +15,14 @@ blockquote.NOTE span {
 }
 
 blockquote.TIP {
-  font: 14px/20px italic Times, serif;
+  color: #094409;
   padding: 8px;
-  background: rgba(0, 100, 73, 0.89);
+  background:  #d2f9d2;
   margin: 5px;
   background-position: top left;
   background-repeat: no-repeat;
-  text-indent: 23px;
+  text-indent: 0px;
+  border-left: 0px solid #d2f9d2;
 }
 blockquote.TIP span {
   display: block;
@@ -29,13 +31,14 @@ blockquote.TIP span {
 }
 
 blockquote.IMPORTANT {
-  font: 14px/20px italic Times, serif;
+  color: #002b4d;
   padding: 8px;
-  background: rgba(103, 58, 183, 0.89);
+  background: #e0f2ff;
   margin: 5px;
   background-position: top left;
   background-repeat: no-repeat;
-  text-indent: 23px;
+  text-indent: 0px;
+  border-left: 0px solid #002b4d;
 }
 blockquote.IMPORTANT span {
   display: block;
@@ -44,13 +47,14 @@ blockquote.IMPORTANT span {
 }
 
 blockquote.CAUTION {
-  font: 14px/20px italic Times, serif;
+  color: #651b01;
   padding: 8px;
-  background: rgba(218, 58, 26, 0.89);
+  background: #ffdacc;
   margin: 5px;
   background-position: top left;
   background-repeat: no-repeat;
-  text-indent: 23px;
+  text-indent: 0px;
+  border-left: 0px solid #ffdacc;
 }
 blockquote.CAUTION span {
   display: block;
@@ -59,13 +63,14 @@ blockquote.CAUTION span {
 }
 
 blockquote.WARNING {
-  color: rgba(126, 17, 22, 0.89);
+  color: #664b00;
   padding: 8px;
-  background: #da9901;
+  background: #fff1cc;
   margin: 5px;
   background-position: top left;
   background-repeat: no-repeat;
-  text-indent: 23px;
+  text-indent: 0px;
+  border-left: #fff1cc;
 }
 blockquote.WARNING span {
   display: block;
