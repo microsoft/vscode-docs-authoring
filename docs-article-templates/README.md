@@ -1,3 +1,4 @@
+[![Build status](https://ceapex.visualstudio.com/Engineering/_apis/build/status/Authoring/docs-article-templates%20CI)](https://ceapex.visualstudio.com/Engineering/_build/latest?definitionId=1348)
 # Docs Article Templates Extension
 
 The Docs Article Templates extension lets writers in VS Code pull a Markdown template from a centralized store and apply it to a file. Templates can help ensure that required metadata is included in articles, that content standards are followed, and so on. Templates are managed as Markdown files in a public GitHub repository.
