@@ -1,4 +1,4 @@
-
+[![Build status](https://ceapex.visualstudio.com/Engineering/_apis/build/status/Authoring/docs-yaml%20CI)](https://ceapex.visualstudio.com/Engineering/_build/latest?definitionId=1358&branchName=develop)
 # Docs YAML Extension
 
 [![Current-Version](https://vsmarketplacebadge.apphb.com/version/docsmsft.docs-yaml.svg)](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml)
