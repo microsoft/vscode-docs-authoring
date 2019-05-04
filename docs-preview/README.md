@@ -1,7 +1,5 @@
 # Docs Preview Extension
 
-**Note: Version 0.3.17 uses the VS Code markdown preview environment.  The vscode.previewHtml command was [deprecated](https://github.com/Microsoft/vscode/issues/62630) and the docs-preview service is being updated to support this change.  Custom markdown rendering will be affected until a new version of the extension is released.**
-
 This extension uses the docs.microsoft.com CSS to provide more accurate preview for Markdown published to Docs via the Open Publishing System (OPS). This includes all Markdown as supported by the CommonMark specification, as well as custom Markdown syntax for Docs, such as:
 
 - Alerts (note, tip, important, caution, and warning).
@@ -22,54 +20,3 @@ If you also have the [Docs Markdown](https://marketplace.visualstudio.com/items?
 1. Select `Preview`.
 
 To install both Docs Preview and Docs Markdown, along with other useful extensions for authoring Markdown for docs.microsoft.com, install the [Docs Authoring Pack](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-authoring-pack).
-
-## Known Issues
-
-1. Alerts are styled incorrectly. A fix for this issue is under development.
-
-<!--
-## Supported markdown snippets
-
-> Note
-> You need enable quickSuggestions for markdown as shown below in user perference, because markdown snippets are not shown up automatically in vscode [by default](https://github.com/Microsoft/vscode/issues/26108):
-> 
-> ```
->   "[markdown]":  {
->     "editor.quickSuggestions": true
->   },
-> ```
-
-1. File inclusion
-    ```
-    [!include [title](path)]
-    ```
-2. Code snippet
-   ```
-   [!code-language[name](path)]
-   ```
-3. Note/Warning/Tip/Important/Caution block
-   ```
-   > [!NOTE]
-   > content
-   > 
-   ```
-4. Tabbed content
-   ```
-   # [tab title](#tab/tab-id-1)
-   tab content
-   # [tab title](#tab/tab-id-2)
-   tab content
-   ***
-   ```
-5. Row extension
-   ```
-   :::row:::
-       :::column:::
-           content
-       :::column-end:::
-       :::column:::
-           content
-       :::column-end:::
-    :::row-end:::
-   ```
--->
