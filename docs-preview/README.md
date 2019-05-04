@@ -1,3 +1,4 @@
+[![Build status](https://ceapex.visualstudio.com/Engineering/_apis/build/status/Authoring/docs-preview%20CI)](https://ceapex.visualstudio.com/Engineering/_build/latest?definitionId=1350&branchName=develop)
 # Docs Preview Extension
 
 **Note: Version 0.3.17 uses the VS Code markdown preview environment.  The vscode.previewHtml command was [deprecated](https://github.com/Microsoft/vscode/issues/62630) and the docs-preview service is being updated to support this change.  Custom markdown rendering will be affected until a new version of the extension is released.**
