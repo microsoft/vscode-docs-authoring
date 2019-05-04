@@ -1,4 +1,4 @@
-import { postWarning } from "../helper/common";
+// import { postWarning } from "../helper/common";
 
 /**
  * This function is to verify whether bookmark items have duplicate name or
@@ -49,7 +49,7 @@ export function bookmarkBuilder(selectedText: string, bookmarkText: string, path
     // Check for anchor tag and post a warning if found.
     // Return selected text as bookmark so common.insertContentToEditor does not delete the selected content.
     if (new RegExp(aTagRegex).test(bookmarkText)) {
-        postWarning("HTML tag in source heading. Abandoning bookmark insert command.");
+        // postWarning("HTML tag in source heading. Abandoning bookmark insert command.");
         bookmark = selectedText;
         return bookmark;
     }

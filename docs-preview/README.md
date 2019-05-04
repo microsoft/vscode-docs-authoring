@@ -1,3 +1,4 @@
+[![Build status](https://ceapex.visualstudio.com/Engineering/_apis/build/status/Authoring/docs-preview%20CI)](https://ceapex.visualstudio.com/Engineering/_build/latest?definitionId=1350&branchName=develop)
 # Docs Preview Extension
 
 This extension uses the docs.microsoft.com CSS to provide more accurate preview for Markdown published to Docs via the Open Publishing System (OPS). This includes all Markdown as supported by the CommonMark specification, as well as custom Markdown syntax for Docs, such as:

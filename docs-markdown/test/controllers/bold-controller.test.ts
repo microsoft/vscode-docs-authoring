@@ -1,5 +1,4 @@
-import { expect } from "chai";
-import { bold } from "../../src/controllers/bold-controller";
+import { bold } from "../../src/helper/format-styles";
 
 describe("Bold controller", () => {
     describe("format function", () => {
@@ -14,16 +13,16 @@ describe("Bold controller", () => {
 
             const bolded = bold(singleLineString);
 
-            expect(bolded).to.equal(`**${singleLineString}**`);
-            expect(bold(bolded)).to.equal(singleLineString);
+            expect(bolded).toBe(`**${singleLineString}**`);
+            expect(bold(bolded)).toBe(singleLineString);
         });
 
         it("Should toggle bold with multiline text.", () => {
 
             const bolded = bold(multilineString);
 
-            expect(bolded).to.equal(`**${multilineString}**`);
-            expect(bold(bolded)).to.equal(multilineString);
+            expect(bolded).toBe(`**${multilineString}**`);
+            expect(bold(bolded)).toBe(multilineString);
         });
 
         it("Should toggle bold without effecting italic/code formatting", () => {
@@ -32,12 +31,12 @@ describe("Bold controller", () => {
             const boldedCode = bold(nestedCode);
             const boldedCodeBlock = bold(nestedCodeBlock);
 
-            expect(boldedItalic).to.equal(`**${nestedItalic}**`);
-            expect(bold(boldedItalic)).to.equal(nestedItalic);
-            expect(boldedCode).to.equal(`**${nestedCode}**`);
-            expect(bold(boldedCode)).to.equal(nestedCode);
-            expect(boldedCodeBlock).to.equal(`**${nestedCodeBlock}**`);
-            expect(bold(boldedCodeBlock)).to.equal(nestedCodeBlock);
+            expect(boldedItalic).toBe(`**${nestedItalic}**`);
+            expect(bold(boldedItalic)).toBe(nestedItalic);
+            expect(boldedCode).toBe(`**${nestedCode}**`);
+            expect(bold(boldedCode)).toBe(nestedCode);
+            expect(boldedCodeBlock).toBe(`**${nestedCodeBlock}**`);
+            expect(bold(boldedCodeBlock)).toBe(nestedCodeBlock);
         });
     });
 });
