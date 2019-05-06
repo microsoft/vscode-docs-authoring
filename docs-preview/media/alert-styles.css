@@ -1,0 +1,49 @@
+blockquote {
+  border-radius: 6px;
+  font-size: 1rem;
+  padding: 1rem;
+  margin-top: 1rem;
+  background-position: top left;
+  background-repeat: no-repeat;
+  text-indent: 0px;
+  line-height: 160%;
+  
+}
+
+blockquote span {
+  display: block;
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+blockquote.NOTE {
+  color: #38225d;
+  background: #e2daf1;
+  border-left: 0px solid #e2daf1;
+}
+
+blockquote.TIP {
+  color: #094409;
+  background:  #d2f9d2;
+  border-left: 0px solid #d2f9d2;
+}
+
+blockquote.IMPORTANT {
+  color: #002b4d;
+  background: #e0f2ff;
+  border-left: 0px solid #002b4d;
+}
+
+blockquote.CAUTION {
+  color: #651b01;
+  background: #ffdacc;
+  border-left: 0px solid #ffdacc;
+}
+
+blockquote.WARNING {
+  color: #664b00;
+  background: #fff1cc;
+  border-left: #fff1cc;
+}
