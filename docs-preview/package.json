@@ -3,7 +3,7 @@
   "displayName": "docs-preview",
   "description": "Docs Markdown Preview Extension",
   "aiKey": "85ed760d-c958-4bc2-bd1e-fb7e1e0b9ef8",
-  "version": "0.3.18",
+  "version": "0.3.19",
   "publisher": "docsmsft",
   "icon": "images/docs-logo-ms.png",
   "bugs": {

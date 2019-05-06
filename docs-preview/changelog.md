@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.19 (May 6th, 2019)
+
+- Alert support
+
 ## 0.3.18 (April 22nd, 2019)
 
 - Add basic usage data
