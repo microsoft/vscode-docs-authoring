@@ -1,11 +1,11 @@
-import {CompletionItemProvider, TextDocument, Position, 
-    CompletionItem, CompletionItemKind, SnippetString} from 'vscode';
-import {join} from 'path';
-import {readdirSync, readFileSync} from 'fs';
-import {safeLoad} from 'js-yaml';
-import {fuzzysearch} from 'fuzzysearch';
-
+import { readdirSync, readFileSync } from 'fs';
+import { fuzzysearch } from 'fuzzysearch';
+import { safeLoad } from 'js-yaml';
+import { join } from 'path';
+import { CompletionItem, CompletionItemKind, CompletionItemProvider, Position, SnippetString, TextDocument } from 'vscode';
+import { reporter } from "../helper/telemetry";
 import { SNIPPETS_ROOT_PATH } from "./yaml-constant";
+
 
 /// Internal representation of a yaml code snippet corresponding to CompletionItemProvider
 export interface CodeSnippet {
@@ -29,6 +29,7 @@ export class DocsYamlCompletionProvider implements CompletionItemProvider {
 
     // Provide code snippets for vscode
     public provideCompletionItems(doc: TextDocument, pos: Position) {
+        reporter.sendTelemetryEvent(`yaml.schemaError`);
         const wordPos = doc.getWordRangeAtPosition(pos);
         const word = doc.getText(wordPos);
 

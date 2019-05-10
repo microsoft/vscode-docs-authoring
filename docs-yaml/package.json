@@ -2,7 +2,8 @@
     "name": "docs-yaml",
     "displayName": "docs-yaml",
     "description": "YAML schema validation and auto-completion for docs.microsoft.com authoring",
-    "version": "0.2.1",
+    "aiKey": "85ed760d-c958-4bc2-bd1e-fb7e1e0b9ef8",
+    "version": "0.2.2",
     "publisher": "docsmsft",
     "engines": {
         "vscode": "^1.25.0"
@@ -46,7 +47,8 @@
     "dependencies": {
         "fuzzysearch": "^1.0.3",
         "js-yaml": "^3.13.1",
-        "web-request": "^1.0.7"
+        "web-request": "^1.0.7",
+        "vscode-extension-telemetry": "^0.1.1"
     },
     "devDependencies": {
         "@types/mocha": "^2.2.32",
