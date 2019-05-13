@@ -22,3 +22,5 @@ export const DocsCodeLanguages = [
     "xaml",
     "xml",
 ];
+
+export const languageRequired = "Select a programming language (required)";
