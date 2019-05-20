@@ -1,9 +1,9 @@
 "use strict";
 
-import * as vscode from "vscode";
+import { Range, window, workspace } from "vscode";
 import { ListType } from "../constants/list-type";
 import { output } from "../extension";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, showStatusMessage } from "../helper/common";
 import {
     addIndent, autolistAlpha, autolistNumbered, checkEmptyLine, checkEmptySelection, CountIndent, createBulletedListFromText, createNumberedListFromText,
     fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, insertList, isBulletedLine,
@@ -29,8 +29,10 @@ export function insertListsCommands() {
  */
 export function insertNumberedList() {
     reporter.sendTelemetryEvent(`${telemetryCommand}.numbered`);
+    const indent = getIndentationValue();
+    indentationMessage();
 
-    const editor = vscode.window.activeTextEditor;
+    const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -57,7 +59,7 @@ export function insertNumberedList() {
 export function insertBulletedList() {
     reporter.sendTelemetryEvent(`${telemetryCommand}.bulleted`);
 
-    const editor = vscode.window.activeTextEditor;
+    const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -86,7 +88,7 @@ export function insertBulletedList() {
  * Adds the next list item automatically. Either bulleted or numbered, includes indentation.
  */
 export function automaticList() {
-    const editor = vscode.window.activeTextEditor;
+    const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -139,7 +141,7 @@ export function automaticList() {
  * Creates indentation in an existing list.
  */
 export function insertNestedList() {
-    const editor = vscode.window.activeTextEditor;
+    const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -168,13 +170,13 @@ export function insertNestedList() {
             }
 
             // Replace editor's text
-            const range: vscode.Range = new vscode.Range(startSelected.line, 0,
+            const range: Range = new Range(startSelected.line, 0,
                 endSelected.line, editor.document.lineAt(endSelected.line).text.length);
             const updateText =
                 selectedLines.join("\n");
             insertContentToEditor(editor, insertNestedList.name, updateText, true, range);
         } else if (!checkEmptyLine(editor)) {
-            const text = editor.document.getText(new vscode.Range(cursorPosition.with(cursorPosition.line, 0),
+            const text = editor.document.getText(new Range(cursorPosition.with(cursorPosition.line, 0),
                 cursorPosition.with(cursorPosition.line, editor.selection.end.character)));
             const indentCount = CountIndent(editor.document.lineAt(cursorPosition.line).text);
             const numberedRegex = new RegExp(fixedNumberedListWithIndentRegexTemplate.replace("{0}"
@@ -202,7 +204,7 @@ export function insertNestedList() {
  *  Removes indentation from a nested list.
  */
 export function removeNestedList() {
-    const editor = vscode.window.activeTextEditor;
+    const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -220,5 +222,18 @@ export function removeNestedList() {
         } else {
             removeNestedListSingleLine(editor);
         }
+    }
+}
+
+export function getIndentationValue() {
+    return workspace.getConfiguration().get("editor.tabSize");
+}
+
+export function indentationMessage() {
+    const indent = getIndentationValue();
+    if (workspace.getConfiguration("markdown").ignoreUnsupportedIndent) {
+        showStatusMessage(`The editor.tabSize value ${indent} is not supported for publishing to docs.microsoft.com. List tabbing will default to 4 spaces when using the Docs Markdown extension.`);
+    } else {
+        postWarning(`The editor.tabSize value ${indent} is not supported for publishing to docs.microsoft.com. List tabbing will default to 4 spaces when using the Docs Markdown extension.`)
     }
 }

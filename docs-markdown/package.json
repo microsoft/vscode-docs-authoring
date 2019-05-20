@@ -310,6 +310,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "detect-indent": "^6.0.0",
     "diff": "^4.0.1",
     "file-exists": "^5.0.1",
     "fs-exists-sync": "^0.1.0",
