@@ -1,13 +1,13 @@
 "use strict";
 
-import { Range, window, workspace } from "vscode";
+import { Range, window } from "vscode";
 import { ListType } from "../constants/list-type";
 import { output } from "../extension";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, showStatusMessage } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
 import {
     addIndent, autolistAlpha, autolistNumbered, checkEmptyLine, checkEmptySelection, CountIndent, createBulletedListFromText, createNumberedListFromText,
-    fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, insertList, isBulletedLine,
-    nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern, evaluateIndent,
+    evaluateIndent, fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex,
+    isBulletedLine, nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern,
 } from "../helper/list";
 import { reporter } from "../helper/telemetry";
 
