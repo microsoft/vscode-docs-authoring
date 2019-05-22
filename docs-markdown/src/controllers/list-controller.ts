@@ -7,7 +7,7 @@ import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEdit
 import {
     addIndent, autolistAlpha, autolistNumbered, checkEmptyLine, checkEmptySelection, CountIndent, createBulletedListFromText, createNumberedListFromText,
     fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, insertList, isBulletedLine,
-    nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern,
+    nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern, evaluateIndent,
 } from "../helper/list";
 import { reporter } from "../helper/telemetry";
 
@@ -29,9 +29,6 @@ export function insertListsCommands() {
  */
 export function insertNumberedList() {
     reporter.sendTelemetryEvent(`${telemetryCommand}.numbered`);
-    const indent = getIndentationValue();
-    indentationMessage();
-
     const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -46,7 +43,7 @@ export function insertNumberedList() {
         }
 
         if (checkEmptyLine(editor) || checkEmptySelection(editor)) {
-            insertList(editor, ListType.Numbered);
+            evaluateIndent(editor, ListType.Numbered);
         } else {
             createNumberedListFromText(editor);
         }
@@ -74,7 +71,7 @@ export function insertBulletedList() {
 
         try {
             if (checkEmptyLine(editor)) {
-                insertList(editor, ListType.Bulleted);
+                evaluateIndent(editor, ListType.Bulleted);
             } else {
                 createBulletedListFromText(editor);
             }
@@ -222,18 +219,5 @@ export function removeNestedList() {
         } else {
             removeNestedListSingleLine(editor);
         }
-    }
-}
-
-export function getIndentationValue() {
-    return workspace.getConfiguration().get("editor.tabSize");
-}
-
-export function indentationMessage() {
-    const indent = getIndentationValue();
-    if (workspace.getConfiguration("markdown").ignoreUnsupportedIndent) {
-        showStatusMessage(`The editor.tabSize value ${indent} is not supported for publishing to docs.microsoft.com. List tabbing will default to 4 spaces when using the Docs Markdown extension.`);
-    } else {
-        postWarning(`The editor.tabSize value ${indent} is not supported for publishing to docs.microsoft.com. List tabbing will default to 4 spaces when using the Docs Markdown extension.`)
     }
 }

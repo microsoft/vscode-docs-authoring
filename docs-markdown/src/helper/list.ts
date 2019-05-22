@@ -20,14 +20,80 @@ export const alphabetListWithIndentRegexTemplate = "^( ){{0}}[a-z]{1}\\.( )";
 export const fixedBulletedListRegex = /^( )*\-( )$/;
 export const fixedNumberedListWithIndentRegexTemplate = "^( ){{0}}[0-9]+\\.( )$";
 export const fixedAlphabetListWithIndentRegexTemplate = "^( ){{0}}[a-z]{1}\\.( )$";
-export const tabPattern = "    ";
 export const startAlphabet = "a";
 export const numberedListValue = "1";
+export let indentSpacing: any;
+export const singleSpace = " ";
+export let tabPattern: any;
+export let editorTabSize: any;
+export let hideMessage: boolean = false;
+
+/**
+ * Get editor.tabSize value from settings
+ */
+export function getTabSize() {
+    return vscode.workspace.getConfiguration().get("editor.tabSize");
+}
+
+/**
+ * Determine if user indent value is supported for OPS rendering.
+ * If the value is anything other than 4, the user should be notified (4 is the supported value).
+ */
+export async function evaluateIndent(editor: vscode.TextEditor, listType: ListType) {
+    editorTabSize = getTabSize();
+    if (editorTabSize === 4) {
+        createIndent(4);
+        insertList(editor, listType);
+    } else {
+        indentationMessage(editor, listType);
+    }
+}
+
+/**
+ * Message users if indent value is unsupported.
+ */
+export function indentationMessage(editor: vscode.TextEditor, listType: ListType) {
+    const dismiss = "Dismiss and default to 4 spaces";
+    const ignorePermanently = "Ignore permanently and use editor.tabSize value.";
+    // check for markdown.ignoreUnsupportedIndent setting. if setting is true, use custom indent and add message to output window.
+    if (vscode.workspace.getConfiguration("markdown").ignoreUnsupportedIndent) {
+        createIndent(indentSpacing);
+        insertList(editor, listType);
+        common.showStatusMessage(`The editor.tabSize value ${editorTabSize} is not supported for publishing to docs.microsoft.com.`);
+    }
+    if (hideMessage) {
+        createIndent(4);
+        insertList(editor, listType);
+    }
+    if (!vscode.workspace.getConfiguration("markdown").ignoreUnsupportedIndent && !hideMessage) {
+        // if the markdown.ignoreUnsupportedIndent setting is missing or false, allow user to either dismiss or permanently ignore the message.
+        vscode.window.showInformationMessage(`The editor.tabSize value ${editorTabSize} is not supported for publishing to docs.microsoft.com. List tabbing will default to 4 spaces when using the Docs Markdown extension.`, dismiss, ignorePermanently).then((result) => {
+            switch (result) {
+                case dismiss: {
+                    hideMessage = true;
+                    createIndent(4);
+                    insertList(editor, listType);
+                    break;
+                }
+                case ignorePermanently: {
+                    createIndent(indentSpacing);
+                    insertList(editor, listType);
+                    break;
+                }
+            }
+        });
+    }
+}
+
+export async function createIndent(indent: any) {
+    // create tab value based on users vscode setting
+    tabPattern = singleSpace.repeat(indent);
+}
 
 /**
  * Creates a list(numbered or bulleted) in the vscode editor.
  */
-export function insertList(editor: vscode.TextEditor, listType: ListType) {
+export async function insertList(editor: vscode.TextEditor, listType: ListType) {
     const cursorPosition = editor.selection.active;
     const lineText = editor.document.lineAt(cursorPosition.line).text;
     const listObjectModel = createListObjectModel(editor);
