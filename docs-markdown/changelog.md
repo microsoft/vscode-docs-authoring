@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.2.6 (TBD)
+
+- Build reporting link
+- UI updates
+- Support custom tabbing in lists
+
 ## 0.2.5 (April 26th, 2019)
 
 - Telemetry: basic usage data
