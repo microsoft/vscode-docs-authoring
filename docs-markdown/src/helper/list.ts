@@ -22,10 +22,9 @@ export const fixedNumberedListWithIndentRegexTemplate = "^( ){{0}}[0-9]+\\.( )$"
 export const fixedAlphabetListWithIndentRegexTemplate = "^( ){{0}}[a-z]{1}\\.( )$";
 export const startAlphabet = "a";
 export const numberedListValue = "1";
-export let indentSpacing: any;
-export const singleSpace = " ";
 export let tabPattern: any;
 export let editorTabSize: any;
+// used to supress prompt for unsupported tab size for a given session.
 export let hideMessage: boolean = false;
 
 /**
@@ -57,7 +56,7 @@ export function indentationMessage(editor: vscode.TextEditor, listType: ListType
     const ignorePermanently = "Ignore permanently and use editor.tabSize value.";
     // check for markdown.ignoreUnsupportedIndent setting. if setting is true, use custom indent and add message to output window.
     if (vscode.workspace.getConfiguration("markdown").ignoreUnsupportedIndent) {
-        createIndent(indentSpacing);
+        createIndent(editorTabSize);
         insertList(editor, listType);
         common.showStatusMessage(`The editor.tabSize value ${editorTabSize} is not supported for publishing to docs.microsoft.com.`);
     }
@@ -71,13 +70,17 @@ export function indentationMessage(editor: vscode.TextEditor, listType: ListType
             switch (result) {
                 case dismiss: {
                     hideMessage = true;
+                    // default to 4 spaces
                     createIndent(4);
                     insertList(editor, listType);
                     break;
                 }
                 case ignorePermanently: {
-                    createIndent(indentSpacing);
+                    // use tabSize settings value
+                    createIndent(editorTabSize);
                     insertList(editor, listType);
+                    // add property to settings.json
+                    vscode.workspace.getConfiguration().update("markdown.ignoreUnsupportedIndent", true, vscode.ConfigurationTarget.Global);
                     break;
                 }
             }
@@ -86,6 +89,7 @@ export function indentationMessage(editor: vscode.TextEditor, listType: ListType
 }
 
 export async function createIndent(indent: any) {
+    const singleSpace = " ";
     // create tab value based on users vscode setting
     tabPattern = singleSpace.repeat(indent);
 }
