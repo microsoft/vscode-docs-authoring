@@ -38,7 +38,7 @@ export function getTabSize() {
  * Determine if user indent value is supported for OPS rendering.
  * If the value is anything other than 4, the user should be notified (4 is the supported value).
  */
-export async function evaluateIndent(editor: vscode.TextEditor, listType: ListType) {
+export function evaluateIndent(editor: vscode.TextEditor, listType: ListType) {
     editorTabSize = getTabSize();
     if (editorTabSize === 4) {
         createIndent(4);
@@ -88,7 +88,7 @@ export function indentationMessage(editor: vscode.TextEditor, listType: ListType
     }
 }
 
-export async function createIndent(indent: any) {
+export function createIndent(indent: any) {
     const singleSpace = " ";
     // create tab value based on users vscode setting
     tabPattern = singleSpace.repeat(indent);
@@ -97,7 +97,7 @@ export async function createIndent(indent: any) {
 /**
  * Creates a list(numbered or bulleted) in the vscode editor.
  */
-export async function insertList(editor: vscode.TextEditor, listType: ListType) {
+export function insertList(editor: vscode.TextEditor, listType: ListType) {
     const cursorPosition = editor.selection.active;
     const lineText = editor.document.lineAt(cursorPosition.line).text;
     const listObjectModel = createListObjectModel(editor);
