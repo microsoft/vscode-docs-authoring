@@ -2,7 +2,7 @@
 
 import { QuickPickOptions, Range, window } from "vscode";
 import { DocsCodeLanguages, languageRequired } from "../constants/docs-code-languages";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
 import { reporter } from "../helper/telemetry";
@@ -103,6 +103,10 @@ export function showSupportedLanguages(content: string, selectedContent: any) {
 
 export function applyCodeFormatting(content: string, selectedContent: any, codeLang: string) {
     const selectedText = content.trim();
+    if (!codeLang) {
+        postWarning("No code language selected. Abandoning command.");
+        return;
+    }
     const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
