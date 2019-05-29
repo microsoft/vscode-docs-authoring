@@ -1,8 +1,8 @@
 "use strict";
 
-import * as vscode from "vscode";
-import { DocsCodeLanguages } from "../constants/docs-code-languages";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { QuickPickOptions, Range, window } from "vscode";
+import { DocsCodeLanguages, languageRequired } from "../constants/docs-code-languages";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
 import { reporter } from "../helper/telemetry";
@@ -21,7 +21,7 @@ export function codeFormattingCommand() {
  */
 export function formatCode() {
     reporter.sendTelemetryEvent(`${telemetryCommand}`);
-    const editor = vscode.window.activeTextEditor;
+    const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -57,7 +57,7 @@ export function formatCode() {
  * @param {boolean} isSingleLine - determines is code formatting is inline (isSingleLine = true)
  * @param {vscode.Range} range - If provided will get the text at the given range
  */
-export function format(content: string, codeLang: string, isSingleLine: boolean, range: vscode.Range) {
+export function format(content: string, codeLang: string, isSingleLine: boolean, range: Range) {
     const selectedText = content.trim();
 
     let styleCode = "";
@@ -91,34 +91,33 @@ export function format(content: string, codeLang: string, isSingleLine: boolean,
 export function showSupportedLanguages(content: string, selectedContent: any) {
     let selectedCodeLang: any;
     const supportedLanguages: any = [];
-    supportedLanguages.push("none");
+    const options: QuickPickOptions = { placeHolder: languageRequired };
     DocsCodeLanguages.sort().forEach((codeLang) => {
         supportedLanguages.push(codeLang);
     });
-    vscode.window.showQuickPick(supportedLanguages).then((qpSelection) => {
+    window.showQuickPick(supportedLanguages, options).then((qpSelection) => {
         selectedCodeLang = qpSelection;
-        // Do not assign a code language if user does not select one.
-        if (!qpSelection || qpSelection === "none") {
-            selectedCodeLang = "";
-        }
-
         applyCodeFormatting(content, selectedContent, selectedCodeLang);
     });
 }
 
 export function applyCodeFormatting(content: string, selectedContent: any, codeLang: string) {
     const selectedText = content.trim();
-    const editor = vscode.window.activeTextEditor;
+    if (!codeLang) {
+        postWarning("No code language selected. Abandoning command.");
+        return;
+    }
+    const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
         return;
     } else {
-        const emptyRange = new vscode.Range(editor.selection.active, editor.selection.active);
+        const emptyRange = new Range(editor.selection.active, editor.selection.active);
 
         if (selectedText === "") {
             const cursorPosition = editor.selection.active;
             // assumes the range of code syntax
-            const range = new vscode.Range(cursorPosition.with(cursorPosition.line, cursorPosition.character - 1
+            const range = new Range(cursorPosition.with(cursorPosition.line, cursorPosition.character - 1
                 < 0 ? 0 : cursorPosition.character - 1), cursorPosition.with
                     (cursorPosition.line, cursorPosition.character + 1));
 
