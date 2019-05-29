@@ -1,5 +1,9 @@
 # Change Log
 
+## **0.2.3**
+
+- Remove links in readme
+
 ## **0.2.2**
 
 - Gather basic usage data
