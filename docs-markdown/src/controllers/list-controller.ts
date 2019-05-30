@@ -3,15 +3,12 @@
 import * as vscode from "vscode";
 import { ListType } from "../constants/list-type";
 import { output } from "../extension";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
-import {
-    addIndent, autolistAlpha, autolistNumbered, checkEmptyLine, checkEmptySelection, CountIndent, createBulletedListFromText, createNumberedListFromText,
-    fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, insertList, isBulletedLine,
-    nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern,
-} from "../helper/list";
+import { getRepoName, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { addIndent, autolistAlpha, autolistNumbered, checkEmptyLine, checkEmptySelection, CountIndent, createBulletedListFromText, createNumberedListFromText, fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, insertList, isBulletedLine, nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern } from "../helper/list";
 import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertList";
+let commandOption: string;
 
 export function insertListsCommands() {
     const commands = [
@@ -28,8 +25,7 @@ export function insertListsCommands() {
  * Creates a numbered (numerical) list in the vscode editor.
  */
 export function insertNumberedList() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}.numbered`);
-
+    commandOption = "numbered";
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -48,6 +44,10 @@ export function insertNumberedList() {
         } else {
             createNumberedListFromText(editor);
         }
+        const workspaceUri = editor.document.uri;
+        const activeRepo = getRepoName(workspaceUri);
+        const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
+        reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
     }
 }
 
@@ -55,8 +55,7 @@ export function insertNumberedList() {
  * Creates a bulleted (dash) list in the vscode editor.
  */
 export function insertBulletedList() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}.bulleted`);
-
+    commandOption = "bulleted";
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -79,6 +78,10 @@ export function insertBulletedList() {
         } catch (error) {
             output.appendLine(error);
         }
+        const workspaceUri = editor.document.uri;
+        const activeRepo = getRepoName(workspaceUri);
+        const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
+        reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
     }
 }
 

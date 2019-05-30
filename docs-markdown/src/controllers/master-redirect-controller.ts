@@ -5,11 +5,11 @@ import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
 import { Uri, window, workspace, WorkspaceFolder } from "vscode";
-import YAML = require("yamljs");
 import { output } from "../extension";
-import { generateTimestamp, postError } from "../helper/common";
+import { generateTimestamp, getRepoName, postError } from "../helper/common";
 import { reporter } from "../helper/telemetry";
 import * as yamlMetadata from "../helper/yaml-metadata";
+import YAML = require("yamljs");
 
 const telemetryCommand: string = "masterRedirect";
 
@@ -64,10 +64,13 @@ function showStatusMessage(message: string) {
 }
 
 export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`);
     const editor = window.activeTextEditor;
     let workspacePath: string;
     if (editor) {
+        const workspaceUri = editor.document.uri;
+        const activeRepo = getRepoName(workspaceUri);
+        const telemetryProperties = activeRepo ? { repo_name: activeRepo } : { repo_name: "" };
+        reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
         const resource = editor.document.uri;
         let folder = workspace.getWorkspaceFolder(resource);
         if (!folder && rootPath) {

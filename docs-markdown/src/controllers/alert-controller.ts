@@ -1,11 +1,12 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { getRepoName, insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { format } from "../helper/format";
-import { reporter } from "../telemetry/telemetry";
+import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertAlert";
+let commandOption: string;
 
 export function insertAlertCommand() {
     const commands = [
@@ -47,20 +48,24 @@ export function insertAlert() {
             if (editor) {
                 insertContentToEditor(editor, insertAlert.name, formattedText, true);
                 if (qpSelection.startsWith("Note")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.note`);
+                    commandOption = "note";
                 }
                 if (qpSelection.startsWith("Tip")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.tip`);
+                    commandOption = "tip";
                 }
                 if (qpSelection.startsWith("Important")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.important`);
+                    commandOption = "important";
                 }
                 if (qpSelection.startsWith("Caution")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.caution`);
+                    commandOption = "caution";
                 }
                 if (qpSelection.startsWith("Warning")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.warning`);
+                    commandOption = "warning";
                 }
+                const workspaceUri = editor.document.uri;
+                const activeRepo = getRepoName(workspaceUri);
+                const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
+                reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
             }
         });
     }

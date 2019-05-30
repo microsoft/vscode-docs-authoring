@@ -1,7 +1,7 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { getRepoName, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBoldAndItalic, isItalic } from "../helper/format-styles";
 import { reporter } from "../helper/telemetry";
@@ -19,8 +19,6 @@ export function italicFormattingCommand() {
  * Replaces current selection with MD italic formated selection
  */
 export function formatItalic() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`);
-
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -61,6 +59,10 @@ export function formatItalic() {
             insertContentToEditor(editor, formatItalic.name, formattedText, true);
         }
     }
+    const workspaceUri = editor.document.uri;
+    const activeRepo = getRepoName(workspaceUri);
+    const telemetryProperties = activeRepo ? { repo_name: activeRepo } : { repo_name: "" };
+    reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
 }
 
 /**

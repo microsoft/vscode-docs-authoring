@@ -1,10 +1,10 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { getRepoName, insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { bold } from "../helper/format-styles";
-import { reporter } from "../telemetry/telemetry";
+import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "formatBold";
 
@@ -55,4 +55,8 @@ export function formatBold() {
             insertContentToEditor(editor, formatBold.name, formattedText, true);
         }
     }
+    const workspaceUri = editor.document.uri;
+    const activeRepo = getRepoName(workspaceUri);
+    const telemetryProperties = activeRepo ? { repo_name: activeRepo } : { repo_name: "" };
+    reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
 }

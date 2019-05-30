@@ -2,11 +2,12 @@
 
 import * as vscode from "vscode";
 import { output } from "../extension";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { getRepoName, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
 import { reporter } from "../helper/telemetry";
 import { tableBuilder, validateTableRowAndColumnCount } from "../helper/utility";
 
 const telemetryCommand: string = "insertTable";
+let commandOption: string;
 
 export function insertTableCommand() {
     const commands = [
@@ -16,6 +17,7 @@ export function insertTableCommand() {
 }
 
 export function insertTable() {
+    let logTableMessage: string;
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -44,13 +46,16 @@ export function insertTable() {
                 const col = Number.parseInt(size[0]);
                 const row = Number.parseInt(size[1]);
                 const str = tableBuilder(col, row);
-                const logTableMessage = "." + col + ":" + row;
-                reporter.sendTelemetryEvent(`${telemetryCommand}${logTableMessage}`);
-
                 insertContentToEditor(editor, insertTable.name, str);
+                logTableMessage = col + ":" + row;
             } else {
                 output.appendLine("Table insert failed.");
             }
+            commandOption = logTableMessage;
+            const workspaceUri = editor.document.uri;
+            const activeRepo = getRepoName(workspaceUri);
+            const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
+            reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
         }
     });
 }

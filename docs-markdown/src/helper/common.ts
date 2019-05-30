@@ -293,10 +293,24 @@ export function checkExtension(extensionName: string, notInstalledMessage?: stri
 
 /**
  * Output message with timestamp
- * @param message 
+ * @param message
  */
 export function showStatusMessage(message: string) {
     const { msTimeValue } = generateTimestamp();
     output.appendLine(`[${msTimeValue}] - ` + message);
     output.show();
+}
+
+/**
+ * Return repo name
+ * @param Uri
+ */
+export function getRepoName(workspacePath: vscode.Uri) {
+    // let repoName;
+    const repo = vscode.workspace.getWorkspaceFolder(workspacePath);
+    if (repo) {
+        // return "undefined";
+        const repoName = repo.name;
+        return repoName;
+    }
 }
