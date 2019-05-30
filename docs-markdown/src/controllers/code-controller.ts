@@ -96,6 +96,10 @@ export function showSupportedLanguages(content: string, selectedContent: any) {
         supportedLanguages.push(codeLang);
     });
     window.showQuickPick(supportedLanguages, options).then((qpSelection) => {
+        if (!qpSelection) {
+            postWarning("No code language selected. Abandoning command.");
+            return;
+        }
         selectedCodeLang = qpSelection;
         applyCodeFormatting(content, selectedContent, selectedCodeLang);
     });
@@ -103,10 +107,6 @@ export function showSupportedLanguages(content: string, selectedContent: any) {
 
 export function applyCodeFormatting(content: string, selectedContent: any, codeLang: string) {
     const selectedText = content.trim();
-    if (!codeLang) {
-        postWarning("No code language selected. Abandoning command.");
-        return;
-    }
     const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
