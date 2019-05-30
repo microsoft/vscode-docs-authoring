@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.6 (TBD)
+## 0.2.6 (May 30th, 2019)
 
 - Build reporting link
 - UI updates
