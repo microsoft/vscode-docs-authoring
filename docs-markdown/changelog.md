@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.6 (May 30th, 2019)
+
+- Build reporting link
+- UI updates
+
 ## 0.2.5 (April 26th, 2019)
 
 - Telemetry: basic usage data

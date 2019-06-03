@@ -1,9 +1,5 @@
-
+[![Build status](https://ceapex.visualstudio.com/Engineering/_apis/build/status/Authoring/docs-yaml%20CI)](https://ceapex.visualstudio.com/Engineering/_build/latest?definitionId=1358&branchName=develop)
 # Docs YAML Extension
-
-[![Current-Version](https://vsmarketplacebadge.apphb.com/version/docsmsft.docs-yaml.svg)](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml)
-[![Install-Count](https://vsmarketplacebadge.apphb.com/installs/docsmsft.docs-yaml.svg)](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml)
-[![Open-Issues](https://vsmarketplacebadge.apphb.com/rating/docsmsft.docs-yaml.svg)](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml)
 
 Provides Docs YAML support via [yaml-language-server](https://github.com/redhat-developer/yaml-language-server).
 

@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.20 (May 30th, 2019)
+
+- Build reporting
+
 ## 0.3.19 (May 6th, 2019)
 
 - Alert support

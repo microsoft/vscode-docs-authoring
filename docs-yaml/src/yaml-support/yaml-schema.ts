@@ -1,5 +1,6 @@
 import { Extension, extensions, TextDocument, window } from 'vscode';
 import { mappingData } from '../extension';
+import { reporter } from "../helper/telemetry";
 import { VSCODE_YAML_EXTENSION_ID } from "./yaml-constant";
 import { DocsSchemaHolder } from "./yaml-schem-Holder";
 import { getYamlMime } from './yaml-util';
@@ -37,6 +38,7 @@ function requestYamlSchemaUriCallback(resource: string): string {
 // Get schema uri of this textDocument
 function getSchemaUri(textDocument: TextDocument) {
     var yamlMime = getYamlMime(textDocument.getText());
+    reporter.sendTelemetryEvent(`yamlMimeType.${yamlMime}`);
     return docsSchemaHolder.lookup(yamlMime);
 }
 
@@ -44,6 +46,7 @@ function getSchemaUri(textDocument: TextDocument) {
 async function activateYamlExtension(): Promise<{ registerContributor: YamlSchemaContributor }> {
     const ext: Extension<any> = extensions.getExtension(VSCODE_YAML_EXTENSION_ID);
     if (!ext) {
+        reporter.sendTelemetryEvent(`yaml.missingDependency`);
         window.showWarningMessage('Please install \'YAML Support by Red Hat\' via the Extensions pane.');
         return;
     }

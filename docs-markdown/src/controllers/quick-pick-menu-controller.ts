@@ -154,7 +154,7 @@ export function markdownQuickPick() {
             case "include":
                 insertInclude();
                 break;
-            case "snippets":
+            case "snippet":
                 insertSnippet();
                 break;
             case "video":
