@@ -4,7 +4,7 @@
   "description": "Docs article templates",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "85ed760d-c958-4bc2-bd1e-fb7e1e0b9ef8",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "publisher": "docsmsft",
   "engines": {
     "vscode": "^1.23.0"
@@ -66,7 +66,7 @@
     "@types/node-dir": "0.0.32",
     "download-git-repo": "^1.0.2",
     "front-matter": "^3.0.1",
-    "js-yaml": "^3.13.0",
+    "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",
     "octicons": "^4.4.0",
     "vscode-extension-telemetry": "^0.1.1"
