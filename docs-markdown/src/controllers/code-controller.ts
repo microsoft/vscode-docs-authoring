@@ -99,6 +99,10 @@ export function showSupportedLanguages(content: string, selectedContent: any) {
         supportedLanguages.push(codeLang);
     });
     window.showQuickPick(supportedLanguages, options).then((qpSelection) => {
+        if (!qpSelection) {
+            postWarning("No code language selected. Abandoning command.");
+            return;
+        }
         selectedCodeLang = qpSelection;
         applyCodeFormatting(content, selectedContent, selectedCodeLang);
         if (!qpSelection) {
