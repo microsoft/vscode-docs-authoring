@@ -309,7 +309,6 @@ export function getRepoName(workspacePath: vscode.Uri) {
     // let repoName;
     const repo = vscode.workspace.getWorkspaceFolder(workspacePath);
     if (repo) {
-        // return "undefined";
         const repoName = repo.name;
         return repoName;
     }
