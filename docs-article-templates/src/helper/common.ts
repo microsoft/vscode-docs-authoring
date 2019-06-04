@@ -69,3 +69,16 @@ export function formatLearnNames(name: string) {
         formattedName,
     };
 }
+
+/**
+ * Return repo name
+ * @param Uri
+ */
+export function getRepoName(workspacePath: vscode.Uri) {
+    // let repoName;
+    const repo = vscode.workspace.getWorkspaceFolder(workspacePath);
+    if (repo) {
+        const repoName = repo.name;
+        return repoName;
+    }
+}
