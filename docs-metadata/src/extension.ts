@@ -6,51 +6,68 @@ import {commands,
 		OpenDialogOptions,
 		Uri} from 'vscode';
 
+import {showExtractionCancellationMessage, 
+		showArgsQuickInput, 
+		showFolderSelectionDialog} from "./controllers/extractController";
+
+import {getRepoName} from "./helper/common";
+
 export function activate(context: ExtensionContext) {
 
-	let disposable = commands.registerCommand('extension.extract', async () => {
+	let extractCommand = commands.registerCommand('extension.extract', async () => {
 		
 		let folderPath = await showFolderSelectionDialog();
 
-		let args = await showArgsQuickInput();
-		
-		console.log(`extract folderPath: ${folderPath}, with args: ${args}`);
-
-		//show a banner stating what is going to happen with ok|cancel
-	});
-
-	context.subscriptions.push(disposable);
-}
-
-export async function showFolderSelectionDialog()
-{
-	let folderPath = workspace.rootPath ? workspace.rootPath : '';
-	const options: OpenDialogOptions = {
-		canSelectMany: false,
-		canSelectFiles: false,
-		canSelectFolders: true,
-		defaultUri:Uri.file(folderPath),
-		openLabel: 'Select'
-   };
-
-   await window.showOpenDialog(options).then(fileUri => {
-		if (fileUri && fileUri[0]) {
-			folderPath = fileUri[0].fsPath;
+		//a blank folderPath signifies a cancel.
+		if(folderPath === ""){ 
+			showExtractionCancellationMessage();
+			return; 
 		}
+
+		let args = await showArgsQuickInput();
+
+		//undefined args represent a cancel.
+		if(args === undefined){ 
+			showExtractionCancellationMessage();
+			return; 
+		}
+		
+		//show a banner stating what is going to happen with ok|cancel
+		var message = "";
+		if(args)
+		{
+			message = `Extracting metadata ${args} for path: ${folderPath}.`;
+		} else {
+			let rootPath = workspace.rootPath ? workspace.rootPath : '';
+			if(folderPath === rootPath)
+			{
+				message = `Extracting all existing metadata for repo "${getRepoName(Uri.file(rootPath))}".`;
+			} else {
+				message = `Extracting all existing metadata for folder ${folderPath}.`;
+			}
+		}
+		window.showInformationMessage(message, "OK", "Cancel")
+		.then(selectedItem => {
+			if(selectedItem !== "OK")
+			{
+				//operation canceled.
+				showExtractionCancellationMessage();
+			} else {
+				//TODO: send the args to mdextractcore
+			}
+		});
+
 	});
 
-	return folderPath;
-}
-
-export async function showArgsQuickInput()
-{
-	const result = await window.showInputBox({
-		value: '',
-		placeHolder: '(Optional) Enter any additional command-line args.'
+	let applyCommand = commands.registerCommand('extension.apply', async () => {
+		console.log('apply');
 	});
-
-	return result;
+	
+	context.subscriptions.push(extractCommand);
+	context.subscriptions.push(applyCommand);
 }
+
+
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
