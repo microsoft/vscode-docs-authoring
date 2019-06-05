@@ -47,3 +47,16 @@ export function generateTimestamp() {
         msTimeValue: date.toLocaleTimeString([], { hour12: false }),
     };
 }
+
+/**
+ * Return repo name
+ * @param Uri
+ */
+export function getRepoName(workspacePath: vscode.Uri) {
+    // let repoName;
+    const repo = vscode.workspace.getWorkspaceFolder(workspacePath);
+    if (repo) {
+        const repoName = repo.name;
+        return repoName;
+    }
+}
