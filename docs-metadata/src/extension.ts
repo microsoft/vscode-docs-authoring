@@ -1,36 +1,55 @@
-import {commands, env, window, workspace, ExtensionContext} from 'vscode';
+import {commands, 
+		env, 
+		window, 
+		workspace, 
+		ExtensionContext, 
+		OpenDialogOptions,
+		Uri} from 'vscode';
 
 export function activate(context: ExtensionContext) {
 
-	const command = 'extension.sayHello';
-	const commandHandler = (name?: string = 'world') => {
-		console.log(`Hello ${name}!!!`);
-	  };
-
-	let disposable = commands.registerCommand('extension.extract', async (arg1: any) => {
-		//TODO: extract metadata
+	let disposable = commands.registerCommand('extension.extract', async () => {
 		
-		//get the selected subfolder, or use root if no selection is made
-		//ref: https://github.com/Microsoft/vscode/issues/3553
-		await commands.executeCommand('workbench.action.files.copyPathOfActiveFile');
-		//await commands.executeCommand('copyRelativeFilePath');
-		let folderPath = await env.clipboard.readText();
-		if(folderPath.toLowerCase().indexOf(workspace.rootPath) === -1)
-		{
-			folderPath = workspace.rootPath;
-		} else {
-			folderPath = folderPath.substring(0, folderPath.lastIndexOf("\\"));
-		}
-		console.log(`extract folderPath: ${folderPath}`);
+		let folderPath = await showFolderSelectionDialog();
 
-		//get the values added after "Docs Metadata: Extract" from the command pallette
-		console.log(arg1);
+		let args = await showArgsQuickInput();
+		
+		console.log(`extract folderPath: ${folderPath}, with args: ${args}`);
 
 		//show a banner stating what is going to happen with ok|cancel
 	});
 
 	context.subscriptions.push(disposable);
-	context.subscriptions.push(commands.registerCommand(command, commandHandler));
+}
+
+export async function showFolderSelectionDialog()
+{
+	let folderPath = workspace.rootPath ? workspace.rootPath : '';
+	const options: OpenDialogOptions = {
+		canSelectMany: false,
+		canSelectFiles: false,
+		canSelectFolders: true,
+		defaultUri:Uri.file(folderPath),
+		openLabel: 'Select'
+   };
+
+   await window.showOpenDialog(options).then(fileUri => {
+		if (fileUri && fileUri[0]) {
+			folderPath = fileUri[0].fsPath;
+		}
+	});
+
+	return folderPath;
+}
+
+export async function showArgsQuickInput()
+{
+	const result = await window.showInputBox({
+		value: '',
+		placeHolder: '(Optional) Enter any additional command-line args.'
+	});
+
+	return result;
 }
 
 // this method is called when your extension is deactivated

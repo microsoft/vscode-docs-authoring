@@ -11,8 +11,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.extract",
-		"onCommand:extension.sayHello"
+		"onCommand:extension.extract"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -20,10 +19,6 @@
 			{
 				"command": "extension.extract",
 				"title": "Docs Metadata: Extract"
-			},
-			{
-				"command": "extension.sayHello",
-				"title": "Say Hello"
 			}
 		],
 		"menus": {
