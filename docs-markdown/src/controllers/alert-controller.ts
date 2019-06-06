@@ -1,9 +1,8 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { getRepoName, insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { format } from "../helper/format";
-import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertAlert";
 let commandOption: string;
@@ -62,10 +61,7 @@ export function insertAlert() {
                 if (qpSelection.startsWith("Warning")) {
                     commandOption = "warning";
                 }
-                const workspaceUri = editor.document.uri;
-                const activeRepo = getRepoName(workspaceUri);
-                const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-                reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+                sendTelemetryData(telemetryCommand, commandOption);
             }
         });
     }

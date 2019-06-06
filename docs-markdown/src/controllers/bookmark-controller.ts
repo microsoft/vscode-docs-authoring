@@ -5,8 +5,7 @@ import { files } from "node-dir";
 import { basename, dirname, extname, join, relative, resolve } from "path";
 import { QuickPickItem, window, workspace } from "vscode";
 import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/bookmark-builder";
-import { getRepoName, insertContentToEditor, noActiveEditorMessage } from "../helper/common";
-import { reporter } from "../helper/telemetry";
+import { insertContentToEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 
 const telemetryCommand: string = "insertBookmark";
 let commandOption: string;
@@ -108,10 +107,7 @@ export function insertBookmarkExternal() {
             });
         });
     });
-    const workspaceUri = editor.document.uri;
-    const activeRepo = getRepoName(workspaceUri);
-    const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-    reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+    sendTelemetryData(telemetryCommand, commandOption);
 }
 
 /**
@@ -145,8 +141,5 @@ export function insertBookmarkInternal() {
         const bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, "");
         insertContentToEditor(editor, "InsertBookmarkInternal", bookmark, true, editor.selection);
     });
-    const workspaceUri = editor.document.uri;
-    const activeRepo = getRepoName(workspaceUri);
-    const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-    reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+    sendTelemetryData(telemetryCommand, commandOption);
 }

@@ -1,7 +1,7 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { getRepoName, hasValidWorkSpaceRootPath, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { getRepoName, hasValidWorkSpaceRootPath, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { reporter } from "../helper/telemetry";
 import { includeBuilder } from "../helper/utility";
 
@@ -83,8 +83,5 @@ export function insertInclude() {
             });
         });
     });
-    const workspaceUri = editor.document.uri;
-    const activeRepo = getRepoName(workspaceUri);
-    const telemetryProperties = activeRepo ? { repo_name: activeRepo } : { repo_name: "" };
-    reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+    sendTelemetryData(telemetryCommand, "");
 }

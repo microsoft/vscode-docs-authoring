@@ -1,7 +1,7 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { getRepoName, insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBold, isBoldAndItalic } from "../helper/format-styles";
 import { reporter } from "../helper/telemetry";
@@ -55,10 +55,7 @@ export function formatBold() {
             insertContentToEditor(editor, formatBold.name, formattedText, true);
         }
     }
-    const workspaceUri = editor.document.uri;
-    const activeRepo = getRepoName(workspaceUri);
-    const telemetryProperties = activeRepo ? { repo_name: activeRepo } : { repo_name: "" };
-    reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+    sendTelemetryData(telemetryCommand, "");
 }
 
 /**

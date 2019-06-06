@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 import { output } from "../extension";
-import { getRepoName, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { getRepoName, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { reporter } from "../helper/telemetry";
 import { tableBuilder, validateTableRowAndColumnCount } from "../helper/utility";
 
@@ -52,10 +52,7 @@ export function insertTable() {
                 output.appendLine("Table insert failed.");
             }
             commandOption = logTableMessage;
-            const workspaceUri = editor.document.uri;
-            const activeRepo = getRepoName(workspaceUri);
-            const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-            reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+            sendTelemetryData(telemetryCommand, commandOption);
         }
     });
 }

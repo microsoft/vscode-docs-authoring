@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 import { insertBookmarkExternal, insertBookmarkInternal } from "../controllers/bookmark-controller";
-import { getRepoName, hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, setCursorPosition } from "../helper/common";
+import { getRepoName, hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, setCursorPosition, sendTelemetryData } from "../helper/common";
 import { reporter } from "../helper/telemetry";
 import { externalLinkBuilder, internalLinkBuilder, videoLinkBuilder } from "../helper/utility";
 
@@ -52,10 +52,7 @@ export function insertVideo() {
             insertContentToEditor(editor, insertVideo.name, contentToInsert);
         });
     }
-    const workspaceUri = editor.document.uri;
-    const activeRepo = getRepoName(workspaceUri);
-    const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-    reporter.sendTelemetryEvent(telemetryCommandMedia, telemetryProperties);
+    sendTelemetryData(telemetryCommandMedia, commandOption);
 }
 
 /**
@@ -93,10 +90,7 @@ export function insertURL() {
             setCursorPosition(editor, selection.start.line, selection.start.character + contentToInsert.length);
         }
     });
-    const workspaceUri = editor.document.uri;
-    const activeRepo = getRepoName(workspaceUri);
-    const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-    reporter.sendTelemetryEvent(telemetryCommandLink, telemetryProperties);
+    sendTelemetryData(telemetryCommandLink, commandOption);
 }
 
 /**
@@ -224,19 +218,16 @@ export function Insert(isArt: any) {
         return;
     } else {
         const selectedText = editor.document.getText(editor.selection);
-        const workspaceUri = editor.document.uri;
-        const activeRepo = getRepoName(workspaceUri);
-        const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
 
         // determines the name to set in the ValidEditor check
         if (isArt) {
             actionType = "Art";
             commandOption = "art";
-            reporter.sendTelemetryEvent(telemetryCommandMedia, telemetryProperties);
+            sendTelemetryData(telemetryCommandMedia, commandOption);
         } else {
             actionType = "Link";
             commandOption = "internal";
-            reporter.sendTelemetryEvent(telemetryCommandLink, telemetryProperties);
+            sendTelemetryData(telemetryCommandLink, commandOption);
         }
 
         // checks for valid environment

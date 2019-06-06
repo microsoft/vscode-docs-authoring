@@ -1,8 +1,7 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { checkExtension, generateTimestamp, getOSPlatform, getRepoName, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
-import { reporter } from "../helper/telemetry";
+import { checkExtension, generateTimestamp, getOSPlatform, getRepoName, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 
 const telemetryCommand: string = "previewTopic";
 
@@ -40,8 +39,5 @@ export function previewTopic() {
             }
         }
     }
-    const workspaceUri = editor.document.uri;
-    const activeRepo = getRepoName(workspaceUri);
-    const telemetryProperties = activeRepo ? { repo_name: activeRepo } : { repo_name: "" };
-    reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+    sendTelemetryData(telemetryCommand, "");
 }

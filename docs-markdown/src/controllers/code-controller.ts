@@ -2,7 +2,7 @@
 
 import { QuickPickOptions, Range, window } from "vscode";
 import { DocsCodeLanguages, languageRequired } from "../constants/docs-code-languages";
-import { getRepoName, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning } from "../helper/common";
+import { getRepoName, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
 import { reporter } from "../helper/telemetry";
@@ -48,10 +48,7 @@ export function formatCode() {
             applyCodeFormatting(selectedText, selection, "");
         }
     }
-    const workspaceUri = editor.document.uri;
-    const activeRepo = getRepoName(workspaceUri);
-    const telemetryProperties = activeRepo ? { repo_name: activeRepo } : { repo_name: "" };
-    reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+    sendTelemetryData(telemetryCommand, "");
 }
 
 /**

@@ -2,7 +2,7 @@
 
 import * as dir from "node-dir";
 import * as vscode from "vscode";
-import { getRepoName, hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { getRepoName, hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { reporter } from "../helper/telemetry";
 import { search } from "../helper/utility";
 
@@ -38,10 +38,7 @@ export function insertSnippet() {
     }
 
     vscode.window.showInputBox({ prompt: "Enter snippet search terms." }).then(searchRepo);
-    const workspaceUri = editor.document.uri;
-    const activeRepo = getRepoName(workspaceUri);
-    const telemetryProperties = activeRepo ? { repo_name: activeRepo } : { repo_name: "" };
-    reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+    sendTelemetryData(telemetryCommand, "");
 }
 // finds the directories to search, passes this and the search term to the search function.
 export function searchRepo(searchTerm: any) {

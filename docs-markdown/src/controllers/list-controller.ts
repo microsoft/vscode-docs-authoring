@@ -3,9 +3,8 @@
 import * as vscode from "vscode";
 import { ListType } from "../constants/list-type";
 import { output } from "../extension";
-import { getRepoName, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { addIndent, autolistAlpha, autolistNumbered, checkEmptyLine, checkEmptySelection, CountIndent, createBulletedListFromText, createNumberedListFromText, fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, insertList, isBulletedLine, nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern } from "../helper/list";
-import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertList";
 let commandOption: string;
@@ -44,10 +43,7 @@ export function insertNumberedList() {
         } else {
             createNumberedListFromText(editor);
         }
-        const workspaceUri = editor.document.uri;
-        const activeRepo = getRepoName(workspaceUri);
-        const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-        reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+        sendTelemetryData(telemetryCommand, commandOption);
     }
 }
 
@@ -78,10 +74,7 @@ export function insertBulletedList() {
         } catch (error) {
             output.appendLine(error);
         }
-        const workspaceUri = editor.document.uri;
-        const activeRepo = getRepoName(workspaceUri);
-        const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-        reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+        sendTelemetryData(telemetryCommand, commandOption);
     }
 }
 

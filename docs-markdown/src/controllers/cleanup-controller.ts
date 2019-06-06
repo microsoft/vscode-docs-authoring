@@ -4,7 +4,7 @@ import { existsSync, readFile, writeFile } from "graceful-fs";
 import { join } from "path";
 import * as vscode from "vscode";
 import { ProgressLocation, window, workspace } from "vscode";
-import { getRepoName, postError, showStatusMessage } from "../helper/common";
+import { postError, sendTelemetryData, showStatusMessage } from "../helper/common";
 import { reporter } from "../helper/telemetry";
 import { generateMasterRedirectionFile } from "./master-redirect-controller";
 // tslint:disable no-var-requires
@@ -102,10 +102,7 @@ export function applyCleanup() {
                                 commandOption = "everything";
                                 break;
                         }
-                        const workspaceUri = editor.document.uri;
-                        const activeRepo = getRepoName(workspaceUri);
-                        const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-                        reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+                        sendTelemetryData(telemetryCommand, commandOption);
                     }
                 }
             });

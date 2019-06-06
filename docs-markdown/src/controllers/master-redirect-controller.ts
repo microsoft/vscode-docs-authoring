@@ -6,7 +6,7 @@ import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
 import { Uri, window, workspace, WorkspaceFolder } from "vscode";
 import { output } from "../extension";
-import { generateTimestamp, getRepoName, postError } from "../helper/common";
+import { generateTimestamp, getRepoName, postError, sendTelemetryData } from "../helper/common";
 import { reporter } from "../helper/telemetry";
 import * as yamlMetadata from "../helper/yaml-metadata";
 import YAML = require("yamljs");
@@ -67,10 +67,7 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
     const editor = window.activeTextEditor;
     let workspacePath: string;
     if (editor) {
-        const workspaceUri = editor.document.uri;
-        const activeRepo = getRepoName(workspaceUri);
-        const telemetryProperties = activeRepo ? { repo_name: activeRepo } : { repo_name: "" };
-        reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+        sendTelemetryData(telemetryCommand, "");
         const resource = editor.document.uri;
         let folder = workspace.getWorkspaceFolder(resource);
         if (!folder && rootPath) {
