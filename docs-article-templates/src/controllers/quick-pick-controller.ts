@@ -5,7 +5,7 @@ import { files } from "node-dir";
 import { basename, dirname, extname, join, parse } from "path";
 import { Position, QuickPickItem, TextDocument, Uri, window, workspace } from "vscode";
 import { output } from "../extension";
-import { generateTimestamp, getRepoName } from "../helper/common";
+import { generateTimestamp, getRepoName, sendTelemetryData } from "../helper/common";
 import { cleanupDownloadFiles, templateDirectory } from "../helper/github";
 import { showLearnFolderSelector } from "../helper/module-builder";
 import { reporter } from "../helper/telemetry";
@@ -99,19 +99,16 @@ export function displayTemplates() {
             }
 
             if (qpSelection.label && qpSelection.label !== moduleQuickPick && qpSelection.label !== addUnitToQuickPick) {
-            const template = qpSelection.label;
-            const templatePath = quickPickMap.get(template);
-            applyDocsTemplate(templatePath, template);
-            commandOption = template;
-        }
-        const workspaceUri = editor.document.uri;
-        const activeRepo = getRepoName(workspaceUri);
-        const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-        reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
-    }, (error: any) => {
-        output.appendLine(error);
+                const template = qpSelection.label;
+                const templatePath = quickPickMap.get(template);
+                applyDocsTemplate(templatePath, template);
+                commandOption = template;
+            }
+            sendTelemetryData(telemetryCommand, commandOption);
+        }, (error: any) => {
+            output.appendLine(error);
+        });
     });
-});
 }
 
 export function applyDocsTemplate(templatePath: string, template?: string) {
