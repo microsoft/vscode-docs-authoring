@@ -1,17 +1,13 @@
 import {commands, 
-		env, 
-		window, 
 		workspace, 
-		ExtensionContext, 
-		OpenDialogOptions,
-		Uri} from 'vscode';
+		ExtensionContext} from 'vscode';
 
 import {showExtractionCancellationMessage, 
 		showArgsQuickInput, 
 		showFolderSelectionDialog,
-		showExtractConfirmationMessage} from "./controllers/extractController";
+		showExtractConfirmationMessage} from "./controllers/extract-controller";
 
-import {showApplyMetadataMessage} from "./controllers/applyController";
+import {showApplyMetadataMessage} from "./controllers/apply-controller";
 
 export function activate(context: ExtensionContext) {
 
