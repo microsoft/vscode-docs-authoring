@@ -9,7 +9,7 @@ import {commands,
 
 export async function showApplyMetadataMessage(folderPath:string)
 {
-	window.showInformationMessage(`Apply MUT file ${folderPath}?`, 
+	window.showInformationMessage(`Apply metadata update tool(MUT) file ${folderPath}?`, 
 								"OK", "Change Location","Cancel")
 	.then(selectedItem => {
 		if(selectedItem === "OK")
