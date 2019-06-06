@@ -39,13 +39,8 @@ function requestYamlSchemaUriCallback(resource: string): string {
 // Get schema uri of this textDocument
 function getSchemaUri(textDocument: TextDocument) {
     var yamlMime = getYamlMime(textDocument.getText());
-    const workspaceUri = textDocument.uri;
-    const activeRepo = getRepoName(workspaceUri);
     const commandOption = yamlMime;
-    const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-    reporter.sendTelemetryEvent("yamlMimeType", telemetryProperties);
-    // sendTelemetryData("yamlMimeType", yamlMime, activeWorkspace);
-    // reporter.sendTelemetryEvent(`yamlMimeType.${yamlMime}`);
+    sendTelemetryData("mimeType", commandOption);
     return docsSchemaHolder.lookup(yamlMime);
 }
 
@@ -53,8 +48,8 @@ function getSchemaUri(textDocument: TextDocument) {
 async function activateYamlExtension(): Promise<{ registerContributor: YamlSchemaContributor }> {
     const ext: Extension<any> = extensions.getExtension(VSCODE_YAML_EXTENSION_ID);
     if (!ext) {
-        sendTelemetryData("yamlError", "missing-dependecy");
-        // reporter.sendTelemetryEvent(`yaml.missingDependency`);
+        const commandOption = "missing-dependecy";
+        sendTelemetryData("yamlError", commandOption);
         window.showWarningMessage('Please install \'YAML Support by Red Hat\' via the Extensions pane.');
         return;
     }

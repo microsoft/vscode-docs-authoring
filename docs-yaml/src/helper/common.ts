@@ -1,6 +1,6 @@
 "use-strict";
 
-import { Uri, workspace } from "vscode";
+import { Uri, window, workspace } from "vscode";
 import { reporter } from "../helper/telemetry";
 
 /**
@@ -16,17 +16,10 @@ export function getRepoName(workspacePath: Uri) {
     }
 }
 
-export function sendTelemetryData(commandName: string, commandOption?: string, workspaceUri?: Uri, ) {
-    try {
-        const activeRepo = getRepoName(workspaceUri);
-        if (commandOption) {
-            const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-        } else {
-            const telemetryProperties = activeRepo ? { repo_name: activeRepo } : { repo_name: "" };
-        }
-        const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-        reporter.sendTelemetryEvent(commandName, telemetryProperties);
-    } catch (error) {
-        console.log(error);
-    }
+export function sendTelemetryData(telemetryCommand: string, commandOption: string) {
+    const editor = window.activeTextEditor;
+    const workspaceUri = editor.document.uri;
+    const activeRepo = getRepoName(workspaceUri);
+    const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
+    reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
 }
