@@ -54,7 +54,6 @@ export function generateTimestamp() {
  * @param Uri
  */
 export function getRepoName(workspacePath: Uri) {
-    // let repoName;
     const repo = workspace.getWorkspaceFolder(workspacePath);
     if (repo) {
         const repoName = repo.name;
