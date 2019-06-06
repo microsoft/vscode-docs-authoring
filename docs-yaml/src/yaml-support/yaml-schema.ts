@@ -1,5 +1,6 @@
 import { Extension, extensions, TextDocument, window } from 'vscode';
 import { mappingData } from '../extension';
+import { getRepoName, sendTelemetryData } from "../helper/common";
 import { reporter } from "../helper/telemetry";
 import { VSCODE_YAML_EXTENSION_ID } from "./yaml-constant";
 import { DocsSchemaHolder } from "./yaml-schem-Holder";
@@ -38,7 +39,13 @@ function requestYamlSchemaUriCallback(resource: string): string {
 // Get schema uri of this textDocument
 function getSchemaUri(textDocument: TextDocument) {
     var yamlMime = getYamlMime(textDocument.getText());
-    reporter.sendTelemetryEvent(`yamlMimeType.${yamlMime}`);
+    const workspaceUri = textDocument.uri;
+    const activeRepo = getRepoName(workspaceUri);
+    const commandOption = yamlMime;
+    const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
+    reporter.sendTelemetryEvent("yamlMimeType", telemetryProperties);
+    // sendTelemetryData("yamlMimeType", yamlMime, activeWorkspace);
+    // reporter.sendTelemetryEvent(`yamlMimeType.${yamlMime}`);
     return docsSchemaHolder.lookup(yamlMime);
 }
 
@@ -46,7 +53,8 @@ function getSchemaUri(textDocument: TextDocument) {
 async function activateYamlExtension(): Promise<{ registerContributor: YamlSchemaContributor }> {
     const ext: Extension<any> = extensions.getExtension(VSCODE_YAML_EXTENSION_ID);
     if (!ext) {
-        reporter.sendTelemetryEvent(`yaml.missingDependency`);
+        sendTelemetryData("yamlError", "missing-dependecy");
+        // reporter.sendTelemetryEvent(`yaml.missingDependency`);
         window.showWarningMessage('Please install \'YAML Support by Red Hat\' via the Extensions pane.');
         return;
     }
