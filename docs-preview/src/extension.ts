@@ -3,8 +3,8 @@
 import { readFileSync } from "fs";
 import { basename, resolve } from "path";
 import { commands, ExtensionContext, TextDocument, window } from "vscode";
-import { getRepoName } from "./helper/common";
-import { Reporter, reporter } from "./helper/telemetry";
+import { sendTelemetryData } from "./helper/common";
+import { Reporter } from "./helper/telemetry";
 
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
@@ -18,12 +18,12 @@ export function activate(context: ExtensionContext) {
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
         commands.executeCommand("markdown.showPreviewToSide");
         const commandOption = "show-preview-to-side";
-        sendTelemetryData(commandOption);
+        sendTelemetryData(telemetryCommand, commandOption);
     });
     const disposableStandalonePreview = commands.registerCommand("docs.showPreview", (uri) => {
         commands.executeCommand("markdown.showPreview");
         const commandOption = "show-preview-tab";
-        sendTelemetryData(commandOption);
+        sendTelemetryData(telemetryCommand, commandOption);
     });
     context.subscriptions.push(
         disposableSidePreview,
@@ -65,12 +65,4 @@ export function codeSnippets(md, options) {
         }
     };
     md.core.ruler.before("normalize", "codesnippet", importCodeSnippet);
-}
-
-export function sendTelemetryData(commandOption: string) {
-    const editor = window.activeTextEditor;
-    const workspaceUri = editor.document.uri;
-    const activeRepo = getRepoName(workspaceUri);
-    const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-    reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
 }
