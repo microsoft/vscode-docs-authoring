@@ -8,9 +8,10 @@ import {commands,
 
 import {showExtractionCancellationMessage, 
 		showArgsQuickInput, 
-		showFolderSelectionDialog} from "./controllers/extractController";
+		showFolderSelectionDialog,
+		showExtractConfirmationMessage} from "./controllers/extractController";
 
-import {getRepoName} from "./helper/common";
+import {showApplyMetadataMessage} from "./controllers/applyController";
 
 export function activate(context: ExtensionContext) {
 
@@ -32,35 +33,13 @@ export function activate(context: ExtensionContext) {
 			return; 
 		}
 		
-		//show a banner stating what is going to happen with ok|cancel
-		var message = "";
-		if(args)
-		{
-			message = `Extracting metadata ${args} for path: ${folderPath}.`;
-		} else {
-			let rootPath = workspace.rootPath ? workspace.rootPath : '';
-			if(folderPath === rootPath)
-			{
-				message = `Extracting all existing metadata for repo "${getRepoName(Uri.file(rootPath))}".`;
-			} else {
-				message = `Extracting all existing metadata for folder ${folderPath}.`;
-			}
-		}
-		window.showInformationMessage(message, "OK", "Cancel")
-		.then(selectedItem => {
-			if(selectedItem !== "OK")
-			{
-				//operation canceled.
-				showExtractionCancellationMessage();
-			} else {
-				//TODO: send the args to mdextractcore
-			}
-		});
+		showExtractConfirmationMessage(args, folderPath);
 
 	});
 
 	let applyCommand = commands.registerCommand('extension.apply', async () => {
-		console.log('apply');
+		let metadataCsvPath = workspace.rootPath ? workspace.rootPath : "./";
+		showApplyMetadataMessage(metadataCsvPath);
 	});
 	
 	context.subscriptions.push(extractCommand);

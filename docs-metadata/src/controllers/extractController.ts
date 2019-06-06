@@ -7,10 +7,38 @@ import {commands,
 	OpenDialogOptions,
 	Uri} from 'vscode';
 
-	
+import {getRepoName} from "../helper/common";
+
 export function showExtractionCancellationMessage()
 {
 	window.showInformationMessage("Metadata extraction cancelled.");
+}
+
+export function showExtractConfirmationMessage(args:string, folderPath:string)
+{
+	var message = "";
+		if(args)
+		{
+			message = `Extracting metadata ${args} for path: ${folderPath}.`;
+		} else {
+			let rootPath = workspace.rootPath ? workspace.rootPath : '';
+			if(folderPath === rootPath)
+			{
+				message = `Extracting all existing metadata for repo "${getRepoName(Uri.file(rootPath))}".`;
+			} else {
+				message = `Extracting all existing metadata for folder ${folderPath}.`;
+			}
+		}
+		window.showInformationMessage(message, "OK", "Cancel")
+		.then(selectedItem => {
+			if(selectedItem !== "OK")
+			{
+				//operation canceled.
+				showExtractionCancellationMessage();
+			} else {
+				//TODO: send the args to mdextractcore
+			}
+		});
 }
 
 export async function showFolderSelectionDialog()
