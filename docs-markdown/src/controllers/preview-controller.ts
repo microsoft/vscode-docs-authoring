@@ -1,7 +1,7 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { checkExtension, generateTimestamp, getOSPlatform, getRepoName, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { checkExtension, generateTimestamp, getOSPlatform, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 
 const telemetryCommand: string = "previewTopic";
 

@@ -1,8 +1,7 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { getRepoName, hasValidWorkSpaceRootPath, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
-import { reporter } from "../helper/telemetry";
+import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { includeBuilder } from "../helper/utility";
 
 const telemetryCommand: string = "insertInclude";

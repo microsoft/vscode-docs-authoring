@@ -2,8 +2,7 @@
 
 import * as dir from "node-dir";
 import * as vscode from "vscode";
-import { getRepoName, hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
-import { reporter } from "../helper/telemetry";
+import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { search } from "../helper/utility";
 
 const telemetryCommand: string = "insertSnippet";

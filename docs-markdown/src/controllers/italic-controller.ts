@@ -1,10 +1,9 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { getRepoName, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBoldAndItalic, isItalic } from "../helper/format-styles";
-import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "formatItalic";
 

@@ -2,8 +2,7 @@
 
 import * as vscode from "vscode";
 import { output } from "../extension";
-import { getRepoName, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
-import { reporter } from "../helper/telemetry";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { tableBuilder, validateTableRowAndColumnCount } from "../helper/utility";
 
 const telemetryCommand: string = "insertTable";

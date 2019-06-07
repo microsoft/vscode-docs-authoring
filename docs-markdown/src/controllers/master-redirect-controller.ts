@@ -6,8 +6,7 @@ import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
 import { Uri, window, workspace, WorkspaceFolder } from "vscode";
 import { output } from "../extension";
-import { generateTimestamp, getRepoName, postError, sendTelemetryData } from "../helper/common";
-import { reporter } from "../helper/telemetry";
+import { generateTimestamp, postError, sendTelemetryData } from "../helper/common";
 import * as yamlMetadata from "../helper/yaml-metadata";
 import YAML = require("yamljs");
 
