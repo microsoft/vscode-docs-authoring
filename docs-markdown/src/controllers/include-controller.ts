@@ -1,8 +1,7 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
-import { reporter } from "../helper/telemetry";
+import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { includeBuilder } from "../helper/utility";
 
 const telemetryCommand: string = "insertInclude";
@@ -19,8 +18,6 @@ export function insertIncludeCommand() {
  * transforms the current selection into an include.
  */
 export function insertInclude() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`);
-
     const path = require("path");
     const dir = require("node-dir");
     const os = require("os");
@@ -85,4 +82,5 @@ export function insertInclude() {
             });
         });
     });
+    sendTelemetryData(telemetryCommand, "");
 }
