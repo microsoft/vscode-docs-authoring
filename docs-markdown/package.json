@@ -3,8 +3,8 @@
   "displayName": "docs-markdown",
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
-  "aiKey": "85ed760d-c958-4bc2-bd1e-fb7e1e0b9ef8",
-  "version": "0.2.6",
+  "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
+  "version": "0.2.7",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {

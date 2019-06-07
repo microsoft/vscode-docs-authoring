@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.7 (TBD)
+
+- Telemetry update
+
 ## 0.2.6 (June 3rd, 2019)
 
 - Build reporting link
