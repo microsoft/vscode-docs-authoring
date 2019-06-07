@@ -1,8 +1,7 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { checkExtension, generateTimestamp, getOSPlatform, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
-import { reporter } from "../helper/telemetry";
+import { checkExtension, generateTimestamp, getOSPlatform, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 
 const telemetryCommand: string = "previewTopic";
 
@@ -14,8 +13,6 @@ export function previewTopicCommand() {
 }
 
 export function previewTopic() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`);
-
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -42,4 +39,5 @@ export function previewTopic() {
             }
         }
     }
+    sendTelemetryData(telemetryCommand, "");
 }

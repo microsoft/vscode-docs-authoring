@@ -2,12 +2,12 @@
 
 import * as vscode from "vscode";
 import { insertBookmarkExternal, insertBookmarkInternal } from "../controllers/bookmark-controller";
-import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, setCursorPosition } from "../helper/common";
-import { reporter } from "../helper/telemetry";
+import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData, setCursorPosition } from "../helper/common";
 import { externalLinkBuilder, internalLinkBuilder, videoLinkBuilder } from "../helper/utility";
 
 const telemetryCommandMedia: string = "insertMedia";
 const telemetryCommandLink: string = "insertLink";
+let commandOption: string;
 
 export function insertLinksAndMediaCommands() {
     const commands = [
@@ -30,7 +30,7 @@ export const headingTextRegex = /^(#+)[\s](.*)[\r]?[\n]/gm;
 export const yamlTextRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
 
 export function insertVideo() {
-    reporter.sendTelemetryEvent(`${telemetryCommandMedia}.video`);
+    commandOption = "video";
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -51,14 +51,14 @@ export function insertVideo() {
             insertContentToEditor(editor, insertVideo.name, contentToInsert);
         });
     }
+    sendTelemetryData(telemetryCommandMedia, commandOption);
 }
 
 /**
  * Creates an external URL with the current selection.
  */
 export function insertURL() {
-    reporter.sendTelemetryEvent(`${telemetryCommandLink}.external`);
-
+    commandOption = "external";
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -89,6 +89,7 @@ export function insertURL() {
             setCursorPosition(editor, selection.start.line, selection.start.character + contentToInsert.length);
         }
     });
+    sendTelemetryData(telemetryCommandLink, commandOption);
 }
 
 /**
@@ -102,7 +103,6 @@ export function insertLink() {
  * Triggers the insert function and passes in the true value to signify it is an art insert.
  */
 export function insertImage() {
-    reporter.sendTelemetryEvent(`${telemetryCommandMedia}.art`);
     Insert(true);
 }
 
@@ -221,9 +221,12 @@ export function Insert(isArt: any) {
         // determines the name to set in the ValidEditor check
         if (isArt) {
             actionType = "Art";
+            commandOption = "art";
+            sendTelemetryData(telemetryCommandMedia, commandOption);
         } else {
             actionType = "Link";
-            reporter.sendTelemetryEvent(`${telemetryCommandLink}.internal`);
+            commandOption = "internal";
+            sendTelemetryData(telemetryCommandLink, commandOption);
         }
 
         // checks for valid environment

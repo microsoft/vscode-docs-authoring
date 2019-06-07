@@ -1,11 +1,11 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { format } from "../helper/format";
-import { reporter } from "../telemetry/telemetry";
 
 const telemetryCommand: string = "insertAlert";
+let commandOption: string;
 
 export function insertAlertCommand() {
     const commands = [
@@ -47,20 +47,21 @@ export function insertAlert() {
             if (editor) {
                 insertContentToEditor(editor, insertAlert.name, formattedText, true);
                 if (qpSelection.startsWith("Note")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.note`);
+                    commandOption = "note";
                 }
                 if (qpSelection.startsWith("Tip")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.tip`);
+                    commandOption = "tip";
                 }
                 if (qpSelection.startsWith("Important")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.important`);
+                    commandOption = "important";
                 }
                 if (qpSelection.startsWith("Caution")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.caution`);
+                    commandOption = "caution";
                 }
                 if (qpSelection.startsWith("Warning")) {
-                    reporter.sendTelemetryEvent(`${telemetryCommand}.warning`);
+                    commandOption = "warning";
                 }
+                sendTelemetryData(telemetryCommand, commandOption);
             }
         });
     }
