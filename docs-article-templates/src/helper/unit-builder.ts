@@ -1,8 +1,7 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join, parse } from "path";
 import { MessageOptions, TextDocumentShowOptions, Uri, ViewColumn, window } from "vscode";
-import { output } from "../extension";
-import { formatLearnNames } from "../helper/common";
+import { formatLearnNames, showStatusMessage } from "../helper/common";
 import { formattedModuleName, includesDirectory, modulePath, repoName, updateModule } from "../helper/module-builder";
 import { alias, gitHubID, learnRepoId } from "../helper/user-settings";
 import { enterUnitName, validateUnitName } from "../strings";
@@ -106,7 +105,7 @@ export function cleanupUnit(generatedUnit: string, preserveValues?: boolean) {
             updateModule(unitList);
         }
     } catch (error) {
-        output.appendLine(error);
+        showStatusMessage(error);
     }
 }
 
