@@ -5,10 +5,10 @@ import { files } from "node-dir";
 import { basename, dirname, extname, join, relative, resolve } from "path";
 import { QuickPickItem, window, workspace } from "vscode";
 import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/bookmark-builder";
-import { insertContentToEditor, noActiveEditorMessage } from "../helper/common";
-import { reporter } from "../helper/telemetry";
+import { insertContentToEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 
 const telemetryCommand: string = "insertBookmark";
+let commandOption: string;
 const markdownExtensionFilter = [".md"];
 
 export const headingTextRegex = /^ {0,3}(#{2,6})(.*)/gm;
@@ -26,7 +26,7 @@ export function insertBookmarkCommands() {
  * Creates a bookmark to another file at the cursor position
  */
 export function insertBookmarkExternal() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}.external`);
+    commandOption = "external";
     let folderPath: string = "";
     let fullPath: string = "";
 
@@ -107,17 +107,19 @@ export function insertBookmarkExternal() {
             });
         });
     });
+    sendTelemetryData(telemetryCommand, commandOption);
 }
 
 /**
  * Creates a bookmark at the current cursor position
  */
 export function insertBookmarkInternal() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}.internal`);
+    commandOption = "internal";
     const editor = window.activeTextEditor;
     if (!editor) {
         return;
     }
+
     const content = editor.document.getText();
     const headings = content.match(headingTextRegex);
     if (!headings) {
@@ -139,4 +141,5 @@ export function insertBookmarkInternal() {
         const bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, "");
         insertContentToEditor(editor, "InsertBookmarkInternal", bookmark, true, editor.selection);
     });
+    sendTelemetryData(telemetryCommand, commandOption);
 }

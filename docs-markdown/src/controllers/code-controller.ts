@@ -2,10 +2,9 @@
 
 import { QuickPickOptions, Range, window } from "vscode";
 import { DocsCodeLanguages, languageRequired } from "../constants/docs-code-languages";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
-import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "formatCode";
 
@@ -20,7 +19,6 @@ export function codeFormattingCommand() {
  * Replaces current single or multiline selection with MD code formated selection
  */
 export function formatCode() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`);
     const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -49,6 +47,7 @@ export function formatCode() {
             applyCodeFormatting(selectedText, selection, "");
         }
     }
+    sendTelemetryData(telemetryCommand, "");
 }
 
 /**
@@ -102,6 +101,10 @@ export function showSupportedLanguages(content: string, selectedContent: any) {
         }
         selectedCodeLang = qpSelection;
         applyCodeFormatting(content, selectedContent, selectedCodeLang);
+        if (!qpSelection) {
+            postWarning("No code language selected. Abandoning command.");
+            return;
+        }
     });
 }
 

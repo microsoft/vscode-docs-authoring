@@ -4,7 +4,7 @@ import { existsSync, readFile, writeFile } from "graceful-fs";
 import { join } from "path";
 import * as vscode from "vscode";
 import { ProgressLocation, window, workspace } from "vscode";
-import { postError, showStatusMessage } from "../helper/common";
+import { postError, sendTelemetryData, showStatusMessage } from "../helper/common";
 import { reporter } from "../helper/telemetry";
 import { generateMasterRedirectionFile } from "./master-redirect-controller";
 // tslint:disable no-var-requires
@@ -13,6 +13,7 @@ const jsyaml = require("js-yaml");
 const jsdiff = require("diff");
 
 const telemetryCommand: string = "applyCleanup";
+let commandOption: string;
 
 export function applyCleanupCommand() {
     const commands = [
@@ -22,7 +23,6 @@ export function applyCleanupCommand() {
 }
 
 export function applyCleanup() {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     const opts: vscode.QuickPickOptions = { placeHolder: "Cleanup..." };
     const items: vscode.QuickPickItem[] = [];
     items.push({
@@ -83,25 +83,26 @@ export function applyCleanup() {
                         switch (selection.label.toLowerCase()) {
                             case "single-valued metadata":
                                 handleSingleValuedMetadata(workspacePath, progress, resolve);
-                                reporter.sendTelemetryEvent(`${telemetryCommand}.singleValue`);
+                                commandOption = "single-value";
                                 break;
                             case "microsoft links":
                                 microsoftLinks(workspacePath, progress, resolve);
-                                reporter.sendTelemetryEvent(`${telemetryCommand}.links`);
+                                commandOption = "links";
                                 break;
                             case "capitalization of metadata values":
                                 capitalizationOfMetadata(workspacePath, progress, resolve);
-                                reporter.sendTelemetryEvent(`${telemetryCommand}.capitalization`);
+                                commandOption = "capitalization";
                                 break;
                             case "master redirection file":
                                 generateMasterRedirectionFile(workspacePath, resolve);
-                                reporter.sendTelemetryEvent(`${telemetryCommand}.redirects`);
+                                commandOption = "redirects";
                                 break;
                             case "everything":
                                 runAll(workspacePath, progress, resolve);
-                                reporter.sendTelemetryEvent(`${telemetryCommand}.all`);
+                                commandOption = "everything";
                                 break;
                         }
+                        sendTelemetryData(telemetryCommand, commandOption);
                     }
                 }
             });

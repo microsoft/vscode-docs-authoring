@@ -2,8 +2,7 @@
 
 import * as dir from "node-dir";
 import * as vscode from "vscode";
-import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
-import { reporter } from "../helper/telemetry";
+import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { search } from "../helper/utility";
 
 const telemetryCommand: string = "insertSnippet";
@@ -19,8 +18,6 @@ export function insertSnippetCommand() {
  * Creates a snippet at the current cursor position.
  */
 export function insertSnippet() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`);
-
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -40,6 +37,7 @@ export function insertSnippet() {
     }
 
     vscode.window.showInputBox({ prompt: "Enter snippet search terms." }).then(searchRepo);
+    sendTelemetryData(telemetryCommand, "");
 }
 // finds the directories to search, passes this and the search term to the search function.
 export function searchRepo(searchTerm: any) {
