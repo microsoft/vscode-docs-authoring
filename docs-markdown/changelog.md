@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.8 (TBD)
+
+- Support custom tabbing in lists
+
 ## 0.2.7 (June 7th, 2019)
 
 - Telemetry update

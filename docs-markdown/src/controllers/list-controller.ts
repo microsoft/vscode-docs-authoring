@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import { ListType } from "../constants/list-type";
 import { output } from "../extension";
 import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
-import { addIndent, autolistAlpha, autolistNumbered, checkEmptyLine, checkEmptySelection, CountIndent, createBulletedListFromText, createNumberedListFromText, fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, insertList, isBulletedLine, nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern } from "../helper/list";
+import { addIndent, autolistAlpha, autolistNumbered, checkEmptyLine, checkEmptySelection, CountIndent, createBulletedListFromText, createNumberedListFromText, evaluateIndent, fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, isBulletedLine, nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern } from "../helper/list";
 
 const telemetryCommand: string = "insertList";
 let commandOption: string;
@@ -39,7 +39,7 @@ export function insertNumberedList() {
         }
 
         if (checkEmptyLine(editor) || checkEmptySelection(editor)) {
-            insertList(editor, ListType.Numbered);
+            evaluateIndent(editor, ListType.Numbered);
         } else {
             createNumberedListFromText(editor);
         }
@@ -67,7 +67,7 @@ export function insertBulletedList() {
 
         try {
             if (checkEmptyLine(editor)) {
-                insertList(editor, ListType.Bulleted);
+                evaluateIndent(editor, ListType.Bulleted);
             } else {
                 createBulletedListFromText(editor);
             }
