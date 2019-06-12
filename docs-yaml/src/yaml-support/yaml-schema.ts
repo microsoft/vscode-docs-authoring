@@ -1,7 +1,6 @@
 import { Extension, extensions, TextDocument, window } from 'vscode';
 import { mappingData } from '../extension';
-import { getRepoName, sendTelemetryData } from "../helper/common";
-import { reporter } from "../helper/telemetry";
+import { sendTelemetryData } from "../helper/common";
 import { VSCODE_YAML_EXTENSION_ID } from "./yaml-constant";
 import { DocsSchemaHolder } from "./yaml-schem-Holder";
 import { getYamlMime } from './yaml-util';
@@ -26,6 +25,7 @@ export async function registerYamlSchemaSupport(): Promise<void> {
     }
     // register for kubernetes schema provider
     yamlPlugin.registerContributor("docs-yaml", requestYamlSchemaUriCallback, null);
+    mimeTelemetry();
 }
 
 // See docs from YamlSchemaContributor
@@ -39,8 +39,6 @@ function requestYamlSchemaUriCallback(resource: string): string {
 // Get schema uri of this textDocument
 function getSchemaUri(textDocument: TextDocument) {
     var yamlMime = getYamlMime(textDocument.getText());
-    const commandOption = yamlMime;
-    sendTelemetryData("mimeType", commandOption);
     return docsSchemaHolder.lookup(yamlMime);
 }
 
@@ -60,4 +58,11 @@ async function activateYamlExtension(): Promise<{ registerContributor: YamlSchem
         return;
     }
     return yamlPlugin;
+}
+
+function mimeTelemetry() {
+    let activeTextDocument = window.activeTextEditor.document.getText();
+    var yamlMime = getYamlMime(activeTextDocument);
+    const commandOption = yamlMime;
+    sendTelemetryData("mimeType", commandOption);
 }
