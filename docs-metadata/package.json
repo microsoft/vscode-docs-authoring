@@ -28,14 +28,14 @@
 		],
 		"menus": {
 			"commandPalette": [
-			  {
-				"command": "extension.extract"
+				{
+					"command": "extension.extract"
 				},
 				{
-				"command": "extension.apply"
+					"command": "extension.apply"
 				}
 			]
-		  }
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
@@ -50,5 +50,33 @@
 		"tslint": "^5.12.1",
 		"@types/node": "^10.12.21",
 		"@types/mocha": "^2.2.42"
+	},
+	"runtimeDependencies": [
+		{
+			"description": "mdextractcore and mdapplycore",
+			"url": "https://authoringresources.blob.core.windows.net/mutcore/MUTCore.zip",
+			"installPath": ".muttools",
+			"platforms": [
+				"netcore",
+				"win32",
+				"darwin",
+				"linux"
+			],
+			"architectures": [
+				"netcore",
+				"x86",
+				"x86_64"
+			],
+			"installTestPath": "./.muttools/mdapplycore.dll"
+		}
+	],
+	"dependencies": {
+		"@types/mkdirp": "^0.5.2",
+		"@types/tmp": "^0.1.0",
+		"@types/yauzl": "^2.9.1",
+		"file-system": "^2.2.2",
+		"mkdirp": "^0.5.1",
+		"tmp": "^0.1.0",
+		"yauzl": "^2.10.0"
 	}
 }
