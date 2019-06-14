@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.8 (TBD)
+## 0.2.8 (June 11th, 2019)
 
 - Support custom tabbing in lists
 
