@@ -4,7 +4,8 @@ import {commands,
 		Extension, 
 		ExtensionContext} from 'vscode';
 
-import {showExtractionCancellationMessage, 
+import {getMutFileName,
+		showExtractionCancellationMessage, 
 		showArgsQuickInput, 
 		showFolderSelectionDialog,
 		showExtractConfirmationMessage} from "./controllers/extract-controller";
@@ -57,8 +58,7 @@ export async function activate(context: ExtensionContext) {
 	});
 
 	let applyCommand = commands.registerCommand('extension.apply', async () => {
-		let metadataCsvPath = workspace.rootPath ? workspace.rootPath : "./";
-		showApplyMetadataMessage(metadataCsvPath);
+		showApplyMetadataMessage(getMutFileName());
 	});
 	
 	context.subscriptions.push(extractCommand);

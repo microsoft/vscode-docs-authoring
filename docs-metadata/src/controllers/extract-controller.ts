@@ -1,13 +1,28 @@
 
 import {commands, 
 	env, 
+	Task,
 	window, 
-	workspace, 
-	ExtensionContext, 
+	workspace,
+	ShellExecution, 
+	ShellExecutionOptions,
 	OpenDialogOptions,
 	Uri} from 'vscode';
 
 import {getRepoName} from "../helper/common";
+import * as moment from "moment"
+import { getExtensionPath } from '../extension';
+import {exec} from 'child_process';
+
+let fileName:string = "";
+export function getMutFileName()
+{
+	if(fileName === "")
+	{
+		return workspace.rootPath ? workspace.rootPath : "./";
+	}
+	return fileName;
+}
 
 export function showExtractionCancellationMessage()
 {
@@ -19,7 +34,7 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 	var message = "";
 		if(args)
 		{
-			message = `Extracting metadata ${args} for path: ${folderPath}.`;
+			message = `Extracting metadata for path: ${folderPath}, using arguments: "${args}"`;
 		} else {
 			let rootPath = workspace.rootPath ? workspace.rootPath : '';
 			if(folderPath === rootPath)
@@ -36,7 +51,22 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 				//operation canceled.
 				showExtractionCancellationMessage();
 			} else {
-				//TODO: send the args to mdextractcore
+				fileName = `${workspace.rootPath}/metadata/${getRepoName(Uri.file(folderPath))}_mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
+				let command = `mkdir "${workspace.rootPath}/metadata" | dotnet "${getExtensionPath() + "\\.muttools\\"}mdextractcore.dll" --path "${folderPath}" --recurse -o "${fileName}" ${args}`;
+				exec(command, (err, stdout, stderr) => {
+					if (err) {
+					  // node couldn't execute the command
+					  console.log(`Error: ${err}`);
+					  console.log(`${stderr}`);
+					  return;
+					}
+				  
+					// the *entire* stdout and stderr (buffered)
+					console.log(`stdout: ${stdout}`);
+					console.log(`stderr: ${stderr}`);
+				  });
+				
+				  window.showInformationMessage(`Metadata extracted and placed in: ${fileName}`);
 			}
 		});
 }
@@ -67,7 +97,7 @@ export async function showArgsQuickInput()
 {
 	const result = await window.showInputBox({
 		value: '',
-		placeHolder: '(Optional) Enter any additional command-line args.'
+		placeHolder: '(Optional) Enter any additional command-line args. (i.e. "-t ms.author,author")'
 	});
 
 	return result;

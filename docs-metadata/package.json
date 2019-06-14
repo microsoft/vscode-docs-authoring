@@ -76,6 +76,7 @@
 		"@types/yauzl": "^2.9.1",
 		"file-system": "^2.2.2",
 		"mkdirp": "^0.5.1",
+		"moment": "^2.24.0",
 		"tmp": "^0.1.0",
 		"yauzl": "^2.10.0"
 	}
