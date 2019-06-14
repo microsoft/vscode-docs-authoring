@@ -3,23 +3,27 @@
 import { readFileSync } from "fs";
 import { basename, resolve } from "path";
 import { commands, ExtensionContext, TextDocument, window } from "vscode";
-import { Reporter, reporter } from "./helper/telemetry";
+import { sendTelemetryData } from "./helper/common";
+import { Reporter } from "./helper/telemetry";
 
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
 export const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
 export const CODE_RE = /\[\!code-(.*)\[(.*)\]\((.*)\)\]/gmi;
+const telemetryCommand: string = "preview";
 
 export function activate(context: ExtensionContext) {
     extensionPath = context.extensionPath;
     context.subscriptions.push(new Reporter(context));
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
         commands.executeCommand("markdown.showPreviewToSide");
-        reporter.sendTelemetryEvent(`preview.show-preview-to-side`, null, null);
+        const commandOption = "show-preview-to-side";
+        sendTelemetryData(telemetryCommand, commandOption);
     });
     const disposableStandalonePreview = commands.registerCommand("docs.showPreview", (uri) => {
         commands.executeCommand("markdown.showPreview");
-        reporter.sendTelemetryEvent(`preview.show-preview-tab`, null, null);
+        const commandOption = "show-preview-tab";
+        sendTelemetryData(telemetryCommand, commandOption);
     });
     context.subscriptions.push(
         disposableSidePreview,

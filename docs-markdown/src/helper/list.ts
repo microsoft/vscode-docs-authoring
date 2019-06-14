@@ -20,9 +20,9 @@ export const alphabetListWithIndentRegexTemplate = "^( ){{0}}[a-z]{1}\\.( )";
 export const fixedBulletedListRegex = /^( )*\-( )$/;
 export const fixedNumberedListWithIndentRegexTemplate = "^( ){{0}}[0-9]+\\.( )$";
 export const fixedAlphabetListWithIndentRegexTemplate = "^( ){{0}}[a-z]{1}\\.( )$";
-export const tabPattern = "    ";
 export const startAlphabet = "a";
 export const numberedListValue = "1";
+export let tabPattern = "    ";
 
 /**
  * Creates a list(numbered or bulleted) in the vscode editor.
