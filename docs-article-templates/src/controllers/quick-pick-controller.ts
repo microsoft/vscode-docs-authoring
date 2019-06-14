@@ -13,9 +13,6 @@ import { addUnitToQuickPick, displayTemplateList, moduleQuickPick, newModuleMess
 
 const telemetryCommand: string = "templateSelected";
 let commandOption: string;
-
-const telemetryCommand: string = "templateSelected";
-let commandOption: string;
 export let moduleTitle;
 // tslint:disable-next-line:no-var-requires
 const fm = require("front-matter");
