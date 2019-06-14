@@ -19,11 +19,11 @@
 		"commands": [
 			{
 				"command": "extension.extract",
-				"title": "Docs Metadata: Extract"
+				"title": "Docs: Metadata Extract"
 			},
 			{
 				"command": "extension.apply",
-				"title": "Docs Metadata: Apply"
+				"title": "Docs: Metadata Apply"
 			}
 		],
 		"menus": {
