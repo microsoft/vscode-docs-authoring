@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.9 (June 14th, 2019)
+
+- Breaking change in latest VS Code release: revert custom tabbing support
+
 ## 0.2.8 (June 11th, 2019)
 
 - Support custom tabbing in lists

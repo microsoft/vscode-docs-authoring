@@ -5,7 +5,7 @@ import { files } from "node-dir";
 import { basename, dirname, extname, join, parse } from "path";
 import { Position, QuickPickItem, TextDocument, Uri, window, workspace } from "vscode";
 import { output } from "../extension";
-import { generateTimestamp } from "../helper/common";
+import { generateTimestamp, getRepoName, sendTelemetryData } from "../helper/common";
 import { cleanupDownloadFiles, templateDirectory } from "../helper/github";
 import { showLearnFolderSelector } from "../helper/module-builder";
 import { reporter } from "../helper/telemetry";
@@ -13,6 +13,8 @@ import { getUnitName } from "../helper/unit-builder";
 import { alias, gitHubID, missingValue } from "../helper/user-settings";
 import { addUnitToQuickPick, moduleQuickPick, templateNameMetadata } from "../strings";
 
+const telemetryCommand: string = "templateSelected";
+let commandOption: string;
 export let moduleTitle;
 // tslint:disable-next-line:no-var-requires
 const fm = require("front-matter");
@@ -20,6 +22,7 @@ const markdownExtensionFilter = [".md"];
 
 export function displayTemplates() {
     let templateName;
+    const editor = window.activeTextEditor;
     // tslint:disable-next-line:no-shadowed-variable
     files(templateDirectory, (err, files) => {
         if (err) {
@@ -87,24 +90,25 @@ export function displayTemplates() {
 
             if (qpSelection.label === moduleQuickPick) {
                 showLearnFolderSelector();
-                reporter.sendTelemetryEvent(`templateSelected.new-module`, null, null);
+                commandOption = "new-module";
             }
 
             if (qpSelection.label === addUnitToQuickPick) {
                 getUnitName(true, activeFilePath);
-                reporter.sendTelemetryEvent(`templateSelected.additional-unit`, null, null);
+                commandOption = "additional-unit";
             }
 
             if (qpSelection.label && qpSelection.label !== moduleQuickPick && qpSelection.label !== addUnitToQuickPick) {
-            const template = qpSelection.label;
-            const templatePath = quickPickMap.get(template);
-            applyDocsTemplate(templatePath, template);
-            reporter.sendTelemetryEvent(`templateSelected.${template}`, null , null);
-        }
-    }, (error: any) => {
-        output.appendLine(error);
+                const template = qpSelection.label;
+                const templatePath = quickPickMap.get(template);
+                applyDocsTemplate(templatePath, template);
+                commandOption = template;
+            }
+            sendTelemetryData(telemetryCommand, commandOption);
+        }, (error: any) => {
+            output.appendLine(error);
+        });
     });
-});
 }
 
 export function applyDocsTemplate(templatePath: string, template?: string) {
