@@ -23,7 +23,7 @@ export interface Package {
     platforms: string[];
     architectures: string[];
     binaries: string[];
-    tmpFile: tmp.SynchrounousResult;
+    tmpFile: any;
 
     // Path to use to test if the package has already been installed
     installTestPath?: string;
@@ -37,7 +37,7 @@ export interface Status {
 export class PackageError extends Error {
     // Do not put PII (personally identifiable information) in the 'message' field as it will be logged to telemetry
     constructor(public message: string, 
-                public pkg: Package = null, 
+                public pkg: Package, 
                 public innerError: any = null) {
         super(message);
     }
@@ -86,7 +86,7 @@ export class PackageManager {
                 resolve(this.allPackages);
             }
             else {
-                reject(new PackageError("Package manifest does not exist."));
+                //reject(new PackageError("Package manifest does not exist."));
             }
         });
     }
@@ -143,13 +143,13 @@ function downloadPackage(pkg: Package, logger: Logger, status: Status, proxy: st
     status.setMessage("$(cloud-download) Downloading packages");
     status.setDetail(`Downloading package '${pkg.description}'...`);
 
-    return new Promise<tmp.SynchrounousResult>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
         tmp.file({ prefix: 'package-' }, (err, path, fd, cleanupCallback) => {
             if (err) {
                 return reject(new PackageError('Error from tmp.file', pkg, err));
             }
 
-            resolve(<tmp.SynchrounousResult>{ name: path, fd: fd, removeCallback: cleanupCallback });
+            resolve(<any>{ name: path, fd: fd, removeCallback: cleanupCallback });
         });
     }).then(tmpResult => {
         pkg.tmpFile = tmpResult;
@@ -163,7 +163,7 @@ function downloadPackage(pkg: Package, logger: Logger, status: Status, proxy: st
         if (pkg.fallbackUrl) {
             result = result.catch((primaryUrlError) => {
                 logger.append(`\tRetrying from '${pkg.fallbackUrl}' `);
-                return downloadFile(pkg.fallbackUrl, pkg, logger, status, proxy, strictSSL)
+                return downloadFile(pkg.fallbackUrl||"", pkg, logger, status, proxy, strictSSL)
                     .then(() => logger.appendLine(' Done!'))
                     .catch(() => primaryUrlError);
             });
@@ -191,7 +191,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return resolve(downloadFile(response.headers.location, pkg, logger, status, proxy, strictSSL));
+                return resolve(downloadFile(response.headers.location||"", pkg, logger, status, proxy, strictSSL));
             }
 
             if (response.statusCode != 200) {

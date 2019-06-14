@@ -67,7 +67,7 @@ export class ExtensionDownloader
                 installationStage = 'downloadPackages';
 
                 const config = vscode.workspace.getConfiguration();
-                const proxy = config.get<string>('http.proxy');
+                const proxy = config.get<string>('http.proxy') || "";
                 const strictSSL = config.get('http.proxyStrictSSL', true);
 
                 return packageManager.DownloadPackages(this.logger, status, proxy, strictSSL);
