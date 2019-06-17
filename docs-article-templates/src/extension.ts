@@ -2,6 +2,7 @@
 
 import { commands, ExtensionContext, window, workspace } from "vscode";
 import { applyTemplateCommand } from "./controllers/template-controller";
+import { showStatusMessage } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 
 export const output = window.createOutputChannel("docs-article-templates");
@@ -21,13 +22,13 @@ export function activate(context: ExtensionContext) {
             context.subscriptions.push(command);
         });
     } catch (error) {
-        output.appendLine("Error registering commands with vscode extension context: " + error);
+        showStatusMessage(`Error registering commands with vscode extension context: ${error}`);
     }
     // if the user changes markdown.showToolbar in settings.json, display message telling them to reload.
     workspace.onDidChangeConfiguration((e: any) => {
 
         if (e.affectsConfiguration("docs.templates.githubID" || "docs.templates.alias" || "docs.templates.learn_repo_id" || "docs.templates.learn_product"
-        || "docs.templates.learn_level" || "docs.templates.learn_role")) {
+            || "docs.templates.learn_level" || "docs.templates.learn_role")) {
 
             window.showInformationMessage("Your updated configuration has been recorded, but you must reload to see its effects.", "Reload")
                 .then((res) => {
@@ -41,5 +42,5 @@ export function activate(context: ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-    output.appendLine("Deactivating extension.");
+    showStatusMessage("Deactivating extension.");
 }
