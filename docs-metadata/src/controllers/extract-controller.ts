@@ -10,7 +10,7 @@ import {commands,
 	Uri} from 'vscode';
 
 import {getRepoName} from "../helper/common";
-import * as moment from "moment"
+import * as moment from "moment";
 import { getExtensionPath } from '../extension';
 import {exec} from 'child_process';
 
