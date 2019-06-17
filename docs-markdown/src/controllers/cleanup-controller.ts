@@ -548,6 +548,8 @@ function handleLinksWithRegex(data: string) {
     data = data.replace(azureRegex2, "https://azure.com");
     const msdnRegex = new RegExp(/http:\/\/msdn.microsoft.com/g);
     data = data.replace(msdnRegex, "https://msdn.microsoft.com");
+    const msdnRegex2 = new RegExp(/http:\/\/msdn.com/g);
+    data = data.replace(msdnRegex2, "https://msdn.com");
     const technetRegex = new RegExp(/http:\/\/technet.microsoft.com/g);
     data = data.replace(technetRegex, "https://technet.microsoft.com");
     const docsRegexLang = new RegExp(/https:\/\/docs.microsoft.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
