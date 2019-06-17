@@ -537,13 +537,15 @@ function handleLinksWithRegex(data: string) {
     const akaRegex = new RegExp(/http:\/\/aka.ms/g);
     data = data.replace(akaRegex, "https://aka.ms");
     const visualstudioRegex = new RegExp(/http:\/\/visualstudio.com/g);
-    data = data.replace(visualstudioRegex, "https://visualstudio.com");;
+    data = data.replace(visualstudioRegex, "https://visualstudio.com");
     const officeRegex = new RegExp(/http:\/\/office.com/g);
     data = data.replace(officeRegex, "https://office.com");
     const docsRegex = new RegExp(/http:\/\/docs.microsoft.com/g);
     data = data.replace(docsRegex, "https://docs.microsoft.com");
     const azureRegex = new RegExp(/http:\/\/azure.microsoft.com/g);
     data = data.replace(azureRegex, "https://azure.microsoft.com");
+    const azureRegex2 = new RegExp(/http:\/\/azure.com/g);
+    data = data.replace(azureRegex2, "https://azure.com");
     const msdnRegex = new RegExp(/http:\/\/msdn.microsoft.com/g);
     data = data.replace(msdnRegex, "https://msdn.microsoft.com");
     const technetRegex = new RegExp(/http:\/\/technet.microsoft.com/g);
