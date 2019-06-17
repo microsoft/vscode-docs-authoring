@@ -536,6 +536,8 @@ function microsoftLinks(workspacePath: string, progress: any, resolve: any) {
 function handleLinksWithRegex(data: string) {
     const akaRegex = new RegExp(/http:\/\/aka.ms/g);
     data = data.replace(akaRegex, "https://aka.ms");
+    const microsoftRegex = new RegExp(/http:\/\/microsoft.com/g);
+    data = data.replace(microsoftRegex, "https://microsoft.com");
     const visualstudioRegex = new RegExp(/http:\/\/visualstudio.com/g);
     data = data.replace(visualstudioRegex, "https://visualstudio.com");
     const officeRegex = new RegExp(/http:\/\/office.com/g);
