@@ -33,10 +33,10 @@ export async function activate(context: ExtensionContext) {
 
 	const logger = new Logger();
 
-	await ensureRuntimeDependencies(extension, logger);
-
-	let extractCommand = commands.registerCommand('extension.extract', async () => {
+	let extractCommand = commands.registerCommand('docs.extract', async () => {
 		
+		await ensureRuntimeDependencies(extension, logger);
+
 		let folderPath = await showFolderSelectionDialog();
 
 		//a blank folderPath signifies a cancel.
@@ -57,12 +57,14 @@ export async function activate(context: ExtensionContext) {
 
 	});
 
-	let applyCommand = commands.registerCommand('extension.apply', async () => {
+	let applyCommand = commands.registerCommand('docs.apply', async () => {
 		showApplyMetadataMessage(getMutFileName());
 	});
 	
 	context.subscriptions.push(extractCommand);
 	context.subscriptions.push(applyCommand);
+
+	
 }
 
 export async function ensureRuntimeDependencies(extension: Extension<any>, logger: Logger): Promise<boolean> {

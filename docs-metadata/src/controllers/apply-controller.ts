@@ -5,10 +5,12 @@ import {commands,
 	workspace, 
 	ExtensionContext, 
 	OpenDialogOptions,
-	Uri} from 'vscode';
+	Uri,
+	ViewColumn} from 'vscode';
 
 import {exec} from 'child_process';
 import { getExtensionPath } from '../extension';
+import { execChildProcess, execPromise } from '../util/common';
 
 export async function showApplyMetadataMessage(path:string)
 {
@@ -48,21 +50,15 @@ export async function showApplyMetadataMessage(path:string)
 
 }
 
-function applyMetadata(filePath:string)
+async function applyMetadata(filePath:string)
 {
-	let command = `dotnet "${getExtensionPath() + "\\.muttools\\"}mdapplycore.dll" "${filePath}"`;
-	exec(command, (err, stdout, stderr) => {
-		if (err) {
-			// node couldn't execute the command
-			console.log(`Error: ${err}`);
-			console.log(`${stderr}`);
-			return;
-		}
-		
-		// the *entire* stdout and stderr (buffered)
-		console.log(`stdout: ${stdout}`);
-		console.log(`stderr: ${stderr}`);
-		});
+	let logFilePath = `${filePath.replace(".csv", "")}_log.csv`;
+	let command = `dotnet "${getExtensionPath() + "//.muttools//"}mdapplycore.dll" "${filePath}" -l "${logFilePath}"`;
+	await execPromise(command);
+	window.showInformationMessage(`Metadata apply completed. The log can be found here: "${logFilePath}"`);
+	workspace.openTextDocument(logFilePath).then(doc => {
+		window.showTextDocument(doc, ViewColumn.Two);
+	});
 }
 
 export function showApplyCancellationMessage()

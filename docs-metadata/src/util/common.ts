@@ -7,8 +7,13 @@ import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import { Uri, workspace } from 'vscode';
 
 let extensionPath: string;
+
+
+export const docsAuthoringDirectory = path.join(os.homedir(), "Docs Authoring");
+export const metadataDirectory = path.join(docsAuthoringDirectory, "Metadata");
 
 export function setExtensionPath(path: string) {
     extensionPath = path;
@@ -183,4 +188,34 @@ export function isSubfolderOf(subfolder: string, folder: string): boolean {
 
     // Check to see that every sub directory in subfolder exists in folder.
     return subfolderArray.length <= folderArray.length && subfolderArray.every((subpath, index) => folderArray[index] === subpath);
+}
+
+export function execPromise(command:string)
+{
+    return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
+        cp.exec(command, (err, stdout, stderr) => {
+            if (err) {
+                console.log(`Error: ${err}`);
+                console.log(`${stderr}`);
+                reject({ err, stdout, stderr });
+            }
+            // the *entire* stdout and stderr (buffered)
+            console.log(`stdout: ${stdout}`);
+            console.log(`stderr: ${stderr}`);
+            resolve({ stdout, stderr });
+        });
+    });
+}
+
+/**
+ * Return repo name
+ * @param Uri
+ */
+export function getRepoName(workspacePath: Uri) {
+    // let repoName;
+    const repo = workspace.getWorkspaceFolder(workspacePath);
+    if (repo) {
+        const repoName = repo.name;
+        return repoName;
+    }
 }

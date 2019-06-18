@@ -4,15 +4,13 @@ import {commands,
 	Task,
 	window, 
 	workspace,
-	ShellExecution, 
-	ShellExecutionOptions,
 	OpenDialogOptions,
-	Uri} from 'vscode';
+	Uri,
+	ViewColumn} from 'vscode';
 
-import {getRepoName} from "../helper/common";
+import {getRepoName, execPromise, metadataDirectory } from "../util/common";
 import * as moment from "moment";
 import { getExtensionPath } from '../extension';
-import {exec} from 'child_process';
 
 let fileName:string = "";
 export function getMutFileName()
@@ -34,7 +32,7 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 	var message = "";
 		if(args)
 		{
-			message = `Extracting metadata for path: ${folderPath}, using arguments: "${args}"`;
+			message = `Extracting metadata "${args}" for path: ${folderPath}.`;
 		} else {
 			let rootPath = workspace.rootPath ? workspace.rootPath : '';
 			if(folderPath === rootPath)
@@ -45,28 +43,35 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 			}
 		}
 		window.showInformationMessage(message, "OK", "Cancel")
-		.then(selectedItem => {
+		.then(async selectedItem => {
 			if(selectedItem !== "OK")
 			{
 				//operation canceled.
 				showExtractionCancellationMessage();
 			} else {
-				fileName = `${workspace.rootPath}/metadata/${getRepoName(Uri.file(folderPath))}_mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
-				let command = `mkdir "${workspace.rootPath}/metadata" | dotnet "${getExtensionPath() + "\\.muttools\\"}mdextractcore.dll" --path "${folderPath}" --recurse -o "${fileName}" ${args}`;
-				exec(command, (err, stdout, stderr) => {
-					if (err) {
-					  // node couldn't execute the command
-					  console.log(`Error: ${err}`);
-					  console.log(`${stderr}`);
-					  return;
+				fileName = `${metadataDirectory}/${getRepoName(Uri.file(folderPath))}_mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
+				if(args !== ""){ args = "-t " + args; }
+				let command = `mkdir "${metadataDirectory}" | dotnet "${getExtensionPath() + "/.muttools/"}mdextractcore.dll" --path "${folderPath}" --recurse -o "${fileName}" ${args}`;
+				await execPromise(command).then(result => {
+					window.showInformationMessage(`Metadata extracted and placed in: ${fileName}`);
+					workspace.openTextDocument(fileName).then(doc => {
+						window.showTextDocument(doc, ViewColumn.Two);
+					});	
+				}).catch(result => {
+					if(result.stderr.indexOf(`'dotnet' is not recognized`) >= -1)
+					{
+						window.showInformationMessage(`It looks like you need to install the DotNet runtime.`, 
+								"Install DotNet","Cancel")
+						.then(async selectedItem => {
+							if(selectedItem === "Install DotNet")
+							{
+								commands.executeCommand('vscode.open', Uri.parse('https://dotnet.microsoft.com/download'))
+							}
+						});
 					}
-				  
-					// the *entire* stdout and stderr (buffered)
-					console.log(`stdout: ${stdout}`);
-					console.log(`stderr: ${stderr}`);
-				  });
+				});
 				
-				  window.showInformationMessage(`Metadata extracted and placed in: ${fileName}`);
+				  
 			}
 		});
 }
@@ -97,7 +102,7 @@ export async function showArgsQuickInput()
 {
 	const result = await window.showInputBox({
 		value: '',
-		placeHolder: '(Optional) Enter any additional command-line args. (i.e. "-t ms.author,author")'
+		placeHolder: '(Optional) Enter a specific single-value tag you would like to extract. (e.g. "ms.author")'
 	});
 
 	return result;

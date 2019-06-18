@@ -2,7 +2,7 @@
 	"name": "docs-metadata",
 	"displayName": "Docs Metadata",
 	"description": "Simplifies editing metadata within docs.",
-	"version": "0.0.1",
+	"version": "0.0.117",
 	"publisher": "docsmsft",
 	"engines": {
 		"vscode": "^1.22.0"
@@ -11,28 +11,35 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.extract",
-		"onCommand:extension.apply"
+		"onCommand:docs.extract",
+		"onCommand:docs.apply"
 	],
 	"main": "./out/extension.js",
+	"bugs": {
+		"url": "https://github.com/vscode-docs-authoring/docs-metadata/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Microsoft/vscode-docs-authoring.git"
+	},
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.extract",
+				"command": "docs.extract",
 				"title": "Docs: Metadata Extract"
 			},
 			{
-				"command": "extension.apply",
+				"command": "docs.apply",
 				"title": "Docs: Metadata Apply"
 			}
 		],
 		"menus": {
 			"commandPalette": [
 				{
-					"command": "extension.extract"
+					"command": "docs.extract"
 				},
 				{
-					"command": "extension.apply"
+					"command": "docs.apply"
 				}
 			]
 		}
@@ -75,6 +82,8 @@
 		"@types/tmp": "^0.1.0",
 		"@types/yauzl": "^2.9.1",
 		"file-system": "^2.2.2",
+		"http-proxy-agent": "^2.1.0",
+		"https-proxy-agent": "^2.2.1",
 		"mkdirp": "^0.5.1",
 		"moment": "^2.24.0",
 		"tmp": "^0.1.0",
