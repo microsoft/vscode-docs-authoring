@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.5 (June 18th, 2019)
+
+- Logging improvements
+
 ## 0.2.4 (June 10th, 2019)
 
 - Telemetry updates
