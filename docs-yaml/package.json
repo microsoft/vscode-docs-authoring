@@ -2,8 +2,8 @@
     "name": "docs-yaml",
     "displayName": "docs-yaml",
     "description": "YAML schema validation and auto-completion for docs.microsoft.com authoring",
-    "aiKey": "85ed760d-c958-4bc2-bd1e-fb7e1e0b9ef8",
-    "version": "0.2.2",
+    "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
+    "version": "0.2.3",
     "publisher": "docsmsft",
     "engines": {
         "vscode": "^1.25.0"

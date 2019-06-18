@@ -4,14 +4,12 @@ import { readFileSync } from "fs";
 import { files } from "node-dir";
 import { basename, dirname, extname, join, parse } from "path";
 import { Position, QuickPickItem, TextDocument, Uri, window, workspace } from "vscode";
-import { output } from "../extension";
-import { generateTimestamp, getRepoName, sendTelemetryData } from "../helper/common";
+import { generateTimestamp, sendTelemetryData, showStatusMessage } from "../helper/common";
 import { cleanupDownloadFiles, templateDirectory } from "../helper/github";
 import { showLearnFolderSelector } from "../helper/module-builder";
-import { reporter } from "../helper/telemetry";
 import { getUnitName } from "../helper/unit-builder";
 import { alias, gitHubID, missingValue } from "../helper/user-settings";
-import { addUnitToQuickPick, moduleQuickPick, templateNameMetadata } from "../strings";
+import { addUnitToQuickPick, displayTemplateList, moduleQuickPick, newModuleMessage, newUnitMessage, templateNameMetadata } from "../strings";
 
 const telemetryCommand: string = "templateSelected";
 let commandOption: string;
@@ -21,12 +19,14 @@ const fm = require("front-matter");
 const markdownExtensionFilter = [".md"];
 
 export function displayTemplates() {
+    showStatusMessage(displayTemplateList);
+
     let templateName;
-    const editor = window.activeTextEditor;
+    let yamlContent;
     // tslint:disable-next-line:no-shadowed-variable
     files(templateDirectory, (err, files) => {
         if (err) {
-            output.appendLine(err);
+            showStatusMessage(err);
             throw err;
         }
 
@@ -37,22 +37,23 @@ export function displayTemplates() {
             files.filter((file: any) => markdownExtensionFilter.indexOf(extname(file.toLowerCase()))
                 !== -1).forEach((file: any) => {
                     if (basename(file).toLowerCase() !== "readme.md") {
+                        const filePath = join(dirname(file), basename(file));
+                        const fileContent = readFileSync(filePath, "utf8");
+                        const updatedContent = fileContent.replace("{@date}", "{date}");
                         try {
-                            const filePath = join(dirname(file), basename(file));
-                            const fileContent = readFileSync(filePath, "utf8");
-                            const updatedContent = fileContent.replace("{@date}", "{date}");
-                            const yamlContent = fm(updatedContent);
-                            templateName = yamlContent.attributes[templateNameMetadata];
-
-                            if (templateName) {
-                                quickPickMap.set(templateName, join(dirname(file), basename(file)));
-                            }
-
-                            if (!templateName) {
-                                quickPickMap.set(basename(file), join(dirname(file), basename(file)));
-                            }
+                            yamlContent = fm(updatedContent);
                         } catch (error) {
-                            output.appendLine(error);
+                            // suppress js-yaml error, does not impact
+                            // https://github.com/mulesoft-labs/yaml-ast-parser/issues/9#issuecomment-402869930
+                        }
+                        templateName = yamlContent.attributes[templateNameMetadata];
+
+                        if (templateName) {
+                            quickPickMap.set(templateName, join(dirname(file), basename(file)));
+                        }
+
+                        if (!templateName) {
+                            quickPickMap.set(basename(file), join(dirname(file), basename(file)));
                         }
                     }
                 });
@@ -91,27 +92,30 @@ export function displayTemplates() {
             if (qpSelection.label === moduleQuickPick) {
                 showLearnFolderSelector();
                 commandOption = "new-module";
+                showStatusMessage(newModuleMessage);
             }
 
             if (qpSelection.label === addUnitToQuickPick) {
                 getUnitName(true, activeFilePath);
                 commandOption = "additional-unit";
+                showStatusMessage(newUnitMessage);
             }
 
             if (qpSelection.label && qpSelection.label !== moduleQuickPick && qpSelection.label !== addUnitToQuickPick) {
                 const template = qpSelection.label;
                 const templatePath = quickPickMap.get(template);
-                applyDocsTemplate(templatePath, template);
+                applyDocsTemplate(templatePath);
                 commandOption = template;
+                showStatusMessage(`Applying ${template} template.`);
             }
             sendTelemetryData(telemetryCommand, commandOption);
         }, (error: any) => {
-            output.appendLine(error);
+            showStatusMessage(error);
         });
     });
 }
 
-export function applyDocsTemplate(templatePath: string, template?: string) {
+export function applyDocsTemplate(templatePath: string) {
     const newFile = Uri.parse("untitled:" + "New-Topic.md");
     workspace.openTextDocument(newFile).then((textDocument: TextDocument) => {
         window.showTextDocument(textDocument, 1, false).then((textEditor) => {
@@ -135,11 +139,11 @@ export function applyDocsTemplate(templatePath: string, template?: string) {
                         edit.insert(new Position(0, 0), updatedContent);
                     }
                 } catch (error) {
-                    output.appendLine(error);
+                    showStatusMessage(error);
                 }
             });
         }, (error: any) => {
-            output.appendLine(error);
+            showStatusMessage(error);
         });
     });
 

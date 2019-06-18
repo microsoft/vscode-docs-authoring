@@ -1,5 +1,9 @@
 # Change Log
 
+## **0.2.3**
+
+- Telemetry updates
+
 ## **0.2.2**
 
 - Gather basic usage data
