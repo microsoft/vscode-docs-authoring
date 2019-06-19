@@ -9,7 +9,7 @@ import { Reporter } from "./helper/telemetry";
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
 export const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
-export const CODE_RE = /\[\!code-(.*)\[(.*)\]\((.*)\)\]/gmi;
+export const CODE_RE = /\[!code-(.+?)\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
 const telemetryCommand: string = "preview";
 
 export function activate(context: ExtensionContext) {
@@ -48,12 +48,14 @@ export function isMarkdownFile(document: TextDocument) {
 }
 
 export function codeSnippets(md, options) {
-    const replaceCodeSnippetWithContents = (src, rootdir) => {
-        const captureGroup = CODE_RE.exec(src);
-        const filePath = resolve(rootdir, captureGroup[3].trim());
-        let mdSrc = readFileSync(filePath, "utf8");
-        mdSrc = `\`\`\`${captureGroup[1].trim()}\r\n${mdSrc}\r\n\`\`\``;
-        src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
+    const replaceCodeSnippetWithContents = (src: string, rootdir: string) => {
+        let captureGroup;
+        while ((captureGroup = CODE_RE.exec(src))) {
+            const filePath = resolve(rootdir, captureGroup[2].trim());
+            let mdSrc = readFileSync(filePath, "utf8");
+            mdSrc = `\`\`\`${captureGroup[1].trim()}\r\n${mdSrc}\r\n\`\`\``;
+            src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
+        }
         return src;
     };
 

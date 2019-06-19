@@ -1,6 +1,7 @@
 "use-strict";
 
 import { Uri, window, workspace} from "vscode";
+import { output } from "../extension";
 import { reporter } from "./telemetry";
 
 /**
@@ -90,3 +91,13 @@ export function sendTelemetryData(telemetryCommand: string, commandOption: strin
     const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
     reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
 }
+
+/**
+ * Output message with timestamp
+ * @param message
+ */
+export function showStatusMessage(message: string) {
+    const { msTimeValue } = generateTimestamp();
+    output.appendLine(`[${msTimeValue}] - ` + message);
+}
+

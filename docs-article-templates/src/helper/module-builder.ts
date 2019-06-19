@@ -2,7 +2,7 @@ import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, writeFileS
 import { join } from "path";
 import { QuickPickItem, QuickPickOptions, TextDocumentShowOptions, Uri, ViewColumn, window, workspace } from "vscode";
 import { output } from "../extension";
-import { formatLearnNames } from "../helper/common";
+import { formatLearnNames, showStatusMessage } from "../helper/common";
 import { getUnitName, unitList } from "../helper/unit-builder";
 import { alias, gitHubID, learnRepoId } from "../helper/user-settings";
 import { enterModuleName, parentFolderPrompt, validateModuleName } from "../strings";
@@ -145,6 +145,6 @@ export function cleanupModule(generatedModule: string) {
         };
         window.showTextDocument(uri, options);
     } catch (error) {
-        output.appendLine(error);
+        showStatusMessage(error);
     }
 }
