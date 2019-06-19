@@ -13,3 +13,5 @@ export const LinkMessages = {
     Internal: "Internal",
     InternalBookmark: "BookmarkThisFile",
 };
+
+export const invalidTocEntryPosition = "Invalid TOC entry position";

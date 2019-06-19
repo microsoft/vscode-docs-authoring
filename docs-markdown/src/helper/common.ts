@@ -330,3 +330,11 @@ export function detectFileExtension(filePath: string) {
     const fileExtension = path.extname(filePath);
     return fileExtension;
 }
+
+/**
+ * Create a posted error message and applies the message to the log
+ * @param {string} message - the message to post to the editor as an error.
+ */
+export async function showWarningMessage(message: string) {
+    vscode.window.showWarningMessage(message);
+}
