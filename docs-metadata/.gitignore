@@ -1,2 +1,5 @@
-node_modules/*
-out/*
+# Extension output and files
+out
+node_modules
+*.vsix
+/package-lock.json
