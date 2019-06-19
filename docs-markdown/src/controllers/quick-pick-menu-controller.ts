@@ -24,9 +24,12 @@ export function quickPickMenuCommand() {
 }
 
 export function markdownQuickPick() {
-    const opts: vscode.QuickPickOptions = { placeHolder: "Which Markdown command would you like to run?" };
+    const opts: vscode.QuickPickOptions = { placeHolder: "Which command would you like to run?" };
     const markdownItems: vscode.QuickPickItem[] = [];
     const yamlItems: vscode.QuickPickItem[] = [];
+    let items: vscode.QuickPickItem[] = [];
+    const activeTextDocument = vscode.window.activeTextEditor;
+    let fileExtension: string;
 
     if (checkExtension("docsmsft.docs-preview")) {
         markdownItems.push({
@@ -95,7 +98,7 @@ export function markdownQuickPick() {
         {
             description: "",
             label: "$(tasklist) Cleanup...",
-        }
+        },
     );
 
     if (checkExtension("docsmsft.docs-article-templates")) {
@@ -112,10 +115,20 @@ export function markdownQuickPick() {
         },
     );
 
-    // const { fileExtension } = detectFileExtension 
-    // let menuItems = [];
+    if (activeTextDocument) {
+        const activeFilePath = activeTextDocument.document.fileName;
+        fileExtension = detectFileExtension(activeFilePath);
+        switch (fileExtension) {
+            case ".md":
+                items = markdownItems;
+                break;
+            case ".yml":
+                items = yamlItems;
+                break;
+        }
+    }
 
-    vscode.window.showQuickPick(markdownItems, opts).then((selection) => {
+    vscode.window.showQuickPick(items, opts).then((selection: any) => {
         if (!selection) {
             return;
         }

@@ -1,11 +1,11 @@
 "use-strict";
 
 import os = require("os");
+import path = require("path");
 import * as vscode from "vscode";
 import { output } from "../extension";
 import * as log from "./log";
 import { reporter } from "./telemetry";
-import path = require("path");
 
 /**
  * Provide current os platform
@@ -326,7 +326,7 @@ export function sendTelemetryData(telemetryCommand: string, commandOption: strin
     }
 }
 
-export function detectFileExtension(fileName: string) {
-    const fileExtension = path.extname(fileName);
+export function detectFileExtension(filePath: string) {
+    const fileExtension = path.extname(filePath);
     return fileExtension;
 }

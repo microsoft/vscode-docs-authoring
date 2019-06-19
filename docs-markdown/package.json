@@ -23,7 +23,7 @@
     "markdown"
   ],
   "activationEvents": [
-    "onLanguage:markdown"
+    "*"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -120,6 +120,11 @@
       {
         "command": "applyCleanup",
         "title": "Cleanup...",
+        "category": "Docs"
+      },
+      {
+        "command": "insertTocEntry",
+        "title": "TOC entry",
         "category": "Docs"
       }
     ],
@@ -224,6 +229,11 @@
           "command": "applyCleanup",
           "group": "Docs",
           "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "insertTocEntry",
+          "group": "Docs",
+          "when": "resourceLangId == yaml"
         }
       ]
     },
@@ -244,7 +254,7 @@
         "command": "markdownQuickPick",
         "key": "Alt+M",
         "mac": "Alt+M",
-        "when": "editorTextFocus && editorLangId == 'markdown'"
+        "when": "editorTextFocus"
       },
       {
         "command": "automaticList",
