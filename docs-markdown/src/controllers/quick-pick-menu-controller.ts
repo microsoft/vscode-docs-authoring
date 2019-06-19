@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 import { output } from "../extension";
-import { checkExtension, generateTimestamp } from "../helper/common";
+import { checkExtension, detectFileExtension, generateTimestamp } from "../helper/common";
 import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
 import { applyCleanup } from "./cleanup-controller";
@@ -25,16 +25,17 @@ export function quickPickMenuCommand() {
 
 export function markdownQuickPick() {
     const opts: vscode.QuickPickOptions = { placeHolder: "Which Markdown command would you like to run?" };
-    const items: vscode.QuickPickItem[] = [];
+    const markdownItems: vscode.QuickPickItem[] = [];
+    const yamlItems: vscode.QuickPickItem[] = [];
 
     if (checkExtension("docsmsft.docs-preview")) {
-        items.push({
+        markdownItems.push({
             description: "",
             label: "$(browser) Preview",
         });
     }
 
-    items.push(
+    markdownItems.push(
         {
             description: "",
             label: "$(pencil) Bold",
@@ -98,13 +99,23 @@ export function markdownQuickPick() {
     );
 
     if (checkExtension("docsmsft.docs-article-templates")) {
-        items.push({
+        markdownItems.push({
             description: "",
             label: "$(diff) Template",
         });
     }
 
-    vscode.window.showQuickPick(items, opts).then((selection) => {
+    yamlItems.push(
+        {
+            description: "",
+            label: "$(note) TOC entry",
+        },
+    );
+
+    // const { fileExtension } = detectFileExtension 
+    // let menuItems = [];
+
+    vscode.window.showQuickPick(markdownItems, opts).then((selection) => {
         if (!selection) {
             return;
         }

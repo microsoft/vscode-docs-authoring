@@ -5,6 +5,7 @@ import * as vscode from "vscode";
 import { output } from "../extension";
 import * as log from "./log";
 import { reporter } from "./telemetry";
+import path = require("path");
 
 /**
  * Provide current os platform
@@ -323,4 +324,9 @@ export function sendTelemetryData(telemetryCommand: string, commandOption: strin
         const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
         reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
     }
+}
+
+export function detectFileExtension(fileName: string) {
+    const fileExtension = path.extname(fileName);
+    return fileExtension;
 }
