@@ -21,7 +21,7 @@ export function yamlCommands() {
 }
 
 export function insertTocEntry() {
-  showQuickPick(false);
+  checkForPreviousEntry(false);
 }
 export function insertTocEntryWithOptions() {
   showQuickPick(true);
@@ -35,7 +35,6 @@ export function showQuickPick(options: boolean) {
 
   if (workspace.workspaceFolders) {
     folderPath = workspace.workspaceFolders[0].uri.fsPath;
-    // console.log(folderPath);
   }
 
   // tslint:disable-next-line: no-shadowed-variable
@@ -59,8 +58,6 @@ export function showQuickPick(options: boolean) {
         noActiveEditorMessage();
         return;
       }
-      // const activeFileName = editor.document.fileName;
-      // const activeFilePath = dirname(activeFileName);
 
       if (!qpSelection) {
         return;
@@ -81,6 +78,7 @@ export function showQuickPick(options: boolean) {
       const hrefName = qpSelection.label;
       window.showInputBox({
         value: headingName,
+        valueSelection: [0, 0],
       }).then((val) => {
         if (!val) {
           window.showInformationMessage("No heading name chosen.  Aboring command.");
@@ -96,23 +94,52 @@ export function showQuickPick(options: boolean) {
 
 export function createEntry(name: string, href: string, options: boolean) {
   const editor = window.activeTextEditor;
-  if (editor) {
-    const position = editor.selection.active;
-    const cursorPosition = position.character;
-    const attributeSpace = "  ";
-    const attributeSpaceIndented = attributeSpace.repeat(cursorPosition);
-    if (cursorPosition === 0 && !(options)) {
-      insertContentToEditor(editor, yaml, `- name: ${name}\n${attributeSpace}href: ${href}`);
+  if (!editor) {
+    return;
+  }
+  const position = editor.selection.active;
+  const cursorPosition = position.character;
+  const attributeSpace = "  ";
+  const attributeSpaceIndented = attributeSpace.repeat(cursorPosition);
+
+  if (cursorPosition === 0 && !options) {
+    insertContentToEditor(editor, yaml, `- name: ${name}\n${attributeSpace}href: ${href}`);
+  }
+  if (cursorPosition !== 0 && !options) {
+    insertContentToEditor(editor, yaml, `- name: ${name}\n${attributeSpaceIndented}href: ${href}`);
+  }
+  if (cursorPosition === 0 && options) {
+    insertContentToEditor(editor, yaml, `- name: ${name}\n${attributeSpace}displayname: #optional string for searching TOC\n${attributeSpace}href: ${href}\n${attributeSpace}maintainContext: #true or false, false is default\n${attributeSpace}uid: #optional string\n${attributeSpace}expanded: #true or false, false is default\n${attributeSpace}items: #optional sub-entries`);
+  }
+  if (cursorPosition !== 0 && options) {
+    insertContentToEditor(editor, yaml, `- name: ${name}\n${attributeSpaceIndented}displayname: #optional string for searching TOC\n${attributeSpaceIndented}href: ${href}\n${attributeSpaceIndented}maintainContext: #true or false, false is default\n${attributeSpaceIndented}uid: #optional string\n${attributeSpaceIndented}expanded: #true or false, false is default\n${attributeSpaceIndented}items: #optional sub-entries`);
+  }
+  showStatusMessage(insertedTocEntry);
+}
+
+export function checkForPreviousEntry(options: boolean) {
+  const editor = window.activeTextEditor;
+  if (!editor) {
+    return;
+  }
+  const position = editor.selection.active;
+  const cursorPosition = position.character;
+  if (cursorPosition === 0) {
+    // no need to check further
+  }
+  if (cursorPosition !== 0) {
+    const currentLine = position.line;
+    const previousLine = currentLine - 1;
+    const previousLineContent = editor.document.lineAt(previousLine);
+    const previousNameAttribute = previousLineContent.firstNonWhitespaceCharacterIndex - 2;
+    if (previousNameAttribute !== cursorPosition) {
+      window.showErrorMessage("Not in the right place");
+      return;
     }
-    if (cursorPosition !== 0 && !(options)) {
-      insertContentToEditor(editor, yaml, `- name: ${name}\n${attributeSpaceIndented}href: ${href}`);
-    }
-    if (cursorPosition === 0 && options) {
-      insertContentToEditor(editor, yaml, `- name: ${name}\n${attributeSpace}displayname: #optional string for searching TOC\n${attributeSpace}href: ${href}\n${attributeSpace}maintainContext: #true or false, false is default\n${attributeSpace}uid: #optional string\n${attributeSpace}expanded: #true or false, false is default\n${attributeSpace}items: #optional sub-entries`);
-    }
-    if (cursorPosition !== 0 && options) {
-      insertContentToEditor(editor, yaml, `- name: ${name}\n${attributeSpaceIndented}displayname: #optional string for searching TOC\n${attributeSpaceIndented}href: ${href}\n${attributeSpaceIndented}maintainContext: #true or false, false is default\n${attributeSpaceIndented}uid: #optional string\n${attributeSpaceIndented}expanded: #true or false, false is default\n${attributeSpaceIndented}items: #optional sub-entries`);
-    }
-    showStatusMessage(insertedTocEntry);
+  }
+  if (!options) {
+    showQuickPick(false);
+  } else {
+    showQuickPick(true);
   }
 }
