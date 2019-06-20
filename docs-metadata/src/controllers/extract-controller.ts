@@ -51,14 +51,14 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 			} else {
 				fileName = `${metadataDirectory}/${getRepoName(Uri.file(folderPath))}_mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
 				if(args !== ""){ args = "-t " + args; }
-				let command = `mkdir "${metadataDirectory}" | dotnet "${getExtensionPath() + "/.muttools/"}mdextractcore.dll" --path "${folderPath}" --recurse -o "${fileName}" ${args}`;
+				let command = `mkdir -p "${metadataDirectory}" | dotnet "${getExtensionPath() + "/.muttools/"}mdextractcore.dll" --path "${folderPath}" --recurse -o "${fileName}" ${args}`;
 				await execPromise(command).then(result => {
 					window.showInformationMessage(`Metadata extracted and placed in: ${fileName}`);
 					workspace.openTextDocument(fileName).then(doc => {
 						window.showTextDocument(doc, ViewColumn.Two);
 					});	
 				}).catch(result => {
-					if(result.stderr.indexOf(`'dotnet' is not recognized`) >= -1)
+					if(result.stderr.indexOf(`'dotnet' is not recognized`) > -1)
 					{
 						window.showInformationMessage(`It looks like you need to install the DotNet runtime.`, 
 								"Install DotNet","Cancel")
