@@ -14,4 +14,5 @@ export const LinkMessages = {
     InternalBookmark: "BookmarkThisFile",
 };
 
-export const invalidTocEntryPosition = "Invalid TOC entry position";
+export const invalidTocEntryPosition = "Invalid TOC entry position.";
+export const insertedTocEntry = "Added TOC entry.";

@@ -15,7 +15,7 @@ import { previewTopic } from "./preview-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
-import { insertTocEntry } from "./yaml-controller";
+import { insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
 
 export function quickPickMenuCommand() {
     const commands = [
@@ -114,6 +114,10 @@ export function markdownQuickPick() {
             description: "",
             label: "$(note) TOC entry",
         },
+        {
+            description: "",
+            label: "$(note) TOC entry with optional attributes",
+        },
     );
 
     if (activeTextDocument) {
@@ -196,6 +200,9 @@ export function markdownQuickPick() {
                 break;
             case "toc entry":
                 insertTocEntry();
+                break;
+            case "toc entry with optional attributes":
+                insertTocEntryWithOptions();
                 break;
             default:
                 const { msTimeValue } = generateTimestamp();

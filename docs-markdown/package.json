@@ -126,6 +126,11 @@
         "command": "insertTocEntry",
         "title": "TOC entry",
         "category": "Docs"
+      },
+      {
+        "command": "insertTocEntryWithOptions",
+        "title": "TOC entry with optional attributes",
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -232,6 +237,11 @@
         },
         {
           "command": "insertTocEntry",
+          "group": "Docs",
+          "when": "resourceLangId == yaml"
+        },
+        {
+          "command": "insertTocEntryWithOptions",
           "group": "Docs",
           "when": "resourceLangId == yaml"
         }
