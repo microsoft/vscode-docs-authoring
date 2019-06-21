@@ -54,10 +54,29 @@ async function applyMetadata(filePath:string)
 {
 	let logFilePath = `${filePath.replace(".csv", "")}_log.csv`;
 	let command = `dotnet "${getExtensionPath() + "//.muttools//"}mdapplycore.dll" "${filePath}" -l "${logFilePath}"`;
-	await execPromise(command);
-	window.showInformationMessage(`Metadata apply completed. The log can be found here: "${logFilePath}"`);
-	workspace.openTextDocument(logFilePath).then(doc => {
-		window.showTextDocument(doc, ViewColumn.Two);
+	await execPromise(command).then(result => {
+		window.showInformationMessage(`Metadata apply completed. The log can be found here: "${logFilePath}"`);
+		workspace.openTextDocument(logFilePath).then(doc => {
+			window.showTextDocument(doc, ViewColumn.Two);
+		});
+	}).catch(result => {
+		if(result.stderr.indexOf(`'dotnet' is not recognized`) > -1)
+		{
+			window.showInformationMessage(`It looks like you need to install the DotNet runtime.`, 
+					"Install DotNet","Cancel")
+			.then(async selectedItem => {
+				if(selectedItem === "Install DotNet")
+				{
+					commands.executeCommand('vscode.open', Uri.parse('https://dotnet.microsoft.com/download'))
+				}
+			});
+		} else if(result.stdout.indexOf("used by another process") > -1)
+		{
+			window.showErrorMessage(`Couldn't apply metadata. Please make sure the csv file is not in use by another program, and try again.`);
+		} else {
+			window.showErrorMessage(`Couldn't apply metadata: ${result.stderr}`);
+		}
+
 	});
 }
 
