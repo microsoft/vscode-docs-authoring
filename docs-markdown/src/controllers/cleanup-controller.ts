@@ -534,12 +534,24 @@ function microsoftLinks(workspacePath: string, progress: any, resolve: any) {
  * @param data takes data string as arg
  */
 function handleLinksWithRegex(data: string) {
+    const akaRegex = new RegExp(/http:\/\/aka.ms/g);
+    data = data.replace(akaRegex, "https://aka.ms");
+    const microsoftRegex = new RegExp(/http:\/\/microsoft.com/g);
+    data = data.replace(microsoftRegex, "https://microsoft.com");
+    const visualstudioRegex = new RegExp(/http:\/\/visualstudio.com/g);
+    data = data.replace(visualstudioRegex, "https://visualstudio.com");
+    const officeRegex = new RegExp(/http:\/\/office.com/g);
+    data = data.replace(officeRegex, "https://office.com");
     const docsRegex = new RegExp(/http:\/\/docs.microsoft.com/g);
     data = data.replace(docsRegex, "https://docs.microsoft.com");
     const azureRegex = new RegExp(/http:\/\/azure.microsoft.com/g);
     data = data.replace(azureRegex, "https://azure.microsoft.com");
+    const azureRegex2 = new RegExp(/http:\/\/azure.com/g);
+    data = data.replace(azureRegex2, "https://azure.com");
     const msdnRegex = new RegExp(/http:\/\/msdn.microsoft.com/g);
     data = data.replace(msdnRegex, "https://msdn.microsoft.com");
+    const msdnRegex2 = new RegExp(/http:\/\/msdn.com/g);
+    data = data.replace(msdnRegex2, "https://msdn.com");
     const technetRegex = new RegExp(/http:\/\/technet.microsoft.com/g);
     data = data.replace(technetRegex, "https://technet.microsoft.com");
     const docsRegexLang = new RegExp(/https:\/\/docs.microsoft.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
