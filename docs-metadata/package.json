@@ -1,0 +1,92 @@
+{
+	"name": "docs-metadata",
+	"displayName": "Docs Metadata",
+	"description": "Simplifies editing metadata within docs.",
+	"version": "0.0.119",
+	"publisher": "docsmsft",
+	"engines": {
+		"vscode": "^1.22.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:docs.extract",
+		"onCommand:docs.apply"
+	],
+	"main": "./out/extension.js",
+	"bugs": {
+		"url": "https://github.com/vscode-docs-authoring/docs-metadata/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Microsoft/vscode-docs-authoring.git"
+	},
+	"contributes": {
+		"commands": [
+			{
+				"command": "docs.extract",
+				"title": "Docs: Metadata Extract"
+			},
+			{
+				"command": "docs.apply",
+				"title": "Docs: Metadata Apply"
+			}
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "docs.extract"
+				},
+				{
+					"command": "docs.apply"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"typescript": "^3.3.1",
+		"vscode": "^1.1.28",
+		"tslint": "^5.12.1",
+		"@types/node": "^10.12.21",
+		"@types/mocha": "^2.2.42"
+	},
+	"runtimeDependencies": [
+		{
+			"description": "mdextractcore and mdapplycore",
+			"url": "https://authoringresources.blob.core.windows.net/mutcore/MUTCore.zip",
+			"installPath": ".muttools",
+			"platforms": [
+				"netcore",
+				"win32",
+				"darwin",
+				"linux"
+			],
+			"architectures": [
+				"netcore",
+				"x86",
+				"x86_64"
+			],
+			"installTestPath": "./.muttools/mdapplycore.dll"
+		}
+	],
+	"dependencies": {
+		"@types/mkdirp": "^0.5.2",
+		"@types/tmp": "^0.1.0",
+		"@types/yauzl": "^2.9.1",
+		"file-system": "^2.2.2",
+		"http-proxy-agent": "^2.1.0",
+		"https-proxy-agent": "^2.2.1",
+		"mkdirp": "^0.5.1",
+		"moment": "^2.24.0",
+		"tmp": "^0.1.0",
+		"yauzl": "^2.10.0"
+	}
+}

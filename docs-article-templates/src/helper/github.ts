@@ -5,7 +5,7 @@ import { homedir } from "os";
 import { join } from "path";
 import { displayTemplates } from "../controllers/quick-pick-controller";
 import { output } from "../extension";
-import { postWarning } from "../helper/common";
+import { postWarning, showStatusMessage } from "../helper/common";
 
 export const docsAuthoringDirectory = join(homedir(), "Docs Authoring");
 export const templateDirectory = join(docsAuthoringDirectory, "Templates");
@@ -16,8 +16,8 @@ export async function downloadRepo() {
     const templateRepo = "MicrosoftDocs/content-templates";
     download(templateRepo, docsAuthoringDirectory, (err) => {
         if (err) {
-            postWarning(err ? "Error: Cannot connect to " + templateRepo : "Success");
-            output.appendLine(err ? "Error: Cannot connect to " + templateRepo : "Success");
+            postWarning(err ? `Error: Cannot connect to ${templateRepo}` : "Success");
+            showStatusMessage(err ? `Error: Cannot connect to ${templateRepo}` : "Success");
         } else {
             displayTemplates();
         }
@@ -42,7 +42,7 @@ export function cleanupDownloadFiles(templates?: boolean) {
                     unlinkSync(fullFilePath);
                 }
                 if (error) {
-                    output.appendLine(`Error: ${error}`);
+                    showStatusMessage(`Error: ${error}`);
                 }
             });
         });
