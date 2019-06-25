@@ -4,6 +4,7 @@
 	"description": "Simplifies editing metadata within docs.",
 	"version": "0.0.119",
 	"publisher": "docsmsft",
+	"preview": true,
 	"engines": {
 		"vscode": "^1.22.0"
 	},
