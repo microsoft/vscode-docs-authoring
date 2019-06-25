@@ -3,7 +3,7 @@
   "displayName": "docs-preview",
   "description": "Docs Markdown Preview Extension",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.3.22",
+  "version": "0.3.23",
   "publisher": "docsmsft",
   "icon": "images/docs-logo-ms.png",
   "bugs": {
@@ -28,8 +28,6 @@
     "docfx"
   ],
   "activationEvents": [
-    "onCommand:docs.showPreview",
-    "onCommand:docs.showPreviewToSide",
     "onLanguage:markdown"
   ],
   "main": "./out/src/extension",
@@ -52,7 +50,19 @@
         "title": "Docs: Preview in current tab",
         "when": "editorTextFocus"
       }
-    ]
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "when": "resourceLangId == markdown",
+          "command": "docs.showPreviewToSide"
+        },
+        {
+          "when": "resourceLangId == markdown",
+          "command": "docs.showPreview"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",

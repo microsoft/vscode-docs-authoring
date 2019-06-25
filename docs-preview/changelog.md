@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.3.23 (June 25th, 2019)
+
+- Command palette updates
+
+## 0.3.22 (June 18th, 2019)
+
+- Rendering improvements for includes
+
 ## 0.3.21 (June 7th, 2019)
 
 - Telemetry updates
