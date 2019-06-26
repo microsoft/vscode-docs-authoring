@@ -27,26 +27,30 @@ export async function applyXref() {
       return;
     }
   }
+  let range;
   const selection = editor.selection;
   const selectedText = editor.document.getText(selection);
-  let range;
-
-  // if unselect text, add xref syntax as <xref:...>
+  // if theres no selected text, add xref syntax as <xref:...>
   if (selectedText === "") {
-    const cursorPosition = editor.selection.active;
-
-    // assumes the range of xref syntax
-    range = new Range(cursorPosition.with(cursorPosition.line,
-      cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
-      cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
-    await getXrefSelection()
-    // insertContentToEditor(editor, senderName, formattedText, true);
-
-    // // Gets the cursor position
-    // const position = editor.selection.active;
-    // const positionCharacter = senderName === "formatBold" ? position.character + 2 : position.character + 1;
-    // // Makes the cursor position in between syntaxs
-    // setCursorPosition(editor, position.line, positionCharacter);
+    let xrefSelection = await getXrefSelection()
+    if (xrefSelection) {
+      let displayProperty = await getXrefDisplayProperty();
+      if (displayProperty && displayProperty.label != "none") {
+        xrefSelection.label = `${xrefSelection.label}?displayProperty=${displayProperty.label}`;
+      }
+      const cursorPosition = editor.selection.active;
+      // assumes the range of xref syntax
+      let xref = `<xref:${encodeSpecialCharacters(xrefSelection.label)}>`
+      range = new Range(cursorPosition.with(cursorPosition.line,
+        cursorPosition.character - xref.length < 0 ? 0 : cursorPosition.character - xref.length),
+        cursorPosition.with(cursorPosition.line, cursorPosition.character + xref.length));
+      insertContentToEditor(editor, applyXref.name, xref, true);
+      // Gets the cursor position
+      const position = editor.selection.active;
+      const positionCharacter = applyXref.name === "applyXref" ? position.character + xref.length : position.character + 1;
+      // Makes the cursor position in between syntaxs
+      setCursorPosition(editor, position.line, positionCharacter);
+    }
   } else {
     insertXrefIntoSelectedText(await getXrefSelection())
   }
@@ -54,15 +58,42 @@ export async function applyXref() {
 function insertXrefIntoSelectedText(selection: any) {
 
 }
+function encodeSpecialCharacters(content: string) {
+  content = content.replace("*", "%2A")
+  content = content.replace("#", "%23")
+  content = content.replace("`", "%60")
+  return content;
+}
+
+async function getXrefDisplayProperty() {
+  const items: QuickPickItem[] = [];
+  items.push({
+    description: "None (default)",
+    label: "none",
+  });
+  items.push({
+    description: "Name with Type",
+    label: "nameWithType",
+  });
+  items.push({
+    description: "Full Name",
+    label: "fullName",
+  });
+  return window.showQuickPick(items, { placeHolder: "Select Display Property" }).then((selection) => {
+    if (!selection) {
+      return;
+    }
+    return selection;
+  });
+}
 
 async function getXrefSelection() {
   const items: QuickPickItem[] = [];
   let uid: string | undefined = await window.showInputBox({ placeHolder: "Enter XREF Search Term" });
   if (uid) {
-    let content = await getAsync(`${rootUrl}/query?tags=${tags}&uid=${uid}`);
+    let content = await getAsync(`${rootUrl}/autocomplete?tags=${tags}&text=${uid}`);
     content.data.map((item: { tags: any; uid: string; }) => {
       items.push({
-        description: JSON.stringify(item.tags),
         label: item.uid,
       });
     });
