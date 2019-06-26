@@ -15,6 +15,7 @@ import { previewTopic } from "./preview-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
+import { applyXref } from "./xref-controller";
 
 export function quickPickMenuCommand() {
     const commands = [
@@ -74,6 +75,10 @@ export function markdownQuickPick() {
         {
             description: "",
             label: "$(link) Link to heading",
+        },
+        {
+            description: "",
+            label: "$(x) Link to XREF",
         },
         {
             description: "",
@@ -168,6 +173,9 @@ export function markdownQuickPick() {
                 break;
             case "cleanup...":
                 applyCleanup();
+                break;
+            case "link to xref":
+                applyXref();
                 break;
             default:
                 const { msTimeValue } = generateTimestamp();
