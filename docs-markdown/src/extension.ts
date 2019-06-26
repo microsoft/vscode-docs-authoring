@@ -21,6 +21,7 @@ import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
 import { insertTableCommand } from "./controllers/table-controller";
+import { yamlCommands } from "./controllers/yaml-controller";
 import { checkExtension, generateTimestamp } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
@@ -66,6 +67,7 @@ export function activate(context: ExtensionContext) {
     previewTopicCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     getMasterRedirectionCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     applyCleanupCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    yamlCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     noLocTextCommand().forEach((cmd) => AuthoringCommands.push(cmd));
 
     // Telemetry

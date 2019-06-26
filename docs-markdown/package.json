@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.9",
+  "version": "0.3.0",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -23,7 +23,7 @@
     "markdown"
   ],
   "activationEvents": [
-    "onLanguage:markdown"
+    "*"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -125,6 +125,16 @@
       {
         "command": "applyCleanup",
         "title": "Cleanup...",
+        "category": "Docs"
+      },
+      {
+        "command": "insertTocEntry",
+        "title": "TOC entry",
+        "category": "Docs"
+      },
+      {
+        "command": "insertTocEntryWithOptions",
+        "title": "TOC entry with optional attributes",
         "category": "Docs"
       }
     ],
@@ -234,6 +244,16 @@
           "command": "applyCleanup",
           "group": "Docs",
           "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "insertTocEntry",
+          "group": "Docs",
+          "when": "resourceLangId == yaml"
+        },
+        {
+          "command": "insertTocEntryWithOptions",
+          "group": "Docs",
+          "when": "resourceLangId == yaml"
         }
       ]
     },
@@ -254,7 +274,7 @@
         "command": "markdownQuickPick",
         "key": "Alt+M",
         "mac": "Alt+M",
-        "when": "editorTextFocus && editorLangId == 'markdown'"
+        "when": "editorTextFocus"
       },
       {
         "command": "automaticList",
@@ -324,7 +344,6 @@
     "file-exists": "^5.0.1",
     "fs-exists-sync": "^0.1.0",
     "graceful-fs": "^4.1.15",
-    "js-yaml": "^3.13.1",
     "lodash.merge": "^4.6.0",
     "markdownlint": "^0.11.0",
     "matcher": "^1.0.0",
@@ -344,6 +363,7 @@
     "@types/yamljs": "^0.2.30",
     "jest": "^24.7.1",
     "jest-junit": "^6.3.0",
+    "js-yaml": "^3.13.1",
     "octicons": "^7.3.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.9.1",
