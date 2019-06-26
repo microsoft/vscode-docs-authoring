@@ -15,8 +15,6 @@ const lodash = require("lodash.merge");
 const matcher = require("matcher");
 const fsExistsSync = require("fs-exists-sync");
 
-const yamlHeaderRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
-
 export enum MetadataSourceContentType { MarkdownFile, DocFxFile, GlobalMetadataFx, FileMetadataFx, YamlContent }
 
 export const dateTimeFormat = "MM/dd/yyyy";

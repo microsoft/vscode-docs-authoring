@@ -123,6 +123,10 @@ export function markdownQuickPick() {
             description: "",
             label: "$(note) TOC entry with optional attributes",
         },
+        {
+            description: "",
+            label: "$(lock) Non-localizable text",
+        },
     );
 
     if (activeTextDocument) {

@@ -201,6 +201,11 @@
           "when": "resourceLangId == markdown"
         },
         {
+          "command": "noLocText",
+          "group": "Docs",
+          "when": "resourceLangId == yaml"
+        },
+        {
           "command": "insertLink",
           "group": "Docs",
           "when": "resourceLangId == markdown"

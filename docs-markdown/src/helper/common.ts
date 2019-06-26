@@ -254,7 +254,9 @@ export function rtrim(str: string, chr: string) {
  */
 export function isMarkdownFileCheck(editor: vscode.TextEditor, languageId: boolean) {
     if (editor.document.languageId !== "markdown") {
-        postInformation("The docs-markdown extension only works on Markdown files.");
+        if (editor.document.languageId !== "yaml") {
+            postInformation("The docs-markdown extension only works on Markdown files.");
+        }
         return false;
     } else {
         return true;

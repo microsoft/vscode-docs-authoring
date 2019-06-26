@@ -42,11 +42,29 @@ function insertYamlNoLocEntry(editor: TextEditor) {
         return;
     }
 
-    const insertText = "no-loc: []";
-    insertContentToEditor(editor, insertYamlNoLocEntry.name, insertText, false);
-    const newPosition = new Position(editor.selection.active.line, insertText.indexOf("]"));
-    const newSelection = new Selection(newPosition, newPosition);
-    editor.selection = newSelection;
+    if (isMarkdownFileCheck(editor, false)) {
+        const insertText = "no-loc: []";
+        insertContentToEditor(editor, insertYamlNoLocEntry.name, insertText, false);
+        const newPosition = new Position(editor.selection.active.line, insertText.indexOf("]"));
+        const newSelection = new Selection(newPosition, newPosition);
+        editor.selection = newSelection;
+    } else {
+        const tabs = getTabInsertion(editor);
+
+        const insertText = `no-loc:\n${tabs}- `;
+        insertContentToEditor(editor, insertYamlNoLocEntry.name, insertText, false);
+        const newPosition = new Position(editor.selection.active.line + 1, insertText.indexOf("- ") + 1);
+        const newSelection = new Selection(newPosition, newPosition);
+        editor.selection = newSelection;
+    }
+
+}
+
+function getTabInsertion(editor: TextEditor): string {
+    let tabs = "";
+    const numToInsert = editor.selection.end.character;
+    for (let ii = 0; ii < numToInsert; ii++) { tabs += (editor.options.insertSpaces ? " " : "\t"); }
+    return tabs;
 }
 
 function insertMarkdownNoLocEntry(editor: TextEditor) {
