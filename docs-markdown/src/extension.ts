@@ -22,7 +22,7 @@ import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
 import { insertTableCommand } from "./controllers/table-controller";
 import { yamlCommands } from "./controllers/yaml-controller";
-import { checkExtension, generateTimestamp, isMarkdownFileCheck, noActiveEditorMessage } from "./helper/common";
+import { checkExtension, generateTimestamp, noActiveEditorMessage } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
