@@ -78,6 +78,11 @@
         "category": "Docs"
       },
       {
+        "command": "noLocText",
+        "title": "Non-localizable text",
+        "category": "Docs"
+      },
+      {
         "command": "insertLink",
         "title": "Link to file in repo",
         "category": "Docs"
@@ -179,6 +184,11 @@
           "command": "selectLinkType",
           "group": "Docs",
           "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "noLocText",
+          "group": "Docs",
+          "when": "resourceLangId == markdown || resourceLangId == yaml || resourceLangId == yml"
         },
         {
           "command": "insertLink",

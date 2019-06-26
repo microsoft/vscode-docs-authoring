@@ -15,6 +15,7 @@ import { previewTopic } from "./preview-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
+import { noLocText } from "./no-loc-controller";
 
 export function quickPickMenuCommand() {
     const commands = [
@@ -74,6 +75,10 @@ export function markdownQuickPick() {
         {
             description: "",
             label: "$(link) Link to heading",
+        },
+        {
+            description: "",
+            label: "$(lock) Non-localizable text",
         },
         {
             description: "",
@@ -147,6 +152,9 @@ export function markdownQuickPick() {
                 break;
             case "link to heading":
                 selectLinkType();
+                break;
+            case "non-localizable text":
+                noLocText();
                 break;
             case "image":
                 insertImage();

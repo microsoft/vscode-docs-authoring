@@ -7,12 +7,15 @@ import YAML = require("yamljs");
 import * as yamlMetadata from "../helper/yaml-metadata";
 import * as common from "./common";
 import * as utilityHelper from "./utility";
+import { TextEditor, Range } from "vscode";
 
 /* tslint:disable:no-var-requires max-classes-per-file */
 
 const lodash = require("lodash.merge");
 const matcher = require("matcher");
 const fsExistsSync = require("fs-exists-sync");
+
+const yamlHeaderRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
 
 export enum MetadataSourceContentType { MarkdownFile, DocFxFile, GlobalMetadataFx, FileMetadataFx, YamlContent }
 
@@ -342,4 +345,18 @@ function mergeMetadataFromTop(stack: Collections.Stack<MetadataContentBase>): Me
 
 function GetDocFxMetadataName(): string {
     return "docfx.json";
+}
+
+
+/**
+ * Return true if cursor is within the YAML Header
+ * @param 
+ */
+export function isCursorInsideYamlHeader(editor: TextEditor) {
+    const docText = editor.document.getText();
+    const secondDashPosition = docText.indexOf("---", 4);
+    const range = new Range(0, 0, editor.selection.end.line, editor.selection.end.character);
+    const cursorText = editor.document.getText(range);
+    const isInHeader = cursorText.length < secondDashPosition;
+    return isInHeader;
 }
