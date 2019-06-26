@@ -121,6 +121,11 @@
         "command": "applyCleanup",
         "title": "Cleanup...",
         "category": "Docs"
+      },
+      {
+        "command": "applyXref",
+        "title": "Link to XREF",
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -224,6 +229,11 @@
           "command": "applyCleanup",
           "group": "Docs",
           "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyXref",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
         }
       ]
     },
@@ -310,6 +320,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "axios": "^0.19.0",
     "diff": "^4.0.1",
     "file-exists": "^5.0.1",
     "fs-exists-sync": "^0.1.0",

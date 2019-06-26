@@ -23,6 +23,7 @@ import { insertTableCommand } from "./controllers/table-controller";
 import { checkExtension, generateTimestamp } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
+import { applyXrefCommand } from "./controllers/xref-controller";
 
 export const output = window.createOutputChannel("docs-markdown");
 export let extensionPath: string;
@@ -65,6 +66,7 @@ export function activate(context: ExtensionContext) {
     previewTopicCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     getMasterRedirectionCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     applyCleanupCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    applyXrefCommand().forEach((cmd) => AuthoringCommands.push(cmd));
 
     // Telemetry
     context.subscriptions.push(new Reporter(context));
