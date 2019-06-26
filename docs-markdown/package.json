@@ -188,7 +188,7 @@
         {
           "command": "noLocText",
           "group": "Docs",
-          "when": "resourceLangId == markdown || resourceLangId == yaml || resourceLangId == yml"
+          "when": "resourceLangId == markdown"
         },
         {
           "command": "insertLink",

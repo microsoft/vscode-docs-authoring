@@ -16,6 +16,7 @@ import { italicFormattingCommand } from "./controllers/italic-controller";
 import { insertListsCommands } from "./controllers/list-controller";
 import { getMasterRedirectionCommand } from "./controllers/master-redirect-controller";
 import { insertLinksAndMediaCommands } from "./controllers/media-controller";
+import { noLocTextCommand } from "./controllers/no-loc-controller";
 import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
@@ -65,6 +66,7 @@ export function activate(context: ExtensionContext) {
     previewTopicCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     getMasterRedirectionCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     applyCleanupCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    noLocTextCommand().forEach((cmd) => AuthoringCommands.push(cmd));
 
     // Telemetry
     context.subscriptions.push(new Reporter(context));

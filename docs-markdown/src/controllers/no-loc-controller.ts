@@ -1,9 +1,15 @@
 "use strict";
 
-import { output } from "../extension";
-import { isMarkdownFileCheck, noActiveEditorMessage, insertContentToEditor } from "../helper/common";
-import { window, TextEditor, Selection, Position, Range } from "vscode";
+import { Position, Range, Selection, TextEditor, window } from "vscode";
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { isCursorInsideYamlHeader } from "../helper/yaml-metadata";
+
+export function noLocTextCommand() {
+    const commands = [
+        { command: noLocText.name, callback: noLocText },
+    ];
+    return commands;
+}
 
 
 /**
@@ -23,10 +29,10 @@ export function noLocText() {
         if (isCursorInsideYamlHeader(editor)) {
             insertYamlNoLocEntry(editor);
         } else {
-
+            insertMarkdownNoLocEntry(editor);
         }
     } else {
-        // do yaml stuff
+        insertYamlNoLocEntry(editor);
     }
 }
 
@@ -36,11 +42,30 @@ function insertYamlNoLocEntry(editor: TextEditor) {
         return;
     }
 
-    let insertText = "no-loc: []";
+    const insertText = "no-loc: []";
     insertContentToEditor(editor, insertYamlNoLocEntry.name, insertText, false);
     const newPosition = new Position(editor.selection.active.line, insertText.indexOf("]"));
     const newSelection = new Selection(newPosition, newPosition);
     editor.selection = newSelection;
+}
+
+function insertMarkdownNoLocEntry(editor: TextEditor) {
+    const textSelection = editor.document.getText(editor.selection);
+    if (textSelection === "") {
+        const insertText = `:::no-loc text="":::`;
+        insertContentToEditor(editor, insertMarkdownNoLocEntry.name, insertText, false);
+        const newPosition = new Position(editor.selection.active.line,
+            editor.selection.active.character + insertText.indexOf(`"`) + 1);
+        const newSelection = new Selection(newPosition, newPosition);
+        editor.selection = newSelection;
+    } else {
+        const insertText = `:::no-loc text="${textSelection}":::`;
+        insertContentToEditor(editor, insertMarkdownNoLocEntry.name, insertText, true, editor.selection);
+        const newPosition = new Position(editor.selection.end.line,
+            editor.selection.end.character + insertText.indexOf(`"`) + 1);
+        const newSelection = new Selection(newPosition, newPosition);
+        editor.selection = newSelection;
+    }
 }
 
 function isContentOnCurrentLine(editor: TextEditor): boolean {
