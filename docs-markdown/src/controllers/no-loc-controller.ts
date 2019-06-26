@@ -1,6 +1,6 @@
 "use strict";
 
-import { Position, Range, Selection, TextEditor, window } from "vscode";
+import { Position, Range, Selection, TextEditor, window, CompletionItem } from "vscode";
 import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { isCursorInsideYamlHeader } from "../helper/yaml-metadata";
 
@@ -9,6 +9,16 @@ export function noLocTextCommand() {
         { command: noLocText.name, callback: noLocText },
     ];
     return commands;
+}
+
+export function noLocCompletionItemsMarkdownYamlHeader() {
+    return [new CompletionItem(`no-loc: []`)];
+}
+export function noLocCompletionItemsMarkdown() {
+    return [new CompletionItem(`::::no-loc text="":::`)];
+}
+export function noLocCompletionItemsYaml() {
+    return [new CompletionItem(`no-loc:\n- `)];
 }
 
 
