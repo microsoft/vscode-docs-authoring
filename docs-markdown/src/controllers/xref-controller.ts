@@ -1,6 +1,6 @@
 "use strict";
 
-import { QuickPickItem, window, Range } from "vscode";
+import { QuickPickItem, window } from "vscode";
 import { getAsync } from "../helper/http-helper";
 import { noActiveEditorMessage, isMarkdownFileCheck, insertContentToEditor, setCursorPosition, sendTelemetryData } from "../helper/common";
 import { reporter } from "../helper/telemetry";
