@@ -89,6 +89,24 @@ Cleanup scripts available:
 - Capitalization of metadata values: lowercases certain metadata properties.
 - Master redirection file: generate redirect_url entries for master redirect file.
 
+## Non-localazible text tool
+
+The ability to easily mark what text should not be localized has been added. It is accessible as "Non-localizable text" via either the command pallette, or quickpick menu.
+
+For markdown files:
+- If you are in the YAML header, using "Non-localizable text" on a new line will insert ```no-loc: []```, and will allow you to enter the strings inside the brackets as you desire.
+- If you place your cursor anywhere below the header, running the tool will insert ```:::no-loc text="":::```, and you can enter a single string inside the quotes.
+- If you select a string, such as "String" and run the function, the tool will insert ```:::no-loc text="String":::```.
+
+For YAML files:
+
+Using "Non-localizable text" on a new line will insert 
+```
+no-loc
+- 
+```
+and will allow you to enter a string per dash.
+
 ## Known issues
 
 - [Docs Preview] Code blocks only preview in Dark theme, and some colorized text is unreadable in Light theme.

@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 import { output } from "../extension";
-import { checkExtension, generateTimestamp } from "../helper/common";
+import { checkExtension, detectFileExtension, generateTimestamp } from "../helper/common";
 import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
 import { applyCleanup } from "./cleanup-controller";
@@ -15,6 +15,8 @@ import { previewTopic } from "./preview-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
+import { insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
+import { noLocText } from "./no-loc-controller";
 
 export function quickPickMenuCommand() {
     const commands = [
@@ -24,17 +26,21 @@ export function quickPickMenuCommand() {
 }
 
 export function markdownQuickPick() {
-    const opts: vscode.QuickPickOptions = { placeHolder: "Which Markdown command would you like to run?" };
-    const items: vscode.QuickPickItem[] = [];
+    const opts: vscode.QuickPickOptions = { placeHolder: "Which command would you like to run?" };
+    const markdownItems: vscode.QuickPickItem[] = [];
+    const yamlItems: vscode.QuickPickItem[] = [];
+    let items: vscode.QuickPickItem[] = [];
+    const activeTextDocument = vscode.window.activeTextEditor;
+    let fileExtension: string;
 
     if (checkExtension("docsmsft.docs-preview")) {
-        items.push({
+        markdownItems.push({
             description: "",
             label: "$(browser) Preview",
         });
     }
 
-    items.push(
+    markdownItems.push(
         {
             description: "",
             label: "$(pencil) Bold",
@@ -77,6 +83,10 @@ export function markdownQuickPick() {
         },
         {
             description: "",
+            label: "$(lock) Non-localizable text",
+        },
+        {
+            description: "",
             label: "$(file-media) Image",
         },
         {
@@ -94,17 +104,45 @@ export function markdownQuickPick() {
         {
             description: "",
             label: "$(tasklist) Cleanup...",
-        }
+        },
     );
 
     if (checkExtension("docsmsft.docs-article-templates")) {
-        items.push({
+        markdownItems.push({
             description: "",
             label: "$(diff) Template",
         });
     }
 
-    vscode.window.showQuickPick(items, opts).then((selection) => {
+    yamlItems.push(
+        {
+            description: "",
+            label: "$(note) TOC entry",
+        },
+        {
+            description: "",
+            label: "$(note) TOC entry with optional attributes",
+        },
+        {
+            description: "",
+            label: "$(lock) Non-localizable text",
+        },
+    );
+
+    if (activeTextDocument) {
+        const activeFilePath = activeTextDocument.document.fileName;
+        fileExtension = detectFileExtension(activeFilePath);
+        switch (fileExtension) {
+            case ".md":
+                items = markdownItems;
+                break;
+            case ".yml":
+                items = yamlItems;
+                break;
+        }
+    }
+
+    vscode.window.showQuickPick(items, opts).then((selection: any) => {
         if (!selection) {
             return;
         }
@@ -148,6 +186,9 @@ export function markdownQuickPick() {
             case "link to heading":
                 selectLinkType();
                 break;
+            case "non-localizable text":
+                noLocText();
+                break;
             case "image":
                 insertImage();
                 break;
@@ -168,6 +209,12 @@ export function markdownQuickPick() {
                 break;
             case "cleanup...":
                 applyCleanup();
+                break;
+            case "toc entry":
+                insertTocEntry();
+                break;
+            case "toc entry with optional attributes":
+                insertTocEntryWithOptions();
                 break;
             default:
                 const { msTimeValue } = generateTimestamp();
