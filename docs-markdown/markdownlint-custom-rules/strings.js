@@ -7,6 +7,11 @@ module.exports.syntaxUnsupportedExtension = `Bad syntax for markdown extension. 
 module.exports.monikerRange = `Bad syntax for range argument. Use =, <=, or >=, and put value in quotes.`;
 module.exports.monikerSyntax = `Bad syntax for moniker. Only "moniker range" is supported.`;
 
+// no-loc
+module.exports.noLocSyntax = `Bad syntax for non-localization.`;
+module.exports.noLocMissingTextAttribute = `Bad syntax for non-localization. Missing the "text" attribute.`;
+module.exports.noLocMissingTextAttribute = `Bad syntax for non-localization. ""no-loc" and "text" must be lower-case.`;
+
 // zone
 module.exports.zoneSyntax = `Bad syntax for zone. Only "zone target", "zone pivot" and "zone-end" are supported.`;
 module.exports.zoneRender = `Bad syntax for render argument. Use "=" and put value in quotes.`;

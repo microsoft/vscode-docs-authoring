@@ -26,6 +26,12 @@ module.exports.openMoniker = /^:::\s+moniker/gm;
 module.exports.syntaxMoniker = /^:::\s+moniker\s+range/gm;
 module.exports.rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
 
+//no-loc
+module.exports.openNoLoc = /^:::no-loc\s/gmi;
+module.exports.missingTextAttributeNoLoc = /^:::no-loc text\s/gm;
+module.exports.syntaxNoLocCaseSensitive = /^:::no-loc\stext=\"([a-zA-Z'-]*)\":::/gm;
+module.exports.syntaxNoLoc = /^:::no-loc\stext=\"([a-zA-Z'-]*)\":::/gmi;
+
 // Alert
 module.exports.alertOpener = /^>\s+\[!/gm; // regex to find "> [!"
 module.exports.snippetOpener = /^>\s+\[!code-/gm; //identify code snippet in text block, starting with "> [!code-"
