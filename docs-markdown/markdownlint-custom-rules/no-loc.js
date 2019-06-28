@@ -16,9 +16,18 @@ module.exports = {
             inline.children.filter(function filterChild(child) {
                 return child.type === "text";
             }).forEach(function forChild(text) {
-                const content = text.content.toLowerCase();
+                const content = text.content;
+                // no dash for "no-loc"
+                if (content.match(common.openNoDashNoLoc) && !content.match(common.syntaxNoLoc)) {
+                    onError({
+                        lineNumber: text.lineNumber,
+                        detail: detailStrings.noLocNoDash,
+                        context: text.line
+                    });
+                }
+
                 // Condition: After ":::no-loc " syntax is incorrect.
-                if (content.match(common.openNoLoc) && !content.match(common.syntaxNoLocCaseSensitive)) {
+                if (content.match(common.openNoLoc) && !content.match(common.syntaxNoLoc)) {
                     //different errors
                     //missing text attribute
                     if (!content.match(common.missingTextAttributeNoLoc)) {
@@ -30,12 +39,26 @@ module.exports = {
                     }
 
                     //case sensitivity
-                    if (!content.match(common.syntaxNoLocCaseSensitive)) {
-                        onError({
-                            lineNumber: text.lineNumber,
-                            detail: detailStrings.noLocMissingTextAttribute,
-                            context: text.line
-                        });
+                    if (content.match(common.syntaxNoLocLooseMatch)) {
+                        if (!content.match(common.syntaxNoLocCaseSensitive)) {
+                            onError({
+                                lineNumber: text.lineNumber,
+                                detail: detailStrings.noLocCaseSensitive,
+                                context: text.line
+                            });
+                        } else if (!content.match(common.syntaxQuotesNoLoc)) {
+                            onError({
+                                lineNumber: text.lineNumber,
+                                detail: detailStrings.noLocNoQuotes,
+                                context: text.line
+                            });
+                        } else {
+                            onError({
+                                lineNumber: text.lineNumber,
+                                detail: detailStrings.noLocColonsIncorrect,
+                                context: text.line
+                            });
+                        }
                     }
 
 

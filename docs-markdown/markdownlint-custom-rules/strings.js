@@ -9,8 +9,12 @@ module.exports.monikerSyntax = `Bad syntax for moniker. Only "moniker range" is 
 
 // no-loc
 module.exports.noLocSyntax = `Bad syntax for non-localization.`;
+module.exports.noLocNoDash = `Bad syntax for non-localization. "no-loc" requires a dash.`;
 module.exports.noLocMissingTextAttribute = `Bad syntax for non-localization. Missing the "text" attribute.`;
-module.exports.noLocMissingTextAttribute = `Bad syntax for non-localization. ""no-loc" and "text" must be lower-case.`;
+module.exports.noLocColonsIncorrect = `Bad syntax for non-localization. Make sure "no-loc" begins and ends with ":::"`;
+module.exports.noLocCaseSensitive = `Bad syntax for non-localization. ""no-loc" and "text" must be lower-case.`;
+module.exports.noLocNoQuotes = `Bad syntax for non-localization. Quotes required.`;
+
 
 // zone
 module.exports.zoneSyntax = `Bad syntax for zone. Only "zone target", "zone pivot" and "zone-end" are supported.`;

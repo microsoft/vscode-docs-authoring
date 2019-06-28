@@ -27,10 +27,13 @@ module.exports.syntaxMoniker = /^:::\s+moniker\s+range/gm;
 module.exports.rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
 
 //no-loc
-module.exports.openNoLoc = /^:::no-loc\s/gmi;
-module.exports.missingTextAttributeNoLoc = /^:::no-loc text\s/gm;
-module.exports.syntaxNoLocCaseSensitive = /^:::no-loc\stext=\"([a-zA-Z'-]*)\":::/gm;
-module.exports.syntaxNoLoc = /^:::no-loc\stext=\"([a-zA-Z'-]*)\":::/gmi;
+module.exports.openNoLoc = /^(.:*)no-loc\s/gmi;
+module.exports.openNoDashNoLoc = /^(.:*)noloc\s/gmi;
+module.exports.missingTextAttributeNoLoc = /^(.:*)(.\s*)no-loc\stext/gmi;
+module.exports.syntaxNoLocLooseMatch = /^(.:*)(.\s*)no-loc\stext=(.\"*)([a-zA-Z'-]*)(.\"*)(.:*)/gmi
+module.exports.syntaxNoLocCaseSensitive = /:::no-loc\stext=(.\"*)([a-zA-Z'-]*)(.\"*):::/gm
+module.exports.syntaxQuotesNoLoc = /:::no-loc\stext=\"([a-zA-Z'-]*)\":::/gmi
+module.exports.syntaxNoLoc = /^:::no-loc\stext=\"([a-zA-Z'-]*)\":::/gm;
 
 // Alert
 module.exports.alertOpener = /^>\s+\[!/gm; // regex to find "> [!"
