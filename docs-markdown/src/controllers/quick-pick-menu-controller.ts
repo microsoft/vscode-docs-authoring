@@ -217,6 +217,7 @@ export function markdownQuickPick() {
                 break;
             case "link to xref":
                 applyXref();
+                break;
             case "toc entry":
                 insertTocEntry();
                 break;

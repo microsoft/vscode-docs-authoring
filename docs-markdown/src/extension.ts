@@ -129,7 +129,7 @@ export function checkMarkdownlintCustomProperty() {
     const { msTimeValue } = generateTimestamp();
     const customProperty = "markdownlint.customRules";
     const customRuleset = "{docsmsft.docs-markdown}/markdownlint-custom-rules/rules.js";
-    const customPropertyData = workspace.getConfiguration().inspect(customProperty);
+    const customPropertyData: any = workspace.getConfiguration().inspect(customProperty);
     // new list for string comparison and updating.
     const existingUserSettings: string[] = [];
     if (customPropertyData) {
@@ -137,7 +137,7 @@ export function checkMarkdownlintCustomProperty() {
         if (customPropertyData.globalValue) {
             const valuesToString = customPropertyData.globalValue.toString();
             const individualValues = valuesToString.split(",");
-            individualValues.forEach((setting) => {
+            individualValues.forEach((setting: string) => {
                 existingUserSettings.push(setting);
             });
             // if the customRuleset already exist, write a notification to the output window and continue.
