@@ -136,6 +136,11 @@
         "command": "insertTocEntryWithOptions",
         "title": "TOC entry with optional attributes",
         "category": "Docs"
+      },
+      {
+        "command": "createParentNode",
+        "title": "Create expandable parent node",
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -257,6 +262,11 @@
         },
         {
           "command": "insertTocEntryWithOptions",
+          "group": "Docs",
+          "when": "resourceLangId == yaml"
+        },
+        {
+          "command": "createParentNode",
           "group": "Docs",
           "when": "resourceLangId == yaml"
         }
