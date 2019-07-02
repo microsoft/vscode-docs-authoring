@@ -15,6 +15,7 @@ export function yamlCommands() {
   const commands = [
     { command: insertTocEntry.name, callback: insertTocEntry },
     { command: insertTocEntryWithOptions.name, callback: insertTocEntryWithOptions },
+    { command: insertExpandableParentNode.name, callback: insertExpandableParentNode },
   ];
   return commands;
 }
@@ -24,8 +25,13 @@ export function insertTocEntry() {
   checkForPreviousEntry(false);
 }
 export function insertTocEntryWithOptions() {
-  commandOption = "tocEntryWithOptions"
+  commandOption = "tocEntryWithOptions";
   checkForPreviousEntry(true);
+}
+
+export function insertExpandableParentNode() {
+  commandOption = "expandableParentNode";
+  createParentNode();
 }
 
 export function showQuickPick(options: boolean) {
@@ -144,4 +150,14 @@ export function checkForPreviousEntry(options: boolean) {
   } else {
     showQuickPick(true);
   }
+}
+
+export function createParentNode() {
+  const editor = window.activeTextEditor;
+  if (!editor) {
+    return;
+  }
+  const attributeSpace = "  ";
+  const indentedSpace = "    ";
+  insertContentToEditor(editor, insertTocEntry.name, `- name:\n${attributeSpace}items:\n${attributeSpace}- name:\n${indentedSpace}href:`);
 }
