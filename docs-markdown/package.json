@@ -138,8 +138,8 @@
         "category": "Docs"
       },
       {
-        "command": "applyXref",
-        "title": "Link to XREF",
+        "command": "createParentNode",
+        "title": "Create expandable parent node",
         "category": "Docs"
       }
     ],
@@ -266,9 +266,9 @@
           "when": "resourceLangId == yaml"
         },
         {
-          "command": "applyXref",
+          "command": "createParentNode",
           "group": "Docs",
-          "when": "resourceLangId == markdown"
+          "when": "resourceLangId == yaml"
         }
       ]
     },

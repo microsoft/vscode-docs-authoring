@@ -25,7 +25,7 @@ import { yamlCommands } from "./controllers/yaml-controller";
 import { checkExtension, generateTimestamp, noActiveEditorMessage } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
-import { applyXrefCommand, isCursorInsideXref, xrefTagsCompletionItemsMarkdown, xrefDisplayPropsCompletionItemsMarkdown, isCursorAfterXrefUid, xrefCompletionItemsMarkdown, isCursorStartAngleBracketsXref, startXrefCompletionItemsMarkdown } from "./controllers/xref-controller";
+import { isCursorInsideXref, xrefTagsCompletionItemsMarkdown, xrefDisplayPropsCompletionItemsMarkdown, isCursorAfterXrefUid, xrefCompletionItemsMarkdown, isCursorStartAngleBracketsXref, startXrefCompletionItemsMarkdown } from "./controllers/xref-controller";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
 
 export const output = window.createOutputChannel("docs-markdown");
@@ -69,7 +69,7 @@ export function activate(context: ExtensionContext) {
     previewTopicCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     getMasterRedirectionCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     applyCleanupCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    applyXrefCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    // applyXrefCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     yamlCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     noLocTextCommand().forEach((cmd) => AuthoringCommands.push(cmd));
 

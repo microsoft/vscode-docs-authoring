@@ -15,6 +15,7 @@ export function yamlCommands() {
   const commands = [
     { command: insertTocEntry.name, callback: insertTocEntry },
     { command: insertTocEntryWithOptions.name, callback: insertTocEntryWithOptions },
+    { command: insertExpandableParentNode.name, callback: insertExpandableParentNode },
   ];
   return commands;
 }
@@ -24,8 +25,13 @@ export function insertTocEntry() {
   checkForPreviousEntry(false);
 }
 export function insertTocEntryWithOptions() {
-  commandOption = "tocEntryWithOptions"
+  commandOption = "tocEntryWithOptions";
   checkForPreviousEntry(true);
+}
+
+export function insertExpandableParentNode() {
+  commandOption = "expandableParentNode";
+  createParentNode();
 }
 
 export function showQuickPick(options: boolean) {
@@ -101,19 +107,44 @@ export function createEntry(name: string, href: string, options: boolean) {
   const position = editor.selection.active;
   const cursorPosition = position.character;
   const attributeSpace = "  ";
-  const attributeSpaceIndented = attributeSpace.repeat(cursorPosition);
+
+  const tocEntryLineStart =
+    `- name: ${name}
+  href: ${href}`
+
+  const tocEntryIndented =
+    `- name: ${name}
+  ${attributeSpace}href: ${href}`
+
+  const tocEntryWithOptions =
+    `- name: ${name}
+  displayname: #optional string for searching TOC
+  href: ${href}
+  maintainContext: #true or false, false is default
+  uid: #optional string
+  expanded: #true or false, false is default
+  items: #optional sub-entries`
+
+  const tocEntryWithOptionsIndented =
+    `- name: ${name}
+  ${attributeSpace}displayname: #optional string for searching TOC
+  ${attributeSpace}href: ${href}
+  ${attributeSpace}maintainContext: #true or false, false is default
+  ${attributeSpace}uid: #optional string
+  ${attributeSpace}expanded: #true or false, false is default
+  ${attributeSpace}items: #optional sub-entries`
 
   if (cursorPosition === 0 && !options) {
-    insertContentToEditor(editor, insertTocEntry.name, `- name: ${name}\n${attributeSpace}href: ${href}`);
+    insertContentToEditor(editor, insertTocEntry.name, tocEntryLineStart);
   }
-  if (cursorPosition !== 0 && !options) {
-    insertContentToEditor(editor, insertTocEntry.name, `- name: ${name}\n${attributeSpaceIndented}href: ${href}`);
+  if (cursorPosition > 0 && !options) {
+    insertContentToEditor(editor, insertTocEntry.name, tocEntryIndented);
   }
   if (cursorPosition === 0 && options) {
-    insertContentToEditor(editor, insertTocEntryWithOptions.name, `- name: ${name}\n${attributeSpace}displayname: #optional string for searching TOC\n${attributeSpace}href: ${href}\n${attributeSpace}maintainContext: #true or false, false is default\n${attributeSpace}uid: #optional string\n${attributeSpace}expanded: #true or false, false is default\n${attributeSpace}items: #optional sub-entries`);
+    insertContentToEditor(editor, insertTocEntryWithOptions.name, tocEntryWithOptions);
   }
-  if (cursorPosition !== 0 && options) {
-    insertContentToEditor(editor, insertTocEntryWithOptions.name, `- name: ${name}\n${attributeSpaceIndented}displayname: #optional string for searching TOC\n${attributeSpaceIndented}href: ${href}\n${attributeSpaceIndented}maintainContext: #true or false, false is default\n${attributeSpaceIndented}uid: #optional string\n${attributeSpaceIndented}expanded: #true or false, false is default\n${attributeSpaceIndented}items: #optional sub-entries`);
+  if (cursorPosition > 0 && options) {
+    insertContentToEditor(editor, insertTocEntryWithOptions.name, tocEntryWithOptionsIndented);
   }
   showStatusMessage(insertedTocEntry);
   sendTelemetryData(telemetryCommand, commandOption);
@@ -126,19 +157,99 @@ export function checkForPreviousEntry(options: boolean) {
   }
   const position = editor.selection.active;
   const cursorPosition = position.character;
-  if (cursorPosition === 0) {
-    // no need to check further
-  }
-  if (cursorPosition !== 0) {
-    const currentLine = position.line;
-    const previousLine = currentLine - 1;
-    const previousLineContent = editor.document.lineAt(previousLine);
-    const previousNameAttribute = previousLineContent.firstNonWhitespaceCharacterIndex - 2;
-    if (previousNameAttribute !== cursorPosition) {
+  const currentLine = position.line;
+
+  // case 1: beginning of toc/first line
+  if (currentLine === 0) {
+    if (cursorPosition === 0) {
+      launchQuickPick(options)
+    } else {
       window.showErrorMessage(invalidTocEntryPosition);
       return;
     }
   }
+
+  const previousLine = currentLine - 1;
+  const previousLineData = editor.document.lineAt(previousLine);
+  const nameScalar = `- name:`
+  const itemsScalar = `items:`
+  const hrefScalar = `href:`
+
+  // case 2: name scalar on previous line
+  if (previousLineData.text.includes(nameScalar)) {
+    // if previous line starts with nameScalar check for cursor.  if equal, show quickpick.  if not, show error.
+    if (previousLineData.firstNonWhitespaceCharacterIndex === cursorPosition) {
+      launchQuickPick(options)
+    } else {
+      window.showErrorMessage(invalidTocEntryPosition);
+      return;
+    }
+  }
+
+  // case 2: items scalar on previous line
+  if (previousLineData.text.includes(itemsScalar)) {
+    // if nameLine starts with itemsScalar check for cursor.  if equal, show quickpick.  if not, show error.
+    if (previousLineData.firstNonWhitespaceCharacterIndex === cursorPosition) {
+      launchQuickPick(options)
+    } else {
+      window.showErrorMessage(invalidTocEntryPosition);
+      return;
+    }
+  }
+
+  // case 3: href scalar on previous line
+  if (previousLineData.text.includes(hrefScalar)) {
+    // get content for line above href
+    const nameLine = currentLine - 2;
+    const nameLineData = editor.document.lineAt(nameLine);
+    // if nameLine starts with nameScalar check for cursor.  if equal, show quickpick.  if not, show error.
+    if (nameLineData.text.includes(nameScalar)) {
+      if (nameLineData.firstNonWhitespaceCharacterIndex === cursorPosition) {
+        launchQuickPick(options);
+      } else {
+        window.showErrorMessage(invalidTocEntryPosition);
+        return;
+      }
+    }
+  }
+
+  // case 4: blank line
+  if (previousLineData.isEmptyOrWhitespace) {
+    // to-do: check with pm for this scenario
+    showStatusMessage(`No previous entry and not at the top of the toc.`);
+    return;
+  }
+}
+
+export function createParentNode() {
+  const editor = window.activeTextEditor;
+  if (!editor) {
+    return;
+  }
+  const position = editor.selection.active;
+  const cursorPosition = position.character;
+  const attributeSpace = "  ";
+  const indentedSpace = "    ";
+
+  const parentNodeLineStart = `- name:
+  items:
+  - name:
+    href:`
+
+  const parentNodeIndented = `- name:
+  ${attributeSpace}items:
+  ${attributeSpace}- name:
+  ${indentedSpace}href:`
+
+  if (cursorPosition === 0) {
+    insertContentToEditor(editor, insertTocEntry.name, parentNodeLineStart);
+  }
+  if (cursorPosition > 0) {
+    insertContentToEditor(editor, insertTocEntry.name, parentNodeIndented);
+  }
+}
+
+export function launchQuickPick(options: boolean) {
   if (!options) {
     showQuickPick(false);
   } else {
