@@ -25,7 +25,7 @@ import { yamlCommands } from "./controllers/yaml-controller";
 import { checkExtension, generateTimestamp, noActiveEditorMessage } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
-import { applyXrefCommand } from "./controllers/xref-controller";
+import { applyXrefCommand, xrefCompletionItemsMarkdown, isCursorInsideXref, xrefTagsCompletionItemsMarkdown, xrefDisplayPropsCompletionItemsMarkdown, isCursorStartXref } from "./controllers/xref-controller";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
 
 export const output = window.createOutputChannel("docs-markdown");
@@ -180,9 +180,12 @@ function setupAutoComplete() {
             }
 
             if (document.languageId === "markdown") {
-
                 if (isCursorInsideYamlHeader(editor)) {
                     return completionItemsMarkdownYamlHeader;
+                } else if (isCursorInsideXref(editor)) {
+                    return xrefDisplayPropsCompletionItemsMarkdown()
+                } else if (isCursorStartXref(editor)) {
+                    return xrefTagsCompletionItemsMarkdown(editor)
                 } else {
                     return completionItemsMarkdown;
                 }

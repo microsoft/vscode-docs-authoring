@@ -1,6 +1,6 @@
 "use strict";
 
-import { QuickPickItem, window } from "vscode";
+import { QuickPickItem, window, CompletionItem, Range } from "vscode";
 import { getAsync } from "../helper/http-helper";
 import { noActiveEditorMessage, isMarkdownFileCheck, insertContentToEditor, setCursorPosition, sendTelemetryData } from "../helper/common";
 import { reporter } from "../helper/telemetry";
@@ -8,6 +8,41 @@ import { reporter } from "../helper/telemetry";
 const telemetryCommand: string = "applyXref";
 const rootUrl: string = "https://xref.docs.microsoft.com";
 const tags: string = "/dotnet";
+
+export function xrefCompletionItemsMarkdown() {
+  return [new CompletionItem(`<xref:...>`)];
+}
+export async function xrefTagsCompletionItemsMarkdown(editor: any) {
+  let completionItems: CompletionItem[] = [];
+  if (editor) {
+    const range = new Range(editor.selection.start.line, editor.selection.active - 4 > 0 ? editor.selection.active - 4 : 0, editor.selection.end.line, editor.selection.end.character - 1);
+    const cursorText = editor.document.getText(range);
+    cursorText.indexOf("<ref:")
+    // let content = await getAsync(`${rootUrl}/autocomplete?tags=${tags}&text=${uid}`)
+    // content.data.map((item: { tags: any; uid: string; }) => {
+    //   completionItems.push(new CompletionItem(item.uid))
+    // });
+  }
+
+  return completionItems;
+}
+export function xrefDisplayPropsCompletionItemsMarkdown() {
+  return [new CompletionItem(`<xref:...>`)];
+}
+export function isCursorStartXref(editor: any) {
+  const range = new Range(editor.selection.start.line, editor.selection.active - 4 > 0 ? editor.selection.active - 4 : 0, editor.selection.end.line, editor.selection.end.character);
+  const cursorText = editor.document.getText(range);
+  const isCursorStartXref = cursorText.indexOf("<ref:") > -1
+  return isCursorStartXref;
+}
+export function isCursorInsideXref(editor: any) {
+  const range = new Range(0, 0, editor.selection.end.line, editor.selection.end.character);
+  const cursorText = editor.document.getText(range);
+  const docText = editor.document.getText();
+  let xrefPosition = docText.indexOf("<ref:");
+  const isCursorStartXref = cursorText.length < xrefPosition;
+  return isCursorStartXref;
+}
 
 export function applyXrefCommand() {
   const commands = [
