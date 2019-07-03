@@ -212,6 +212,13 @@ export function checkForPreviousEntry(options: boolean) {
       }
     }
   }
+
+  // case 4: blank line
+  if (previousLineData.isEmptyOrWhitespace) {
+    // to-do: check with pm for this scenario
+    showStatusMessage(`No previous entry and not at the top of the toc.`);
+    return;
+  }
 }
 
 export function createParentNode() {
