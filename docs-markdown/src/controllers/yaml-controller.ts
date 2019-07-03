@@ -158,14 +158,25 @@ export function checkForPreviousEntry(options: boolean) {
   const position = editor.selection.active;
   const cursorPosition = position.character;
   const currentLine = position.line;
+
+  // case 1: beginning of toc/first line
+  if (currentLine === 0) {
+    if (cursorPosition === 0) {
+      launchQuickPick(options)
+    } else {
+      window.showErrorMessage(invalidTocEntryPosition);
+      return;
+    }
+  }
+
   const previousLine = currentLine - 1;
   const previousLineData = editor.document.lineAt(previousLine);
   const nameScalar = `- name:`
   const itemsScalar = `items:`
   const hrefScalar = `href:`
 
-  // case 1: name scalar on previous line
-  if (previousLineData.text.startsWith(nameScalar)) {
+  // case 2: name scalar on previous line
+  if (previousLineData.text.includes(nameScalar)) {
     // if previous line starts with nameScalar check for cursor.  if equal, show quickpick.  if not, show error.
     if (previousLineData.firstNonWhitespaceCharacterIndex === cursorPosition) {
       launchQuickPick(options)
@@ -176,7 +187,7 @@ export function checkForPreviousEntry(options: boolean) {
   }
 
   // case 2: items scalar on previous line
-  if (previousLineData.text.startsWith(itemsScalar)) {
+  if (previousLineData.text.includes(itemsScalar)) {
     // if nameLine starts with itemsScalar check for cursor.  if equal, show quickpick.  if not, show error.
     if (previousLineData.firstNonWhitespaceCharacterIndex === cursorPosition) {
       launchQuickPick(options)
