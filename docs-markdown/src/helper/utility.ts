@@ -28,15 +28,15 @@ export function validateTableRowAndColumnCount(size: number, colStr: string, row
         common.postWarning(errorMsg);
         return false;
     } else if (col <= 0 || row <= 0) {
-        const errorMsg = "The number of columns and rows cannot be zero or negatives.";
+        const errorMsg = "The number of rows or columns can't be zero or negative.";
         common.postWarning(errorMsg);
         return false;
     } else if (col > 4) {
-        const errorMsg = "Per Docs content guidelines, you can only insert up to four columns via the Docs authoring extension. You can add more columns manually if necessary.";
+        const errorMsg = "You can only insert up to four columns via Docs Markdown.";
         common.postWarning(errorMsg);
         return false;
-    } else if (row >= 100) {
-        const errorMsg = "You can only insert a table with fewer than one hundred rows via the Docs authoring extension.";
+    } else if (row > 50) {
+        const errorMsg = "You can only insert up to 50 rows via Docs Markdown.";
         common.postWarning(errorMsg);
         return false;
     } else {
