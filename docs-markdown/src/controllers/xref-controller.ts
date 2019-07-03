@@ -1,6 +1,6 @@
 "use strict";
 
-import { QuickPickItem, window, CompletionItem, Range } from "vscode";
+import { QuickPickItem, window, CompletionItem, Range, Position } from "vscode";
 import { getAsync } from "../helper/http-helper";
 import { noActiveEditorMessage, isMarkdownFileCheck, insertContentToEditor, setCursorPosition, sendTelemetryData } from "../helper/common";
 import { reporter } from "../helper/telemetry";
@@ -8,40 +8,66 @@ import { reporter } from "../helper/telemetry";
 const telemetryCommand: string = "applyXref";
 const rootUrl: string = "https://xref.docs.microsoft.com";
 const tags: string = "/dotnet";
-
+const RE_XREF = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9]+)?(\?)?(displayProperty)?(=)?(.+)?>/g
 export function xrefCompletionItemsMarkdown() {
   return [new CompletionItem(`<xref:...>`)];
 }
 export async function xrefTagsCompletionItemsMarkdown(editor: any) {
   let completionItems: CompletionItem[] = [];
+  let uid = "A"
   if (editor) {
-    const range = new Range(editor.selection.start.line, editor.selection.active - 4 > 0 ? editor.selection.active - 4 : 0, editor.selection.end.line, editor.selection.end.character - 1);
-    const cursorText = editor.document.getText(range);
-    cursorText.indexOf("<ref:")
-    // let content = await getAsync(`${rootUrl}/autocomplete?tags=${tags}&text=${uid}`)
-    // content.data.map((item: { tags: any; uid: string; }) => {
-    //   completionItems.push(new CompletionItem(item.uid))
-    // });
+    let position = new Position(editor.selection.active.line, editor.selection.active.character)
+    let wordRange = editor.document.getWordRangeAtPosition(position, RE_XREF)
+    const xref = editor.document.getText(wordRange);
+    let captureGroup = RE_XREF.exec(xref);
+    if (captureGroup && captureGroup[1]) {
+      uid = captureGroup[1].trim();
+    }
+    let content = await getAsync(`${rootUrl}/autocomplete?tags=${tags}&text=${uid}`)
+    content.data.map((item: { tags: any; uid: string; }) => {
+      completionItems.push(new CompletionItem(encodeSpecialCharacters(item.uid)))
+    });
   }
 
   return completionItems;
 }
-export function xrefDisplayPropsCompletionItemsMarkdown() {
-  return [new CompletionItem(`<xref:...>`)];
+
+export function xrefDisplayPropsCompletionItemsMarkdown(editor: any) {
+  const completionItems: CompletionItem[] = [];
+  completionItems.push(new CompletionItem("displayProperty=none"))
+  completionItems.push(new CompletionItem("displayProperty=nameWithType"));
+  completionItems.push(new CompletionItem("displayProperty=fullName"));
+  return completionItems;
 }
-export function isCursorStartXref(editor: any) {
-  const range = new Range(editor.selection.start.line, editor.selection.active - 4 > 0 ? editor.selection.active - 4 : 0, editor.selection.end.line, editor.selection.end.character);
-  const cursorText = editor.document.getText(range);
-  const isCursorStartXref = cursorText.indexOf("<ref:") > -1
-  return isCursorStartXref;
-}
+
 export function isCursorInsideXref(editor: any) {
-  const range = new Range(0, 0, editor.selection.end.line, editor.selection.end.character);
+  const range = new Range(editor.selection.start.line, 0, editor.selection.end.line, editor.selection.active.character);
   const cursorText = editor.document.getText(range);
-  const docText = editor.document.getText();
-  let xrefPosition = docText.indexOf("<ref:");
-  const isCursorStartXref = cursorText.length < xrefPosition;
-  return isCursorStartXref;
+  const isCursorInsideXref = cursorText.indexOf("<xref:") > -1
+  return isCursorInsideXref;
+}
+
+export function isCursorAfterXrefUid(editor: any) {
+  let position = new Position(editor.selection.active.line, editor.selection.active.character)
+  let wordRange = editor.document.getWordRangeAtPosition(position, RE_XREF)
+  if (wordRange) {
+    const xref = editor.document.getText(wordRange);
+    let captureGroup = RE_XREF.exec(xref);
+    if (captureGroup && (captureGroup[2] || captureGroup[5])) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function startXrefCompletionItemsMarkdown() {
+  return [new CompletionItem(`xref:...`)];
+}
+
+export function isCursorStartAngleBracketsXref(editor: any) {
+  const range = new Range(editor.selection.start.line, 0, editor.selection.end.line, editor.selection.active.character);
+  const cursorText = editor.document.getText(range);
+  return cursorText.indexOf("<") > -1;
 }
 
 export function applyXrefCommand() {
@@ -88,9 +114,9 @@ export async function applyXref() {
 }
 
 function encodeSpecialCharacters(content: string) {
-  content = content.replace("*", "%2A")
-  content = content.replace("#", "%23")
-  content = content.replace("`", "%60")
+  content = content.replace(/\*/g, "%2A")
+  content = content.replace(/#/g, "%23")
+  content = content.replace(/`/g, "%60")
   return content;
 }
 

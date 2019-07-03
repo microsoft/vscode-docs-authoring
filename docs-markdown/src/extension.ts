@@ -25,7 +25,7 @@ import { yamlCommands } from "./controllers/yaml-controller";
 import { checkExtension, generateTimestamp, noActiveEditorMessage } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
-import { applyXrefCommand, xrefCompletionItemsMarkdown, isCursorInsideXref, xrefTagsCompletionItemsMarkdown, xrefDisplayPropsCompletionItemsMarkdown, isCursorStartXref } from "./controllers/xref-controller";
+import { applyXrefCommand, isCursorInsideXref, xrefTagsCompletionItemsMarkdown, xrefDisplayPropsCompletionItemsMarkdown, isCursorAfterXrefUid, xrefCompletionItemsMarkdown, isCursorStartAngleBracketsXref, startXrefCompletionItemsMarkdown } from "./controllers/xref-controller";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
 
 export const output = window.createOutputChannel("docs-markdown");
@@ -166,7 +166,9 @@ function setupAutoComplete() {
     completionItemsMarkdownYamlHeader = completionItemsMarkdownYamlHeader.concat(noLocCompletionItemsMarkdownYamlHeader());
 
     let completionItemsMarkdown: CompletionItem[] = [];
-    completionItemsMarkdown = completionItemsMarkdown.concat(noLocCompletionItemsMarkdown());
+    completionItemsMarkdown = completionItemsMarkdown.concat(
+        noLocCompletionItemsMarkdown(),
+        xrefCompletionItemsMarkdown());
 
     let completionItemsYaml: CompletionItem[] = [];
     completionItemsYaml = completionItemsYaml.concat(noLocCompletionItemsYaml());
@@ -182,10 +184,12 @@ function setupAutoComplete() {
             if (document.languageId === "markdown") {
                 if (isCursorInsideYamlHeader(editor)) {
                     return completionItemsMarkdownYamlHeader;
+                } else if (isCursorAfterXrefUid(editor)) {
+                    return xrefDisplayPropsCompletionItemsMarkdown(editor)
                 } else if (isCursorInsideXref(editor)) {
-                    return xrefDisplayPropsCompletionItemsMarkdown()
-                } else if (isCursorStartXref(editor)) {
                     return xrefTagsCompletionItemsMarkdown(editor)
+                } else if (isCursorStartAngleBracketsXref(editor)) {
+                    return startXrefCompletionItemsMarkdown()
                 } else {
                     return completionItemsMarkdown;
                 }
