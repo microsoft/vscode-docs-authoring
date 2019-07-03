@@ -15,7 +15,7 @@ import { previewTopic } from "./preview-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
-import { insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
+import { insertExpandableParentNode, insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
 // import { applyXref } from "./xref-controller";
 import { noLocText } from "./no-loc-controller";
 
@@ -130,6 +130,10 @@ export function markdownQuickPick() {
         },
         {
             description: "",
+            label: "$(note) Parent node",
+        },
+        {
+            description: "",
             label: "$(lock) Non-localizable text",
         },
     );
@@ -223,6 +227,9 @@ export function markdownQuickPick() {
                 break;
             case "toc entry with optional attributes":
                 insertTocEntryWithOptions();
+                break;
+            case "parent node":
+                insertExpandableParentNode();
                 break;
             default:
                 const { msTimeValue } = generateTimestamp();
