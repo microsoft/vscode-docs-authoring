@@ -160,10 +160,9 @@ export function checkForPreviousEntry(options: boolean) {
   const currentLine = position.line;
   const previousLine = currentLine - 1;
   const previousLineData = editor.document.lineAt(previousLine);
-  const attributeSpace = "  ";
   const nameScalar = `- name:`
-  const itemsScalar = `${attributeSpace}items:`
-  const hrefScalar = `${attributeSpace}href:`
+  const itemsScalar = `items:`
+  const hrefScalar = `href:`
 
   // case 1: name scalar on previous line
   if (previousLineData.text.startsWith(nameScalar)) {
@@ -188,13 +187,12 @@ export function checkForPreviousEntry(options: boolean) {
   }
 
   // case 3: href scalar on previous line
-  if (previousLineData.text.startsWith(hrefScalar)) {
+  if (previousLineData.text.includes(hrefScalar)) {
     // get content for line above href
     const nameLine = currentLine - 2;
     const nameLineData = editor.document.lineAt(nameLine);
-    console.log(nameLineData);
     // if nameLine starts with nameScalar check for cursor.  if equal, show quickpick.  if not, show error.
-    if (nameLineData.text.startsWith(nameScalar)) {
+    if (nameLineData.text.includes(nameScalar)) {
       if (nameLineData.firstNonWhitespaceCharacterIndex === cursorPosition) {
         launchQuickPick(options);
       } else {
