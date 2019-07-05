@@ -50,3 +50,8 @@ module.exports.alertNoExclam = /\[(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]/gm; //i
 
 //Links
 module.exports.linkPattern = /(http:\/\/(|www\.))(visualstudio\.com|msdn\.com|microsoft\.com|office\.com|azure\.com|aka\.ms).*/;
+
+//xref
+module.exports.openXref = /<xref:/gmi;
+module.exports.missingUidAttributeXref = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9]+)>/g;
+module.exports.syntaxXref = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9]+)(\?displayProperty=.+)?>/g;

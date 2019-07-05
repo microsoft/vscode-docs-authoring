@@ -25,3 +25,7 @@ module.exports.zoneValue = `Bad value for zone target. Only "chromeless" and "do
 module.exports.alertType = `Bad alert type. Only NOTE, TIP, IMPORTANT, CAUTION, and WARNING are supported. Case-sensitive.`;
 module.exports.alertNoOpen = `Missing block opener. Alerts must be preceded by ">" plus a space.`;
 module.exports.alertNoExclam = `Bad alert syntax. Alerts must include exclamation point within brackets, such as "> [!NOTE]"`;
+
+//xref
+module.exports.xrefSyntax = `Bad xref syntax. Xref must include xref: within open angle brackets, such as "<xref:...>"`;
+module.exports.missingUidAttributeXref = `Missing xref uid after <xref:. Xref must include uid, such as "<xref:System.Format.String%2A>"`;
