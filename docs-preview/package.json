@@ -33,8 +33,7 @@
   "main": "./out/src/extension",
   "contributes": {
     "markdown.previewScripts": [
-      "./media/alert-styles.js",
-      "./media/xref.js"
+      "./media/alert-styles.js"
     ],
     "markdown.previewStyles": [
       "./media/alert-styles.css"

@@ -6,11 +6,13 @@ export const output = window.createOutputChannel("docs-preview");
 
 const apiUrl = "https://xref.docs.microsoft.com/query?uid=";
 const XREF_RE = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9]+)(\?displayProperty=.+)?>/i;
+let xrefContent = "";
+
 export function xref(md) {
   const xref = (state) => {
     try {
       // var xrefMatches = state.src.match(XREF_RE);
-      if (!updateFlag) {
+      if (xrefContent === "") {
         updateXrefContent(md, state.src);
       } else {
         state.src = xrefContent;
@@ -23,9 +25,8 @@ export function xref(md) {
   md.core.ruler.before("normalize", "xref", xref);
 }
 
-let xrefContent = "";
 async function updateXrefContent(md: any, src: string) {
-  updateFlag = true;
+  xrefContent = src;
   let mdSrc = "";
   let captureGroup;
   while ((captureGroup = XREF_RE.exec(src))) {
@@ -53,23 +54,20 @@ function decodeSpecialCharacters(content) {
 }
 
 function updateEditorToRefreshChanges() {
-  const position = new Position(0, 0);
-  const range = new Range(position, new Position(0, 1));
+  const position = new Position(99999, 9998);
+  const range = new Range(position, new Position(99999, 9999));
   const editor = window.activeTextEditor;
   editor.edit((update) => {
     update.insert(position, " ");
-  });
-
-  function deleteNewRefreshContent() {
+  }).then(() => {
     editor.edit((update) => {
       update.delete(range);
+    }).then(() => {
+      setTimeout(() => {
+        xrefContent = "";
+      }, 500);
     });
-  }
-  setTimeout(deleteNewRefreshContent, 100);
-  setTimeout(() => {
-    updateFlag = false;
-  }, 500);
+  });
 }
-let updateFlag = false;
 
 
