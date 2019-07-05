@@ -35,7 +35,7 @@ export function activate(context: ExtensionContext) {
             const workingPath = filePath.replace(basename(filePath), "");
             return md.use(require("markdown-it-include"), { root: workingPath, includeRe: INCLUDE_RE })
                 .use(codeSnippets, { root: workingPath })
-                .use(xref)
+                .use(xref);
         }
     };
 }
