@@ -32,7 +32,7 @@ async function updateXrefContent(md: any, src: string) {
 
   // check for matches, to see if there are any outside of our map.
   const matches = src.match(XREF_RE_WITH_GLOBAL);
-  const perfectMatch = matches.every((match) => {
+  const cacheIsReady = matches.every((match) => {
     if (XREF_RE.test(match)) {
       return xrefMap.has(match);
     } else {
@@ -40,7 +40,7 @@ async function updateXrefContent(md: any, src: string) {
     }
   });
 
-  if (perfectMatch) {
+  if (cacheIsReady) {
     while ((captureGroup = XREF_RE.exec(src))) {
       mdSrc = xrefMap.get(captureGroup[0]);
       src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
