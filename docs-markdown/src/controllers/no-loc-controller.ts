@@ -15,7 +15,7 @@ export function noLocCompletionItemsMarkdownYamlHeader() {
     return [new CompletionItem(`no-loc: []`)];
 }
 export function noLocCompletionItemsMarkdown() {
-    return [new CompletionItem(`::::no-loc text="":::`)];
+    return [new CompletionItem(`:::no-loc text="":::`)];
 }
 export function noLocCompletionItemsYaml() {
     return [new CompletionItem(`no-loc:\n- `)];
