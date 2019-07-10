@@ -26,7 +26,7 @@ The following commands are available in Markdown files:
 |Preview (`Alt+DP`) |Preview the active topic in a side-by-side window using the Docs Preview extension, if it is installed.|
 |Bold (`Alt+DB`)    |Format text **bold**.|
 |Italic (`Alt+DI`)  |Format text *italic*.|
-|Code               |If one line or less is selected, formats text as `inline code`.<br><br>If multiple lines are selected, formats them as a fenced code block, and allows you to optionally select a programming language supported by OPS.<br>|
+|Code               |If one line or less is selected, formats text as `inline code`.<br><br>If multiple lines are selected, formats them as a fenced code block, and prompts you to select a programming language supported by Docs.<br>|
 |Alert              |Insert a Note, Important, Warning, or Tip.<br><br>Select Alert from the menu, then select the alert type. If you have previously selected text, it will be surrounded with the selected alert syntax. If no text is selected, a new alert will be added with placeholder text.|
 |Numbered list      |Insert a new numbered list.<br><br> If multiple lines are selected, each will be a list item. To create a nested numbered list, tab from within the parent list.|
 |Bulleted list      |Insert a new bulleted list.|
@@ -40,15 +40,15 @@ The following commands are available in Markdown files:
 |Snippet            |Find a code snippet in the repo to embed in the current file.|
 |Cleanup            |Run one of the Docs Cleanup scripts (see [Cleanup scripts](#cleanup-scripts) below).
 |Video              |Add an embedded video.|
-|Template           |Insert a Markdown authoring templates, if the Docs Article Templates extension is installed.|
+|Template           |Insert a Markdown authoring template, if the Docs Article Templates extension is installed.|
 
 The following commands are available in YAML files:
 
 |Command            |Description         |
 |-------------------|--------------------|
 |TOC entry          |Insert a basic TOC entry with the `name` and `href` attributes, and select the file link to. By default, the H1 of the selected file is used as the `name`.|
-|TOC entry          |Insert a TOC entry with optional attributes as well as `name` and `href`.<br>`displayName`: Add alternative search terms for TOC filtering.<br>`uid`: Add an identifier for a Docs reference article, such as `System.String`.<br>`expanded`: Indicate that the node should be expanded by default.|
-|Parent node        |Insert a content-less parent node with a stub child (`name` and `href` pair).|
+|TOC entry with optional attributes |Insert a TOC entry with the following optional attributes as well as `name` and `href`.<br>- `displayName`: Add alternative search terms for TOC filtering.<br>- `uid`: Add an identifier for a Docs reference article, such as `System.String`.<br>- `expanded`: Indicate that the node should be expanded by default.|
+|Parent node         |Insert a content-less parent node with a stub child (`name` and `href` pair).|
 |Non-localizable text|Insert a `no-loc` YAML node. If you insert this node within a `metadata` node, every matching string within the YAML file will be non-localizable. If you insert it within any other node, every matchinig string within that node will be non-localizable.
 
 ## How to assign keyboard shortcuts
