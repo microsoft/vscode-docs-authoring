@@ -1,6 +1,7 @@
 "use-strict";
 
 import os = require("os");
+import path = require("path");
 import * as vscode from "vscode";
 import { output } from "../extension";
 import * as log from "./log";
@@ -253,7 +254,9 @@ export function rtrim(str: string, chr: string) {
  */
 export function isMarkdownFileCheck(editor: vscode.TextEditor, languageId: boolean) {
     if (editor.document.languageId !== "markdown") {
-        postInformation("The docs-markdown extension only works on Markdown files.");
+        if (editor.document.languageId !== "yaml") {
+            postInformation("The docs-markdown extension only works on Markdown files.");
+        }
         return false;
     } else {
         return true;
@@ -323,4 +326,17 @@ export function sendTelemetryData(telemetryCommand: string, commandOption: strin
         const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
         reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
     }
+}
+
+export function detectFileExtension(filePath: string) {
+    const fileExtension = path.extname(filePath);
+    return fileExtension;
+}
+
+/**
+ * Create a posted error message and applies the message to the log
+ * @param {string} message - the message to post to the editor as an error.
+ */
+export async function showWarningMessage(message: string) {
+    vscode.window.showWarningMessage(message);
 }

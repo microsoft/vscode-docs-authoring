@@ -6,7 +6,7 @@
  Logging, Error Handling, VS Code window updates, etc.
 */
 
-import { commands, ConfigurationTarget, ExtensionContext, window, workspace } from "vscode";
+import { commands, ConfigurationTarget, ExtensionContext, window, workspace, languages, CompletionItem, TextDocument, Position } from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand } from "./controllers/cleanup-controller";
@@ -16,13 +16,17 @@ import { italicFormattingCommand } from "./controllers/italic-controller";
 import { insertListsCommands } from "./controllers/list-controller";
 import { getMasterRedirectionCommand } from "./controllers/master-redirect-controller";
 import { insertLinksAndMediaCommands } from "./controllers/media-controller";
+import { noLocTextCommand, noLocCompletionItemsMarkdownYamlHeader, noLocCompletionItemsMarkdown, noLocCompletionItemsYaml } from "./controllers/no-loc-controller";
 import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
 import { insertTableCommand } from "./controllers/table-controller";
-import { checkExtension, generateTimestamp } from "./helper/common";
+import { yamlCommands } from "./controllers/yaml-controller";
+import { checkExtension, generateTimestamp, noActiveEditorMessage } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
+// import { applyXrefCommand } from "./controllers/xref-controller";
+import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
 
 export const output = window.createOutputChannel("docs-markdown");
 export let extensionPath: string;
@@ -65,6 +69,12 @@ export function activate(context: ExtensionContext) {
     previewTopicCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     getMasterRedirectionCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     applyCleanupCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    // applyXrefCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    yamlCommands().forEach((cmd) => AuthoringCommands.push(cmd));
+    noLocTextCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+
+    //Autocomplete
+    context.subscriptions.push(setupAutoComplete());
 
     // Telemetry
     context.subscriptions.push(new Reporter(context));
@@ -119,7 +129,7 @@ export function checkMarkdownlintCustomProperty() {
     const { msTimeValue } = generateTimestamp();
     const customProperty = "markdownlint.customRules";
     const customRuleset = "{docsmsft.docs-markdown}/markdownlint-custom-rules/rules.js";
-    const customPropertyData = workspace.getConfiguration().inspect(customProperty);
+    const customPropertyData: any = workspace.getConfiguration().inspect(customProperty);
     // new list for string comparison and updating.
     const existingUserSettings: string[] = [];
     if (customPropertyData) {
@@ -127,7 +137,7 @@ export function checkMarkdownlintCustomProperty() {
         if (customPropertyData.globalValue) {
             const valuesToString = customPropertyData.globalValue.toString();
             const individualValues = valuesToString.split(",");
-            individualValues.forEach((setting) => {
+            individualValues.forEach((setting: string) => {
                 existingUserSettings.push(setting);
             });
             // if the customRuleset already exist, write a notification to the output window and continue.
@@ -149,6 +159,38 @@ export function checkMarkdownlintCustomProperty() {
             output.appendLine(`[${msTimeValue}] - Docs custom markdownlint ruleset added to user settings.`);
         }
     }
+}
+
+function setupAutoComplete() {
+    let completionItemsMarkdownYamlHeader: CompletionItem[] = [];
+    completionItemsMarkdownYamlHeader = completionItemsMarkdownYamlHeader.concat(noLocCompletionItemsMarkdownYamlHeader());
+
+    let completionItemsMarkdown: CompletionItem[] = [];
+    completionItemsMarkdown = completionItemsMarkdown.concat(noLocCompletionItemsMarkdown());
+
+    let completionItemsYaml: CompletionItem[] = [];
+    completionItemsYaml = completionItemsYaml.concat(noLocCompletionItemsYaml());
+
+    return languages.registerCompletionItemProvider("*", {
+        provideCompletionItems(document: TextDocument, position: Position) {
+            const editor = window.activeTextEditor;
+            if (!editor) {
+                noActiveEditorMessage();
+                return;
+            }
+
+            if (document.languageId === "markdown") {
+
+                if (isCursorInsideYamlHeader(editor)) {
+                    return completionItemsMarkdownYamlHeader;
+                } else {
+                    return completionItemsMarkdown;
+                }
+            } else {
+                return completionItemsYaml;
+            }
+        }
+    });
 }
 
 // this method is called when your extension is deactivated
