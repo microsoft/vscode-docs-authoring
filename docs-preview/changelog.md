@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.25 (TBD)
+
+- Added Xref support
+
 ## 0.3.23 (June 25th, 2019)
 
 - Command palette updates
