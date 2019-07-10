@@ -105,6 +105,7 @@ Cleanup scripts available:
 
 ## Known issues
 
+- [YAML TOC entries] The Docs-YAML schema validation falsely shows a "Matches a schema that is not allowed" linting error on optional attributes such as `displayName`. These entries are in fact valid, and we'll be updating the schema linting in an upcoming release.
 - [Docs Preview] Code blocks only preview in Dark theme, and some colorized text is unreadable in Light theme.
 - [External bookmarks] Linux: File list is displayed but no headings are shown to select.
 - [Includes] Linux: File list is displayed but no link is added after selection is made.
