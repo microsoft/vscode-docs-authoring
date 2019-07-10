@@ -25,7 +25,7 @@ import { yamlCommands } from "./controllers/yaml-controller";
 import { checkExtension, generateTimestamp, noActiveEditorMessage } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
-import { isCursorInsideXref, xrefTagsCompletionItemsMarkdown, xrefDisplayPropsCompletionItemsMarkdown, isCursorAfterXrefUid, xrefCompletionItemsMarkdown, isCursorStartAngleBracketsXref, startXrefCompletionItemsMarkdown } from "./controllers/xref-controller";
+import { isCursorInsideXref, xrefTagsCompletionItemsMarkdown, xrefDisplayPropsCompletionItemsMarkdown, isCursorAfterXrefUid, xrefCompletionItemsMarkdown, isCursorStartAngleBracketsXref, xrefDisplayPropertyCompletionItemsMarkdown, isCursorAfterXrefDisplayProperty } from "./controllers/xref-controller";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
 
 export const output = window.createOutputChannel("docs-markdown");
@@ -184,12 +184,14 @@ function setupAutoComplete() {
             if (document.languageId === "markdown") {
                 if (isCursorInsideYamlHeader(editor)) {
                     return completionItemsMarkdownYamlHeader;
-                } else if (isCursorAfterXrefUid(editor)) {
+                } else if (isCursorAfterXrefDisplayProperty(editor)) {
                     return xrefDisplayPropsCompletionItemsMarkdown(editor)
+                } else if (isCursorAfterXrefUid(editor)) {
+                    return xrefDisplayPropertyCompletionItemsMarkdown(editor)
                 } else if (isCursorInsideXref(editor)) {
                     return xrefTagsCompletionItemsMarkdown(editor)
                 } else if (isCursorStartAngleBracketsXref(editor)) {
-                    return startXrefCompletionItemsMarkdown()
+                    return xrefCompletionItemsMarkdown()
                 } else {
                     return completionItemsMarkdown;
                 }

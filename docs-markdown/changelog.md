@@ -1,6 +1,11 @@
 # Change Log
 
-## 0.3.0 (TBD)
+## 0.2.11 (TBD)
+
+- Xref support for <xref:...> Markdown insertion
+- Xref Intellisense
+
+## 0.2.10 (TBD)
 
 - YAML TOC support
 
