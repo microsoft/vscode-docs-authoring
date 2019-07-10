@@ -19,10 +19,11 @@ You can also now access the Docs commands from the VS Code command palette. Hit 
 
 ![Docs commands](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/docs-command-palette.png)
 
-The following are available:
+The following commands are available in Markdown files:
 
 |Function           |Command             |Description           |
 |-------------------|--------------------|----------------------|
+|Preview (`Alt+DP`) |`previewTopic`      |Preview the active topic in a side-by-side window using the Docs Preview extension, if it is installed.|
 |Bold (`Alt+DB`)    |`formatBold`        |Formats text **bold**.|
 |Italic (`Alt+DI`)  |`formatItalic`      |Formats text *italic*.|
 |Code               |`formatCode`        |If one line or less is selected, formats text as `inline code`.<br><br>If multiple lines are selected, formats them as a fenced code block, and allows you to optionally select a programming language supported by OPS.<br>|
@@ -30,13 +31,16 @@ The following are available:
 |Numbered list      |`insertNumberedList` |Inserts a new numbered list.<br><br> If multiple lines are selected, each will be a list item. To create a nested numbered list, tab from within the parent list.|
 |Bulleted list      |`insertBulletedList` |Inserts a new bulleted list.|
 |Table              |`insertTable`        |Inserts a Markdown table structure.<br><br>After you select the table command, specify the number of columns and rows in the format columns:rows, such as 3:4. Note that the maximum number of columns you can specify via this extension is 5, which is the recommended maximum for readability on docs.microsoft.com.|
-|Link (`Alt+DK`)    |`selectLinkType`      |Inserts a link. When you select this command, the following sub-menu appears.<br><br>`External`: Link to a web page by URI. Must include "http" or "https".<br>`Internal`: Insert a relative link to another file in the same repo. After selecting this option, type in the command window to filter files by name, then select the file you want. <br>`Bookmark in this file`: Choose from a list of headings in the current file to insert a properly formatted bookmark.<br>`Bookmark in another file`: First, filter by file name and select the file to link to, then choose the appropriate heading within the selected file.|
-|Image              |`insertImage`     |Type alternate text (required for accessibility) and select it, then call this command to filter the list of supported image files in the repo and select the one you want. If you haven't selected alt text when you call this command, you will be prompted for it before you can select an image file.|
+|Link to file in repo|  |Inserts a Markdown link to a file within the current repo. |
+|Link to web page    |  |Inserts a Markdown link to a URI.|
+|Link to heading     |  |Opens a sub-menu to link to a heading (bookmark) in the current file or in another file in the current repo.|
+|Non-localiable text |  |Within the Markdown body of a file, formats text as non-localizable (`:::no-loc text="string":::`). Within the YAML header of a Markdown file, adds metadata to be populated with strings that should be non-localizable throughout the file ( `no-loc: []`).|
+|Image               |`insertImage`     |Type alternate text (required for accessibility) and select it, then call this command to filter the list of supported image files in the repo and select the one you want. If you haven't selected alt text when you call this command, you will be prompted for it before you can select an image file.|
 |Include            |`insertInclude`   |Find a file to embed in the current file.|
 |Snippet            |`insertSnippet`   |Find a code snippet in the repo to embed in the current file.|
 |Template           |`applyTemplate`   |Opens the list of available Markdown authoring templates, if the Docs Article Templates extension is installed.|
 |Video              |`insertVideo`     |Add an embedded video.|
-|Preview (`Alt+DP`) |`previewTopic`    |Preview the active topic in a side-by-side window using the Docs Preview extension, if it is installed.|
+
 
 ## How to assign keyboard shortcuts
 
@@ -89,7 +93,8 @@ Cleanup scripts available:
 - Capitalization of metadata values: lowercases certain metadata properties.
 - Master redirection file: generate redirect_url entries for master redirect file.
 
-## Non-localazible text tool
+<!--
+## Non-localizable text tool
 
 The ability to easily mark what text should not be localized has been added. It is accessible as "Non-localizable text" via either the command pallette, or quickpick menu.
 
@@ -106,6 +111,8 @@ no-loc
 - 
 ```
 and will allow you to enter a string per dash.
+
+-->
 
 ## Known issues
 
