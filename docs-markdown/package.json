@@ -23,7 +23,8 @@
     "markdown"
   ],
   "activationEvents": [
-    "*"
+    "onLanguage:markdown",
+    "onLanguage:yaml"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -367,7 +368,8 @@
     "recursive-readdir": "^2.2.2",
     "typescript-collections": "^1.2.3",
     "vscode-extension-telemetry": "^0.1.1",
-    "yamljs": "^0.3.0"
+    "yamljs": "^0.3.0",
+    "js-yaml": "^3.13.1"
   },
   "devDependencies": {
     "@types/graceful-fs": "^2.0.30",
@@ -379,7 +381,6 @@
     "@types/yamljs": "^0.2.30",
     "jest": "^24.7.1",
     "jest-junit": "^6.3.0",
-    "js-yaml": "^3.13.1",
     "octicons": "^7.3.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.9.1",
