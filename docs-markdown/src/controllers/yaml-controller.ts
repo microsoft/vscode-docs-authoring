@@ -129,10 +129,8 @@ export function createEntry(name: string, href: string, options: boolean) {
     `- name: ${name}
   ${attributeSpace}displayname: #optional string for searching TOC
   ${attributeSpace}href: ${href}
-  ${attributeSpace}maintainContext: #true or false, false is default
   ${attributeSpace}uid: #optional string
-  ${attributeSpace}expanded: #true or false, false is default
-  ${attributeSpace}items: #optional sub-entries`
+  ${attributeSpace}expanded: #true or false, false is default`;
 
   if (cursorPosition === 0 && !options) {
     insertContentToEditor(editor, insertTocEntry.name, tocEntryLineStart);

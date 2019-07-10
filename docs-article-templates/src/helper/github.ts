@@ -3,8 +3,8 @@
 import { readdir, stat, unlinkSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
+import * as WebRequest from 'web-request';
 import { displayTemplates } from "../controllers/quick-pick-controller";
-import { output } from "../extension";
 import { postWarning, showStatusMessage } from "../helper/common";
 
 export const docsAuthoringDirectory = join(homedir(), "Docs Authoring");
@@ -20,6 +20,7 @@ export async function downloadRepo() {
             showStatusMessage(err ? `Error: Cannot connect to ${templateRepo}` : "Success");
         } else {
             displayTemplates();
+            logRepoData();
         }
     });
 }
@@ -47,4 +48,11 @@ export function cleanupDownloadFiles(templates?: boolean) {
             });
         });
     });
+}
+
+export async function logRepoData() {
+    const repoUrl = `https://github.com/MicrosoftDocs/content-templates`;
+    const result = await WebRequest.get(repoUrl);
+    showStatusMessage(`Content-templates repo URL and http response: ${repoUrl}, ${result.statusCode}`);
+    showStatusMessage(`Local template directory: ${templateDirectory}`);
 }
