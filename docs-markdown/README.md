@@ -46,7 +46,7 @@ The following commands are available in YAML files:
 
 |Command            |Description         |
 |-------------------|--------------------|
-|TOC entry          |Insert a basic TOC entry with the `name` and `href` attributes, and allows you to select the file link to. By default, the H1 of the selected file is used as the `name`.|
+|TOC entry          |Insert a basic TOC entry with the `name` and `href` attributes, and select the file link to. By default, the H1 of the selected file is used as the `name`.|
 |TOC entry          |Insert a TOC entry with optional attributes as well as `name` and `href`.<br>`displayName`: Add alternative search terms for TOC filtering.<br>`uid`: Add an identifier for a Docs reference article, such as `System.String`.<br>`expanded`: Indicate that the node should be expanded by default.|
 |Parent node        |Insert a content-less parent node with a stub child (`name` and `href` pair).|
 |Non-localizable text|Insert a `no-loc` YAML node. If you insert this node within a `metadata` node, every matching string within the YAML file will be non-localizable. If you insert it within any other node, every matchinig string within that node will be non-localizable.
