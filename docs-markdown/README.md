@@ -38,7 +38,7 @@ The following commands are available in Markdown files:
 |Image               |Type alternate text (required for accessibility) and select it, then call this command to filter the list of supported image files in the repo and select the one you want. If you haven't selected alt text when you call this command, you will be prompted for it before you can select an image file.|
 |Include            |Find a file in the repo to embed in the current file.|
 |Snippet            |Find a code snippet in the repo to embed in the current file.|
-|Cleanup            |Run one of the Docs Cleanup scripts (see [Cleanup scripts](*cleanup-scripts) below).
+|Cleanup            |Run one of the Docs Cleanup scripts (see [Cleanup scripts](#cleanup-scripts) below).
 |Video              |Add an embedded video.|
 |Template           |Insert a Markdown authoring templates, if the Docs Article Templates extension is installed.|
 
