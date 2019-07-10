@@ -4,6 +4,7 @@
 
 - Xref support for <xref:...> Markdown insertion
 - Xref Intellisense
+- xref linting rules
 
 ## 0.2.10 (TBD)
 
