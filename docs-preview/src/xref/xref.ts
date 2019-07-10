@@ -1,4 +1,3 @@
-
 import Axios from "axios";
 import { window, Position, Range } from "vscode";
 
@@ -50,28 +49,27 @@ async function updateXrefContent(md: any, src: string) {
   }
 
   while ((captureGroup = XREF_RE.exec(src))) {
-    // const uid = decodeSpecialCharacters(captureGroup[1].trim());
     const uid = captureGroup[1].trim();
-    await Axios.get(apiUrl + uid)
-      .then(response => {
-        if (response) {
-          let xref = response.data[0];
-          mdSrc = `[${xref.fullName}](${xref.href})`;
-          src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
-          xrefMap.set(captureGroup[0], mdSrc);
-        }
-      });
+    try {
+      await Axios.get(apiUrl + uid)
+        .then(response => {
+          if (response) {
+            if (response.data[0]) {
+              let xref = response.data[0];
+              mdSrc = `[${xref.fullName}](${xref.href})`;
+            } else {
+              mdSrc = `[${uid}](${uid})`
+            }
+            src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
+            xrefMap.set(captureGroup[0], mdSrc);
+          }
+        });
+    } catch (error) {
+      output.appendLine(error);
+    }
   }
   xrefContent = src;
-  //md.parse(xrefContent);
   updateEditorToRefreshChanges();
-}
-
-function decodeSpecialCharacters(content) {
-  content = content.replace("%2A", "*")
-  content = content.replace("%23", "#")
-  content = content.replace("%60", "`")
-  return content;
 }
 
 function updateEditorToRefreshChanges() {
@@ -90,5 +88,3 @@ function updateEditorToRefreshChanges() {
     });
   });
 }
-
-
