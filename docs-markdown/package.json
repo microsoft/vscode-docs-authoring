@@ -142,6 +142,11 @@
         "command": "createParentNode",
         "title": "Create expandable parent node",
         "category": "Docs"
+      },
+      {
+        "command": "applyXref",
+        "title": "Link to XREF",
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -270,6 +275,11 @@
           "command": "createParentNode",
           "group": "Docs",
           "when": "resourceLangId == yaml"
+        },
+        {
+          "command": "applyXref",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
         }
       ]
     },
