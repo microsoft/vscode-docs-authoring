@@ -1,8 +1,10 @@
 # Change Log
 
-## 0.3.0 (TBD)
+## 0.2.10 (July 10th, 2019)
 
 - YAML TOC support
+- No-Loc extension support
+- UI updates
 
 ## 0.2.9 (June 14th, 2019)
 
