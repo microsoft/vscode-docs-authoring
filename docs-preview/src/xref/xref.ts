@@ -73,18 +73,15 @@ async function updateXrefContent(md: any, src: string) {
 }
 
 function updateEditorToRefreshChanges() {
-  const position = new Position(99999, 9998);
-  const range = new Range(position, new Position(99999, 9999));
   const editor = window.activeTextEditor;
+  const lastLine = editor.document.lineAt(editor.document.lineCount - 1);
+  const position = new Position(editor.document.lineCount - 1, lastLine.range.end.character);
   editor.edit((update) => {
     update.insert(position, " ");
   }).then(() => {
     editor.edit((update) => {
+      const range = editor.document.getWordRangeAtPosition(position, /[ ]+/g);
       update.delete(range);
-    }).then(() => {
-      setTimeout(() => {
-        xrefContent = "";
-      }, 500);
-    });
+    })
   });
 }

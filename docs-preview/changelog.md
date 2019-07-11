@@ -4,6 +4,10 @@
 
 - Added Xref support
 
+## 0.3.24 (July 10th, 2019)
+
+- No-loc markdown extension support
+
 ## 0.3.23 (June 25th, 2019)
 
 - Command palette updates
