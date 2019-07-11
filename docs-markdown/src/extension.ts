@@ -6,17 +6,18 @@
  Logging, Error Handling, VS Code window updates, etc.
 */
 
-import { commands, ConfigurationTarget, ExtensionContext, window, workspace, languages, CompletionItem, TextDocument, Position } from "vscode";
+import { commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, Position, TextDocument, window, workspace } from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand } from "./controllers/cleanup-controller";
 import { codeFormattingCommand } from "./controllers/code-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
 import { italicFormattingCommand } from "./controllers/italic-controller";
+import { disableHeaderRule, resetHeaderRule } from "./controllers/lint-config-controller";
 import { insertListsCommands } from "./controllers/list-controller";
 import { getMasterRedirectionCommand } from "./controllers/master-redirect-controller";
 import { insertLinksAndMediaCommands } from "./controllers/media-controller";
-import { noLocTextCommand, noLocCompletionItemsMarkdownYamlHeader, noLocCompletionItemsMarkdown, noLocCompletionItemsYaml } from "./controllers/no-loc-controller";
+import { noLocCompletionItemsMarkdown, noLocCompletionItemsMarkdownYamlHeader, noLocCompletionItemsYaml, noLocTextCommand } from "./controllers/no-loc-controller";
 import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
@@ -192,35 +193,6 @@ function setupAutoComplete() {
             }
         },
     });
-}
-
-// store users markdownlint settings on activation
-let currentMarkdownlintSettings: string[] = [];
-
-export function disableHeaderRule() {
-    // the markdownlint property we need to update
-    const markdownlintProperty = "markdownlint.config";
-    // heading value we need to disable, should append this to the current settings if they exists
-    // may want to use another array for reset
-    const headingFalse = { MD025: false };
-    // all info from the property
-    const markdownlintData: any = workspace.getConfiguration().inspect(markdownlintProperty);
-    if (markdownlintData) {
-        // check for headingFalse
-        // if exist and false, do nothing and return
-        // if exist and true, update true to false
-        // if does not exist, add headingFalue
-    } else {
-        // just add heading false
-    }
-    // method to update the property
-    workspace.getConfiguration().update(markdownlintProperty, headingFalse, ConfigurationTarget.Global);
-}
-
-export function resetHeaderRule() {
-    const markdownlintProperty = "markdownlint.config";
-    // rest markdownlint config to original state
-    workspace.getConfiguration().update(markdownlintProperty, currentMarkdownlintSettings, ConfigurationTarget.Global);
 }
 
 // this method is called when your extension is deactivated
