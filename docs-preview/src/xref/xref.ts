@@ -7,6 +7,8 @@ const apiUrl = "https://xref.docs.microsoft.com/query?uid=";
 //Sadly because of the bug with global regexes, I need two versions. One with global, one without. - Adam
 const XREF_RE_WITH_GLOBAL = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displayProperty=(fullName|nameWithType))?>/gmi;
 const XREF_RE = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displayProperty=(fullName|nameWithType))?>/mi;
+const XREF_MD_LINK_RE_WITH_GLOBAL = /\(xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displayProperty=(fullName|nameWithType))?\)/gmi;
+const XREF_MD_LINK_RE = /\(xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displayProperty=(fullName|nameWithType))?\)/mi;
 let xrefContent = "";
 
 export function xref(md) {
@@ -30,8 +32,8 @@ async function updateXrefContent(md: any, src: string) {
   let captureGroup;
 
   // check for matches, to see if there are any outside of our map.
-  const matches = src.match(XREF_RE_WITH_GLOBAL);
-  const cacheIsReady = matches.every((match) => {
+  const xrefTagMatches = src.match(XREF_RE_WITH_GLOBAL);
+  const xrefTagCacheIsReady = xrefTagMatches.every((match) => {
     if (XREF_RE.test(match)) {
       return xrefMap.has(match);
     } else {
@@ -39,15 +41,47 @@ async function updateXrefContent(md: any, src: string) {
     }
   });
 
-  if (cacheIsReady) {
+  const xrefMdLinkMatches = src.match(XREF_MD_LINK_RE_WITH_GLOBAL);
+  const xrefMdLinkCacheIsReady = xrefMdLinkMatches.every((match) => {
+    if (XREF_MD_LINK_RE.test(match)) {
+      return xrefMap.has(match);
+    } else {
+      return true;
+    }
+  });
+
+  if (xrefTagCacheIsReady && xrefMdLinkCacheIsReady) {
     while ((captureGroup = XREF_RE.exec(src))) {
+      mdSrc = xrefMap.get(captureGroup[0]);
+      src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
+    }
+    while ((captureGroup = XREF_MD_LINK_RE.exec(src))) {
       mdSrc = xrefMap.get(captureGroup[0]);
       src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
     }
     xrefContent = src;
     return;
   }
-
+  while ((captureGroup = XREF_MD_LINK_RE.exec(src))) {
+    const uid = captureGroup[1].trim();
+    try {
+      await Axios.get(apiUrl + uid)
+        .then(response => {
+          if (response) {
+            if (response.data[0]) {
+              let xref = response.data[0];
+              mdSrc = `(${xref.href})`;
+            } else {
+              mdSrc = `(${uid})`
+            }
+            src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
+            xrefMap.set(captureGroup[0], mdSrc);
+          }
+        });
+    } catch (error) {
+      output.appendLine(error);
+    }
+  }
   while ((captureGroup = XREF_RE.exec(src))) {
     const uid = captureGroup[1].trim();
     try {
@@ -68,6 +102,7 @@ async function updateXrefContent(md: any, src: string) {
       output.appendLine(error);
     }
   }
+
   xrefContent = src;
   updateEditorToRefreshChanges();
 }
