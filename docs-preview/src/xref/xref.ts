@@ -30,38 +30,50 @@ async function updateXrefContent(md: any, src: string) {
   xrefContent = src;
   let mdSrc = "";
   let captureGroup;
-
+  let xrefTagCacheIsReady = true;
+  let xrefMdLinkCacheIsReady = true;
   // check for matches, to see if there are any outside of our map.
   const xrefTagMatches = src.match(XREF_RE_WITH_GLOBAL);
-  const xrefTagCacheIsReady = xrefTagMatches.every((match) => {
-    if (XREF_RE.test(match)) {
-      return xrefMap.has(match);
-    } else {
-      return true;
-    }
-  });
+  if (xrefTagMatches) {
+    xrefTagCacheIsReady = xrefTagMatches.every((match) => {
+      if (XREF_RE.test(match)) {
+        return xrefMap.has(match);
+      } else {
+        return true;
+      }
+    });
+  }
 
   const xrefMdLinkMatches = src.match(XREF_MD_LINK_RE_WITH_GLOBAL);
-  const xrefMdLinkCacheIsReady = xrefMdLinkMatches.every((match) => {
-    if (XREF_MD_LINK_RE.test(match)) {
-      return xrefMap.has(match);
-    } else {
-      return true;
-    }
-  });
+  if (xrefMdLinkMatches) {
+    xrefMdLinkCacheIsReady = xrefMdLinkMatches.every((match) => {
+      if (XREF_MD_LINK_RE.test(match)) {
+        return xrefMap.has(match);
+      } else {
+        return true;
+      }
+    });
+  }
 
-  if (xrefTagCacheIsReady && xrefMdLinkCacheIsReady) {
-    while ((captureGroup = XREF_RE.exec(src))) {
-      mdSrc = xrefMap.get(captureGroup[0]);
-      src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
-    }
+  if (xrefMdLinkCacheIsReady) {
     while ((captureGroup = XREF_MD_LINK_RE.exec(src))) {
       mdSrc = xrefMap.get(captureGroup[0]);
       src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
     }
     xrefContent = src;
+  }
+  if (xrefTagCacheIsReady) {
+    while ((captureGroup = XREF_RE.exec(src))) {
+      mdSrc = xrefMap.get(captureGroup[0]);
+      src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
+    }
+    xrefContent = src;
+  }
+
+  if (xrefTagCacheIsReady && xrefMdLinkCacheIsReady) {
     return;
   }
+
   while ((captureGroup = XREF_MD_LINK_RE.exec(src))) {
     const uid = captureGroup[1].trim();
     try {
