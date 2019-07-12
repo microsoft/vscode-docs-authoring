@@ -3,7 +3,7 @@
 import { readdir, stat, unlinkSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
-import * as WebRequest from 'web-request';
+import Axios from 'axios';
 import { displayTemplates } from "../controllers/quick-pick-controller";
 import { postWarning, showStatusMessage } from "../helper/common";
 
@@ -52,7 +52,7 @@ export function cleanupDownloadFiles(templates?: boolean) {
 
 export async function logRepoData() {
     const repoUrl = `https://github.com/MicrosoftDocs/content-templates`;
-    const result = await WebRequest.get(repoUrl);
-    showStatusMessage(`Content-templates repo URL and http response: ${repoUrl}, ${result.statusCode}`);
+    const result = await Axios.get(repoUrl);
+    showStatusMessage(`Content-templates repo URL and http response: ${repoUrl}, ${result.status}`);
     showStatusMessage(`Local template directory: ${templateDirectory}`);
 }
