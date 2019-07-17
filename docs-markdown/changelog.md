@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.11 (July 17th, 2019)
+
+- Markdownlint: Rule MD025 front matter update
+
 ## 0.2.10 (July 10th, 2019)
 
 - YAML TOC support
