@@ -49,7 +49,13 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 				//operation canceled.
 				showExtractionCancellationMessage();
 			} else {
-				fileName = `${metadataDirectory}/${getRepoName(Uri.file(folderPath))}_mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
+				let repoName = getRepoName(Uri.file(folderPath));
+				if(repoName != undefined)
+				{
+					fileName = `${metadataDirectory}/${repoName}_mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
+				} else {
+					fileName = `${metadataDirectory}/mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
+				}
 				if(args !== ""){ args = "-t " + args; }
 				let command = `mkdir -p "${metadataDirectory}" | dotnet "${getExtensionPath() + "/.muttools/"}mdextractcore.dll" --path "${folderPath}" --recurse -o "${fileName}" ${args}`;
 				await execPromise(command).then(result => {
