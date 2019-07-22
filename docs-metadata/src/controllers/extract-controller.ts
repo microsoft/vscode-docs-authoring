@@ -56,6 +56,7 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 				} else {
 					fileName = `${metadataDirectory}/mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
 				}
+				fileName = fileName.replace(/\\/g, "/");
 				if(args !== ""){ args = "-t " + args; }
 				let command = `mkdir -p "${metadataDirectory}" | dotnet "${getExtensionPath() + "/.muttools/"}mdextractcore.dll" --path "${folderPath}" --recurse -o "${fileName}" ${args}`;
 				await execPromise(command).then(result => {
