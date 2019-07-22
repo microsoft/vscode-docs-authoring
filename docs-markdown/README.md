@@ -107,6 +107,7 @@ Cleanup scripts available:
 
 - [YAML TOC entries] The Docs-YAML schema validation falsely shows a "Matches a schema that is not allowed" linting error on optional attributes such as `displayName`. These entries are in fact valid, and we'll be updating the schema linting in an upcoming release.
 - [YAML TOC entries] Depending on your settings related to spacing, sometimes attributes in nested TOC entries don't line up correctly. If you experience this issue, make sure all the attributes line up with the nested `name` attribute. A fix is in progress for this bug.
+- [YAML TOC entries] Erroneous invalid location error when trying to add new top level entry after nested entry. A fix is in progress for this bug.
 - [Docs Preview] Code blocks only preview in Dark theme, and some colorized text is unreadable in Light theme.
 - [External bookmarks] Linux: File list is displayed but no headings are shown to select.
 - [Includes] Linux: File list is displayed but no link is added after selection is made.
