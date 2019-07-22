@@ -68,6 +68,16 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 								commands.executeCommand('vscode.open', Uri.parse('https://dotnet.microsoft.com/download'))
 							}
 						});
+					} else if(result.stderr.indexOf(`specified framework`) > -1)
+					{
+						window.showErrorMessage(`Extraction unsuccessful. Please make sure you have .Net core 2.2 or greater installed.`, 
+								"Install DotNet","Cancel")
+						.then(async selectedItem => {
+							if(selectedItem === "Install DotNet")
+							{
+								commands.executeCommand('vscode.open', Uri.parse('https://dotnet.microsoft.com/download'))
+							}
+						});
 					}
 				});
 				
