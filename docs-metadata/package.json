@@ -2,7 +2,7 @@
 	"name": "docs-metadata",
 	"displayName": "Docs Metadata",
 	"description": "Simplifies editing metadata within docs.",
-	"version": "0.0.120",
+	"version": "0.0.121",
 	"publisher": "docsmsft",
 	"preview": true,
 	"engines": {
