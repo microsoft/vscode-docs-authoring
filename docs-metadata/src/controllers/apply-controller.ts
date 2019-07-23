@@ -92,7 +92,7 @@ export async function showChooseMetadataCsvDialog(folderPath:string)
 		defaultUri:Uri.file(folderPath),
 		openLabel: 'Apply Metadata',
 		filters: {
-			'CSV files': ['csv']
+			'Supported files': ['csv', 'xls', 'txt']
 		}
    };
    
