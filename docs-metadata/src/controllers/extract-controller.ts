@@ -12,6 +12,8 @@ import {getRepoName, execPromise, metadataDirectory } from "../util/common";
 import * as moment from "moment";
 import { getExtensionPath } from '../extension';
 
+const outputChannel = window.createOutputChannel('docs-metadata');
+
 let fileName:string = "";
 export function getMutFileName()
 {
@@ -63,7 +65,9 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 					window.showInformationMessage(`Metadata extracted and placed in: ${fileName}`);
 					workspace.openTextDocument(fileName).then(doc => {
 						window.showTextDocument(doc, ViewColumn.Two);
-					});	
+					});
+					outputChannel.append(result.stdout);
+					outputChannel.show(true);
 				}).catch(result => {
 					if(result.stderr.indexOf(`'dotnet' is not recognized`) > -1)
 					{
