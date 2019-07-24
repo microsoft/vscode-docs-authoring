@@ -12,6 +12,8 @@ import {exec} from 'child_process';
 import { getExtensionPath } from '../extension';
 import { execChildProcess, execPromise } from '../util/common';
 
+const outputChannel = window.createOutputChannel('docs-metadata');
+
 export async function showApplyMetadataMessage(path:string)
 {
 	if(path.indexOf(".csv") === -1)
@@ -52,13 +54,14 @@ export async function showApplyMetadataMessage(path:string)
 
 async function applyMetadata(filePath:string)
 {
+	
+
 	let logFilePath = `${filePath.replace(".csv", "")}_log.csv`;
-	let command = `dotnet "${getExtensionPath() + "//.muttools//"}mdapplycore.dll" "${filePath}" -l "${logFilePath}"`;
+	let command = `dotnet "${getExtensionPath() + "//.muttools//"}mdapplycore.dll" "${filePath}" --nobackup -l "${logFilePath}"`;
 	await execPromise(command).then(result => {
-		window.showInformationMessage(`Metadata apply completed. The log can be found here: "${logFilePath}"`);
-		workspace.openTextDocument(logFilePath).then(doc => {
-			window.showTextDocument(doc, ViewColumn.Two);
-		});
+		window.showInformationMessage(`Metadata apply completed. Check the "docs-metadata" output channel for details.`);
+		outputChannel.append(result.stdout);
+		outputChannel.show(true);
 	}).catch(result => {
 		if(result.stderr.indexOf(`'dotnet' is not recognized`) > -1)
 		{
