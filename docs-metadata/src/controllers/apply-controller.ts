@@ -16,7 +16,7 @@ const outputChannel = window.createOutputChannel('docs-metadata');
 
 export async function showApplyMetadataMessage(path:string)
 {
-	if(path.indexOf(".csv") === -1)
+	if(path.indexOf(".txt") === -1)
 	{
 		window.showInformationMessage(`Please find a Metadata Update Tool file to apply...`, 
 								"Find MUT file","Cancel")
@@ -56,7 +56,7 @@ async function applyMetadata(filePath:string)
 {
 	
 
-	let logFilePath = `${filePath.replace(".csv", "")}_log.csv`;
+	let logFilePath = `${filePath.replace(".txt", "")}_log.txt`;
 	let command = `dotnet "${getExtensionPath() + "//.muttools//"}mdapplycore.dll" "${filePath}" --nobackup -l "${logFilePath}"`;
 	await execPromise(command).then(result => {
 		window.showInformationMessage(`Metadata apply completed. Check the "docs-metadata" output channel for details.`);

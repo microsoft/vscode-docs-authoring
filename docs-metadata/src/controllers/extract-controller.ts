@@ -53,9 +53,9 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 				let repoName = getRepoName(Uri.file(folderPath));
 				if(repoName != undefined)
 				{
-					fileName = `${metadataDirectory}/${repoName}_mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
+					fileName = `${metadataDirectory}/${repoName}_mut_extract_${moment().format('MMDDYYYYhmmA')}.txt`;
 				} else {
-					fileName = `${metadataDirectory}/mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
+					fileName = `${metadataDirectory}/mut_extract_${moment().format('MMDDYYYYhmmA')}.txt`;
 				}
 				const platform = await PlatformInformation.GetCurrent();
 				fileName = (platform.isWindows()) ? fileName.replace(/\//g, "\\") : fileName.replace(/\\/g, "/");
