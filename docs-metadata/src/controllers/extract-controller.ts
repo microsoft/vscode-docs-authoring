@@ -1,16 +1,15 @@
 
-import {commands, 
-	env, 
-	Task,
-	window, 
-	workspace,
-	OpenDialogOptions,
-	Uri,
-	ViewColumn} from 'vscode';
+import {commands,
+		window, 
+		workspace,
+		OpenDialogOptions,
+		Uri,
+		ViewColumn} from 'vscode';
 
 import {getRepoName, execPromise, metadataDirectory } from "../util/common";
 import * as moment from "moment";
 import { getExtensionPath } from '../extension';
+import { PlatformInformation } from '../util/platform';
 
 const outputChannel = window.createOutputChannel('docs-metadata');
 
@@ -58,7 +57,8 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 				} else {
 					fileName = `${metadataDirectory}/mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
 				}
-				fileName = fileName.replace(/\\/g, "/");
+				const platform = await PlatformInformation.GetCurrent();
+				fileName = (platform.isWindows()) ? fileName.replace(/\//g, "\\") : fileName.replace(/\\/g, "/");
 				if(args !== ""){ args = "-t " + args; }
 				let command = `mkdir -p "${metadataDirectory}" | dotnet "${getExtensionPath() + "/.muttools/"}mdextractcore.dll" --path "${folderPath}" --recurse -o "${fileName}" ${args}`;
 				await execPromise(command).then(result => {
