@@ -20,6 +20,7 @@ import { insertLinksAndMediaCommands } from "./controllers/media-controller";
 import { noLocCompletionItemsMarkdown, noLocCompletionItemsMarkdownYamlHeader, noLocCompletionItemsYaml, noLocTextCommand } from "./controllers/no-loc-controller";
 import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
+import { insertRowsAndColumnsCommand } from "./controllers/row-columns-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
 import { insertTableCommand } from "./controllers/table-controller";
 import { yamlCommands } from "./controllers/yaml-controller";
@@ -76,6 +77,7 @@ export function activate(context: ExtensionContext) {
     // applyXrefCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     yamlCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     noLocTextCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    insertRowsAndColumnsCommand().forEach((cmd) => AuthoringCommands.push(cmd));
 
     //Autocomplete
     context.subscriptions.push(setupAutoComplete());
