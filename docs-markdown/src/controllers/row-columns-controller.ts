@@ -1,8 +1,8 @@
 "use strict";
 
 import { window } from "vscode";
-import { buildRow } from "../constants/rows-columns";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, showWarningMessage } from "../helper/common";
+import { isMarkdownFileCheck, noActiveEditorMessage, showWarningMessage } from "../helper/common";
+import { addNewColumn, checkColumnRange } from "../helper/rows-columns";
 
 const rowWithColumns = "Row with columns";
 const newColumn = "New column";
@@ -27,9 +27,6 @@ export function insertRowsAndColumns() {
         if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
-
-
-        // let subCommand: string;
 
         const commandOptions = [
             rowWithColumns,
@@ -74,26 +71,10 @@ export function insertRowsWithColumns() {
 }
 
 export function insertNewColumn() {
-    showWarningMessage(`${newColumn} selected`);
+    addNewColumn();
 }
 
 export function insertNewColumnWithSpan() {
     showWarningMessage(`${newColumnWithSpan} selected`);
 }
 
-export function checkColumnRange(columnNumber: number) {
-    if (columnNumber >= 1 && columnNumber <= 4) {
-        createRow(columnNumber);
-    } else {
-        showWarningMessage(`The number of columns must be between 1 and 4.`);
-        return;
-    }
-}
-
-export function createRow(columnNumber: number) {
-    const editor = window.activeTextEditor;
-    if (editor) {
-        const newRow = buildRow(columnNumber);
-        insertContentToEditor(editor, createRow.name, newRow);
-    }
-}   
