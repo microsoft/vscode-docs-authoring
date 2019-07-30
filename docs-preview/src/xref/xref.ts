@@ -102,7 +102,18 @@ async function updateXrefContent(md: any, src: string) {
           if (response) {
             if (response.data[0]) {
               let xref = response.data[0];
-              mdSrc = `[${xref.fullName}](${xref.href})`;
+              let displayProperty = captureGroup[3];
+              if (displayProperty) {
+                if (displayProperty == "fullName") {
+                  mdSrc = `[${xref.fullName}](${xref.href})`;
+                }
+                if (displayProperty == "nameWithType") {
+                  mdSrc = `[${xref.nameWithType}](${xref.href})`
+                }
+              } else {
+                //displayProperty=none;
+                mdSrc = `[${xref.name}](${xref.href})`;
+              }
             } else {
               mdSrc = `[${uid}](${uid})`
             }
