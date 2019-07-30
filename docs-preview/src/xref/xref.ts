@@ -107,7 +107,7 @@ async function updateXrefContent(md: any, src: string) {
                 if (displayProperty == "fullName") {
                   mdSrc = `[${xref.fullName}](${xref.href})`;
                 }
-                if (displayProperty == "nameWithType") {
+                else if (displayProperty == "nameWithType") {
                   mdSrc = `[${xref.nameWithType}](${xref.href})`
                 }
               } else {
