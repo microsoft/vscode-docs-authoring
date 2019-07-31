@@ -6,7 +6,7 @@ const indentSpacing = "    ";
 const columnCursorSpacing = indentSpacing.repeat(2);
 const columnOpenSyntax = ":::column:::";
 const columnEndSyntax = ":::column-end:::";
-const columnSpanSyntax = `:::column span"":::`;
+const columnSpanSyntax = `:::column span="":::`;
 const rowOpenSyntax = ":::row:::";
 const rowEndSyntax = ":::row-end:::";
 const incorrectSyntaxMessage = "Incorrect column sytax. Abandoning command.";
