@@ -53,10 +53,11 @@ export function createRow(columnNumber: number) {
 export function addNewColumn() {
     const editor = window.activeTextEditor;
     if (editor) {
-        insertContentToEditor(editor, createRow.name, columnAdd);
+        checkForRow();
+        /* insertContentToEditor(editor, createRow.name, columnAdd);
         const newPosition = new Position(editor.selection.active.line + 1, 7);
         const newSelection = new Selection(newPosition, newPosition);
-        editor.selection = newSelection;
+        editor.selection = newSelection; */
     }
 }
 
@@ -67,5 +68,41 @@ export function addNewColumnWithSpan() {
         const newPosition = new Position(editor.selection.active.line, 19);
         const newSelection = new Selection(newPosition, newPosition);
         editor.selection = newSelection;
+    }
+}
+
+export function checkForRow() {
+    const editor = window.activeTextEditor;
+    if (editor) {
+        const rowEnd = ":::row-end:::";
+        let i = editor.selection.active.line;
+        let contentBelowCursor = [];
+        for (i; i >= 0; i++) {
+            let lineContent = editor.document.lineAt(i);
+            contentBelowCursor.push(lineContent.text);
+            console.log(contentBelowCursor);
+            if (contentBelowCursor.indexOf(rowEnd)) {
+                insertContentToEditor(editor, createRow.name, columnAdd);
+                const newPosition = new Position(editor.selection.active.line + 1, 7);
+                const newSelection = new Selection(newPosition, newPosition);
+                editor.selection = newSelection;
+            }
+            if (!contentBelowCursor.indexOf(rowEnd)) {
+                showWarningMessage(`Not in a row.`);
+            }
+            /* if (lineContent.text.startsWith(rowEnd)) {
+                insertContentToEditor(editor, createRow.name, columnAdd);
+                const newPosition = new Position(editor.selection.active.line + 1, 7);
+                const newSelection = new Selection(newPosition, newPosition);
+                editor.selection = newSelection;
+            }
+            if (!lineContent.text.startsWith(rowEnd)) {
+                contentBelowCursor.push(lineContent.text);
+                console.log(contentBelowCursor);
+                if (!contentBelowCursor.includes(rowEnd)) {
+                    showWarningMessage(`Not in a row`);
+                }
+            } */
+        }
     }
 }
