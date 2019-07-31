@@ -12,22 +12,20 @@ const rowEndSyntax = ":::row-end:::";
 const incorrectSyntaxMessage = "Incorrect column sytax. Abandoning command.";
 const columnRangeMessage = "The number of columns must be between 1 and 4.";
 
-// new column
 const columnRow = `
 ${indentSpacing}${columnOpenSyntax}
 ${columnCursorSpacing}
 ${indentSpacing}${columnEndSyntax}`;
 
-// new column
 const columnAdd = `${indentSpacing}${columnOpenSyntax}
 ${columnCursorSpacing}
 ${indentSpacing}${columnEndSyntax}`;
 
-// new column with span
 const columnSpan = `${indentSpacing}${columnSpanSyntax}
 ${columnCursorSpacing}
 ${indentSpacing}${columnEndSyntax}`;
 
+// range should be between 1 and 4
 export function checkColumnRange(columnNumber: number) {
     if (columnNumber >= 1 && columnNumber <= 4) {
         createRow(columnNumber);
@@ -37,6 +35,7 @@ export function checkColumnRange(columnNumber: number) {
     }
 }
 
+// row structure
 export function buildRow(columnNumber: number) {
     const columns = columnRow.repeat(columnNumber);
     const rowStructure = `${rowOpenSyntax}${columns}
@@ -44,6 +43,7 @@ ${rowEndSyntax}`;
     return rowStructure;
 }
 
+// insert row
 export function createRow(columnNumber: number) {
     const editor = window.activeTextEditor;
     if (editor) {
@@ -55,6 +55,7 @@ export function createRow(columnNumber: number) {
     }
 }
 
+// add a new column to existing row
 export function addNewColumn() {
     const editor = window.activeTextEditor;
     if (editor) {
@@ -62,6 +63,7 @@ export function addNewColumn() {
     }
 }
 
+// add a new column with span to existing row
 export function addNewColumnWithSpan() {
     const editor = window.activeTextEditor;
     if (editor) {
@@ -69,6 +71,8 @@ export function addNewColumnWithSpan() {
     }
 }
 
+// determine if cursor position is within a row by looking up for either row open or column-end
+// if no row or column-end is found, assume that cursor is not in a row
 export function validatePosition(span?: boolean) {
     const editor = window.activeTextEditor;
     if (editor) {
