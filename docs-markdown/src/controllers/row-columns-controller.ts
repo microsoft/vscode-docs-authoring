@@ -21,9 +21,6 @@ export function insertRowsAndColumns() {
         noActiveEditorMessage();
         return;
     } else {
-        const selection = editor.selection;
-        const selectedText = editor.document.getText(selection);
-
         if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
