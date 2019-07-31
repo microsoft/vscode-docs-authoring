@@ -1,14 +1,27 @@
 "use strict";
-import { window } from "vscode";
+import { Position, Selection, window } from "vscode";
 import { insertContentToEditor, showWarningMessage } from "../helper/common";
 
-export const columnStructure =
-    `
-    :::column:::
-    
-    :::column-end:::
-    `
-    ;
+const indentSpacing = "    ";
+const columnCursorSpacing = indentSpacing.repeat(2);
+
+// new column
+const columnRow = `
+${indentSpacing}:::column:::
+${columnCursorSpacing}
+${indentSpacing}:::column-end:::`;
+
+// new column
+const columnAdd = `${indentSpacing}:::column:::
+${columnCursorSpacing}
+${indentSpacing}:::column-end:::`;
+
+// new column with span
+const columnSpan = `
+${indentSpacing}:::column span"":::
+
+${indentSpacing}:::column-end:::`;
+
 
 export function checkColumnRange(columnNumber: number) {
     if (columnNumber >= 1 && columnNumber <= 4) {
@@ -20,11 +33,8 @@ export function checkColumnRange(columnNumber: number) {
 }
 
 export function buildRow(columnNumber: number) {
-    const columns = columnStructure.repeat(columnNumber);
-    const rowStructure =
-        `
-:::row:::
-    ${columns}
+    const columns = columnRow.repeat(columnNumber);
+    const rowStructure = `:::row:::${columns}
 :::row-end:::`;
     return rowStructure;
 }
@@ -34,12 +44,28 @@ export function createRow(columnNumber: number) {
     if (editor) {
         const newRow = buildRow(columnNumber);
         insertContentToEditor(editor, createRow.name, newRow);
+        const newPosition = new Position(editor.selection.active.line + 2, 7);
+        const newSelection = new Selection(newPosition, newPosition);
+        editor.selection = newSelection;
     }
 }
 
 export function addNewColumn() {
     const editor = window.activeTextEditor;
     if (editor) {
-        insertContentToEditor(editor, createRow.name, columnStructure);
+        insertContentToEditor(editor, createRow.name, columnAdd);
+        const newPosition = new Position(editor.selection.active.line + 1, 7);
+        const newSelection = new Selection(newPosition, newPosition);
+        editor.selection = newSelection;
+    }
+}
+
+export function addNewColumnWithSpan() {
+    const editor = window.activeTextEditor;
+    if (editor) {
+        insertContentToEditor(editor, createRow.name, columnSpan);
+        const newPosition = new Position(editor.selection.active.line, 19);
+        const newSelection = new Selection(newPosition, newPosition);
+        editor.selection = newSelection;
     }
 }

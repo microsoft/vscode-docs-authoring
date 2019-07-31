@@ -2,7 +2,7 @@
 
 import { window } from "vscode";
 import { isMarkdownFileCheck, noActiveEditorMessage, showWarningMessage } from "../helper/common";
-import { addNewColumn, checkColumnRange } from "../helper/rows-columns";
+import { addNewColumn, addNewColumnWithSpan, checkColumnRange } from "../helper/rows-columns";
 
 const rowWithColumns = "Row with columns";
 const newColumn = "New column";
@@ -75,6 +75,6 @@ export function insertNewColumn() {
 }
 
 export function insertNewColumnWithSpan() {
-    showWarningMessage(`${newColumnWithSpan} selected`);
+    addNewColumnWithSpan();
 }
 
