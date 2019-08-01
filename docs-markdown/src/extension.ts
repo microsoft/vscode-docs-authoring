@@ -22,11 +22,11 @@ import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
 import { insertTableCommand } from "./controllers/table-controller";
+import { applyXrefCommand } from "./controllers/xref-controller";
 import { yamlCommands } from "./controllers/yaml-controller";
 import { checkExtension, generateTimestamp, noActiveEditorMessage } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
-import { isCursorInsideXref, xrefTagsCompletionItemsMarkdown, xrefDisplayPropsCompletionItemsMarkdown, isCursorAfterXrefUid, xrefCompletionItemsMarkdown, isCursorStartAngleBracketsXref, xrefDisplayPropertyCompletionItemsMarkdown, isCursorAfterXrefDisplayProperty, applyXrefCommand } from "./controllers/xref-controller";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
 
 export const output = window.createOutputChannel("docs-markdown");
@@ -77,7 +77,7 @@ export function activate(context: ExtensionContext) {
     yamlCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     noLocTextCommand().forEach((cmd) => AuthoringCommands.push(cmd));
 
-    //Autocomplete
+    // Autocomplete
     context.subscriptions.push(setupAutoComplete());
 
     // Telemetry
@@ -171,14 +171,13 @@ function setupAutoComplete() {
 
     let completionItemsMarkdown: CompletionItem[] = [];
     completionItemsMarkdown = completionItemsMarkdown.concat(
-        noLocCompletionItemsMarkdown(),
-        xrefCompletionItemsMarkdown());
+        noLocCompletionItemsMarkdown());
 
     let completionItemsYaml: CompletionItem[] = [];
     completionItemsYaml = completionItemsYaml.concat(noLocCompletionItemsYaml());
 
     return languages.registerCompletionItemProvider("*", {
-        provideCompletionItems(document: TextDocument, position: Position) {
+        provideCompletionItems(document: TextDocument) {
             const editor = window.activeTextEditor;
             if (!editor) {
                 noActiveEditorMessage();
@@ -188,21 +187,13 @@ function setupAutoComplete() {
             if (document.languageId === "markdown") {
                 if (isCursorInsideYamlHeader(editor)) {
                     return completionItemsMarkdownYamlHeader;
-                } else if (isCursorAfterXrefDisplayProperty(editor)) {
-                    return xrefDisplayPropsCompletionItemsMarkdown(editor)
-                } else if (isCursorAfterXrefUid(editor)) {
-                    return xrefDisplayPropertyCompletionItemsMarkdown(editor)
-                } else if (isCursorInsideXref(editor)) {
-                    return xrefTagsCompletionItemsMarkdown(editor)
-                } else if (isCursorStartAngleBracketsXref(editor)) {
-                    return xrefCompletionItemsMarkdown()
                 } else {
                     return completionItemsMarkdown;
                 }
             } else {
                 return completionItemsYaml;
             }
-        }
+        },
     });
 }
 
