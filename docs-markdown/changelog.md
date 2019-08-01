@@ -1,10 +1,17 @@
 # Change Log
 
-## 0.2.11 (TBD)
+## 0.2.13 (TBD)
 
 - Xref support for <xref:...> Markdown insertion
-- Xref Intellisense
 - xref linting rules
+
+## 0.2.12 (July 22nd, 2019)
+
+- Update YAML TOC attributes
+
+## 0.2.11 (July 17th, 2019)
+
+- Markdownlint: Rule MD025 front matter update
 
 ## 0.2.10 (July 10th, 2019)
 

@@ -120,10 +120,9 @@ export function createEntry(name: string, href: string, options: boolean) {
     `- name: ${name}
   displayname: #optional string for searching TOC
   href: ${href}
-  maintainContext: #true or false, false is default
   uid: #optional string
-  expanded: #true or false, false is default
-  items: #optional sub-entries`
+  expanded: #true or false, false is default`;
+
 
   const tocEntryWithOptionsIndented =
     `- name: ${name}

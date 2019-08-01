@@ -6,17 +6,18 @@
  Logging, Error Handling, VS Code window updates, etc.
 */
 
-import { commands, ConfigurationTarget, ExtensionContext, window, workspace, languages, CompletionItem, TextDocument, Position } from "vscode";
+import { commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, Position, TextDocument, window, workspace } from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand } from "./controllers/cleanup-controller";
 import { codeFormattingCommand } from "./controllers/code-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
 import { italicFormattingCommand } from "./controllers/italic-controller";
+import { addFrontMatterTitle } from "./controllers/lint-config-controller";
 import { insertListsCommands } from "./controllers/list-controller";
 import { getMasterRedirectionCommand } from "./controllers/master-redirect-controller";
 import { insertLinksAndMediaCommands } from "./controllers/media-controller";
-import { noLocTextCommand, noLocCompletionItemsMarkdownYamlHeader, noLocCompletionItemsMarkdown, noLocCompletionItemsYaml } from "./controllers/no-loc-controller";
+import { noLocCompletionItemsMarkdown, noLocCompletionItemsMarkdownYamlHeader, noLocCompletionItemsYaml, noLocTextCommand } from "./controllers/no-loc-controller";
 import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
@@ -53,6 +54,9 @@ export function activate(context: ExtensionContext) {
 
     // Markdownlint custom rule check
     checkMarkdownlintCustomProperty();
+
+    // Update markdownlint.config to fix MD025 issue
+    addFrontMatterTitle();
 
     // Creates an array of commands from each command file.
     const AuthoringCommands: any = [];

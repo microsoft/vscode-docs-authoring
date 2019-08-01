@@ -12,9 +12,11 @@ import {exec} from 'child_process';
 import { getExtensionPath } from '../extension';
 import { execChildProcess, execPromise } from '../util/common';
 
+const outputChannel = window.createOutputChannel('docs-metadata');
+
 export async function showApplyMetadataMessage(path:string)
 {
-	if(path.indexOf(".csv") === -1)
+	if(path.indexOf(".txt") === -1)
 	{
 		window.showInformationMessage(`Please find a Metadata Update Tool file to apply...`, 
 								"Find MUT file","Cancel")
@@ -52,13 +54,14 @@ export async function showApplyMetadataMessage(path:string)
 
 async function applyMetadata(filePath:string)
 {
-	let logFilePath = `${filePath.replace(".csv", "")}_log.csv`;
-	let command = `dotnet "${getExtensionPath() + "//.muttools//"}mdapplycore.dll" "${filePath}" -l "${logFilePath}"`;
+	
+
+	let logFilePath = `${filePath.replace(".txt", "")}_log.txt`;
+	let command = `dotnet "${getExtensionPath() + "//.muttools//"}mdapplycore.dll" "${filePath}" --nobackup -l "${logFilePath}"`;
 	await execPromise(command).then(result => {
-		window.showInformationMessage(`Metadata apply completed. The log can be found here: "${logFilePath}"`);
-		workspace.openTextDocument(logFilePath).then(doc => {
-			window.showTextDocument(doc, ViewColumn.Two);
-		});
+		window.showInformationMessage(`Metadata apply completed. Check the "docs-metadata" output channel for details.`);
+		outputChannel.append(result.stdout);
+		outputChannel.show(true);
 	}).catch(result => {
 		if(result.stderr.indexOf(`'dotnet' is not recognized`) > -1)
 		{
@@ -92,7 +95,7 @@ export async function showChooseMetadataCsvDialog(folderPath:string)
 		defaultUri:Uri.file(folderPath),
 		openLabel: 'Apply Metadata',
 		filters: {
-			'CSV files': ['csv']
+			'Supported files': ['csv', 'xls', 'txt']
 		}
    };
    
