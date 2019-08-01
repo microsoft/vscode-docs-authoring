@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.13 (TBD)
+
+- Xref support for <xref:...> Markdown insertion
+- xref linting rules
+
 ## 0.2.12 (July 22nd, 2019)
 
 - Update YAML TOC attributes
