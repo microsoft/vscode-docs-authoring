@@ -6,26 +6,27 @@
  Logging, Error Handling, VS Code window updates, etc.
 */
 
-import { commands, ConfigurationTarget, ExtensionContext, window, workspace, languages, CompletionItem, TextDocument, Position } from "vscode";
+import { commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, Position, TextDocument, window, workspace } from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand } from "./controllers/cleanup-controller";
 import { codeFormattingCommand } from "./controllers/code-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
 import { italicFormattingCommand } from "./controllers/italic-controller";
+import { addFrontMatterTitle } from "./controllers/lint-config-controller";
 import { insertListsCommands } from "./controllers/list-controller";
 import { getMasterRedirectionCommand } from "./controllers/master-redirect-controller";
 import { insertLinksAndMediaCommands } from "./controllers/media-controller";
-import { noLocTextCommand, noLocCompletionItemsMarkdownYamlHeader, noLocCompletionItemsMarkdown, noLocCompletionItemsYaml } from "./controllers/no-loc-controller";
+import { noLocCompletionItemsMarkdown, noLocCompletionItemsMarkdownYamlHeader, noLocCompletionItemsYaml, noLocTextCommand } from "./controllers/no-loc-controller";
 import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
 import { insertTableCommand } from "./controllers/table-controller";
+import { applyXrefCommand } from "./controllers/xref-controller";
 import { yamlCommands } from "./controllers/yaml-controller";
 import { checkExtension, generateTimestamp, noActiveEditorMessage } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
-import { isCursorInsideXref, xrefTagsCompletionItemsMarkdown, xrefDisplayPropsCompletionItemsMarkdown, isCursorAfterXrefUid, xrefCompletionItemsMarkdown, isCursorStartAngleBracketsXref, xrefDisplayPropertyCompletionItemsMarkdown, isCursorAfterXrefDisplayProperty, applyXrefCommand } from "./controllers/xref-controller";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
 
 export const output = window.createOutputChannel("docs-markdown");
@@ -54,6 +55,9 @@ export function activate(context: ExtensionContext) {
     // Markdownlint custom rule check
     checkMarkdownlintCustomProperty();
 
+    // Update markdownlint.config to fix MD025 issue
+    addFrontMatterTitle();
+
     // Creates an array of commands from each command file.
     const AuthoringCommands: any = [];
     insertAlertCommand().forEach((cmd) => AuthoringCommands.push(cmd));
@@ -73,7 +77,7 @@ export function activate(context: ExtensionContext) {
     yamlCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     noLocTextCommand().forEach((cmd) => AuthoringCommands.push(cmd));
 
-    //Autocomplete
+    // Autocomplete
     context.subscriptions.push(setupAutoComplete());
 
     // Telemetry
@@ -167,14 +171,13 @@ function setupAutoComplete() {
 
     let completionItemsMarkdown: CompletionItem[] = [];
     completionItemsMarkdown = completionItemsMarkdown.concat(
-        noLocCompletionItemsMarkdown(),
-        xrefCompletionItemsMarkdown());
+        noLocCompletionItemsMarkdown());
 
     let completionItemsYaml: CompletionItem[] = [];
     completionItemsYaml = completionItemsYaml.concat(noLocCompletionItemsYaml());
 
     return languages.registerCompletionItemProvider("*", {
-        provideCompletionItems(document: TextDocument, position: Position) {
+        provideCompletionItems(document: TextDocument) {
             const editor = window.activeTextEditor;
             if (!editor) {
                 noActiveEditorMessage();
@@ -184,21 +187,13 @@ function setupAutoComplete() {
             if (document.languageId === "markdown") {
                 if (isCursorInsideYamlHeader(editor)) {
                     return completionItemsMarkdownYamlHeader;
-                } else if (isCursorAfterXrefDisplayProperty(editor)) {
-                    return xrefDisplayPropsCompletionItemsMarkdown(editor)
-                } else if (isCursorAfterXrefUid(editor)) {
-                    return xrefDisplayPropertyCompletionItemsMarkdown(editor)
-                } else if (isCursorInsideXref(editor)) {
-                    return xrefTagsCompletionItemsMarkdown(editor)
-                } else if (isCursorStartAngleBracketsXref(editor)) {
-                    return xrefCompletionItemsMarkdown()
                 } else {
                     return completionItemsMarkdown;
                 }
             } else {
                 return completionItemsYaml;
             }
-        }
+        },
     });
 }
 
