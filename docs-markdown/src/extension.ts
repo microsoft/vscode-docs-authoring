@@ -6,7 +6,7 @@
  Logging, Error Handling, VS Code window updates, etc.
 */
 
-import { commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, Position, TextDocument, window, workspace } from "vscode";
+import { commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, TextDocument, window, workspace } from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand } from "./controllers/cleanup-controller";
