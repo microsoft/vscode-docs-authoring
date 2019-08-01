@@ -86,7 +86,7 @@ export function validatePosition(span?: boolean) {
         if (previousLineContent.text.startsWith(rowOpenSyntax) || previousLineContent.text.includes(columnEndSyntax)) {
             if (span) {
                 insertContentToEditor(editor, createRow.name, columnSpan);
-                newPosition = new Position(editor.selection.active.line, 19);
+                newPosition = new Position(editor.selection.active.line, 20);
             } else {
                 insertContentToEditor(editor, createRow.name, columnAdd);
                 newPosition = new Position(editor.selection.active.line + 1, 7);
