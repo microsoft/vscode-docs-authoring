@@ -49,7 +49,7 @@ export function createRow(columnNumber: number) {
     if (editor) {
         const newRow = buildRow(columnNumber);
         insertContentToEditor(editor, createRow.name, newRow);
-        const newPosition = new Position(editor.selection.active.line + 2, 7);
+        const newPosition = new Position(editor.selection.active.line + 2, 8);
         const newSelection = new Selection(newPosition, newPosition);
         editor.selection = newSelection;
     }
@@ -77,28 +77,77 @@ export function validatePosition(span?: boolean) {
     const editor = window.activeTextEditor;
     if (editor) {
         let newPosition;
+        let newSelection;
+        let activeLine = editor.selection.active.line;
         const previousLine = editor.selection.active.line - 1;
         const previousLineContent = editor.document.lineAt(previousLine);
         if (editor.selection.active.line === 0) {
             showWarningMessage(incorrectSyntaxMessage);
             return;
         }
-        if (previousLineContent.text.startsWith(rowOpenSyntax) || previousLineContent.text.includes(columnEndSyntax)) {
+
+        if (previousLineContent.text.startsWith(rowOpenSyntax)) {
+            if (editor.selection.active.character !== 0) {
+                showWarningMessage(incorrectSyntaxMessage);
+                return;
+            }
             if (span) {
                 insertContentToEditor(editor, createRow.name, columnSpan);
                 newPosition = new Position(editor.selection.active.line, 20);
+                newSelection = new Selection(newPosition, newPosition);
+                editor.selection = newSelection;
             } else {
                 insertContentToEditor(editor, createRow.name, columnAdd);
                 newPosition = new Position(editor.selection.active.line + 1, 7);
+                newSelection = new Selection(newPosition, newPosition);
+                editor.selection = newSelection;
             }
-            if (newPosition) {
-                const newSelection = new Selection(newPosition, newPosition);
+        }
+
+        if (previousLineContent.text.includes(columnEndSyntax)) {
+            console.log(editor.selection.active.character)
+            if (editor.selection.active.character !== 0 && editor.selection.active.character !== 8) {
+                showWarningMessage(incorrectSyntaxMessage);
+                return;
+            }
+
+            if (!span && editor.selection.active.character === 0) {
+                insertContentToEditor(editor, createRow.name, columnAdd);
+                newPosition = new Position(editor.selection.active.line + 1, 8);
+                newSelection = new Selection(newPosition, newPosition);
                 editor.selection = newSelection;
             }
 
-        } else {
-            showWarningMessage(incorrectSyntaxMessage);
-            return;
+            if (!span && editor.selection.active.character === 8) {
+                insertIndentedColumn(columnAdd, 0);
+                newPosition = new Position(editor.selection.active.line + 1, 20);
+                newSelection = new Selection(newPosition, newPosition);
+                editor.selection = newSelection;
+            }
+
+            if (span && editor.selection.active.character === 0) {
+                insertContentToEditor(editor, createRow.name, columnSpan);
+                newPosition = new Position(editor.selection.active.line, 20);
+                newSelection = new Selection(newPosition, newPosition);
+                editor.selection = newSelection;
+            }
+
+            if (span && editor.selection.active.character === 8) {
+                insertIndentedColumn(columnSpan, 0);
+                newPosition = new Position(editor.selection.active.line, 20);
+                newSelection = new Selection(newPosition, newPosition);
+                editor.selection = newSelection;
+            }
         }
+    }
+}
+
+export function insertIndentedColumn(content: string, position: number) {
+    const editor = window.activeTextEditor;
+    if (editor) {
+        const activeLine = editor.selection.active.line;
+        editor.edit(editBuilder => {
+            editBuilder.insert(new Position(activeLine, position), content);
+        })
     }
 }
