@@ -1,23 +1,14 @@
 var blockquoteTags = document.getElementsByTagName("blockquote");
-var alerts = ["NOTE", "TIP", "IMPORTANT", "CAUTION", "WARNING"];
+var alerts = ["Note", "Tip", "Important", "Caution", "Warning"];
 
 alerts.map(aa => {
   for (var i = 0; i < blockquoteTags.length; i++) {
     let tag = blockquoteTags[i];
-    if (tag.innerHTML.toUpperCase().indexOf(`[!${aa}]`) > -1) {
-      tag.setAttribute("class", aa);
+    if (tag.innerHTML.toUpperCase().indexOf(`[!${aa.toUpperCase()}]`) > -1) {
+      tag.setAttribute("class", aa.toUpperCase());
       var alertType = blockquoteTags[i].innerHTML;
-      var addBreak = alertType.replace(`[!${aa}]`, `<strong>${aa}</strong><br>`);
+      var addBreak = alertType.replace(`[!${aa.toUpperCase()}]`, `<strong>${aa}</strong><br/><hr/>`);
       blockquoteTags[i].innerHTML = addBreak;
     }
   }
-});
-
-const noLocRegex = /:::no-loc\stext=\"([a-zA-Z'-\s]*)\":::/gm;
-const noLocFrontRegex = /:::no-loc\stext=\"/;
-const noLocBackRegex = /":::/;
-var noLocMatches = document.body.innerHTML.match(noLocRegex);
-noLocMatches.map(match => {
-  const noLocText = match.replace(noLocFrontRegex, "").replace(noLocBackRegex, "");
-  document.body.innerHTML = document.body.innerHTML.replace(match, noLocText);
 });
