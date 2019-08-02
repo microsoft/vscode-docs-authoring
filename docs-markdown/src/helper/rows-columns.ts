@@ -85,6 +85,11 @@ export function validatePosition(span?: boolean) {
             return;
         }
 
+        if (!previousLineContent.text.startsWith(rowOpenSyntax) && !previousLineContent.text.includes(columnEndSyntax)) {
+            showWarningMessage(incorrectSyntaxMessage);
+            return;
+        }
+
         if (previousLineContent.text.startsWith(rowOpenSyntax)) {
             if (editor.selection.active.character !== 0) {
                 showWarningMessage(incorrectSyntaxMessage);
