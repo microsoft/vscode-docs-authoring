@@ -78,7 +78,6 @@ export function validatePosition(span?: boolean) {
     if (editor) {
         let newPosition;
         let newSelection;
-        let activeLine = editor.selection.active.line;
         const previousLine = editor.selection.active.line - 1;
         const previousLineContent = editor.document.lineAt(previousLine);
         if (editor.selection.active.line === 0) {
@@ -105,7 +104,6 @@ export function validatePosition(span?: boolean) {
         }
 
         if (previousLineContent.text.includes(columnEndSyntax)) {
-            console.log(editor.selection.active.character)
             if (editor.selection.active.character !== 0 && editor.selection.active.character !== 8) {
                 showWarningMessage(incorrectSyntaxMessage);
                 return;
@@ -113,7 +111,7 @@ export function validatePosition(span?: boolean) {
 
             if (!span && editor.selection.active.character === 0) {
                 insertContentToEditor(editor, createRow.name, columnAdd);
-                newPosition = new Position(editor.selection.active.line + 1, 8);
+                newPosition = new Position(editor.selection.active.line, 8);
                 newSelection = new Selection(newPosition, newPosition);
                 editor.selection = newSelection;
             }
