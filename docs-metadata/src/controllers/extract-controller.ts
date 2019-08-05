@@ -6,7 +6,7 @@ import {commands,
 		Uri,
 		ViewColumn} from 'vscode';
 
-import {getRepoName, execPromise, metadataDirectory } from "../util/common";
+import {getRepoName, execPromise, metadataDirectory, openFolderInExplorerOrFinder } from "../util/common";
 import * as moment from "moment";
 import { getExtensionPath } from '../extension';
 import { PlatformInformation } from '../util/platform';
@@ -62,7 +62,13 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 				if(args !== ""){ args = "-t " + args; }
 				let command = `mkdir -p "${metadataDirectory}" | dotnet "${getExtensionPath() + "/.muttools/"}mdextractcore.dll" --path "${folderPath}" --recurse -o "${fileName}" ${args}`;
 				await execPromise(command).then(result => {
-					window.showInformationMessage(`Metadata extracted and placed in: ${fileName}`);
+					window.showInformationMessage(`Metadata extracted and placed in: ${fileName}`, "Open Folder")
+					.then(async selectedItem => {
+						if(selectedItem === "Open Folder")
+						{
+							await openFolderInExplorerOrFinder(metadataDirectory);
+						}
+					});
 					workspace.openTextDocument(fileName).then(doc => {
 						window.showTextDocument(doc, ViewColumn.Two);
 					});
@@ -123,7 +129,7 @@ export async function showArgsQuickInput()
 {
 	const result = await window.showInputBox({
 		value: '',
-		placeHolder: '(Optional) Enter a specific single-value tag you would like to extract. (e.g. "ms.author")'
+		placeHolder: 'Type a specific tag to extract, or Enter to extract all tags.'
 	});
 
 	return result;

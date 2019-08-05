@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { Uri, workspace } from 'vscode';
+import { PlatformInformation } from './platform';
 
 let extensionPath: string;
 
@@ -217,5 +218,18 @@ export function getRepoName(workspacePath: Uri) {
     if (repo) {
         const repoName = repo.name;
         return repoName;
+    }
+}
+
+export async function openFolderInExplorerOrFinder(path:string)
+{
+    const platform = await PlatformInformation.GetCurrent();
+    if(platform.isWindows())
+    {
+        const command = `%SystemRoot%\\explorer.exe ${path}`;
+        await execPromise(command);
+    } else {
+        const command = `open "${path}"`;
+        await execPromise(command);
     }
 }
