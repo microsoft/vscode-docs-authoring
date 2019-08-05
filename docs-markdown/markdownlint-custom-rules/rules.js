@@ -6,5 +6,6 @@ module.exports = [
   require("./zone"),
   require("./moniker"),
   require("./no-loc"),
-  require("./securelinks")
+  require("./securelinks"),
+  require("./xref")
 ];
