@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.25 (TBD)
+
+- Added Xref support
+
 ## 0.3.24 (July 10th, 2019)
 
 - No-loc markdown extension support

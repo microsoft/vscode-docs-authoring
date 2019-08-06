@@ -25,3 +25,11 @@ module.exports.zoneValue = `Bad value for zone target. Only "chromeless" and "do
 module.exports.alertType = `Bad alert type. Only NOTE, TIP, IMPORTANT, CAUTION, and WARNING are supported. Case-sensitive.`;
 module.exports.alertNoOpen = `Missing block opener. Alerts must be preceded by ">" plus a space.`;
 module.exports.alertNoExclam = `Bad alert syntax. Alerts must include exclamation point within brackets, such as "> [!NOTE]"`;
+
+//xref
+module.exports.xrefSyntax = `Bad xref syntax. Xref syntax should look like this: "<xref:System.Format.String%2A>" or with the optional displayProperty "<xref:System.Format.String%2A?displayProperty=fullName>". <xref:...> contained within angle brackets followed by a colon. It should have a xref id like System.Format.String and an optional displayProperty`;
+module.exports.missingUidAttributeXref = `Missing xref uid after <xref:. Xref must include uid, such as "<xref:System.Format.String%2A>".`;
+module.exports.usesCorrectXrefDisplayProperties = `Bad displayProperty value. Display property must be either fullName or nameWithType "<xref:System.Format.String%2A?displayProperty=fullName>". Or remove the display property completely "<xref:System.Format.String%2A>".`;
+module.exports.xrefShouldIncludeColon = `Bad xref syntax. xref should include a colon "<xref:System.Format.String%2A>".`;
+module.exports.xrefHasSpace = `Bad xref syntax. xref should not include a space before the xref uid "<xref:System.Format.String%2A>".`;
+module.exports.xrefHasDisplayPropertyQuestionMark = `Bad xref syntax. xref should also contain displayProperty=fullName or nameWithType "<xref:System.Format.String%2A?displayProperty=fullName>". Or remove the display property completely "<xref:System.Format.String%2A>".`;

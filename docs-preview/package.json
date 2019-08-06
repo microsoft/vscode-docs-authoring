@@ -3,7 +3,7 @@
   "displayName": "docs-preview",
   "description": "Docs Markdown Preview Extension",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.3.24",
+  "version": "0.3.25",
   "publisher": "docsmsft",
   "icon": "images/docs-logo-ms.png",
   "bugs": {
@@ -84,6 +84,7 @@
     "vscode": "^1.1.33"
   },
   "dependencies": {
+    "axios": "^0.19.0",
     "markdown-it": "^8.4.2",
     "markdown-it-include": "^1.1.0",
     "vscode-extension-telemetry": "^0.1.1"
