@@ -76,3 +76,27 @@ table > thead > tr > th, table > thead > tr > td, table > tbody > tr > th, table
   padding: 10px 15px;
   font-size: 11.5px;
 }
+
+table > thead > tr > th {
+  border-top: 0;
+}
+
+table {
+  overflow: auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: auto;
+  width: 100%;
+}
+
+.hljs-comment, .hljs-quote {
+  color: hsla(0,0%,0%,1);
+  color: var(--text);
+  font-style: normal;
+  font-size: 12px;
+  line-height: 0;
+}
+
+body.wordWrap pre {
+  white-space: pre;
+}

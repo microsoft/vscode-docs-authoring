@@ -48,31 +48,50 @@ blockquote span {
 }
 
 blockquote.NOTE {
-  color: #38225d;
+  color: #38225d!important;
   background: #e2daf1;
   border-left: 0px solid #e2daf1;
 }
 
+blockquote.NOTE p {
+  color: #38225d!important;
+}
+
 blockquote.TIP {
-  color: #094409;
+  color: #094409!important;
   background:  #d2f9d2;
   border-left: 0px solid #d2f9d2;
 }
 
+blockquote.TIP p {
+  color: #094409!important;
+}
+
 blockquote.IMPORTANT {
-  color: #002b4d;
+  color: #002b4d!important;
   background: #e0f2ff;
   border-left: 0px solid #002b4d;
 }
 
+blockquote.IMPORTANT p {
+  color: #002b4d!important;
+}
+
 blockquote.CAUTION {
-  color: #651b01;
+  color: #651b01!important;
   background: #ffdacc;
   border-left: 0px solid #ffdacc;
 }
 
+blockquote.CAUTION p {
+  color: #651b01!important;
+}
+
 blockquote.WARNING {
-  color: #664b00;
+  color: #664b00!important;
   background: #fff1cc;
   border-left: #fff1cc;
+}
+blockquote.WARNING p {
+  color: #664b00!important;
 }
