@@ -37,6 +37,7 @@ export function activate(context: ExtensionContext) {
                 .use(codeSnippets, { root: workingPath })
                 .use(xref)
                 .use(custom_codeblock)
+                .use(column_end)
                 .use(container_plugin, "row", {
                     marker: ":",
                     validate(params) {
@@ -72,7 +73,7 @@ export function activate(context: ExtensionContext) {
                             return "</div>";
                         }
                     },
-                });
+                })
         },
     };
 }
@@ -210,11 +211,31 @@ export function container_plugin(md, name, options) {
 }
 
 export function custom_codeblock(md, options) {
-    const CODEBLOCK_RE = /([ ]{4})/g;
+    const CODEBLOCK_RE = /([ ]{5})/g;
     const removeCodeblockSpaces = (src: string) => {
         let captureGroup;
         while ((captureGroup = CODEBLOCK_RE.exec(src))) {
             src = src.slice(0, captureGroup.index) + src.slice(captureGroup.index + captureGroup[0].length, src.length);
+        }
+        return src;
+    };
+
+    const customCodeBlock = (state) => {
+        try {
+            state.src = removeCodeblockSpaces(state.src);
+        } catch (error) {
+            output.appendLine(error);
+        }
+    };
+    md.core.ruler.before("normalize", "custom_codeblock", customCodeBlock);
+}
+
+export function column_end(md, options) {
+    const CODEBLOCK_RE = /(:::column-end:::)/g;
+    const removeCodeblockSpaces = (src: string) => {
+        let captureGroup;
+        while ((captureGroup = CODEBLOCK_RE.exec(src))) {
+            src = src.slice(0, captureGroup.index) + "\r\n:::column-end:::" + src.slice(captureGroup.index + captureGroup[0].length, src.length);
         }
         return src;
     };
