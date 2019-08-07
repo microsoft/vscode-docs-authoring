@@ -34,7 +34,8 @@
   "contributes": {
     "markdown.previewScripts": [
       "./media/noloc.js",
-      "./media/alert-styles.js"
+      "./media/alert-styles.js",
+      "./media/wrapper.js"
     ],
     "markdown.previewStyles": [
       "./media/conceptual.css",
