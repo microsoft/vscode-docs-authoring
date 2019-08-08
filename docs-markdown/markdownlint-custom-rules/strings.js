@@ -33,3 +33,14 @@ module.exports.usesCorrectXrefDisplayProperties = `Bad displayProperty value. Di
 module.exports.xrefShouldIncludeColon = `Bad xref syntax. xref should include a colon "<xref:System.Format.String%2A>".`;
 module.exports.xrefHasSpace = `Bad xref syntax. xref should not include a space before the xref uid "<xref:System.Format.String%2A>".`;
 module.exports.xrefHasDisplayPropertyQuestionMark = `Bad xref syntax. xref should also contain displayProperty=fullName or nameWithType "<xref:System.Format.String%2A?displayProperty=fullName>". Or remove the display property completely "<xref:System.Format.String%2A>".`;
+
+// row
+module.exports.rowSyntax = `Bad row syntax. Rows should begin and end with ::: (ex. :::row:::).`;
+module.exports.rowMissingEnd = `Row missing end. Rows should end with ":::row-end:::"`;
+
+// column
+module.exports.columnSyntax = `Bad column syntax. Columns should begin and end with ::: (ex. :::column:::).`;
+module.exports.columnAttribute = `Bad column attirbute; "span" is the only attribute supported by columns.`;
+module.exports.columnMissingEnd = `Column missing end. Columns should end with ":::column-end:::"`;
+
+

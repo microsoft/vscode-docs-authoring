@@ -59,3 +59,17 @@ module.exports.missingUidAttributeXref = /<xref:(\?displayProperty=(fullName|nam
 module.exports.usesCorrectXrefDisplayProperties = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displayProperty=(?!fullName|nameWithType))(>)?/g;
 module.exports.xrefHasDisplayPropertyQuestionMark = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?)(?!displayProperty=.*)(>)?/g;
 module.exports.syntaxXref = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displayProperty=(fullName|nameWithType))?>/g;
+
+// Row
+module.exports.startRow = /^(.:*)row/gm;
+module.exports.syntaxRow = /^:::row(-end)?:::/gm;
+module.exports.rowEnd = /^:::row-end:::/gm;
+module.exports.openRow = /^:::row:::/gm;
+module.exports.rowContent = /:::row:::(.*):::row-end:::/gm;
+
+// Column
+module.exports.startColumn = /(.:*)column/gm;
+module.exports.syntaxColumn = /:::column(-end)?:::/gm;
+module.exports.columnEnd = /:::column-end:::/gm;
+module.exports.openColumn = /:::column:::/gm;
+
