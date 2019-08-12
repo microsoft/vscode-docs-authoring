@@ -31,13 +31,17 @@ Next, review the metadata in the tabular format and make any desired changes, us
 1. Edit the existing VALUE, if appropriate.
 1. Edit the ACTION as appropriate.
 
-For example, suppose you want to change the author of several files from meganbradley to adunndevster. In this case, you might take advantage of the filtering capabilities of Excel to scope to the values you want:
+For example, suppose you want to change the author of several files from meganbradley to adunndevster. In this case, you might take advantage of the filtering capabilities of Excel to scope to the TAG and VALUE you want to update:
 
 ![shows action, tag, and value columns filtered on value](images/mut-filter-values.png)
 
 Then, update the VALUE from meganbradley to adunndevster, and update the ACTION to OVERWRITE:
 
 ![shows new values for action and value](images/mut-filter-values.png)
+
+You can make other changes in the same file. For example, `ms.assetid` is a deprecated attribute, so you might choose to delete it from all files in the repo. In this case, you first filter on TAG equals ms.assetid, then change ACTION from IGNORE to DELETE for each instance:
+
+![shows ms.assetid rows with ACTION set to DELETE](images/mut-delete-values.png)
 
 ## Step 3: Apply changes
 
