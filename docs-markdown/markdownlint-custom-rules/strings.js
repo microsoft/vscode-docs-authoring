@@ -40,7 +40,8 @@ module.exports.rowMissingEnd = `Row missing end. Rows should end with ":::row-en
 
 // column
 module.exports.columnSyntax = `Bad column syntax. Columns should begin and end with ::: (ex. :::column:::).`;
-module.exports.columnAttribute = `Bad column attirbute; "span" is the only attribute supported by columns.`;
 module.exports.columnMissingEnd = `Column missing end. Columns should end with ":::column-end:::"`;
+module.exports.contenOutisdeColumn = `Content in a row outside of a column. Content should follow ":::column-end:::"`;
+module.exports.contenSpanAttribute = `Only span is supported.`;
 
 

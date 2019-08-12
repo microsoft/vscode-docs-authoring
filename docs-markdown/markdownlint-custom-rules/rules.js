@@ -11,5 +11,7 @@ module.exports = [
   require("./row-missing-colons"),
   require("./row-missing-end"),
   require("./column-missing-colons"),
-  require("./column-missing-end")
+  require("./column-missing-end"),
+  require("./row-content"),
+  require("./colomn-span-attribute")
 ];

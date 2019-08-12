@@ -69,7 +69,10 @@ module.exports.rowContent = /:::row:::(.*):::row-end:::/gm;
 
 // Column
 module.exports.startColumn = /(.:*)column/gm;
-module.exports.syntaxColumn = /:::column(-end)?:::/gm;
+module.exports.syntaxColumn = /:::column(-end|\s+(.*))?:::/gm;
 module.exports.columnEnd = /:::column-end:::/gm;
 module.exports.openColumn = /:::column:::/gm;
+module.exports.columnWithAttribute = /:::column\s+(.*?):/gm;
+module.exports.columnSpan = /:::column\s+span="(.*?)":::/gm;
+module.exports.validColumn = /:::column:::([\s\S]*?):::column-end:::/gmi
 
