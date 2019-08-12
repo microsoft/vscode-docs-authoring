@@ -17,10 +17,15 @@ First, you need to extract the metadata of interest into tabular form.
 
 Next, review the metadata in the tabular format and make any desired changes, using the following available commands. 
 
-|Command |Description |
-|--------|------------|
-|ADD     |Adds the tag and value only if it does not already exist. If there is an existing value for the tag, it will not be overwritten (that is, ADD will be ignored).|
-|DELETE  |Deletes the tag and all values.|
+|Command        |Description |
+|---------------|------------|
+|ADD            |Adds the tag and value only if it does not already exist. If there is an existing value for the tag, it will not be overwritten (that is, ADD will be ignored).|
+|DELETE         |Deletes the tag and all values.|
 |PARTIAL DELETE |Deletes specified value(s) for the tag. If additional values exist, they remain. If all values are deleted, the tag is also deleted.|
+|FORCE OVERWRITE|Overwrites all values of the tag with specified value(s), or adds tag with specified values if it does not exist.|
+|OVERWRITE      |Overwrite all values of the tag with specified value(s) if tag exists; if tag does not exist, do not add tag.|
+|MERGE          |Merge unique specified values into tag if tag exists; do not add tag if it does not exist. Do not delete existing values and do not add duplicate values.|
+|TOTAL MERGE    |Merge unique specified values into tag if tag exists; add tag and values if tag does not exist. Do not delete existing values and do not add duplicate values.|
+
 
 
