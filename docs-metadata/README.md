@@ -1,2 +1,2 @@
-# docs-metadata README
+# Docs Metadata
 
