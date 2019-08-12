@@ -2,9 +2,9 @@
 
 import { window } from "vscode";
 import { isMarkdownFileCheck, noActiveEditorMessage, showWarningMessage } from "../helper/common";
-import { addNewColumn, addNewColumnWithSpan, checkColumnRange } from "../helper/rows-columns";
+import { addNewColumn, addNewColumnWithSpan, checkColumnRange, createRow } from "../helper/rows-columns";
 
-const rowWithColumns = "Row with columns";
+const rowWithColumns = "Two-column structure";
 const newColumn = "New column";
 const newColumnWithSpan = "New column with span";
 
@@ -50,10 +50,11 @@ export function insertRowsAndColumns() {
 }
 
 export function insertRowsWithColumns() {
-    const getNumberOfColumns = window.showInputBox(
+    createRow(2);
+    /* const getNumberOfColumns = window.showInputBox(
         { prompt: "Input the number of columns (min=1, max=4)" }
-    )
-    getNumberOfColumns.then((val) => {
+    ) */
+    /* getNumberOfColumns.then((val) => {
         if (!val) {
             showWarningMessage(`Number of columns was not provided.  Abandoning command.`);
             return;
@@ -64,7 +65,7 @@ export function insertRowsWithColumns() {
         } else {
             showWarningMessage(`Input is not a number. Abandoning command.`);
         }
-    });
+    }); */
 }
 
 export function insertNewColumn() {

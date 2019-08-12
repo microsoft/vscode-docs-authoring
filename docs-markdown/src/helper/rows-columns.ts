@@ -39,7 +39,8 @@ export function checkColumnRange(columnNumber: number) {
 export function buildRow(columnNumber: number) {
     const columns = columnRow.repeat(columnNumber);
     const rowStructure = `${rowOpenSyntax}${columns}
-${rowEndSyntax}`;
+${rowEndSyntax}
+`;
     return rowStructure;
 }
 
