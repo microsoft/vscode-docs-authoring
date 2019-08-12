@@ -31,10 +31,22 @@ Next, review the metadata in the tabular format and make any desired changes, us
 1. Edit the existing VALUE, if appropriate.
 1. Edit the ACTION as appropriate.
 
-For example, suppose I want to change the author of several files from meganbradley to adunndevster. In this case, I take advantage of the filtering capabilities of Excel to scope to the values I want:
+For example, suppose you want to change the author of several files from meganbradley to adunndevster. In this case, you might take advantage of the filtering capabilities of Excel to scope to the values you want:
 
+![shows action, tag, and value columns filtered on value](images/mut-filter-values.png)
 
-Then, I update the VALUE and update the ACTION to OVERWRITE:
+Then, update the VALUE from meganbradley to adunndevster, and update the ACTION to OVERWRITE:
 
+![shows new values for action and value](images/mut-filter-values.png)
 
+## Step 3: Apply changes
+
+When you've finished making changes to the extracted file, it's time to apply them.
+
+1. Save and close the .xslx file.
+1. Hit F1 to open the VS Code command palette.
+1. Start typing to filter and select "Docs: Metadata Apply".
+1. If prompted, navigate to the correct file to apply.
+1. Click OK to confirm.
+1. Verify your changes in VS Code before submitting a pull request on the repo.
 
