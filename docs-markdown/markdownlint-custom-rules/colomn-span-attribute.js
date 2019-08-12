@@ -17,14 +17,12 @@ module.exports = {
                 return child.type === "text";
             }).forEach(function forChild(text) {
                 const content = text.line;
-                if (content.match(common.columnWithAttribute)) {
-                    if (!content.match(common.columnSpan)) {
-                        onError({
-                            lineNumber: text.lineNumber,
-                            detail: detailStrings.contenSpanAttribute,
-                            context: text.line
-                        });
-                    }
+                if (content.match(common.columnWithAttribute) && !content.match(common.columnSpan)) {
+                    onError({
+                        lineNumber: text.lineNumber,
+                        detail: detailStrings.contenSpanAttribute,
+                        context: text.line
+                    });
                 }
             });
         });
