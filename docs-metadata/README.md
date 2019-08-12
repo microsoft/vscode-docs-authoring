@@ -27,5 +27,14 @@ Next, review the metadata in the tabular format and make any desired changes, us
 |MERGE          |Merge unique specified values into tag if tag exists; do not add tag if it does not exist. Do not delete existing values and do not add duplicate values.|
 |TOTAL MERGE    |Merge unique specified values into tag if tag exists; add tag and values if tag does not exist. Do not delete existing values and do not add duplicate values.|
 
+1. Find the TAG and VALUE of interest.
+1. Edit the existing VALUE, if appropriate.
+1. Edit the ACTION as appropriate.
+
+For example, suppose I want to change the author of several files from meganbradley to adunndevster. In this case, I take advantage of the filtering capabilities of Excel to scope to the values I want:
+
+
+Then, I update the VALUE and update the ACTION to OVERWRITE:
+
 
 
