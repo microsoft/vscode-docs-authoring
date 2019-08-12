@@ -8,10 +8,7 @@ module.exports = [
   require("./no-loc"),
   require("./securelinks"),
   require("./xref"),
-  require("./row-missing-colons"),
-  require("./row-missing-end"),
-  require("./column-missing-colons"),
-  require("./column-missing-end"),
-  require("./row-content"),
+  require("./row-extension-syntax"),
+  require("./column-extension-syntax"),
   require("./colomn-span-attribute")
 ];

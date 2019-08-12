@@ -62,17 +62,13 @@ module.exports.syntaxXref = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displa
 
 // Row
 module.exports.startRow = /^(.:*)row/gm;
-module.exports.syntaxRow = /^:::row(-end)?:::/gm;
-module.exports.rowEnd = /^:::row-end:::/gm;
-module.exports.openRow = /^:::row:::/gm;
-module.exports.rowContent = /:::row:::(.*):::row-end:::/gm;
+module.exports.syntaxRow = /^:{3}(row|row-end):{3}$/gm;
 
 // Column
 module.exports.startColumn = /(.:*)column/gm;
-module.exports.syntaxColumn = /:::column(-end|\s+(.*))?:::/gm;
-module.exports.columnEnd = /:::column-end:::/gm;
-module.exports.openColumn = /:::column:::/gm;
-module.exports.columnWithAttribute = /:::column\s+(.*?):/gm;
-module.exports.columnSpan = /:::column\s+span="(.*?)":::/gm;
-module.exports.validColumn = /:::column:::([\s\S]*?):::column-end:::/gmi
+// module.exports.syntaxColumn = /:column(-end|\s+(.*)):{3}/gm;
+module.exports.syntaxColumn = /^\s+:{3}(column|column-end|column\s+(.*)):{3}$/gm;
+module.exports.columnWithAttribute = /^\s+:{3}(column\s+(.*?)):/gm;
+module.exports.columnSpan = /^\s+:{3}(column\s+span="(.*?)"):/gm;
+
 

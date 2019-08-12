@@ -6,8 +6,8 @@ const common = require("./common");
 const detailStrings = require("./strings");
 
 module.exports = {
-    "names": ["docsmd002", "row-missing-colons"],
-    "description": `Row missing one or more colons.`,
+    "names": ["docsmd002", "columns-extension-syntax"],
+    "description": "Bad column syntax.",
     "tags": ["validation"],
     "function": function rule(params, onError) {
         params.tokens.filter(function filterToken(token) {
@@ -17,10 +17,10 @@ module.exports = {
                 return child.type === "text";
             }).forEach(function forChild(text) {
                 const content = text.line;
-                if (content.match(common.startRow) && !content.match(common.syntaxRow)) {
+                if (content.match(common.startColumn) && !content.match(common.syntaxColumn)) {
                     onError({
                         lineNumber: text.lineNumber,
-                        detail: detailStrings.rowSyntax,
+                        detail: detailStrings.columnSyntax,
                         context: text.line
                     });
                 }

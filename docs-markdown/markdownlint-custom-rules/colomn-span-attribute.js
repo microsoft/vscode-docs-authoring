@@ -6,7 +6,7 @@ const common = require("./common");
 const detailStrings = require("./strings");
 
 module.exports = {
-    "names": ["docsmd006", "column-span-attribute"],
+    "names": ["docsmd003", "column-span-attribute"],
     "description": `Column attribute is unsupported.`,
     "tags": ["validation"],
     "function": function rule(params, onError) {
