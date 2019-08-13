@@ -54,6 +54,10 @@ When you've finished making changes to the extracted file, it's time to apply th
 1. Click OK to confirm.
 1. Verify your changes in VS Code before submitting a pull request on the repo.
 
+## Can I use this tool to inject new metadata fields into multiple topics?
+
+Yes, but at present it must be done manually by adding a new row to the extracted file for each article you want to add the metadata to, and populating it with the full file path, the ACTION "ADD", the TAG, the VALUE, and the format. There's a feature in the Docs Authoring Pack backlog to enable injecting metadata in bulk; to upvote this feature, please file an issue in this repo.
+
 ## What about the format column?
 
 In general, you shouldn't touch this. This advanced functionality allows you to change the format of values as follows:
