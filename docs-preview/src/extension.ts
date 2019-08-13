@@ -10,6 +10,7 @@ import { columnOptions, column_end } from "./markdown-extensions/column";
 import { container_plugin } from "./markdown-extensions/container";
 import { rowOptions } from "./markdown-extensions/row";
 import { xref } from "./xref/xref";
+import { div_plugin, divOptions } from "./markdown-extensions/div";
 
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
@@ -43,6 +44,7 @@ export function activate(context: ExtensionContext) {
                 .use(column_end)
                 .use(container_plugin, "row", rowOptions)
                 .use(container_plugin, "column", columnOptions)
+                .use(div_plugin, "div", divOptions);
         },
     };
 }
