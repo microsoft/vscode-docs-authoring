@@ -1,9 +1,16 @@
-body {
+body, html {
   margin-left:auto;
   margin-right: auto;
   max-width: 967px;
   padding: 0;
+  font-size: 16px !important;
 }
+
+@font-face {
+  font-family: 'docons';
+  src: url('docons.woff');
+}
+
 
 h1 {
   margin: .67em 0 0 0;
@@ -25,7 +32,7 @@ h3, h4, h5, h6 {
 p {
   margin-top: 8px;
   margin-bottom: 0;
-  font-size: 13.3px;
+  /* font-size: 13.3px; */
   color: var(--text);
 }
 
