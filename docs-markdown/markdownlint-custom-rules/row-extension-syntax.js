@@ -17,7 +17,7 @@ module.exports = {
                 return child.type === "text";
             }).forEach(function forChild(text) {
                 const content = text.line;
-                if (content.match(common.startRow) && !content.match(common.syntaxRow)) {
+                if (content.match(common.supportedExtensions) && content.match(common.startRow) && !content.match(common.syntaxRow)) {
                     onError({
                         lineNumber: text.lineNumber,
                         detail: detailStrings.rowSyntax,

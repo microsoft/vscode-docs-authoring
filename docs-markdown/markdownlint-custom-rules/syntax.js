@@ -30,7 +30,7 @@ module.exports = {
                     }
                 }
                 // Condition: After three colons and a space, text is not a supported extension.
-                if (content.match(common.validTripleColon) && !content.match(common.supportedExtensions)) {
+                if (content.match(common.tripleColonSyntax) && !content.match(common.supportedExtensions)) {
                     const unsupportedExtension = content.match(common.unsupportedExtensionRegex);
                     onError({
                         lineNumber: text.lineNumber,
