@@ -6,7 +6,7 @@ const common = require("./common");
 const detailStrings = require("./strings");
 
 module.exports = {
-    "names": ["docsmd002", "columns-extension-syntax"],
+    "names": ["docsmd002", "column-extension-syntax"],
     "description": "Bad column syntax.",
     "tags": ["validation"],
     "function": function rule(params, onError) {

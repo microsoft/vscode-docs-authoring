@@ -65,7 +65,7 @@ module.exports.startRow = /^(.:*)row/gm;
 module.exports.syntaxRow = /^:{3}(row|row-end):{3}$/gm;
 
 // Column
-module.exports.startColumn = /(.:*)column/gm;
+module.exports.startColumn = /^\s+(:*)column/gm;
 module.exports.syntaxColumn = /^\s+:{3}(column|column-end|column\s+(.*)"):{3}$/gm;
 module.exports.columnWithAttribute = /^\s+:{3}(column\s+(.*?)):/gm;
 module.exports.columnSpan = /^\s+:{3}(column\s+span="(.*?)"):/gm;

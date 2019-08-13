@@ -35,10 +35,10 @@ module.exports.xrefHasSpace = `Bad xref syntax. xref should not include a space 
 module.exports.xrefHasDisplayPropertyQuestionMark = `Bad xref syntax. xref should also contain displayProperty=fullName or nameWithType "<xref:System.Format.String%2A?displayProperty=fullName>". Or remove the display property completely "<xref:System.Format.String%2A>".`;
 
 // row
-module.exports.rowSyntax = `Rows should begin and end with ::: (ex. :::row:::).`;
+module.exports.rowSyntax = `Rows should begin :::row::: and end with :::row-end:::).`;
 
 // column
-module.exports.columnSyntax = `Columns should begin and end with ::: (ex. :::column:::).`;
+module.exports.columnSyntax = `Columns should begin :::column::: and end with :::column-end:::).`;
 module.exports.contenSpanAttribute = `Only span is supported (ex. :::column span="":::).`;
 
 
