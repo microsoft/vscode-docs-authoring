@@ -61,7 +61,7 @@ In general, you shouldn't touch this. This advanced functionality allows you to 
 |Value    |Description|
 |---------|-----------|
 |`single` |Changes the value to single value format - that is, a single string following the field on the same line, such as<br>`author: meganbradley`.|
-|`dash`   |Changes multi-valued attributes to values preceded by hyphens on multiple lines, such as<br>`ms.devlang`<br>`  - csharp`<br>`  - vb`|
+|`dash`   |Changes multi-valued attributes to values preceded by hyphens on multiple lines, such as<br>`ms.devlang:`<br>`  - csharp`<br>`  - vb`|
 |`bracket`|Changes multi-valued attributes to a comma-separated bracket list, such as `ms.devlang: [csharp, vb]`.|
 
 **Caution:** If you change a value or list to the wrong format, the file might become invalid.
