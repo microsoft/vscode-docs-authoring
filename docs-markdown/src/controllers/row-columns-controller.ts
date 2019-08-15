@@ -51,21 +51,6 @@ export function insertRowsAndColumns() {
 
 export function insertRowsWithColumns() {
     createRow(2);
-    /* const getNumberOfColumns = window.showInputBox(
-        { prompt: "Input the number of columns (min=1, max=4)" }
-    ) */
-    /* getNumberOfColumns.then((val) => {
-        if (!val) {
-            showWarningMessage(`Number of columns was not provided.  Abandoning command.`);
-            return;
-        }
-        const columnNumber = parseInt(val);
-        if (columnNumber) {
-            checkColumnRange(columnNumber);
-        } else {
-            showWarningMessage(`Input is not a number. Abandoning command.`);
-        }
-    }); */
 }
 
 export function insertNewColumn() {

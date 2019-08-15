@@ -1,6 +1,9 @@
 "use strict";
 import { Position, Selection, window } from "vscode";
 import { insertContentToEditor, showWarningMessage } from "../helper/common";
+import { showStatusMessage } from "../helper/common";
+import { connect } from "net";
+import { indexOf } from "typescript-collections/dist/lib/arrays";
 
 const indentSpacing = "    ";
 const columnCursorSpacing = indentSpacing.repeat(2);
@@ -11,6 +14,7 @@ const rowOpenSyntax = ":::row:::";
 const rowEndSyntax = ":::row-end:::";
 const incorrectSyntaxMessage = "Incorrect column sytax. Abandoning command.";
 const columnRangeMessage = "The number of columns must be between 1 and 4.";
+const insertRowStructureMessage = "Column structures can’t be inserted within rows or columns";
 
 const columnRow = `
 ${indentSpacing}${columnOpenSyntax}
@@ -48,9 +52,38 @@ ${rowEndSyntax}
 export function createRow(columnNumber: number) {
     const editor = window.activeTextEditor;
     if (editor) {
-        const newRow = buildRow(columnNumber);
+        const startPosition = editor.selection.active.line;
+        const totalLines = editor.document.lineCount;
+        let i;
+        let rowStartLineNumber;
+        let rowEndLineNumber;
+        const rowStartRegex = /^:{3}row:{3}/gm;
+        const rowEndRegex = /^:{3}row-end:{3}/gm;
+        for (i = startPosition; i < totalLines; i--) {
+            var lineData = editor.document.lineAt(i);
+            var lineText = lineData.text;
+            innerloop:
+            if (!lineText.match(rowOpenSyntax)) {
+                console.log(i);
+                break innerloop;
+            }
+            if (lineText.match(rowStartRegex)) {
+                rowStartLineNumber = lineData.lineNumber;
+                break;
+            }
+        }
+        if (!rowStartLineNumber) {
+            insertRowStructure(2, startPosition);
+        }
+    }
+}
+
+export function insertRowStructure(columns: number, start: number) {
+    const editor = window.activeTextEditor;
+    if (editor) {
+        const newRow = buildRow(columns);
         insertContentToEditor(editor, createRow.name, newRow);
-        const newPosition = new Position(editor.selection.active.line + 2, 8);
+        const newPosition = new Position(start + 2, 8);
         const newSelection = new Selection(newPosition, newPosition);
         editor.selection = newSelection;
     }
