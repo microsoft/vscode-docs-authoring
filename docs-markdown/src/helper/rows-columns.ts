@@ -15,6 +15,7 @@ const rowEndSyntax = ":::row-end:::";
 const incorrectSyntaxMessage = "Incorrect column sytax. Abandoning command.";
 const columnRangeMessage = "The number of columns must be between 1 and 4.";
 const insertRowStructureMessage = "Column structures can’t be inserted within rows or columns";
+const validRowPosition = "Valid position. Creating row.";
 
 const columnRow = `
 ${indentSpacing}${columnOpenSyntax}
@@ -59,26 +60,53 @@ export function createRow(columnNumber: number) {
         let rowEndLineNumber;
         const rowStartRegex = /^:{3}row:{3}/gm;
         const rowEndRegex = /^:{3}row-end:{3}/gm;
-        for (i = startPosition; i < totalLines; i--) {
-            var lineData = editor.document.lineAt(i);
-            var lineText = lineData.text;
-            innerloop:
-            if (!lineText.match(rowOpenSyntax)) {
-                console.log(i);
-                break innerloop;
+        try {
+            for (i = startPosition; i < totalLines; i--) {
+                var lineData = editor.document.lineAt(i);
+                var lineText = lineData.text;
+                if (lineText.match(rowStartRegex)) {
+                    rowStartLineNumber = lineData.lineNumber;
+                    break;
+                }
+                if (lineText.match(rowEndRegex)) {
+                    rowEndLineNumber = lineData.lineNumber;
+                }
             }
-            if (lineText.match(rowStartRegex)) {
-                rowStartLineNumber = lineData.lineNumber;
-                break;
+        } catch (error) {
+            // no rows found before cursor
+            // to-do: create promois for this.
+        }
+
+        // found row start but no row end so assume that the cursor is at the beginning of the first/only row
+        // throw error
+        if (rowStartLineNumber && !rowEndLineNumber) {
+            showWarningMessage(insertRowStructureMessage);
+            showStatusMessage(insertRowStructureMessage);
+        }
+        // found a complete row
+        // create row
+        if (rowStartLineNumber && rowEndLineNumber) {
+            if (rowStartLineNumber < startPosition && rowEndLineNumber < startPosition) {
+                const newRow = buildRow(columnNumber);
+                insertContentToEditor(editor, createRow.name, newRow);
+                const newPosition = new Position(startPosition + 2, 8);
+                const newSelection = new Selection(newPosition, newPosition);
+                editor.selection = newSelection;
             }
         }
+        // no previous rows
+        // create row
         if (!rowStartLineNumber) {
-            insertRowStructure(2, startPosition);
+            const newRow = buildRow(columnNumber);
+            insertContentToEditor(editor, createRow.name, newRow);
+            const newPosition = new Position(startPosition + 2, 8);
+            const newSelection = new Selection(newPosition, newPosition);
+            editor.selection = newSelection;
         }
     }
 }
 
-export function insertRowStructure(columns: number, start: number) {
+/* export function insertRowStructure(columns: number, start: number) {
     const editor = window.activeTextEditor;
     if (editor) {
         const newRow = buildRow(columns);
@@ -87,7 +115,7 @@ export function insertRowStructure(columns: number, start: number) {
         const newSelection = new Selection(newPosition, newPosition);
         editor.selection = newSelection;
     }
-}
+} */
 
 // add a new column to existing row
 export function addNewColumn() {
