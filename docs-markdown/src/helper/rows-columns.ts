@@ -2,8 +2,6 @@
 import { Position, Selection, window } from "vscode";
 import { insertContentToEditor, showWarningMessage } from "../helper/common";
 import { showStatusMessage } from "../helper/common";
-import { connect } from "net";
-import { indexOf } from "typescript-collections/dist/lib/arrays";
 
 const indentSpacing = "    ";
 const columnCursorSpacing = indentSpacing.repeat(2);
@@ -14,8 +12,10 @@ const rowOpenSyntax = ":::row:::";
 const rowEndSyntax = ":::row-end:::";
 const incorrectSyntaxMessage = "Incorrect column sytax. Abandoning command.";
 const columnRangeMessage = "The number of columns must be between 1 and 4.";
-const insertRowStructureMessage = "Column structures can’t be inserted within rows or columns";
+const insertRowStructureMessage = "Column structures can’t be inserted within rows or columns.";
 const validRowPosition = "Valid position. Creating row.";
+const columnErrorMessage = "A column can’t be inserted within another column.";
+const columnOutsideRowMessage = "A column can only be inserted within a row.";
 
 const columnRow = `
 ${indentSpacing}${columnOpenSyntax}
@@ -74,7 +74,7 @@ export function createRow(columnNumber: number) {
             }
         } catch (error) {
             // no rows found before cursor
-            // to-do: create promois for this.
+            // to-do: create promise
         }
 
         // found row start but no row end so assume that the cursor is at the beginning of the first/only row
@@ -106,17 +106,6 @@ export function createRow(columnNumber: number) {
     }
 }
 
-/* export function insertRowStructure(columns: number, start: number) {
-    const editor = window.activeTextEditor;
-    if (editor) {
-        const newRow = buildRow(columns);
-        insertContentToEditor(editor, createRow.name, newRow);
-        const newPosition = new Position(start + 2, 8);
-        const newSelection = new Selection(newPosition, newPosition);
-        editor.selection = newSelection;
-    }
-} */
-
 // add a new column to existing row
 export function addNewColumn() {
     const editor = window.activeTextEditor;
@@ -138,70 +127,72 @@ export function addNewColumnWithSpan() {
 export function validatePosition(span?: boolean) {
     const editor = window.activeTextEditor;
     if (editor) {
+        const startPosition = editor.selection.active.line;
+        const cursorPosition = editor.selection.active.character;
+        const totalLines = editor.document.lineCount;
+        let i;
+        let columnStartLineNumber;
+        let columnEndLineNumber;
+        let rowStartLineNumber;
         let newPosition;
         let newSelection;
-        const previousLine = editor.selection.active.line - 1;
-        const previousLineContent = editor.document.lineAt(previousLine);
-        if (editor.selection.active.line === 0) {
-            showWarningMessage(incorrectSyntaxMessage);
-            return;
+        const columnStartRegex = /^\s+:{3}(column|column\sspan=".*"):{3}/gm;
+        const columnEndRegex = /^\s+:{3}column-end:{3}/gm;
+        const rowStartRegex = /^:{3}row:{3}/gm;
+        try {
+            for (i = startPosition; i < totalLines; i--) {
+                var lineData = editor.document.lineAt(i);
+                var lineText = lineData.text;
+                if (lineText.match(columnStartRegex)) {
+                    columnStartLineNumber = lineData.lineNumber;
+                    break;
+                }
+                if (lineText.match(columnEndRegex)) {
+                    columnEndLineNumber = lineData.lineNumber;
+                }
+                if (lineText.match(rowStartRegex)) {
+                    rowStartLineNumber = lineData.lineNumber;
+                }
+            }
+        } catch (error) {
+            // no columns found before cursor
+            // to-do: create promise for this
         }
 
-        if (!previousLineContent.text.startsWith(rowOpenSyntax) && !previousLineContent.text.includes(columnEndSyntax)) {
-            showWarningMessage(incorrectSyntaxMessage);
-            return;
+        // found column start but no column end so assume that the cursor is at the beginning of the first/only column
+        // throw error
+        if (columnStartLineNumber && !columnEndLineNumber) {
+            showWarningMessage(columnErrorMessage);
+            showStatusMessage(columnErrorMessage);
         }
-
-        if (previousLineContent.text.startsWith(rowOpenSyntax)) {
-            if (editor.selection.active.character !== 0) {
-                showWarningMessage(incorrectSyntaxMessage);
-                return;
-            }
-            if (span) {
-                insertContentToEditor(editor, createRow.name, columnSpan);
-                newPosition = new Position(editor.selection.active.line, 20);
-                newSelection = new Selection(newPosition, newPosition);
-                editor.selection = newSelection;
-            } else {
-                insertContentToEditor(editor, createRow.name, columnAdd);
-                newPosition = new Position(editor.selection.active.line + 1, 7);
-                newSelection = new Selection(newPosition, newPosition);
-                editor.selection = newSelection;
-            }
-        }
-
-        if (previousLineContent.text.includes(columnEndSyntax)) {
-            if (editor.selection.active.character !== 0 && editor.selection.active.character !== 8) {
-                showWarningMessage(incorrectSyntaxMessage);
-                return;
-            }
-
-            if (!span && editor.selection.active.character === 0) {
-                insertContentToEditor(editor, createRow.name, columnAdd);
-                newPosition = new Position(editor.selection.active.line, 8);
-                newSelection = new Selection(newPosition, newPosition);
-                editor.selection = newSelection;
-            }
-
-            if (!span && editor.selection.active.character === 8) {
-                insertIndentedColumn(columnAdd, 0);
-                newPosition = new Position(editor.selection.active.line + 1, 20);
-                newSelection = new Selection(newPosition, newPosition);
-                editor.selection = newSelection;
-            }
-
-            if (span && editor.selection.active.character === 0) {
-                insertContentToEditor(editor, createRow.name, columnSpan);
-                newPosition = new Position(editor.selection.active.line, 20);
-                newSelection = new Selection(newPosition, newPosition);
-                editor.selection = newSelection;
-            }
-
-            if (span && editor.selection.active.character === 8) {
-                insertIndentedColumn(columnSpan, 0);
-                newPosition = new Position(editor.selection.active.line, 20);
-                newSelection = new Selection(newPosition, newPosition);
-                editor.selection = newSelection;
+        // found a complete column
+        // create column
+        if (columnStartLineNumber && columnEndLineNumber) {
+            if (columnStartLineNumber < startPosition && columnEndLineNumber < startPosition) {
+                if (span && cursorPosition === 0) {
+                    insertContentToEditor(editor, createRow.name, columnSpan);
+                    newPosition = new Position(editor.selection.active.line, 20);
+                    newSelection = new Selection(newPosition, newPosition);
+                    editor.selection = newSelection;
+                }
+                if (!span && cursorPosition === 0) {
+                    insertContentToEditor(editor, createRow.name, columnAdd);
+                    newPosition = new Position(editor.selection.active.line + 1, 7);
+                    newSelection = new Selection(newPosition, newPosition);
+                    editor.selection = newSelection;
+                }
+                if (!span && cursorPosition === 8) {
+                    insertIndentedColumn(columnAdd, 0);
+                    newPosition = new Position(editor.selection.active.line + 1, 20);
+                    newSelection = new Selection(newPosition, newPosition);
+                    editor.selection = newSelection;
+                }
+                if (span && cursorPosition === 8) {
+                    insertIndentedColumn(columnSpan, 0);
+                    newPosition = new Position(editor.selection.active.line, 20);
+                    newSelection = new Selection(newPosition, newPosition);
+                    editor.selection = newSelection;
+                }
             }
         }
     }
