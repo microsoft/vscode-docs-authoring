@@ -11,7 +11,6 @@ import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
 import { Insert, insertImage, insertURL, insertVideo, selectLinkType } from "./media-controller";
-// import { applyXref } from "./xref-controller";
 import { noLocText } from "./no-loc-controller";
 import { previewTopic } from "./preview-controller";
 import { insertRowsAndColumns } from "./row-columns-controller";
@@ -19,6 +18,9 @@ import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
 import { insertExpandableParentNode, insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
+import { applyXref } from "./xref-controller";
+import { noLocText } from "./no-loc-controller";
+
 
 export function quickPickMenuCommand() {
     const commands = [
@@ -87,10 +89,10 @@ export function markdownQuickPick() {
             description: "",
             label: "$(link) Link to heading",
         },
-        // {
-        //     description: "",
-        //     label: "$(x) Link to XREF",
-        // },
+        {
+            description: "",
+            label: "$(x) Link to XREF",
+        },
         {
             description: "",
             label: "$(lock) Non-localizable text",
@@ -224,9 +226,9 @@ export function markdownQuickPick() {
             case "cleanup...":
                 applyCleanup();
                 break;
-            // case "link to xref":
-            //     applyXref();
-            //     break;
+            case "link to xref":
+                applyXref();
+                break;
             case "toc entry":
                 insertTocEntry();
                 break;

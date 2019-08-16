@@ -6,5 +6,9 @@ module.exports = [
   require("./zone"),
   require("./moniker"),
   require("./no-loc"),
-  require("./securelinks")
+  require("./securelinks"),
+  require("./xref"),
+  require("./row-extension-syntax"),
+  require("./column-extension-syntax"),
+  require("./colomn-span-attribute")
 ];

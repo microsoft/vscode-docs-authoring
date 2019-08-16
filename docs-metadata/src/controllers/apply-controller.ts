@@ -1,16 +1,11 @@
 
 import {commands, 
-	env, 
 	window, 
-	workspace, 
-	ExtensionContext, 
 	OpenDialogOptions,
-	Uri,
-	ViewColumn} from 'vscode';
+	Uri} from 'vscode';
 
-import {exec} from 'child_process';
 import { getExtensionPath } from '../extension';
-import { execChildProcess, execPromise } from '../util/common';
+import { execPromise, metadataDirectory, openFolderInExplorerOrFinder } from '../util/common';
 
 const outputChannel = window.createOutputChannel('docs-metadata');
 
@@ -58,8 +53,14 @@ async function applyMetadata(filePath:string)
 
 	let logFilePath = `${filePath.replace(".txt", "")}_log.txt`;
 	let command = `dotnet "${getExtensionPath() + "//.muttools//"}mdapplycore.dll" "${filePath}" --nobackup -l "${logFilePath}"`;
-	await execPromise(command).then(result => {
-		window.showInformationMessage(`Metadata apply completed. Check the "docs-metadata" output channel for details.`);
+	await execPromise(command).then(async result => {
+		window.showInformationMessage(`Metadata apply completed. Check the "docs-metadata" output channel for details.`, "Open Folder").then(async selectedItem => {
+			if(selectedItem === "Open Folder")
+			{
+				await openFolderInExplorerOrFinder(metadataDirectory);
+			}
+				
+		});
 		outputChannel.append(result.stdout);
 		outputChannel.show(true);
 	}).catch(result => {
