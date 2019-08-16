@@ -6,7 +6,7 @@ const common = require("./common");
 const detailStrings = require("./strings");
 
 module.exports = {
-    "names": ["docsmd.xref", "docsmd010"],
+    "names": ["DOCSMD010", "docsmd.xref"],
     "description": `xref linting.`,
     "tags": ["validation"],
     "function": function rule(params, onError) {

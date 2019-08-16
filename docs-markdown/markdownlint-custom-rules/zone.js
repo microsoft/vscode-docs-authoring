@@ -6,7 +6,7 @@ const common = require("./common");
 const detailStrings = require("./strings");
 
 module.exports = {
-    "names": ["docsmd.zone", "docsmd005"],
+    "names": ["DOCSMD005", "docsmd.zone"],
     "description": `Zone linting.`,
     "tags": ["validation"],
     "function": function rule(params, onError) {
