@@ -5,7 +5,7 @@
 const common = require("./common");
 
 module.exports = {
-  "names": ["docsmd.securelinks"],
+  "names": ["docsmd.securelinks", "docsmd008"],
   "description": "All links to Microsoft properties should be secure",
   "tags": ["compliance"],
   "function": function rule(params, onError) {

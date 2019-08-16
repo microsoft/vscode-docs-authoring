@@ -6,7 +6,7 @@ const common = require("./common");
 const detailStrings = require("./strings");
 
 module.exports = {
-    "names": ["docsmd.no-loc"],
+    "names": ["docsmd.no-loc", "docsmd009"],
     "description": `Non-localization linting.`,
     "tags": ["validation"],
     "function": function rule(params, onError) {

@@ -6,7 +6,7 @@ const common = require("./common");
 const detailStrings = require("./strings");
 
 module.exports = {
-    "names": ["docsmd.alert"],
+    "names": ["docsmd.alert", "docsmd007"],
     "description": `Alert linting.`,
     "tags": ["validation"],
     "function": function rule(params, onError) {
