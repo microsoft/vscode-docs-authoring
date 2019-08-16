@@ -29,16 +29,8 @@ module.exports = {
 
                     }
                 }
-                // Condition: Three colons are followed by fewer or more than one space.
-                if (!content.match(common.validTripleColon) && content.match(common.openExtension)) {
-                    onError({
-                        lineNumber: text.lineNumber,
-                        detail: detailStrings.syntaxSpace,
-                        context: text.line
-                    });
-                }
                 // Condition: After three colons and a space, text is not a supported extension.
-                if (content.match(common.validTripleColon) && !content.match(common.supportedExtensions)) {
+                if (content.match(common.tripleColonSyntax) && !content.match(common.supportedExtensions)) {
                     const unsupportedExtension = content.match(common.unsupportedExtensionRegex);
                     onError({
                         lineNumber: text.lineNumber,
