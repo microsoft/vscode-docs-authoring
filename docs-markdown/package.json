@@ -144,6 +144,11 @@
         "category": "Docs"
       },
       {
+        "command": "applyXref",
+        "title": "Link to XREF",
+        "category": "Docs"
+      },
+      {
         "command": "insertRowsAndColumns",
         "title": "Rows and columns",
         "category": "Docs"
@@ -275,6 +280,11 @@
           "command": "createParentNode",
           "group": "Docs",
           "when": "resourceLangId == yaml"
+        },
+        {
+          "command": "applyXref",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
         },
         {
           "command": "insertRowsAndColumns",
