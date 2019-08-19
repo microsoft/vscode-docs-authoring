@@ -38,6 +38,7 @@
       "./media/wrapper.js"
     ],
     "markdown.previewStyles": [
+      "./media/docons.woff",
       "./media/conceptual.css",
       "./media/site-ltr.css",
       "./media/styles.css",

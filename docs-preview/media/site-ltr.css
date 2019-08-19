@@ -4485,8 +4485,7 @@ h6 {
 
 @font-face {
   font-family: 'docons';
-  src: url("docons.568acbd7.eot");
-  src: url("docons.568acbd7.eot") format("embedded-opentype"), url("docons.e90329eb.woff2") format("woff2"), url("docons.8c1d92ae.woff") format("woff"), url("docons.9fe51e47.ttf") format("truetype");
+  src: url("docons.woff");
   font-weight: normal;
   font-style: normal;
 }

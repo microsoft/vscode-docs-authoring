@@ -6,12 +6,6 @@ body, html {
   font-size: 16px !important;
 }
 
-@font-face {
-  font-family: 'docons';
-  src: url('docons.woff');
-}
-
-
 h1 {
   margin: .67em 0 0 0;
   font-size: 2.4rem;
