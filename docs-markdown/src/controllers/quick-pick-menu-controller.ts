@@ -19,8 +19,6 @@ import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
 import { insertExpandableParentNode, insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
 import { applyXref } from "./xref-controller";
-import { noLocText } from "./no-loc-controller";
-
 
 export function quickPickMenuCommand() {
     const commands = [
