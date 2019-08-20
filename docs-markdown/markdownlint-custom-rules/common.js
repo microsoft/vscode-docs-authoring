@@ -4,12 +4,12 @@
 
 // Triple colon
 module.exports.singleColon = /^:/gm;
-module.exports.tripleColonSyntax = /^:::/gm;
+module.exports.tripleColonSyntax = /^:::\s?/gm;
 module.exports.validTripleColon = /^:::\s+/gm;
 
 // Markdown extensions (add valid/supported extensions to list)
 module.exports.openExtension = /^:(.*?)(zone|moniker|no-loc)/gm;
-module.exports.supportedExtensions = /^(:{3}|\s+:{3})(zone|moniker|row|column|form|no-loc)(.:*)/g;
+module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc)(.:*)/g;
 module.exports.unsupportedExtensionRegex = /^:::\s+(.*)/gm;
 
 // Zones

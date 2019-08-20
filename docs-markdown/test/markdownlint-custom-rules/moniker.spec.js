@@ -12,7 +12,7 @@ test('Moniker markdown lint', () => {
     expect(results[src]).toEqual([
         {
             lineNumber: 31,
-            ruleNames: ['docsmd.moniker'],
+            ruleNames: ['DOCSMD006', 'docsmd.moniker'],
             ruleDescription: 'Moniker linting.',
             errorDetail: errorDetailStrings.monikerRange,
             errorContext: '::: moniker range:"chromeless"',
@@ -20,7 +20,7 @@ test('Moniker markdown lint', () => {
         },
         {
             lineNumber: 49,
-            ruleNames: ['docsmd.moniker'],
+            ruleNames: ['DOCSMD006', 'docsmd.moniker'],
             ruleDescription: 'Moniker linting.',
             errorDetail: errorDetailStrings.monikerSyntax,
             errorContext: '::: moniker robot',

@@ -1,8 +1,8 @@
 "use strict";
 
 import { window } from "vscode";
-import { isMarkdownFileCheck, noActiveEditorMessage, showWarningMessage } from "../helper/common";
-import { addNewColumn, addNewColumnWithSpan, checkColumnRange, createRow } from "../helper/rows-columns";
+import { isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { addNewColumn, addNewColumnWithSpan, createRow } from "../helper/rows-columns";
 
 const rowWithColumns = "Two-column structure";
 const newColumn = "New column";

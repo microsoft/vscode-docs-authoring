@@ -19,26 +19,16 @@ module.exports = {
                 const content = text.content.toLowerCase();
                 // Begin linting when a colon is at the beginning of a line.
                 if (content.match(common.singleColon)) {
-                    // Condition: Line begins with fewer or more than three colons.
-                    if (!content.match(common.tripleColonSyntax) && content.match(common.openExtension)) {
+                    // Condition: After three colons and a space, text is not a supported extension.
+                    if (content.match(common.tripleColonSyntax) && !content.match(common.supportedExtensions)) {
                         onError({
                             lineNumber: text.lineNumber,
-                            detail: detailStrings.syntaxCount,
+                            detail: detailStrings.syntaxUnsupportedExtension,
                             context: text.line
                         });
-
                     }
-                }
-                // Condition: After three colons and a space, text is not a supported extension.
-                if (content.match(common.tripleColonSyntax) && !content.match(common.supportedExtensions)) {
-                    const unsupportedExtension = content.match(common.unsupportedExtensionRegex);
-                    onError({
-                        lineNumber: text.lineNumber,
-                        detail: detailStrings.syntaxUnsupportedExtension,
-                        context: text.line
-                    });
-                }
+                };
             });
         });
     }
-};
+}
