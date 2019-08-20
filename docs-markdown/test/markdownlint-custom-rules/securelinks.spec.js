@@ -16,7 +16,7 @@ test('Secure Links markdown lint', () => {
             "errorRange": [25, 37],
             "lineNumber": 5,
             "ruleDescription": "All links to Microsoft properties should be secure",
-            "ruleNames": ["docsmd.securelinks"]
+            "ruleNames": ['DOCSMD008', 'docsmd.securelinks']
         },
         {
             "errorContext": "[Go get Visual Studio](htTp://www.visualstudio.com/foo/test)",
@@ -24,7 +24,7 @@ test('Secure Links markdown lint', () => {
             "errorRange": [23, 36],
             "lineNumber": 17,
             "ruleDescription": "All links to Microsoft properties should be secure",
-            "ruleNames": ["docsmd.securelinks"]
+            "ruleNames": ['DOCSMD008', 'docsmd.securelinks']
         },
         {
             "errorContext": "[Go get Visual Studio](http://aka.ms/learn)",
@@ -32,7 +32,7 @@ test('Secure Links markdown lint', () => {
             "errorRange": [23, 19],
             "lineNumber": 25,
             "ruleDescription": "All links to Microsoft properties should be secure",
-            "ruleNames": ["docsmd.securelinks"]
+            "ruleNames": ['DOCSMD008', 'docsmd.securelinks']
         }
     ]);
 });

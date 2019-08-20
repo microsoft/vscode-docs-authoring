@@ -12,7 +12,7 @@ test('Zone markdown lint', () => {
     expect(results[src]).toEqual([
         {
             lineNumber: 23,
-            ruleNames: ['docsmd.zone'],
+            ruleNames: ['DOCSMD005', 'docsmd.zone'],
             ruleDescription: 'Zone linting.',
             errorDetail: errorDetailStrings.zoneSyntax,
             errorContext: '::: zone pelican',
@@ -20,7 +20,7 @@ test('Zone markdown lint', () => {
         },
         {
             lineNumber: 27,
-            ruleNames: ['docsmd.zone'],
+            ruleNames: ['DOCSMD005', 'docsmd.zone'],
             ruleDescription: 'Zone linting.',
             errorDetail: errorDetailStrings.zoneRender,
             errorContext: '::: zone target:',
@@ -28,7 +28,7 @@ test('Zone markdown lint', () => {
         },
         {
             lineNumber: 41,
-            ruleNames: ['docsmd.zone'],
+            ruleNames: ['DOCSMD005', 'docsmd.zone'],
             ruleDescription: 'Zone linting.',
             errorDetail: errorDetailStrings.zoneValue,
             errorContext: '::: zone target="volcano"',
