@@ -10,12 +10,9 @@ const columnEndSyntax = ":::column-end:::";
 const columnSpanSyntax = `:::column span="":::`;
 const rowOpenSyntax = ":::row:::";
 const rowEndSyntax = ":::row-end:::";
-const incorrectSyntaxMessage = "Incorrect column sytax. Abandoning command.";
 const columnRangeMessage = "The number of columns must be between 1 and 4.";
 const insertRowStructureMessage = "Column structures can’t be inserted within rows or columns.";
-const validRowPosition = "Valid position. Creating row.";
 const columnErrorMessage = "A column can’t be inserted within another column.";
-const columnOutsideRowMessage = "A column can only be inserted within a row.";
 
 const columnRow = `
 ${indentSpacing}${columnOpenSyntax}
@@ -133,7 +130,6 @@ export function validatePosition(span?: boolean) {
         let i;
         let columnStartLineNumber;
         let columnEndLineNumber;
-        let rowStartLineNumber;
         let newPosition;
         let newSelection;
         const columnStartRegex = /^\s+:{3}(column|column\sspan=".*"):{3}/gm;
@@ -151,7 +147,6 @@ export function validatePosition(span?: boolean) {
                     columnEndLineNumber = lineData.lineNumber;
                 }
                 if (lineText.match(rowStartRegex)) {
-                    rowStartLineNumber = lineData.lineNumber;
                 }
             }
         } catch (error) {
