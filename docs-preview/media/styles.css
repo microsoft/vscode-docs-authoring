@@ -3,7 +3,7 @@ body, html {
   margin-right: auto;
   max-width: 967px;
   padding: 0;
-  font-size: 16px !important;
+  /* font-size: 16px !important; */
 }
 
 h1 {
@@ -26,7 +26,7 @@ h3, h4, h5, h6 {
 p {
   margin-top: 8px;
   margin-bottom: 0;
-  /* font-size: 13.3px; */
+  font-size: 13.3px;
   color: var(--text);
 }
 
@@ -101,4 +101,47 @@ table {
 
 body.wordWrap pre {
   white-space: pre;
+}
+
+
+body.showEditorSelection .code-active-line::before, body.showEditorSelection .code-line:hover::before {
+  /* content: ""; */
+  /* display: block; */
+  /* position: absolute; */
+  content: initial;
+  display: initial;
+  position: initial;
+  top: 0;
+  left: -12px;
+  height: 100%;
+}
+
+body.showEditorSelection pre > code.code-line:hover::before 
+{
+  display: block;
+  /* height: 31px; */
+  box-sizing: border-box;
+  margin: -16px -16px 16px;
+  padding: 5px 16px;
+  content: ' ';
+  font-weight: 400;
+  font-size: .8rem;
+  line-height: 160%;
+  color: hsla(0, 0%, 0%, 1);
+  color: var(--text);
+  background-color: hsla(0, 0%, 95%, 1);
+  background-color: var(--body-background-dark);
+  border-bottom: 1px solid hsla(0, 0%, 89%, 1);
+  border-bottom: 1px solid var(--border);
+}
+
+.content .checklist > ul > li:hover::before {
+  font-family: 'docons';
+  content: '\FF02';
+  display: inline-block;
+  height: 1rem;
+  margin-right: .5rem;
+  width: 1rem;
+  color: hsla(120, 77%, 30%, 1);
+  color: var(--success-base);
 }
