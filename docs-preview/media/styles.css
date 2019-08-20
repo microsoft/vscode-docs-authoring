@@ -1,0 +1,104 @@
+body, html {
+  margin-left:auto;
+  margin-right: auto;
+  max-width: 967px;
+  padding: 0;
+  font-size: 16px !important;
+}
+
+h1 {
+  margin: .67em 0 0 0;
+  font-size: 2.4rem;
+  border-color: transparent!important;
+}
+
+h2 { 
+  font-size: 1.65rem;
+  margin-top: 18px;
+  margin-bottom: 0px;
+  line-height: 1.35;
+}
+
+h3, h4, h5, h6 {
+  margin-bottom: .4rem;
+}
+
+p {
+  margin-top: 8px;
+  margin-bottom: 0;
+  /* font-size: 13.3px; */
+  color: var(--text);
+}
+
+a {
+  text-decoration: underline;
+}
+
+b, strong {
+  font-weight: 700;
+}
+
+code {
+  color: var(--text)!important;
+}
+
+pre {
+  border: 1px solid hsla(0,0%,89%,1);
+  border: 1px solid var(--border);
+  background-color: hsla(0,0%,98%,1)!important;
+  background-color: var(--body-background-medium);
+}
+
+pre:not(.hljs), pre.hljs code > div {
+  border-radius: 1px;
+}
+
+ul, ol {
+  margin: .8rem 0 0 2.3rem;
+  font-size: 13.2px;
+  line-height: 1.68;
+}
+
+ul a, ol a {
+  text-decoration: none;
+}
+
+ul li ul, ol li ol { 
+  margin: 0 0 0 1.2rem
+}
+
+table > thead > tr > th, table > thead > tr > td, table > tbody > tr > th, table > tbody > tr > td {
+  border-style: solid;
+  border-color: hsla(0,0%,89%,1)!important;
+  border-color: var(--border)!important;
+  border-left: 0;
+  border-bottom: 0;
+  border-right: 0;
+  border-width: 1px;
+  padding: 10px 15px;
+  font-size: 11.5px;
+}
+
+table > thead > tr > th {
+  border-top: 0;
+}
+
+table {
+  overflow: auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: auto;
+  width: 100%;
+}
+
+.hljs-comment, .hljs-quote {
+  color: hsla(0,0%,0%,1);
+  color: var(--text);
+  font-style: normal;
+  font-size: 12px;
+  line-height: 0;
+}
+
+body.wordWrap pre {
+  white-space: pre;
+}

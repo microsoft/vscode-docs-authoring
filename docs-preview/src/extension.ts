@@ -1,16 +1,20 @@
 "use strict";
 
+import { rename } from "fs";
 import { basename } from "path";
 import { commands, ExtensionContext, TextDocument, window } from "vscode";
 import { sendTelemetryData } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
-import { codeSnippets } from "./codesnippets/codesnippet";
+import { codeSnippets, custom_codeblock } from "./markdown-extensions/codesnippet";
+import { columnOptions, column_end } from "./markdown-extensions/column";
+import { container_plugin } from "./markdown-extensions/container";
+import { rowOptions } from "./markdown-extensions/row";
 import { xref } from "./xref/xref";
+import { div_plugin, divOptions } from "./markdown-extensions/div";
 
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
 export const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
-
 const telemetryCommand: string = "preview";
 
 export function activate(context: ExtensionContext) {
@@ -35,8 +39,13 @@ export function activate(context: ExtensionContext) {
             const workingPath = filePath.replace(basename(filePath), "");
             return md.use(require("markdown-it-include"), { root: workingPath, includeRe: INCLUDE_RE })
                 .use(codeSnippets, { root: workingPath })
-                .use(xref);
-        }
+                .use(xref)
+                .use(custom_codeblock)
+                .use(column_end)
+                .use(container_plugin, "row", rowOptions)
+                .use(container_plugin, "column", columnOptions)
+                .use(div_plugin, "div", divOptions);
+        },
     };
 }
 

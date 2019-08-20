@@ -1,6 +1,6 @@
 "use-strict";
 
-import { Uri, window, workspace } from "vscode";
+import { Uri, window, workspace, TextDocument } from "vscode";
 import { reporter } from "./telemetry";
 
 /**
@@ -67,4 +67,8 @@ export function sendTelemetryData(telemetryCommand: string, commandOption: strin
     const activeRepo = getRepoName(workspaceUri);
     const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
     reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
+}
+
+export function isMarkdownFile(document: TextDocument) {
+    return document.languageId === "markdown"; // prevent processing of own documents
 }
