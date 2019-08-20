@@ -1,23 +1,34 @@
 var blockquoteTags = document.getElementsByTagName("blockquote");
-var alerts = ["NOTE", "TIP", "IMPORTANT", "CAUTION", "WARNING"];
+var alerts = [
+  {
+    "name": "Note",
+    "icon": "docon-status-error-outline"
+  },
+  {
+    "name": "Tip",
+    "icon": "docon-lightbulb"
+  },
+  {
+    "name": "Important",
+    "icon": "docon-status-info-outline"
+  },
+  {
+    "name": "Caution",
+    "icon": "docon-status-failure-outline"
+  },
+  {
+    "name": "Warning",
+    "icon": "docon-status-warning-outline"
+  }];
 
 alerts.map(aa => {
   for (var i = 0; i < blockquoteTags.length; i++) {
     let tag = blockquoteTags[i];
-    if (tag.innerHTML.toUpperCase().indexOf(`[!${aa}]`) > -1) {
-      tag.setAttribute("class", aa);
+    if (tag.innerHTML.toUpperCase().indexOf(`[!${aa.name.toUpperCase()}]`) > -1) {
+      tag.setAttribute("class", `${aa.name.toUpperCase()}`);
       var alertType = blockquoteTags[i].innerHTML;
-      var addBreak = alertType.replace(`[!${aa}]`, `<strong>${aa}</strong><br>`);
+      var addBreak = alertType.replace(`[!${aa.name.toUpperCase()}]`, `<strong><span class="docon ${aa.icon}"></span> ${aa.name}</strong><br/><hr/>`);
       blockquoteTags[i].innerHTML = addBreak;
     }
   }
-});
-
-const noLocRegex = /:::no-loc\stext=\"([a-zA-Z'-\s]*)\":::/gm;
-const noLocFrontRegex = /:::no-loc\stext=\"/;
-const noLocBackRegex = /":::/;
-var noLocMatches = document.body.innerHTML.match(noLocRegex);
-noLocMatches.map(match => {
-  const noLocText = match.replace(noLocFrontRegex, "").replace(noLocBackRegex, "");
-  document.body.innerHTML = document.body.innerHTML.replace(match, noLocText);
 });
