@@ -1,6 +1,11 @@
 # Change Log
 
-## 0.2.13 (TBD)
+## 0.2.14 (August 21st, 2019)
+
+- Row and column support
+- Output window update
+
+## 0.2.13 (August 5th, 2019)
 
 - Xref support for <xref:...> Markdown insertion
 - xref linting rules
