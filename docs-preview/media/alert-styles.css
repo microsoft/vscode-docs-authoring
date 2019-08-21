@@ -17,7 +17,7 @@ blockquote ul {
 
 blockquote p {
   margin: 0px 0 10px 0;
-  /* font-size: 13px; */
+  font-size: 13px;
 }
 
 blockquote p:first-child { 

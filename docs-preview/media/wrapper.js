@@ -11,15 +11,3 @@ while (body.firstChild) {
 
 // Append the wrapper to the body
 document.body.appendChild(mainContainer);
-
-// var row = document.getElementsByClassName("row");
-// console.log(row);
-// if (row) {
-//   for (let index = 0; index < row.length; index++) {
-//     var element = row[index];
-//     var mainContainer = document.createElement('div');
-//     mainContainer.classList.add("content")
-//     element.parentNode.insertBefore(mainContainer, element);
-//     mainContainer.appendChild(element);
-//   }
-// }
