@@ -11,24 +11,8 @@ test('Syntax markdown lint', () => {
 
     expect(results[src]).toEqual([
         {
-            lineNumber: 5,
-            ruleNames: ['docsmd.syntax'],
-            ruleDescription: 'Syntax linting.',
-            errorDetail: errorDetailStrings.syntaxCount,
-            errorContext: ': zone',
-            errorRange: null
-        },
-        {
-            lineNumber: 15,
-            ruleNames: ['docsmd.syntax'],
-            ruleDescription: 'Syntax linting.',
-            errorDetail: errorDetailStrings.syntaxSpace,
-            errorContext: ':::zone',
-            errorRange: null
-        },
-        {
             lineNumber: 19,
-            ruleNames: ['docsmd.syntax'],
+            ruleNames: ['DOCSMD004', 'docsmd.syntax'],
             ruleDescription: 'Syntax linting.',
             errorDetail: errorDetailStrings.syntaxUnsupportedExtension,
             errorContext: '::: keyboard',

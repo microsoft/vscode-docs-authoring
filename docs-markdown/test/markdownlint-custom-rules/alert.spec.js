@@ -1,6 +1,6 @@
 const markdownlint = require('markdownlint');
 const alert = require('../../markdownlint-custom-rules/alert');
-const errorDetailStrings = require("../../markdownlint-custom-rules/strings");
+const errorDetailStrings = require('../../markdownlint-custom-rules/strings');
 
 test('Alert markdown lint', () => {
     const src = `${__dirname}/test-content/alerts.md`;
@@ -12,7 +12,7 @@ test('Alert markdown lint', () => {
     expect(results[src]).toEqual([
         {
             lineNumber: 7,
-            ruleNames: ['docsmd.alert'],
+            ruleNames: ['DOCSMD007', 'docsmd.alert'],
             ruleDescription: 'Alert linting.',
             errorDetail: errorDetailStrings.alertType,
             errorContext: '> [!DANGER]',
@@ -20,7 +20,7 @@ test('Alert markdown lint', () => {
         },
         {
             lineNumber: 11,
-            ruleNames: ['docsmd.alert'],
+            ruleNames: ['DOCSMD007', 'docsmd.alert'],
             ruleDescription: 'Alert linting.',
             errorDetail: errorDetailStrings.alertType,
             errorContext: '> [!NOT]',
@@ -28,7 +28,7 @@ test('Alert markdown lint', () => {
         },
         {
             lineNumber: 15,
-            ruleNames: ['docsmd.alert'],
+            ruleNames: ['DOCSMD007', 'docsmd.alert'],
             ruleDescription: 'Alert linting.',
             errorDetail: errorDetailStrings.alertType,
             errorContext: '> [!tip]',
@@ -36,7 +36,7 @@ test('Alert markdown lint', () => {
         },
         {
             lineNumber: 19,
-            ruleNames: ['docsmd.alert'],
+            ruleNames: ['DOCSMD007', 'docsmd.alert'],
             ruleDescription: 'Alert linting.',
             errorDetail: errorDetailStrings.alertNoOpen,
             errorContext: '[!NOTE]',
@@ -44,7 +44,7 @@ test('Alert markdown lint', () => {
         },
         {
             lineNumber: 21,
-            ruleNames: ['docsmd.alert'],
+            ruleNames: ['DOCSMD007', 'docsmd.alert'],
             ruleDescription: 'Alert linting.',
             errorDetail: errorDetailStrings.alertNoOpen,
             errorContext: '[!CAUTION]',
@@ -52,7 +52,7 @@ test('Alert markdown lint', () => {
         },
         {
             lineNumber: 38,
-            ruleNames: ['docsmd.alert'],
+            ruleNames: ['DOCSMD007', 'docsmd.alert'],
             ruleDescription: 'Alert linting.',
             errorDetail: errorDetailStrings.alertNoExclam,
             errorContext: '> [NOTE]',

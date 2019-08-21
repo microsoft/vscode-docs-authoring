@@ -1,13 +1,42 @@
 blockquote {
   border-radius: 6px;
-  font-size: 1rem;
-  padding: 1rem;
-  margin-top: 1rem;
+  /* font-size: 1rem; */
+  padding: 0.0em 0.8em 0.1em .8em !important;
+  /* margin: 1em 0 0 0 !important; */
   background-position: top left;
   background-repeat: no-repeat;
   text-indent: 0px;
   line-height: 160%;
-  
+  font-family: "Segoe UI","SegoeUI","Segoe WP","Helvetica Neue","Helvetica","Tahoma","Arial","sans-serif";
+  font-weight: 400;
+}
+
+blockquote ul {
+  margin: 1rem 0 1.1rem 2.5rem
+}
+
+blockquote p {
+  margin: 0px 0 10px 0;
+  font-size: 13px;
+}
+
+blockquote p:first-child { 
+  margin-top: 15px
+}
+
+blockquote hr {
+  border:transparent;
+}
+
+blockquote a {
+    color: hsla(206,100%,15%,1);
+    color: var(--primary-dark);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+blockquote strong, blockquote b {
+  font-weight: 600;
 }
 
 blockquote span {
@@ -19,31 +48,50 @@ blockquote span {
 }
 
 blockquote.NOTE {
-  color: #38225d;
+  color: #38225d!important;
   background: #e2daf1;
   border-left: 0px solid #e2daf1;
 }
 
+blockquote.NOTE p {
+  color: #38225d!important;
+}
+
 blockquote.TIP {
-  color: #094409;
+  color: #094409!important;
   background:  #d2f9d2;
   border-left: 0px solid #d2f9d2;
 }
 
+blockquote.TIP p {
+  color: #094409!important;
+}
+
 blockquote.IMPORTANT {
-  color: #002b4d;
+  color: #002b4d!important;
   background: #e0f2ff;
   border-left: 0px solid #002b4d;
 }
 
+blockquote.IMPORTANT p {
+  color: #002b4d!important;
+}
+
 blockquote.CAUTION {
-  color: #651b01;
+  color: #651b01!important;
   background: #ffdacc;
   border-left: 0px solid #ffdacc;
 }
 
+blockquote.CAUTION p {
+  color: #651b01!important;
+}
+
 blockquote.WARNING {
-  color: #664b00;
+  color: #664b00!important;
   background: #fff1cc;
   border-left: #fff1cc;
+}
+blockquote.WARNING p {
+  color: #664b00!important;
 }

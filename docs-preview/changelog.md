@@ -1,6 +1,10 @@
 # Change Log
 
-## 0.3.25 (TBD)
+## 0.3.26 (August 20th 2019)
+
+- Added Docs Styles
+
+## 0.3.25 (August 6th 2019)
 
 - Added Xref support
 

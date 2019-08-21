@@ -6,7 +6,7 @@ const common = require("./common");
 const detailStrings = require("./strings");
 
 module.exports = {
-    "names": ["docsmd.moniker"],
+    "names": ["DOCSMD006", "docsmd.moniker"],
     "description": `Moniker linting.`,
     "tags": ["validation"],
     "function": function rule(params, onError) {

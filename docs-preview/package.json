@@ -3,7 +3,7 @@
   "displayName": "docs-preview",
   "description": "Docs Markdown Preview Extension",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.3.25",
+  "version": "0.3.26",
   "publisher": "docsmsft",
   "icon": "images/docs-logo-ms.png",
   "bugs": {
@@ -33,9 +33,15 @@
   "main": "./out/src/extension",
   "contributes": {
     "markdown.previewScripts": [
-      "./media/alert-styles.js"
+      "./media/noloc.js",
+      "./media/alert-styles.js",
+      "./media/wrapper.js"
     ],
     "markdown.previewStyles": [
+      "./media/docons.woff",
+      "./media/conceptual.css",
+      "./media/site-ltr.css",
+      "./media/styles.css",
       "./media/alert-styles.css"
     ],
     "markdown.markdownItPlugins": true,

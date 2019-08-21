@@ -4,12 +4,12 @@
 
 // Triple colon
 module.exports.singleColon = /^:/gm;
-module.exports.tripleColonSyntax = /^:::/gm;
+module.exports.tripleColonSyntax = /^:::\s?/gm;
 module.exports.validTripleColon = /^:::\s+/gm;
 
 // Markdown extensions (add valid/supported extensions to list)
 module.exports.openExtension = /^:(.*?)(zone|moniker|no-loc)/gm;
-module.exports.supportedExtensions = /^:::\s+(zone|moniker|row|column|form|no-loc)/gm;
+module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc)(.:*)/g;
 module.exports.unsupportedExtensionRegex = /^:::\s+(.*)/gm;
 
 // Zones
@@ -59,3 +59,15 @@ module.exports.missingUidAttributeXref = /<xref:(\?displayProperty=(fullName|nam
 module.exports.usesCorrectXrefDisplayProperties = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displayProperty=(?!fullName|nameWithType))(>)?/g;
 module.exports.xrefHasDisplayPropertyQuestionMark = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?)(?!displayProperty=.*)(>)?/g;
 module.exports.syntaxXref = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displayProperty=(fullName|nameWithType))?>/g;
+
+// Row
+module.exports.startRow = /^(.:*)(.+row)/gm;
+module.exports.syntaxRow = /^:{3}(row|row-end):{3}$/gm;
+
+// Column
+module.exports.startColumn = /^\s+(:*)(.+column)/gm;
+module.exports.syntaxColumn = /^\s+:{3}(column|column-end|column\s+(.*)"):{3}$/gm;
+module.exports.columnWithAttribute = /^\s+:{3}(column\s+(.*?)):/gm;
+module.exports.columnSpan = /^\s+:{3}(column\s+span="(.*?)"):/gm;
+
+
