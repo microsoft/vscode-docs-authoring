@@ -302,7 +302,6 @@ export function checkExtension(extensionName: string, notInstalledMessage?: stri
 export function showStatusMessage(message: string) {
     const { msTimeValue } = generateTimestamp();
     output.appendLine(`[${msTimeValue}] - ` + message);
-    output.show();
 }
 
 /**
