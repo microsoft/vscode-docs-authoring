@@ -6,11 +6,12 @@ import { commands, ExtensionContext, TextDocument, window } from "vscode";
 import { sendTelemetryData } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { codeSnippets, custom_codeblock } from "./markdown-extensions/codesnippet";
-import { columnOptions, column_end } from "./markdown-extensions/column";
+import { column_end, columnOptions } from "./markdown-extensions/column";
 import { container_plugin } from "./markdown-extensions/container";
-import { rowOptions } from "./markdown-extensions/row";
-import { xref } from "./xref/xref";
 import { div_plugin, divOptions } from "./markdown-extensions/div";
+import { rowOptions } from "./markdown-extensions/row";
+import { video_plugin, videoOptions } from "./markdown-extensions/video";
+import { xref } from "./xref/xref";
 
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
@@ -44,7 +45,8 @@ export function activate(context: ExtensionContext) {
                 .use(column_end)
                 .use(container_plugin, "row", rowOptions)
                 .use(container_plugin, "column", columnOptions)
-                .use(div_plugin, "div", divOptions);
+                .use(div_plugin, "div", divOptions)
+                .use(video_plugin, "video", videoOptions);
         },
     };
 }
