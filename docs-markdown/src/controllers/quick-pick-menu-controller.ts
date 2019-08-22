@@ -89,7 +89,7 @@ export function markdownQuickPick() {
         },
         {
             description: "",
-            label: "$(x) Link to XREF",
+            label: "$(x) Link to Xref",
         },
         {
             description: "",
