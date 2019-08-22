@@ -6,25 +6,29 @@ body, html {
   /* font-size: 16px !important; */
 }
 
-h1 {
+.content h1 {
   margin: .67em 0 0 0;
-  font-size: 2.4rem;
+  font-size: 2.15rem;
   border-color: transparent!important;
 }
 
-h2 { 
-  font-size: 1.65rem;
-  margin-top: 18px;
+.content h2 { 
+  font-size: 1.50rem;
+  margin-top: 21px;;
   margin-bottom: 0px;
-  line-height: 1.35;
+  line-height: 1.00;
 }
 
-h3, h4, h5, h6 {
+.content h3 {
+  font-size: 16px;
+}
+
+.content h3, h4, h5, h6 {
   margin-bottom: .4rem;
 }
 
-p {
-  margin-top: 8px;
+.content p {
+  margin-top: 12px;
   margin-bottom: 0;
   font-size: 13.3px;
   color: var(--text);
@@ -47,14 +51,19 @@ pre {
   border: 1px solid var(--border);
   background-color: hsla(0,0%,98%,1)!important;
   background-color: var(--body-background-medium);
+  margin: 12px 0 0;
 }
 
 pre:not(.hljs), pre.hljs code > div {
   border-radius: 1px;
 }
 
-ul, ol {
-  margin: .8rem 0 0 2.3rem;
+pre > code {
+  font-size: 13px;
+}
+
+.content ul, .content ol {
+  margin: .8rem 0 0 2rem;
   font-size: 13.2px;
   line-height: 1.68;
 }
@@ -64,7 +73,7 @@ ul a, ol a {
 }
 
 ul li ul, ol li ol { 
-  margin: 0 0 0 1.2rem
+  margin: 0 0 0 1rem
 }
 
 table > thead > tr > th, table > thead > tr > td, table > tbody > tr > th, table > tbody > tr > td {
@@ -103,11 +112,11 @@ body.wordWrap pre {
   white-space: pre;
 }
 
+.content :not(.codeHeader) + pre > code:before {
+  height: 25px;
+}
 
 body.showEditorSelection .code-active-line::before, body.showEditorSelection .code-line:hover::before {
-  /* content: ""; */
-  /* display: block; */
-  /* position: absolute; */
   content: initial;
   display: initial;
   position: initial;
@@ -119,7 +128,7 @@ body.showEditorSelection .code-active-line::before, body.showEditorSelection .co
 body.showEditorSelection pre > code.code-line:hover::before 
 {
   display: block;
-  /* height: 31px; */
+  height: 25px;
   box-sizing: border-box;
   margin: -16px -16px 16px;
   padding: 5px 16px;
@@ -144,4 +153,30 @@ body.showEditorSelection pre > code.code-line:hover::before
   width: 1rem;
   color: hsla(120, 77%, 30%, 1);
   color: var(--success-base);
+}
+
+@media only screen and (min-width: 575px) {
+  .content .row > .column.span2 {
+    width: 50%;
+    flex-grow: 2;
+    flex-shrink: 1;
+    flex-basis: 50%;
+  }
+}
+
+@media only screen and (min-width: 575px) {
+  .content .row > .column.span3 {
+    flex-shrink: 1;
+    flex-grow: 3;
+    flex-basis: 75%;
+  }
+}
+  
+@media only screen and (min-width: 575px) {
+  .content .row > .column {
+    flex-basis: calc(25% - 8px);
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin-right: 12px;
+  }
 }
