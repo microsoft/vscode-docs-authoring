@@ -35,7 +35,8 @@
     "markdown.previewScripts": [
       "./media/noloc.js",
       "./media/alert-styles.js",
-      "./media/wrapper.js"
+      "./media/wrapper.js",
+      "./media/next-step-action.js"
     ],
     "markdown.previewStyles": [
       "./media/docons.woff",
