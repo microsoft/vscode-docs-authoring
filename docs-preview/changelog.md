@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.3.28 (August 23rd, 2019)
+
+- Added "In this article" section
+- Added single selector functionality
+- Fixed unreadable tables (mx-tdBreakAll, mx-tdCol2BreakAll)
+- Cleaned up Docs Styles
+
 ## 0.3.27 (August 22nd 2019)
 
 - Added Action Button for Docs Styles
