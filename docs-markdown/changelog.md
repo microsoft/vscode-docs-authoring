@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.15 (August 22st, 2019)
+
+- Xref Bug Fixes and support additional Xref tags.
+
 ## 0.2.14 (August 21st, 2019)
 
 - Row and column support
