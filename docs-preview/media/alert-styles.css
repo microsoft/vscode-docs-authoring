@@ -1,8 +1,7 @@
 blockquote {
   border-radius: 6px;
-  /* font-size: 1rem; */
   padding: 0.0em 0.8em 0.1em .8em !important;
-  /* margin: 1em 0 0 0 !important; */
+  margin: 1em 0 0 0 !important;
   background-position: top left;
   background-repeat: no-repeat;
   text-indent: 0px;
