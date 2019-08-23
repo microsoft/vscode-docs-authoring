@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.3.27 (August 22nd 2019)
+
+- Added Action Button for Docs Styles
+- Cleaned up Docs Styles
+
 ## 0.3.26 (August 20th 2019)
 
 - Added Docs Styles
