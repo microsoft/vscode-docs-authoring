@@ -61,6 +61,19 @@ pre > code {
   font-size: 13px;
 }
 
+.content .doc-outline ol {
+  margin: 8px 0 0;
+  list-style-type: none;
+}
+
+.content .doc-outline h3 {
+  font-size: 14px;
+}
+
+.content .doc-outline li {
+  font-size: 11.5px;
+}
+
 .content ul, .content ol {
   margin: .8rem 0 0 2rem;
   font-size: 13.2px;
