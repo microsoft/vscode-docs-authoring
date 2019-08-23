@@ -39,7 +39,8 @@
       "./media/wrapper.js",
       "./media/next-step-action.js",
       "./media/checklist.js",
-      "./media/mx-tdBreakAll.js"
+      "./media/mx-tdBreakAll.js",
+      "./media/single-selector.js"
     ],
     "markdown.previewStyles": [
       "./media/docons.woff",
