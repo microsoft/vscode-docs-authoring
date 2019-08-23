@@ -112,6 +112,10 @@ table {
   font-weight: 400;
 }
 
+.button.is-medium {
+  font-size: 13.3px;
+}
+
 body.wordWrap pre {
   white-space: pre;
 }
