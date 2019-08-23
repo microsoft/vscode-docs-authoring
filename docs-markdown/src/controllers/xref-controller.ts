@@ -7,7 +7,6 @@ import { reporter } from "../helper/telemetry";
 
 const telemetryCommand: string = "applyXref";
 const rootUrl: string = "https://xref.docs.microsoft.com";
-const tags: string = "/dotnet";
 const RE_XREF = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)?(\?)?(d)?(isplayProperty)?(=)?(fullName|nameWithType)?(>)?/g;
 
 export function xrefCompletionItemsMarkdown() {
@@ -24,7 +23,7 @@ export async function xrefTagsCompletionItemsMarkdown(editor: any) {
     if (captureGroup && captureGroup[1]) {
       uid = captureGroup[1].trim();
     }
-    const response = await getAsync(`${rootUrl}/autocomplete?tags=${tags}&text=${uid}`);
+    const response = await getAsync(`${rootUrl}/autocomplete?text=${uid}`);
     response.data.map((item: { tags: any; uid: string; }) => {
       completionItems.push(new CompletionItem(encodeSpecialCharacters(item.uid)));
     });
@@ -167,7 +166,7 @@ async function getXrefSelection() {
   const items: QuickPickItem[] = [];
   const uid: string | undefined = await window.showInputBox({ placeHolder: "Enter XREF Search Term" });
   if (uid) {
-    const response = await getAsync(`${rootUrl}/autocomplete?tags=${tags}&text=${uid}`);
+    const response = await getAsync(`${rootUrl}/autocomplete?text=${uid}`);
     if (response.status !== 200) {
       window.showErrorMessage("Failed to connect to XREF service. Please check your internet connection and try again.");
       return;
