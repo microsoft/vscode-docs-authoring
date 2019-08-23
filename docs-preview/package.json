@@ -39,7 +39,7 @@
       "./media/wrapper.js",
       "./media/next-step-action.js",
       "./media/checklist.js",
-      "./media/in-this-article.js"
+      "./media/in-this-article.js",
       "./media/mx-tdBreakAll.js",
       "./media/single-selector.js"
     ],

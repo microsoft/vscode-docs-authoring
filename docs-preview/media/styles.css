@@ -72,6 +72,7 @@ pre > code {
 
 .content .doc-outline li {
   font-size: 11.5px;
+  margin: 3px 0;
 }
 
 .content ul, .content ol {
