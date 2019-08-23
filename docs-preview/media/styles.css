@@ -80,11 +80,11 @@ pre > code {
   line-height: 1.68;
 }
 
-ul a, ol a {
+.content ul a, ol a {
   text-decoration: none;
 }
 
-ul li ul, ol li ol { 
+.content ul li ul, ol li ol { 
   margin: 0 0 0 1rem
 }
 
@@ -123,6 +123,10 @@ table {
 .button {
   font-size: 13.3px;
   font-weight: 400;
+}
+
+.button.is-medium {
+  font-size: 13.3px;
 }
 
 body.wordWrap pre {
