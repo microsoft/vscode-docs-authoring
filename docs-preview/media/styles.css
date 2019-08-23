@@ -61,17 +61,31 @@ pre > code {
   font-size: 13px;
 }
 
+.content .doc-outline ol {
+  margin: 8px 0 0;
+  list-style-type: none;
+}
+
+.content .doc-outline h3 {
+  font-size: 14px;
+}
+
+.content .doc-outline li {
+  font-size: 11.5px;
+  margin: 3px 0;
+}
+
 .content ul, .content ol {
   margin: .8rem 0 0 2rem;
   font-size: 13.2px;
   line-height: 1.68;
 }
 
-ul a, ol a {
+.content ul a, ol a {
   text-decoration: none;
 }
 
-ul li ul, ol li ol { 
+.content ul li ul, ol li ol { 
   margin: 0 0 0 1rem
 }
 
@@ -110,6 +124,10 @@ table {
 .button {
   font-size: 13.3px;
   font-weight: 400;
+}
+
+.button.is-medium {
+  font-size: 13.3px;
 }
 
 body.wordWrap pre {
