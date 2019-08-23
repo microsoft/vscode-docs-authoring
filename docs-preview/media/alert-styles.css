@@ -25,6 +25,7 @@ blockquote p:first-child {
 
 blockquote hr {
   border:transparent;
+  height: 1px;
 }
 
 blockquote a {
@@ -44,6 +45,14 @@ blockquote span {
   background-position: bottom right;
   margin-top: 1rem;
   margin-bottom: 0;
+}
+
+blockquote > pre {
+  margin-bottom: .8rem;
+}
+
+.content blockquote > ul {
+  margin-bottom: .9rem;
 }
 
 blockquote.NOTE {

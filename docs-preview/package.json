@@ -38,7 +38,8 @@
       "./media/alert-styles.js",
       "./media/wrapper.js",
       "./media/next-step-action.js",
-      "./media/checklist.js"
+      "./media/checklist.js",
+      "./media/mx-tdBreakAll.js"
     ],
     "markdown.previewStyles": [
       "./media/docons.woff",
