@@ -1,11 +1,13 @@
 function insertAfter(el, referenceNode) {
-  referenceNode.parentNode.insertBefore(el, referenceNode.nextSibling);
+  if (referenceNode && referenceNode.parentNode) {
+    referenceNode.parentNode.insertBefore(el, referenceNode.nextSibling);
+  }
 }
 
 var h1 = document.querySelectorAll("h1");
-if (h1) {
+if (h1.length > 0) {
   var h2 = document.querySelectorAll("h2");
-  if (h2) {
+  if (h2.length > 0) {
     var inThisArticle = document.createElement("nav");
     inThisArticle.classList.add("doc-outline")
     var inThisArticleHeader = document.createElement("h3")
