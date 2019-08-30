@@ -31,6 +31,7 @@ The following commands are available in Markdown files:
 |Numbered list      |Insert a new numbered list.<br><br> If multiple lines are selected, each will be a list item. To create a nested numbered list, tab from within the parent list.|
 |Bulleted list      |Insert a new bulleted list.|
 |Table              |Insert a Markdown table structure.<br><br>After you select the table command, specify the number of columns and rows in the format columns:rows, such as 3:4. Note that the maximum number of columns you can specify via this extension is 5, which is the recommended maximum for readability on docs.microsoft.com.|
+|Columns             |Insert a column-based layout structure, or add a column to an existing structure. Optionally add the `span` attribute to merge two to four columns together. |
 |Link to file in repo|Insert a Markdown link to a file within the current repo. |
 |Link to web page    |Insert a Markdown link to a URI.|
 |Link to heading     |Open a sub-menu to link to a heading (bookmark) in the current file or in another file in the current repo.|
