@@ -73,7 +73,7 @@ export function markdownQuickPick() {
         },
         {
             description: "",
-            label: "$(ellipsis) Rows and columns",
+            label: "$(ellipsis) Columns",
         },
         {
             description: "",
@@ -236,7 +236,7 @@ export function markdownQuickPick() {
             case "parent node":
                 insertExpandableParentNode();
                 break;
-            case "rows and columns":
+            case "columns":
                 insertRowsAndColumns();
                 break;
             default:
