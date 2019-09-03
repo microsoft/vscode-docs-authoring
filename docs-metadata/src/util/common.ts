@@ -14,7 +14,7 @@ let extensionPath: string;
 
 
 export const docsAuthoringDirectory = path.join(os.homedir(), "Docs Authoring");
-export const metadataDirectory = path.join(docsAuthoringDirectory, "Metadata");
+export const metadataDirectory = path.join(docsAuthoringDirectory, "metadata");
 
 export function setExtensionPath(path: string) {
     extensionPath = path;
