@@ -1,8 +1,11 @@
 "use strict";
 
 import { Position, Range, Selection, TextEditor, window, CompletionItem } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { isCursorInsideYamlHeader } from "../helper/yaml-metadata";
+
+const telemetryCommand: string = "applyNoLoc";
+let commandOption: string;
 
 export function noLocTextCommand() {
     const commands = [
@@ -26,7 +29,6 @@ export function noLocCompletionItemsYaml() {
  * Inserts non-localizable text
  */
 export function noLocText() {
-
     const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -47,6 +49,8 @@ export function noLocText() {
 }
 
 function insertYamlNoLocEntry(editor: TextEditor) {
+    commandOption = "yaml-entry"
+    sendTelemetryData(telemetryCommand, commandOption);
     if (isContentOnCurrentLine(editor)) {
         window.showErrorMessage("The no-loc metadata must be inserted on a new line.");
         return;
@@ -78,6 +82,8 @@ function getTabInsertion(editor: TextEditor): string {
 }
 
 function insertMarkdownNoLocEntry(editor: TextEditor) {
+    commandOption = "markdown-entry"
+    sendTelemetryData(telemetryCommand, commandOption);
     const textSelection = editor.document.getText(editor.selection);
     if (textSelection === "") {
         const insertText = `:::no-loc text="":::`;
