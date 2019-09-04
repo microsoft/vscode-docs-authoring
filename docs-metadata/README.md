@@ -37,11 +37,11 @@ For example, suppose you want to change the author of several files from meganbr
 
 Then, update the VALUE from meganbradley to adunndevster, and update the ACTION to OVERWRITE:
 
-![shows new values for action and value](images/mut-filter-values.png)
+![shows new values for action and value](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/mut-overwrite-values.png)
 
 You can make other changes in the same file. For example, `ms.assetid` is a deprecated attribute, so you might choose to delete it from all files in the repo. In this case, you first filter on TAG equals ms.assetid, then change ACTION from IGNORE to DELETE for each instance:
 
-![shows ms.assetid rows with ACTION set to DELETE](images/mut-delete-values.png)
+![shows ms.assetid rows with ACTION set to DELETE](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/mut-delete-values.png)
 
 ## Step 3: Apply changes
 
