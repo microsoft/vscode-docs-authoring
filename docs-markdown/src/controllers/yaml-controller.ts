@@ -2,7 +2,7 @@
 
 import { readFileSync } from "fs";
 import { files } from "node-dir";
-import { basename, dirname, extname, join } from "path";
+import { basename, dirname, extname, join, relative } from "path";
 import { QuickPickItem, window, workspace } from "vscode";
 import { insertedTocEntry, invalidTocEntryPosition, noHeading, noHeadingSelected } from "../constants/log-messages";
 import { insertContentToEditor, noActiveEditorMessage, sendTelemetryData, showStatusMessage } from "../helper/common";
@@ -82,7 +82,9 @@ export function showQuickPick(options: boolean) {
         return;
       }
       let headingName = headings.toString().replace("# ", "");
-      const hrefName = qpSelection.label;
+      const activeFilePath = editor.document.fileName;
+      const href = relative(activeFilePath, fullPath);
+      const formattedHrefPath = href.replace(/\.\.\\/g, "").replace(/\\/g, "/");
       window.showInputBox({
         value: headingName,
         valueSelection: [0, 0],
@@ -93,7 +95,7 @@ export function showQuickPick(options: boolean) {
         if (val) {
           headingName = val;
         }
-        createEntry(headingName, hrefName, options);
+        createEntry(headingName, formattedHrefPath, options);
       });
     });
   });
