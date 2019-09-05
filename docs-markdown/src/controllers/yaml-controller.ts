@@ -84,7 +84,7 @@ export function showQuickPick(options: boolean) {
       let headingName = headings.toString().replace("# ", "");
       const activeFilePath = editor.document.fileName;
       const href = relative(activeFilePath, fullPath);
-      const formattedHrefPath = href.replace(/\.\.\\/g, "").replace(/\\/g, "/");
+      const formattedHrefPath = href.replace("..\\", "").replace("../", "").replace(/\\/g, "/");
       window.showInputBox({
         value: headingName,
         valueSelection: [0, 0],
