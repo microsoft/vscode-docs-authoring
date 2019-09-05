@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.16 (TBD)
+
+- TOC href link bugfix
+- Telemetry updates
+
 ## 0.2.15 (August 22st, 2019)
 
 - Xref Bug Fixes and support additional Xref tags.
