@@ -371,6 +371,12 @@
         "fileMatch": "toc.yml",
         "url": "./schema/toc.schema.json"
       }
+    ],
+    "snippets": [
+      {
+        "language": "markdown",
+        "path": "./snippets/snippets.json"
+      }
     ]
   },
   "scripts": {
