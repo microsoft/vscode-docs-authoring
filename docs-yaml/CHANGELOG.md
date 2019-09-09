@@ -2,7 +2,7 @@
 
 ## **0.2.3**
 
-- Telemetry updates
+- Telemetry updates 
 
 ## **0.2.2**
 
