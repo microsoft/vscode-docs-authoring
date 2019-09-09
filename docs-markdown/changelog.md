@@ -1,8 +1,9 @@
 # Change Log
 
-## 0.2.16 (TBD)
+## 0.2.16 (September 6th, 2019)
 
 - TOC href link bugfix
+- TOC attribute bugfix
 - Telemetry updates
 
 ## 0.2.15 (August 22st, 2019)
