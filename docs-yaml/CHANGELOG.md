@@ -7,7 +7,7 @@
 ## **0.2.2**
 
 - Gather basic usage data
-- Remove links in readme 
+- Remove links in readme
 - Build reporting
 
 ## **0.2.1**
