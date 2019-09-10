@@ -4,7 +4,6 @@
 
 - Telemetry updates
 - Another test
-- One more
 
 ## **0.2.2**
 
