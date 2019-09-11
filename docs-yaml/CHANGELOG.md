@@ -1,5 +1,9 @@
 # Change Log
 
+## **0.2.4**
+
+- Fix incorrect linting error
+
 ## **0.2.3**
 
 - Telemetry updates
