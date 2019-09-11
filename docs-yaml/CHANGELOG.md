@@ -1,5 +1,9 @@
 # Change Log
 
+## **0.2.4**
+
+- Bug fix for fuzzy search with templates
+
 ## **0.2.3**
 
 - Telemetry updates
