@@ -45,10 +45,10 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
-        "fuzzysearch": "^1.0.3",
+        "fuse.js": "^3.4.5",
         "js-yaml": "^3.13.1",
-        "web-request": "^1.0.7",
-        "vscode-extension-telemetry": "^0.1.1"
+        "vscode-extension-telemetry": "^0.1.1",
+        "web-request": "^1.0.7"
     },
     "devDependencies": {
         "@types/mocha": "^2.2.32",
