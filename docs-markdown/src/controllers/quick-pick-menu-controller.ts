@@ -7,18 +7,19 @@ import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
 import { applyCleanup } from "./cleanup-controller";
 import { formatCode } from "./code-controller";
+import { insertImage } from "./image-controller";
 import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
-import { Insert, insertImage, insertURL, insertVideo, selectLinkType } from "./media-controller";
+import { Insert, insertURL, insertVideo, selectLinkType } from "./media-controller";
 import { noLocText } from "./no-loc-controller";
 import { previewTopic } from "./preview-controller";
 import { insertRowsAndColumns } from "./row-columns-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
-import { insertExpandableParentNode, insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
 import { applyXref } from "./xref-controller";
+import { insertExpandableParentNode, insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
 
 export function quickPickMenuCommand() {
     const commands = [
