@@ -1,4 +1,4 @@
-[![Build status](https://ceapex.visualstudio.com/Engineering/_apis/build/status/Authoring/docs-yaml%20CI)](https://ceapex.visualstudio.com/Engineering/_build/latest?definitionId=1358&branchName=develop)
+[![Build Status](https://ceapex.visualstudio.com/Engineering/_apis/build/status/Authoring/docs-yaml%20CI?branchName=master)](https://ceapex.visualstudio.com/Engineering/_build/latest?definitionId=1358&branchName=master)
 # Docs YAML Extension
 
 Provides Docs YAML support via [yaml-language-server](https://github.com/redhat-developer/yaml-language-server).
