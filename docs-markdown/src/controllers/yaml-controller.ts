@@ -170,8 +170,28 @@ export function checkForPreviousEntry(options: boolean) {
   }
 
   // case 2: cursor is at the beginning of a line
-  if (cursorPosition == 0) {
-    launchQuickPick(options);
+  // if there is an items scalar at the beginning of any line above, it will result in a build error so abandon command
+  if (cursorPosition == 0 && currentLine > 0) {
+    const totalLines = editor.document.lineCount;
+    let i = currentLine;
+    let itemsIndex: boolean = false;
+    const itemsScalarFirstPosition = /^items:/;
+    for (i = currentLine; i < totalLines; i--) {
+      const lineData = editor.document.lineAt(i);
+      const lineText = lineData.text;
+      if (lineText.match(itemsScalarFirstPosition)) {
+        itemsIndex = true;
+        break;
+      } else {
+        itemsIndex = false
+        continue;
+      }
+    }
+    if (itemsIndex) {
+      window.showErrorMessage(invalidTocEntryPosition);
+    } else {
+      launchQuickPick(options);
+    }
   }
 
   // case 3: ensure that the cursor position lines up with the aligned name scalar above
@@ -182,7 +202,6 @@ export function checkForPreviousEntry(options: boolean) {
     let i = startPosition;
     let nameIndex: boolean = false;
     const nameScalar = /^\s+(-\sname:)/;
-
     for (i = startPosition; i < totalLines; i--) {
       startingCursorPosition = editor.selection.active.character;
       if (i === 0) {
