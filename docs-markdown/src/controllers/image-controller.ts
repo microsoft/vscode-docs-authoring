@@ -84,9 +84,6 @@ async function applyImage() {
     const selectedText = editor.document.getText(selection);
     // if theres no selected text, add xref syntax as <xref:...>
     if (selectedText === "") {
-        // If user has selected text, cancel operation?
-        return;
-    } else {
         // Get images from repo as quickpick items
         // User should be given a list of quickpick items which list images from repo
         // const items: QuickPickItem[] = getFilesFromDirectory();
@@ -105,10 +102,14 @@ async function applyImage() {
             } else {
                 // output image content type
                 image = `:::image type="content" source="${source}" alt-text="${altText}":::`;
+                insertContentToEditor(editor, applyImage.name, image, true);
             }
         }
+    } else {
+        // If user has selected text, cancel operation?
+        return;
+
     }
-    insertContentToEditor(editor, applyImage.name, image, true);
 }
 async function applyIcon() {
     // get editor to see if user has selected text
@@ -122,9 +123,6 @@ async function applyIcon() {
     const selectedText = editor.document.getText(selection);
     // if theres no selected text, add xref syntax as <xref:...>
     if (selectedText === "") {
-        // if user has selected text then exit?
-        return;
-    } else {
         // Get images from repo as quickpick items
         // User should be given a list of quickpick items which list images from repo
         // const items: QuickPickItem[] = getFilesFromDirectory();
@@ -136,9 +134,12 @@ async function applyIcon() {
         } else {
             // output icon image type to editor window
             image = `:::image type="icon" source="${source}" :::`;
+            insertContentToEditor(editor, applyImage.name, image, true);
         }
+    } else {
+        // if user has selected text then exit?
+        return;
     }
-    insertContentToEditor(editor, applyImage.name, image, true);
     return;
 }
 async function applyComplex() {
@@ -152,9 +153,6 @@ async function applyComplex() {
     const selection = editor.selection;
     const selectedText = editor.document.getText(selection);
     if (selectedText === "") {
-        // If user has selected text, cancel operation?
-        return;
-    } else {
         // Get images from repo as quickpick items
         // User should be given a list of quickpick items which list images from repo
         // const items: QuickPickItem[] = getFilesFromDirectory();
@@ -175,12 +173,15 @@ async function applyComplex() {
                 image = `:::image type="complex" source="${source}" alt-text="${altText}":::
 
                 :::image-end:::`;
+                insertContentToEditor(editor, applyImage.name, image, true);
+                // Set editor position to the middle of long description body
+                setCursorPosition(editor, editor.selection.active.line + 1, editor.selection.active.character);
             }
         }
+    } else {
+        // If user has selected text, cancel operation?
+        return;
     }
-    insertContentToEditor(editor, applyImage.name, image, true);
-    // Set editor position to the middle of long description body
-    setCursorPosition(editor, editor.selection.active.line + 1, editor.selection.active.character);
 }
 async function applyLocScope() {
     // get editor, its needed to apply the output to editor window.
@@ -222,11 +223,12 @@ async function applyLocScope() {
                     selected.insert(new Position(wordRange.end.line, wordRange.end.character - 3), ` loc-scope="${product}" `);
                 });
             }
-        } else {
-            // If user has selected text, cancel operation?
-            return;
         }
+    } else {
+        // If user has selected text, cancel operation?
+        return;
     }
+    return;
 }
 export function getFilesShowQuickPick(isArt: any, altText: string) {
     const editor = window.activeTextEditor;
