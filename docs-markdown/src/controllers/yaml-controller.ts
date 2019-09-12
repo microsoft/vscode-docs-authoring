@@ -174,14 +174,14 @@ export function checkForPreviousEntry(options: boolean) {
     launchQuickPick(options);
   }
 
-  // case 3: ensure that the cursor position lines up with the closest items scalar above
+  // case 3: ensure that the cursor position lines up with the aligned name scalar above
   if (cursorPosition >= 1) {
     const startPosition = editor.selection.active.line;
     let startingCursorPosition: number;
     const totalLines = editor.document.lineCount;
     let i = startPosition;
-    let itemsIndex: boolean = false;
-    const itemsScalar = /^\s+items:/;
+    let nameIndex: boolean = false;
+    const nameScalar = /^\s+(-\sname:)/;
 
     for (i = startPosition; i < totalLines; i--) {
       startingCursorPosition = editor.selection.active.character;
@@ -190,18 +190,19 @@ export function checkForPreviousEntry(options: boolean) {
       }
       const lineData = editor.document.lineAt(i);
       const lineText = lineData.text;
-      if (lineText.match(itemsScalar)) {
+      if (lineText.match(nameScalar)) {
         const itemScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
         if (itemScalarPosition === startingCursorPosition) {
-          itemsIndex = true;
+          nameIndex = true;
+          break;
         } else {
-          itemsIndex = false
+          nameIndex = false
+          continue;
         }
-        break;
       }
     }
 
-    if (itemsIndex) {
+    if (nameIndex) {
       launchQuickPick(options);
     } else {
       window.showErrorMessage(invalidTocEntryPosition);
