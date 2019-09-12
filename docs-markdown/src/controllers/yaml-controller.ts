@@ -228,7 +228,6 @@ export function createParentNode() {
   }
   const position = editor.selection.active;
   const cursorPosition = position.character;
-  const attributeSpace = " ";
 
   if (cursorPosition === 0) {
     const parentNodeLineStart = `- name:
@@ -236,15 +235,9 @@ export function createParentNode() {
   - name:
     href:`
     insertContentToEditor(editor, insertTocEntry.name, parentNodeLineStart);
-  }
-  if (cursorPosition > 0) {
-    const currentPosition = editor.selection.active.character;
-    const parentNodeIndented =
-      `- name:
-  ${attributeSpace.repeat(currentPosition)}items:
-  ${attributeSpace.repeat(currentPosition)}- name:
-  ${attributeSpace.repeat(currentPosition + 2)}href:`
-    insertContentToEditor(editor, insertTocEntry.name, parentNodeIndented);
+  } else {
+    window.showErrorMessage(invalidTocEntryPosition);
+    return;
   }
 }
 

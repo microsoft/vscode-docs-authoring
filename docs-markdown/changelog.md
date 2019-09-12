@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.18 (TBD)
+
+- TOC parent node bugfix
+
 ## 0.2.17 (September 9th, 2019)
 
 - TOC href link bugfix
