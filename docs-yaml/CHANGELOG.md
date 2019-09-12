@@ -3,6 +3,7 @@
 ## **0.2.4**
 
 - Bug fix for fuzzy search with templates
+- Fix incorrect linting error
 
 ## **0.2.3**
 
