@@ -155,26 +155,20 @@ export function checkForPreviousEntry(options: boolean) {
   if (!editor) {
     return;
   }
+
+  // position variables
   const position = editor.selection.active;
   const cursorPosition = position.character;
   const currentLine = position.line;
 
-  // case 1: beginning of toc/first line
-  if (currentLine === 0) {
-    if (cursorPosition === 0) {
-      launchQuickPick(options)
-    } else {
-      window.showErrorMessage(invalidTocEntryPosition);
-      return;
-    }
-  }
+  // scalar variables
+  let itemsIndex: boolean = false;
+  let nameIndex: boolean = false;
 
-  // case 2: cursor is at the beginning of a line
-  // if there is an items scalar at the beginning of any line above, it will result in a build error so abandon command
-  if (cursorPosition == 0 && currentLine > 0) {
+  // check 1: opening items scalar above
+  if (currentLine > 0) {
     const totalLines = editor.document.lineCount;
     let i = currentLine;
-    let itemsIndex: boolean = false;
     const itemsScalarFirstPosition = /^items:/;
     for (i = currentLine; i < totalLines; i--) {
       const lineData = editor.document.lineAt(i);
@@ -187,6 +181,63 @@ export function checkForPreviousEntry(options: boolean) {
         continue;
       }
     }
+  }
+
+  // check 2: opening items scalar below
+  if (currentLine === 0) {
+    const totalLines = editor.document.lineCount;
+    let i = currentLine;
+    const itemsScalarFirstPosition = /^items:/;
+    for (i = currentLine; i < totalLines; i++) {
+      const lineData = editor.document.lineAt(i);
+      const lineText = lineData.text;
+      if (lineText.match(itemsScalarFirstPosition)) {
+        itemsIndex = true;
+        break;
+      } else {
+        itemsIndex = false
+        continue;
+      }
+    }
+  }
+
+  // check 3: name scalar position
+  const startPosition = editor.selection.active.line;
+  let startingCursorPosition: number;
+  const totalLines = editor.document.lineCount;
+  let i = startPosition;
+  const nameScalar = /^\s+(-\sname:)/;
+  for (i = startPosition; i < totalLines; i--) {
+    startingCursorPosition = editor.selection.active.character;
+    if (i === 0) {
+      break;
+    }
+    const lineData = editor.document.lineAt(i);
+    const lineText = lineData.text;
+    if (lineText.match(nameScalar)) {
+      const itemScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+      if (itemScalarPosition === startingCursorPosition) {
+        nameIndex = true;
+        break;
+      } else {
+        nameIndex = false
+        continue;
+      }
+    }
+  }
+
+  // case 1: beginning of toc/first line
+  if (currentLine === 0) {
+    if (cursorPosition === 0 && !itemsIndex) {
+      launchQuickPick(options)
+    } else {
+      window.showErrorMessage(invalidTocEntryPosition);
+    }
+  }
+
+  // case 2: cursor is at the beginning of a line
+  // if there is an items scalar at the beginning of any line above, it will result in a build error so abandon command
+  if (cursorPosition == 0 && currentLine > 0) {
     if (itemsIndex) {
       window.showErrorMessage(invalidTocEntryPosition);
     } else {
@@ -196,31 +247,6 @@ export function checkForPreviousEntry(options: boolean) {
 
   // case 3: ensure that the cursor position lines up with the aligned name scalar above
   if (cursorPosition >= 1) {
-    const startPosition = editor.selection.active.line;
-    let startingCursorPosition: number;
-    const totalLines = editor.document.lineCount;
-    let i = startPosition;
-    let nameIndex: boolean = false;
-    const nameScalar = /^\s+(-\sname:)/;
-    for (i = startPosition; i < totalLines; i--) {
-      startingCursorPosition = editor.selection.active.character;
-      if (i === 0) {
-        break;
-      }
-      const lineData = editor.document.lineAt(i);
-      const lineText = lineData.text;
-      if (lineText.match(nameScalar)) {
-        const itemScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
-        if (itemScalarPosition === startingCursorPosition) {
-          nameIndex = true;
-          break;
-        } else {
-          nameIndex = false
-          continue;
-        }
-      }
-    }
-
     if (nameIndex) {
       launchQuickPick(options);
     } else {
