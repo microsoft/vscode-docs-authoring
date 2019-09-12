@@ -169,55 +169,43 @@ export function checkForPreviousEntry(options: boolean) {
     }
   }
 
-  const previousLine = currentLine - 1;
-  const previousLineData = editor.document.lineAt(previousLine);
-  const nameScalar = `- name:`
-  const itemsScalar = `items:`
-  const hrefScalar = `href:`
-
-  // case 2: name scalar on previous line
-  if (previousLineData.text.includes(nameScalar)) {
-    // if previous line starts with nameScalar check for cursor.  if equal, show quickpick.  if not, show error.
-    if (previousLineData.firstNonWhitespaceCharacterIndex === cursorPosition) {
-      launchQuickPick(options)
-    } else {
-      window.showErrorMessage(invalidTocEntryPosition);
-      return;
-    }
+  // case 2: cursor is at the beginning of a line
+  if (cursorPosition == 0) {
+    launchQuickPick(options);
   }
 
-  // case 2: items scalar on previous line
-  if (previousLineData.text.includes(itemsScalar)) {
-    // if nameLine starts with itemsScalar check for cursor.  if equal, show quickpick.  if not, show error.
-    if (previousLineData.firstNonWhitespaceCharacterIndex === cursorPosition) {
-      launchQuickPick(options)
-    } else {
-      window.showErrorMessage(invalidTocEntryPosition);
-      return;
-    }
-  }
+  // case 3: ensure that the cursor position lines up with the closest items scalar above
+  if (cursorPosition >= 1) {
+    const startPosition = editor.selection.active.line;
+    let startingCursorPosition: number;
+    const totalLines = editor.document.lineCount;
+    let i = startPosition;
+    let itemsIndex: boolean = false;
+    const itemsScalar = /^\s+items:/;
 
-  // case 3: href scalar on previous line
-  if (previousLineData.text.includes(hrefScalar)) {
-    // get content for line above href
-    const nameLine = currentLine - 2;
-    const nameLineData = editor.document.lineAt(nameLine);
-    // if nameLine starts with nameScalar check for cursor.  if equal, show quickpick.  if not, show error.
-    if (nameLineData.text.includes(nameScalar)) {
-      if (nameLineData.firstNonWhitespaceCharacterIndex === cursorPosition) {
-        launchQuickPick(options);
-      } else {
-        window.showErrorMessage(invalidTocEntryPosition);
-        return;
+    for (i = startPosition; i < totalLines; i--) {
+      startingCursorPosition = editor.selection.active.character;
+      if (i === 0) {
+        break;
+      }
+      const lineData = editor.document.lineAt(i);
+      const lineText = lineData.text;
+      if (lineText.match(itemsScalar)) {
+        const itemScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+        if (itemScalarPosition === startingCursorPosition) {
+          itemsIndex = true;
+        } else {
+          itemsIndex = false
+        }
+        break;
       }
     }
-  }
 
-  // case 4: blank line
-  if (previousLineData.isEmptyOrWhitespace) {
-    // to-do: check with pm for this scenario
-    showStatusMessage(`No previous entry and not at the top of the toc.`);
-    return;
+    if (itemsIndex) {
+      launchQuickPick(options);
+    } else {
+      window.showErrorMessage(invalidTocEntryPosition);
+    }
   }
 }
 
