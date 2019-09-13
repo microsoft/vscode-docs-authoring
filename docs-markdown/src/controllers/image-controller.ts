@@ -89,8 +89,7 @@ export async function applyImage() {
     if (selectedText === "") {
         // Get images from repo as quickpick items
         // User should be given a list of quickpick items which list images from repo
-        // const items: QuickPickItem[] = getFilesFromDirectory();
-        const items: QuickPickItem[] = [];
+        const items: QuickPickItem[] = getFilesFromDirectory(editor);
         // allow user to select source items from quickpick
         const source = await window.showQuickPick(items, { placeHolder: "Select Image from repo" });
         if (!source) {
@@ -233,19 +232,12 @@ export async function applyLocScope() {
     }
     return;
 }
-export function getFilesShowQuickPick(isArt: any, altText: string) {
-    const editor = window.activeTextEditor;
-    if (!editor) {
-        return;
-    }
-    const selection = editor.selection;
-    const folderPath = workspace.rootPath;
-    let selectedText = editor.document.getText(selection);
+export function getFilesForQuickPick() {
 
-    const activeFileDir = path.dirname(editor.document.fileName);
+    const folderPath = workspace.rootPath;
 
     // recursively get all the files from the root folder
-    dir.files(folderPath, (err: any, files: any) => {
+    return dir.files(folderPath, (err: any, files: any) => {
         if (err) {
             window.showErrorMessage(err);
             throw err;
@@ -254,73 +246,12 @@ export function getFilesShowQuickPick(isArt: any, altText: string) {
         const items: QuickPickItem[] = [];
         files.sort();
 
-        if (isArt) {
 
-            files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
-                items.push({ label: path.basename(file), description: path.dirname(file) });
-
-            });
-        } else {
-            files.filter((file: any) => markdownExtensionFilter.indexOf(path.extname(file.toLowerCase()))
-                !== -1).forEach((file: any) => {
-                    items.push({ label: path.basename(file), description: path.dirname(file) });
-                });
-        }
-
-        // show the quick pick menu
-        const selectionPick = window.showQuickPick(items);
-        selectionPick.then((qpSelection) => {
-            if (!qpSelection) {
-                return;
-            } else {
-                let result: any;
-                const altTextFileName = qpSelection.label;
-                // Gets the H1 content as default name if unselected text. Will filter undefinition H1, non-MD file.
-                if (!isArt && selectedText === "") {
-                    // gets the content for chosen file with utf-8 format
-                    const fullPath = path.join(qpSelection.description, qpSelection.label);
-                    let content = fs.readFileSync(fullPath, "utf8");
-                    // Separation yaml.
-                    const yamlMatch = content.match(yamlTextRegex);
-                    if (yamlMatch != null) {
-                        content = yamlMatch[2];
-                    }
-                    content = "\n" + content;
-                    const match = content.match(h1TextRegex);
-                    if (match != null) {
-                        selectedText = match[2].trim();
-                    }
-                }
-
-                // Construct and write out links
-                if (isArt && altText) {
-                    if (altText.length > 70) {
-                        window.showWarningMessage("Alt text exceeds 70 characters!");
-                    } else {
-                        result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
-                            (qpSelection.description, qpSelection.label).split("\\").join("\\\\")), altText);
-                    }
-
-                } else if (isArt && altText === "") {
-                    result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
-                        (qpSelection.description, qpSelection.label).split("\\").join("\\\\")), altTextFileName);
-                } else if (!isArt) {
-                    result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
-                        (qpSelection.description, qpSelection.label).split("\\").join("\\\\")), selectedText);
-                }
-
-                if (os.type() === "Darwin") {
-                    result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
-                        (qpSelection.description, qpSelection.label).split("//").join("//")), selectedText);
-                }
-
-                // Insert content into topic
-                insertContentToEditor(editor, Insert.name, result, true);
-                if (!isArt) {
-                    setCursorPosition(editor, selection.start.line, selection.start.character + result.length);
-                }
-            }
+        files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+            items.push({ label: path.basename(file), description: path.dirname(file) });
         });
+
+        return items;
     });
 }
 
@@ -342,30 +273,18 @@ export function imageCompletionProvider() {
     return completionItems;
 }
 
-/**
- * Inserts a link or art.
- * @param {boolean} isArt - if true inserts art, if false inserts link.
- */
-export function Insert(isArt: any) {
+export function getFilesFromDirectory(editor: any) {
+    let actionType: string = "Get File for Image";
 
-    let actionType: string = Insert.name;
-
-    const editor = window.activeTextEditor;
     if (!editor) {
-        return;
+        let items: QuickPickItem[] = []
+        return items.push({ label: "No Images could be found", description: "" });
     } else {
-        const selectedText = editor.document.getText(editor.selection);
 
         // determines the name to set in the ValidEditor check
-        if (isArt) {
-            actionType = "Art";
-            commandOption = "art";
-            sendTelemetryData(telemetryCommandMedia, commandOption);
-        } else {
-            actionType = "Link";
-            commandOption = "internal";
-            sendTelemetryData(telemetryCommandLink, commandOption);
-        }
+        actionType = "Art";
+        commandOption = "art";
+        sendTelemetryData(telemetryCommandMedia, commandOption);
 
         // checks for valid environment
         if (!isValidEditor(editor, false, actionType)) {
@@ -395,23 +314,6 @@ export function Insert(isArt: any) {
                 " is not saved.  Cannot accurately resolve path to create link.");
             return;
         }
-
-        // Determine if there is selected text.  If selected text, no action.
-        if (isArt && selectedText === "") {
-            window.showInputBox({
-                placeHolder: "Add alt text (up to 70 characters)",
-            }).then((val) => {
-                if (!val) {
-                    getFilesShowQuickPick(isArt, "");
-                    window.showInformationMessage("No alt entered or selected.  File name will be used.");
-                } else if (val.length < 70) {
-                    getFilesShowQuickPick(isArt, val);
-                } else if (val.length > 70) {
-                    window.showWarningMessage("Alt text exceeds 70 characters!");
-                }
-            });
-        } else {
-            getFilesShowQuickPick(isArt, selectedText);
-        }
+        return getFilesForQuickPick();
     }
 }
