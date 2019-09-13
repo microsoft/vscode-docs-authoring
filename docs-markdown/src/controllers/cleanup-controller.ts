@@ -128,7 +128,7 @@ function runAll(workspacePath: string, progress: any, resolve: any) {
                 postError(err);
             }
             let percentComplete = 0;
-            const promises: Array<Promise<{} | void>> = [];
+            const promises: Array<Promise<any>> = [];
             files.map((file, index) => {
                 if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
                     promises.push(new Promise((resolve, reject) => {
@@ -259,7 +259,7 @@ function handleSingleValuedMetadata(workspacePath: string, progress: any, resolv
                 postError(err);
             }
             let percentComplete = 0;
-            const promises: Array<Promise<{} | void>> = [];
+            const promises: Array<Promise<any>> = [];
             files.map((file, index) => {
                 if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
                     promises.push(new Promise((resolve, reject) => {
@@ -484,7 +484,7 @@ function microsoftLinks(workspacePath: string, progress: any, resolve: any) {
                 postError(err);
             }
             let percentComplete = 0;
-            const promises: Array<Promise<{} | void>> = [];
+            const promises: Array<Promise<any>> = [];
             files.map((file, index) => {
                 if (file.endsWith(".md")) {
                     promises.push(new Promise((resolve, reject) => {
@@ -579,7 +579,7 @@ function capitalizationOfMetadata(workspacePath: string, progress: any, resolve:
                 postError(err);
             }
             let percentComplete = 0;
-            const promises: Array<Promise<{} | void>> = [];
+            const promises: Array<Promise<any>> = [];
             files.map((file, index) => {
                 if (file.endsWith(".md")) {
                     promises.push(new Promise((resolve) => {

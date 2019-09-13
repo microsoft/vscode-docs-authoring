@@ -11,6 +11,7 @@ import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand } from "./controllers/cleanup-controller";
 import { codeFormattingCommand } from "./controllers/code-controller";
+import { insertImageCommand } from "./controllers/image-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
 import { italicFormattingCommand } from "./controllers/italic-controller";
 import { addFrontMatterTitle } from "./controllers/lint-config-controller";
@@ -78,6 +79,7 @@ export function activate(context: ExtensionContext) {
     yamlCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     noLocTextCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     insertRowsAndColumnsCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    insertImageCommand().forEach((cmd) => AuthoringCommands.push(cmd));
 
     // Autocomplete
     context.subscriptions.push(setupAutoComplete());

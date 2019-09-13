@@ -1,9 +1,9 @@
 
-import { QuickPickItem, QuickPickOptions, window, workspace, Position, TextEditor, CompletionItem } from "vscode";
-import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData, setCursorPosition } from "../helper/common";
+import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, workspace } from "vscode";
+import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData, setCursorPosition } from "../helper/common";
 
-import { internalLinkBuilder } from "../helper/utility";
 import Axios from "axios";
+import { internalLinkBuilder } from "../helper/utility";
 
 const path = require("path");
 const dir = require("node-dir");
@@ -23,6 +23,9 @@ let commandOption: string;
 export function insertImageCommand() {
     const commands = [
         { command: insertImage.name, callback: insertImage },
+        { command: applyImage.name, callback: applyImage },
+        { command: applyIcon.name, callback: applyIcon },
+        { command: applyComplex.name, callback: applyComplex },
     ];
     return commands;
 }
@@ -72,7 +75,7 @@ export function insertImage() {
     });
 }
 
-async function applyImage() {
+export async function applyImage() {
     // get editor, its needed to apply the output to editor window.
     const editor = window.activeTextEditor;
     if (!editor) {
@@ -111,7 +114,7 @@ async function applyImage() {
 
     }
 }
-async function applyIcon() {
+export async function applyIcon() {
     // get editor to see if user has selected text
     const editor = window.activeTextEditor;
     if (!editor) {
@@ -142,7 +145,7 @@ async function applyIcon() {
     }
     return;
 }
-async function applyComplex() {
+export async function applyComplex() {
     // get editor, its needed to apply the output to editor window.
     const editor = window.activeTextEditor;
     if (!editor) {
@@ -183,7 +186,7 @@ async function applyComplex() {
         return;
     }
 }
-async function applyLocScope() {
+export async function applyLocScope() {
     // get editor, its needed to apply the output to editor window.
     const editor = window.activeTextEditor;
     if (!editor) {
