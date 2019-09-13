@@ -171,13 +171,16 @@ export function checkForPreviousEntry(options: boolean) {
     let i = currentLine;
     const itemsScalarFirstPosition = /^items:/;
     for (i = currentLine; i < totalLines; i--) {
+      if (i === 0) {
+        break;
+      }
       const lineData = editor.document.lineAt(i);
       const lineText = lineData.text;
       if (lineText.match(itemsScalarFirstPosition)) {
         itemsIndex = true;
         break;
       } else {
-        itemsIndex = false
+        itemsIndex = false;
         continue;
       }
     }
@@ -195,13 +198,23 @@ export function checkForPreviousEntry(options: boolean) {
         itemsIndex = true;
         break;
       } else {
-        itemsIndex = false
+        itemsIndex = false;
         continue;
       }
     }
   }
 
-  // check 3: name scalar position
+  // check 3: Items on first line
+  const lineData = editor.document.lineAt(0);
+  const lineText = lineData.text;
+  const itemsScalarFirstPosition = /^items:/;
+  if (lineText.match(itemsScalarFirstPosition)) {
+    itemsIndex = true;
+  } else {
+    itemsIndex = false;
+  }
+
+  // check 4: name scalar position
   const startPosition = editor.selection.active.line;
   let startingCursorPosition: number;
   const totalLines = editor.document.lineCount;
@@ -215,21 +228,23 @@ export function checkForPreviousEntry(options: boolean) {
     const lineData = editor.document.lineAt(i);
     const lineText = lineData.text;
     if (lineText.match(nameScalar)) {
-      const itemScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
-      if (itemScalarPosition === startingCursorPosition) {
+      const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+      if (nameScalarPosition === startingCursorPosition) {
         nameIndex = true;
         break;
       } else {
-        nameIndex = false
+        nameIndex = false;
         continue;
       }
     }
   }
 
+  console.log(`nameIndex: ${nameIndex}`);
+  console.log(`itemsIndex: ${itemsIndex}`);
   // case 1: beginning of toc/first line
   if (currentLine === 0) {
     if (cursorPosition === 0 && !itemsIndex) {
-      launchQuickPick(options)
+      launchQuickPick(options);
     } else {
       window.showErrorMessage(invalidTocEntryPosition);
     }
@@ -237,7 +252,7 @@ export function checkForPreviousEntry(options: boolean) {
 
   // case 2: cursor is at the beginning of a line
   // if there is an items scalar at the beginning of any line above, it will result in a build error so abandon command
-  if (cursorPosition == 0 && currentLine > 0) {
+  if (cursorPosition === 0 && currentLine > 0) {
     if (itemsIndex) {
       window.showErrorMessage(invalidTocEntryPosition);
     } else {
@@ -245,15 +260,36 @@ export function checkForPreviousEntry(options: boolean) {
     }
   }
 
-  // case 3: ensure that the cursor position lines up with the aligned name scalar above
-  if (cursorPosition >= 1) {
-    if (nameIndex) {
+  // case 3: cursor is at the beginning of a line
+  // if there is an items scalar at the beginning of any line above, it will result in a build error so abandon command
+  if (currentLine === 1 && itemsIndex) {
+    if (cursorPosition === 2) {
       launchQuickPick(options);
     } else {
       window.showErrorMessage(invalidTocEntryPosition);
     }
   }
+
+  // case 3: cursor is at the beginning of a line
+  // if there is an items scalar at the beginning of any line above, it will result in a build error so abandon command
+  if (currentLine > 1 && itemsIndex) {
+    launchQuickPick(options);
+  } else {
+    window.showErrorMessage(invalidTocEntryPosition);
+  }
+
+  // case 4: if no nameIndex or noItem index throw error
+  if (!nameIndex && !itemsIndex) {
+    window.showErrorMessage(invalidTocEntryPosition);
+  }
 }
+
+// case 3: ensure that the cursor position lines up with the aligned name scalar above
+/* if (cursorPosition >= 1 && nameIndex) {
+  launchQuickPick(options);
+} else {
+  window.showErrorMessage(invalidTocEntryPosition);
+} */
 
 export function createParentNode() {
   const editor = window.activeTextEditor;
