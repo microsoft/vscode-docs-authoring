@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.18 (TBD)
+## 0.2.18 (September 13th, 2019)
 
 - TOC parent node bugfix
 
