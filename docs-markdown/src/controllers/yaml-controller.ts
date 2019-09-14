@@ -44,7 +44,7 @@ export function showQuickPick(options: boolean) {
     folderPath = workspace.workspaceFolders[0].uri.fsPath;
   }
 
-  // tslint:disable-next-line: no-shadowed-variable
+  // tslint:disable: no-shadowed-variable
   files(folderPath, (err: any, files: any) => {
     if (err) {
       window.showErrorMessage(err);
@@ -163,106 +163,26 @@ export function checkForPreviousEntry(options: boolean) {
 
   // scalar variables
   let itemsIndex: boolean = false;
+  let itemsIndexFirstPosition: boolean = false;
   let nameIndex: boolean = false;
 
-  // check 1: opening items scalar above
-  if (currentLine > 0) {
-    const totalLines = editor.document.lineCount;
-    let i = currentLine;
-    const itemsScalarFirstPosition = /^items:/;
-    for (i = currentLine; i < totalLines; i--) {
-      if (i === 0) {
-        break;
-      }
-      const lineData = editor.document.lineAt(i);
-      const lineText = lineData.text;
-      if (lineText.match(itemsScalarFirstPosition)) {
-        itemsIndex = true;
-        break;
-      } else {
-        itemsIndex = false;
-        continue;
-      }
-    }
-  }
+  // scalar regex
+  const itemsScalarFirstPosition = /^items:/;
+  const itemsScalar = /^\s+items:/;
+  const nameScalarFirstPosition = /^-\sname:/;
+  const nameScalar = /^\s+(-\sname:)/;
 
-  // check 2: opening items scalar below
-  if (currentLine === 0) {
-    const totalLines = editor.document.lineCount;
-    let i = currentLine;
-    const itemsScalarFirstPosition = /^items:/;
-    for (i = currentLine; i < totalLines; i++) {
-      const lineData = editor.document.lineAt(i);
-      const lineText = lineData.text;
-      if (lineText.match(itemsScalarFirstPosition)) {
-        itemsIndex = true;
-        break;
-      } else {
-        itemsIndex = false;
-        continue;
-      }
-    }
-  }
-
-  // check 3: Items on first line
+  // check 1: opening items node
   const lineData = editor.document.lineAt(0);
   const lineText = lineData.text;
-  const itemsScalarFirstPosition = /^items:/;
   if (lineText.match(itemsScalarFirstPosition)) {
-    itemsIndex = true;
+    itemsIndexFirstPosition = true;
   } else {
-    itemsIndex = false;
+    itemsIndexFirstPosition = false;
   }
 
-  // check 4: name scalar position
-  const startPosition = editor.selection.active.line;
-  let startingCursorPosition: number;
-  const totalLines = editor.document.lineCount;
-  let i = startPosition;
-  const nameScalar = /^\s+(-\sname:)/;
-  for (i = startPosition; i < totalLines; i--) {
-    startingCursorPosition = editor.selection.active.character;
-    if (i === 0) {
-      break;
-    }
-    const lineData = editor.document.lineAt(i);
-    const lineText = lineData.text;
-    if (lineText.match(nameScalar)) {
-      const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
-      if (nameScalarPosition === startingCursorPosition) {
-        nameIndex = true;
-        break;
-      } else {
-        nameIndex = false;
-        continue;
-      }
-    }
-  }
-
-  console.log(`nameIndex: ${nameIndex}`);
-  console.log(`itemsIndex: ${itemsIndex}`);
-  // case 1: beginning of toc/first line
-  if (currentLine === 0) {
-    if (cursorPosition === 0 && !itemsIndex) {
-      launchQuickPick(options);
-    } else {
-      window.showErrorMessage(invalidTocEntryPosition);
-    }
-  }
-
-  // case 2: cursor is at the beginning of a line
-  // if there is an items scalar at the beginning of any line above, it will result in a build error so abandon command
-  if (cursorPosition === 0 && currentLine > 0) {
-    if (itemsIndex) {
-      window.showErrorMessage(invalidTocEntryPosition);
-    } else {
-      launchQuickPick(options);
-    }
-  }
-
-  // case 3: cursor is at the beginning of a line
-  // if there is an items scalar at the beginning of any line above, it will result in a build error so abandon command
-  if (currentLine === 1 && itemsIndex) {
+  // case 1: opening items alignment
+  if (currentLine === 1 && itemsScalarFirstPosition) {
     if (cursorPosition === 2) {
       launchQuickPick(options);
     } else {
@@ -270,26 +190,94 @@ export function checkForPreviousEntry(options: boolean) {
     }
   }
 
-  // case 3: cursor is at the beginning of a line
-  // if there is an items scalar at the beginning of any line above, it will result in a build error so abandon command
-  if (currentLine > 1 && itemsIndex) {
-    launchQuickPick(options);
+  // check 2: items node
+  if (currentLine > 0) {
+    const totalLines = editor.document.lineCount;
+    const startingCursorPosition = editor.selection.active.character;
+    let i = currentLine;
+    for (i = currentLine; i < totalLines; i--) {
+      if (i === 0) {
+        break;
+      }
+      const lineData = editor.document.lineAt(i);
+      const lineText = lineData.text;
+      if (lineText.match(itemsScalar)) {
+        const itemScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+        if (startingCursorPosition === itemScalarPosition + 2) {
+          itemsIndex = true;
+          break;
+        } else {
+          itemsIndex = false;
+          continue;
+        }
+      }
+    }
+  }
+
+  // check 3: name scalar
+  if (currentLine > 0) {
+    const startPosition = editor.selection.active.line;
+    let startingCursorPosition: number;
+    const totalLines = editor.document.lineCount;
+    let i = startPosition;
+    for (i = startPosition; i < totalLines; i--) {
+      startingCursorPosition = editor.selection.active.character;
+      if (i === 0) {
+        break;
+      }
+      const lineData = editor.document.lineAt(i);
+      const lineText = lineData.text;
+      if (lineText.match(nameScalar)) {
+        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+        if (nameScalarPosition === startingCursorPosition) {
+          nameIndex = true;
+          break;
+        } else {
+          nameIndex = false;
+          continue;
+        }
+      }
+    }
+  }
+
+  // check 3: name scalar in first position
+  if (currentLine > 0) {
+    const startPosition = editor.selection.active.line;
+    let startingCursorPosition: number;
+    const totalLines = editor.document.lineCount;
+    let i = startPosition;
+    for (i = startPosition; i < totalLines; i--) {
+      startingCursorPosition = editor.selection.active.character;
+      const lineData = editor.document.lineAt(i);
+      const lineText = lineData.text;
+      if (lineText.match(nameScalarFirstPosition)) {
+        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+        if (nameScalarPosition === startingCursorPosition) {
+          nameIndex = true;
+          break;
+        } else {
+          nameIndex = false;
+          continue;
+        }
+      }
+    }
+  }
+
+  // case 2: scalar alignment
+  if (currentLine > 1) {
+    if (itemsIndex) {
+      launchQuickPick(options);
+    } else if (nameIndex) {
+      launchQuickPick(options);
+    } else {
+      window.showErrorMessage(invalidTocEntryPosition);
+    }
+  }
+  /*   launchQuickPick(options);
   } else {
     window.showErrorMessage(invalidTocEntryPosition);
-  }
-
-  // case 4: if no nameIndex or noItem index throw error
-  if (!nameIndex && !itemsIndex) {
-    window.showErrorMessage(invalidTocEntryPosition);
-  }
+  } */
 }
-
-// case 3: ensure that the cursor position lines up with the aligned name scalar above
-/* if (cursorPosition >= 1 && nameIndex) {
-  launchQuickPick(options);
-} else {
-  window.showErrorMessage(invalidTocEntryPosition);
-} */
 
 export function createParentNode() {
   const editor = window.activeTextEditor;
