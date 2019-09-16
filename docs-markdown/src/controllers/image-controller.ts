@@ -3,16 +3,12 @@ import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, work
 import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData, setCursorPosition } from "../helper/common";
 
 import Axios from "axios";
-import { internalLinkBuilder } from "../helper/utility";
 
 const path = require("path");
 const dir = require("node-dir");
-const os = require("os");
-const fs = require("fs");
 const telemetryCommandMedia: string = "insertMedia";
 const telemetryCommandLink: string = "insertLink";
 const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp"];
-const markdownExtensionFilter = [".md"];
 export const h1TextRegex = /\n {0,3}(#{1,6})(.*)/;
 export const headingTextRegex = /^(#+)[\s](.*)[\r]?[\n]/gm;
 export const yamlTextRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
