@@ -144,13 +144,12 @@ export function markdownQuickPick() {
     );
 
     if (activeTextDocument) {
-        const activeFilePath = activeTextDocument.document.fileName;
-        fileExtension = detectFileExtension(activeFilePath);
-        switch (fileExtension) {
-            case ".md":
+        const activeDocumentLanguage = activeTextDocument.document.languageId;
+        switch (activeDocumentLanguage) {
+            case "markdown":
                 items = markdownItems;
                 break;
-            case ".yml":
+            case "yaml":
                 items = yamlItems;
                 break;
         }
