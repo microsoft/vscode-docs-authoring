@@ -182,7 +182,7 @@ export function checkForPreviousEntry(options: boolean) {
   }
 
   // case 1: opening items alignment
-  if (currentLine === 1 && itemsScalarFirstPosition) {
+  if (currentLine === 1 && itemsIndexFirstPosition) {
     if (cursorPosition === 2) {
       launchQuickPick(options);
     } else {
