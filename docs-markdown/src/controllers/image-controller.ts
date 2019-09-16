@@ -313,18 +313,17 @@ export async function applyLocScope() {
             // you will need auth token to call list
             const response = await Axios.get("https://docs.microsoft.com/api/metadata/allowlists")
             // get products from response
-            const products = Object.keys(response.data)
-                .filter(x => x.startsWith("list:ms.prod"))
-
-            // push the response products into the list of quickpicks.
-            products.map((item: any) => {
-                const set = item.split(":");
-                if (set.length > 2) {
-                    items.push({
-                        label: set[2],
-                    });
-                }
-            });
+            Object.keys(response.data)
+                .filter((x) => x.startsWith("list:ms.prod"))
+                .map((item: string) => {
+                    const set = item.split(":");
+                    if (set.length > 2) {
+                        // push the response products into the list of quickpicks.
+                        items.push({
+                            label: set[2],
+                        });
+                    }
+                });
             // show quickpick to user for products list.
             const product = await window.showQuickPick(items, { placeHolder: "Select from product list" });
             if (!product) {
@@ -333,7 +332,7 @@ export async function applyLocScope() {
             } else {
                 // insert loc-sope into editor
                 editor.edit((selected) => {
-                    selected.insert(new Position(wordRange.end.line, wordRange.end.character - 3), ` loc-scope="${product.label}" `);
+                    selected.insert(new Position(wordRange.end.line, wordRange.end.character - 3), ` loc-scope="${product.label}"`);
                 });
             }
         }
