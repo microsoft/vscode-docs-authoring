@@ -240,7 +240,7 @@ export function checkForPreviousEntry(options: boolean) {
     }
   }
 
-  // check 3: name scalar in first position
+  // check 4: name scalar in first position
   if (currentLine > 0) {
     const startPosition = editor.selection.active.line;
     let startingCursorPosition: number;
@@ -248,6 +248,9 @@ export function checkForPreviousEntry(options: boolean) {
     let i = startPosition;
     for (i = startPosition; i < totalLines; i--) {
       startingCursorPosition = editor.selection.active.character;
+      if (i === 0) {
+        break;
+      }
       const lineData = editor.document.lineAt(i);
       const lineText = lineData.text;
       if (lineText.match(nameScalarFirstPosition)) {
@@ -273,10 +276,15 @@ export function checkForPreviousEntry(options: boolean) {
       window.showErrorMessage(invalidTocEntryPosition);
     }
   }
-  /*   launchQuickPick(options);
-  } else {
-    window.showErrorMessage(invalidTocEntryPosition);
-  } */
+
+  // case 3: beginning of toc/first line
+  if (currentLine === 0) {
+    if (cursorPosition === 0) {
+      launchQuickPick(options);
+    } else {
+      window.showErrorMessage(invalidTocEntryPosition);
+    }
+  }
 }
 
 export function createParentNode() {
