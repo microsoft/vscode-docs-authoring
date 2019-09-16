@@ -26,6 +26,7 @@ export function insertImageCommand() {
         { command: applyImage.name, callback: applyImage },
         { command: applyIcon.name, callback: applyIcon },
         { command: applyComplex.name, callback: applyComplex },
+        { command: applyLocScope.name, callback: applyLocScope },
     ];
     return commands;
 }
@@ -87,31 +88,91 @@ export async function applyImage() {
     const selectedText = editor.document.getText(selection);
     // if theres no selected text, add xref syntax as <xref:...>
     if (selectedText === "") {
-        // Get images from repo as quickpick items
-        // User should be given a list of quickpick items which list images from repo
-        const items: QuickPickItem[] = getFilesFromDirectory(editor);
-        // allow user to select source items from quickpick
-        const source = await window.showQuickPick(items, { placeHolder: "Select Image from repo" });
-        if (!source) {
-            // if user did not select source image then exit.
-            return;
-        } else {
-            // Ask user input for alt text
-            const altText: string | undefined = await window.showInputBox({ placeHolder: "Enter alt-text" });
-            if (!altText) {
-                // if user did not enter any alt text, then exit.
-                return;
-            } else {
-                // output image content type
-                image = `:::image type="content" source="${source}" alt-text="${altText}":::`;
-                insertContentToEditor(editor, applyImage.name, image, true);
-            }
+
+        if (checkEditor(editor)) {
+            // Get images from repo as quickpick items
+            // User should be given a list of quickpick items which list images from repo
+            const folderPath = workspace.rootPath;
+
+            // recursively get all the files from the root folder
+            dir.files(folderPath, async (err: any, files: any) => {
+                if (err) {
+                    window.showErrorMessage(err);
+                }
+
+                const items: QuickPickItem[] = [];
+                files.sort();
+
+                files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+                    items.push({ label: path.basename(file), description: path.dirname(file) });
+                });
+
+                // allow user to select source items from quickpick
+                const source = await window.showQuickPick(items, { placeHolder: "Select Image from repo" });
+                if (!source) {
+                    // if user did not select source image then exit.
+                    return;
+                } else {
+                    const activeFileDir = path.dirname(editor.document.fileName);
+
+                    const sourcePath = path.relative(activeFileDir, path.join
+                        (source.description, source.label).split("//").join("//"))
+                        .replace(/\\/g, "/");
+
+                    // Ask user input for alt text
+                    let altText: string | undefined = await window.showInputBox({ placeHolder: "Enter alt-text" });
+                    if (!altText) {
+                        altText = "";
+                    }
+                    // output image content type
+                    image = `:::image type="content" source="${sourcePath}" alt-text="${altText}":::`;
+                    insertContentToEditor(editor, applyImage.name, image, true);
+                }
+            });
         }
     } else {
         // If user has selected text, cancel operation?
         return;
-
     }
+}
+function checkEditor(editor: any) {
+    let actionType: string = "Get File for Image";
+
+    // determines the name to set in the ValidEditor check
+    actionType = "Art";
+    commandOption = "art";
+    sendTelemetryData(telemetryCommandMedia, commandOption);
+
+    // checks for valid environment
+    if (!isValidEditor(editor, false, actionType)) {
+        return;
+    }
+
+    if (!isMarkdownFileCheck(editor, false)) {
+        return;
+    }
+
+    if (!hasValidWorkSpaceRootPath(telemetryCommandLink)) {
+        return;
+    }
+
+    // The active file should be used as the origin for relative links.
+    // The path is split so the file type is not included when resolving the path.
+    const activeFileName = editor.document.fileName;
+    const pathDelimited = editor.document.fileName.split(".");
+    const activeFilePath = pathDelimited[0];
+
+    // Check to see if the active file has been saved.  If it has not been saved, warn the user.
+    // The user will still be allowed to add a link but it the relative path will not be resolved.
+    const fileExists = require("file-exists");
+
+    if (!fileExists(activeFileName)) {
+        window.showWarningMessage(activeFilePath +
+            " is not saved.  Cannot accurately resolve path to create link.");
+        return;
+    }
+
+    return true;
 }
 export async function applyIcon() {
     // get editor to see if user has selected text
@@ -125,18 +186,41 @@ export async function applyIcon() {
     const selectedText = editor.document.getText(selection);
     // if theres no selected text, add xref syntax as <xref:...>
     if (selectedText === "") {
-        // Get images from repo as quickpick items
-        // User should be given a list of quickpick items which list images from repo
-        // const items: QuickPickItem[] = getFilesFromDirectory();
-        const items: QuickPickItem[] = [];
-        // allow user to select source items from quickpick
-        const source = await window.showQuickPick(items, { placeHolder: "Select Image from repo" });
-        if (!source) {
-            return;
-        } else {
-            // output icon image type to editor window
-            image = `:::image type="icon" source="${source}" :::`;
-            insertContentToEditor(editor, applyImage.name, image, true);
+        if (checkEditor(editor)) {
+            // Get images from repo as quickpick items
+            // User should be given a list of quickpick items which list images from repo
+            const folderPath = workspace.rootPath;
+
+            // recursively get all the files from the root folder
+            dir.files(folderPath, async (err: any, files: any) => {
+                if (err) {
+                    window.showErrorMessage(err);
+                }
+
+                const items: QuickPickItem[] = [];
+                files.sort();
+
+                files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+                    items.push({ label: path.basename(file), description: path.dirname(file) });
+                });
+
+                // allow user to select source items from quickpick
+                const source = await window.showQuickPick(items, { placeHolder: "Select Image from repo" });
+                if (!source) {
+                    // if user did not select source image then exit.
+                    return;
+                } else {
+                    const activeFileDir = path.dirname(editor.document.fileName);
+
+                    const sourcePath = path.relative(activeFileDir, path.join
+                        (source.description, source.label).split("//").join("//"))
+                        .replace(/\\/g, "/");
+
+                    // output image content type
+                    image = `:::image type="icon" source="${sourcePath}" :::`;
+                    insertContentToEditor(editor, applyImage.name, image, true);
+                }
+            });
         }
     } else {
         // if user has selected text then exit?
@@ -155,30 +239,52 @@ export async function applyComplex() {
     const selection = editor.selection;
     const selectedText = editor.document.getText(selection);
     if (selectedText === "") {
-        // Get images from repo as quickpick items
-        // User should be given a list of quickpick items which list images from repo
-        // const items: QuickPickItem[] = getFilesFromDirectory();
-        const items: QuickPickItem[] = [];
-        // allow user to select source items from quickpick
-        const source = await window.showQuickPick(items, { placeHolder: "Select Image from repo" });
-        if (!source) {
-            // if user did not select source image then exit.
-            return;
-        } else {
-            // Ask user input for alt text
-            const altText: string | undefined = await window.showInputBox({ placeHolder: "Enter alt-text" });
-            if (!altText) {
-                // if user did not enter any alt text, then exit.
-                return;
-            } else {
-                // output image complex type
-                image = `:::image type="complex" source="${source}" alt-text="${altText}":::
+        if (checkEditor(editor)) {
+            // Get images from repo as quickpick items
+            // User should be given a list of quickpick items which list images from repo
+            const folderPath = workspace.rootPath;
 
-                :::image-end:::`;
-                insertContentToEditor(editor, applyImage.name, image, true);
-                // Set editor position to the middle of long description body
-                setCursorPosition(editor, editor.selection.active.line + 1, editor.selection.active.character);
-            }
+            // recursively get all the files from the root folder
+            dir.files(folderPath, async (err: any, files: any) => {
+                if (err) {
+                    window.showErrorMessage(err);
+                }
+
+                const items: QuickPickItem[] = [];
+                files.sort();
+
+                files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+                    items.push({ label: path.basename(file), description: path.dirname(file) });
+                });
+
+                // allow user to select source items from quickpick
+                const source = await window.showQuickPick(items, { placeHolder: "Select Image from repo" });
+                if (!source) {
+                    // if user did not select source image then exit.
+                    return;
+                } else {
+                    const activeFileDir = path.dirname(editor.document.fileName);
+
+                    const sourcePath = path.relative(activeFileDir, path.join
+                        (source.description, source.label).split("//").join("//"))
+                        .replace(/\\/g, "/");
+
+                    // Ask user input for alt text
+                    let altText: string | undefined = await window.showInputBox({ placeHolder: "Enter alt-text" });
+                    if (!altText) {
+                        // if user did not enter any alt text, then exit.
+                        altText = "";
+                    }
+                    // output image content type
+                    // output image complex type
+                    image = `:::image type="complex" source="${sourcePath}" alt-text="${altText}":::
+
+:::image-end:::`;
+                    insertContentToEditor(editor, applyImage.name, image, true);
+                    // Set editor position to the middle of long description body
+                    setCursorPosition(editor, editor.selection.active.line + 1, editor.selection.active.character);
+                }
+            });
         }
     } else {
         // If user has selected text, cancel operation?
@@ -205,14 +311,19 @@ export async function applyLocScope() {
             const items: QuickPickItem[] = [];
             // call allowlist with API Auth Token
             // you will need auth token to call list
-            const response = await Axios.get("https://docsmetadatatool.azurewebsites.net/allowlists")
+            const response = await Axios.get("https://docs.microsoft.com/api/metadata/allowlists")
             // get products from response
-            const products = response.data.products;
+            const products = Object.keys(response.data)
+                .filter(x => x.startsWith("list:ms.prod"))
+
             // push the response products into the list of quickpicks.
-            products.map((item: { product: any }) => {
-                items.push({
-                    label: item.product,
-                });
+            products.map((item: any) => {
+                const set = item.split(":");
+                if (set.length > 2) {
+                    items.push({
+                        label: set[2],
+                    });
+                }
             });
             // show quickpick to user for products list.
             const product = await window.showQuickPick(items, { placeHolder: "Select from product list" });
@@ -222,7 +333,7 @@ export async function applyLocScope() {
             } else {
                 // insert loc-sope into editor
                 editor.edit((selected) => {
-                    selected.insert(new Position(wordRange.end.line, wordRange.end.character - 3), ` loc-scope="${product}" `);
+                    selected.insert(new Position(wordRange.end.line, wordRange.end.character - 3), ` loc-scope="${product.label}" `);
                 });
             }
         }
@@ -232,12 +343,12 @@ export async function applyLocScope() {
     }
     return;
 }
-export function getFilesForQuickPick() {
+export async function getFilesForQuickPick() {
 
     const folderPath = workspace.rootPath;
 
     // recursively get all the files from the root folder
-    return dir.files(folderPath, (err: any, files: any) => {
+    dir.files(folderPath, (err: any, files: any) => {
         if (err) {
             window.showErrorMessage(err);
             throw err;
@@ -251,7 +362,6 @@ export function getFilesForQuickPick() {
             items.push({ label: path.basename(file), description: path.dirname(file) });
         });
 
-        return items;
     });
 }
 
@@ -273,7 +383,7 @@ export function imageCompletionProvider() {
     return completionItems;
 }
 
-export function getFilesFromDirectory(editor: any) {
+export async function getFilesFromDirectory(editor: any) {
     let actionType: string = "Get File for Image";
 
     if (!editor) {
@@ -314,6 +424,6 @@ export function getFilesFromDirectory(editor: any) {
                 " is not saved.  Cannot accurately resolve path to create link.");
             return;
         }
-        return getFilesForQuickPick();
+        return await getFilesForQuickPick();
     }
 }
