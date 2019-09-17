@@ -6,12 +6,7 @@ import Axios from "axios";
 
 const path = require("path");
 const dir = require("node-dir");
-const telemetryCommandMedia: string = "insertMedia";
-const telemetryCommandLink: string = "insertLink";
 const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp", ".svg"];
-export const h1TextRegex = /\n {0,3}(#{1,6})(.*)/;
-export const headingTextRegex = /^(#+)[\s](.*)[\r]?[\n]/gm;
-export const yamlTextRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
 
 const telemetryCommand: string = "insertImage";
 let commandOption: string;
