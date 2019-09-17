@@ -6,6 +6,8 @@ import Axios from "axios";
 
 const path = require("path");
 const dir = require("node-dir");
+const telemetryCommandMedia: string = "insertMedia";
+const telemetryCommandLink: string = "insertLink";
 const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp", ".svg"];
 
 const telemetryCommand: string = "insertImage";
