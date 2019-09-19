@@ -11,7 +11,7 @@ import { container_plugin } from "./markdown-extensions/container";
 import { rowOptions } from "./markdown-extensions/row";
 import { xref } from "./xref/xref";
 import { div_plugin, divOptions } from "./markdown-extensions/div";
-import { imageOptions } from "./markdown-extensions/image";
+import { imageOptions, image_end } from "./markdown-extensions/image";
 
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
@@ -46,7 +46,8 @@ export function activate(context: ExtensionContext) {
                 .use(container_plugin, "row", rowOptions)
                 .use(container_plugin, "column", columnOptions)
                 .use(div_plugin, "div", divOptions)
-                .use(container_plugin, "image", imageOptions);
+                .use(container_plugin, "image", imageOptions)
+                .use(image_end);
         },
     };
 }
