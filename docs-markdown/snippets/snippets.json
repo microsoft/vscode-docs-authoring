@@ -16,7 +16,7 @@
   "content": {
     "prefix": "image",
     "body": [
-      ":::image source=\"\" alt-text=\"\":::"
+      ":::image type=\"content\" source=\"\" alt-text=\"\":::"
     ],
     "description": "Standard image"
   },
