@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 import { output } from "../extension";
-import { checkExtension, detectFileExtension, generateTimestamp } from "../helper/common";
+import { checkExtension, generateTimestamp } from "../helper/common";
 import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
 import { applyCleanup } from "./cleanup-controller";
@@ -33,7 +33,6 @@ export function markdownQuickPick() {
     const yamlItems: vscode.QuickPickItem[] = [];
     let items: vscode.QuickPickItem[] = [];
     const activeTextDocument = vscode.window.activeTextEditor;
-    let fileExtension: string;
 
     if (checkExtension("docsmsft.docs-preview")) {
         markdownItems.push({
@@ -144,13 +143,12 @@ export function markdownQuickPick() {
     );
 
     if (activeTextDocument) {
-        const activeFilePath = activeTextDocument.document.fileName;
-        fileExtension = detectFileExtension(activeFilePath);
-        switch (fileExtension) {
-            case ".md":
+        const activeDocumentLanguage = activeTextDocument.document.languageId;
+        switch (activeDocumentLanguage) {
+            case "markdown":
                 items = markdownItems;
                 break;
-            case ".yml":
+            case "yaml":
                 items = yamlItems;
                 break;
         }
