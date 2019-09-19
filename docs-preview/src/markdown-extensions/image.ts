@@ -25,19 +25,11 @@ export const imageOptions = {
 
 
 // Sets the type complex to each of the positions type can be in. For example, type, source, alt-text vs source, type, alt-text
-export const IMAGE_END_FIRST_RE = /(?<=image(\s)?(type|source|alt-text)="complex"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?:::)[^]+?:::image-end:::/gm;
-export const IMAGE_END_SECOND_RE = /(?<=image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"\s(type|source|alt-text)="complex"(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?:::)[^]+?:::image-end:::/gm;
-export const IMAGE_END_THIRD_RE = /(?<=image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?(type|source|alt-text)="complex"(\s)?:::)[^]+?:::image-end:::/gm;
+export const IMAGE_END_RE = /(?<=:::image(\s)?(type|source|alt-text)="complex"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?:::)[^]+?:::image-end:::|(?<=:::image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?(type|source|alt-text)="complex"(\s)?:::)[^]+?:::image-end:::|(?<=:::image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\s(type|source|alt-text)="complex"(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?:::)[^]+?:::image-end:::/gm;
 export function image_end(md) {
     const replaceImageEnd = (src: string) => {
         let captureGroup;
-        while ((captureGroup = IMAGE_END_FIRST_RE.exec(src))) {
-            src = src.slice(0, captureGroup.index) + src.slice(captureGroup.index + captureGroup[0].length, src.length);
-        }
-        while ((captureGroup = IMAGE_END_SECOND_RE.exec(src))) {
-            src = src.slice(0, captureGroup.index) + src.slice(captureGroup.index + captureGroup[0].length, src.length);
-        }
-        while ((captureGroup = IMAGE_END_THIRD_RE.exec(src))) {
+        while ((captureGroup = IMAGE_END_RE.exec(src))) {
             src = src.slice(0, captureGroup.index) + src.slice(captureGroup.index + captureGroup[0].length, src.length);
         }
         return src;
