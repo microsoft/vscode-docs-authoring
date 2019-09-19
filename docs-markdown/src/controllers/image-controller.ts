@@ -289,6 +289,7 @@ export async function applyComplex() {
         });
     }
 }
+const items: QuickPickItem[] = [];
 export async function applyLocScope() {
     // get editor, its needed to apply the output to editor window.
     const editor = window.activeTextEditor;
@@ -296,6 +297,7 @@ export async function applyLocScope() {
         noActiveEditorMessage();
         return;
     }
+
     // if user has not selected any text, then continue
     const RE_LOC_SCOPE = /:::image\s.+:::/g;
     const position = new Position(editor.selection.active.line, editor.selection.active.character);
@@ -303,22 +305,25 @@ export async function applyLocScope() {
     const wordRange = editor.document.getWordRangeAtPosition(position, RE_LOC_SCOPE);
     if (wordRange) {
         // if user is inside :::image::: tag, then ask them for quickpick of products based on allow list
-        const items: QuickPickItem[] = [];
-        // call allowlist with API Auth Token
-        // you will need auth token to call list
-        const response = await Axios.get("https://docs.microsoft.com/api/metadata/allowlists")
-        // get products from response
-        Object.keys(response.data)
-            .filter((x) => x.startsWith("list:product"))
-            .map((item: string) => {
-                const set = item.split(":");
-                if (set.length > 2) {
-                    // push the response products into the list of quickpicks.
-                    items.push({
-                        label: set[2],
-                    });
-                }
-            });
+        const cached = items.length <= 0;
+        if (cached) {
+            // call allowlist with API Auth Token
+            // you will need auth token to call list
+            const response = await Axios.get("https://docs.microsoft.com/api/metadata/allowlists")
+            // get products from response
+            Object.keys(response.data)
+                .filter((x) => x.startsWith("list:product"))
+                .map((item: string) => {
+                    const set = item.split(":");
+                    if (set.length > 2) {
+                        // push the response products into the list of quickpicks.
+                        items.push({
+                            label: set[2],
+                        });
+                    }
+                });
+        }
+
         // show quickpick to user for products list.
         const product = await window.showQuickPick(items, { placeHolder: "Select from product list" });
         if (!product) {
@@ -330,8 +335,9 @@ export async function applyLocScope() {
                 selected.insert(new Position(wordRange.end.line, wordRange.end.character - 3), ` loc-scope="${product.label}"`);
             });
         }
+    } else {
+        window.showErrorMessage("invalid cursor position. You must be inside :::image::: tags.");
     }
-    window.showErrorMessage("invalid cursor position. You must be inside :::image::: tags to use this command.")
     return;
 }
 
