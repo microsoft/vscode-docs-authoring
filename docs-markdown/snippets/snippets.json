@@ -16,21 +16,21 @@
   "content": {
     "prefix": "image",
     "body": [
-      ":::image source=\"\" alt-text=\"\":::"
+      ":::image source=\"$1\" alt-text=\"\":::"
     ],
     "description": "Standard image"
   },
   "icon": {
     "prefix": "image",
     "body": [
-      ":::image type=\"icon\" source=\"\":::"
+      ":::image type=\"icon\" source=\"$1\":::"
     ],
     "description": "Icon"
   },
   "complex": {
     "prefix": "image",
     "body": [
-      ":::image type=\"complex\" source=\"\" alt-text=\"\":::\n\n:::image-end:::"
+      ":::image type=\"complex\" source=\"\" alt-text=\"\":::\n   $1\n:::image-end:::"
     ],
     "description": "Complex image"
   }
