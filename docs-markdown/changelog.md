@@ -1,9 +1,13 @@
 # Change Log
 
+## 0.2.19 (TBD)
+
+- Support for yaml file extension/language
+- TOC location error bugfix
+
 ## 0.2.18 (September 13th, 2019)
 
 - TOC parent node bugfix
-- Invalid TOC location error bugfix
 
 ## 0.2.17 (September 9th, 2019)
 
