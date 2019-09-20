@@ -37,9 +37,9 @@ module.exports.syntaxQuotesNoLoc = /(.:*)no-loc\stext=\"([a-zA-Z'-\s]*)\"(.:*)/g
 module.exports.syntaxNoLoc = /:::no-loc\stext=\"([a-zA-Z'-\s]*)\":::/gm;
 
 //image
-module.exports.syntaxImageLooseMatch = /((.:*)(.\s*)(image.*(complex))(.\s*)(.*)(.:*)\s*(.*)\s*(.:*)([a-z]*-[a-z]*)(.:*))|((.:*)(.\s*)(image)(.\s*)(.*)(.:*))/gmi;
-module.exports.syntaxImageAttributes = /(image)|([a-z-]*(?==))/gmi;
-module.exports.allowedImageAttributes = ["image", "type", "source", "alt-text", "loc-scope"];
+module.exports.syntaxImageLooseMatch = /((:+)(.\s*)(image.*(complex))(.\s*)(.*)(.:*)\s*(.*)\s*(.:*)([a-z]*-[a-z]*)(.:*))|((:+)(.\s*)(image)(.\s*)(.*)(.:*))/gmi;
+module.exports.syntaxImageAttributes = /(:image)|([a-z-]*(?==))/gmi;
+module.exports.allowedImageAttributes = [":image", "type", "source", "alt-text", "loc-scope"];
 module.exports.allowedImageTypes = ["content", "complex", "icon"];
 module.exports.imageTypeMatch = /type\s*=\s*"([a-z]*)"/m;
 module.exports.imageLongDescriptionMatch = /(:::)(.*)(:::)(((\s)*(.*))+)(:::)(.*)(:::)/mi;
