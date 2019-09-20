@@ -3,6 +3,7 @@
 ## 0.2.19 (TBD)
 
 - Support for yaml file extension/language
+- TOC location error bugfix
 
 ## 0.2.18 (September 13th, 2019)
 
