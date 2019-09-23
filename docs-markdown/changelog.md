@@ -1,5 +1,24 @@
 # Change Log
 
+## 0.2.19 (September 20th, 2019)
+
+- Support for yaml file extension/language
+- TOC location error bugfix
+
+## 0.2.18 (September 13th, 2019)
+
+- TOC parent node bugfix
+
+## 0.2.17 (September 9th, 2019)
+
+- TOC href link bugfix
+- TOC attribute bugfix
+- Telemetry updates
+
+## 0.2.16 (August 30th, 2019)
+
+- Column command title update
+
 ## 0.2.15 (August 22st, 2019)
 
 - Xref Bug Fixes and support additional Xref tags.

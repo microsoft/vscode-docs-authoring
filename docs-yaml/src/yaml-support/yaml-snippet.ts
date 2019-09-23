@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync } from 'fs';
-import { fuzzysearch } from 'fuzzysearch';
+import * as Fuse from 'fuse.js';
 import { safeLoad } from 'js-yaml';
 import { join } from 'path';
 import { CompletionItem, CompletionItemKind, CompletionItemProvider, Position, SnippetString, TextDocument } from 'vscode';
@@ -33,7 +33,7 @@ export class DocsYamlCompletionProvider implements CompletionItemProvider {
         const wordPos = doc.getWordRangeAtPosition(pos);
         const word = doc.getText(wordPos);
 
-        return this.filterCodeSnippets(word).map((snippet: CodeSnippet): CompletionItem =>  {
+        return this.filterCodeSnippets(word).map((snippet: CodeSnippet): CompletionItem => {
             const item = new CompletionItem(snippet.label, CompletionItemKind.Snippet);
             item.insertText = new SnippetString(snippet.body);
             item.documentation = snippet.description;
@@ -43,15 +43,15 @@ export class DocsYamlCompletionProvider implements CompletionItemProvider {
 
     // Load yaml code snippets from snippets folder
     private loadCodeSnippets(): void {
-        this.snippets  = readdirSync(SNIPPETS_ROOT_PATH)
+        this.snippets = readdirSync(SNIPPETS_ROOT_PATH)
             .filter((filename: string): boolean => filename.endsWith('.yaml'))
             .map((filename: string): CodeSnippet => this.readYamlCodeSnippet(join(SNIPPETS_ROOT_PATH, filename)));
     }
 
     // Filter all internal code snippets using the parameter word
     private filterCodeSnippets(word: string): CodeSnippet[] {
-        return this.snippets.filter((snippet: CodeSnippet): boolean =>
-            fuzzysearch(word.toLowerCase(), snippet.name.toLowerCase()));
+        const searcher = new Fuse(this.snippets, { keys: ["name"] });
+        return searcher.search(word.toLowerCase());
     }
 
     // Parse a yaml snippet file into a CodeSnippet
