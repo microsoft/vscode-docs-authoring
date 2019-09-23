@@ -94,8 +94,23 @@
         "category": "Docs"
       },
       {
-        "command": "insertImage",
+        "command": "applyImage",
         "title": "Image",
+        "category": "Docs"
+      },
+      {
+        "command": "applyIcon",
+        "title": "Icon image",
+        "category": "Docs"
+      },
+      {
+        "command": "applyComplex",
+        "title": "Complex image",
+        "category": "Docs"
+      },
+      {
+        "command": "applyLocScope",
+        "title": "Add localization scope to image",
         "category": "Docs"
       },
       {
@@ -232,7 +247,22 @@
           "when": "resourceLangId == markdown"
         },
         {
-          "command": "insertImage",
+          "command": "applyImage",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyIcon",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyComplex",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyLocScope",
           "group": "Docs",
           "when": "resourceLangId == markdown"
         },
