@@ -345,6 +345,13 @@ export async function applyLocScope() {
             });
         }
     } else {
+        const RE_LOC_SCOPE_EXISTS = /:::image(\s)?(type|source|alt-text|loc-scope)="([a-zA-Z0-9_.\/ -]+)?"\s(type|source|alt-text|loc-scope)="([a-zA-Z0-9_.\/ -]+)?"(\s)?((type|source|alt-text|loc-scope)="([a-zA-Z0-9_.\/ -]+)?"(\s)?)?(type|source|alt-text|loc-scope)="([a-zA-Z0-9_.\/ -]+)?"(\s)?:::/gm
+        const locScopeAlreadyExists = editor.document.getWordRangeAtPosition(position, RE_LOC_SCOPE_EXISTS);
+        if (locScopeAlreadyExists) {
+            window.showErrorMessage("loc-scope attribute already exists on :::image::: tag.");
+            return;
+        }
+
         window.showErrorMessage("invalid cursor position. You must be inside :::image::: tags.");
     }
     return;
