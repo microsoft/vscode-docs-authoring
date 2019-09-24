@@ -19,6 +19,8 @@ export const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
 const telemetryCommand: string = "preview";
 
 export function activate(context: ExtensionContext) {
+    const filePath = window.visibleTextEditors[0].document.fileName;
+    const workingPath = filePath.replace(basename(filePath), "");
     extensionPath = context.extensionPath;
     context.subscriptions.push(new Reporter(context));
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
@@ -36,8 +38,6 @@ export function activate(context: ExtensionContext) {
         disposableStandalonePreview);
     return {
         extendMarkdownIt(md) {
-            const filePath = window.visibleTextEditors[0].document.fileName;
-            const workingPath = filePath.replace(basename(filePath), "");
             return md.use(require("markdown-it-include"), { root: workingPath, includeRe: INCLUDE_RE })
                 .use(codeSnippets, { root: workingPath })
                 .use(xref)
