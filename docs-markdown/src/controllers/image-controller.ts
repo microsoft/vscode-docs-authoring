@@ -299,11 +299,20 @@ export async function applyLocScope() {
     }
 
     // if user has not selected any text, then continue
-    const RE_LOC_SCOPE = /:::image\s.+:::/g;
+    const RE_LOC_SCOPE = /:::image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?((type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?)?:::/gm;
     const position = new Position(editor.selection.active.line, editor.selection.active.character);
     // get the current editor position and check if user is inside :::image::: tags
     const wordRange = editor.document.getWordRangeAtPosition(position, RE_LOC_SCOPE);
     if (wordRange) {
+        const start = RE_LOC_SCOPE.exec(editor.document.getText(wordRange));
+        if (start) {
+            const type = start[start.indexOf("type") + 1]
+            if (type.toLowerCase() === "icon") {
+                window.showErrorMessage("The loc-scope attribute should not be added to icons, which are not localized.");
+                return;
+            }
+        }
+
         // if user is inside :::image::: tag, then ask them for quickpick of products based on allow list
         const cached = items.length <= 0;
         if (cached) {
