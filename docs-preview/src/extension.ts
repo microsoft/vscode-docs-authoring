@@ -36,7 +36,7 @@ export function activate(context: ExtensionContext) {
         disposableStandalonePreview);
     return {
         extendMarkdownIt(md) {
-            const filePath = window.activeTextEditor.document.fileName;
+            const filePath = window.visibleTextEditors[0].document.fileName;
             const workingPath = filePath.replace(basename(filePath), "");
             return md.use(require("markdown-it-include"), { root: workingPath, includeRe: INCLUDE_RE })
                 .use(codeSnippets, { root: workingPath })
