@@ -25,6 +25,7 @@ module.exports.imageComplexEndTagRequired = `Bad syntax for image. If image type
 module.exports.imageSourceRequired = `Bad syntax for image. "source" required.`;
 module.exports.imageAltTextRequired = `Bad syntax for image. "alt-text" required for "complex" and "content" image types.`;
 module.exports.imageIconRemoveLocScope = `Bad syntax for image. "loc-scope" not allowed for icon images`;
+module.exports.imageIconRemoveAltText = `Bad syntax for image. "alt-text" not allowed for icon images`;
 
 // zone
 module.exports.zoneSyntax = `Bad syntax for zone. Only "zone target", "zone pivot" and "zone-end" are supported.`;

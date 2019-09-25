@@ -122,6 +122,15 @@ module.exports = {
                                     context: text.line
                                 });
                             }
+                            //do we have loc-scope? cuzzz, we shouldn't!
+                            const altTextMatch = common.imageAltTextMatch.exec(content);
+                            if (altTextMatch) {
+                                onError({
+                                    lineNumber: text.lineNumber,
+                                    detail: detailStrings.imageIconRemoveAltText,
+                                    context: text.line
+                                });
+                            }
                         }
                     }
 
