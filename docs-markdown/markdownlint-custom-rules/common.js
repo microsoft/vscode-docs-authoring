@@ -45,7 +45,9 @@ module.exports.imageTypeMatch = /type\s*=\s*"([a-z]*)"/m;
 module.exports.imageLongDescriptionMatch = /(:::)(.*)(:::)(((\s)*(.*))+)(:::)(.*)(:::)/mi;
 module.exports.imageComplexEndTagMatch = /:::\s*image-end:::/gmi;
 module.exports.imageOpen = /:::image/gmi;
+module.exports.imageSourceMatch = /source\s*=\s*"([a-zA-Z0-9\-_\.\,\;\:\\/\?\=\%\@s*]*)"/m;
 module.exports.imageAltTextMatch = /alt-text\s*=\s*"([a-zA-Z\-_\.\,\;\:\s*]*)"/m;
+module.exports.imageLocScopeMatch = /loc-scope\s*=\s*"([a-zA-Z\-_\.\,\;\:\s*]*)"/m;
 
 // Alert
 module.exports.alertOpener = /^>\s+\[!/gm; // regex to find "> [!"

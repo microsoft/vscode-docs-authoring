@@ -36,6 +36,16 @@ module.exports = {
                         });
                     }
 
+                    //source check
+                    const sourceMatch = common.imageSourceMatch.exec(content);
+                    if (!sourceMatch || sourceMatch[1] === "") {
+                        onError({
+                            lineNumber: text.lineNumber,
+                            detail: detailStrings.imageSourceRequired,
+                            context: text.line
+                        });
+                    }
+
                     //case sensitivity and attributes check
                     let attrMatches = content.match(common.syntaxImageAttributes);
                     attrMatches = attrMatches.filter((attr) => attr != "");
@@ -99,6 +109,16 @@ module.exports = {
                                 onError({
                                     lineNumber: text.lineNumber,
                                     detail: detailStrings.imageAltTextRequired,
+                                    context: text.line
+                                });
+                            }
+                        } else {
+                            //do we have loc-scope? cuzzz, we shouldn't!
+                            const locScopeMatch = common.imageLocScopeMatch.exec(content);
+                            if (locScopeMatch) {
+                                onError({
+                                    lineNumber: text.lineNumber,
+                                    detail: detailStrings.imageIconRemoveLocScope,
                                     context: text.line
                                 });
                             }

@@ -22,7 +22,9 @@ module.exports.imageNonAllowedAttribute = `Bad syntax for image. "___" is not an
 module.exports.imageNonAllowedType = `Bad syntax for image. "___" is not an allowed type. Options are "content", "complex", "icon"`;
 module.exports.imageComplexLongDescriptionRequired = `Bad syntax for image. If image type is "complex", a long description is required.`;
 module.exports.imageComplexEndTagRequired = `Bad syntax for image. If image type is "complex", ":::image-end:::" is required.`;
+module.exports.imageSourceRequired = `Bad syntax for image. "source" required.`;
 module.exports.imageAltTextRequired = `Bad syntax for image. "alt-text" required for "complex" and "content" image types.`;
+module.exports.imageIconRemoveLocScope = `Bad syntax for image. "loc-scope" not allowed for icon images`;
 
 // zone
 module.exports.zoneSyntax = `Bad syntax for zone. Only "zone target", "zone pivot" and "zone-end" are supported.`;
