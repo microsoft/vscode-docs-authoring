@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.19",
+  "version": "0.2.20",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -94,8 +94,23 @@
         "category": "Docs"
       },
       {
-        "command": "insertImage",
+        "command": "applyImage",
         "title": "Image",
+        "category": "Docs"
+      },
+      {
+        "command": "applyIcon",
+        "title": "Icon image",
+        "category": "Docs"
+      },
+      {
+        "command": "applyComplex",
+        "title": "Complex image",
+        "category": "Docs"
+      },
+      {
+        "command": "applyLocScope",
+        "title": "Add localization scope to image",
         "category": "Docs"
       },
       {
@@ -232,7 +247,22 @@
           "when": "resourceLangId == markdown"
         },
         {
-          "command": "insertImage",
+          "command": "applyImage",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyIcon",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyComplex",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyLocScope",
           "group": "Docs",
           "when": "resourceLangId == markdown"
         },

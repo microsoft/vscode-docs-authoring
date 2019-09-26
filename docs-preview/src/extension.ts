@@ -12,12 +12,15 @@ import { container_plugin } from "./markdown-extensions/container";
 import { rowOptions } from "./markdown-extensions/row";
 import { xref } from "./xref/xref";
 import { div_plugin, divOptions } from "./markdown-extensions/div";
+import { imageOptions, image_end } from "./markdown-extensions/image";
 
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
 const telemetryCommand: string = "preview";
 
 export function activate(context: ExtensionContext) {
+    const filePath = window.visibleTextEditors[0].document.fileName;
+    const workingPath = filePath.replace(basename(filePath), "");
     extensionPath = context.extensionPath;
     context.subscriptions.push(new Reporter(context));
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
@@ -35,8 +38,6 @@ export function activate(context: ExtensionContext) {
         disposableStandalonePreview);
     return {
         extendMarkdownIt(md) {
-            const filePath = window.activeTextEditor.document.fileName;
-            const workingPath = filePath.replace(basename(filePath), "");
             return md.use(include, { root: workingPath })
                 .use(codeSnippets, { root: workingPath })
                 .use(xref)
@@ -44,7 +45,9 @@ export function activate(context: ExtensionContext) {
                 .use(column_end)
                 .use(container_plugin, "row", rowOptions)
                 .use(container_plugin, "column", columnOptions)
-                .use(div_plugin, "div", divOptions);
+                .use(div_plugin, "div", divOptions)
+                .use(container_plugin, "image", imageOptions)
+                .use(image_end);
         },
     };
 }

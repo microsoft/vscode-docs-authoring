@@ -2,6 +2,7 @@
 module.exports.syntaxCount = `Bad syntax for markdown extension. Begin with "::: ".`;
 module.exports.syntaxSpace = `Bad syntax for markdown extension. One space required after ":::".`;
 module.exports.syntaxUnsupportedExtension = `Bad syntax for markdown extension. Extension is not supported.`;
+module.exports.imageColonsIncorrect = `Bad syntax for markdown extension. Begins and end with ":::".`;
 
 // moniker
 module.exports.monikerRange = `Bad syntax for range argument. Use =, <=, or >=, and put value in quotes.`;
@@ -15,6 +16,16 @@ module.exports.noLocColonsIncorrect = `Bad syntax for non-localization. Make sur
 module.exports.noLocCaseSensitive = `Bad syntax for non-localization. ""no-loc" and "text" must be lower-case.`;
 module.exports.noLocNoQuotes = `Bad syntax for non-localization. Quotes required.`;
 
+// image
+module.exports.imageCaseSensitive = `Bad syntax for image. "image" and its attributes must be lower-case.`;
+module.exports.imageNonAllowedAttribute = `Bad syntax for image. "___" is not an allowed attribute.`;
+module.exports.imageNonAllowedType = `Bad syntax for image. "___" is not an allowed type. Options are "content", "complex", "icon"`;
+module.exports.imageComplexLongDescriptionRequired = `Bad syntax for image. If image type is "complex", a long description is required.`;
+module.exports.imageComplexEndTagRequired = `Bad syntax for image. If image type is "complex", ":::image-end:::" is required.`;
+module.exports.imageSourceRequired = `Bad syntax for image. "source" required.`;
+module.exports.imageAltTextRequired = `Bad syntax for image. "alt-text" required for "complex" and "content" image types.`;
+module.exports.imageIconRemoveLocScope = `Bad syntax for image. "loc-scope" not allowed for icon images`;
+module.exports.imageIconRemoveAltText = `Bad syntax for image. "alt-text" not allowed for icon images`;
 
 // zone
 module.exports.zoneSyntax = `Bad syntax for zone. Only "zone target", "zone pivot" and "zone-end" are supported.`;
