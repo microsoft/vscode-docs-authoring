@@ -44,7 +44,7 @@ export function showQuickPick(options: boolean) {
     folderPath = workspace.workspaceFolders[0].uri.fsPath;
   }
 
-  // tslint:disable-next-line: no-shadowed-variable
+  // tslint:disable: no-shadowed-variable
   files(folderPath, (err: any, files: any) => {
     if (err) {
       window.showErrorMessage(err);
@@ -155,69 +155,135 @@ export function checkForPreviousEntry(options: boolean) {
   if (!editor) {
     return;
   }
+
+  // position variables
   const position = editor.selection.active;
   const cursorPosition = position.character;
   const currentLine = position.line;
 
-  // case 1: beginning of toc/first line
-  if (currentLine === 0) {
-    if (cursorPosition === 0) {
-      launchQuickPick(options)
+  // scalar variables
+  let itemsIndex: boolean = false;
+  let itemsIndexFirstPosition: boolean = false;
+  let nameIndex: boolean = false;
+
+  // scalar regex
+  const itemsScalarFirstPosition = /^items:/;
+  const itemsScalar = /^\s+items:/;
+  const nameScalarFirstPosition = /^-\sname:/;
+  const nameScalar = /^\s+(-\sname:)/;
+
+  // check 1: opening items node
+  const lineData = editor.document.lineAt(0);
+  const lineText = lineData.text;
+  if (lineText.match(itemsScalarFirstPosition)) {
+    itemsIndexFirstPosition = true;
+  } else {
+    itemsIndexFirstPosition = false;
+  }
+
+  // case 1: opening items alignment
+  if (currentLine === 1 && itemsIndexFirstPosition) {
+    if (cursorPosition === 2) {
+      launchQuickPick(options);
     } else {
       window.showErrorMessage(invalidTocEntryPosition);
-      return;
     }
   }
 
-  const previousLine = currentLine - 1;
-  const previousLineData = editor.document.lineAt(previousLine);
-  const nameScalar = `- name:`
-  const itemsScalar = `items:`
-  const hrefScalar = `href:`
-
-  // case 2: name scalar on previous line
-  if (previousLineData.text.includes(nameScalar)) {
-    // if previous line starts with nameScalar check for cursor.  if equal, show quickpick.  if not, show error.
-    if (previousLineData.firstNonWhitespaceCharacterIndex === cursorPosition) {
-      launchQuickPick(options)
-    } else {
-      window.showErrorMessage(invalidTocEntryPosition);
-      return;
-    }
-  }
-
-  // case 2: items scalar on previous line
-  if (previousLineData.text.includes(itemsScalar)) {
-    // if nameLine starts with itemsScalar check for cursor.  if equal, show quickpick.  if not, show error.
-    if (previousLineData.firstNonWhitespaceCharacterIndex === cursorPosition) {
-      launchQuickPick(options)
-    } else {
-      window.showErrorMessage(invalidTocEntryPosition);
-      return;
-    }
-  }
-
-  // case 3: href scalar on previous line
-  if (previousLineData.text.includes(hrefScalar)) {
-    // get content for line above href
-    const nameLine = currentLine - 2;
-    const nameLineData = editor.document.lineAt(nameLine);
-    // if nameLine starts with nameScalar check for cursor.  if equal, show quickpick.  if not, show error.
-    if (nameLineData.text.includes(nameScalar)) {
-      if (nameLineData.firstNonWhitespaceCharacterIndex === cursorPosition) {
-        launchQuickPick(options);
-      } else {
-        window.showErrorMessage(invalidTocEntryPosition);
-        return;
+  // check 2: items node
+  if (currentLine > 0) {
+    const totalLines = editor.document.lineCount;
+    const startingCursorPosition = editor.selection.active.character;
+    let i = currentLine;
+    for (i = currentLine; i < totalLines; i--) {
+      if (i === 0) {
+        break;
+      }
+      const lineData = editor.document.lineAt(i);
+      const lineText = lineData.text;
+      if (lineText.match(itemsScalar)) {
+        const itemScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+        if (startingCursorPosition === itemScalarPosition + 2) {
+          itemsIndex = true;
+          break;
+        } else {
+          itemsIndex = false;
+          continue;
+        }
       }
     }
   }
 
-  // case 4: blank line
-  if (previousLineData.isEmptyOrWhitespace) {
-    // to-do: check with pm for this scenario
-    showStatusMessage(`No previous entry and not at the top of the toc.`);
-    return;
+  // check 3: name scalar
+  if (currentLine > 0) {
+    const startPosition = editor.selection.active.line;
+    let startingCursorPosition: number;
+    const totalLines = editor.document.lineCount;
+    let i = startPosition;
+    for (i = startPosition; i < totalLines; i--) {
+      startingCursorPosition = editor.selection.active.character;
+      if (i === 0) {
+        break;
+      }
+      const lineData = editor.document.lineAt(i);
+      const lineText = lineData.text;
+      if (lineText.match(nameScalar)) {
+        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+        if (nameScalarPosition === startingCursorPosition) {
+          nameIndex = true;
+          break;
+        } else {
+          nameIndex = false;
+          continue;
+        }
+      }
+    }
+  }
+
+  // check 4: name scalar in first position
+  if (currentLine > 0) {
+    const startPosition = editor.selection.active.line;
+    let startingCursorPosition: number;
+    const totalLines = editor.document.lineCount;
+    let i = startPosition;
+    for (i = startPosition; i < totalLines; i--) {
+      startingCursorPosition = editor.selection.active.character;
+      if (i === 0) {
+        break;
+      }
+      const lineData = editor.document.lineAt(i);
+      const lineText = lineData.text;
+      if (lineText.match(nameScalarFirstPosition)) {
+        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+        if (nameScalarPosition === startingCursorPosition) {
+          nameIndex = true;
+          break;
+        } else {
+          nameIndex = false;
+          continue;
+        }
+      }
+    }
+  }
+
+  // case 2: scalar alignment
+  if (currentLine > 1) {
+    if (itemsIndex) {
+      launchQuickPick(options);
+    } else if (nameIndex) {
+      launchQuickPick(options);
+    } else {
+      window.showErrorMessage(invalidTocEntryPosition);
+    }
+  }
+
+  // case 3: beginning of toc/first line
+  if (currentLine === 0) {
+    if (cursorPosition === 0) {
+      launchQuickPick(options);
+    } else {
+      window.showErrorMessage(invalidTocEntryPosition);
+    }
   }
 }
 
@@ -228,6 +294,35 @@ export function createParentNode() {
   }
   const position = editor.selection.active;
   const cursorPosition = position.character;
+  const currentLine = position.line;
+  const nameScalar = /^\s+(-\sname:)/;
+  let nameIndex: boolean = false;
+  const attributeSpace = " ";
+
+  if (currentLine > 0) {
+    const startPosition = editor.selection.active.line;
+    let startingCursorPosition: number;
+    const totalLines = editor.document.lineCount;
+    let i = startPosition;
+    for (i = startPosition; i < totalLines; i--) {
+      startingCursorPosition = editor.selection.active.character;
+      if (i === 0) {
+        break;
+      }
+      const lineData = editor.document.lineAt(i);
+      const lineText = lineData.text;
+      if (lineText.match(nameScalar)) {
+        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+        if (nameScalarPosition === startingCursorPosition) {
+          nameIndex = true;
+          break;
+        } else {
+          nameIndex = false;
+          continue;
+        }
+      }
+    }
+  }
 
   if (cursorPosition === 0) {
     const parentNodeLineStart = `- name:
@@ -235,7 +330,18 @@ export function createParentNode() {
   - name:
     href:`
     insertContentToEditor(editor, insertTocEntry.name, parentNodeLineStart);
-  } else {
+  }
+
+  if (nameIndex && cursorPosition > 0) {
+    const parentNodeLineStart =
+      `- name:
+    ${attributeSpace.repeat(cursorPosition - 2)}items:
+    ${attributeSpace.repeat(cursorPosition)}- name:
+    ${attributeSpace.repeat(cursorPosition + 2)}href:`
+    insertContentToEditor(editor, insertTocEntry.name, parentNodeLineStart);
+  }
+
+  if (!nameIndex && cursorPosition !== 0) {
     window.showErrorMessage(invalidTocEntryPosition);
     return;
   }
