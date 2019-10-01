@@ -320,17 +320,26 @@ export async function applyLocScope() {
             // you will need auth token to call list
             const response = await Axios.get("https://docs.microsoft.com/api/metadata/allowlists")
             // get products from response
+            let products: string[] = []
             Object.keys(response.data)
                 .filter((x) => x.startsWith("list:product"))
                 .map((item: string) => {
                     const set = item.split(":");
                     if (set.length > 2) {
-                        // push the response products into the list of quickpicks.
-                        items.push({
-                            label: set[2],
-                        });
+                        products.push(set[2]);
+                        Object.keys(response.data[item].values)
+                            .map((prod: string) =>
+                                // push the response products into the list of quickpicks.
+                                products.push(prod)
+                            );
                     }
                 });
+
+            products.sort().map((item) => {
+                items.push({
+                    label: item
+                })
+            })
         }
 
         // show quickpick to user for products list.
