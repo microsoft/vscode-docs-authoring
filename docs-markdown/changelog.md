@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.21 (October 1st, 2019)
+
+- Loc-Scope options now include all products
+
 ## 0.2.19 (September 20th, 2019)
 
 - Support for yaml file extension/language
