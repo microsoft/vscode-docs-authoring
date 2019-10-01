@@ -1,9 +1,7 @@
-# Change Log
+1.0.1
 
-All notable changes to the "docs-metadata" extension will be documented in this file.
+- Fixed a bug related to how arrays were handled.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+1.0.0
 
-## [Unreleased]
-
-- Initial release
+- Initial Release
