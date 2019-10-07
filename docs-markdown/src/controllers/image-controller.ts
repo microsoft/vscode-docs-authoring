@@ -334,12 +334,17 @@ export async function applyLocScope() {
                             );
                     }
                 });
-
             products.sort().map((item) => {
                 items.push({
                     label: item
                 })
-            })
+            });
+            items.push({
+                label: "other"
+            });
+            items.push({
+                label: "third-party"
+            });
         }
 
         // show quickpick to user for products list.
