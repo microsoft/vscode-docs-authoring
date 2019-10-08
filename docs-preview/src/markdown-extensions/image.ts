@@ -1,7 +1,4 @@
-
-import { window } from "vscode";
-
-export const output = window.createOutputChannel("docs-preview");
+import { output } from "../extension";
 
 export const imageOptions = {
     marker: ":",

@@ -1,8 +1,6 @@
 import { readFileSync } from "fs";
 import { resolve } from "path";
-import { window } from "vscode";
-
-export const output = window.createOutputChannel("docs-preview");
+import { output } from "../extension";
 
 const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
 const FRONTMATTER_RE = /^---[\s\S]+?---/gmi;

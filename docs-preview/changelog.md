@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.33 (October 8th, 2019)
+
+- Remove unnecessary output channels
+
 ## 0.3.28 (August 23rd, 2019)
 
 - Added "In this article" section
