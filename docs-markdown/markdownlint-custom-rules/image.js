@@ -37,13 +37,16 @@ module.exports = {
                     }
 
                     //source check
-                    const sourceMatch = common.imageSourceMatch.exec(content);
-                    if (!sourceMatch || sourceMatch[1] === "") {
-                        onError({
-                            lineNumber: text.lineNumber,
-                            detail: detailStrings.imageSourceRequired,
-                            context: text.line
-                        });
+                    const notImageComplexEndTagMatch = content.match(common.imageComplexEndTagMatch)
+                    if (!notImageComplexEndTagMatch) {
+                        const sourceMatch = common.imageSourceMatch.exec(content);
+                        if (!sourceMatch || sourceMatch[1] === "") {
+                            onError({
+                                lineNumber: text.lineNumber,
+                                detail: detailStrings.imageSourceRequired,
+                                context: text.line
+                            });
+                        }
                     }
 
                     //case sensitivity and attributes check
@@ -122,7 +125,7 @@ module.exports = {
                                     context: text.line
                                 });
                             }
-                            //do we have loc-scope? cuzzz, we shouldn't!
+                            //do we have alt-text? cuzzz, we shouldn't!
                             const altTextMatch = common.imageAltTextMatch.exec(content);
                             if (altTextMatch) {
                                 onError({

@@ -1,4 +1,4 @@
-[![Build Status](https://ceapex.visualstudio.com/Engineering/_apis/build/status/Authoring/docs-markdown%20CI?branchName=develop)](https://ceapex.visualstudio.com/Engineering/_build/latest?definitionId=1346&branchName=develop)
+[![Build Status](https://ceapex.visualstudio.com/Engineering/_apis/build/status/Authoring/docs-markdown%20CI?branchName=master)](https://ceapex.visualstudio.com/Engineering/_build/latest?definitionId=1346&branchName=master)
 # Docs Markdown Extension
 
 Welcome to the Docs Markdown authoring extension! This extension provides Markdown authoring assistance for docs.microsoft.com (Docs) content, including basic Markdown support and support for custom Markdown syntax on Docs. We also now support some YAML authoring commands. Here's a quick demo - the rest of the readme provides details about using the extension:
