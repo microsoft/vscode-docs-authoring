@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { output } from "../extension";
+import { workspace } from "vscode";
 
 const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
 const FRONTMATTER_RE = /^---[\s\S]+?---/gmi;
