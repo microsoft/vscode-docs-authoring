@@ -1,7 +1,6 @@
 import Axios from "axios";
 import { window, Position, Range } from "vscode";
-
-export const output = window.createOutputChannel("docs-preview");
+import { output } from "../extension";
 
 const apiUrl = "https://xref.docs.microsoft.com/query?uid=";
 //Sadly because of the bug with global regexes, I need two versions. One with global, one without. - Adam

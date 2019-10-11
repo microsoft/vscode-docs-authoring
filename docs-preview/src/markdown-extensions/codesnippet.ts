@@ -1,8 +1,6 @@
 import { resolve } from "path";
 import { readFileSync } from "fs";
-import { window, workspace } from "vscode";
-
-export const output = window.createOutputChannel("docs-preview");
+import { output } from "../extension";
 
 export const CODE_RE = /\[!code-(.+?)\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
 const ROOTPATH_RE = /.*~/gmi;
