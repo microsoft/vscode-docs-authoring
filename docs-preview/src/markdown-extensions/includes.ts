@@ -1,14 +1,20 @@
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { output } from "../extension";
+import { workspace } from "vscode";
 
 const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
 const FRONTMATTER_RE = /^---[\s\S]+?---/gmi;
+const ROOTPATH_RE = /.*~/gmi;
 export function include(md, options) {
   const replaceIncludeWithContents = (src: string, rootdir: string) => {
     let captureGroup;
     while ((captureGroup = INCLUDE_RE.exec(src))) {
-      const filePath = resolve(rootdir, captureGroup[1].trim());
+      const repoRoot = workspace.workspaceFolders[0].uri.fsPath;
+      let filePath = resolve(rootdir, captureGroup[1].trim());
+      if (filePath.includes("~")) {
+        filePath = filePath.replace(ROOTPATH_RE, repoRoot);
+      }
       let mdSrc = readFileSync(filePath, "utf8");
       mdSrc = mdSrc.replace(FRONTMATTER_RE, "");
       src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);

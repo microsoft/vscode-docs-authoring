@@ -1,13 +1,19 @@
 import { resolve } from "path";
 import { readFileSync } from "fs";
 import { output } from "../extension";
+import { workspace } from "vscode";
 
 export const CODE_RE = /\[!code-(.+?)\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
+const ROOTPATH_RE = /.*~/gmi;
 export function codeSnippets(md, options) {
   const replaceCodeSnippetWithContents = (src: string, rootdir: string) => {
     let captureGroup;
     while ((captureGroup = CODE_RE.exec(src))) {
-      const filePath = resolve(rootdir, captureGroup[2].trim());
+      const repoRoot = workspace.workspaceFolders[0].uri.fsPath;
+      let filePath = resolve(rootdir, captureGroup[2].trim());
+      if (filePath.includes("~")) {
+        filePath = filePath.replace(ROOTPATH_RE, repoRoot);
+      }
       let mdSrc = readFileSync(filePath, "utf8");
       mdSrc = `\`\`\`${captureGroup[1].trim()}\r\n${mdSrc}\r\n\`\`\``;
       src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
