@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.34 (October 11th, 2019)
+
+- Expanded file path support
+
 ## 0.3.33 (October 8th, 2019)
 
 - Remove unnecessary output channels
