@@ -3,6 +3,7 @@ import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, work
 import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData, setCursorPosition } from "../helper/common";
 
 import Axios from "axios";
+import { insertImage } from "./media-controller";
 
 const path = require("path");
 const dir = require("node-dir");
@@ -15,6 +16,7 @@ let commandOption: string;
 
 export function insertImageCommand() {
     const commands = [
+        { command: pickImageType.name, callback: pickImageType },
         { command: insertImage.name, callback: insertImage },
         { command: applyImage.name, callback: applyImage },
         { command: applyIcon.name, callback: applyIcon },
@@ -23,12 +25,16 @@ export function insertImageCommand() {
     ];
     return commands;
 }
-export function insertImage() {
+export function pickImageType() {
     const opts: QuickPickOptions = { placeHolder: "Select an Image type" };
     const items: QuickPickItem[] = [];
     items.push({
         description: "",
-        label: "Image",
+        label: "Image (Standard Markdown)",
+    });
+    items.push({
+        description: "",
+        label: "Image (Docs Markdown)",
     });
     items.push({
         description: "",
@@ -48,9 +54,13 @@ export function insertImage() {
             return;
         }
         switch (selection.label.toLowerCase()) {
-            case "image":
+            case "image (standard markdown)":
+                insertImage();
+                commandOption = "image (standard markdown)";
+                break;
+            case "image (docs markdown)":
                 applyImage();
-                commandOption = "image";
+                commandOption = "image (docs markdown)";
                 break;
             case "icon image":
                 applyIcon();

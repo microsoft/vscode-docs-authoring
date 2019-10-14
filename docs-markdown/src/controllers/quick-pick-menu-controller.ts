@@ -7,7 +7,7 @@ import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
 import { applyCleanup } from "./cleanup-controller";
 import { formatCode } from "./code-controller";
-import { insertImage } from "./image-controller";
+import { pickImageType } from "./image-controller";
 import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
@@ -203,7 +203,7 @@ export function markdownQuickPick() {
                 noLocText();
                 break;
             case "image":
-                insertImage();
+                pickImageType();
                 break;
             case "include":
                 insertInclude();
