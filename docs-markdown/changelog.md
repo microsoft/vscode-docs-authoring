@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.23 (October 14th, 2019)
+
+- Added Standard Markdown Image to Image extension
+
 ## 0.2.22 (October 7th, 2019)
 
 - Loc-Scope options now include other and third-party
