@@ -37,16 +37,16 @@ module.exports.syntaxQuotesNoLoc = /(.:*)no-loc\stext=\"([a-zA-Z'-\s]*)\"(.:*)/g
 module.exports.syntaxNoLoc = /:::no-loc\stext=\"([a-zA-Z'-\s]*)\":::/gm;
 
 //image
-module.exports.syntaxImageLooseMatch = /((:+)(.\s*)(image.*(complex))(.\s*)(.*)(.:*)\s*(.*)\s*(.:*)([a-z]*-[a-z]*)(.:*))|((:+)(.\s*)(image)(.\s*)(.*)(.:*))/gmi;
+module.exports.syntaxImageLooseMatch = /:::image(\s)?type="complex"\s(source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?((source|alt-text)="([a-zA-Z0-9_.\/ -]+)?")?(\s)?:::([^]+?):::image-end:::|:::image(\s)?(source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\s((source|alt-text)="([a-zA-Z0-9_.\/ -]+)?")?(\s)?type="complex"(\s)?:::([^]+?):::image-end:::|:::image(\s)?(source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\stype="complex"(\s)?((source|alt-text)="([a-zA-Z0-9_.\/ -]+)?")?(\s)?:::([^]+?):::image-end:::|:::image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?((type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?)?:::|:+image.+:+/gmi;
 module.exports.syntaxImageAttributes = /(:image)|([a-z-]*(?==))/gmi;
 module.exports.allowedImageAttributes = [":image", "type", "source", "alt-text", "loc-scope"];
 module.exports.allowedImageTypes = ["content", "complex", "icon"];
 module.exports.imageTypeMatch = /type\s*=\s*"([a-z]*)"/m;
-module.exports.imageLongDescriptionMatch = /(:::)(.*)(:::)(((\s)*(.*))+)(:::)(.*)(:::)/mi;
-module.exports.imageComplexEndTagMatch = /:::(\s*)?image-end:::/gmi;
-module.exports.imageOpen = /:::image/gmi;
-module.exports.imageSourceMatch = /source\s*=\s*"([a-zA-Z0-9\-_\.\,\;\:\\/\?\=\%\@s*]*)"/m;
-module.exports.imageAltTextMatch = /alt-text\s*=\s*"([a-zA-Z\-_\.\,\;\:\s*]*)"/m;
+module.exports.imageLongDescriptionMatch = /(?<=:::image(\s)?type="complex"\s(source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?((source|alt-text)="([a-zA-Z0-9_.\/ -]+)?")?(\s)?:::)([^]+?):::image-end:::|(?<=:::image(\s)?(source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\s((source|alt-text)="([a-zA-Z0-9_.\/ -]+)?")?(\s)?type="complex"(\s)?:::)([^]+?):::image-end:::|(?<=:::image(\s)?(source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\stype="complex"(\s)?((source|alt-text)="([a-zA-Z0-9_.\/ -]+)?")?(\s)?:::)([^]+?):::image-end:::/mi;
+module.exports.imageComplexEndTagMatch = /:::(\s*)?image-end:::/mi;
+module.exports.imageOpen = /:::image/mi;
+module.exports.imageSourceMatch = /source\s*=\s*"(?!\s+)([a-zA-Z0-9\-_\.\,\;\:\/\?\=\%\@s*]*)"/m;
+module.exports.imageAltTextMatch = /alt-text\s*=\s*"(?!\s+)([a-zA-Z\-_\.\,\;\:\s*]*)"/m;
 module.exports.imageLocScopeMatch = /loc-scope\s*=\s*"([a-zA-Z\-_\.\,\;\:\s*]*)"/m;
 
 // Alert
