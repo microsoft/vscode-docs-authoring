@@ -42,7 +42,7 @@ module.exports.syntaxImageAttributes = /(:image)|([a-z-]*(?==))/gmi;
 module.exports.allowedImageAttributes = [":image", "type", "source", "alt-text", "loc-scope"];
 module.exports.allowedImageTypes = ["content", "complex", "icon"];
 module.exports.imageTypeMatch = /type\s*=\s*"([a-z]*)"/m;
-module.exports.imageLongDescriptionMatch = /(?<=:::image(\s)?type="complex"\s(source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?((source|alt-text)="([a-zA-Z0-9_.\/ -]+)?")?(\s)?:::)([^]+?):::image-end:::|(?<=:::image(\s)?(source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\s((source|alt-text)="([a-zA-Z0-9_.\/ -]+)?")?(\s)?type="complex"(\s)?:::)([^]+?):::image-end:::|(?<=:::image(\s)?(source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\stype="complex"(\s)?((source|alt-text)="([a-zA-Z0-9_.\/ -]+)?")?(\s)?:::)([^]+?):::image-end:::/mi;
+module.exports.imageLongDescriptionMatch = /:::image(\s)?type="complex"\s(source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?((source|alt-text)="([a-zA-Z0-9_.\/ -]+)?")?(\s)?:::([^]+?):::image-end:::|:::image(\s)?(source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\s((source|alt-text)="([a-zA-Z0-9_.\/ -]+)?")?(\s)?type="complex"(\s)?:::([^]+?):::image-end:::|:::image(\s)?(source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\stype="complex"(\s)?((source|alt-text)="([a-zA-Z0-9_.\/ -]+)?")?(\s)?:::([^]+?):::image-end:::/mi;
 module.exports.imageComplexEndTagMatch = /:::(\s*)?image-end:::/mi;
 module.exports.imageOpen = /:::image/mi;
 module.exports.imageSourceMatch = /source\s*=\s*"(?!\s+)([a-zA-Z0-9\-_\.\,\;\:\/\?\=\%\@s*]*)"/m;
