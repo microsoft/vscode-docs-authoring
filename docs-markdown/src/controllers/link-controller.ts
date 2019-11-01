@@ -44,12 +44,13 @@ export function pickLinkType() {
         if (!selection) {
             return;
         }
-        switch (selection.label.toLowerCase()) {
+        const selectionWithoutIcon = selection.label.toLowerCase().split(")")[1].trim();
+        switch (selectionWithoutIcon) {
             case "link to file in repo":
                 insertImage();
                 commandOption = "link to file in repo";
                 break;
-            case "Link to web page":
+            case "link to web page":
                 insertURL();
                 commandOption = "Link to web page";
                 break;
@@ -57,7 +58,7 @@ export function pickLinkType() {
                 selectLinkType();
                 commandOption = "link to heading";
                 break;
-            case "link to Xref":
+            case "link to xref":
                 applyXref();
                 commandOption = "link to Xref";
                 break;

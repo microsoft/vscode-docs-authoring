@@ -172,6 +172,11 @@
         "command": "insertRowsAndColumns",
         "title": "Columns",
         "category": "Docs"
+      },
+      {
+        "command": "extension.generateLinkReport",
+        "title": "Check links",
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -330,6 +335,11 @@
           "command": "insertRowsAndColumns",
           "group": "Docs",
           "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "extension.generateLinkReport",
+          "group": "Docs",
+          "when": "vscode.extensions.getExtension('docsmsft.docs-article-templates').active"
         }
       ]
     },

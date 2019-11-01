@@ -11,7 +11,7 @@ import { pickImageType } from "./image-controller";
 import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
-import { Insert, insertURL, insertVideo, selectLinkType } from "./media-controller";
+import { insertVideo } from "./media-controller";
 import { noLocText } from "./no-loc-controller";
 import { previewTopic } from "./preview-controller";
 import { insertRowsAndColumns } from "./row-columns-controller";
