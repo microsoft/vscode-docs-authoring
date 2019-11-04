@@ -44,48 +44,31 @@ export function container_plugin(md, name, options) {
         nextLine = startLine;
 
         for (; ;) {
-            nextLine++;
+
             if (nextLine >= endLine) {
                 // unclosed block should be autoclosed by end of document.
                 // also block seems to be autoclosed by end of parent
                 break;
             }
 
-            start = state.bMarks[nextLine] + state.tShift[nextLine];
+            if (auto_closed) break;
+
+            start = pos + 2;
             max = state.eMarks[nextLine];
 
-            // if (start < max && state.sCount[nextLine] < state.blkIndent) {
-            //     // non-empty line with negative indent should stop the list:
-            //     // - ```
-            //     //  test
-            //     break;
-            // }
-
-            if (marker_char !== state.src.charCodeAt(start)) { continue; }
-
-            if (state.sCount[nextLine] - state.blkIndent >= 4) {
-                // closing fence should be indented less than 4 spaces
-                continue;
-            }
-
-            for (pos = start; pos <= max; pos++) {
-                if (":" !== state.src[pos]) {
-                    break;
+            for (let hpos = start; hpos <= max; hpos++) {
+                if (":" !== state.src[hpos]) {
+                    continue;
                 }
+
+                // found!
+                auto_closed = true;
+                break;
             }
 
-            // closing code fence must be at least as long as the opening one
-            if (Math.floor((pos - start) / marker_len) < marker_count) { continue; }
+            if (auto_closed) break;
 
-            // make sure tail has spaces only
-            pos -= (pos - start) % marker_len;
-            pos = state.skipSpaces(pos);
-
-            if (pos < max) { continue; }
-
-            // found!
-            auto_closed = true;
-            break;
+            nextLine++;
         }
 
         old_parent = state.parentType;
