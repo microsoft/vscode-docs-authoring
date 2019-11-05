@@ -52,7 +52,7 @@ export function pickLinkType() {
                 break;
             case "link to web page":
                 insertURL();
-                commandOption = "Link to web page";
+                commandOption = "link to web page";
                 break;
             case "link to heading":
                 selectLinkType();
@@ -62,7 +62,7 @@ export function pickLinkType() {
                 applyXref();
                 commandOption = "link to Xref";
                 break;
-            case "check links":
+            case "generate a link report":
                 runLinkChecker();
                 commandOption = "generate a link report";
                 break;
