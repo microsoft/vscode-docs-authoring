@@ -1,6 +1,6 @@
 import { QuickPickItem, QuickPickOptions, window, commands } from "vscode";
 import { sendTelemetryData, checkExtension } from "../helper/common";
-import { insertImage, insertURL, selectLinkType } from "./media-controller";
+import { Insert, insertURL, selectLinkType } from "./media-controller";
 import { applyXref } from "./xref-controller";
 
 const telemetryCommand: string = "insertLink";
@@ -47,7 +47,7 @@ export function pickLinkType() {
         const selectionWithoutIcon = selection.label.toLowerCase().split(")")[1].trim();
         switch (selectionWithoutIcon) {
             case "link to file in repo":
-                insertImage();
+                Insert(false);
                 commandOption = "link to file in repo";
                 break;
             case "link to web page":
