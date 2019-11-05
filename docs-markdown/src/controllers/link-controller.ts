@@ -36,7 +36,7 @@ export function pickLinkType() {
     if (checkExtension("blackmist.LinkCheckMD")) {
         items.push({
             description: "",
-            label: "$(check) Check links",
+            label: "$(check) Generate a link report",
         });
     }
 
@@ -64,7 +64,7 @@ export function pickLinkType() {
                 break;
             case "check links":
                 runLinkChecker();
-                commandOption = "check links";
+                commandOption = "generate a link report";
                 break;
         }
         sendTelemetryData(telemetryCommand, commandOption);
