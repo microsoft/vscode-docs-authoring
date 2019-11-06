@@ -9,6 +9,7 @@ The Docs Authoring Pack provides the following extensions to help author content
 * [Docs Article Templates](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-article-templates), which allows users to apply Markdown skeleton content to new files.
 * [Docs YAML](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml), which validates Docs .yml files against the appropriate YAML schemas.
 * [Docs Metadata](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-metadata), which speeds up editing of metadata throughout a Docs repository.
+* [LinkCheckMD](https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD), which generates a report on the links in the document, including broken links.
 
 ## Prerequisites and assumptions
 
