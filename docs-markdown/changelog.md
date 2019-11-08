@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.24 (TBD)
+
+- Update link UI
+- Add link checker extension support (https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD)
+
 ## 0.2.23 (October 14th, 2019)
 
 - Added Standard Markdown Image to Image extension
