@@ -68,11 +68,12 @@ module.exports.linkPattern = /(http:\/\/(|www\.))(visualstudio\.com|msdn\.com|mi
 //xref
 module.exports.openXref = /<xref.*(>)?/gmi;
 module.exports.xrefHasSpace = /<xref:[ ]+(>)?/gmi;
-module.exports.xrefShouldIncludeColon = /<xref(?!:)([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)?(\?displayProperty=(fullName|nameWithType))?(>)?/gmi;
+module.exports.xrefShouldIncludeColon = /<xref(?!:)([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]@]+)?(\?displayProperty=(fullName|nameWithType))?(>)?/gmi;
 module.exports.missingUidAttributeXref = /<xref:(\?displayProperty=(fullName|nameWithType))?>/g;
-module.exports.usesCorrectXrefDisplayProperties = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displayProperty=(?!fullName|nameWithType))(>)?/g;
-module.exports.xrefHasDisplayPropertyQuestionMark = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?)(?!displayProperty=.*)(>)?/g;
-module.exports.syntaxXref = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displayProperty=(fullName|nameWithType))?>/g;
+module.exports.usesCorrectXrefDisplayProperties = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]@]+)(\?displayProperty=(?!fullName|nameWithType))(>)?/g;
+module.exports.xrefHasDisplayPropertyQuestionMark = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]@]+)(\?)(?!displayProperty=.*)(>)?/g;
+module.exports.syntaxXref = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]@]+)(\?displayProperty=(fullName|nameWithType))?>/g;
+module.exports.notEscapedCharacters = /<xref:(.*[\*\#\`].*)(\?displayProperty=(fullName|nameWithType))?>/g;
 
 // Row
 module.exports.startRow = /^(.:*)(.+row)/gm;
