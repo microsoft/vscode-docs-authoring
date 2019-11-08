@@ -11,7 +11,7 @@ import { pickImageType } from "./image-controller";
 import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
-import { Insert, insertURL, insertVideo, selectLinkType } from "./media-controller";
+import { insertVideo } from "./media-controller";
 import { noLocText } from "./no-loc-controller";
 import { previewTopic } from "./preview-controller";
 import { insertRowsAndColumns } from "./row-columns-controller";
@@ -20,6 +20,7 @@ import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
 import { applyXref } from "./xref-controller";
 import { insertExpandableParentNode, insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
+import { pickLinkType } from "./link-controller";
 
 export function quickPickMenuCommand() {
     const commands = [
@@ -77,19 +78,7 @@ export function markdownQuickPick() {
         },
         {
             description: "",
-            label: "$(file-symlink-directory) Link to file in repo",
-        },
-        {
-            description: "",
-            label: "$(globe) Link to web page",
-        },
-        {
-            description: "",
-            label: "$(link) Link to heading",
-        },
-        {
-            description: "",
-            label: "$(x) Link to Xref",
+            label: "$(link) Link",
         },
         {
             description: "",
@@ -190,14 +179,8 @@ export function markdownQuickPick() {
             case "table":
                 insertTable();
                 break;
-            case "link to file in repo":
-                Insert(false);
-                break;
-            case "link to web page":
-                insertURL();
-                break;
-            case "link to heading":
-                selectLinkType();
+            case "link":
+                pickLinkType();
                 break;
             case "non-localizable text":
                 noLocText();
