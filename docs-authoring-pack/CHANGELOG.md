@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.4 (March 27th, 2019)
+
+- [blackmist.LinkCheckMD](https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD) is now part of Docs Authoring Pack
+
 ## 0.1.2 (March 27th, 2019)
 
 - [docs-yaml](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml) is now part of Docs Authoring Pack.
