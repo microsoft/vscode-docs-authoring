@@ -124,8 +124,8 @@ export async function applyImage() {
                 if (selectedText === "") {
                     // Ask user input for alt text
                     altText = await window.showInputBox({
-                        placeHolder: "Add alt text (up to 70 characters)",
-                        validateInput: (text: string) => text !== "" ? text.length <= 70 ? "" : "alt text should be less than 70 characters" : "alt-text input must not be empty"
+                        placeHolder: "Add alt text (up to 250 characters)",
+                        validateInput: (text: string) => text !== "" ? text.length <= 250 ? "" : "alt text should be less than 250 characters" : "alt-text input must not be empty"
                     });
                     if (!altText) {
                         // if user did not enter any alt text, then exit.
@@ -277,8 +277,8 @@ export async function applyComplex() {
                 if (selectedText === "") {
                     // Ask user input for alt text
                     altText = await window.showInputBox({
-                        placeHolder: "Add alt text (up to 70 characters)",
-                        validateInput: (text: string) => text !== "" ? text.length <= 70 ? "" : "alt text should be less than 70 characters" : "alt-text input must not be empty"
+                        placeHolder: "Add alt text (up to 250 characters)",
+                        validateInput: (text: string) => text !== "" ? text.length <= 250 ? "" : "alt text should be less than 250 characters" : "alt-text input must not be empty"
                     });
                     if (!altText) {
                         // if user did not enter any alt text, then exit.
