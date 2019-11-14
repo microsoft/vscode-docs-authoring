@@ -266,9 +266,9 @@ export function Insert(isArt: any) {
                 if (!val) {
                     getFilesShowQuickPick(isArt, "");
                     vscode.window.showInformationMessage("No alt entered or selected.  File name will be used.");
-                } else if (val.length < 70) {
+                } else if (val.length < 250) {
                     getFilesShowQuickPick(isArt, val);
-                } else if (val.length > 70) {
+                } else if (val.length > 250) {
                     vscode.window.showWarningMessage("Alt text exceeds 250 characters!");
                 }
             });
