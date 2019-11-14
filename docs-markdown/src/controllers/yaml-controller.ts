@@ -129,7 +129,7 @@ export function createEntry(name: string, href: string, options: boolean) {
   if (cursorPosition === 0 && options) {
     const tocEntryWithOptions =
       `- name: ${name}
-  displayname: #optional string for searching TOC
+  displayName: #optional string for searching TOC
   href: ${href}
   uid: #optional string
   expanded: #true or false, false is default`;
@@ -140,7 +140,7 @@ export function createEntry(name: string, href: string, options: boolean) {
     const currentPosition = editor.selection.active.character;
     const tocEntryWithOptionsIndented =
       `- name: ${name}
-  ${attributeSpace.repeat(currentPosition)}displayname: #optional string for searching TOC
+  ${attributeSpace.repeat(currentPosition)}displayName: #optional string for searching TOC
   ${attributeSpace.repeat(currentPosition)}href: ${href}
   ${attributeSpace.repeat(currentPosition)}uid: #optional string
   ${attributeSpace.repeat(currentPosition)}expanded: #true or false, false is default`;
@@ -160,6 +160,8 @@ export function checkForPreviousEntry(options: boolean) {
   const position = editor.selection.active;
   const cursorPosition = position.character;
   const currentLine = position.line;
+  const totalLines = editor.document.lineCount;
+  const startingCursorPosition = editor.selection.active.character;
 
   // scalar variables
   let itemsIndex: boolean = false;
@@ -171,6 +173,8 @@ export function checkForPreviousEntry(options: boolean) {
   const itemsScalar = /^\s+items:/;
   const nameScalarFirstPosition = /^-\sname:/;
   const nameScalar = /^\s+(-\sname:)/;
+  const hrefScalar = /^\s+href:/;
+  const displayNameScalar = /^\s+displayName:/;
 
   // check 1: opening items node
   const lineData = editor.document.lineAt(0);
@@ -192,18 +196,34 @@ export function checkForPreviousEntry(options: boolean) {
 
   // check 2: items node
   if (currentLine > 0) {
-    const totalLines = editor.document.lineCount;
-    const startingCursorPosition = editor.selection.active.character;
-    let i = currentLine;
-    for (i = currentLine; i < totalLines; i--) {
+    for (let i = currentLine; i < totalLines; i--) {
       if (i === 0) {
         break;
       }
+
+      const stopAtParent = editor.document.lineAt(i);
+      if (stopAtParent.text.match(itemsScalar)) {
+        if (stopAtParent.firstNonWhitespaceCharacterIndex === 0) {
+          itemsIndex = false;
+          break;
+        }
+      }
+
+      // next line should have a greater starting position
+      if (i === currentLine
+        && i + 1 !== totalLines) {
+        const lineData = editor.document.lineAt(i + 1);
+        if (lineData.firstNonWhitespaceCharacterIndex > startingCursorPosition) {
+          itemsIndex = false;
+          break;
+        }
+      }
+
       const lineData = editor.document.lineAt(i);
       const lineText = lineData.text;
       if (lineText.match(itemsScalar)) {
         const itemScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
-        if (startingCursorPosition === itemScalarPosition + 2) {
+        if (startingCursorPosition === itemScalarPosition) {
           itemsIndex = true;
           break;
         } else {
@@ -217,13 +237,36 @@ export function checkForPreviousEntry(options: boolean) {
   // check 3: name scalar
   if (currentLine > 0) {
     const startPosition = editor.selection.active.line;
-    let startingCursorPosition: number;
-    const totalLines = editor.document.lineCount;
     let i = startPosition;
     for (i = startPosition; i < totalLines; i--) {
-      startingCursorPosition = editor.selection.active.character;
       if (i === 0) {
         break;
+      }
+
+      if (startingCursorPosition === 0) {
+        const checkChild = editor.document.lineAt(i + 1);
+        if (checkChild.firstNonWhitespaceCharacterIndex === startingCursorPosition) {
+          nameIndex = true;
+          break;
+        }
+      }
+
+      const stopAtParent = editor.document.lineAt(i);
+      if (stopAtParent.text.match(nameScalar)) {
+        if (stopAtParent.firstNonWhitespaceCharacterIndex === 0) {
+          nameIndex = false;
+          break;
+        }
+      }
+
+      // next line should have a greater starting position
+      if (i === currentLine
+        && i + 1 !== totalLines) {
+        const lineData = editor.document.lineAt(i + 1);
+        if (lineData.firstNonWhitespaceCharacterIndex > startingCursorPosition) {
+          nameIndex = false;
+          break;
+        }
       }
       const lineData = editor.document.lineAt(i);
       const lineText = lineData.text;
@@ -243,13 +286,37 @@ export function checkForPreviousEntry(options: boolean) {
   // check 4: name scalar in first position
   if (currentLine > 0) {
     const startPosition = editor.selection.active.line;
-    let startingCursorPosition: number;
     const totalLines = editor.document.lineCount;
     let i = startPosition;
     for (i = startPosition; i < totalLines; i--) {
-      startingCursorPosition = editor.selection.active.character;
       if (i === 0) {
         break;
+      }
+
+      if (startingCursorPosition === 0) {
+        const checkChild = editor.document.lineAt(i + 1);
+        if (checkChild.firstNonWhitespaceCharacterIndex === startingCursorPosition) {
+          nameIndex = true;
+          break;
+        }
+      }
+
+      const stopAtParent = editor.document.lineAt(i);
+      if (stopAtParent.text.match(nameScalar)) {
+        if (stopAtParent.firstNonWhitespaceCharacterIndex === 0) {
+          nameIndex = false;
+          break;
+        }
+      }
+
+      // next line should have a greater starting position
+      if (i === currentLine
+        && i + 1 !== totalLines) {
+        const lineData = editor.document.lineAt(i + 1);
+        if (lineData.firstNonWhitespaceCharacterIndex > startingCursorPosition) {
+          nameIndex = false;
+          break;
+        }
       }
       const lineData = editor.document.lineAt(i);
       const lineText = lineData.text;
@@ -262,6 +329,17 @@ export function checkForPreviousEntry(options: boolean) {
           nameIndex = false;
           continue;
         }
+      }
+    }
+  }
+
+  // check if parent is href
+  if (currentLine - 1 > 0) {
+    if (editor.document.lineAt(currentLine - 1).text.match(hrefScalar)
+      || editor.document.lineAt(currentLine - 1).text.match(displayNameScalar)) {
+      if (editor.document.lineAt(currentLine - 1).firstNonWhitespaceCharacterIndex === startingCursorPosition) {
+        nameIndex = false;
+        itemsIndex = false;
       }
     }
   }
@@ -336,8 +414,8 @@ export function createParentNode() {
     const parentNodeLineStart =
       `- name:
     ${attributeSpace.repeat(cursorPosition - 2)}items:
-    ${attributeSpace.repeat(cursorPosition)}- name:
-    ${attributeSpace.repeat(cursorPosition + 2)}href:`
+    ${attributeSpace.repeat(cursorPosition - 2)}- name:
+    ${attributeSpace.repeat(cursorPosition)}href:`
     insertContentToEditor(editor, insertTocEntry.name, parentNodeLineStart);
   }
 
