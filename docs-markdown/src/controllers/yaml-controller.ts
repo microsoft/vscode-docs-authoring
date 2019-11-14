@@ -203,7 +203,7 @@ export function checkForPreviousEntry(options: boolean) {
 
       const stopAtParent = editor.document.lineAt(i);
       if (stopAtParent.text.match(itemsScalar)) {
-        if (stopAtParent.firstNonWhitespaceCharacterIndex === 0) {
+        if (stopAtParent.firstNonWhitespaceCharacterIndex === 2 && startingCursorPosition > 2) {
           itemsIndex = false;
           break;
         }
@@ -333,7 +333,7 @@ export function checkForPreviousEntry(options: boolean) {
     }
   }
 
-  // check if parent is href
+  // check if parent is href or displayName
   if (currentLine - 1 > 0) {
     if (editor.document.lineAt(currentLine - 1).text.match(hrefScalar)
       || editor.document.lineAt(currentLine - 1).text.match(displayNameScalar)) {
