@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.25 (November 15th 2019)
+## 0.2.25 (November 15th, 2019)
 
 - Fixed bug with xref linting
 - Fixed TOC bug with node positioning
