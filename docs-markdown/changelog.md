@@ -1,6 +1,12 @@
 # Change Log
 
-## 0.2.24 (TBD)
+## 0.2.25 (November 15th, 2019)
+
+- Fixed bug with xref linting
+- Fixed TOC bug with node positioning
+- Updated README
+
+## 0.2.24 (November 5th, 2019)
 
 - Update link UI
 - Add link checker extension support (https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD)
