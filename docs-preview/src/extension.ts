@@ -6,7 +6,7 @@ import { commands, ExtensionContext, TextDocument, window } from "vscode";
 import { sendTelemetryData } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { include } from "./markdown-extensions/includes";
-import { codeSnippets, custom_codeblock } from "./markdown-extensions/codesnippet";
+import { codeSnippets, custom_codeblock, tripleColonCodeSnippets } from "./markdown-extensions/codesnippet";
 import { columnOptions, column_end } from "./markdown-extensions/column";
 import { container_plugin } from "./markdown-extensions/container";
 import { rowOptions } from "./markdown-extensions/row";
@@ -40,6 +40,7 @@ export function activate(context: ExtensionContext) {
         extendMarkdownIt(md) {
             return md.use(include, { root: workingPath })
                 .use(codeSnippets, { root: workingPath })
+                .use(tripleColonCodeSnippets, { root: workingPath })
                 .use(xref)
                 .use(custom_codeblock)
                 .use(column_end)
