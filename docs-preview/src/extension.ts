@@ -6,10 +6,10 @@ import { commands, ExtensionContext, TextDocument, window } from "vscode";
 import { sendTelemetryData } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { include } from "./markdown-extensions/includes";
-import { codeSnippets, custom_codeblock, tripleColonCodeSnippets } from "./markdown-extensions/codesnippet";
-import { columnOptions, column_end } from "./markdown-extensions/column";
+import { codeSnippets, tripleColonCodeSnippets } from "./markdown-extensions/codesnippet";
+import { columnOptions, column_end, columnEndOptions } from "./markdown-extensions/column";
 import { container_plugin } from "./markdown-extensions/container";
-import { rowOptions } from "./markdown-extensions/row";
+import { rowOptions, rowEndOptions } from "./markdown-extensions/row";
 import { xref } from "./xref/xref";
 import { div_plugin, divOptions } from "./markdown-extensions/div";
 import { imageOptions, image_end } from "./markdown-extensions/image";
@@ -42,10 +42,11 @@ export function activate(context: ExtensionContext) {
                 .use(codeSnippets, { root: workingPath })
                 .use(tripleColonCodeSnippets, { root: workingPath })
                 .use(xref)
-                .use(custom_codeblock)
                 .use(column_end)
                 .use(container_plugin, "row", rowOptions)
+                .use(container_plugin, "row-end", rowEndOptions)
                 .use(container_plugin, "column", columnOptions)
+                .use(container_plugin, "column-end", columnEndOptions)
                 .use(div_plugin, "div", divOptions)
                 .use(container_plugin, "image", imageOptions)
                 .use(image_end);

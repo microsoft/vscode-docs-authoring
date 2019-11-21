@@ -225,27 +225,6 @@ export function tripleColonCodeSnippets(md, options) {
   md.core.ruler.before("normalize", "codesnippet", importTripleColonCodeSnippets);
 }
 
-
-export function custom_codeblock(md, options) {
-  const CODEBLOCK_RE = /([ ]{5})/g;
-  const removeCodeblockSpaces = (src: string) => {
-    let captureGroup;
-    while ((captureGroup = CODEBLOCK_RE.exec(src))) {
-      src = src.slice(0, captureGroup.index) + src.slice(captureGroup.index + captureGroup[0].length, src.length);
-    }
-    return src;
-  };
-
-  const customCodeBlock = (state) => {
-    try {
-      state.src = removeCodeblockSpaces(state.src);
-    } catch (error) {
-      output.appendLine(error);
-    }
-  };
-  md.core.ruler.before("normalize", "custom_codeblock", customCodeBlock);
-}
-
 function updateEditorToRefreshChanges() {
   const editor = window.activeTextEditor;
   const lastLine = editor.document.lineAt(editor.document.lineCount - 1);
