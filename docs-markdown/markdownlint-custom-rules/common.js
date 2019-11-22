@@ -31,9 +31,9 @@ module.exports.rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
 module.exports.openNoLoc = /(.:*)no-loc\s/gmi;
 module.exports.openNoDashNoLoc = /(.:*)noloc\s/gmi;
 module.exports.missingTextAttributeNoLoc = /(.:*)(.\s*)no-loc\stext/gmi;
-module.exports.syntaxNoLocLooseMatch = /(.:*)(.\s*)(no-loc|noloc)\s(\w+)=(.\"*)([a-zA-Z'-\s]*)(.\"*)(.:*)/gmi
-module.exports.syntaxNoLocCaseSensitive = /(.:*)no-loc\stext=(.\"*)([a-zA-Z'-\s]*)(.\"*)(.:*)/gm
-module.exports.syntaxQuotesNoLoc = /(.:*)no-loc\stext=\"([a-zA-Z'-\s]*)\"(.:*)/gmi
+module.exports.syntaxNoLocLooseMatch = /(.:*)(.\s*)(no-loc|noloc)\s(\w+)=(.\"*)([a-zA-Z0-9'-\s]*)(.\"*)(.:*)/gmi
+module.exports.syntaxNoLocCaseSensitive = /(.:*)no-loc\stext=(.\"*)([a-zA-Z0-9'-\s]*)(.\"*)(.:*)/gm
+module.exports.syntaxQuotesNoLoc = /(.:*)no-loc\stext=\"([a-zA-Z0-9'-\s]*)\"(.:*)/gmi
 module.exports.syntaxNoLoc = /:::no-loc\stext=\"([a-zA-Z'-\s]*)\":::/gm;
 
 //image

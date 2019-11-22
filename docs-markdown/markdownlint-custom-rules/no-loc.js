@@ -57,7 +57,8 @@ module.exports = {
                                     detail: detailStrings.noLocNoQuotes,
                                     context: text.line
                                 });
-                            } else {
+                            } else if (!content.trim().startsWith(":::")
+                                || !content.trim().endsWith(":::")) {
                                 onError({
                                     lineNumber: text.lineNumber,
                                     detail: detailStrings.noLocColonsIncorrect,
