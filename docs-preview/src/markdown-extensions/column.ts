@@ -77,12 +77,14 @@ export function column_end(md, options) {
     const removeCodeblockSpaces = (src: string) => {
         // let captureGroup;
         let matches = src.match(COLUMN_RE);
-        matches.map((element) => {
-            let position = src.indexOf(element);
-            let output = element.replace(CODEBLOCK_RE, "");
-            output = output.replace(COLUMN_END_RE, "\r\n:::column-end:::");
-            src = src.slice(0, position) + output + src.slice(position + element.length, src.length);
-        });
+        if (matches) {
+            matches.map((element) => {
+                let position = src.indexOf(element);
+                let output = element.replace(CODEBLOCK_RE, "");
+                output = output.replace(COLUMN_END_RE, "\r\n:::column-end:::");
+                src = src.slice(0, position) + output + src.slice(position + element.length, src.length);
+            });
+        }
         // while ((captureGroup = COLUMN_RE.exec(src))) {
         //   const output = captureGroup[0].replace(CODEBLOCK_RE, "");
         //   src = src.slice(0, captureGroup.index) + output + src.slice(captureGroup.index + captureGroup[0].length, src.length);
