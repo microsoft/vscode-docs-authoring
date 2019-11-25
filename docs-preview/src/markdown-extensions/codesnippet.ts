@@ -118,222 +118,80 @@ const dict = [
 ]
 let codeSnippetContent = "";
 let firstIteration = true;
-export const TRIPLE_COLON_CODE_RE = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/g;
+const fileMap = new Map();
+const TRIPLE_COLON_CODE_RE = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/g;
+const SOURCE_RE = /source="(.*?)"/i;
+const LANGUAGE_RE = /language="(.*?)"/i;
+const RANGE_RE = /range="(.*?)"/i;
+const ID_RE = /id="(.*?)"/i;
+
 export function tripleColonCodeSnippets(md, options) {
   const replaceTripleColonCodeSnippetWithContents = async (src: string, rootdir: string) => {
-    // let captureGroup;
     const matches = src.match(TRIPLE_COLON_CODE_RE);
-
     for (const match of matches) {
-      const position = src.indexOf(match);
-      // while ((captureGroup = TRIPLE_COLON_CODE_RE.exec(src))) {
-      const repoRoot = workspace.workspaceFolders[0].uri.fsPath;
-      const SOURCE_RE = /source="(.*?)"/g;
-      // const source = SOURCE_RE.exec(captureGroup[0]);
-      const source = SOURCE_RE.exec(match);
-      const LANGUAGE_RE = /language="(.*?)"/g;
-      // let languageMatch = LANGUAGE_RE.exec(captureGroup[0]);
-      let languageMatch = LANGUAGE_RE.exec(match);
-      let language = ""
-      if (languageMatch) {
-        language = languageMatch[1].trim()
-      }
+      let file;
+      let filePath;
+      let shouldUpdate = false;
       let output = "";
       const lineArr: string[] = [];
-      let file
-      let filePath = resolve(repoRoot, source[1].trim());
-      let path = source[1].trim();
-      if (path.includes("~")) {
-        // get openpublishing.json
-        let position = 0
-        let repoPath = "";
-        const openPublishingFilePath = resolve(repoRoot, ".openpublishing.publish.config.json")
-        const openPublishingFile = await readFile(openPublishingFilePath, "utf8")
-        // filePath = filePath.replace(ROOTPATH_RE, repoRoot);
-        const openPublishingJson = JSON.parse(openPublishingFile)
-        const repos = openPublishingJson["dependent_repositories"]
-        const parts = path.split("/")
-        if (repos) {
-          repos.map(repo => {
-            if (parts) {
-              parts.map((part, index) => {
-                if (repo.path_to_root === part) {
-                  position = index;
-                  repoPath = repo.url;
-                  return;
-                }
-              });
+      const position = src.indexOf(match);
+      const source = match.match(SOURCE_RE);
+      const path = source[1].trim();
+      if (path) {
+        file = fileMap.get(path);
+        if (!file) {
+          shouldUpdate = true;
+          const repoRoot = workspace.workspaceFolders[0].uri.fsPath;
+          if (path.includes("~")) {
+            let apiUrl;
+            // get openpublishing.json at root
+            const openPublishingRepos = await getOpenPublishingFile(repoRoot)
+            if (openPublishingRepos) {
+              apiUrl = buildRepoPath(openPublishingRepos, path);
             }
-          });
-          path = buildRepoPath(repoPath, position, parts)
+            try {
+              await Axios.get(apiUrl)
+                .then(response => {
+                  if (response) {
+                    if (response.status === 403) {
+                      outputChannel.appendLine("Github Rate Limit has been reached. 60 calls per hour are allowed.")
+                    } else if (response.status === 404) {
+                      outputChannel.appendLine("Resource not Found.")
+                    } else if (response.status === 200) {
+                      file = Base64.decode(response.data.content);
+                      fileMap.set(path, file)
+                    }
+                  }
+                });
+            } catch (error) {
+              outputChannel.appendLine(error);
+            }
+          } else {
+            filePath = resolve(rootdir, path);
+            file = await readFile(filePath, "utf8")
+            fileMap.set(path, file)
+          }
         }
-        const apiUrl = path;
-        try {
-          await Axios.get(apiUrl)
-            .then(response => {
-              if (response) {
-                file = Base64.decode(response.data.content);
-              }
-            });
-        } catch (error) {
-          outputChannel.appendLine(error);
-        }
-      } else {
-        file = await readFile(filePath, "utf8")
       }
-
       if (file) {
         const data = file.split("\n");
-        const RANGE_RE = /range="(.*?)"/g;
-        // const range = RANGE_RE.exec(captureGroup[0]);
-        const range = RANGE_RE.exec(match);
-        const ID_RE = /id="(.*?)"/g;
-        // const idMatch = ID_RE.exec(captureGroup[0]);
-        const idMatch = ID_RE.exec(match);
+        const language = checkLanguageMatch(match);
+        const range = match.match(RANGE_RE)
+        const idMatch = match.match(ID_RE);
         if (idMatch) {
-          const id = idMatch[1].trim();
-          let startLine = 0;
-          let endLine = 0;
-          let START_RE
-          let START_SPACE_RE
-          let END_RE
-          let END_SPACE_RE
-          // logic for id.
-          // get language to know what type of comment to expect
-          switch (language) {
-            case "cpp":
-            case "vb":
-            case "java":
-            case "javascript":
-            case "js":
-            case "fsharp":
-            case "typescript":
-            case "go":
-            case "php":
-            case "rust":
-            case "objectivec":
-              START_RE = new RegExp(`\/\/<${id}>`)
-              START_SPACE_RE = new RegExp(`\/\/ <${id}>`);;
-              END_RE = new RegExp(`\/\/<\/${id}>`)
-              END_SPACE_RE = new RegExp(`\/\/ <\/${id}>`);
-              break;
-            case "cs":
-            case "csharp":
-              START_RE = new RegExp(`#region${id}`)
-              START_SPACE_RE = new RegExp(`#region ${id}`);
-              END_RE = new RegExp(`#endregion`);
-              END_SPACE_RE = new RegExp(`#endregion`);
-              break;
-            case "xml":
-            case "html":
-              START_RE = new RegExp(`<!--<${id}>-->`)
-              START_SPACE_RE = new RegExp(`<!-- <${id}> -->`)
-              END_RE = new RegExp(`<!--<\/${id}>-->`)
-              END_SPACE_RE = new RegExp(`<!-- </${id}> -->`)
-              break;
-            case "sql":
-              START_RE = new RegExp(`--<${id}>`)
-              START_SPACE_RE = new RegExp(`-- <${id}>`);
-              END_RE = new RegExp(`-- <\/${id}>`)
-              END_SPACE_RE = new RegExp(`--<\/${id}>`);
-              break;
-            case "python":
-            case "powershell":
-            case "shell":
-            case "ruby":
-              START_RE = new RegExp(`#<${id}>`);
-              START_SPACE_RE = new RegExp(`# <${id}>`);
-              END_RE = new RegExp(`#<\/${id}>`);
-              END_SPACE_RE = new RegExp(`# <\/${id}>`);
-              break;
-            case "batchfile":
-              START_RE = new RegExp(`rem<${id}>`, "i");
-              START_SPACE_RE = new RegExp(`rem <${id}>`, "i");
-              END_RE = new RegExp(`rem<\/${id}>`, "i");
-              END_SPACE_RE = new RegExp(`rem <\/${id}>`, "i");
-              break;
-            case "erlang":
-              START_RE = new RegExp(`%<${id}>`);
-              START_SPACE_RE = new RegExp(`% <${id}>`);
-              END_RE = new RegExp(`%</${id}>`);
-              END_SPACE_RE = new RegExp(`% </${id}>`);
-              break;
-            case "lisp":
-              START_RE = new RegExp(`;<${id}>`);
-              START_SPACE_RE = new RegExp(`; <${id}>`);
-              END_RE = new RegExp(`;</${id}>`);
-              END_SPACE_RE = new RegExp(`; </${id}>`);
-              break;
-            default:
-              // get all lines
-              startLine = 0;
-              endLine = data.length;
-              break;
-          }
-          for (let index = 0; index < data.length; index++) {
-            if (START_RE.exec(data[index])) {
-              startLine = index;
-            } else if (START_SPACE_RE.exec(data[index])) {
-              startLine = index;
-            }
-            if (END_RE.exec(data[index])) {
-              endLine = index;
-              break;
-            } else if (END_SPACE_RE.exec(data[index])) {
-              endLine = index;
-              break;
-            }
-            if (index + 1 === data.length) {
-              endLine = data.length;
-              break;
-            }
-          }
-          data.map((x, index) => {
-            if (index > startLine && index < endLine) {
-              lineArr.push(x);
-            }
-          })
-          output = lineArr.join("\n");
-
+          output = idToOutput(idMatch, lineArr, data, language)
         } else if (range) {
-
-          const rangeArr: number[] = [];
-          const rangeList = range[1].split(",");
-          rangeList.forEach((element) => {
-            if (element.indexOf("-") > 0) {
-              const rangeThru = element.split("-");
-              const startRange = parseInt(rangeThru[0], 10);
-              const endRange = parseInt(rangeThru.pop(), 10);
-              for (let index = startRange; index <= endRange; index++) {
-                rangeArr.push(index);
-              }
-            } else {
-              rangeArr.push(parseInt(element, 10));
-            }
-          });
-          rangeArr.sort();
-          data.map((line, index) => {
-            rangeArr.filter((x) => {
-              if (x === index + 1) {
-                lineArr.push(line);
-              }
-            });
-          });
-          output = lineArr.join("\n");
+          output = rangeToOutput(lineArr, data, range);
         } else {
-          output = readFileSync(filePath, "utf8");
+          output = file;
         }
         output = `\`\`\`${language}\r\n${output}\r\n\`\`\``;
         src = src.slice(0, position) + output + src.slice(position + match.length, src.length);
-        // src = src.slice(0, captureGroup.index) + output + src.slice(captureGroup.index + captureGroup[0].length, src.length);
-        // }
+
         codeSnippetContent = src;
-        const matchesRemaining = codeSnippetContent.match(TRIPLE_COLON_CODE_RE);
-        if (matchesRemaining) {
-          if (firstIteration) {
-            firstIteration = false;
-            updateEditorToRefreshChanges();
-          }
+
+        if (shouldUpdate) {
+          updateEditorToRefreshChanges();
         }
       }
     }
@@ -364,14 +222,177 @@ function updateEditorToRefreshChanges() {
   });
 }
 
-function buildRepoPath(repo, position, parts) {
+function buildRepoPath(repos, path) {
+  let position = 0
+  let repoPath = "";
+  const parts = path.split("/")
+  repos.map(repo => {
+    if (parts) {
+      parts.map((part, index) => {
+        if (repo.path_to_root === part) {
+          position = index;
+          repoPath = repo.url;
+          return;
+        }
+      });
+    }
+  });
   let fullPath = [];
-  repo = repo.replace("https://github.com/", "https://api.github.com/repos/")
-  fullPath.push(repo);
+  repoPath = repoPath.replace("https://github.com/", "https://api.github.com/repos/")
+  fullPath.push(repoPath);
   fullPath.push("contents")
   for (let index = position + 1; index < parts.length; index++) {
     const path = parts[index];
     fullPath.push(path);
   }
   return fullPath.join("/");
+}
+
+async function getOpenPublishingFile(repoRoot) {
+  const openPublishingFilePath = resolve(repoRoot, ".openpublishing.publish.config.json")
+  const openPublishingFile = await readFile(openPublishingFilePath, "utf8")
+  // filePath = filePath.replace(ROOTPATH_RE, repoRoot);
+  const openPublishingJson = JSON.parse(openPublishingFile)
+  return openPublishingJson["dependent_repositories"]
+}
+
+function checkLanguageMatch(match) {
+  let languageMatch = LANGUAGE_RE.exec(match);
+  let language = ""
+  if (languageMatch) {
+    language = languageMatch[1].trim()
+  }
+  return language;
+}
+
+function rangeToOutput(lineArr, data, range) {
+  const rangeArr: number[] = [];
+  const rangeList = range[1].split(",");
+  rangeList.forEach((element) => {
+    if (element.indexOf("-") > 0) {
+      const rangeThru = element.split("-");
+      const startRange = parseInt(rangeThru[0], 10);
+      const endRange = parseInt(rangeThru.pop(), 10);
+      for (let index = startRange; index <= endRange; index++) {
+        rangeArr.push(index);
+      }
+    } else {
+      rangeArr.push(parseInt(element, 10));
+    }
+  });
+  rangeArr.sort();
+  data.map((line, index) => {
+    rangeArr.filter((x) => {
+      if (x === index + 1) {
+        lineArr.push(line);
+      }
+    });
+  });
+  return lineArr.join("\n");
+}
+
+function idToOutput(idMatch, lineArr, data, language) {
+  const id = idMatch[1].trim();
+  let startLine = 0;
+  let endLine = 0;
+  let START_RE
+  let START_SPACE_RE
+  let END_RE
+  let END_SPACE_RE
+  // logic for id.
+  // get language to know what type of comment to expect
+  switch (language) {
+    case "cpp":
+    case "vb":
+    case "java":
+    case "javascript":
+    case "js":
+    case "fsharp":
+    case "typescript":
+    case "go":
+    case "php":
+    case "rust":
+    case "objectivec":
+      START_RE = new RegExp(`\/\/<${id}>`)
+      START_SPACE_RE = new RegExp(`\/\/ <${id}>`);;
+      END_RE = new RegExp(`\/\/<\/${id}>`)
+      END_SPACE_RE = new RegExp(`\/\/ <\/${id}>`);
+      break;
+    case "cs":
+    case "csharp":
+      START_RE = new RegExp(`#region${id}`)
+      START_SPACE_RE = new RegExp(`#region ${id}`);
+      END_RE = new RegExp(`#endregion`);
+      END_SPACE_RE = new RegExp(`#endregion`);
+      break;
+    case "xml":
+    case "html":
+      START_RE = new RegExp(`<!--<${id}>-->`)
+      START_SPACE_RE = new RegExp(`<!-- <${id}> -->`)
+      END_RE = new RegExp(`<!--<\/${id}>-->`)
+      END_SPACE_RE = new RegExp(`<!-- </${id}> -->`)
+      break;
+    case "sql":
+      START_RE = new RegExp(`--<${id}>`)
+      START_SPACE_RE = new RegExp(`-- <${id}>`);
+      END_RE = new RegExp(`-- <\/${id}>`)
+      END_SPACE_RE = new RegExp(`--<\/${id}>`);
+      break;
+    case "python":
+    case "powershell":
+    case "shell":
+    case "ruby":
+      START_RE = new RegExp(`#<${id}>`);
+      START_SPACE_RE = new RegExp(`# <${id}>`);
+      END_RE = new RegExp(`#<\/${id}>`);
+      END_SPACE_RE = new RegExp(`# <\/${id}>`);
+      break;
+    case "batchfile":
+      START_RE = new RegExp(`rem<${id}>`, "i");
+      START_SPACE_RE = new RegExp(`rem <${id}>`, "i");
+      END_RE = new RegExp(`rem<\/${id}>`, "i");
+      END_SPACE_RE = new RegExp(`rem <\/${id}>`, "i");
+      break;
+    case "erlang":
+      START_RE = new RegExp(`%<${id}>`);
+      START_SPACE_RE = new RegExp(`% <${id}>`);
+      END_RE = new RegExp(`%</${id}>`);
+      END_SPACE_RE = new RegExp(`% </${id}>`);
+      break;
+    case "lisp":
+      START_RE = new RegExp(`;<${id}>`);
+      START_SPACE_RE = new RegExp(`; <${id}>`);
+      END_RE = new RegExp(`;</${id}>`);
+      END_SPACE_RE = new RegExp(`; </${id}>`);
+      break;
+    default:
+      // get all lines
+      startLine = 0;
+      endLine = data.length;
+      break;
+  }
+  for (let index = 0; index < data.length; index++) {
+    if (START_RE.exec(data[index])) {
+      startLine = index;
+    } else if (START_SPACE_RE.exec(data[index])) {
+      startLine = index;
+    }
+    if (END_RE.exec(data[index])) {
+      endLine = index;
+      break;
+    } else if (END_SPACE_RE.exec(data[index])) {
+      endLine = index;
+      break;
+    }
+    if (index + 1 === data.length) {
+      endLine = data.length;
+      break;
+    }
+  }
+  data.map((x, index) => {
+    if (index > startLine && index < endLine) {
+      lineArr.push(x);
+    }
+  })
+  return lineArr.join("\n");
 }
