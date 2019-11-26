@@ -78,6 +78,12 @@ export function searchRepo(searchTerm: any) {
                         dirOptions.push({ label: subdirs[folders], description: "sub directory" });
                     }
                 }
+
+                vscode.window.showQuickPick(dirOptions).then((directory) => {
+                    if (directory) {
+                        search(editor, selected, searchTerm, directory.label)
+                    }
+                });
             });
         }
     });
