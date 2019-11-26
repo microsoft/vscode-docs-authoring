@@ -31,7 +31,7 @@ module.exports = {
                     if (!content.match(common.openAndClosingValidTripleColon)) {
                         onError({
                             lineNumber: text.lineNumber,
-                            detail: detailStrings.imageColonsIncorrect,
+                            detail: detailStrings.tripleColonsIncorrect,
                             context: text.line
                         });
                     }

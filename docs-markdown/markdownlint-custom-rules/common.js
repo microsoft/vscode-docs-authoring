@@ -85,4 +85,14 @@ module.exports.syntaxColumn = /^\s+:{3}(column|column-end|column\s+(.*)"):{3}$/g
 module.exports.columnWithAttribute = /^\s+:{3}(column\s+(.*?)):/gm;
 module.exports.columnSpan = /^\s+:{3}(column\s+span="(.*?)"):/gm;
 
+//codesnippet
+module.exports.syntaxCodeLooseMatch = /(:+)(\s+)?code.*?(:+)/gmi;
+module.exports.syntaxCodeExactMatch = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/gmi;
+module.exports.syntaxCodeAttributes = /(:code)|([a-z-]*(?==))/gmi;
+module.exports.allowedCodeAttributes = [":code", "language", "source", "range", "id"];
+module.exports.codeSourceMatch = /source="(.*?)"/m;
+module.exports.codeOpen = /:::code/gmi;
+module.exports.codeLanguageMatch = /language="(.*?)"/m;
+module.exports.codeRangeMatch = /range="(.*?)"/m;
+module.exports.codeIdMatch = /id="(.*?)"/m;
 

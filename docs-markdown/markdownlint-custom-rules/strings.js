@@ -2,7 +2,7 @@
 module.exports.syntaxCount = `Bad syntax for markdown extension. Begin with "::: ".`;
 module.exports.syntaxSpace = `Bad syntax for markdown extension. One space required after ":::".`;
 module.exports.syntaxUnsupportedExtension = `Bad syntax for markdown extension. Extension is not supported.`;
-module.exports.imageColonsIncorrect = `Bad syntax for markdown extension. Begins and end with ":::".`;
+module.exports.tripleColonsIncorrect = `Bad syntax for markdown extension. Begins and end with ":::".`;
 
 // moniker
 module.exports.monikerRange = `Bad syntax for range argument. Use =, <=, or >=, and put value in quotes.`;
@@ -52,5 +52,12 @@ module.exports.rowSyntax = `Rows should begin :::row::: and end with :::row-end:
 // column
 module.exports.columnSyntax = `Columns should begin :::column::: and end with :::column-end:::).`;
 module.exports.contenSpanAttribute = `Only span is supported (ex. :::column span="":::).`;
+
+// image
+module.exports.codeCaseSensitive = `Bad syntax for codesnippet. "code" and its attributes must be lower-case.`;
+module.exports.codeNonAllowedAttribute = `Bad syntax for codesnippet. "___" is not an allowed attribute.`;
+module.exports.codeSourceRequired = `Bad syntax for codesnippet. "source" required.`;
+module.exports.codeLanguageRequired = `Bad syntax for codesnippet. "language" required.`;
+module.exports.codeRangeOrId = `Bad syntax for codesnippet. You cannot have both "range" and "id" properties. Choose one or the other.`;
 
 
