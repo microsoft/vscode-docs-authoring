@@ -17,7 +17,7 @@ module.exports = {
                 return token.type === "inline";
             }).map(text => {
                 let content = fullLooseMatches.filter((regexMatch) => regexMatch == text.content)
-                if (content == null) {
+                if (content == null || content.length == 0) {
                     content = fullLooseMatches.filter(regexMatch => regexMatch == text.line)
                 }
                 if (content == null || content.length == 0) {
@@ -35,111 +35,70 @@ module.exports = {
                 }
 
                 //source check
-                // const notImageComplexEndTagMatch = content.match(common.imageComplexEndTagMatch)
-                // if (!notImageComplexEndTagMatch) {
-                const sourceMatch = content.match(common.imageSourceMatch);
+                const sourceMatch = content.match(common.codeSourceMatch);
                 if (!sourceMatch || sourceMatch[0] === "source=\"\"") {
                     onError({
                         lineNumber: text.lineNumber,
-                        detail: detailStrings.imageSourceRequired,
+                        detail: detailStrings.codeSourceRequired,
                         context: text.line
                     });
                 }
-                // }
+
+                //do we have language?
+                const languageMatch = content.match(common.codeLanguageMatch);
+                if (!languageMatch || languageMatch[0] === "language=\"\"") {
+                    onError({
+                        lineNumber: text.lineNumber,
+                        detail: detailStrings.codeLanguageRequired,
+                        context: text.line
+                    });
+                }
+
+                //do we have both Id and Range?
+                const rangeMatch = content.match(common.codeRangeMatch);
+                const idMatch = content.match(common.codeIdMatch);
+                if (rangeMatch && idMatch) {
+                    onError({
+                        lineNumber: text.lineNumber,
+                        detail: detailStrings.codeRangeOrId,
+                        context: text.line
+                    });
+                } else if (rangeMatch) {
+                    const allowedValues = rangeMatch[1].match(common.allowedRangeValues)
+                    if (!allowedValues) {
+                        onError({
+                            lineNumber: text.lineNumber,
+                            detail: detailStrings.allowedRangeValues,
+                            context: text.line
+                        });
+                    }
+                }
 
                 //case sensitivity and attributes check
-                let attrMatches = content.match(common.syntaxImageAttributes);
+                let attrMatches = content.match(common.syntaxCodeAttributes);
                 attrMatches = attrMatches.filter((attr) => attr != "");
                 attrMatches.forEach((attr) => {
-                    if (attr !== attr.toLowerCase()) {
-                        onError({
-                            lineNumber: text.lineNumber,
-                            detail: detailStrings.codeCaseSensitive,
-                            context: text.line
-                        });
-                    }
-
-                    //make sure each attribute is allowed...
-                    if (common.allowedCodeAttributes.indexOf(attr) === -1) {
-                        onError({
-                            lineNumber: text.lineNumber,
-                            detail: detailStrings.codeNonAllowedAttribute.replace("___", attr),
-                            context: text.line
-                        });
+                    if (attr) {
+                        if (attr !== attr.toLowerCase()) {
+                            onError({
+                                lineNumber: text.lineNumber,
+                                detail: detailStrings.codeCaseSensitive,
+                                context: text.line
+                            });
+                        }
+                        //make sure each attribute is allowed...
+                        if (common.allowedCodeAttributes.indexOf(attr) === -1) {
+                            onError({
+                                lineNumber: text.lineNumber,
+                                detail: detailStrings.codeNonAllowedAttribute.replace("___", attr),
+                                context: text.line
+                            });
+                        }
                     }
                 });
-
-                //check if the type is valid
-                const typeMatch = common.imageTypeMatch.exec(content);
-                if (typeMatch) {
-                    if (common.allowedImageTypes.indexOf(typeMatch[1]) === -1) {
-                        onError({
-                            lineNumber: text.lineNumber,
-                            detail: detailStrings.imageNonAllowedType.replace("___", typeMatch[1]),
-                            context: text.line
-                        });
-                    }
-
-
-
-                    if (typeMatch[1] !== "icon") {
-                        //do we have alt-text?
-                        const altTextMatch = content.match(common.imageAltTextMatch);
-                        if (!altTextMatch || altTextMatch[0] === "alt-text=\"\"") {
-                            onError({
-                                lineNumber: text.lineNumber,
-                                detail: detailStrings.imageAltTextRequired,
-                                context: text.line
-                            });
-                        }
-
-                        //complex type rules
-                        if (typeMatch[1] === "complex") {
-                            //do we have an "image-end" tag?
-                            const imageMatches = content.match(common.imageOpen);
-                            if (imageMatches.length > 2 || !content.match(common.imageComplexEndTagMatch)) {
-                                onError({
-                                    lineNumber: text.lineNumber,
-                                    detail: detailStrings.imageComplexEndTagRequired,
-                                    context: text.line
-                                });
-                            }
-
-                            //do we have a long description?
-                            const longDescMatch = common.imageLongDescriptionMatch.exec(content);
-                            if (!longDescMatch || longDescMatch[9].match(/^\s*$/mi)[0] != "") {
-                                onError({
-                                    lineNumber: text.lineNumber,
-                                    detail: detailStrings.imageComplexLongDescriptionRequired,
-                                    context: text.line
-                                });
-                            }
-                        }
-                    } else {
-                        //do we have loc-scope? cuzzz, we shouldn't!
-                        const locScopeMatch = common.imageLocScopeMatch.exec(content);
-                        if (locScopeMatch) {
-                            onError({
-                                lineNumber: text.lineNumber,
-                                detail: detailStrings.imageIconRemoveLocScope,
-                                context: text.line
-                            });
-                        }
-                        //do we have alt-text? cuzzz, we shouldn't!
-                        const altTextMatch = common.imageAltTextMatch.exec(content);
-                        if (altTextMatch) {
-                            onError({
-                                lineNumber: text.lineNumber,
-                                detail: detailStrings.imageIconRemoveAltText,
-                                context: text.line
-                            });
-                        }
-                    }
-                };
             });
         } catch (error) {
             console.log(error);
         }
     }
-
 };

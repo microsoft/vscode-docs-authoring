@@ -10,7 +10,7 @@ module.exports.openAndClosingValidTripleColon = /^:::(.*):::/gmi;
 
 // Markdown extensions (add valid/supported extensions to list)
 module.exports.openExtension = /^:(.*?)(zone|moniker|no-loc)/gm;
-module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc|image)(.:*)/g;
+module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc|image|code)(.:*)/g;
 module.exports.unsupportedExtensionRegex = /^:::\s+(.*)/gm;
 
 // Zones
@@ -45,9 +45,9 @@ module.exports.imageTypeMatch = /type\s*=\s*"([a-z]*)"/m;
 module.exports.imageLongDescriptionMatch = /(:::)(.*)(:::)(((\s)*(.*))+)(:::)(.*)(:::)/mi;
 module.exports.imageComplexEndTagMatch = /:::(\s*)?image-end:::/gmi;
 module.exports.imageOpen = /:::image/gmi;
-module.exports.imageSourceMatch = /source\s*=\s*"([a-zA-Z0-9\-_\.\,\;\:\\/\?\=\%\@s*]*)"/m;
-module.exports.imageAltTextMatch = /alt-text\s*=\s*"([a-zA-Z\-_\.\,\;\:\s*]*)"/m;
-module.exports.imageLocScopeMatch = /loc-scope\s*=\s*"([a-zA-Z\-_\.\,\;\:\s*]*)"/m;
+module.exports.imageSourceMatch = /source\s*=\s*"(.*?)"/m;
+module.exports.imageAltTextMatch = /alt-text\s*=\s*"(.*?)"/m;
+module.exports.imageLocScopeMatch = /loc-scope\s*=\s*"(.*?)"/m;
 
 // Alert
 module.exports.alertOpener = /^>\s+\[!/gm; // regex to find "> [!"
@@ -86,13 +86,15 @@ module.exports.columnWithAttribute = /^\s+:{3}(column\s+(.*?)):/gm;
 module.exports.columnSpan = /^\s+:{3}(column\s+span="(.*?)"):/gm;
 
 //codesnippet
-module.exports.syntaxCodeLooseMatch = /(:+)(\s+)?code.*?(:+)/gmi;
-module.exports.syntaxCodeExactMatch = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/gmi;
-module.exports.syntaxCodeAttributes = /(:code)|([a-z-]*(?==))/gmi;
-module.exports.allowedCodeAttributes = [":code", "language", "source", "range", "id"];
-module.exports.codeSourceMatch = /source="(.*?)"/m;
-module.exports.codeOpen = /:::code/gmi;
-module.exports.codeLanguageMatch = /language="(.*?)"/m;
-module.exports.codeRangeMatch = /range="(.*?)"/m;
-module.exports.codeIdMatch = /id="(.*?)"/m;
+module.exports.syntaxCodeLooseMatch = /(:+)(\s+)?code.*?(:+)/g;
+module.exports.syntaxCodeExactMatch = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/i;
+module.exports.syntaxCodeAttributes = /(:code)|([a-z]*(?==))/i;
+module.exports.allowedCodeAttributes = [":code", "language", "source", "range", "id", "interactive", "highlight"];
+module.exports.codeOpen = /:::code/i;
+module.exports.codeSourceMatch = /source="(.*?)"/;
+module.exports.codeLanguageMatch = /language="(.*?)"/;
+module.exports.codeRangeMatch = /range="(.*?)"/;
+module.exports.codeIdMatch = /id="(.*?)"/;
+module.exports.allowedRangeValues = /[0-9\- ,]+/;
+
 

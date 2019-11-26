@@ -53,11 +53,12 @@ module.exports.rowSyntax = `Rows should begin :::row::: and end with :::row-end:
 module.exports.columnSyntax = `Columns should begin :::column::: and end with :::column-end:::).`;
 module.exports.contenSpanAttribute = `Only span is supported (ex. :::column span="":::).`;
 
-// image
+// codesnippet
 module.exports.codeCaseSensitive = `Bad syntax for codesnippet. "code" and its attributes must be lower-case.`;
 module.exports.codeNonAllowedAttribute = `Bad syntax for codesnippet. "___" is not an allowed attribute.`;
 module.exports.codeSourceRequired = `Bad syntax for codesnippet. "source" required.`;
 module.exports.codeLanguageRequired = `Bad syntax for codesnippet. "language" required.`;
 module.exports.codeRangeOrId = `Bad syntax for codesnippet. You cannot have both "range" and "id" properties. Choose one or the other.`;
+module.exports.allowedRangeValues = `Bad syntax for codesnippet. Allowed range values must match the regex [0-9\- ,]+.`;
 
 
