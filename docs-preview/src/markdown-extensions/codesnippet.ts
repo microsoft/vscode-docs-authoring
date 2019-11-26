@@ -1,13 +1,13 @@
 import Axios from "axios";
 import { open, readFileSync } from "fs";
-import { Base64 } from "js-base64"
+import { Base64 } from "js-base64";
 import { resolve } from "path";
 import { Position, window, workspace } from "vscode";
 import { output as outputChannel } from "../extension";
 
-//async fs does not have import module available
-const fs = require('fs');
-const util = require('util');
+// async fs does not have import module available
+const fs = require("fs");
+const util = require("util");
 const readFile = util.promisify(fs.readFile);
 
 export const CODE_RE = /\[!code-(.+?)\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
@@ -77,7 +77,7 @@ const dict = [
   { xaml: [".xaml"] },
   { xml: ["xsl", "xslt", "xsd", "wsdl", ".xml", ".csdl", ".edmx", ".xsl", ".xslt", ".xsd", ".wsdl"] },
   { vb: ["vbnet", "vbscript", ".vb", ".bas", ".vbs", ".vba"] }
-]
+];
 let codeSnippetContent = "";
 const fileMap = new Map();
 const TRIPLE_COLON_CODE_RE = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/g;
@@ -89,69 +89,73 @@ const ID_RE = /id="(.*?)"/i;
 export function tripleColonCodeSnippets(md, options) {
   const replaceTripleColonCodeSnippetWithContents = async (src: string, rootdir: string) => {
     const matches = src.match(TRIPLE_COLON_CODE_RE);
-    for (const match of matches) {
-      let file;
-      let shouldUpdate = false;
-      let output = "";
-      const lineArr: string[] = [];
-      const position = src.indexOf(match);
-      const source = match.match(SOURCE_RE);
-      const path = source[1].trim();
-      if (path) {
-        file = fileMap.get(path);
-        if (!file) {
-          shouldUpdate = true;
-          const repoRoot = workspace.workspaceFolders[0].uri.fsPath;
-          if (path.includes("~")) {
-            // get openpublishing.json at root
-            const openPublishingRepos = await getOpenPublishingFile(repoRoot);
-            if (openPublishingRepos) {
-              const apiUrl = buildRepoPath(openPublishingRepos, path);
-              try {
-                await Axios.get(apiUrl)
-                  .then((response) => {
-                    if (response) {
-                      if (response.status === 403) {
-                        outputChannel.appendLine("Github Rate Limit has been reached. 60 calls per hour are allowed.");
-                      } else if (response.status === 404) {
-                        outputChannel.appendLine("Resource not Found.");
-                      } else if (response.status === 200) {
-                        file = Base64.decode(response.data.content);
-                        fileMap.set(path, file);
+    if (matches) {
+      for (const match of matches) {
+        let file;
+        let shouldUpdate = false;
+        let output = "";
+        const lineArr: string[] = [];
+        const position = src.indexOf(match);
+        const source = match.match(SOURCE_RE);
+        const path = source[1].trim();
+        if (path) {
+          file = fileMap.get(path);
+          if (!file) {
+            shouldUpdate = true;
+            const repoRoot = workspace.workspaceFolders[0].uri.fsPath;
+            if (path.includes("~")) {
+              // get openpublishing.json at root
+              const openPublishingRepos = await getOpenPublishingFile(repoRoot);
+              if (openPublishingRepos) {
+                const apiUrl = buildRepoPath(openPublishingRepos, path);
+                try {
+                  await Axios.get(apiUrl)
+                    .then((response) => {
+                      if (response) {
+                        if (response.status === 403) {
+                          outputChannel.appendLine("Github Rate Limit has been reached. 60 calls per hour are allowed.");
+                        } else if (response.status === 404) {
+                          outputChannel.appendLine("Resource not Found.");
+                        } else if (response.status === 200) {
+                          file = Base64.decode(response.data.content);
+                          fileMap.set(path, file);
+                        }
                       }
-                    }
-                  });
-              } catch (error) {
-                outputChannel.appendLine(error);
+                    });
+                } catch (error) {
+                  outputChannel.appendLine(error);
+                }
               }
+            } else {
+              file = await readFile(resolve(rootdir, path), "utf8");
+              fileMap.set(path, file);
             }
+          }
+        }
+        if (file) {
+          const data = file.split("\n");
+          const language = checkLanguageMatch(match);
+          const range = match.match(RANGE_RE);
+          const idMatch = match.match(ID_RE);
+          if (idMatch) {
+            output = idToOutput(idMatch, lineArr, data, language);
+          } else if (range) {
+            output = rangeToOutput(lineArr, data, range);
           } else {
-            file = await readFile(resolve(rootdir, path), "utf8");
-            fileMap.set(path, file);
+            output = file;
+          }
+          output = `\`\`\`${language}\r\n${output}\r\n\`\`\``;
+          src = src.slice(0, position) + output + src.slice(position + match.length, src.length);
+
+          codeSnippetContent = src;
+
+          if (shouldUpdate) {
+            updateEditorToRefreshChanges();
           }
         }
       }
-      if (file) {
-        const data = file.split("\n");
-        const language = checkLanguageMatch(match);
-        const range = match.match(RANGE_RE);
-        const idMatch = match.match(ID_RE);
-        if (idMatch) {
-          output = idToOutput(idMatch, lineArr, data, language);
-        } else if (range) {
-          output = rangeToOutput(lineArr, data, range);
-        } else {
-          output = file;
-        }
-        output = `\`\`\`${language}\r\n${output}\r\n\`\`\``;
-        src = src.slice(0, position) + output + src.slice(position + match.length, src.length);
-
-        codeSnippetContent = src;
-
-        if (shouldUpdate) {
-          updateEditorToRefreshChanges();
-        }
-      }
+    } else {
+      codeSnippetContent = src;
     }
   };
 
@@ -196,7 +200,7 @@ function buildRepoPath(repos, path) {
     }
   });
   const fullPath = [];
-  repoPath = repoPath.replace("https://github.com/", "https://api.github.com/repos/")
+  repoPath = repoPath.replace("https://github.com/", "https://api.github.com/repos/");
   fullPath.push(repoPath);
   fullPath.push("contents");
   for (let index = position + 1; index < parts.length; index++) {
@@ -215,9 +219,9 @@ async function getOpenPublishingFile(repoRoot) {
 
 function checkLanguageMatch(match) {
   const languageMatch = LANGUAGE_RE.exec(match);
-  let language = ""
+  let language = "";
   if (languageMatch) {
-    language = languageMatch[1].trim()
+    language = languageMatch[1].trim();
   }
   return language;
 }
@@ -272,6 +276,6 @@ function idToOutput(idMatch, lineArr, data, language) {
     if (index > startLine && index < endLine) {
       lineArr.push(x);
     }
-  })
+  });
   return lineArr.join("\n");
 }
