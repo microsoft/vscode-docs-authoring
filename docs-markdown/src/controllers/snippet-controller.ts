@@ -57,7 +57,7 @@ export function searchRepo() {
 
     scopeOptions.push({ label: "Full Search", description: "Look in all directories for snippet" });
     scopeOptions.push({ label: "Scoped Search", description: "Look in specific directories for snippet" });
-    scopeOptions.push({ label: "Cross-Reference Repo", description: "Reference GitHub repository" });
+    scopeOptions.push({ label: "Cross-Repository Reference", description: "Reference GitHub repository" });
 
     vscode.window.showQuickPick(scopeOptions).then(async function searchType(selection) {
         if (!selection) {

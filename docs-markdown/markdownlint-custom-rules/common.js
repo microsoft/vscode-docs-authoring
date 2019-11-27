@@ -88,7 +88,7 @@ module.exports.columnSpan = /^\s+:{3}(column\s+span="(.*?)"):/gm;
 //codesnippet
 module.exports.syntaxCodeLooseMatch = /(:+)(\s+)?code.*?(:+)/g;
 module.exports.syntaxCodeExactMatch = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/i;
-module.exports.syntaxCodeAttributes = /(:code)|([a-z]*(?==))/i;
+module.exports.syntaxCodeAttributes = /([a-z]*(?==))/g;
 module.exports.allowedCodeAttributes = [":code", "language", "source", "range", "id", "interactive", "highlight"];
 module.exports.codeOpen = /:::code/i;
 module.exports.codeSourceMatch = /source="(.*?)"/;
@@ -96,5 +96,7 @@ module.exports.codeLanguageMatch = /language="(.*?)"/;
 module.exports.codeRangeMatch = /range="(.*?)"/;
 module.exports.codeIdMatch = /id="(.*?)"/;
 module.exports.allowedRangeValues = /[0-9\- ,]+/;
+module.exports.codeInteractiveMatch = /interactive="(.*?)"/;
+module.exports.allowedInteractiveValues = ["try-dotnet", "try-dotnet-method", "try-dotnet-class", "cloudshell-powershell", "cloudshell-bash"]
 
 
