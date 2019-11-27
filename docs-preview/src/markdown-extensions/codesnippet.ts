@@ -249,6 +249,7 @@ function rangeToOutput(lineArr, data, range) {
       }
     });
   });
+  lineArr = dedent(lineArr);
   return lineArr.join("\n");
 }
 
@@ -277,5 +278,46 @@ function idToOutput(idMatch, lineArr, data, language) {
       lineArr.push(x);
     }
   });
+  lineArr = dedent(lineArr);
   return lineArr.join("\n");
+}
+
+function dedent(lineArr) {
+  let indent = 0;
+  let firstIteration = true;
+  for (const key in lineArr) {
+    if (lineArr.hasOwnProperty(key)) {
+      let index = 0;
+      const line = lineArr[key].split("");
+      for (const val in line) {
+        if (line.hasOwnProperty(val)) {
+          const character = line[val];
+          if (firstIteration) {
+            if (!/\s/.test(character)) {
+              lineArr[key] = lineArr[key].substring(indent);
+              break;
+            } else {
+              indent++;
+            }
+          } else {
+            // check if all spaces
+            const allSpaces = lineArr[key].substring(0, indent)
+            if (allSpaces.match(/^ *$/) !== null) {
+              lineArr[key] = lineArr[key].substring(indent);
+              break;
+            } else {
+              if (!/\s/.test(character)) {
+                lineArr[key] = lineArr[key].substring(index);
+                break;
+              }
+
+            }
+          }
+          index++;
+        }
+      }
+      firstIteration = false;
+    }
+  }
+  return lineArr;
 }
