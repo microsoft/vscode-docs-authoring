@@ -6,7 +6,8 @@
  Logging, Error Handling, VS Code window updates, etc.
 */
 
-import { commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, TextDocument, window, workspace } from "vscode";
+import { CancellationToken, commands, CompletionItem, ConfigurationTarget, Definition, DefinitionProvider, ExtensionContext, languages, Position, ProviderResult, TextDocument, window, workspace } from "vscode";
+import * as vscode from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand } from "./controllers/cleanup-controller";
@@ -26,7 +27,7 @@ import { insertSnippetCommand } from "./controllers/snippet-controller";
 import { insertTableCommand } from "./controllers/table-controller";
 import { applyXrefCommand } from "./controllers/xref-controller";
 import { yamlCommands } from "./controllers/yaml-controller";
-import { checkExtension, generateTimestamp, noActiveEditorMessage } from "./helper/common";
+import { checkExtension, extractDocumentLink, generateTimestamp, matchAll, noActiveEditorMessage } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
@@ -83,7 +84,20 @@ export function activate(context: ExtensionContext) {
 
     // Autocomplete
     context.subscriptions.push(setupAutoComplete());
-
+    vscode.languages.registerDocumentLinkProvider({ language: "markdown" }, {
+        provideDocumentLinks(document: TextDocument, token: CancellationToken) {
+            const IMAGE_SOURCE_RE = /source="(.*?)"/gm
+            const text = document.getText();
+            const results: vscode.DocumentLink[] = [];
+            for (const match of matchAll(IMAGE_SOURCE_RE, text)) {
+                const matchLink = extractDocumentLink(document, match[1], match.index);
+                if (matchLink) {
+                    results.push(matchLink);
+                }
+            }
+            return results;
+        }
+    });
     // Telemetry
     context.subscriptions.push(new Reporter(context));
 
