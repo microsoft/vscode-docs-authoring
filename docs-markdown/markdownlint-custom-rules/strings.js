@@ -16,7 +16,7 @@ module.exports.NoLocNonAllowedAttribute = `Bad syntax for non-localization. "___
 module.exports.noLocColonsIncorrect = `Bad syntax for non-localization. Make sure "no-loc" begins and ends with ":::"`;
 module.exports.noLocCaseSensitive = `Bad syntax for non-localization. ""no-loc" and "text" must be lower-case.`;
 module.exports.noLocNoQuotes = `Bad syntax for non-localization. Quotes required.`;
-module.exports.noLocDoubleQuotes = `Bad syntax for non-localization. Double Quotes (") required.`;
+module.exports.noLocDoubleQuotes = `Bad syntax for non-localization. Double quotes (") required.`;
 
 // image
 module.exports.imageCaseSensitive = `Bad syntax for image. "image" and its attributes must be lower-case.`;
