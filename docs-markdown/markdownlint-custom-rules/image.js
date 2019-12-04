@@ -4,6 +4,32 @@
 
 const common = require("./common");
 const detailStrings = require("./strings");
+const { default: axios } = require('axios');
+
+// schema
+const IMAGE_SCHEMA = "https://static.docs.com/ui/latest/schemas/extensions/Image.schema.json";
+
+// schema linting
+let allowedImageTypes = [];
+let imageMappingData;
+
+function loadImageSchema() {
+    axios.get(IMAGE_SCHEMA)
+        .then(function (response) {
+            // handle success
+            imageMappingData = response.data;
+            allowedImageTypes = imageMappingData.properties.type.enum;
+        })
+        .catch(function (error) {
+            // handle error
+            console.log(error);
+        })
+        .finally(function () {
+            // always executed
+        });
+}
+
+loadImageSchema();
 
 module.exports = {
     "names": ["DOCSMD011", "docsmd.image"],
@@ -12,6 +38,8 @@ module.exports = {
     "function": function rule(params, onError) {
         const doc = params.lines.join("\n");
         const fullLooseMatches = doc.match(common.syntaxImageLooseMatch);
+        // loadImageSchema();
+        console.log(imageMappingData.properties.type.enum);
         params.tokens.filter(function filterToken(token) {
             return token.type === "inline";
         }).forEach(function forToken(inline) {
@@ -63,6 +91,7 @@ module.exports = {
 
                         //make sure each attribute is allowed...
                         if (common.allowedImageAttributes.indexOf(attr) === -1) {
+                            // if (allowedImageAttributes.indexOf(attr) === -1) {
                             onError({
                                 lineNumber: text.lineNumber,
                                 detail: detailStrings.imageNonAllowedAttribute.replace("___", attr),
@@ -74,7 +103,8 @@ module.exports = {
                     //check if the type is valid
                     const typeMatch = common.imageTypeMatch.exec(content);
                     if (typeMatch) {
-                        if (common.allowedImageTypes.indexOf(typeMatch[1]) === -1) {
+                        // if (common.allowedImageTypes.indexOf(typeMatch[1]) === -1) {
+                        if (allowedImageTypes.indexOf(typeMatch[1]) === -1) {
                             onError({
                                 lineNumber: text.lineNumber,
                                 detail: detailStrings.imageNonAllowedType.replace("___", typeMatch[1]),
@@ -136,7 +166,6 @@ module.exports = {
                             }
                         }
                     }
-
                 });
             });
         });
