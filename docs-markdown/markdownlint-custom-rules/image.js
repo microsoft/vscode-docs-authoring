@@ -5,6 +5,7 @@
 const common = require("./common");
 const detailStrings = require("./strings");
 const schemas = require("./schemas");
+const vscode = require("vscode");
 const { default: axios } = require('axios');
 
 // schema linting
@@ -20,7 +21,8 @@ function loadImageSchema() {
             allowedImageAttributes = Object.keys(imageDataResponse.properties);
         })
         .catch(function (error) {
-            console.log(error);
+            const errorMessage = detailStrings.failedResponse.replace("NAME", "image").replace("URL", schemas.IMAGE_SCHEMA);
+            vscode.window.showErrorMessage(errorMessage);
         })
 }
 
