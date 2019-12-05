@@ -4,29 +4,24 @@
 
 const common = require("./common");
 const detailStrings = require("./strings");
+const schemas = require("./schemas");
 const { default: axios } = require('axios');
 
-// schema
-const IMAGE_SCHEMA = "https://static.docs.com/ui/latest/schemas/extensions/Image.schema.json";
-
 // schema linting
-let allowedImageTypes = [];
-let imageMappingData;
+let allowedImageTypes;
+let allowedImageAttributes;
+let imageDataResponse;
 
 function loadImageSchema() {
-    axios.get(IMAGE_SCHEMA)
+    axios.get(schemas.IMAGE_SCHEMA)
         .then(function (response) {
-            // handle success
-            imageMappingData = response.data;
-            allowedImageTypes = imageMappingData.properties.type.enum;
+            imageDataResponse = response.data;
+            allowedImageTypes = Object.values(imageDataResponse.properties.type.enum);
+            allowedImageAttributes = Object.keys(imageDataResponse.properties);
         })
         .catch(function (error) {
-            // handle error
             console.log(error);
         })
-        .finally(function () {
-            // always executed
-        });
 }
 
 loadImageSchema();
@@ -46,9 +41,7 @@ module.exports = {
             }).forEach(function forChild(text) {
                 const textBlock = text.content;
                 const imageMatches = textBlock.match(common.syntaxImageLooseMatch);
-
                 if (imageMatches === null) { return; }
-
                 imageMatches.forEach(imageMatch => {
                     const content = (!imageMatch.match(common.imageComplexEndTagMatch)) ?
                         fullLooseMatches.filter((match) => match.includes(imageMatch))[0] :
@@ -88,8 +81,7 @@ module.exports = {
                         }
 
                         //make sure each attribute is allowed...
-                        if (common.allowedImageAttributes.indexOf(attr) === -1) {
-                            // if (allowedImageAttributes.indexOf(attr) === -1) {
+                        if (allowedImageAttributes.indexOf(attr) === -1 && attr !== ":image") {
                             onError({
                                 lineNumber: text.lineNumber,
                                 detail: detailStrings.imageNonAllowedAttribute.replace("___", attr),
@@ -101,7 +93,6 @@ module.exports = {
                     //check if the type is valid
                     const typeMatch = common.imageTypeMatch.exec(content);
                     if (typeMatch) {
-                        // if (common.allowedImageTypes.indexOf(typeMatch[1]) === -1) {
                         if (allowedImageTypes.indexOf(typeMatch[1]) === -1) {
                             onError({
                                 lineNumber: text.lineNumber,
