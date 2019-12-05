@@ -38,8 +38,6 @@ module.exports = {
     "function": function rule(params, onError) {
         const doc = params.lines.join("\n");
         const fullLooseMatches = doc.match(common.syntaxImageLooseMatch);
-        // loadImageSchema();
-        console.log(imageMappingData.properties.type.enum);
         params.tokens.filter(function filterToken(token) {
             return token.type === "inline";
         }).forEach(function forToken(inline) {
