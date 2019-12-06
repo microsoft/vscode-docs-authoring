@@ -3,6 +3,7 @@
 ## 0.2.27 (December 6th, 2019)
 
 - Image and no-loc linting updates
+- Added clickable links for source on triple colon extension
 
 ## 0.2.25 (November 15th, 2019)
 
