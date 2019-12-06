@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.27 (December 6th, 2019)
+
+- Image and no-loc linting updates
+
 ## 0.2.25 (November 15th, 2019)
 
 - Fixed bug with xref linting
