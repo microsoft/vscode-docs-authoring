@@ -55,4 +55,5 @@ module.exports.rowSyntax = `Rows should begin :::row::: and end with :::row-end:
 module.exports.columnSyntax = `Columns should begin :::column::: and end with :::column-end:::).`;
 module.exports.contenSpanAttribute = `Only span is supported (ex. :::column span="":::).`;
 
-
+// logging
+module.exports.failedResponse = `There was an error pulling NAME schema data from URL.`;
