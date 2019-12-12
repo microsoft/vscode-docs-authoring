@@ -1,7 +1,7 @@
 import Axios from "axios";
 import { open, readFileSync } from "fs";
 import { Base64 } from "js-base64";
-import { resolve } from "path";
+import { resolve, parse } from "path";
 import { Position, window, workspace } from "vscode";
 import { output as outputChannel } from "../extension";
 
@@ -134,7 +134,7 @@ export function tripleColonCodeSnippets(md, options) {
         }
         if (file) {
           const data = file.split("\n");
-          const language = checkLanguageMatch(match);
+          const language = getLanguage(match, path);
           const range = match.match(RANGE_RE);
           const idMatch = match.match(ID_RE);
           if (idMatch) {
@@ -183,7 +183,13 @@ function updateEditorToRefreshChanges() {
     });
   });
 }
-
+function getLanguage(match, path) {
+  let language = checkLanguageMatch(match);
+  if (!language) {
+    language = inferLanguage(path)
+  }
+  return language;
+}
 function buildRepoPath(repos, path) {
   let position = 0;
   let repoPath = "";
@@ -225,7 +231,71 @@ function checkLanguageMatch(match) {
   }
   return language;
 }
-
+function inferLanguage(filePath: string) {
+  const dict = [
+    { actionscript: [".as"] },
+    { arduino: [".ino"] },
+    { assembly: ["nasm", ".asm"] },
+    { batchfile: [".bat", ".cmd"] },
+    { cpp: ["c", "c++", "objective-c", "obj-c", "objc", "objectivec", ".c", ".cpp", ".h", ".hpp", ".cc"] },
+    { csharp: ["cs", ".cs"] },
+    { cuda: [".cu", ".cuh"] },
+    { d: ["dlang", ".d"] },
+    { erlang: [".erl"] },
+    { fsharp: ["fs", ".fs", ".fsi", ".fsx"] },
+    { go: ["golang", ".go"] },
+    { haskell: [".hs"] },
+    { html: [".html", ".jsp", ".asp", ".aspx", ".ascx"] },
+    { cshtml: [".cshtml", "aspx-cs", "aspx-csharp"] },
+    { vbhtml: [".vbhtml", "aspx-vb"] },
+    { java: [".java"] },
+    { javascript: ["js", "node", ".js"] },
+    { lisp: [".lisp", ".lsp"] },
+    { lua: [".lua"] },
+    { matlab: [".matlab"] },
+    { pascal: [".pas"] },
+    { perl: [".pl"] },
+    { php: [".php"] },
+    { powershell: ["posh", ".ps1"] },
+    { processing: [".pde"] },
+    { python: [".py"] },
+    { r: [".r"] },
+    { ruby: ["ru", ".ru", ".ruby"] },
+    { rust: [".rs"] },
+    { scala: [".scala"] },
+    { shell: ["sh", "bash", ".sh", ".bash"] },
+    { smalltalk: [".st"] },
+    { sql: [".sql"] },
+    { swift: [".swift"] },
+    { typescript: ["ts", ".ts"] },
+    { xaml: [".xaml"] },
+    { xml: ["xsl", "xslt", "xsd", "wsdl", ".xml", ".csdl", ".edmx", ".xsl", ".xslt", ".xsd", ".wsdl"] },
+    { vb: ["vbnet", "vbscript", ".vb", ".bas", ".vbs", ".vba"] }
+  ]
+  const target = parse(filePath);
+  const ext: string = target.ext;
+  let language: string = "";
+  for (const key in dict) {
+    if (dict.hasOwnProperty(key)) {
+      const element: any = dict[key];
+      for (const extension in element) {
+        if (element.hasOwnProperty(extension)) {
+          const val: string[] = element[extension];
+          for (const x in val) {
+            if (val[x] === ext) {
+              language = extension;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+  if (!language) {
+    language = ext.substr(1);
+  }
+  return language;
+}
 function rangeToOutput(lineArr, data, range) {
   const rangeArr: number[] = [];
   const rangeList = range[1].split(",");
