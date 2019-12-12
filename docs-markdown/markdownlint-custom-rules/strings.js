@@ -12,9 +12,11 @@ module.exports.monikerSyntax = `Bad syntax for moniker. Only "moniker range" is 
 module.exports.noLocSyntax = `Bad syntax for non-localization.`;
 module.exports.noLocNoDash = `Bad syntax for non-localization. "no-loc" requires a dash.`;
 module.exports.noLocMissingTextAttribute = `Bad syntax for non-localization. Missing the "text" attribute.`;
+module.exports.NoLocNonAllowedAttribute = `Bad syntax for non-localization. "___" is not an allowed attribute.`;
 module.exports.noLocColonsIncorrect = `Bad syntax for non-localization. Make sure "no-loc" begins and ends with ":::"`;
 module.exports.noLocCaseSensitive = `Bad syntax for non-localization. ""no-loc" and "text" must be lower-case.`;
 module.exports.noLocNoQuotes = `Bad syntax for non-localization. Quotes required.`;
+module.exports.noLocDoubleQuotes = `Bad syntax for non-localization. Double quotes (") required.`;
 
 // image
 module.exports.imageCaseSensitive = `Bad syntax for image. "image" and its attributes must be lower-case.`;
@@ -62,4 +64,5 @@ module.exports.codeRangeOrId = `You cannot have both "range" and "id" properties
 module.exports.allowedRangeValues = `Allowed range values must match the regex [0-9\- ,]+.`;
 module.exports.allowedInteractiveValues = `"___" is not an allowed value for interactive. Allowed values include: "try-dotnet", "try-dotnet-method", "try-dotnet-class", "cloudshell-powershell", "cloudshell-bash"`;
 
-
+// logging
+module.exports.failedResponse = `There was an error pulling NAME schema data from URL.`;
