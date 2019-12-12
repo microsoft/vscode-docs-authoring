@@ -54,11 +54,12 @@ module.exports.columnSyntax = `Columns should begin :::column::: and end with ::
 module.exports.contenSpanAttribute = `Only span is supported (ex. :::column span="":::).`;
 
 // codesnippet
-module.exports.codeCaseSensitive = `Bad syntax for codesnippet. "code" and its attributes must be lower-case.`;
-module.exports.codeNonAllowedAttribute = `Bad syntax for codesnippet. "___" is not an allowed attribute.`;
-module.exports.codeSourceRequired = `Bad syntax for codesnippet. "source" required.`;
-module.exports.codeLanguageRequired = `Bad syntax for codesnippet. "language" required.`;
-module.exports.codeRangeOrId = `Bad syntax for codesnippet. You cannot have both "range" and "id" properties. Choose one or the other.`;
-module.exports.allowedRangeValues = `Bad syntax for codesnippet. Allowed range values must match the regex [0-9\- ,]+.`;
+module.exports.codeCaseSensitive = `"code" and its attributes must be lower-case.`;
+module.exports.codeNonAllowedAttribute = `"___" is not an allowed attribute. Allowed attributes include "language", "source", "range", "id", "interactive", "highlight"`;
+module.exports.codeSourceRequired = `"source" is required.`;
+module.exports.codeLanguageRequired = `"language" is required.`;
+module.exports.codeRangeOrId = `You cannot have both "range" and "id" properties. Choose one or the other.`;
+module.exports.allowedRangeValues = `Allowed range values must match the regex [0-9\- ,]+.`;
+module.exports.allowedInteractiveValues = `"___" is not an allowed value for interactive. Allowed values include: "try-dotnet", "try-dotnet-method", "try-dotnet-class", "cloudshell-powershell", "cloudshell-bash"`;
 
 
