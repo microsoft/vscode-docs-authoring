@@ -35,29 +35,48 @@ module.exports = {
                     if (content.match(common.openNoLoc) && !content.match(common.syntaxNoLoc)) {
                         //different errors
                         //missing text attribute
-                        if (!content.match(common.missingTextAttributeNoLoc)) {
+                        let attrMatches = content.match(common.missingTextAttributeNoLoc);
+                        attrMatches = attrMatches.filter((attr) => attr != "");
+                        attrMatches.forEach((attr) => {
+                            //make sure each attribute is allowed...
+                            if (common.allowedNoLocAttributes.indexOf(attr) === -1) {
+                                onError({
+                                    lineNumber: text.lineNumber,
+                                    detail: detailStrings.NoLocNonAllowedAttribute.replace("___", attr),
+                                    context: text.line
+                                });
+                            }
+                        });
+                        const textMatch = common.noLocTextMatch.exec(content);
+                        if (!textMatch) {
                             onError({
                                 lineNumber: text.lineNumber,
                                 detail: detailStrings.noLocMissingTextAttribute,
                                 context: text.line
                             });
                         }
-
-                        //case sensitivity
-                        if (content.match(common.syntaxNoLocLooseMatch)) {
+                        else if (content.match(common.syntaxNoLocLooseMatch)) {
+                            //case sensitivity
                             if (!content.match(common.syntaxNoLocCaseSensitive)) {
                                 onError({
                                     lineNumber: text.lineNumber,
                                     detail: detailStrings.noLocCaseSensitive,
                                     context: text.line
                                 });
-                            } else if (!content.match(common.syntaxQuotesNoLoc)) {
+                            } else if (content.match(common.syntaxSingleQuotesNoLoc)) {
+                                onError({
+                                    lineNumber: text.lineNumber,
+                                    detail: detailStrings.noLocDoubleQuotes,
+                                    context: text.line
+                                });
+                            } else if (content.match(common.syntaxNoQuotesNoLoc)) {
                                 onError({
                                     lineNumber: text.lineNumber,
                                     detail: detailStrings.noLocNoQuotes,
                                     context: text.line
                                 });
-                            } else {
+                            } else if (!content.trim().startsWith(":::")
+                                || !content.trim().endsWith(":::")) {
                                 onError({
                                     lineNumber: text.lineNumber,
                                     detail: detailStrings.noLocColonsIncorrect,
@@ -65,8 +84,6 @@ module.exports = {
                                 });
                             }
                         }
-
-
                     }
                 });
             });

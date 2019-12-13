@@ -1,6 +1,17 @@
 # Change Log
 
-## 0.2.24 (TBD)
+## 0.2.27 (December 6th, 2019)
+
+- Image and no-loc linting updates
+- Added clickable links for source on triple colon extension
+
+## 0.2.25 (November 15th, 2019)
+
+- Fixed bug with xref linting
+- Fixed TOC bug with node positioning
+- Updated README
+
+## 0.2.24 (November 5th, 2019)
 
 - Update link UI
 - Add link checker extension support (https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD)

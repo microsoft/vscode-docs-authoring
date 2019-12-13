@@ -12,9 +12,11 @@ module.exports.monikerSyntax = `Bad syntax for moniker. Only "moniker range" is 
 module.exports.noLocSyntax = `Bad syntax for non-localization.`;
 module.exports.noLocNoDash = `Bad syntax for non-localization. "no-loc" requires a dash.`;
 module.exports.noLocMissingTextAttribute = `Bad syntax for non-localization. Missing the "text" attribute.`;
+module.exports.NoLocNonAllowedAttribute = `Bad syntax for non-localization. "___" is not an allowed attribute.`;
 module.exports.noLocColonsIncorrect = `Bad syntax for non-localization. Make sure "no-loc" begins and ends with ":::"`;
 module.exports.noLocCaseSensitive = `Bad syntax for non-localization. ""no-loc" and "text" must be lower-case.`;
 module.exports.noLocNoQuotes = `Bad syntax for non-localization. Quotes required.`;
+module.exports.noLocDoubleQuotes = `Bad syntax for non-localization. Double quotes (") required.`;
 
 // image
 module.exports.imageCaseSensitive = `Bad syntax for image. "image" and its attributes must be lower-case.`;
@@ -53,4 +55,5 @@ module.exports.rowSyntax = `Rows should begin :::row::: and end with :::row-end:
 module.exports.columnSyntax = `Columns should begin :::column::: and end with :::column-end:::).`;
 module.exports.contenSpanAttribute = `Only span is supported (ex. :::column span="":::).`;
 
-
+// logging
+module.exports.failedResponse = `There was an error pulling NAME schema data from URL.`;
