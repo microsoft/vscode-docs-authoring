@@ -90,7 +90,7 @@ module.exports.columnSpan = /^\s+:{3}(column\s+span="(.*?)"):/gm;
 
 //codesnippet
 module.exports.syntaxCodeLooseMatch = /(:+)(\s+)?code.*?(:+)/g;
-module.exports.syntaxCodeExactMatch = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/i;
+module.exports.syntaxCodeExactMatch = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+))?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/i;
 module.exports.syntaxCodeAttributes = /([a-z]*(?==))/g;
 module.exports.allowedCodeAttributes = [":code", "language", "source", "range", "id", "interactive", "highlight"];
 module.exports.codeOpen = /:::code/i;
