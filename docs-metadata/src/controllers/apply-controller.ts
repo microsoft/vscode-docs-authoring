@@ -11,7 +11,7 @@ const outputChannel = window.createOutputChannel('docs-metadata');
 
 export async function showApplyMetadataMessage(path:string)
 {
-	if(path.indexOf(".txt") === -1)
+	if(path.indexOf(".csv") === -1)
 	{
 		window.showInformationMessage(`Please find a Metadata Update Tool file to apply...`, 
 								"Find MUT file","Cancel")
