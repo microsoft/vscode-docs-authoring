@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.28 (December 16th, 2019)
+
+- Fixed image linting bug
+
 ## 0.2.27 (December 6th, 2019)
 
 - Image and no-loc linting updates
