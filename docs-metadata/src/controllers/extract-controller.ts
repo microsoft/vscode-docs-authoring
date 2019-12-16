@@ -53,9 +53,9 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 				let repoName = getRepoName(Uri.file(folderPath));
 				if(repoName != undefined)
 				{
-					fileName = `${metadataDirectory}/${repoName}_mut_extract_${moment().format('MMDDYYYYhmmA')}.txt`;
+					fileName = `${metadataDirectory}/${repoName}_mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
 				} else {
-					fileName = `${metadataDirectory}/mut_extract_${moment().format('MMDDYYYYhmmA')}.txt`;
+					fileName = `${metadataDirectory}/mut_extract_${moment().format('MMDDYYYYhmmA')}.csv`;
 				}
 				const platform = await PlatformInformation.GetCurrent();
 				fileName = (platform.isWindows()) ? fileName.replace(/\//g, "\\") : fileName.replace(/\\/g, "/");
@@ -87,7 +87,7 @@ export function showExtractConfirmationMessage(args:string, folderPath:string)
 						});
 					} else if(result.stderr.indexOf(`specified framework`) > -1)
 					{
-						window.showErrorMessage(`Extraction unsuccessful. Please make sure you have .Net core 2.2 or greater installed.`, 
+						window.showErrorMessage(`Extraction unsuccessful. Please make sure you have .Net core 2.1 or greater installed.`, 
 								"Install DotNet","Cancel")
 						.then(async selectedItem => {
 							if(selectedItem === "Install DotNet")
