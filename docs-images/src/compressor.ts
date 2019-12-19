@@ -43,8 +43,8 @@ export class ImageCompressor {
         
         if (this.filePathHasValidExtension(filePath)) {
             const before = getFileSize(filePath);
-            const wasResized = await this.applyImageDimensions(filePath, maxWidth, maxHeight);
-            const wasCompressed = await this.applyImageCompression(filePath);
+            const wasResized = await this.tryApplyImageDimensions(filePath, maxWidth, maxHeight);
+            const wasCompressed = await this.tryApplyImageCompression(filePath);
             const after = getFileSize(filePath);
             const reduction = calculatePercentReduction(before, after);
 
@@ -79,7 +79,7 @@ export class ImageCompressor {
         return false;
     }
 
-    private async applyImageDimensions(filePath: string, maxWidth: number = 0, maxHeight: number = 0) {
+    private async tryApplyImageDimensions(filePath: string, maxWidth: number = 0, maxHeight: number = 0) {
         if (!!maxWidth || !!maxHeight) {
             let dimensions = size.imageSize(filePath);
             if (dimensions && (dimensions.width ?? 0) > maxWidth || (dimensions.height ?? 0) > maxHeight) {
@@ -100,7 +100,7 @@ export class ImageCompressor {
         return false;
     }
 
-    private async applyImageCompression(filePath: string) {
+    private async tryApplyImageCompression(filePath: string) {
         const options: imagemin.Options = {
             destination: "temp/images",
             glob: false,
