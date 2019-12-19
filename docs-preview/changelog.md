@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.35 (December 19th, 2019)
+
+- Added Preview for triple colon code snippet extension
+
 ## 0.3.34 (October 11th, 2019)
 
 - Expanded file path support
