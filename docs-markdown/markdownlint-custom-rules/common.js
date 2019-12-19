@@ -10,7 +10,7 @@ module.exports.openAndClosingValidTripleColon = /^:::(.*):::/gmi;
 
 // Markdown extensions (add valid/supported extensions to list)
 module.exports.openExtension = /^:(.*?)(zone|moniker|no-loc)/gm;
-module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc|image)(.:*)/g;
+module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc|image|code)(.:*)/g;
 module.exports.unsupportedExtensionRegex = /^:::\s+(.*)/gm;
 
 // Zones
@@ -48,9 +48,9 @@ module.exports.imageTypeMatch = /type\s*=\s*"([a-z]*)"/m;
 module.exports.imageLongDescriptionMatch = /(:::)(.*)(:::)(((\s)*(.*))+)(:::)(.*)(:::)/mi;
 module.exports.imageComplexEndTagMatch = /:::(\s*)?image-end:::/gmi;
 module.exports.imageOpen = /:::image/gmi;
-module.exports.imageSourceMatch = /source\s*=\s*"([a-zA-Z0-9\-_\.\,\;\:\\/\?\=\%\@s*]*)"/m;
-module.exports.imageAltTextMatch = /alt-text\s*=\s*"([a-zA-Z\-_\.\,\;\:\s*]*)"/m;
-module.exports.imageLocScopeMatch = /loc-scope\s*=\s*"([a-zA-Z\-_\.\,\;\:\s*]*)"/m;
+module.exports.imageSourceMatch = /source\s*=\s*"(.*?)"/m;
+module.exports.imageAltTextMatch = /alt-text\s*=\s*"(.*?)"/m;
+module.exports.imageLocScopeMatch = /loc-scope\s*=\s*"(.*?)"/m;
 module.exports.imageAltTextTypes = ["content", "complex"];
 
 // Alert
@@ -88,5 +88,19 @@ module.exports.startColumn = /^\s+(:*)(.+column)/gm;
 module.exports.syntaxColumn = /^\s+:{3}(column|column-end|column\s+(.*)"):{3}$/gm;
 module.exports.columnWithAttribute = /^\s+:{3}(column\s+(.*?)):/gm;
 module.exports.columnSpan = /^\s+:{3}(column\s+span="(.*?)"):/gm;
+
+//codesnippet
+module.exports.syntaxCodeLooseMatch = /(:+)(\s+)?code.*?(:+)/g;
+module.exports.syntaxCodeExactMatch = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+))?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/i;
+module.exports.syntaxCodeAttributes = /([a-z]*(?==))/g;
+module.exports.allowedCodeAttributes = [":code", "language", "source", "range", "id", "interactive", "highlight"];
+module.exports.codeOpen = /:::code/i;
+module.exports.codeSourceMatch = /source="(.*?)"/;
+module.exports.codeLanguageMatch = /language="(.*?)"/;
+module.exports.codeRangeMatch = /range="(.*?)"/;
+module.exports.codeIdMatch = /id="(.*?)"/;
+module.exports.allowedRangeValues = /[0-9\- ,]+/;
+module.exports.codeInteractiveMatch = /interactive="(.*?)"/;
+module.exports.allowedInteractiveValues = ["try-dotnet", "try-dotnet-method", "try-dotnet-class", "cloudshell-powershell", "cloudshell-bash"]
 
 

@@ -2,7 +2,7 @@
 module.exports.syntaxCount = `Bad syntax for markdown extension. Begin with "::: ".`;
 module.exports.syntaxSpace = `Bad syntax for markdown extension. One space required after ":::".`;
 module.exports.syntaxUnsupportedExtension = `Bad syntax for markdown extension. Extension is not supported.`;
-module.exports.imageColonsIncorrect = `Bad syntax for markdown extension. Begins and end with ":::".`;
+module.exports.tripleColonsIncorrect = `Bad syntax for markdown extension. Begins and end with ":::".`;
 
 // moniker
 module.exports.monikerRange = `Bad syntax for range argument. Use =, <=, or >=, and put value in quotes.`;
@@ -54,6 +54,15 @@ module.exports.rowSyntax = `Rows should begin :::row::: and end with :::row-end:
 // column
 module.exports.columnSyntax = `Columns should begin :::column::: and end with :::column-end:::).`;
 module.exports.contenSpanAttribute = `Only span is supported (ex. :::column span="":::).`;
+
+// codesnippet
+module.exports.codeCaseSensitive = `"code" and its attributes must be lower-case.`;
+module.exports.codeNonAllowedAttribute = `"___" is not an allowed attribute. Allowed attributes include "language", "source", "range", "id", "interactive", "highlight"`;
+module.exports.codeSourceRequired = `"source" is required.`;
+module.exports.codeLanguageRequired = `"language" is required.`;
+module.exports.codeRangeOrId = `You cannot have both "range" and "id" properties. Choose one or the other.`;
+module.exports.allowedRangeValues = `Allowed range values must match the regex [0-9\- ,]+.`;
+module.exports.allowedInteractiveValues = `"___" is not an allowed value for interactive. Allowed values include: "try-dotnet", "try-dotnet-method", "try-dotnet-class", "cloudshell-powershell", "cloudshell-bash"`;
 
 // logging
 module.exports.failedResponse = `There was an error pulling NAME schema data from URL.`;

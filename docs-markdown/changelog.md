@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.29 (December 19th, 2019)
+
+- Added triple colon code snippet extension
+
 ## 0.2.28 (December 16th, 2019)
 
 - Fixed image linting bug
