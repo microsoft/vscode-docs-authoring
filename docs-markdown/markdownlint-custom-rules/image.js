@@ -126,7 +126,7 @@ module.exports = {
                             }
                         }
 
-                        if (typeMatch[1] !== "icon") {
+                        if (common.imageAltTextTypes.indexOf(typeMatch[1]) !== -1) {
                             //do we have alt-text?
                             const altTextMatch = common.imageAltTextMatch.exec(content);
                             if (!altTextMatch || altTextMatch[1] === "") {

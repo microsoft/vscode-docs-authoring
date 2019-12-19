@@ -11,7 +11,7 @@ First, you need to extract the metadata of interest into tabular form.
 1. In the window that opens, browse to the folder you want to extract for. This can be the repo root or any subfolder.
 1. Optionally, type the name of one metadata field to extract, such as `author`. If you don't specify a field, all metadata will be extracted.
 1. Click OK to confirm.
-1. A .txt file structured as a tab-separated list will open side-by-side with you currently displayed VS Code file. You can edit the file directly in VS Code, or use the pop-up to go to the file in your Docs Authoring folder and open the file in Excel or another editor of your choice.
+1. A .csv file structured as a comma-separated list will open side-by-side with you currently displayed VS Code file. You can edit the file directly in VS Code, or use the pop-up to go to the file in your Docs Authoring folder and open the file in Excel or another editor of your choice.
 
 ## Step 2: Update metadata
 
@@ -47,7 +47,7 @@ You can make other changes in the same file. For example, `ms.assetid` is a depr
 
 When you've finished making changes to the extracted file, it's time to apply them.
 
-1. Save and close the .txt file.
+1. Save and close the .csv file.
 1. Hit F1 to open the VS Code command palette.
 1. Start typing to filter and select "Docs: Metadata Apply".
 1. If prompted, navigate to the correct file to apply.

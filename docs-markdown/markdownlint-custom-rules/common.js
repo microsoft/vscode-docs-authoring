@@ -51,6 +51,7 @@ module.exports.imageOpen = /:::image/gmi;
 module.exports.imageSourceMatch = /source\s*=\s*"(.*?)"/m;
 module.exports.imageAltTextMatch = /alt-text\s*=\s*"(.*?)"/m;
 module.exports.imageLocScopeMatch = /loc-scope\s*=\s*"(.*?)"/m;
+module.exports.imageAltTextTypes = ["content", "complex"];
 
 // Alert
 module.exports.alertOpener = /^>\s+\[!/gm; // regex to find "> [!"
