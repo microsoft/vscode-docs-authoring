@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import { Result } from "./result";
 
-export function getFileName(filePath: string): string {
-    return filePath.replace(/^.*[\\\/]/, '');
+export function getFileName(filePath: string | null): string {
+    return !!filePath ? filePath.replace(/^.*[\\\/]/, '') : "";
 }
 
 export function getFileSize(filePath: string): number {
@@ -13,20 +13,20 @@ export function getFileSize(filePath: string): number {
 export function toHumanReadableString(bytes: number, si: boolean = true): string {
     const thresh = si ? 1000 : 1024;
     if (Math.abs(bytes) < thresh) {
-        return bytes + ' B';
+        return `${bytes} B`;
     }
 
     const units = si
         ? ['kB','MB','GB','TB','PB','EB','ZB','YB']
         : ['KiB','MiB','GiB','TiB','PiB','EiB','ZiB','YiB'];
 
-    let u = -1;
+    let unitIndex = -1;
     do {
         bytes /= thresh;
-        ++ u;
-    } while (Math.abs(bytes) >= thresh && u < units.length - 1);
+        ++ unitIndex;
+    } while (Math.abs(bytes) >= thresh && unitIndex < units.length - 1);
 
-    return bytes.toFixed(1)+' '+units[u];
+    return `${bytes.toFixed(1)} ${units[unitIndex]}`;
 }
 
 export function calculatePercentReduction(originalBytes: number, compressedBytes: number): string {
