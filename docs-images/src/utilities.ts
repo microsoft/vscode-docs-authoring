@@ -44,3 +44,18 @@ export function resultToString(result: Result): string {
 
     return `Unable to compress "${result.file}".`;
 }
+
+export function resultsToString(results: Result[]): string {
+    const resized = sum(results, r => r.wasResized === true ? 1 : 0);
+    const beforeSum = sum(results, r => !!r.originalSize ? r.originalSize : 0);
+    const afterSum = sum(results, r => !!r.compressedSize ? r.compressedSize : 0);
+    const count = results.length;
+    const reduction = calculatePercentReduction(beforeSum, afterSum);
+    const resizedMessage = !!resized ? ` (and resized ${resized})` : "";
+
+    return `Compressed ${count} images${resizedMessage}: from ${toHumanReadableString(beforeSum)} to ${toHumanReadableString(afterSum)}, reduced by ${reduction}`;
+}
+
+function sum<T>(array: T[], selector: (t: T) => number): number {
+    return array.reduce((a, b) => a + selector(b), 0);
+}

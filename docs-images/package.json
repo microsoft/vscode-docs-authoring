@@ -27,7 +27,8 @@
     "optimization"
   ],
   "activationEvents": [
-    "onCommand:docs.compressImage"
+    "onCommand:docs.compressImage",
+    "onCommand:docs.compressImagesInFolder"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -36,6 +37,11 @@
         "command": "docs.compressImage",
         "title": "Compress image",
         "category": "Docs"
+      },
+      {
+        "command": "docs.compressImagesInFolder",
+        "title": "Compress all images in folder",
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -43,13 +49,22 @@
         {
           "command": "docs.compressImage",
           "when": "false"
+        },
+        {
+          "command": "docs.compressImagesInFolder",
+          "when": "false"
         }
       ],
       "explorer/context": [
         {
           "command": "docs.compressImage",
           "group": "1_modification",
-          "when": "resourceLangId == compressionTargetFile"
+          "when": "resourceLangId == compressionTargetFile && !listMultipleSelection"
+        },
+        {
+          "command": "docs.compressImagesInFolder",
+          "group": "1_modification",
+          "when": "explorerResourceIsFolder"
         }
       ]
     },

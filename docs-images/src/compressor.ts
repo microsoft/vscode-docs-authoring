@@ -21,7 +21,18 @@ import * as imageminGif from "imagemin-gifsicle";
 import * as imageminSvg from "imagemin-svgo";
 import * as imageminWebp from "imagemin-webp";
 
+enum Status {
+    Idle,
+    Initializing,
+    AttemptingResize,
+    AttemptingCompression,
+    Done
+}
+
 export class ImageCompressor {
+    private currentStatus: Status = Status.Idle;
+    private isBatching = false;
+
     private readonly fileExtensionExpression: RegExp = /(?:\.([^.]+))?$/;
     private readonly imageExtensions: string[] = [
         ".png",
@@ -38,8 +49,17 @@ export class ImageCompressor {
             this.output.show();
         }
 
+
+    async compressImagesInFolder(filePaths: string[], maxWidth: number = 0, maxHeight: number = 0): Promise<Result[]> {
+        this.isBatching = true;
+        const compressTasks =
+            filePaths.map(path => this.compressImage(path, maxWidth, maxHeight));
+        const results = await Promise.all(compressTasks);
+        return results;
+    }
+
     async compressImage(filePath: string, maxWidth: number = 0, maxHeight: number = 0): Promise<Result> {
-        this.updateStatus(`Attempting to compress "${filePath}".`);
+        this.updateStatus(Status.Initializing, `Attempting to compress "${filePath}".`);
         
         if (this.filePathHasValidExtension(filePath)) {
             const before = getFileSize(filePath);
@@ -52,12 +72,14 @@ export class ImageCompressor {
                 wasCompressed,
                 wasResized,
                 file: getFileName(filePath),
+                originalSize: before,
                 before: toHumanReadableString(before),
+                compressedSize: after,
                 after: toHumanReadableString(after),
                 reduction
             };
         } else {
-            this.updateStatus(`Invalid image for compression "${filePath}".`);
+            this.updateStatus(Status.Done, `Invalid image for compression "${filePath}".`);
         }
 
         return {
@@ -82,8 +104,12 @@ export class ImageCompressor {
     private async tryApplyImageDimensions(filePath: string, maxWidth: number = 0, maxHeight: number = 0) {
         if (!!maxWidth || !!maxHeight) {
             let dimensions = size.imageSize(filePath);
-            if (dimensions && (dimensions.width ?? 0) > maxWidth || (dimensions.height ?? 0) > maxHeight) {
-                this.updateStatus(`Resizing large image ${dimensions.width}x${dimensions.height}.`);
+            const workingMaxWidth = maxWidth > 0 ? maxWidth : dimensions.width ?? 0;
+            const workingMaxHeight = maxHeight > 0 ? maxHeight : dimensions.height ?? 0;
+            if (dimensions &&
+                (dimensions.width ?? 0) > workingMaxWidth ||
+                (dimensions.height ?? 0) > workingMaxHeight) {
+                this.updateStatus(Status.AttemptingResize, `Resizing large image ${dimensions.width}x${dimensions.height}.`);
                 const image = await jimp.read(filePath);
                 image.resize(
                     maxWidth || jimp.AUTO,
@@ -91,7 +117,7 @@ export class ImageCompressor {
 
                 await image.writeAsync(filePath);
                 dimensions = size.imageSize(filePath);
-                this.updateStatus(`Resized image to ${dimensions.width}x${dimensions.height}.`);
+                this.updateStatus(Status.AttemptingResize, `Resized image to ${dimensions.width}x${dimensions.height}.`);
 
                 return true;
             }
@@ -127,15 +153,34 @@ export class ImageCompressor {
                 fs.unlinkSync(tempPath);
 
                 wasCompressed = true;
-                this.updateStatus(`Successfully compressed "${filePath}".`);
+                this.updateStatus(Status.Done, `Successfully compressed "${filePath}".`);
             }
         }
 
         return wasCompressed;
     }
 
-    private updateStatus(message: string) {
-        this.output.appendLine(message);
-        this.progress.report({ message });
+    private updateStatus(status: Status, message: string) {
+        if (this.isBatching) {
+            if (status > this.currentStatus) {
+                this.currentStatus = status;
+                const statusMsg = this.statusToMessage(status);
+                this.output.appendLine(statusMsg);
+                this.progress.report({ message: statusMsg });
+            }
+        } else {
+            this.output.appendLine(message);
+            this.progress.report({ message });
+        }
+    }
+
+    private statusToMessage(status: Status): string {
+        switch (status) {
+            case Status.Initializing: return "Initializing image compression";
+            case Status.AttemptingResize: return "Attempting image resize";
+            case Status.AttemptingCompression: return "Attempting image compression";
+            case Status.Done: return "Image compression complete";
+            default: return "Idle...";
+        }
     }
 }
