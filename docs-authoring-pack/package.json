@@ -23,7 +23,6 @@
   ],
   "extensionDependencies": [
     "DavidAnson.vscode-markdownlint",
-    "docsmsft.docs-images",
     "docsmsft.docs-preview",
     "docsmsft.docs-markdown",
     "docsmsft.docs-article-templates",
