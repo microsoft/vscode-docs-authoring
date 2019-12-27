@@ -82,15 +82,20 @@ export function pickImageType() {
 export async function applyImage() {
     // get editor, its needed to apply the output to editor window.
     const editor = window.activeTextEditor;
+    let folderPath: string = "";
+
     if (!editor) {
         noActiveEditorMessage();
         return;
     }
+
     let image = "";
     if (checkEditor(editor)) {
         // Get images from repo as quickpick items
         // User should be given a list of quickpick items which list images from repo
-        const folderPath = workspace.rootPath;
+        if (workspace.workspaceFolders) {
+            folderPath = workspace.workspaceFolders[0].uri.fsPath;
+        }
 
         // recursively get all the files from the root folder
         dir.files(folderPath, async (err: any, files: any) => {
@@ -183,10 +188,13 @@ function checkEditor(editor: any) {
 export async function applyIcon() {
     // get editor to see if user has selected text
     const editor = window.activeTextEditor;
+    let folderPath: string = "";
+
     if (!editor) {
         noActiveEditorMessage();
         return;
     }
+
     let image = "";
     if (checkEditor(editor)) {
         const selection = editor.selection;
@@ -194,7 +202,9 @@ export async function applyIcon() {
         if (selectedText === "") {
             // Get images from repo as quickpick items
             // User should be given a list of quickpick items which list images from repo
-            const folderPath = workspace.rootPath;
+            if (workspace.workspaceFolders) {
+                folderPath = workspace.workspaceFolders[0].uri.fsPath;
+            }
 
             // recursively get all the files from the root folder
             dir.files(folderPath, async (err: any, files: any) => {
@@ -236,15 +246,20 @@ export async function applyIcon() {
 export async function applyComplex() {
     // get editor, its needed to apply the output to editor window.
     const editor = window.activeTextEditor;
+    let folderPath: string = "";
+
     if (!editor) {
         noActiveEditorMessage();
         return;
     }
+
     let image = "";
     if (checkEditor(editor)) {
         // Get images from repo as quickpick items
         // User should be given a list of quickpick items which list images from repo
-        const folderPath = workspace.rootPath;
+        if (workspace.workspaceFolders) {
+            folderPath = workspace.workspaceFolders[0].uri.fsPath;
+        }
 
         // recursively get all the files from the root folder
         dir.files(folderPath, async (err: any, files: any) => {

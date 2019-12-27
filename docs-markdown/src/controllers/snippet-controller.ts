@@ -46,11 +46,17 @@ export function insertSnippet() {
 // finds the directories to search, passes this and the search term to the search function.
 export function searchRepo() {
     const editor = vscode.window.activeTextEditor;
+    let folderPath: string = "";
+
     if (!editor) {
         noActiveEditorMessage();
         return;
     }
-    const folderPath: any = vscode.workspace.rootPath;
+
+    if (workspace.workspaceFolders) {
+        folderPath = workspace.workspaceFolders[0].uri.fsPath;
+    }
+
     const selected = editor.selection;
     // There are two kinds of repo searching, whole repo, and scoped folder (both recursive)
     const scopeOptions: vscode.QuickPickItem[] = [];
