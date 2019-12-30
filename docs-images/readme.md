@@ -14,6 +14,15 @@ Once the Docs Image extension is run you can view the output console in docs-ima
 
 ![docs image output](images/image-compressed.png)
 
+## Supported image types
+
+* .png
+* .jpg
+* .jpeg
+* .gif
+* .svg
+* .webp
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
