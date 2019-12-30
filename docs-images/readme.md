@@ -4,13 +4,13 @@ Docs Images provides image compression and resizing for folders and individual f
 
 * [Docs Images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images) by [David Pine](https://github.com/IEvangelist), which compresses and resizes images.
 
-## How to use the Docs Image extension
+## How to use the Docs Images extension
 
-To access the Docs Images menu, right click on a folder or individual image file. Select the "Compress all images in folder" or "Compress image" for the context menu.
+To access the Docs Images menu, right click on a folder or individual image file. Select "Compress all images in folder" or "Compress image" from the context menu.
 
 ![docs image context menu](images/right-click-image-compression.png)
 
-Once the Docs Image extension is run you can view the output console to view the compression and resizing details.
+Once the Docs Image extension is run you can view the output console in docs-images output tab to view the compression and resizing details.
 
 ![docs image output](images/image-compressed.png)
 
