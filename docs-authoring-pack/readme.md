@@ -26,6 +26,14 @@ You can also access the Docs commands from the VS Code command palette by hittin
 
 For more information about the Docs Markdown commands, see the [Docs Markdown readme](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown).
 
+## How to use Docs Images extension
+
+To access the Docs Images menu, right click on a folder or individual image file. Select "Compress all images in folder" or "Compress image" from the context menu.
+
+![docs image context menu](images/right-click-image-compression.png)
+
+For more information about the Docs Images extension, see the [Docs Images readme](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images).
+
 ## How to assign keyboard shortcuts
 
 Default keyboard shortcuts are available for some commands, as noted in the table above. You can override them, or add shortcuts for other commands, using the VS Code keyboard shortcut mappings.
