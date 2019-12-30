@@ -10,6 +10,7 @@ The Docs Authoring Pack provides the following extensions to help author content
 * [Docs YAML](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml), which validates Docs .yml files against the appropriate YAML schemas.
 * [Docs Metadata](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-metadata), which speeds up editing of metadata throughout a Docs repository.
 * [LinkCheckMD](https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD) by Larry Franks, which generates a report on the links in the document, including broken links.
+* [Docs Images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images) by David Pine, which compresses and resizes images.
 
 ## Prerequisites and assumptions
 
@@ -17,7 +18,7 @@ To accurately insert relative links, images, and other embedded content with Doc
 
 ## How to use the Docs Markdown extension
 
-To access the Docs Markdown Authoring menu, type `ALT+M`. You can click or use up/down arrows to select the function you want, or type to start filtering, then hit `ENTER` when the function you want is highlighted in the menu. 
+To access the Docs Markdown Authoring menu, type `ALT+M`. You can click or use up/down arrows to select the function you want, or type to start filtering, then hit `ENTER` when the function you want is highlighted in the menu.
 
 You can also access the Docs commands from the VS Code command palette by hitting `F1` and typing to filter. All the Docs commands begin with "Docs":
 
