@@ -21,8 +21,7 @@ export function insertIncludeCommand() {
  */
 export function insertInclude() {
     const glob = require("glob")
-    const editor = vscode.window.activeTextEditor;
-
+    const editor = window.activeTextEditor;
 
     if (!editor) {
         noActiveEditorMessage();
@@ -49,7 +48,7 @@ export function insertInclude() {
     }
 
     glob("**/includes/*.md", { cwd: folderPath, nocase: true, realpath: true }, function (er: any, files: any) {
-        const items: vscode.QuickPickItem[] = [];
+        const items: QuickPickItem[] = [];
 
         files.sort();
 
