@@ -10,79 +10,75 @@ module.exports = {
     "description": `xref linting.`,
     "tags": ["validation"],
     "function": function rule(params, onError) {
-        params.tokens.filter(function filterToken(token) {
-            return token.type === "inline";
-        }).forEach(function forToken(text) {
-            const textBlock = text.line;
-            const xrefMatches = textBlock.match(common.openXref);
+        try {
 
-            if (xrefMatches === null) { return; }
 
-            xrefMatches.forEach(content => {
-                // no colon for "<xref:...>"
-                if (content.match(common.xrefShouldIncludeColon)) {
-                    onError({
-                        lineNumber: text.lineNumber,
-                        detail: detailStrings.xrefShouldIncludeColon,
-                        context: text.line
-                    });
-                }
+            const doc = params.lines.join("\n");
+            const fullLooseMatches = doc.match(common.openXref);
+            if (fullLooseMatches) {
+                params.tokens.filter(function filterToken(token) {
+                    return token.type === "inline";
+                }).map(text => {
 
-                //xref should not have a space before the uid <xref: ...> vs <xref:...>
-                if (content.match(common.xrefHasSpace)) {
-                    onError({
-                        lineNumber: text.lineNumber,
-                        detail: detailStrings.xrefHasSpace,
-                        context: text.line
-                    });
-                }
+                    let matches = fullLooseMatches.filter((regexMatch) => text.content.indexOf(regexMatch) > -1)
 
-                // Condition: After "<xref:...>" is missing uid.
-                if (content.match(common.missingUidAttributeXref)) {
-                    onError({
-                        lineNumber: text.lineNumber,
-                        detail: detailStrings.missingUidAttributeXref,
-                        context: text.line
-                    });
-                }
+                    if (matches == null || matches.length == 0) {
+                        return;
+                    }
+                    matches.map(content => {
+                        // no colon for "<xref:...>"
+                        if (content.match(common.xrefShouldIncludeColon)) {
+                            onError({
+                                lineNumber: text.lineNumber,
+                                detail: detailStrings.xrefShouldIncludeColon,
+                                context: text.line
+                            });
+                        }
 
-                // Condition: "<xref:...?displayProperty=" bad displayProperty indicator.
-                if (content.match(common.xrefHasDisplayPropertyQuestionMark)
-                    && !content.match(common.syntaxXref)
-                    && !content.match(common.usesCorrectXrefDisplayProperties)) {
-                    onError({
-                        lineNumber: text.lineNumber,
-                        detail: detailStrings.xrefHasDisplayPropertyQuestionMark,
-                        context: text.line
-                    });
-                }
+                        //xref should not have a space before the uid <xref: ...> vs <xref:...>
+                        if (content.match(common.xrefHasSpace)) {
+                            onError({
+                                lineNumber: text.lineNumber,
+                                detail: detailStrings.xrefHasSpace,
+                                context: text.line
+                            });
+                        }
 
-                // Condition: "<xref:...?displayProperty=fullName|nameWithType>" bad displayProperty value.
-                if (content.match(common.usesCorrectXrefDisplayProperties)) {
-                    onError({
-                        lineNumber: text.lineNumber,
-                        detail: detailStrings.usesCorrectXrefDisplayProperties,
-                        context: text.line
-                    });
-                }
+                        // Condition: After "<xref:...>" is missing uid.
+                        if (content.match(common.missingUidAttributeXref)) {
+                            onError({
+                                lineNumber: text.lineNumber,
+                                detail: detailStrings.missingUidAttributeXref,
+                                context: text.line
+                            });
+                        }
 
-                if (content.match(common.notEscapedCharacters)) {
-                    onError({
-                        lineNumber: text.lineNumber,
-                        detail: detailStrings.notEscapedCharacters,
-                        context: text.line
-                    });
-                }
+                        // Condition: "<xref:...?displayProperty=" bad displayProperty indicator.
+                        const displayPropertyMatch = content.match(common.xrefHasDisplayProperty);
+                        if (displayPropertyMatch) {
+                            // Condition: "<xref:...?displayProperty=fullName|nameWithType>" bad displayProperty value.
+                            const displayPropertyValue = content.match(common.xrefDisplayPropertyValues)
+                            if (!displayPropertyValue) {
+                                onError({
+                                    lineNumber: text.lineNumber,
+                                    detail: detailStrings.usesCorrectXrefDisplayProperties,
+                                    context: text.line
+                                });
+                            }
+                        }
 
-                // Condition: After "<xref:...>" syntax is incorrect.
-                if (!content.match(common.syntaxXref)) {
-                    onError({
-                        lineNumber: text.lineNumber,
-                        detail: detailStrings.xrefSyntax,
-                        context: text.line
-                    });
-                }
-            });
-        });
+                        if (content.match(common.notEscapedCharacters)) {
+                            onError({
+                                lineNumber: text.lineNumber,
+                                detail: detailStrings.notEscapedCharacters,
+                                context: text.line
+                            });
+                        }
+                    })
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        };
     }
-};
+}

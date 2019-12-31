@@ -70,14 +70,16 @@ module.exports.alertNoExclam = /\[(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]/gm; //i
 module.exports.linkPattern = /(http:\/\/(|www\.))(visualstudio\.com|msdn\.com|microsoft\.com|office\.com|azure\.com|aka\.ms).*/;
 
 //xref
-module.exports.openXref = /<xref:.*?>/gmi;
-module.exports.xrefHasSpace = /<xref:[ ]+(>)?/gmi;
-module.exports.xrefShouldIncludeColon = /<xref(?!:)([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]@]+)?(\?displayProperty=(fullName|nameWithType))?(>)?/gmi;
-module.exports.missingUidAttributeXref = /<xref:(\?displayProperty=(fullName|nameWithType))?>/g;
-module.exports.usesCorrectXrefDisplayProperties = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]@]+)(\?displayProperty=(?!fullName|nameWithType))(>)?/g;
-module.exports.xrefHasDisplayPropertyQuestionMark = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]@]+)(\?)(?!displayProperty=.*)(>)?/g;
-module.exports.syntaxXref = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]@]+)(\?displayProperty=(fullName|nameWithType))?>/g;
-module.exports.notEscapedCharacters = /<xref:(.*[\*\#\`].*)(\?displayProperty=(fullName|nameWithType))?>/g;
+module.exports.openXref = /(<|\()xref(:)?.*?(>|\))/gmi;
+module.exports.xrefHasSpace = /(<|\()xref:[ ]+((>|\)))?/gmi;
+module.exports.xrefShouldIncludeColon = /(<|\()xref(?!:)(.*?)?(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(>|\))/gmi;
+module.exports.missingUidAttributeXref = /(<|\()xref:(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(>|\))/g;
+module.exports.xrefHasPropertyQuestionMark = /(<|\()xref:(.*?)(\?)((>|\)))?/g;
+module.exports.xrefHasDisplayProperty = /displayProperty=/g;
+module.exports.xrefDisplayPropertyValues = /displayProperty=(fullName|nameWithType)/g;
+module.exports.xrefHasTwoProperties = /&/g;
+module.exports.syntaxXref = /(<|\()xref:(.*?)(\?)?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?))?(>|\))/g;
+module.exports.notEscapedCharacters = /(<|\()xref:(.*[\*\#\`].*)(>|\))/g;
 
 // Row
 module.exports.startRow = /^(.:*)(.+row)/gm;
