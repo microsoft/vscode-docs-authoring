@@ -114,11 +114,15 @@ export function hasContentAlready(editor: any) {
 }
 
 export function hasValidWorkSpaceRootPath(senderName: string) {
-    const folderPath = vscode.workspace.rootPath;
+    let folderPath: string = "";
 
     if (folderPath == null) {
         postWarning("The " + senderName + " command requires an active workspace. Please open VS Code from the root of your clone to continue.");
         return false;
+    }
+
+    if (vscode.workspace.workspaceFolders) {
+        folderPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
     }
 
     return true;

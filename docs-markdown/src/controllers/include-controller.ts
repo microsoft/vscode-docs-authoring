@@ -1,6 +1,6 @@
 "use strict";
 
-import * as vscode from "vscode";
+import { QuickPickItem, window, workspace } from "vscode";
 import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { includeBuilder } from "../helper/utility";
 
@@ -21,14 +21,19 @@ export function insertIncludeCommand() {
  */
 export function insertInclude() {
     const glob = require("glob")
-    const editor = vscode.window.activeTextEditor;
+    const editor = window.activeTextEditor;
 
     if (!editor) {
         noActiveEditorMessage();
         return;
     }
+
     const activeFileDir = path.dirname(editor.document.fileName);
-    const folderPath = vscode.workspace.rootPath;
+    let folderPath: string = "";
+
+    if (workspace.workspaceFolders) {
+        folderPath = workspace.workspaceFolders[0].uri.fsPath;
+    }
 
     if (!isMarkdownFileCheck(editor, false)) {
         return;
@@ -43,7 +48,8 @@ export function insertInclude() {
     }
 
     glob("**/includes/*.md", { cwd: folderPath, nocase: true, realpath: true }, function (er: any, files: any) {
-        const items: vscode.QuickPickItem[] = [];
+        const items: QuickPickItem[] = [];
+
         files.sort();
 
         {
@@ -54,7 +60,7 @@ export function insertInclude() {
         }
 
         // show the quick pick menu
-        vscode.window.showQuickPick(items).then((qpSelection) => {
+        window.showQuickPick(items).then((qpSelection) => {
             let result: string;
             const position = editor.selection.active;
 
