@@ -6,6 +6,8 @@ import { includeBuilder } from "../helper/utility";
 
 const telemetryCommand: string = "insertInclude";
 const markdownExtensionFilter = [".md"];
+const path = require("path");
+const os = require("os");
 
 export function insertIncludeCommand() {
     const commands = [
@@ -18,10 +20,9 @@ export function insertIncludeCommand() {
  * transforms the current selection into an include.
  */
 export function insertInclude() {
-    const path = require("path");
-    const dir = require("node-dir");
-    const os = require("os");
+    const glob = require("glob")
     const editor = vscode.window.activeTextEditor;
+
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -41,12 +42,7 @@ export function insertInclude() {
         return;
     }
 
-    // recursively get all the files from the root folder
-    dir.files(folderPath, (err: any, files: any) => {
-        if (err) {
-            throw err;
-        }
-
+    glob("**/includes/*.md", { cwd: folderPath, nocase: true, realpath: true }, function (er: any, files: any) {
         const items: vscode.QuickPickItem[] = [];
         files.sort();
 
