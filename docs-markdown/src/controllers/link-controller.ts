@@ -1,15 +1,15 @@
-import { QuickPickItem, QuickPickOptions, window, commands } from "vscode";
-import { sendTelemetryData, checkExtension } from "../helper/common";
-import { Insert, insertURL, selectLinkType } from "./media-controller";
+import { commands, QuickPickItem, QuickPickOptions, window } from "vscode";
+import { checkExtension, sendTelemetryData } from "../helper/common";
+import { Insert, insertExternalURL, insertURL, selectLinkType } from "./media-controller";
 import { applyXref } from "./xref-controller";
 
 const telemetryCommand: string = "insertLink";
-let commandOption: string;
 
 export function insertLinkCommand() {
     const commands = [
         { command: pickLinkType.name, callback: pickLinkType },
         { command: insertURL.name, callback: insertURL },
+        { command: insertExternalURL.name, callback: insertExternalURL },
     ];
     return commands;
 }
@@ -23,6 +23,10 @@ export function pickLinkType() {
     items.push({
         description: "",
         label: "$(globe) Link to web page",
+    });
+    items.push({
+        description: "",
+        label: "$(link-external) Link to external web page (opens in new tab)",
     });
     items.push({
         description: "",
@@ -44,30 +48,29 @@ export function pickLinkType() {
         if (!selection) {
             return;
         }
+
         const selectionWithoutIcon = selection.label.toLowerCase().split(")")[1].trim();
         switch (selectionWithoutIcon) {
             case "link to file in repo":
                 Insert(false);
-                commandOption = "link to file in repo";
                 break;
             case "link to web page":
                 insertURL();
-                commandOption = "link to web page";
+                break;
+            case "link to external web page (opens in new tab)":
+                insertExternalURL();
                 break;
             case "link to heading":
                 selectLinkType();
-                commandOption = "link to heading";
                 break;
             case "link to xref":
                 applyXref();
-                commandOption = "link to Xref";
                 break;
             case "generate a link report":
                 runLinkChecker();
-                commandOption = "generate a link report";
                 break;
         }
-        sendTelemetryData(telemetryCommand, commandOption);
+        sendTelemetryData(telemetryCommand, selectionWithoutIcon);
     });
 }
 

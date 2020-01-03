@@ -282,6 +282,10 @@ export function internalLinkBuilder(isArt: boolean, pathSelection: any, selected
     return link;
 }
 
+export function externalLinkOpensInNewTabBuilder(link: string, title: string = "") {
+    return `<a href=\"${link}\" target=\"_blank\" rel=\"noopener\">\n    ${title || link} <span class=\"docon docon-navigate-external x-hidden-focus\"></span>\n</a>`;
+}
+
 export function externalLinkBuilder(link: string, title: string = "") {
     if (title === "") {
         title = link;
