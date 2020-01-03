@@ -419,7 +419,9 @@
     "diff": "^4.0.1",
     "file-exists": "^5.0.1",
     "fs-exists-sync": "^0.1.0",
+    "glob": "^7.1.6",
     "graceful-fs": "^4.1.15",
+    "js-yaml": "^3.13.1",
     "lodash.merge": "^4.6.2",
     "markdownlint": "^0.11.0",
     "matcher": "^1.0.0",
@@ -427,8 +429,7 @@
     "recursive-readdir": "^2.2.2",
     "typescript-collections": "^1.2.3",
     "vscode-extension-telemetry": "^0.1.1",
-    "yamljs": "^0.3.0",
-    "js-yaml": "^3.13.1"
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@types/graceful-fs": "^2.0.30",

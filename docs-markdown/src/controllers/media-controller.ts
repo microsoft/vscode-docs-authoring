@@ -118,10 +118,13 @@ export function getFilesShowQuickPick(isArt: any, altText: string) {
         return;
     }
     const selection = editor.selection;
-    const folderPath = vscode.workspace.rootPath;
+    let folderPath: string = "";
     let selectedText = editor.document.getText(selection);
-
     const activeFileDir = path.dirname(editor.document.fileName);
+
+    if (vscode.workspace.workspaceFolders) {
+        folderPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+    }
 
     // recursively get all the files from the root folder
     dir.files(folderPath, (err: any, files: any) => {
