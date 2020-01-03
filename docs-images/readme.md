@@ -8,11 +8,19 @@ Docs Images provides image compression and resizing for folders and individual f
 
 To access the Docs Images menu, right click on a folder or individual image file. Select "Compress all images in folder" or "Compress image" from the context menu.
 
-![docs image context menu](images/right-click-image-compression.png)
+![docs image context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-images/images/right-click-image-compression.png)
 
 Once the Docs Image extension is run you can view the output console in docs-images output tab to view the compression and resizing details.
 
-![docs image output](images/image-compressed.png)
+![docs image output](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-images/images/image-compressed.png)
+
+## Configuration
+
+To configure the Docs Images, you can adjust the max height and max width of images. These are used when applying compression, if an image is larger than these values -- the image is resized whilst maintaining the aspect ratio, prior to compression.
+
+![docs image config](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-images/images/docs-images-configuration.png)
+
+> **Note:** A max height or width value of `0`, is interpreted as do not enforce resize.
 
 ## Supported image types
 
