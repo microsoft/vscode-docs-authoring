@@ -94,11 +94,6 @@
         "category": "Docs"
       },
       {
-        "command": "insertExternalURL",
-        "title": "Link to external website (opens in new tab)",
-        "category": "Docs"
-      },
-      {
         "command": "applyImage",
         "title": "Image (Docs Markdown)",
         "category": "Docs"

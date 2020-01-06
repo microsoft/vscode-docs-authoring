@@ -286,10 +286,6 @@ export function imageWithGrayBorderBuilder(altText: string, imagePath: string) {
     return `> [!div class="mx-imgBorder"]\n> ![${altText}](${imagePath})`;
 }
 
-export function externalLinkOpensInNewTabBuilder(link: string, title: string = "") {
-    return `<a href="${link}" target="_blank" rel="noopener" title="${title || link} (opens in new tab)">\n    ${title || link} <span class="docon docon-navigate-external x-hidden-focus"></span>\n</a>`;
-}
-
 export function externalLinkBuilder(link: string, title: string = "") {
     if (title === "") {
         title = link;

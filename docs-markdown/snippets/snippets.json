@@ -33,17 +33,5 @@
       ":::image type=\"complex\" source=\"\" alt-text=\"\":::\n\n:::image-end:::"
     ],
     "description": "Complex image"
-  },
-  "externalLink": {
-    "prefix": [
-      "link",
-      "ext"
-    ],
-    "body": [
-      "<a href=\"${1:url}\" target=\"_blank\" rel=\"noopener\">",
-      "    ${2:URL description} <span class=\"docon docon-navigate-external x-hidden-focus\"></span>",
-      "</a>"
-    ],
-    "description": "External link, opens in a new tab."
   }
 }

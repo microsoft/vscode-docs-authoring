@@ -1,6 +1,6 @@
 import { commands, QuickPickItem, QuickPickOptions, window } from "vscode";
 import { checkExtension, sendTelemetryData } from "../helper/common";
-import { Insert, insertExternalURL, insertURL, MediaType, selectLinkType } from "./media-controller";
+import { Insert, insertURL, MediaType, selectLinkType } from "./media-controller";
 import { applyXref } from "./xref-controller";
 
 const telemetryCommand: string = "insertLink";
@@ -9,7 +9,6 @@ export function insertLinkCommand() {
     const commands = [
         { command: pickLinkType.name, callback: pickLinkType },
         { command: insertURL.name, callback: insertURL },
-        { command: insertExternalURL.name, callback: insertExternalURL },
     ];
     return commands;
 }
@@ -23,10 +22,6 @@ export function pickLinkType() {
     items.push({
         description: "",
         label: "$(globe) Link to web page",
-    });
-    items.push({
-        description: "",
-        label: "$(link-external) Link to external web page (opens in new tab)",
     });
     items.push({
         description: "",
@@ -56,9 +51,6 @@ export function pickLinkType() {
                 break;
             case "link to web page":
                 insertURL();
-                break;
-            case "link to external web page (opens in new tab)":
-                insertExternalURL();
                 break;
             case "link to heading":
                 selectLinkType();

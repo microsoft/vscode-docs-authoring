@@ -29,7 +29,6 @@ export function insertLinksAndMediaCommands() {
         { command: insertVideo.name, callback: insertVideo },
         { command: insertURL.name, callback: insertURL },
         { command: insertLink.name, callback: insertLink },
-        { command: insertExternalURL.name, callback: insertExternalURL },
         { command: insertImageWithGrayBorder.name, callback: insertImageWithGrayBorder },
         // { command: insertImage.name, callback: insertImage },
         { command: selectLinkType.name, callback: selectLinkType },
@@ -112,48 +111,6 @@ export function insertURL() {
             setCursorPosition(editor, selection.start.line, selection.start.character + contentToInsert.length);
         }
     });
-    sendTelemetryData(telemetryCommandLink, commandOption);
-}
-
-/**
- * Inserts an external URL
- */
-export async function insertExternalURL() {
-    commandOption = "externalNewTab";
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-        noActiveEditorMessage();
-        return;
-    }
-    const selection = editor.selection;
-    const selectedText = editor.document.getText(selection);
-
-    let options: vscode.InputBoxOptions = {
-        placeHolder: "Enter URL",
-        validateInput: (urlInput) => urlInput.startsWith("http://") || urlInput.startsWith("https://") ? "" :
-            "http:// or https:// is required for URLs. Link will not be added if prefix is not present.",
-    };
-
-    const url = await vscode.window.showInputBox(options);
-    // If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
-    if (url === undefined) {
-        postWarning("Incorrect link syntax. Abandoning command.");
-    } else {
-        let contentToInsert;
-        if (selection.isEmpty) {
-            options = {
-                placeHolder: "Enter URL description (optional)",
-            };
-            const title = await vscode.window.showInputBox(options);
-            contentToInsert = externalLinkOpensInNewTabBuilder(url, title);
-            insertContentToEditor(editor, insertURL.name, contentToInsert);
-        } else {
-            contentToInsert = externalLinkOpensInNewTabBuilder(url, selectedText);
-            insertContentToEditor(editor, insertURL.name, contentToInsert, true);
-        }
-        setCursorPosition(editor, selection.start.line, selection.start.character + contentToInsert.length);
-    }
-
     sendTelemetryData(telemetryCommandLink, commandOption);
 }
 
