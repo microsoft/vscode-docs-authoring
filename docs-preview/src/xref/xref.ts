@@ -4,10 +4,10 @@ import { output } from "../extension";
 
 const apiUrl = "https://xref.docs.microsoft.com/query?uid=";
 // Sadly because of the bug with global regexes, I need two versions. One with global, one without. - Adam
-const XREF_RE_WITH_GLOBAL = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]@]+)(\?displayProperty=(fullName|nameWithType))?>/gmi;
-const XREF_RE = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]@]+)(\?displayProperty=(fullName|nameWithType))?>/mi;
-const XREF_MD_LINK_RE_WITH_GLOBAL = /\(xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]@]+)(\?displayProperty=(fullName|nameWithType))?\)/gmi;
-const XREF_MD_LINK_RE = /\(xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]@]+)(\?displayProperty=(fullName|nameWithType))?\)/mi;
+const XREF_RE_WITH_GLOBAL = /<xref:(.*?)(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?>/gmi;
+const XREF_RE = /<xref:(.*?)(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?>/mi;
+const XREF_MD_LINK_RE_WITH_GLOBAL = /\(xref:(.*?)(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?\)/gmi;
+const XREF_MD_LINK_RE = /\(xref:(.*?)(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?\)/mi;
 let xrefContent = "";
 
 export function xref(md) {
@@ -74,7 +74,8 @@ async function updateXrefContent(md: any, src: string) {
   }
 
   while ((captureGroup = XREF_MD_LINK_RE.exec(src))) {
-    const uid = captureGroup[1].trim();
+    const uidWithParams = captureGroup[1].trim();
+    const uid = uidWithParams.split("?")[0];
     try {
       await Axios.get(apiUrl + uid)
         .then(response => {
@@ -94,7 +95,8 @@ async function updateXrefContent(md: any, src: string) {
     }
   }
   while ((captureGroup = XREF_RE.exec(src))) {
-    const uid = captureGroup[1].trim();
+    const uidWithParams = captureGroup[1].trim();
+    const uid = uidWithParams.split("?")[0];
     try {
       await Axios.get(apiUrl + uid)
         .then(response => {
