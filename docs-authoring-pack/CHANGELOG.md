@@ -1,6 +1,10 @@
 # Change Log
 
-## 0.1.3 November 8th, 2019)
+## 0.1.5 (December 30th, 2019)
+
+- [docs-images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images)
+
+## 0.1.3 (November 8th, 2019)
 
 - [blackmist.LinkCheckMD](https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD) is now part of Docs Authoring Pack
 
