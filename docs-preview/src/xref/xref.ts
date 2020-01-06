@@ -76,7 +76,6 @@ async function updateXrefContent(md: any, src: string) {
   while ((captureGroup = XREF_MD_LINK_RE.exec(src))) {
     const uidWithParams = captureGroup[1].trim();
     const uid = uidWithParams.split("?")[0];
-    console.log(captureGroup);
     try {
       await Axios.get(apiUrl + uid)
         .then(response => {
