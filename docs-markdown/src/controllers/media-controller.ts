@@ -2,8 +2,23 @@
 
 import * as vscode from "vscode";
 import { insertBookmarkExternal, insertBookmarkInternal } from "../controllers/bookmark-controller";
-import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData, setCursorPosition } from "../helper/common";
-import { externalLinkBuilder, externalLinkOpensInNewTabBuilder, internalLinkBuilder, videoLinkBuilder } from "../helper/utility";
+import {
+    hasValidWorkSpaceRootPath,
+    insertContentToEditor,
+    isMarkdownFileCheck,
+    isValidEditor,
+    noActiveEditorMessage,
+    postWarning,
+    sendTelemetryData,
+    setCursorPosition,
+} from "../helper/common";
+import {
+    externalLinkBuilder,
+    externalLinkOpensInNewTabBuilder,
+    imageWithGrayBorderBuilder,
+    internalLinkBuilder,
+    videoLinkBuilder,
+} from "../helper/utility";
 
 const telemetryCommandMedia: string = "insertMedia";
 const telemetryCommandLink: string = "insertLink";
@@ -15,12 +30,19 @@ export function insertLinksAndMediaCommands() {
         { command: insertURL.name, callback: insertURL },
         { command: insertLink.name, callback: insertLink },
         { command: insertExternalURL.name, callback: insertExternalURL },
+        { command: insertImageWithGrayBorder.name, callback: insertImageWithGrayBorder },
         // { command: insertImage.name, callback: insertImage },
         { command: selectLinkType.name, callback: selectLinkType },
         { command: selectLinkTypeToolbar.name, callback: selectLinkTypeToolbar },
         { command: selectMediaType.name, callback: selectMediaType },
     ];
     return commands;
+}
+
+export enum MediaType {
+    Link,
+    ImageOrVideo,
+    GrayBorderImage,
 }
 
 const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp"];
@@ -136,20 +158,27 @@ export async function insertExternalURL() {
 }
 
 /**
+ * Inserts an image with a gray border
+ */
+export async function insertImageWithGrayBorder() {
+    Insert(MediaType.GrayBorderImage);
+}
+
+/**
  * Inserts a link
  */
 export function insertLink() {
-    Insert(false);
+    Insert(MediaType.Link);
 }
 
 /**
  * Triggers the insert function and passes in the true value to signify it is an art insert.
  */
 export function insertImage() {
-    Insert(true);
+    Insert(MediaType.ImageOrVideo);
 }
 
-export function getFilesShowQuickPick(isArt: any, altText: string) {
+export function getFilesShowQuickPick(mediaType: MediaType, altText: string) {
     const path = require("path");
     const dir = require("node-dir");
     const os = require("os");
@@ -179,6 +208,7 @@ export function getFilesShowQuickPick(isArt: any, altText: string) {
         const items: vscode.QuickPickItem[] = [];
         files.sort();
 
+        const isArt = mediaType !== MediaType.Link;
         if (isArt) {
 
             files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
@@ -222,8 +252,13 @@ export function getFilesShowQuickPick(isArt: any, altText: string) {
                     if (altText.length > 250) {
                         vscode.window.showWarningMessage("Alt text exceeds 250 characters!");
                     } else {
-                        result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
-                            (qpSelection.description, qpSelection.label).split("\\").join("\\\\")), altText);
+                        if (mediaType === MediaType.ImageOrVideo) {
+                            result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
+                                (qpSelection.description, qpSelection.label).split("\\").join("\\\\")), altText);
+                        } else {
+                            result = imageWithGrayBorderBuilder(altText, path.relative(activeFileDir, path.join
+                                (qpSelection.description, qpSelection.label).split("\\").join("\\\\")));
+                        }
                     }
 
                 } else if (isArt && altText === "") {
@@ -255,10 +290,10 @@ export function getFilesShowQuickPick(isArt: any, altText: string) {
 }
 
 /**
- * Inserts a link or art.
- * @param {boolean} isArt - if true inserts art, if false inserts link.
+ * Inserts various media types.
+ * @param {MediaType} mediaType - the media type to insert
  */
-export function Insert(isArt: any) {
+export function Insert(mediaType: MediaType) {
 
     let actionType: string = Insert.name;
 
@@ -269,18 +304,26 @@ export function Insert(isArt: any) {
     } else {
         const selectedText = editor.document.getText(editor.selection);
 
-        // determines the name to set in the ValidEditor check
-        if (isArt) {
-            actionType = "Art";
-            commandOption = "art";
-            sendTelemetryData(telemetryCommandMedia, commandOption);
-        } else {
-            actionType = "Link";
-            commandOption = "internal";
-            sendTelemetryData(telemetryCommandLink, commandOption);
+        // Determines the name to set in the ValidEditor check
+        switch (mediaType) {
+            case MediaType.ImageOrVideo:
+                actionType = "Art";
+                commandOption = "art";
+                sendTelemetryData(telemetryCommandMedia, commandOption);
+                break;
+            case MediaType.Link:
+                actionType = "Link";
+                commandOption = "internal";
+                sendTelemetryData(telemetryCommandLink, commandOption);
+                break;
+            case MediaType.GrayBorderImage:
+                actionType = "GrayBorderImage";
+                commandOption = "imageWithGrayBorder";
+                sendTelemetryData(telemetryCommandLink, commandOption);
+                break;
         }
 
-        // checks for valid environment
+        // Checks for valid environment
         if (!isValidEditor(editor, false, actionType)) {
             return;
         }
@@ -310,21 +353,21 @@ export function Insert(isArt: any) {
         }
 
         // Determine if there is selected text.  If selected text, no action.
-        if (isArt && selectedText === "") {
+        if (selectedText === "") {
             vscode.window.showInputBox({
                 placeHolder: "Add alt text (up to 250 characters)",
             }).then((val) => {
                 if (!val) {
-                    getFilesShowQuickPick(isArt, "");
+                    getFilesShowQuickPick(mediaType, "");
                     vscode.window.showInformationMessage("No alt entered or selected.  File name will be used.");
                 } else if (val.length < 250) {
-                    getFilesShowQuickPick(isArt, val);
+                    getFilesShowQuickPick(mediaType, val);
                 } else if (val.length > 250) {
                     vscode.window.showWarningMessage("Alt text exceeds 250 characters!");
                 }
             });
         } else {
-            getFilesShowQuickPick(isArt, selectedText);
+            getFilesShowQuickPick(mediaType, selectedText);
         }
     }
 }
@@ -380,7 +423,7 @@ export function selectLinkTypeToolbar(toolbar?: boolean) {
         if (qpSelection === linkTypes[0]) {
             insertURL();
         } else if (qpSelection === linkTypes[1]) {
-            Insert(false);
+            Insert(MediaType.Link);
         } else if (qpSelection === linkTypes[2]) {
             insertBookmarkInternal();
         } else if (qpSelection === linkTypes[3]) {
@@ -409,7 +452,7 @@ export function selectMediaType() {
         const mediaTypes = ["Image", "Video"];
         vscode.window.showQuickPick(mediaTypes).then((qpSelection) => {
             if (qpSelection === mediaTypes[0]) {
-                Insert(true);
+                Insert(MediaType.ImageOrVideo);
             } else if (qpSelection === mediaTypes[1]) {
                 insertVideo();
             }

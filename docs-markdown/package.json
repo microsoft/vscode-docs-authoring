@@ -109,6 +109,11 @@
         "category": "Docs"
       },
       {
+        "command": "insertImageWithGrayBorder",
+        "title": "Image with gray border",
+        "category": "Docs"
+      },
+      {
         "command": "applyIcon",
         "title": "Icon image",
         "category": "Docs"
