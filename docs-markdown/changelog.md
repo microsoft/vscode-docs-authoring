@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.30 (January 6th, 2020)
+
+- Include filtering
+- Xref preview and linting updates
+
 ## 0.2.29 (December 19th, 2019)
 
 - Added triple colon code snippet extension
