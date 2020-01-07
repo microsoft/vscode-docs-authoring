@@ -84,16 +84,6 @@
 					"minItems": 1
 				}
 			},
-			"not": {
-				"anyOf": [
-					{
-						"required": [ "href", "uid" ]
-					},
-					{
-						"required": [ "topicHref", "uid" ]
-					}
-				]
-			},
 			"type": "object",
 			"required": [ "name" ],
 			"additionalProperties": true

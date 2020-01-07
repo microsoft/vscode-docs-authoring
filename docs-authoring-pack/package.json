@@ -3,7 +3,7 @@
   "displayName": "Docs Authoring Pack",
   "description": "Collection of extensions to assist with content development for docs.microsoft.com",
   "icon": "images/docs-logo-ms.png",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "publisher": "docsmsft",
   "engines": {
     "vscode": "^1.20.0"
@@ -23,11 +23,14 @@
   ],
   "extensionDependencies": [
     "DavidAnson.vscode-markdownlint",
+    "docsmsft.docs-images",
     "docsmsft.docs-preview",
     "docsmsft.docs-markdown",
     "docsmsft.docs-article-templates",
     "streetsidesoftware.code-spell-checker",
-    "docsmsft.docs-yaml"
+    "docsmsft.docs-yaml",
+    "docsmsft.docs-metadata",
+    "blackmist.LinkCheckMD"
   ],
   "license": "MIT"
 }

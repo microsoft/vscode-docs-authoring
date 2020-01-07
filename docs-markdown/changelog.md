@@ -1,5 +1,70 @@
 # Change Log
 
+## 0.2.30 (January 6th, 2020)
+
+- Include filtering
+- Xref preview and linting updates
+
+## 0.2.29 (December 19th, 2019)
+
+- Added triple colon code snippet extension
+
+## 0.2.28 (December 16th, 2019)
+
+- Fixed image linting bug
+
+## 0.2.27 (December 6th, 2019)
+
+- Image and no-loc linting updates
+- Added clickable links for source on triple colon extension
+
+## 0.2.25 (November 15th, 2019)
+
+- Fixed bug with xref linting
+- Fixed TOC bug with node positioning
+- Updated README
+
+## 0.2.24 (November 5th, 2019)
+
+- Update link UI
+- Add link checker extension support (https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD)
+
+## 0.2.23 (October 14th, 2019)
+
+- Added Standard Markdown Image to Image extension
+
+## 0.2.22 (October 7th, 2019)
+
+- Loc-Scope options now include other and third-party
+- Bug fix for image extension linting rules
+
+## 0.2.21 (October 1st, 2019)
+
+- Loc-Scope options now include all products
+
+## 0.2.19 (September 20th, 2019)
+
+- Support for yaml file extension/language
+- TOC location error bugfix
+
+## 0.2.18 (September 13th, 2019)
+
+- TOC parent node bugfix
+
+## 0.2.17 (September 9th, 2019)
+
+- TOC href link bugfix
+- TOC attribute bugfix
+- Telemetry updates
+
+## 0.2.16 (August 30th, 2019)
+
+- Column command title update
+
+## 0.2.15 (August 22st, 2019)
+
+- Xref Bug Fixes and support additional Xref tags.
+
 ## 0.2.14 (August 21st, 2019)
 
 - Row and column support

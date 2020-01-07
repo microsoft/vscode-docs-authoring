@@ -2,23 +2,25 @@
 
 import * as vscode from "vscode";
 import { output } from "../extension";
-import { checkExtension, detectFileExtension, generateTimestamp } from "../helper/common";
+import { checkExtension, generateTimestamp } from "../helper/common";
 import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
 import { applyCleanup } from "./cleanup-controller";
 import { formatCode } from "./code-controller";
+import { pickImageType } from "./image-controller";
 import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
-import { Insert, insertImage, insertURL, insertVideo, selectLinkType } from "./media-controller";
+import { insertVideo } from "./media-controller";
 import { noLocText } from "./no-loc-controller";
 import { previewTopic } from "./preview-controller";
 import { insertRowsAndColumns } from "./row-columns-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
-import { insertExpandableParentNode, insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
 import { applyXref } from "./xref-controller";
+import { insertExpandableParentNode, insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
+import { pickLinkType } from "./link-controller";
 
 export function quickPickMenuCommand() {
     const commands = [
@@ -33,7 +35,6 @@ export function markdownQuickPick() {
     const yamlItems: vscode.QuickPickItem[] = [];
     let items: vscode.QuickPickItem[] = [];
     const activeTextDocument = vscode.window.activeTextEditor;
-    let fileExtension: string;
 
     if (checkExtension("docsmsft.docs-preview")) {
         markdownItems.push({
@@ -73,23 +74,11 @@ export function markdownQuickPick() {
         },
         {
             description: "",
-            label: "$(ellipsis) Rows and columns",
+            label: "$(ellipsis) Columns",
         },
         {
             description: "",
-            label: "$(file-symlink-directory) Link to file in repo",
-        },
-        {
-            description: "",
-            label: "$(globe) Link to web page",
-        },
-        {
-            description: "",
-            label: "$(link) Link to heading",
-        },
-        {
-            description: "",
-            label: "$(x) Link to XREF",
+            label: "$(link) Link",
         },
         {
             description: "",
@@ -144,13 +133,12 @@ export function markdownQuickPick() {
     );
 
     if (activeTextDocument) {
-        const activeFilePath = activeTextDocument.document.fileName;
-        fileExtension = detectFileExtension(activeFilePath);
-        switch (fileExtension) {
-            case ".md":
+        const activeDocumentLanguage = activeTextDocument.document.languageId;
+        switch (activeDocumentLanguage) {
+            case "markdown":
                 items = markdownItems;
                 break;
-            case ".yml":
+            case "yaml":
                 items = yamlItems;
                 break;
         }
@@ -191,20 +179,14 @@ export function markdownQuickPick() {
             case "table":
                 insertTable();
                 break;
-            case "link to file in repo":
-                Insert(false);
-                break;
-            case "link to web page":
-                insertURL();
-                break;
-            case "link to heading":
-                selectLinkType();
+            case "link":
+                pickLinkType();
                 break;
             case "non-localizable text":
                 noLocText();
                 break;
             case "image":
-                insertImage();
+                pickImageType();
                 break;
             case "include":
                 insertInclude();
@@ -236,7 +218,7 @@ export function markdownQuickPick() {
             case "parent node":
                 insertExpandableParentNode();
                 break;
-            case "rows and columns":
+            case "columns":
                 insertRowsAndColumns();
                 break;
             default:

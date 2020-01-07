@@ -3,7 +3,7 @@
   "displayName": "docs-preview",
   "description": "Docs Markdown Preview Extension",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.3.26",
+  "version": "0.3.36",
   "publisher": "docsmsft",
   "icon": "images/docs-logo-ms.png",
   "bugs": {
@@ -33,9 +33,15 @@
   "main": "./out/src/extension",
   "contributes": {
     "markdown.previewScripts": [
+      "./media/common.js",
       "./media/noloc.js",
       "./media/alert-styles.js",
-      "./media/wrapper.js"
+      "./media/wrapper.js",
+      "./media/next-step-action.js",
+      "./media/checklist.js",
+      "./media/in-this-article.js",
+      "./media/mx-tdBreakAll.js",
+      "./media/single-selector.js"
     ],
     "markdown.previewStyles": [
       "./media/docons.woff",
@@ -87,6 +93,7 @@
   },
   "dependencies": {
     "axios": "^0.19.0",
+    "js-base64": "^2.5.1",
     "markdown-it": "^8.4.2",
     "markdown-it-include": "^1.1.0",
     "vscode-extension-telemetry": "^0.1.1"

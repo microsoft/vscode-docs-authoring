@@ -128,7 +128,7 @@ function runAll(workspacePath: string, progress: any, resolve: any) {
                 postError(err);
             }
             let percentComplete = 0;
-            const promises: Array<Promise<{} | void>> = [];
+            const promises: Array<Promise<any>> = [];
             files.map((file, index) => {
                 if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
                     promises.push(new Promise((resolve, reject) => {
@@ -259,7 +259,7 @@ function handleSingleValuedMetadata(workspacePath: string, progress: any, resolv
                 postError(err);
             }
             let percentComplete = 0;
-            const promises: Array<Promise<{} | void>> = [];
+            const promises: Array<Promise<any>> = [];
             files.map((file, index) => {
                 if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
                     promises.push(new Promise((resolve, reject) => {
@@ -484,7 +484,7 @@ function microsoftLinks(workspacePath: string, progress: any, resolve: any) {
                 postError(err);
             }
             let percentComplete = 0;
-            const promises: Array<Promise<{} | void>> = [];
+            const promises: Array<Promise<any>> = [];
             files.map((file, index) => {
                 if (file.endsWith(".md")) {
                     promises.push(new Promise((resolve, reject) => {
@@ -538,6 +538,8 @@ function handleLinksWithRegex(data: string) {
     data = data.replace(akaRegex, "https://aka.ms");
     const microsoftRegex = new RegExp(/http:\/\/microsoft.com/g);
     data = data.replace(microsoftRegex, "https://microsoft.com");
+    const goMicrosoftRegex = new RegExp(/http:\/\/go.microsoft.com/g);
+    data = data.replace(goMicrosoftRegex, "https://go.microsoft.com");
     const visualstudioRegex = new RegExp(/http:\/\/visualstudio.com/g);
     data = data.replace(visualstudioRegex, "https://visualstudio.com");
     const officeRegex = new RegExp(/http:\/\/office.com/g);
@@ -554,6 +556,8 @@ function handleLinksWithRegex(data: string) {
     data = data.replace(msdnRegex2, "https://msdn.com");
     const technetRegex = new RegExp(/http:\/\/technet.microsoft.com/g);
     data = data.replace(technetRegex, "https://technet.microsoft.com");
+    const technetRegex2 = new RegExp(/http:\/\/technet.com/g);
+    data = data.replace(technetRegex2, "https://technet.com");
     const docsRegexLang = new RegExp(/https:\/\/docs.microsoft.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
     data = data.replace(docsRegexLang, "https://docs.microsoft.com/");
     const azureRegexLang = new RegExp(/https:\/\/azure.microsoft.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
@@ -579,7 +583,7 @@ function capitalizationOfMetadata(workspacePath: string, progress: any, resolve:
                 postError(err);
             }
             let percentComplete = 0;
-            const promises: Array<Promise<{} | void>> = [];
+            const promises: Array<Promise<any>> = [];
             files.map((file, index) => {
                 if (file.endsWith(".md")) {
                     promises.push(new Promise((resolve) => {

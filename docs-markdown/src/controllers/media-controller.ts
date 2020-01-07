@@ -14,7 +14,7 @@ export function insertLinksAndMediaCommands() {
         { command: insertVideo.name, callback: insertVideo },
         { command: insertURL.name, callback: insertURL },
         { command: insertLink.name, callback: insertLink },
-        { command: insertImage.name, callback: insertImage },
+        // { command: insertImage.name, callback: insertImage },
         { command: selectLinkType.name, callback: selectLinkType },
         { command: selectLinkTypeToolbar.name, callback: selectLinkTypeToolbar },
         { command: selectMediaType.name, callback: selectMediaType },
@@ -118,10 +118,13 @@ export function getFilesShowQuickPick(isArt: any, altText: string) {
         return;
     }
     const selection = editor.selection;
-    const folderPath = vscode.workspace.rootPath;
+    let folderPath: string = "";
     let selectedText = editor.document.getText(selection);
-
     const activeFileDir = path.dirname(editor.document.fileName);
+
+    if (vscode.workspace.workspaceFolders) {
+        folderPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+    }
 
     // recursively get all the files from the root folder
     dir.files(folderPath, (err: any, files: any) => {
@@ -173,8 +176,8 @@ export function getFilesShowQuickPick(isArt: any, altText: string) {
 
                 // Construct and write out links
                 if (isArt && altText) {
-                    if (altText.length > 70) {
-                        vscode.window.showWarningMessage("Alt text exceeds 70 characters!");
+                    if (altText.length > 250) {
+                        vscode.window.showWarningMessage("Alt text exceeds 250 characters!");
                     } else {
                         result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
                             (qpSelection.description, qpSelection.label).split("\\").join("\\\\")), altText);
@@ -261,15 +264,15 @@ export function Insert(isArt: any) {
         // Determine if there is selected text.  If selected text, no action.
         if (isArt && selectedText === "") {
             vscode.window.showInputBox({
-                placeHolder: "Add alt text (up to 70 characters)",
+                placeHolder: "Add alt text (up to 250 characters)",
             }).then((val) => {
                 if (!val) {
                     getFilesShowQuickPick(isArt, "");
                     vscode.window.showInformationMessage("No alt entered or selected.  File name will be used.");
-                } else if (val.length < 70) {
+                } else if (val.length < 250) {
                     getFilesShowQuickPick(isArt, val);
-                } else if (val.length > 70) {
-                    vscode.window.showWarningMessage("Alt text exceeds 70 characters!");
+                } else if (val.length > 250) {
+                    vscode.window.showWarningMessage("Alt text exceeds 250 characters!");
                 }
             });
         } else {

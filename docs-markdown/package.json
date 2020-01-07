@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.14",
+  "version": "0.2.30",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -94,8 +94,28 @@
         "category": "Docs"
       },
       {
+        "command": "applyImage",
+        "title": "Image (Docs Markdown)",
+        "category": "Docs"
+      },
+      {
         "command": "insertImage",
-        "title": "Image",
+        "title": "Image (Standard Markdown)",
+        "category": "Docs"
+      },
+      {
+        "command": "applyIcon",
+        "title": "Icon image",
+        "category": "Docs"
+      },
+      {
+        "command": "applyComplex",
+        "title": "Complex image",
+        "category": "Docs"
+      },
+      {
+        "command": "applyLocScope",
+        "title": "Add localization scope to image",
         "category": "Docs"
       },
       {
@@ -145,12 +165,12 @@
       },
       {
         "command": "applyXref",
-        "title": "Link to XREF",
+        "title": "Link to Xref",
         "category": "Docs"
       },
       {
         "command": "insertRowsAndColumns",
-        "title": "Rows and columns",
+        "title": "Columns",
         "category": "Docs"
       }
     ],
@@ -232,7 +252,27 @@
           "when": "resourceLangId == markdown"
         },
         {
+          "command": "applyImage",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
           "command": "insertImage",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyIcon",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyComplex",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyLocScope",
           "group": "Docs",
           "when": "resourceLangId == markdown"
         },
@@ -318,22 +358,10 @@
         "when": "editorTextFocus"
       },
       {
-        "command": "automaticList",
-        "key": "enter",
-        "mac": "enter",
-        "when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible && !vim.active"
-      },
-      {
         "command": "insertNestedList",
         "key": "tab",
         "mac": "tab",
         "when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible && !vim.active"
-      },
-      {
-        "command": "removeNestedList",
-        "key": "backspace",
-        "mac": "backspace",
-        "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active"
       },
       {
         "command": "formatBold",
@@ -371,6 +399,12 @@
         "fileMatch": "toc.yml",
         "url": "./schema/toc.schema.json"
       }
+    ],
+    "snippets": [
+      {
+        "language": "markdown",
+        "path": "./snippets/snippets.json"
+      }
     ]
   },
   "scripts": {
@@ -385,7 +419,9 @@
     "diff": "^4.0.1",
     "file-exists": "^5.0.1",
     "fs-exists-sync": "^0.1.0",
+    "glob": "^7.1.6",
     "graceful-fs": "^4.1.15",
+    "js-yaml": "^3.13.1",
     "lodash.merge": "^4.6.2",
     "markdownlint": "^0.11.0",
     "matcher": "^1.0.0",
@@ -393,8 +429,7 @@
     "recursive-readdir": "^2.2.2",
     "typescript-collections": "^1.2.3",
     "vscode-extension-telemetry": "^0.1.1",
-    "yamljs": "^0.3.0",
-    "js-yaml": "^3.13.1"
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@types/graceful-fs": "^2.0.30",

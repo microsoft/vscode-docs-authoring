@@ -6,10 +6,11 @@
 module.exports.singleColon = /^:/gm;
 module.exports.tripleColonSyntax = /^:::\s?/gm;
 module.exports.validTripleColon = /^:::\s+/gm;
+module.exports.openAndClosingValidTripleColon = /^:::(.*):::/gmi;
 
 // Markdown extensions (add valid/supported extensions to list)
 module.exports.openExtension = /^:(.*?)(zone|moniker|no-loc)/gm;
-module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc)(.:*)/g;
+module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc|image|code)(.:*)/g;
 module.exports.unsupportedExtensionRegex = /^:::\s+(.*)/gm;
 
 // Zones
@@ -27,13 +28,30 @@ module.exports.syntaxMoniker = /^:::\s+moniker\s+range/gm;
 module.exports.rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
 
 //no-loc
-module.exports.openNoLoc = /(.:*)no-loc\s/gmi;
-module.exports.openNoDashNoLoc = /(.:*)noloc\s/gmi;
-module.exports.missingTextAttributeNoLoc = /(.:*)(.\s*)no-loc\stext/gmi;
-module.exports.syntaxNoLocLooseMatch = /(.:*)(.\s*)(no-loc|noloc)\s(\w+)=(.\"*)([a-zA-Z'-\s]*)(.\"*)(.:*)/gmi
-module.exports.syntaxNoLocCaseSensitive = /(.:*)no-loc\stext=(.\"*)([a-zA-Z'-\s]*)(.\"*)(.:*)/gm
-module.exports.syntaxQuotesNoLoc = /(.:*)no-loc\stext=\"([a-zA-Z'-\s]*)\"(.:*)/gmi
-module.exports.syntaxNoLoc = /:::no-loc\stext=\"([a-zA-Z'-\s]*)\":::/gm;
+module.exports.openNoLoc = /(:*)no-loc/gmi;
+module.exports.openNoDashNoLoc = /(:*)noloc/gmi;
+module.exports.missingTextAttributeNoLoc = /([a-z-]*(?==))/gmi;
+module.exports.allowedNoLocAttributes = ["text"];
+module.exports.noLocTextMatch = /text\s*=\s*(")?(.*?)(")?/;
+module.exports.syntaxNoLocLooseMatch = /:::(.\s*)?(no-loc|noloc)(\s)?((\w+)=)?(")?(.*?)(")?:::/gmi
+module.exports.syntaxNoLocCaseSensitive = /(:::)no-loc\stext=(")?(.*?)(")?(:::)/gm
+module.exports.syntaxNoQuotesNoLoc = /:::no-loc\stext=(.*?):::/gmi
+module.exports.syntaxSingleQuotesNoLoc = /:::no-loc\stext='(.*?)':::/gmi
+module.exports.syntaxNoLoc = /:::no-loc\stext="(.*?)":::/gm;
+
+//image
+module.exports.syntaxImageLooseMatch = /((:+)(.\s*)(image.*(complex))(.\s*)(.*)(.:*)\s*(.*)\s*(.:*)([a-z]*-[a-z]*)(.:*))|((:+)(.\s*)(image)(.\s*)(.*)(.:*))/gmi;
+module.exports.syntaxImageAttributes = /(:image)|([a-z-]*(?==))/gmi;
+module.exports.allowedImageAttributes = [":image", "type", "source", "alt-text", "loc-scope"];
+module.exports.allowedImageTypes = ["content", "complex", "icon"];
+module.exports.imageTypeMatch = /type\s*=\s*"([a-z]*)"/m;
+module.exports.imageLongDescriptionMatch = /(:::)(.*)(:::)(((\s)*(.*))+)(:::)(.*)(:::)/mi;
+module.exports.imageComplexEndTagMatch = /:::(\s*)?image-end:::/gmi;
+module.exports.imageOpen = /:::image/gmi;
+module.exports.imageSourceMatch = /source\s*=\s*"(.*?)"/m;
+module.exports.imageAltTextMatch = /alt-text\s*=\s*"(.*?)"/m;
+module.exports.imageLocScopeMatch = /loc-scope\s*=\s*"(.*?)"/m;
+module.exports.imageAltTextTypes = ["content", "complex"];
 
 // Alert
 module.exports.alertOpener = /^>\s+\[!/gm; // regex to find "> [!"
@@ -52,13 +70,16 @@ module.exports.alertNoExclam = /\[(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]/gm; //i
 module.exports.linkPattern = /(http:\/\/(|www\.))(visualstudio\.com|msdn\.com|microsoft\.com|office\.com|azure\.com|aka\.ms).*/;
 
 //xref
-module.exports.openXref = /<xref.*(>)?/gmi;
-module.exports.xrefHasSpace = /<xref:[ ]+(>)?/gmi;
-module.exports.xrefShouldIncludeColon = /<xref(?!:)([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)?(\?displayProperty=(fullName|nameWithType))?(>)?/gmi;
-module.exports.missingUidAttributeXref = /<xref:(\?displayProperty=(fullName|nameWithType))?>/g;
-module.exports.usesCorrectXrefDisplayProperties = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displayProperty=(?!fullName|nameWithType))(>)?/g;
-module.exports.xrefHasDisplayPropertyQuestionMark = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?)(?!displayProperty=.*)(>)?/g;
-module.exports.syntaxXref = /<xref:([A-Za-z_.\-\*\(\)\,\%0-9\`}{\[\]]+)(\?displayProperty=(fullName|nameWithType))?>/g;
+module.exports.openXref = /(<|\()xref(:)?.*?(>|\))/gmi;
+module.exports.xrefHasSpace = /(<|\()xref:[ ]+((>|\)))?/gmi;
+module.exports.xrefShouldIncludeColon = /(<|\()xref(?!:)(.*?)?(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(>|\))/gmi;
+module.exports.missingUidAttributeXref = /(<|\()xref:(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(>|\))/g;
+module.exports.xrefHasPropertyQuestionMark = /(<|\()xref:(.*?)(\?)((>|\)))?/g;
+module.exports.xrefHasDisplayProperty = /displayProperty=/g;
+module.exports.xrefDisplayPropertyValues = /displayProperty=(fullName|nameWithType)/g;
+module.exports.xrefHasTwoProperties = /&/g;
+module.exports.syntaxXref = /(<|\()xref:(.*?)(\?)?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?))?(>|\))/g;
+module.exports.notEscapedCharacters = /(<|\()xref:(.*[\*\#\`].*)(>|\))/g;
 
 // Row
 module.exports.startRow = /^(.:*)(.+row)/gm;
@@ -69,5 +90,19 @@ module.exports.startColumn = /^\s+(:*)(.+column)/gm;
 module.exports.syntaxColumn = /^\s+:{3}(column|column-end|column\s+(.*)"):{3}$/gm;
 module.exports.columnWithAttribute = /^\s+:{3}(column\s+(.*?)):/gm;
 module.exports.columnSpan = /^\s+:{3}(column\s+span="(.*?)"):/gm;
+
+//codesnippet
+module.exports.syntaxCodeLooseMatch = /(:+)(\s+)?code.*?(:+)/g;
+module.exports.syntaxCodeExactMatch = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+))?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/i;
+module.exports.syntaxCodeAttributes = /([a-z]*(?==))/g;
+module.exports.allowedCodeAttributes = [":code", "language", "source", "range", "id", "interactive", "highlight"];
+module.exports.codeOpen = /:::code/i;
+module.exports.codeSourceMatch = /source="(.*?)"/;
+module.exports.codeLanguageMatch = /language="(.*?)"/;
+module.exports.codeRangeMatch = /range="(.*?)"/;
+module.exports.codeIdMatch = /id="(.*?)"/;
+module.exports.allowedRangeValues = /[0-9\- ,]+/;
+module.exports.codeInteractiveMatch = /interactive="(.*?)"/;
+module.exports.allowedInteractiveValues = ["try-dotnet", "try-dotnet-method", "try-dotnet-class", "cloudshell-powershell", "cloudshell-bash"]
 
 

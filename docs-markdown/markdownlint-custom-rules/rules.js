@@ -10,5 +10,7 @@ module.exports = [
   require("./xref"),
   require("./row-extension-syntax"),
   require("./column-extension-syntax"),
-  require("./colomn-span-attribute")
+  require("./colomn-span-attribute"),
+  require("./image"),
+  require("./codesnippet")
 ];

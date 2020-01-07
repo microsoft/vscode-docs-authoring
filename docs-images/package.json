@@ -1,0 +1,134 @@
+{
+  "name": "docs-images",
+  "displayName": "docs-images",
+  "description": "Docs Images Extension",
+  "icon": "images/docs-logo-ms.png",
+  "version": "0.0.3",
+  "publisher": "docsmsft",
+  "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-images",
+  "bugs": {
+    "url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
+  },
+  "engines": {
+    "vscode": "^1.22.0"
+  },
+  "repository": {
+    "url": "https://github.com/Microsoft/vscode-docs-authoring.git"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "image",
+    "images",
+    "compress",
+    "compression",
+    "optimize",
+    "optimization"
+  ],
+  "activationEvents": [
+    "onCommand:docs.compressImage",
+    "onCommand:docs.compressImagesInFolder"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "docs.compressImage",
+        "title": "Compress image",
+        "category": "Docs"
+      },
+      {
+        "command": "docs.compressImagesInFolder",
+        "title": "Compress all images in folder",
+        "category": "Docs"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "docs.compressImage",
+          "when": "false"
+        },
+        {
+          "command": "docs.compressImagesInFolder",
+          "when": "false"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "docs.compressImage",
+          "group": "1_modification",
+          "when": "resourceLangId == compressionTargetFile && !listMultipleSelection"
+        },
+        {
+          "command": "docs.compressImagesInFolder",
+          "group": "1_modification",
+          "when": "explorerResourceIsFolder"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Docs Images Extension Configuration",
+      "properties": {
+        "docsImages.maxWidth": {
+          "type": "number",
+          "default": 1200,
+          "description": "The maximum width of an image. When applying image compression, images wider than this will be resized appropriately."
+        },
+        "docsImages.maxHeight": {
+          "type": "number",
+          "default": 0,
+          "description": "The maximum height of an image. When applying image compression, images taller than this will be resized appropriately."
+        }
+      }
+    },
+    "languages": [
+      {
+        "id": "compressionTargetFile",
+        "extensions": [
+          ".png",
+          ".jpg",
+          ".jpeg",
+          ".gif",
+          ".svg",
+          ".webp"
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runTest.js"
+  },
+  "dependencies": {
+    "jimp": "0.9.3",
+    "image-size": "0.8.3",
+    "imagemin": "7.0.0",
+    "imagemin-jpegtran": "6.0.0",
+    "imagemin-optipng": "7.1.0",
+    "imagemin-gifsicle": "6.0.1",
+    "imagemin-svgo": "7.0.0",
+    "imagemin-webp": "5.1.0"
+  },
+  "devDependencies": {
+    "@types/jimp": "^0.2.28",
+    "@types/image-size": "^0.8.0",
+    "@types/imagemin-jpegtran": "5.0.0",
+    "@types/imagemin-optipng": "5.2.0",
+    "@types/imagemin-gifsicle": "5.2.0",
+    "@types/imagemin-svgo": "7.0.0",
+    "@types/imagemin-webp": "5.1.0",
+    "@types/node": "^10.12.21",
+    "@types/mocha": "^5.2.7",
+    "mocha": "6.2.2",
+    "typescript": "^3.3.1",
+    "vscode": "^1.1.28",
+    "tslint": "^5.12.1"
+  },
+  "license": "MIT"
+}

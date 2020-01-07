@@ -1,4 +1,4 @@
-const noLocRegex = /:::no-loc\stext=\"([a-zA-Z'-\s]*)\":::/gm;
+const noLocRegex = /:::no-loc\stext=\"(.*?)\":::/gm;
 const noLocFrontRegex = /:::no-loc\stext=\"/;
 const noLocBackRegex = /":::/;
 var noLocMatches = document.body.innerHTML.match(noLocRegex);

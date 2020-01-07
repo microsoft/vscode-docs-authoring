@@ -2,6 +2,7 @@
 module.exports.syntaxCount = `Bad syntax for markdown extension. Begin with "::: ".`;
 module.exports.syntaxSpace = `Bad syntax for markdown extension. One space required after ":::".`;
 module.exports.syntaxUnsupportedExtension = `Bad syntax for markdown extension. Extension is not supported.`;
+module.exports.tripleColonsIncorrect = `Bad syntax for markdown extension. Begins and end with ":::".`;
 
 // moniker
 module.exports.monikerRange = `Bad syntax for range argument. Use =, <=, or >=, and put value in quotes.`;
@@ -11,10 +12,22 @@ module.exports.monikerSyntax = `Bad syntax for moniker. Only "moniker range" is 
 module.exports.noLocSyntax = `Bad syntax for non-localization.`;
 module.exports.noLocNoDash = `Bad syntax for non-localization. "no-loc" requires a dash.`;
 module.exports.noLocMissingTextAttribute = `Bad syntax for non-localization. Missing the "text" attribute.`;
+module.exports.NoLocNonAllowedAttribute = `Bad syntax for non-localization. "___" is not an allowed attribute.`;
 module.exports.noLocColonsIncorrect = `Bad syntax for non-localization. Make sure "no-loc" begins and ends with ":::"`;
 module.exports.noLocCaseSensitive = `Bad syntax for non-localization. ""no-loc" and "text" must be lower-case.`;
 module.exports.noLocNoQuotes = `Bad syntax for non-localization. Quotes required.`;
+module.exports.noLocDoubleQuotes = `Bad syntax for non-localization. Double quotes (") required.`;
 
+// image
+module.exports.imageCaseSensitive = `Bad syntax for image. "image" and its attributes must be lower-case.`;
+module.exports.imageNonAllowedAttribute = `Bad syntax for image. "___" is not an allowed attribute.`;
+module.exports.imageNonAllowedType = `Bad syntax for image. "___" is not an allowed type. Options are "content", "complex", "icon"`;
+module.exports.imageComplexLongDescriptionRequired = `Bad syntax for image. If image type is "complex", a long description is required.`;
+module.exports.imageComplexEndTagRequired = `Bad syntax for image. If image type is "complex", ":::image-end:::" is required.`;
+module.exports.imageSourceRequired = `Bad syntax for image. "source" required.`;
+module.exports.imageAltTextRequired = `Bad syntax for image. "alt-text" required for "complex" and "content" image types.`;
+module.exports.imageIconRemoveLocScope = `Bad syntax for image. "loc-scope" not allowed for icon images`;
+module.exports.imageIconRemoveAltText = `Bad syntax for image. "alt-text" not allowed for icon images`;
 
 // zone
 module.exports.zoneSyntax = `Bad syntax for zone. Only "zone target", "zone pivot" and "zone-end" are supported.`;
@@ -33,6 +46,7 @@ module.exports.usesCorrectXrefDisplayProperties = `Bad displayProperty value. Di
 module.exports.xrefShouldIncludeColon = `Bad xref syntax. xref should include a colon "<xref:System.Format.String%2A>".`;
 module.exports.xrefHasSpace = `Bad xref syntax. xref should not include a space before the xref uid "<xref:System.Format.String%2A>".`;
 module.exports.xrefHasDisplayPropertyQuestionMark = `Bad xref syntax. xref should also contain displayProperty=fullName or nameWithType "<xref:System.Format.String%2A?displayProperty=fullName>". Or remove the display property completely "<xref:System.Format.String%2A>".`;
+module.exports.notEscapedCharacters = `Unescaped xref syntax. The following Characters should be escaped *(%2A) #(%23) \`(%60).`;
 
 // row
 module.exports.rowSyntax = `Rows should begin :::row::: and end with :::row-end:::).`;
@@ -41,4 +55,14 @@ module.exports.rowSyntax = `Rows should begin :::row::: and end with :::row-end:
 module.exports.columnSyntax = `Columns should begin :::column::: and end with :::column-end:::).`;
 module.exports.contenSpanAttribute = `Only span is supported (ex. :::column span="":::).`;
 
+// codesnippet
+module.exports.codeCaseSensitive = `"code" and its attributes must be lower-case.`;
+module.exports.codeNonAllowedAttribute = `"___" is not an allowed attribute. Allowed attributes include "language", "source", "range", "id", "interactive", "highlight"`;
+module.exports.codeSourceRequired = `"source" is required.`;
+module.exports.codeLanguageRequired = `"language" is required.`;
+module.exports.codeRangeOrId = `You cannot have both "range" and "id" properties. Choose one or the other.`;
+module.exports.allowedRangeValues = `Allowed range values must match the regex [0-9\- ,]+.`;
+module.exports.allowedInteractiveValues = `"___" is not an allowed value for interactive. Allowed values include: "try-dotnet", "try-dotnet-method", "try-dotnet-class", "cloudshell-powershell", "cloudshell-bash"`;
 
+// logging
+module.exports.failedResponse = `There was an error pulling NAME schema data from URL.`;

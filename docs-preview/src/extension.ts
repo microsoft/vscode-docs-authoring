@@ -5,20 +5,23 @@ import { basename } from "path";
 import { commands, ExtensionContext, TextDocument, window } from "vscode";
 import { sendTelemetryData } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
-import { codeSnippets, custom_codeblock } from "./markdown-extensions/codesnippet";
-import { column_end, columnOptions } from "./markdown-extensions/column";
+import { include } from "./markdown-extensions/includes";
+import { codeSnippets, tripleColonCodeSnippets } from "./markdown-extensions/codesnippet";
+import { columnOptions, column_end, columnEndOptions } from "./markdown-extensions/column";
 import { container_plugin } from "./markdown-extensions/container";
-import { div_plugin, divOptions } from "./markdown-extensions/div";
-import { rowOptions } from "./markdown-extensions/row";
-import { video_plugin, videoOptions } from "./markdown-extensions/video";
+import { rowOptions, rowEndOptions } from "./markdown-extensions/row";
 import { xref } from "./xref/xref";
+import { div_plugin, divOptions } from "./markdown-extensions/div";
+import { imageOptions, image_end } from "./markdown-extensions/image";
+import { video_plugin, videoOptions } from "./markdown-extensions/video";
 
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
-export const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
 const telemetryCommand: string = "preview";
 
 export function activate(context: ExtensionContext) {
+    const filePath = window.visibleTextEditors[0].document.fileName;
+    const workingPath = filePath.replace(basename(filePath), "");
     extensionPath = context.extensionPath;
     context.subscriptions.push(new Reporter(context));
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
@@ -36,16 +39,18 @@ export function activate(context: ExtensionContext) {
         disposableStandalonePreview);
     return {
         extendMarkdownIt(md) {
-            const filePath = window.activeTextEditor.document.fileName;
-            const workingPath = filePath.replace(basename(filePath), "");
-            return md.use(require("markdown-it-include"), { root: workingPath, includeRe: INCLUDE_RE })
+            return md.use(include, { root: workingPath })
                 .use(codeSnippets, { root: workingPath })
+                .use(tripleColonCodeSnippets, { root: workingPath })
                 .use(xref)
-                .use(custom_codeblock)
                 .use(column_end)
                 .use(container_plugin, "row", rowOptions)
+                .use(container_plugin, "row-end", rowEndOptions)
                 .use(container_plugin, "column", columnOptions)
+                .use(container_plugin, "column-end", columnEndOptions)
                 .use(div_plugin, "div", divOptions)
+                .use(container_plugin, "image", imageOptions)
+                .use(image_end)
                 .use(video_plugin, "video", videoOptions);
         },
     };

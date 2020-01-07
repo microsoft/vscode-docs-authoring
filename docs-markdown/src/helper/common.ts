@@ -114,11 +114,15 @@ export function hasContentAlready(editor: any) {
 }
 
 export function hasValidWorkSpaceRootPath(senderName: string) {
-    const folderPath = vscode.workspace.rootPath;
+    let folderPath: string = "";
 
     if (folderPath == null) {
         postWarning("The " + senderName + " command requires an active workspace. Please open VS Code from the root of your clone to continue.");
         return false;
+    }
+
+    if (vscode.workspace.workspaceFolders) {
+        folderPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
     }
 
     return true;
@@ -338,4 +342,47 @@ export function detectFileExtension(filePath: string) {
  */
 export async function showWarningMessage(message: string) {
     vscode.window.showWarningMessage(message);
+}
+
+export function matchAll(
+    pattern: RegExp,
+    text: string
+): Array<RegExpMatchArray> {
+    const out: RegExpMatchArray[] = [];
+    pattern.lastIndex = 0;
+    let match: RegExpMatchArray | null;
+    while ((match = pattern.exec(text))) {
+        out.push(match);
+    }
+    return out;
+}
+
+export function extractDocumentLink(
+    document: vscode.TextDocument,
+    link: string,
+    matchIndex: number | undefined
+): vscode.DocumentLink | undefined {
+    const offset = (matchIndex || 0) + 8;
+    const linkStart = document.positionAt(offset);
+    const linkEnd = document.positionAt(offset + link.length);
+    const text = document.getText(new vscode.Range(linkStart, linkEnd))
+    try {
+        const httpMatch = text.match(/^(http|https):\/\//)
+        if (httpMatch) {
+            const documentLink = new vscode.DocumentLink(
+                new vscode.Range(linkStart, linkEnd),
+                vscode.Uri.parse(link));
+            return documentLink;
+        } else {
+            const filePath = document.fileName.split("\\").slice(0, -1).join("\\");
+
+            const documentLink = new vscode.DocumentLink(
+                new vscode.Range(linkStart, linkEnd),
+                vscode.Uri.file(path.resolve(filePath, link)));
+            return documentLink;
+        }
+
+    } catch (e) {
+        return undefined;
+    }
 }

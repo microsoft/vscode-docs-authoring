@@ -1,12 +1,15 @@
 "use strict";
 
 import { window } from "vscode";
-import { isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { addNewColumn, addNewColumnWithSpan, createRow } from "../helper/rows-columns";
 
 const rowWithColumns = "Two-column structure";
 const newColumn = "New column";
 const newColumnWithSpan = "New column with span";
+
+const telemetryCommand: string = "insertColumn";
+let commandOption: string;
 
 export function insertRowsAndColumnsCommand() {
     const commands = [
@@ -51,13 +54,19 @@ export function insertRowsAndColumns() {
 
 export function insertRowsWithColumns() {
     createRow(2);
+    commandOption = "row";
+    sendTelemetryData(telemetryCommand, commandOption);
 }
 
 export function insertNewColumn() {
     addNewColumn();
+    commandOption = "column";
+    sendTelemetryData(telemetryCommand, commandOption);
 }
 
 export function insertNewColumnWithSpan() {
     addNewColumnWithSpan();
+    commandOption = "column-with-span";
+    sendTelemetryData(telemetryCommand, commandOption);
 }
 

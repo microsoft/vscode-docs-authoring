@@ -1,5 +1,29 @@
 # Change Log
 
+## 0.3.35 (December 19th, 2019)
+
+- Added Preview for triple colon code snippet extension
+
+## 0.3.34 (October 11th, 2019)
+
+- Expanded file path support
+
+## 0.3.33 (October 8th, 2019)
+
+- Remove unnecessary output channels
+
+## 0.3.28 (August 23rd, 2019)
+
+- Added "In this article" section
+- Added single selector functionality
+- Fixed unreadable tables (mx-tdBreakAll, mx-tdCol2BreakAll)
+- Cleaned up Docs Styles
+
+## 0.3.27 (August 22nd 2019)
+
+- Added Action Button for Docs Styles
+- Cleaned up Docs Styles
+
 ## 0.3.26 (August 20th 2019)
 
 - Added Docs Styles
