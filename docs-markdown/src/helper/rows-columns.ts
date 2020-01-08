@@ -136,8 +136,6 @@ export function validatePosition(span?: boolean) {
         let columnStartLineNumber;
         let columnEndLineNumber;
         let rowStartLineNumber;
-        let newPosition;
-        let newSelection;
         try {
             for (i = startPosition; i < totalLines; i--) {
                 var lineData = editor.document.lineAt(i);
