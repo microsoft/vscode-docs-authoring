@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.32 (January 10th, 2020)
+
+- Fixed alt text image bug on macOS
+
 ## 0.2.31 (January 9th, 2020)
 
 - Fixed column bug
