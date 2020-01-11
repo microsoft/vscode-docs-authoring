@@ -192,8 +192,13 @@ export function getFilesShowQuickPick(isArt: any, altText: string) {
                 }
 
                 if (os.type() === "Darwin") {
-                    result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
-                        (qpSelection.description, qpSelection.label).split("//").join("//")), selectedText);
+                    if (isArt) {
+                        result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
+                            (qpSelection.description, qpSelection.label).split("//").join("//")), altText);
+                    } else {
+                        result = internalLinkBuilder(isArt, path.relative(activeFileDir, path.join
+                            (qpSelection.description, qpSelection.label).split("//").join("//")), selectedText);
+                    }
                 }
 
                 // Insert content into topic
