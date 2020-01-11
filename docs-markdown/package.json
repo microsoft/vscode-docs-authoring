@@ -347,6 +347,11 @@
           "type": "boolean",
           "default": true,
           "description": "Used to add the front_matter_title parameter (MD025) to the markdownlint.config file."
+        },
+        "markdown.alwaysIncludeLocScope": {
+          "type": "boolean",
+          "default": false,
+          "description": "Always include loc-scope for images."
         }
       }
     },
