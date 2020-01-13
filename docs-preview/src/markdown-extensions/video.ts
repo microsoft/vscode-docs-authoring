@@ -85,7 +85,7 @@ export const videoOptions = {
         const VIDEO_RE = /^\[\!VIDEO\s+(.+)\]$/gmi;
         const videoMatches = VIDEO_RE.exec(tokens[idx].info.trim());
         if (videoMatches !== null) {
-            return `<iframe src="${videoMatches[1]}" width="640" height="320" allowFullScreen="true" frameBorder="0"></iframe>`;
+            return `<video width="640" height="320" controls><source src="${videoMatches[1]}"></video>`;
         } else {
             return "";
         }
