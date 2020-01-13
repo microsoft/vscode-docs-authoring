@@ -1,13 +1,14 @@
 "use strict";
 
+import * as glob from "glob";
+import * as os from "os";
+import * as path from "path";
 import { QuickPickItem, window, workspace } from "vscode";
 import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { includeBuilder } from "../helper/utility";
 
 const telemetryCommand: string = "insertInclude";
-const markdownExtensionFilter = [".md"];
-const path = require("path");
-const os = require("os");
+const markdownExtension = ".md";
 
 export function insertIncludeCommand() {
     const commands = [
@@ -19,8 +20,7 @@ export function insertIncludeCommand() {
 /**
  * transforms the current selection into an include.
  */
-export function insertInclude() {
-    const glob = require("glob")
+export async function insertInclude() {
     const editor = window.activeTextEditor;
 
     if (!editor) {
@@ -43,46 +43,57 @@ export function insertInclude() {
         return;
     }
 
-    if (folderPath == null) {
+    if (!folderPath) {
         return;
     }
 
-    glob("**/includes/*.md", { cwd: folderPath, nocase: true, realpath: true }, function (er: any, files: any) {
+    await glob("**/includes/**/*.md", { cwd: folderPath, nocase: true, realpath: true }, async (er: any, files: string[]) => {
         const items: QuickPickItem[] = [];
 
-        files.sort();
+        files.forEach((file: string) => items.push({
+            description: path.dirname(file),
+            label: path.basename(file),
+        }));
 
-        {
-            files.filter((file: any) => markdownExtensionFilter.indexOf(path.extname(file.toLowerCase()))
-                !== -1).forEach((file: any) => {
-                    items.push({ label: path.basename(file), description: path.dirname(file) });
-                });
-        }
+        const descSelector = (item: QuickPickItem) => item && item.description || "";
+        items.sort((a, b) => {
+            const [aDesc, bDesc] = [descSelector(a), descSelector(b)];
+            if (aDesc < bDesc) {
+                return -1;
+            }
+            if (aDesc > bDesc) {
+                return 1;
+            }
+
+            return 0;
+        });
 
         // show the quick pick menu
-        window.showQuickPick(items).then((qpSelection) => {
-            let result: string;
-            const position = editor.selection.active;
+        const qpSelection = await window.showQuickPick(items);
 
-            // replace the selected text with the properly formatted link
-            if (!qpSelection) {
-                return;
-            }
-            // Strip markdown extension from label text.
-            const includeText = qpSelection.label.replace(".md", "");
-            if (os.type() === "Windows_NT") {
-                result = includeBuilder((path.relative(activeFileDir, path.join
-                    (qpSelection.description, qpSelection.label).split("\\").join("\\\\"))), includeText);
-            }
-            if (os.type() === "Darwin") {
-                result = includeBuilder((path.relative(activeFileDir, path.join
-                    (qpSelection.description, qpSelection.label).split("//").join("//"))), includeText);
-            }
+        // replace the selected text with the properly formatted link
+        if (!qpSelection) {
+            return;
+        }
 
-            editor.edit((editBuilder) => {
-                editBuilder.insert(position, result.replace(/\\/g, "/"));
-            });
+        let result: string;
+        const position = editor.selection.active;
+
+        // strip markdown extension from label text.
+        const includeText = qpSelection.label.replace(markdownExtension, "");
+        if (os.type() === "Windows_NT") {
+            result = includeBuilder((path.relative(activeFileDir, path.join
+                (qpSelection.description || "Unknown", qpSelection.label).split("\\").join("\\\\"))), includeText);
+        }
+        if (os.type() === "Darwin") {
+            result = includeBuilder((path.relative(activeFileDir, path.join
+                (qpSelection.description || "Unknown", qpSelection.label).split("//").join("//"))), includeText);
+        }
+
+        editor.edit((editBuilder) => {
+            editBuilder.insert(position, result.replace(/\\/g, "/"));
         });
     });
+
     sendTelemetryData(telemetryCommand, "");
 }

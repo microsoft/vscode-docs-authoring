@@ -439,6 +439,7 @@
     "@types/node-dir": "0.0.32",
     "@types/recursive-readdir": "^2.2.0",
     "@types/yamljs": "^0.2.30",
+    "@types/glob": "5.0.35",
     "jest": "^24.7.1",
     "jest-junit": "^6.3.0",
     "octicons": "^7.3.0",
