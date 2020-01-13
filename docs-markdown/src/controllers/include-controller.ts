@@ -81,13 +81,15 @@ export async function insertInclude() {
 
         // strip markdown extension from label text.
         const includeText = qpSelection.label.replace(markdownExtension, "");
-        if (os.type() === "Windows_NT") {
-            result = includeBuilder((path.relative(activeFileDir, path.join
-                (qpSelection.description || "Unknown", qpSelection.label).split("\\").join("\\\\"))), includeText);
-        }
-        if (os.type() === "Darwin") {
-            result = includeBuilder((path.relative(activeFileDir, path.join
-                (qpSelection.description || "Unknown", qpSelection.label).split("//").join("//"))), includeText);
+        switch (os.type()) {
+            case "Windows_NT":
+                result = includeBuilder((path.relative(activeFileDir, path.join
+                    (qpSelection.description || "Unknown", qpSelection.label).split("\\").join("\\\\"))), includeText);
+                break;
+            case "Darwin":
+                result = includeBuilder((path.relative(activeFileDir, path.join
+                    (qpSelection.description || "Unknown", qpSelection.label).split("//").join("//"))), includeText);
+                break;
         }
 
         editor.edit((editBuilder) => {
