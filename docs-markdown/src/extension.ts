@@ -19,6 +19,7 @@ import { addFrontMatterTitle } from "./controllers/lint-config-controller";
 import { insertListsCommands } from "./controllers/list-controller";
 import { getMasterRedirectionCommand } from "./controllers/master-redirect-controller";
 import { insertLinksAndMediaCommands } from "./controllers/media-controller";
+import { insertMetadataCommands } from "./controllers/metadata-controller";
 import { noLocCompletionItemsMarkdown, noLocCompletionItemsMarkdownYamlHeader, noLocCompletionItemsYaml, noLocTextCommand } from "./controllers/no-loc-controller";
 import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
@@ -81,6 +82,7 @@ export function activate(context: ExtensionContext) {
     noLocTextCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     insertRowsAndColumnsCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     insertImageCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    insertMetadataCommands().forEach((cmd) => AuthoringCommands.push(cmd));
 
     // Autocomplete
     context.subscriptions.push(setupAutoComplete());

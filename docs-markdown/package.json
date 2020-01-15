@@ -172,6 +172,11 @@
         "command": "insertRowsAndColumns",
         "title": "Columns",
         "category": "Docs"
+      },
+      {
+        "command": "updateMetadataDate",
+        "title": "Update \"ms.date\" Metadata Value",
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -181,6 +186,13 @@
           "command": "markdown.showPreview",
           "alt": "markdown.showPreviewToSide",
           "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "resourceLangId == markdown",
+          "command": "updateMetadataDate",
+          "group": "1_modification"
         }
       ],
       "commandPalette": [
