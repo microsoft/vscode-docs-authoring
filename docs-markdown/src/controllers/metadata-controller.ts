@@ -25,18 +25,18 @@ export async function updateMetadataDate() {
     const content = editor.document.getText();
     if (content) {
         const result = msDateRegex.exec(content);
-        if (result !== null) {
+        if (result !== null && result.length) {
             const match = result[0];
             if (match) {
                 const index = result.index;
-                const today = new Date();
                 const wasEdited = await editor.edit((builder) => {
                     const startPosition = editor.document.positionAt(index);
                     const endPosition = editor.document.positionAt(index + match.length);
                     const selection = new Selection(startPosition, endPosition);
+
                     builder.replace(
                         selection,
-                        `ms.date: ${toShortDate(today)}`);
+                        `ms.date: ${toShortDate(new Date())}`);
                 });
 
                 if (wasEdited) {
