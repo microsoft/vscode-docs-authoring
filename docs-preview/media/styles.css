@@ -181,6 +181,26 @@ body.showEditorSelection pre > code.code-line:hover::before
    border-left: none;
 }
 
+body.vscode-dark {
+  background-color: transparent;
+  color: azure;
+}
+
+body.vscode-dark p{
+  color: azure;
+
+}
+
+body.vscode-dark pre>code {
+  background-color: rgb(227, 227, 227); 
+}
+
+body.vscode-high-contrast {
+  background-color: transparent;
+  color: red;
+}
+
+
 @media only screen and (min-width: 575px) {
   .content .row > .column.span2 {
     width: 50%;
