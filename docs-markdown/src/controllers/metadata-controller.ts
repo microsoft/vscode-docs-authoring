@@ -1,6 +1,6 @@
 "use strict";
 
-import { Selection, window } from "vscode";
+import { commands, Selection, window } from "vscode";
 import { isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 
 export function insertMetadataCommands() {
@@ -11,7 +11,7 @@ export function insertMetadataCommands() {
 
 const msDateRegex = /ms.date:\s*\b(.+?)$/mi;
 
-export function updateMetadataDate() {
+export async function updateMetadataDate() {
     const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -30,7 +30,7 @@ export function updateMetadataDate() {
             if (match) {
                 const index = result.index;
                 const today = new Date();
-                editor.edit((builder) => {
+                const wasEdited = await editor.edit((builder) => {
                     const startPosition = editor.document.positionAt(index);
                     const endPosition = editor.document.positionAt(index + match.length);
                     const selection = new Selection(startPosition, endPosition);
@@ -39,8 +39,12 @@ export function updateMetadataDate() {
                         `ms.date: ${toShortDate(today)}`);
                 });
 
-                const telemetryCommand = "updateMetadata";
-                sendTelemetryData(telemetryCommand, updateMetadataDate.name);
+                if (wasEdited) {
+                    await commands.executeCommand("workbench.action.files.save");
+
+                    const telemetryCommand = "updateMetadata";
+                    sendTelemetryData(telemetryCommand, updateMetadataDate.name);
+                }
             }
         }
     }
