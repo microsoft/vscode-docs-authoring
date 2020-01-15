@@ -133,7 +133,7 @@ export function hasValidWorkSpaceRootPath(senderName: string) {
  * If overwrite is set the content will replace current selection.
  * @param {vscode.TextEditor} editor - the active editor in vs code.
  * @param {string} senderName - the name of the function that is calling this function
- * which is used to provide tracibility in logging.
+ * which is used to provide traceability in logging.
  * @param {string} string - the content to insert.
  * @param {boolean} overwrite - if true replaces current selection.
  * @param {vscode.Range} selection - if null uses the current selection for the insert or update.

@@ -7,5 +7,21 @@
         "out": true // set this to false to include "out" folder in search results
     },
     "typescript.tsdk": "node_modules/typescript/lib",
-    "editor.formatOnSave": true // we want to use the TS server from our node_modules folder to control its version
+    "editor.formatOnSave": true,
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#3399ff",
+        "activityBar.activeBorder": "#bf0060",
+        "activityBar.foreground": "#15202b",
+        "activityBar.inactiveForeground": "#15202b99",
+        "activityBarBadge.background": "#bf0060",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "titleBar.activeBackground": "#007fff",
+        "titleBar.inactiveBackground": "#007fff99",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveForeground": "#e7e7e799",
+        "statusBar.background": "#007fff",
+        "statusBarItem.hoverBackground": "#3399ff",
+        "statusBar.foreground": "#e7e7e7"
+    },
+    "peacock.color": "#007fff" // we want to use the TS server from our node_modules folder to control its version
 }
