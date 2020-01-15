@@ -195,12 +195,12 @@ body.vscode-dark pre>code {
   background-color: rgb(227, 227, 227); 
 }
 
-body.vscode-dark blockquote {
+body.vscode-dark blockquote.code-line.code-line {
   background-color: rgb(227, 227, 227);
   color: black;
 }
 
-body.vscode-dark blockquote p {
+body.vscode-dark blockquote.code-line.code-line p {
   color: black;
 }
 
