@@ -195,6 +195,15 @@ body.vscode-dark pre>code {
   background-color: rgb(227, 227, 227); 
 }
 
+body.vscode-dark blockquote {
+  background-color: rgb(227, 227, 227);
+  color: black;
+}
+
+body.vscode-dark blockquote p {
+  color: black;
+}
+
 body.vscode-high-contrast {
   background-color: transparent;
   color: red;
