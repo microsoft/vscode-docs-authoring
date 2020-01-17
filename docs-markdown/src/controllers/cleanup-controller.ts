@@ -43,6 +43,10 @@ export function applyCleanup() {
     });
     items.push({
         description: "",
+        label: "Empty Metadata",
+    });
+    items.push({
+        description: "",
         label: "Everything",
     });
 
@@ -96,6 +100,10 @@ export function applyCleanup() {
                             case "master redirection file":
                                 generateMasterRedirectionFile(workspacePath, resolve);
                                 commandOption = "redirects";
+                                break;
+                            case "empty metadata":
+                                emptyMetadataQuickPick(workspacePath, progress, resolve);
+                                commandOption = "empty-metadata";
                                 break;
                             case "everything":
                                 runAll(workspacePath, progress, resolve);
@@ -656,6 +664,155 @@ function lowerCaseData(data: any, variable: string) {
             postError(`Error occurred: ${error}`);
         }
     }
-
     return data;
+}
+
+function emptyMetadataQuickPick(workspacePath: string, progress: any, resolve: any) {
+    const opts: vscode.QuickPickOptions = { placeHolder: "Cleanup..." };
+    const items: vscode.QuickPickItem[] = [];
+    items.push({
+        description: "",
+        label: "Remove metadata attributes with empty values",
+    });
+    items.push({
+        description: "",
+        label: `Remove metadata attributes with "na" or "n/a"`,
+    });
+    items.push({
+        description: "",
+        label: "Remove commented out metadata attributes",
+    });
+    items.push({
+        description: "",
+        label: "Remove all",
+    });
+    window.showQuickPick(items, opts).then((selection) => {
+        if (!selection) {
+            return;
+        }
+        const editor = window.activeTextEditor;
+        if (editor) {
+            const resource = editor.document.uri;
+            const folder = workspace.getWorkspaceFolder(resource);
+
+            if (folder) {
+                const workspacePath = folder.uri.fsPath;
+
+                if (workspacePath == null) {
+                    postError("No workspace is opened.");
+                }
+
+                // Check if the current workspace is the root folder of a repo by checking if the .git folder is present
+                const gitDir = join(workspacePath, ".git");
+                if (!existsSync(gitDir)) {
+                    postError("Current workspace is not root folder of a repo.");
+                }
+
+                switch (selection.label.toLowerCase()) {
+                    case "remove metadata attributes with empty values":
+                        removeEmptyMetadataAttributes(workspacePath, progress, resolve);
+                        commandOption = "remove-empty";
+                        break;
+                    case `remove metadata attributes with "na" or "n/a"`:
+                        findAttributesToRemove(1, "la", "la");
+                        commandOption = "remove-na";
+                        break;
+                    case "remove commented out metadata attributes":
+                        findAttributesToRemove(1, "la", "la");
+                        commandOption = "remove-commented";
+                        break;
+                    case "remove all":
+                        findAttributesToRemove(1, "la", "la");
+                        commandOption = "remove-all-empty";
+                        break;
+                }
+                sendTelemetryData(telemetryCommand, commandOption);
+            }
+        }
+    });
+}
+
+function findAttributesToRemove(data: any, variable: string, type: string) {
+    const regex = new RegExp(`^(${variable}:\\s?)(.*\\s)`, "m");
+    const captureParts = regex.exec(data);
+    let value = ""
+    if (captureParts && captureParts.length > 2) {
+        value = captureParts[2].toLowerCase();
+        if (value.match(/^\s*$/) !== null) {
+            return data;
+        }
+        try {
+            return data.replace(regex, `${variable}: ${value}`);
+        } catch (error) {
+            postError(`Error occurred: ${error}`);
+        }
+    }
+    return data;
+}
+
+/**
+ * Lower cases all metadata found in .md files
+ */
+function removeEmptyMetadataAttributes(workspacePath: string, progress: any, resolve: any) {
+    showStatusMessage("Cleanup: Capitalization of metadata values started.");
+    const message = "Capitalization of metadata values";
+    progress.report({ increment: 0, message });
+    recursive(workspacePath,
+        [".git", ".github", ".vscode", ".vs", "node_module"],
+        (err: any, files: string[]) => {
+            if (err) {
+                postError(err);
+            }
+            let percentComplete = 0;
+            const promises: Array<Promise<any>> = [];
+            files.map((file, index) => {
+                if (file.endsWith(".md")) {
+                    promises.push(new Promise((resolve) => {
+                        readFile(file, "utf8", (err, data) => {
+                            if (err) {
+                                postError(`Error: ${err}`);
+                            }
+                            if (data.startsWith("---")) {
+                                const regex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
+                                const metadataMatch = data.match(regex);
+                                if (metadataMatch) {
+                                    const origin = data;
+                                    data = handleYamlMetadata(data);
+                                    const diff = jsdiff.diffChars(origin, data)
+                                        .some((part: { added: any; removed: any; }) => {
+                                            return part.added || part.removed;
+                                        });
+
+                                    console.log(metadataMatch[2].split(" "));
+                                    if (diff) {
+                                        writeFile(file, data, err => {
+                                            promises.push(new Promise((resolve, reject) => {
+
+                                                if (err) {
+                                                    postError(`Error: ${err}`);
+                                                    reject();
+                                                }
+                                                percentComplete = showProgress(index, files, percentComplete, progress, message);
+                                            }).catch((error) => {
+                                                postError(error);
+                                            }));
+                                        });
+                                    }
+                                }
+                            }
+                            resolve();
+                        });
+                    }).catch((error) => {
+                        postError(error);
+                    }));
+                }
+            });
+            Promise.all(promises).then(() => {
+                progress.report({ increment: 100, message: "Capitalization of metadata values completed." });
+                showStatusMessage(`Cleanup: Capitalization of metadata values completed.`);
+                resolve();
+            }).catch((error) => {
+                postError(error);
+            });
+        });
 }
