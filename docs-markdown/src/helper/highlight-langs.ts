@@ -202,3 +202,16 @@ groupings.set(false, languages.filter((lang) => !lang.isPopular));
  * The various syntax highlighting languages available, grouped by popularity.
  */
 export const languagesGroupedByPopularity: Map<boolean, HighlightLanguages> = groupings;
+
+/**
+ * All of the possible aliases concatenated together.
+ */
+export const allAliases: string[] =
+    languages.reduce((aliases, lang) => aliases.concat(lang.aliases), [""]);
+
+/**
+ * Validates whether or not a given language is going to render correctly with syntax highlighting.
+ */
+export function isValidCodeLang(language: string) {
+    return allAliases.some((alias) => alias === language);
+}
