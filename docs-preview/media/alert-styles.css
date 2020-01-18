@@ -10,6 +10,20 @@ blockquote {
   font-weight: 400;
 }
 
+body.vscode-high-contrast blockquote {
+  border-radius: 6px;
+  padding: 0.0em 0.8em 0.1em .8em !important;
+  margin: 1em 0 0 0 !important;
+  background-position: top left;
+  background-repeat: no-repeat;
+  text-indent: 0px;
+  line-height: 160%;
+  font-family: "Segoe UI","SegoeUI","Segoe WP","Helvetica Neue","Helvetica","Tahoma","Arial","sans-serif";
+  font-weight: 400;
+  background: transparent;
+  color: white!important;
+}
+
 blockquote ul {
   margin: 1rem 0 1.1rem 2.5rem
 }
@@ -65,6 +79,16 @@ blockquote.NOTE p {
   color: #38225d!important;
 }
 
+body.vscode-high-contrast blockquote.NOTE {
+  border: solid #a47af3;
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-high-contrast blockquote.NOTE p {
+  color: #e2daf1!important;
+}
+
 blockquote.TIP {
   color: #094409!important;
   background:  #d2f9d2;
@@ -75,6 +99,17 @@ blockquote.TIP p {
   color: #094409!important;
 }
 
+body.vscode-high-contrast blockquote.TIP {
+  border: solid  #72ec72;
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-high-contrast blockquote.TIP p {
+  color: #d2f9d2!important;
+}
+
+
 blockquote.IMPORTANT {
   color: #002b4d!important;
   background: #e0f2ff;
@@ -83,6 +118,16 @@ blockquote.IMPORTANT {
 
 blockquote.IMPORTANT p {
   color: #002b4d!important;
+}
+
+body.vscode-high-contrast blockquote.IMPORTANT {
+  border: solid  yellow;
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-high-contrast blockquote.IMPORTANT p {
+  color: yellow!important;
 }
 
 blockquote.CAUTION {
@@ -95,6 +140,16 @@ blockquote.CAUTION p {
   color: #651b01!important;
 }
 
+body.vscode-high-contrast blockquote.CAUTION {
+  border: solid  #fa9183;
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-high-contrast blockquote.CAUTION p {
+  color: #fa9183!important;
+}
+
 blockquote.WARNING {
   color: #664b00!important;
   background: #fff1cc;
@@ -102,4 +157,14 @@ blockquote.WARNING {
 }
 blockquote.WARNING p {
   color: #664b00!important;
+}
+
+body.vscode-high-contrast blockquote.WARNING {
+  border: solid  #eecc6f;
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-high-contrast blockquote.WARNING p {
+  color: #eecc6f!important;
 }
