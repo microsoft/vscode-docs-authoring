@@ -11,6 +11,10 @@ body, html {
   border-color: transparent!important;
 }
 
+body.vscode-high-contrast .content h1 { 
+  color: white;
+}
+
 .content h2 { 
   color: black;
   font-size: 1.50rem;
@@ -31,17 +35,17 @@ body.vscode-high-contrast .content h2 {
   font-size: 16px;
 }
 
-body.vscode-light .content h3, h4, h5, h6 {
+.content h3, h4, h5, h6 {
   color: black;
   margin-bottom: .4rem;
 }
 
-body.vscode-dark .content h3, h4, h5, h6 {
+body.vscode-dark .content h3, body.vscode-dark .content h4, body.vscode-dark .content h5, body.vscode-dark .content h6 {
   color: white;
   margin-bottom: .4rem;
 }
 
-body.vscode-high-contrast .content h3, h4, h5, h6 {
+body.vscode-high-contrast .content h3, body.vscode-high-contrast h4, body.vscode-high-contrast h5, body.vscode-high-contrast h6 {
   color: white;
   margin-bottom: .4rem;
 }
@@ -76,9 +80,13 @@ code {
 pre {
   border: 1px solid hsla(0,0%,89%,1);
   border: 1px solid var(--border);
-  background-color: hsla(0,0%,98%,1)!important;
+  background-color: hsla(0,0%,98%,1);
   background-color: var(--body-background-medium);
   margin: 12px 0 0;
+}
+
+body.vscode-dark .content > pre {
+  background: rgb(227, 227, 227);
 }
 
 pre:not(.hljs), pre.hljs code > div {
@@ -107,6 +115,10 @@ pre > code {
   margin: .8rem 0 0 2rem;
   font-size: 13.2px;
   line-height: 1.68;
+}
+
+body.vscode-high-contrast .content ul, body.vscode-high-contrast .content ol {
+  color: white;
 }
 
 .content ul a, ol a {
@@ -162,6 +174,17 @@ body.vscode-high-contrast table {
   font-size: 13.3px;
   font-weight: 400;
 }
+
+body.vscode-high-contrast .button, body.vscode-high-contrast .button:hover {
+  background: rgb(255, 255, 0);
+  border: black;
+  color: black;
+}
+
+/*body.vscode-high-contrast .button:hover {
+  background: rgb(255, 255, 0);
+  color: black;
+}*/
 
 .button.is-medium {
   font-size: 13.3px;
