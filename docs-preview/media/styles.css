@@ -12,30 +12,53 @@ body, html {
 }
 
 .content h2 { 
+  color: black;
   font-size: 1.50rem;
   margin-top: 21px;;
   margin-bottom: 0px;
   line-height: 1.00;
 }
 
+body.vscode-dark .content h2 { 
+  color: white;
+}
+
+body.vscode-high-contrast .content h2 { 
+  color: white;
+}
+
 .content h3 {
   font-size: 16px;
 }
 
-.content h3, h4, h5, h6 {
+body.vscode-light .content h3, h4, h5, h6 {
+  color: black;
   margin-bottom: .4rem;
 }
 
-body.vscode-high-contrast .content h1, h2, h3, h4, h5, h6 {
+body.vscode-dark .content h3, h4, h5, h6 {
   color: white;
   margin-bottom: .4rem;
 }
 
-.content p {
+body.vscode-high-contrast .content h3, h4, h5, h6 {
+  color: white;
+  margin-bottom: .4rem;
+}
+
+body.vscode-light > .content p {
   margin-top: 12px;
   margin-bottom: 0;
   font-size: 13.3px;
-  color: var(--text);
+  color: black;
+}
+
+body.vscode-dark > .content p {
+  color: white;
+}
+
+body.vscode-high-contrast > .content p {
+  color:white;
 }
 
 a {
@@ -94,11 +117,6 @@ pre > code {
   margin: 0 0 0 1rem
 }
 
-body.vscode-high-contrast .content ul, .content ol {
-  color: white!important;
-  margin: 0 0 0 1rem;
-}
-
 table > thead > tr > th, table > thead > tr > td, table > tbody > tr > th, table > tbody > tr > td {
   border-style: solid;
   border-color: hsla(0,0%,89%,1)!important;
@@ -116,6 +134,7 @@ table > thead > tr > th {
 }
 
 table {
+  color: black;
   overflow: auto;
   border-collapse: collapse;
   border-spacing: 0;
@@ -123,8 +142,12 @@ table {
   width: 100%;
 }
 
+body.vscode-dark table {
+  color: white;
+}
+
 body.vscode-high-contrast table {
-  color: white!important;
+  color: white;
 }
 
 .hljs-comment, .hljs-quote {
@@ -204,10 +227,6 @@ body.vscode-dark p {
   color: white;
 }
 
-body.vscode-dark h3 {
-  color: white;
-}
-
 body.vscode-dark blockquote.code-line.code-line {
   background-color: rgb(227, 227, 227);
   color: black;
@@ -226,10 +245,6 @@ body.vscode-high-contrast a {
 }
 
 body.vscode-high-contrast p {
-  color: white;
-}
-
-body.vscode-high-contrast h3 {
   color: white;
 }
 
