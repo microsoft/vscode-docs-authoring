@@ -89,6 +89,17 @@ body.vscode-high-contrast blockquote.NOTE p {
   color: #e2daf1!important;
 }
 
+body.vscode-dark blockquote.NOTE {
+  background: rgb(56, 34, 93);
+  border: solid rgb(56, 34, 93);
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-dark blockquote.NOTE p {
+  color: #e2daf1!important;
+}
+
 blockquote.TIP {
   color: #094409!important;
   background:  #d2f9d2;
@@ -109,6 +120,16 @@ body.vscode-high-contrast blockquote.TIP p {
   color: #d2f9d2!important;
 }
 
+body.vscode-dark blockquote.TIP {
+  background: rgb(34, 93, 73);
+  border: solid rgb(34, 93, 73);
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-dark blockquote.TIP p {
+  color: rgb(210,249, 210)!important;
+}
 
 blockquote.IMPORTANT {
   color: #002b4d!important;
@@ -128,6 +149,17 @@ body.vscode-high-contrast blockquote.IMPORTANT {
 
 body.vscode-high-contrast blockquote.IMPORTANT p {
   color: yellow!important;
+}
+
+body.vscode-dark blockquote.IMPORTANT {
+  background: #002b4d;
+  border: solid  #002b4d;
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-dark blockquote.IMPORTANT p {
+  color: #61b5f1!important;
 }
 
 blockquote.CAUTION {
@@ -150,6 +182,17 @@ body.vscode-high-contrast blockquote.CAUTION p {
   color: #fa9183!important;
 }
 
+body.vscode-dark blockquote.CAUTION {
+  background: rgb(101, 27, 1);
+  border: solid  rgb(101, 27, 1);
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-dark blockquote.CAUTION p {
+  color: #fa9183!important;
+}
+
 blockquote.WARNING {
   color: #664b00!important;
   background: #fff1cc;
@@ -166,5 +209,16 @@ body.vscode-high-contrast blockquote.WARNING {
 }
 
 body.vscode-high-contrast blockquote.WARNING p {
+  color: #eecc6f!important;
+}
+
+body.vscode-dark blockquote.WARNING {
+  background: rgb(102, 75, 0);
+  border: solid  rgb(102, 75, 0);
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-dark blockquote.WARNING p {
   color: #eecc6f!important;
 }
