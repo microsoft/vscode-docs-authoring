@@ -89,6 +89,10 @@ body.vscode-dark .content > pre {
   background: rgb(227, 227, 227);
 }
 
+body.vscode-high-contrast .content > pre.code-active-line {
+  color: white;
+}
+
 pre:not(.hljs), pre.hljs code > div {
   border-radius: 1px;
 }
@@ -265,6 +269,10 @@ body.vscode-high-contrast {
 
 body.vscode-high-contrast a {
   color: yellow;
+}
+
+body.vscode-dark a {
+  color: #4db2ff;
 }
 
 body.vscode-high-contrast p {
