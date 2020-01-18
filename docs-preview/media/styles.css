@@ -26,6 +26,11 @@ body, html {
   margin-bottom: .4rem;
 }
 
+body.vscode-high-contrast .content h1, h2, h3, h4, h5, h6 {
+  color: white;
+  margin-bottom: .4rem;
+}
+
 .content p {
   margin-top: 12px;
   margin-bottom: 0;
@@ -89,6 +94,11 @@ pre > code {
   margin: 0 0 0 1rem
 }
 
+body.vscode-high-contrast .content ul, .content ol {
+  color: white!important;
+  margin: 0 0 0 1rem;
+}
+
 table > thead > tr > th, table > thead > tr > td, table > tbody > tr > th, table > tbody > tr > td {
   border-style: solid;
   border-color: hsla(0,0%,89%,1)!important;
@@ -111,6 +121,10 @@ table {
   border-spacing: 0;
   table-layout: auto;
   width: 100%;
+}
+
+body.vscode-high-contrast table {
+  color: white!important;
 }
 
 .hljs-comment, .hljs-quote {
@@ -199,12 +213,12 @@ body.vscode-dark blockquote.code-line.code-line {
   color: black;
 }
 
-body.vscode-dark blockquote.code-line.code-line p {
+body.vscode-dark blockquote.code-line p {
   color: black;
 }
 
 body.vscode-high-contrast {
-  background-color: black;
+  background-color: transparent;
 }
 
 body.vscode-high-contrast a {
