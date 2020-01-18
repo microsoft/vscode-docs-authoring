@@ -183,16 +183,15 @@ body.showEditorSelection pre > code.code-line:hover::before
 
 body.vscode-dark {
   background-color: transparent;
-  color: azure;
+  color: white;
 }
 
-body.vscode-dark p{
-  color: azure;
-
+body.vscode-dark p {
+  color: white;
 }
 
-body.vscode-dark pre>code {
-  background-color: rgb(227, 227, 227); 
+body.vscode-dark h3 {
+  color: white;
 }
 
 body.vscode-dark blockquote.code-line.code-line {
@@ -205,10 +204,20 @@ body.vscode-dark blockquote.code-line.code-line p {
 }
 
 body.vscode-high-contrast {
-  background-color: transparent;
-  color: red;
+  background-color: black;
 }
 
+body.vscode-high-contrast a {
+  color: yellow;
+}
+
+body.vscode-high-contrast p {
+  color: white;
+}
+
+body.vscode-high-contrast h3 {
+  color: white;
+}
 
 @media only screen and (min-width: 575px) {
   .content .row > .column.span2 {
