@@ -10,7 +10,7 @@ The Docs Authoring Pack provides the following extensions to help author content
 * [Docs YAML](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml), which validates Docs .yml files against the appropriate YAML schemas.
 * [Docs Metadata](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-metadata), which speeds up editing of metadata throughout a Docs repository.
 * [LinkCheckMD](https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD) by Larry Franks, which generates a report on the links in the document, including broken links.
-* [Docs Images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images) by David Pine, which compresses and resizes images.
+* [Docs Images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images) compresses and resizes images.
 
 ## Prerequisites and assumptions
 
