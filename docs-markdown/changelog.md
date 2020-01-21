@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.33 (January 14th, 2020)
+
+- Extend include scope
+
 ## 0.2.32 (January 10th, 2020)
 
 - Fixed alt text image bug on macOS

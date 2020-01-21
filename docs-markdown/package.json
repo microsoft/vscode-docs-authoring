@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.32",
+  "version": "0.2.33",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -172,6 +172,11 @@
         "command": "insertRowsAndColumns",
         "title": "Columns",
         "category": "Docs"
+      },
+      {
+        "command": "updateMetadataDate",
+        "title": "Update \"ms.date\" Metadata Value",
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -181,6 +186,13 @@
           "command": "markdown.showPreview",
           "alt": "markdown.showPreviewToSide",
           "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "resourceLangId == markdown",
+          "command": "updateMetadataDate",
+          "group": "1_modification"
         }
       ],
       "commandPalette": [
@@ -432,6 +444,7 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "@types/glob": "^5.0.35",
     "@types/graceful-fs": "^2.0.30",
     "@types/jest": "24.0.12",
     "@types/lodash.merge": "^4.6.3",
@@ -439,7 +452,6 @@
     "@types/node-dir": "0.0.32",
     "@types/recursive-readdir": "^2.2.0",
     "@types/yamljs": "^0.2.30",
-    "@types/glob": "5.0.35",
     "jest": "^24.7.1",
     "jest-junit": "^6.3.0",
     "octicons": "^7.3.0",
