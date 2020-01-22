@@ -256,7 +256,7 @@
         {
           "command": "insertLink",
           "group": "Docs",
-          "when": "resourceLangId == markdown"
+          "when": "resourceLangId == markdown || resourceLangId == yaml"
         },
         {
           "command": "insertURL",
