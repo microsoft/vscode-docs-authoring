@@ -1,3 +1,9 @@
+import { TextDocument, Position, CancellationToken, CompletionContext, CompletionItemProvider, CompletionItem, CompletionItemKind } from "vscode";
+
+// TODO: Desired features.
+// QuickPickSelection items, offering the user to select the desired code fence language identifier.
+// Validate existing code slug identifiers, provides warnings and errors!
+
 export interface IHighlightLanguage {
     language: string;
     aliases: string[];
@@ -215,3 +221,17 @@ export const allAliases: string[] =
 export function isValidCodeLang(language: string) {
     return allAliases.some((alias) => alias === language);
 }
+
+export const provideLanguageCompletionItems: CompletionItemProvider = {
+    provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
+        const completionItems: CompletionItem[] = [];
+        languagesGroupedByPopularity.get(true)?.forEach((lang) => {
+            const item = new CompletionItem(lang.language, CompletionItemKind.Value);
+            item.insertText = lang.aliases[0];
+            item.documentation = `Use ${lang.language} language, ${item.insertText} alias.`;
+            completionItems.push(item);
+        });
+
+        return completionItems;
+    },
+};

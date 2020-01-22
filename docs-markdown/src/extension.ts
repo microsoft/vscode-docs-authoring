@@ -29,6 +29,7 @@ import { insertTableCommand } from "./controllers/table-controller";
 import { applyXrefCommand } from "./controllers/xref-controller";
 import { yamlCommands } from "./controllers/yaml-controller";
 import { checkExtension, extractDocumentLink, generateTimestamp, matchAll, noActiveEditorMessage } from "./helper/common";
+import { provideLanguageCompletionItems } from "./helper/highlight-langs";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
@@ -88,7 +89,7 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(setupAutoComplete());
     vscode.languages.registerDocumentLinkProvider({ language: "markdown" }, {
         provideDocumentLinks(document: TextDocument, token: CancellationToken) {
-            const IMAGE_SOURCE_RE = /source="(.*?)"/gm
+            const IMAGE_SOURCE_RE = /source="(.*?)"/gm;
             const text = document.getText();
             const results: vscode.DocumentLink[] = [];
             for (const match of matchAll(IMAGE_SOURCE_RE, text)) {
@@ -98,8 +99,46 @@ export function activate(context: ExtensionContext) {
                 }
             }
             return results;
-        }
+        },
     });
+
+    vscode.languages.registerCompletionItemProvider("markdown", provideLanguageCompletionItems, "`");
+
+    // vscode.languages.registerCodeActionsProvider("markdown", {
+    //     provideCodeActions(document: TextDocument, range: vscode.Range, _: vscode.CodeActionContext, token: CancellationToken) {
+    //         const CODE_FENCE_RE = /`{3,4}(.*?[^```])$/gm;
+    //         const text = document.getText();
+    //         const results: vscode.CodeAction[] = [];
+    //         for (const matches of matchAll(CODE_FENCE_RE, text).filter((ms) => !!ms)) {
+    //             for (const lang of matches) {
+    //                 if (matches.index === CODE_FENCE_RE.lastIndex) {
+    //                     ++CODE_FENCE_RE.lastIndex;
+    //                 }
+
+    //                 const index = matches?.index || -1;
+    //                 if (lang && index >= 0) {
+    //                     if (!allAliases.some((alias) => alias === lang.toLowerCase())) {
+    //                         const action =
+    //                             new vscode.CodeAction(
+    //                                 "Click to fix unrecognized code-fence language identifer",
+    //                                 CodeActionKind.QuickFix);
+    //                         const startPosition = document.positionAt(index);
+    //                         const endPosition = document.positionAt(index + lang.length);
+    //                         const diagnostics =
+    //                             new vscode.Diagnostic(
+    //                                 new vscode.Range(startPosition, endPosition),
+    //                                 "Select from available code-fence language identifiers",
+    //                                 vscode.DiagnosticSeverity.Warning);
+    //                         (action.diagnostics || (action.diagnostics = [])).push(diagnostics);
+    //                         results.push(action);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         return results;
+    //     },
+    // });
+
     // Telemetry
     context.subscriptions.push(new Reporter(context));
 

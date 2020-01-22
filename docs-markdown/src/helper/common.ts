@@ -313,7 +313,7 @@ export function checkExtension(extensionName: string, notInstalledMessage?: stri
  */
 export function showStatusMessage(message: string) {
     const { msTimeValue } = generateTimestamp();
-    output.appendLine(`[${msTimeValue}] - ` + message);
+    output.appendLine(`[${msTimeValue}] - ${message}`);
 }
 
 /**
@@ -355,7 +355,7 @@ export async function showWarningMessage(message: string) {
 export function matchAll(
     pattern: RegExp,
     text: string
-): Array<RegExpMatchArray> {
+): RegExpMatchArray[] {
     const out: RegExpMatchArray[] = [];
     pattern.lastIndex = 0;
     let match: RegExpMatchArray | null;
