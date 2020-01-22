@@ -75,6 +75,10 @@ export function noActiveEditorMessage() {
     postWarning("No active editor. Abandoning command.");
 }
 
+export function unsupportedFileMessage(languageId: string) {
+    postWarning(`Command is not support for "${languageId}". Abandoning command.`);
+}
+
 export function GetEditorText(editor: vscode.TextEditor, senderName: string): string {
     let content = "";
     const emptyString = "";
@@ -265,6 +269,10 @@ export function isMarkdownFileCheck(editor: vscode.TextEditor, languageId: boole
     } else {
         return true;
     }
+}
+
+export function isValidFileCheck(editor: vscode.TextEditor, languageIds: string[]) {
+    return languageIds.some((id) => editor.document.languageId === id);
 }
 
 /**
