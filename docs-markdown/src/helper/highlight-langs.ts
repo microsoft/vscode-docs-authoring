@@ -225,14 +225,16 @@ export function isValidCodeLang(language: string) {
 export const provideLanguageCompletionItems: CompletionItemProvider = {
     provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
 
-
         const completionItems: CompletionItem[] = [];
-        languagesGroupedByPopularity.get(true)?.forEach((lang) => {
-            const item = new CompletionItem(lang.language, CompletionItemKind.Value);
-            item.insertText = lang.aliases[0];
-            item.documentation = `Use ${lang.language} language, ${item.insertText} alias.`;
-            completionItems.push(item);
-        });
+        const popularLangs = languagesGroupedByPopularity.get(true);
+        if (popularLangs) {
+            popularLangs.forEach((lang) => {
+                const item = new CompletionItem(lang.language, CompletionItemKind.Value);
+                item.insertText = lang.aliases[0];
+                item.documentation = `Use the "${lang.language.trim()}" language identifer (alias: ${item.insertText}).`;
+                completionItems.push(item);
+            });
+        }
 
         return completionItems;
     },
