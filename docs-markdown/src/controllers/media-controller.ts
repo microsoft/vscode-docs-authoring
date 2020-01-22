@@ -14,7 +14,6 @@ export function insertLinksAndMediaCommands() {
         { command: insertVideo.name, callback: insertVideo },
         { command: insertURL.name, callback: insertURL },
         { command: insertLink.name, callback: insertLink },
-        // { command: insertImage.name, callback: insertImage },
         { command: selectLinkType.name, callback: selectLinkType },
         { command: selectLinkTypeToolbar.name, callback: selectLinkTypeToolbar },
         { command: selectMediaType.name, callback: selectMediaType },
@@ -97,13 +96,6 @@ export function insertURL() {
  */
 export function insertLink() {
     Insert(false);
-}
-
-/**
- * Triggers the insert function and passes in the true value to signify it is an art insert.
- */
-export function insertImage() {
-    Insert(true);
 }
 
 export function getFilesShowQuickPick(isArt: any, altText: string) {

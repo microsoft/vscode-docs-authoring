@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.35 (January 22nd, 2020)
+
+- Removed support for standard image insertion
+
 ## 0.2.33 (January 14th, 2020)
 
 - Extend include scope
