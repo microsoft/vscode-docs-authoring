@@ -224,6 +224,8 @@ export function isValidCodeLang(language: string) {
 
 export const provideLanguageCompletionItems: CompletionItemProvider = {
     provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
+
+
         const completionItems: CompletionItem[] = [];
         languagesGroupedByPopularity.get(true)?.forEach((lang) => {
             const item = new CompletionItem(lang.language, CompletionItemKind.Value);
