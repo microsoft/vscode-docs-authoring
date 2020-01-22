@@ -198,7 +198,7 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
                     }
                 }
 
-                const languageId = options?.languageId || undefined;
+                const languageId = options ? options.languageId : undefined;
                 // Construct and write out links
                 if (isArt && altText) {
                     if (altText.length > 250) {
@@ -297,7 +297,8 @@ export function Insert(mediaType: MediaType, options?: IOptions) {
         }
 
         // Determine if there is selected text.  If selected text, no action.
-        if (selectedText === "" && options?.languageId !== "yaml") {
+        const languageId = !!options ? options.languageId : undefined;
+        if (selectedText === "" && languageId !== "yaml") {
             vscode.window.showInputBox({
                 placeHolder: "Add alt text (up to 250 characters)",
             }).then((val) => {
