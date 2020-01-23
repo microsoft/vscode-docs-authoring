@@ -12,15 +12,17 @@ import {
     DiagnosticSeverity,
     MarkdownString,
     Position,
+    QuickPickItem,
     Range,
     TextDocument,
+    window,
 } from "vscode";
 
-import { matchAll } from "./common";
+import { insertContentToEditor, matchAll, noActiveEditorMessage } from "./common";
 
 export function insertLanguageCommands() {
     return [
-        { command: getLanguageIdentifierCompletionItems.name, callback: getLanguageIdentifierCompletionItems },
+        { command: insertLanguageIdentifier.name, callback: insertLanguageIdentifier },
     ];
 }
 
@@ -247,8 +249,42 @@ export function isValidCodeLang(language: string) {
     return allAliases.some((alias) => alias === language);
 }
 
-function getLanguageIdentifierQuickPickItems() {
+export async function insertLanguageIdentifier(range: Range) {
+    const editor = window.activeTextEditor;
+    if (!editor) {
+        noActiveEditorMessage();
+        return;
+    }
 
+    const selection = range || editor.selection;
+    if (selection) {
+        const items = getLanguageIdentifierQuickPickItems();
+        const item = await window.showQuickPick(items);
+        if (item) {
+            const language = languages.find((lang) => lang.language === item.label);
+            if (language) {
+                const alias = language.aliases[0];
+                insertContentToEditor(editor, "insertLanguageIdentifier", alias, true, selection);
+            }
+        }
+    }
+}
+
+function getLanguageIdentifierQuickPickItems() {
+    const items: QuickPickItem[] = [];
+    const isPopular = true;
+    const popularLangs = languagesGroupedByPopularity.get(isPopular);
+    if (popularLangs) {
+        popularLangs.forEach((lang) => {
+            const item: QuickPickItem = {
+                description: `Use the "${lang.language.trim()}" language identifer (alias: ${lang.aliases[0]}).`,
+                label: lang.language,
+            };
+            items.push(item);
+        });
+    }
+
+    return items;
 }
 
 export function getLanguageIdentifierCompletionItems(range: Range | undefined, isCancellationRequested: boolean) {
@@ -296,34 +332,37 @@ export const markdownCodeActionProvider: CodeActionProvider = {
         const text = document.getText();
         const results: CodeAction[] = [];
         for (const matches of matchAll(CODE_FENCE_RE, text).filter((ms) => !!ms)) {
-            const lang = matches[1] || undefined;
-            if (!!lang && lang !== "\r" && lang !== "\n") {
-                const index = matches?.index || -1;
-                if (lang && index >= 0) {
-                    if (!allAliases.some((alias) => alias === lang.toLowerCase())) {
-                        const action =
-                            new CodeAction(
-                                `Click to fix "${lang}" unrecognized code-fence language identifer`,
-                                CodeActionKind.QuickFix);
+            if (matches) {
+                const lang = matches[1] || undefined;
+                if (!!lang && lang !== "\r" && lang !== "\n") {
+                    const index = matches.index || -1;
+                    if (lang && index >= 0) {
+                        if (!allAliases.some((alias) => alias === lang.toLowerCase())) {
+                            const action =
+                                new CodeAction(
+                                    `Click to fix "${lang}" unrecognized code-fence language identifer`,
+                                    CodeActionKind.QuickFix);
 
-                        const startPosition = document.positionAt(index);
-                        const endPosition = document.positionAt(index + lang.length);
-                        const range = new Range(startPosition, endPosition);
-                        const diagnostics =
-                            new Diagnostic(
-                                range,
-                                "Select from available code-fence language identifiers",
-                                DiagnosticSeverity.Warning);
-                        (action.diagnostics || (action.diagnostics = [])).push(diagnostics);
+                            const IndexWithOffset = index + 3; // Account for "```".
+                            const startPosition = document.positionAt(IndexWithOffset);
+                            const endPosition = document.positionAt(IndexWithOffset + lang.length);
+                            const range = new Range(startPosition, endPosition);
+                            const diagnostics =
+                                new Diagnostic(
+                                    range,
+                                    "Select from available code-fence language identifiers",
+                                    DiagnosticSeverity.Warning);
+                            (action.diagnostics || (action.diagnostics = [])).push(diagnostics);
 
-                        action.command = {
-                            arguments: [range],
-                            command: "insertLanguageIdentifier",
-                            title: "Insert language identifier",
-                            tooltip: "Select from the available language identifiers.",
-                        };
+                            action.command = {
+                                arguments: [range],
+                                command: "insertLanguageIdentifier",
+                                title: "Insert language identifier",
+                                tooltip: "Select from the available language identifiers.",
+                            };
 
-                        results.push(action);
+                            results.push(action);
+                        }
                     }
                 }
             }
