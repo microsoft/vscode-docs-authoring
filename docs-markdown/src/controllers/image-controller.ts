@@ -30,21 +30,11 @@ export function pickImageType() {
     const items: QuickPickItem[] = [];
     const config = workspace.getConfiguration("markdown");
     const alwaysIncludeLocScope = config.get<boolean>("alwaysIncludeLocScope");
-    if (!alwaysIncludeLocScope) {
-        items.push({
-            description: "",
-            label: "Image (Standard Markdown)",
-        });
-        items.push({
-            description: "",
-            label: "Image (Docs Markdown)",
-        });
-    } else {
-        items.push({
-            description: "",
-            label: "Image",
-        });
-    }
+
+    items.push({
+        description: "",
+        label: "Image",
+    });
     items.push({
         description: "",
         label: "Icon image",
