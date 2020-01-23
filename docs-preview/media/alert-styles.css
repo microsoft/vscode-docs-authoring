@@ -90,8 +90,8 @@ body.vscode-high-contrast blockquote.NOTE p {
 }
 
 body.vscode-dark blockquote.NOTE {
-  background: rgb(56, 34, 93);
-  border: solid rgb(56, 34, 93);
+  background: #38225d;
+  border: solid #38225d;
   border-width: thin;
   color: white!important;
 }
@@ -121,14 +121,14 @@ body.vscode-high-contrast blockquote.TIP p {
 }
 
 body.vscode-dark blockquote.TIP {
-  background: rgb(34, 93, 73);
-  border: solid rgb(34, 93, 73);
+  background: #225d49;
+  border: solid #225d49;
   border-width: thin;
   color: white!important;
 }
 
 body.vscode-dark blockquote.TIP p {
-  color: rgb(210,249, 210)!important;
+  color: #d2f9d2 !important;
 }
 
 blockquote.IMPORTANT {
@@ -183,8 +183,8 @@ body.vscode-high-contrast blockquote.CAUTION p {
 }
 
 body.vscode-dark blockquote.CAUTION {
-  background: rgb(101, 27, 1);
-  border: solid  rgb(101, 27, 1);
+  background: #651c01;
+  border: solid  #651c01;
   border-width: thin;
   color: white!important;
 }
@@ -213,8 +213,8 @@ body.vscode-high-contrast blockquote.WARNING p {
 }
 
 body.vscode-dark blockquote.WARNING {
-  background: rgb(102, 75, 0);
-  border: solid  rgb(102, 75, 0);
+  background: #664b00;
+  border: solid  #664b00;
   border-width: thin;
   color: white!important;
 }

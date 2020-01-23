@@ -86,7 +86,7 @@ pre {
 }
 
 body.vscode-dark .content > pre {
-  background: rgb(227, 227, 227);
+  background: #e3e3e3;
 }
 
 body.vscode-high-contrast .content > pre.code-active-line {
@@ -180,15 +180,10 @@ body.vscode-high-contrast table {
 }
 
 body.vscode-high-contrast .button, body.vscode-high-contrast .button:hover {
-  background: rgb(255, 255, 0);
+  background: #ffff00;
   border: black;
   color: black;
 }
-
-/*body.vscode-high-contrast .button:hover {
-  background: rgb(255, 255, 0);
-  color: black;
-}*/
 
 .button.is-medium {
   font-size: 13.3px;
@@ -255,7 +250,7 @@ body.vscode-dark p {
 }
 
 body.vscode-dark blockquote.code-line.code-line {
-  background-color: rgb(227, 227, 227);
+  background-color: #e3e3e3;
   color: black;
 }
 
