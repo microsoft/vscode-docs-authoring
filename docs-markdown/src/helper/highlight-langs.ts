@@ -1,21 +1,40 @@
-import { TextDocument, Position, CancellationToken, CompletionContext, CompletionItemProvider, CompletionItem, CompletionItemKind } from "vscode";
+import {
+    CancellationToken,
+    CodeAction,
+    CodeActionContext,
+    CodeActionKind,
+    CodeActionProvider,
+    CompletionContext,
+    CompletionItem,
+    CompletionItemKind,
+    CompletionItemProvider,
+    Diagnostic,
+    DiagnosticSeverity,
+    MarkdownString,
+    Position,
+    Range,
+    TextDocument,
+} from "vscode";
 
-// TODO: Desired features.
-// QuickPickSelection items, offering the user to select the desired code fence language identifier.
-// Validate existing code slug identifiers, provides warnings and errors!
+import { matchAll } from "./common";
+
+export function insertLanguageCommands() {
+    return [
+        { command: getLanguageIdentifierCompletionItems.name, callback: getLanguageIdentifierCompletionItems },
+    ];
+}
 
 export interface IHighlightLanguage {
-    language: string;
-    aliases: string[];
-    isPopular?: boolean | undefined;
+    readonly language: string;
+    readonly aliases: string[];
+    readonly isPopular?: boolean | undefined;
 }
 
 export type HighlightLanguages = IHighlightLanguage[];
 
-// Source langs: https://raw.githubusercontent.com/DuncanmaMSFT/highlight.js/master/README.md
-
 /**
  * The various syntax highlighting languages available.
+ * Source langs: https://raw.githubusercontent.com/DuncanmaMSFT/highlight.js/master/README.md
  */
 export const languages: HighlightLanguages =
     [
@@ -37,11 +56,15 @@ export const languages: HighlightLanguages =
         { language: "AutoIt", aliases: ["autoit"] },
         { language: "Awk ", aliases: ["awk", "mawk", "nawk", "gawk"] },
         { language: "Axapta", aliases: ["axapta"] },
+        { language: "Azure CLI", aliases: ["azurecli"], isPopular: true },
+        { language: "Azure CLI (Interactive)", aliases: ["azurecli-interactive"], isPopular: true },
+        { language: "Azure Powershell (Interactive)", aliases: ["azurepowershell-interactive"], isPopular: true },
         { language: "Bash", aliases: ["bash", "sh", "zsh"], isPopular: true },
         { language: "Basic ", aliases: ["basic"] },
         { language: "BNF ", aliases: ["bnf"] },
         { language: "Brainfuck ", aliases: ["brainfuck", "bf"] },
-        { language: "C#", aliases: ["cs", "csharp"], isPopular: true },
+        { language: "C#", aliases: ["csharp", "cs"], isPopular: true },
+        { language: "C# (Interactive)", aliases: ["csharp-interactive"], isPopular: true },
         { language: "C++ ", aliases: ["cpp", "c", "cc", "h", "c++", "h++", "hpp"], isPopular: true },
         { language: "C/AL", aliases: ["cal"] },
         { language: "Cache Object Script ", aliases: ["cos", "cls"] },
@@ -93,22 +116,22 @@ export const languages: HighlightLanguages =
         { language: "Haskell ", aliases: ["haskell", "hs"] },
         { language: "Haxe", aliases: ["haxe", "hx"] },
         { language: "Hy", aliases: ["hy", "hylang"] },
-        { language: "Ini", aliases: ["ini"] },
+        { language: "Ini", aliases: ["ini"], isPopular: true },
         { language: "Inform7 ", aliases: ["inform7", "i7"] },
         { language: "IRPF90", aliases: ["irpf90"] },
         { language: "JSON", aliases: ["json"], isPopular: true },
         { language: "Java", aliases: ["java", "jsp"], isPopular: true },
         { language: "JavaScript", aliases: ["javascript", "js", "jsx"], isPopular: true },
-        { language: "Kotlin", aliases: ["kotlin", "kt"] },
+        { language: "Kotlin", aliases: ["kotlin", "kt"], isPopular: true },
         { language: "Leaf", aliases: ["leaf"] },
         { language: "Lasso ", aliases: ["lasso", "ls", "lassoscript"] },
-        { language: "Less", aliases: ["less"] },
+        { language: "Less", aliases: ["less"], isPopular: true },
         { language: "LDIF", aliases: ["ldif"] },
         { language: "Lisp", aliases: ["lisp"] },
         { language: "LiveCode Server ", aliases: ["livecodeserver"] },
         { language: "LiveScript", aliases: ["livescript", "ls"] },
         { language: "Lua ", aliases: ["lua"] },
-        { language: "Makefile", aliases: ["makefile", "mk", "mak"] },
+        { language: "Makefile", aliases: ["makefile", "mk", "mak"], isPopular: true },
         { language: "Markdown", aliases: ["markdown", "md", "mkdown", "mkd"], isPopular: true },
         { language: "Mathematica ", aliases: ["mathematica", "mma", "wl"] },
         { language: "Matlab", aliases: ["matlab"] },
@@ -120,6 +143,7 @@ export const languages: HighlightLanguages =
         { language: "Mojolicious ", aliases: ["mojolicious"] },
         { language: "Monkey", aliases: ["monkey"] },
         { language: "Moonscript", aliases: ["moonscript", "moon"] },
+        { language: "MS Graph (Interactive)", aliases: ["msgraph-interactive"], isPopular: true },
         { language: "N1QL", aliases: ["n1ql"] },
         { language: "NSIS", aliases: ["nsis"] },
         { language: "Nginx ", aliases: ["nginx", "nginxconf"], isPopular: true },
@@ -132,21 +156,22 @@ export const languages: HighlightLanguages =
         { language: "Oracle Rules Language ", aliases: ["ruleslanguage"] },
         { language: "Oxygene ", aliases: ["oxygene"] },
         { language: "PF", aliases: ["pf", "pf.conf"] },
-        { language: "PHP ", aliases: ["php", "php3", "php4", "php5", "php6"] },
+        { language: "PHP ", aliases: ["php", "php3", "php4", "php5", "php6"], isPopular: true },
         { language: "Parser3 ", aliases: ["parser3"] },
         { language: "Perl", aliases: ["perl", "pl", "pm"] },
-        { language: "Plaintext: no highlight ", aliases: ["plaintext"] },
+        { language: "Plaintext: no highlight ", aliases: ["plaintext"], isPopular: true },
         { language: "Pony", aliases: ["pony"] },
         { language: "PostgreSQL & PL/pgSQL ", aliases: ["pgsql", "postgres", "postgresql"] },
         { language: "PowerShell", aliases: ["powershell", "ps"], isPopular: true },
+        { language: "PowerShell (Interactive)", aliases: ["azurepowershell"], isPopular: true },
         { language: "Processing", aliases: ["processing"] },
         { language: "Prolog", aliases: ["prolog"] },
         { language: "Properties", aliases: ["properties"] },
-        { language: "Protocol Buffers", aliases: ["protobuf"] },
+        { language: "Protocol Buffers", aliases: ["protobuf"], isPopular: true },
         { language: "Puppet", aliases: ["puppet", "pp"] },
         { language: "Python", aliases: ["python", "py", "gyp"], isPopular: true },
         { language: "Python profiler results ", aliases: ["profile"] },
-        { language: "Q ", aliases: ["k", "kdb"] },
+        { language: "Q ", aliases: ["k", "kdb"], isPopular: true },
         { language: "QML ", aliases: ["qml"] },
         { language: "R ", aliases: ["r"], isPopular: true },
         { language: "Razor CSHTML", aliases: ["cshtml", "razor", "razor-cshtml"], isPopular: true },
@@ -156,10 +181,10 @@ export const languages: HighlightLanguages =
         { language: "Roboconf", aliases: ["graph", "instances"] },
         { language: "Robot Framework ", aliases: ["robot", "rf"] },
         { language: "RPM spec files", aliases: ["rpm-specfile", "rpm", "spec", "rpm-spec", "specfile"] },
-        { language: "Ruby", aliases: ["ruby", "rb", "gemspec", "podspec", "thor", "irb"] },
+        { language: "Ruby", aliases: ["ruby", "rb", "gemspec", "podspec", "thor", "irb"], isPopular: true },
         { language: "Rust", aliases: ["rust", "rs"], isPopular: true },
-        { language: "SAS ", aliases: ["SAS", "sas"] },
-        { language: "SCSS", aliases: ["scss"] },
+        { language: "SAS ", aliases: ["SAS", "sas"], isPopular: true },
+        { language: "SCSS", aliases: ["scss"], isPopular: true },
         { language: "SQL ", aliases: ["sql"], isPopular: true },
         { language: "STEP Part 21", aliases: ["p21", "step", "stp"] },
         { language: "Scala ", aliases: ["scala"], isPopular: true },
@@ -172,7 +197,7 @@ export const languages: HighlightLanguages =
         { language: "Solidity", aliases: ["solidity", "sol"] },
         { language: "Stan", aliases: ["stan"] },
         { language: "Stata ", aliases: ["stata"] },
-        { language: "Structured Text ", aliases: ["iecst", "scl", "stl", "structured-text"] },
+        { language: "Structured Text ", aliases: ["iecst", "scl", "stl", "structured-text"], isPopular: true },
         { language: "Stylus", aliases: ["stylus", "styl"] },
         { language: "SubUnit ", aliases: ["subunit"] },
         { language: "Supercollider ", aliases: ["supercollider", "sc"] },
@@ -192,7 +217,7 @@ export const languages: HighlightLanguages =
         { language: "Vala", aliases: ["vala"] },
         { language: "Verilog ", aliases: ["verilog", "v"] },
         { language: "Vim Script", aliases: ["vim"], isPopular: true },
-        { language: "x86 Assembly", aliases: ["x86asm"] },
+        { language: "x86 Assembly", aliases: ["x86asm"], isPopular: true },
         { language: "XL", aliases: ["xl", "tao"] },
         { language: "XQuery", aliases: ["xquery", "xpath", "xq"] },
         { language: "YAML", aliases: ["yml", "yaml"], isPopular: true },
@@ -222,20 +247,87 @@ export function isValidCodeLang(language: string) {
     return allAliases.some((alias) => alias === language);
 }
 
-export const provideLanguageCompletionItems: CompletionItemProvider = {
-    provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
+function getLanguageIdentifierQuickPickItems() {
 
+}
+
+export function getLanguageIdentifierCompletionItems(range: Range | undefined, isCancellationRequested: boolean) {
+    if (range) {
         const completionItems: CompletionItem[] = [];
-        const popularLangs = languagesGroupedByPopularity.get(true);
+        const isPopular = true;
+        const popularLangs = languagesGroupedByPopularity.get(isPopular);
         if (popularLangs) {
             popularLangs.forEach((lang) => {
                 const item = new CompletionItem(lang.language, CompletionItemKind.Value);
-                item.insertText = lang.aliases[0];
-                item.documentation = `Use the "${lang.language.trim()}" language identifer (alias: ${item.insertText}).`;
+                const langId = item.sortText = item.insertText = lang.aliases[0];
+                const doc = new MarkdownString(`Use the "${lang.language.trim()}" language identifer (alias: ${item.insertText}).`);
+                doc.appendText("\r\nSample:\r\n");
+                doc.appendCodeblock(`\`\`\`${langId}`, "markdown");
+                doc.appendCodeblock("// some code...", "markdown");
+                doc.appendCodeblock("\r\n", "markdown");
+                doc.appendCodeblock("\`\`\` ", "markdown"); // This is missing from the completion item!
+                doc.appendText("");
+                item.documentation = doc;
                 completionItems.push(item);
             });
         }
 
-        return completionItems;
+        return isCancellationRequested
+            ? undefined
+            : completionItems;
+    }
+
+    return undefined;
+}
+
+export const markdownCompletionItemsProvider: CompletionItemProvider = {
+    provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
+        const text = document.getText();
+        if (text) {
+            const range = document.getWordRangeAtPosition(position, /```/);
+            return getLanguageIdentifierCompletionItems(range, token.isCancellationRequested);
+        }
+    },
+};
+
+export const markdownCodeActionProvider: CodeActionProvider = {
+    provideCodeActions(document: TextDocument, _: Range, context: CodeActionContext, token: CancellationToken) {
+        const CODE_FENCE_RE = /`{3,4}(.*?[^```])$/gm;
+        const text = document.getText();
+        const results: CodeAction[] = [];
+        for (const matches of matchAll(CODE_FENCE_RE, text).filter((ms) => !!ms)) {
+            const lang = matches[1] || undefined;
+            if (!!lang && lang !== "\r" && lang !== "\n") {
+                const index = matches?.index || -1;
+                if (lang && index >= 0) {
+                    if (!allAliases.some((alias) => alias === lang.toLowerCase())) {
+                        const action =
+                            new CodeAction(
+                                `Click to fix "${lang}" unrecognized code-fence language identifer`,
+                                CodeActionKind.QuickFix);
+
+                        const startPosition = document.positionAt(index);
+                        const endPosition = document.positionAt(index + lang.length);
+                        const range = new Range(startPosition, endPosition);
+                        const diagnostics =
+                            new Diagnostic(
+                                range,
+                                "Select from available code-fence language identifiers",
+                                DiagnosticSeverity.Warning);
+                        (action.diagnostics || (action.diagnostics = [])).push(diagnostics);
+
+                        action.command = {
+                            arguments: [range],
+                            command: "insertLanguageIdentifier",
+                            title: "Insert language identifier",
+                            tooltip: "Select from the available language identifiers.",
+                        };
+
+                        results.push(action);
+                    }
+                }
+            }
+        }
+        return results;
     },
 };

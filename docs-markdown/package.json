@@ -177,6 +177,11 @@
         "command": "updateMetadataDate",
         "title": "Update \"ms.date\" Metadata Value",
         "category": "Docs"
+      },
+      {
+        "command": "insertLanguageIdentifier",
+        "title": "Insert language identifier",
+        "category": "Docs"
       }
     ],
     "menus": {
