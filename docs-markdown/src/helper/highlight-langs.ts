@@ -16,6 +16,7 @@ import {
     Range,
     TextDocument,
     window,
+    workspace,
 } from "vscode";
 
 import { insertContentToEditor, matchAll, noActiveEditorMessage } from "./common";
@@ -26,19 +27,19 @@ export function insertLanguageCommands() {
     ];
 }
 
-export interface IHighlightLanguage {
+interface IHighlightLanguage {
     readonly language: string;
     readonly aliases: string[];
     readonly isPopular?: boolean | undefined;
 }
 
-export type HighlightLanguages = IHighlightLanguage[];
+type HighlightLanguages = IHighlightLanguage[];
 
 /**
  * The various syntax highlighting languages available.
  * Source langs: https://raw.githubusercontent.com/DuncanmaMSFT/highlight.js/master/README.md
  */
-export const languages: HighlightLanguages =
+const languages: HighlightLanguages =
     [
         { language: "1C", aliases: ["1c"] },
         { language: "ABNF", aliases: ["abnf"] },
@@ -234,19 +235,19 @@ groupings.set(false, languages.filter((lang) => !lang.isPopular));
 /**
  * The various syntax highlighting languages available, grouped by popularity.
  */
-export const languagesGroupedByPopularity: Map<boolean, HighlightLanguages> = groupings;
+const languagesGroupedByPopularity: Map<boolean, HighlightLanguages> = groupings;
 
 /**
  * All of the possible aliases concatenated together.
  */
-export const allAliases: string[] =
+const allAliases: string[] =
     languages.reduce((aliases, lang) => aliases.concat(lang.aliases), [""]);
 
 /**
  * Validates whether or not a given language is going to render correctly with syntax highlighting.
  */
-export function isValidCodeLang(language: string) {
-    return allAliases.some((alias) => alias === language);
+function isValidCodeLang(language: string) {
+    return allAliases.some((alias) => alias === language.toLowerCase());
 }
 
 export async function insertLanguageIdentifier(range: Range) {
@@ -267,15 +268,16 @@ export async function insertLanguageIdentifier(range: Range) {
                 insertContentToEditor(editor, "insertLanguageIdentifier", alias, true, selection);
             }
         }
+    } else {
+        window.showWarningMessage("Please first make a selection to insert a language identifier.");
     }
 }
 
 function getLanguageIdentifierQuickPickItems() {
     const items: QuickPickItem[] = [];
-    const isPopular = true;
-    const popularLangs = languagesGroupedByPopularity.get(isPopular);
-    if (popularLangs) {
-        popularLangs.forEach((lang) => {
+    const langs = getConfiguredLanguages();
+    if (langs) {
+        langs.forEach((lang) => {
             const item: QuickPickItem = {
                 description: `Use the "${lang.language.trim()}" language identifer (alias: ${lang.aliases[0]}).`,
                 label: lang.language,
@@ -287,13 +289,12 @@ function getLanguageIdentifierQuickPickItems() {
     return items;
 }
 
-export function getLanguageIdentifierCompletionItems(range: Range | undefined, isCancellationRequested: boolean) {
+function getLanguageIdentifierCompletionItems(range: Range | undefined, isCancellationRequested: boolean) {
     if (range) {
         const completionItems: CompletionItem[] = [];
-        const isPopular = true;
-        const popularLangs = languagesGroupedByPopularity.get(isPopular);
-        if (popularLangs) {
-            popularLangs.forEach((lang) => {
+        const langs = getConfiguredLanguages();
+        if (langs) {
+            langs.forEach((lang) => {
                 const item = new CompletionItem(lang.language, CompletionItemKind.Value);
                 const langId = item.sortText = item.insertText = lang.aliases[0];
                 const doc = new MarkdownString(`Use the "${lang.language.trim()}" language identifer (alias: ${item.insertText}).`);
@@ -314,6 +315,12 @@ export function getLanguageIdentifierCompletionItems(range: Range | undefined, i
     }
 
     return undefined;
+}
+
+function getConfiguredLanguages() {
+    return workspace.getConfiguration("markdown").allAvailableLanguages
+        ? languages
+        : languagesGroupedByPopularity.get(true);
 }
 
 export const markdownCompletionItemsProvider: CompletionItemProvider = {
@@ -337,7 +344,7 @@ export const markdownCodeActionProvider: CodeActionProvider = {
                 if (!!lang && lang !== "\r" && lang !== "\n") {
                     const index = matches.index || -1;
                     if (lang && index >= 0) {
-                        if (!allAliases.some((alias) => alias === lang.toLowerCase())) {
+                        if (!isValidCodeLang(lang)) {
                             const action =
                                 new CodeAction(
                                     `Click to fix "${lang}" unrecognized code-fence language identifer`,
