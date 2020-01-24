@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.34",
+  "version": "0.2.36",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -177,6 +177,18 @@
         "command": "updateMetadataDate",
         "title": "Update \"ms.date\" Metadata Value",
         "category": "Docs"
+      },
+      {
+        "command": "sortSelectionAscending",
+        "title": "Sort selection ascending (A to Z)",
+        "category": "Docs",
+        "enablement": "resourceLangId == markdown"
+      },
+      {
+        "command": "sortSelectionDescending",
+        "title": "Sort selection descending (Z to A)",
+        "category": "Docs",
+        "enablement": "resourceLangId == markdown"
       }
     ],
     "menus": {
@@ -192,6 +204,16 @@
         {
           "when": "resourceLangId == markdown",
           "command": "updateMetadataDate",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "sortSelectionAscending",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "sortSelectionDescending",
           "group": "1_modification"
         }
       ],
