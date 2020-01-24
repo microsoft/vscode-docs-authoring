@@ -73,7 +73,6 @@ module.exports = {
 
                     //lightbox source check
                     if (!notImageComplexEndTagMatch) {
-                        const sourceMatch = "common.imageLightboxMatch.exec(content);
                         const sourceMatch = common.imageLightboxMatch.exec(content);
                         if (sourceMatch && sourceMatch[1] === "") {
                             onError({
