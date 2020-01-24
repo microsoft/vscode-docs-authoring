@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.35 (January 22nd, 2020)
+## 0.2.37 (January 22nd, 2020)
 
 - Removed support for standard image insertion
 - Added lightbox insertion to image
