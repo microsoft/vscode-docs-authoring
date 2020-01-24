@@ -29,23 +29,26 @@ export function formatBold() {
             return;
         }
 
-        const selection = editor.selection;
-        const selectedText = editor.document.getText(selection);
+        const selections = editor.selections;
         let range;
 
         // if unselect text, add bold syntax without any text
-        if (selectedText === "") {
+        if (selections.length == 0) {
             const cursorPosition = editor.selection.active;
-
+            const selectedText = "";
             // assumes the range of bold syntax
             range = new vscode.Range(cursorPosition.with(cursorPosition.line,
                 cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
                 cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
-
             // calls formatter and returns selectedText as MD bold
             const formattedText = bold(selectedText);
             insertUnselectedText(editor, formatBold.name, formattedText, range);
-        } else {
+        }
+
+        // if only a selection is made with a single cursor
+        if (selections.length == 1) {
+            const selection = editor.selection;
+            const selectedText = editor.document.getText(selection);
             const cursorPosition = editor.selection.active;
             range = new vscode.Range(cursorPosition.with(cursorPosition.line,
                 cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
@@ -53,6 +56,20 @@ export function formatBold() {
             // calls formatter and returns selectedText as MD Bold
             const formattedText = bold(selectedText);
             insertContentToEditor(editor, formatBold.name, formattedText, true);
+        }
+
+        // if mulitple cursors were used to make selections
+        if (selections.length > 1) {
+            selections.forEach(function (selectedItem) {
+                let selectedText = editor.document.getText(selectedItem);
+                let cursorPosition = editor.selection.active;
+                range = new vscode.Range(cursorPosition.with(cursorPosition.line,
+                    cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
+                    cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
+                let formattedText = bold(selectedText);
+                console.log(formattedText);
+                insertContentToEditor(editor, formatBold.name, formattedText, true);
+            });
         }
     }
     sendTelemetryData(telemetryCommand, "");
