@@ -37,7 +37,11 @@ function sortLines(ascending: boolean = true) {
         lines.push(editor.document.lineAt(i).text);
     }
 
-    lines.sort();
+    const naturalLanguageCompare = (a: string, b: string) => {
+        return (!!a && !!b) ? a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }) : 0;
+    };
+
+    lines.sort(naturalLanguageCompare);
     if (!ascending) {
         lines.reverse();
     }
