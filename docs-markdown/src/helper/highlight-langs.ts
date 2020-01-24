@@ -325,11 +325,33 @@ function getConfiguredLanguages() {
 
 export const markdownCompletionItemsProvider: CompletionItemProvider = {
     provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
-        const text = document.getText();
-        if (text) {
-            const range = document.getWordRangeAtPosition(position, /```/);
-            return getLanguageIdentifierCompletionItems(range, token.isCancellationRequested);
+        const range = document.getWordRangeAtPosition(position, /```/);
+        if (range) {
+            const text = document.getText();
+            if (text) {
+                const TRIPLE_BACKTICK_RE = /```/gm;
+                const results = matchAll(TRIPLE_BACKTICK_RE, text);
+                if (results) {
+                    for (let i = 0; i < results.length; ++i) {
+                        if (i % 2) {
+                            const match = results[i];
+                            if (match) {
+                                const index = match.index || -1;
+                                const pos = document.positionAt(index);
+                                const positionIsInRange =
+                                    pos.line === range.start.line && pos.character === range.start.character ||
+                                    pos.line === range.end.line && pos.character === range.end.character;
+                                if (index >= 0 && positionIsInRange) {
+                                    return getLanguageIdentifierCompletionItems(range, token.isCancellationRequested);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
+
+        return undefined;
     },
 };
 
@@ -350,9 +372,9 @@ export const markdownCodeActionProvider: CodeActionProvider = {
                                     `Click to fix "${lang}" unrecognized code-fence language identifer`,
                                     CodeActionKind.QuickFix);
 
-                            const IndexWithOffset = index + 3; // Account for "```".
-                            const startPosition = document.positionAt(IndexWithOffset);
-                            const endPosition = document.positionAt(IndexWithOffset + lang.length);
+                            const indexWithOffset = index + 3; // Account for "```".
+                            const startPosition = document.positionAt(indexWithOffset);
+                            const endPosition = document.positionAt(indexWithOffset + lang.length);
                             const range = new Range(startPosition, endPosition);
                             const diagnostics =
                                 new Diagnostic(
@@ -374,6 +396,9 @@ export const markdownCodeActionProvider: CodeActionProvider = {
                 }
             }
         }
-        return results;
+
+        return token.isCancellationRequested
+            ? undefined
+            : results;
     },
 };
