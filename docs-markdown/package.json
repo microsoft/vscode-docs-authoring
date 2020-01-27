@@ -179,6 +179,11 @@
         "category": "Docs"
       },
       {
+        "command": "updateAllMetadataValues",
+        "title": "Update All Metadata Value",
+        "category": "Docs"
+      },
+      {
         "command": "sortSelectionAscending",
         "title": "Sort selection ascending (A to Z)",
         "category": "Docs",
@@ -193,6 +198,11 @@
       {
         "command": "insertLanguageIdentifier",
         "title": "Insert language identifier",
+        "category": "Docs"
+      },
+      {
+        "command": "updateAllMetadataValues",
+        "title": "Update All Metadata Values",
         "category": "Docs"
       }
     ],
@@ -209,6 +219,11 @@
         {
           "when": "resourceLangId == markdown",
           "command": "updateMetadataDate",
+          "group": "1_modification"
+        },
+        {
+          "when": "resourceLangId == markdown",
+          "command": "updateAllMetadataValues",
           "group": "1_modification"
         },
         {
