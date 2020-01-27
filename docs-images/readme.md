@@ -2,7 +2,7 @@
 
 Docs Images provides image compression and resizing for folders and individual files to help authors for docs.microsoft.com:
 
-* [Docs Images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images) by [David Pine](https://github.com/IEvangelist), which compresses and resizes images.
+* [Docs Images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images), which compresses and resizes images.
 
 ## How to use the Docs Images extension
 
