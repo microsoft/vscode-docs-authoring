@@ -75,6 +75,10 @@ export function noActiveEditorMessage() {
     postWarning("No active editor. Abandoning command.");
 }
 
+export function unsupportedFileMessage(languageId: string) {
+    postWarning(`Command is not support for "${languageId}". Abandoning command.`);
+}
+
 export function GetEditorText(editor: vscode.TextEditor, senderName: string): string {
     let content = "";
     const emptyString = "";
@@ -267,6 +271,10 @@ export function isMarkdownFileCheck(editor: vscode.TextEditor, languageId: boole
     }
 }
 
+export function isValidFileCheck(editor: vscode.TextEditor, languageIds: string[]) {
+    return languageIds.some((id) => editor.document.languageId === id);
+}
+
 /**
  * Telemetry or Trace Log Type
  */
@@ -305,7 +313,7 @@ export function checkExtension(extensionName: string, notInstalledMessage?: stri
  */
 export function showStatusMessage(message: string) {
     const { msTimeValue } = generateTimestamp();
-    output.appendLine(`[${msTimeValue}] - ` + message);
+    output.appendLine(`[${msTimeValue}] - ${message}`);
 }
 
 /**
@@ -346,13 +354,21 @@ export async function showWarningMessage(message: string) {
 
 export function matchAll(
     pattern: RegExp,
-    text: string
-): Array<RegExpMatchArray> {
+    text: string,
+): RegExpMatchArray[] {
     const out: RegExpMatchArray[] = [];
     pattern.lastIndex = 0;
-    let match: RegExpMatchArray | null;
-    while ((match = pattern.exec(text))) {
-        out.push(match);
+    let match: RegExpMatchArray | null = pattern.exec(text);
+    while (match) {
+        match = pattern.exec(text);
+        if (match) {
+            // This is necessary to avoid infinite loops with zero-width matches
+            if (match.index === pattern.lastIndex) {
+                pattern.lastIndex++;
+            }
+
+            out.push(match);
+        }
     }
     return out;
 }
@@ -360,14 +376,14 @@ export function matchAll(
 export function extractDocumentLink(
     document: vscode.TextDocument,
     link: string,
-    matchIndex: number | undefined
+    matchIndex: number | undefined,
 ): vscode.DocumentLink | undefined {
     const offset = (matchIndex || 0) + 8;
     const linkStart = document.positionAt(offset);
     const linkEnd = document.positionAt(offset + link.length);
-    const text = document.getText(new vscode.Range(linkStart, linkEnd))
+    const text = document.getText(new vscode.Range(linkStart, linkEnd));
     try {
-        const httpMatch = text.match(/^(http|https):\/\//)
+        const httpMatch = text.match(/^(http|https):\/\//);
         if (httpMatch) {
             const documentLink = new vscode.DocumentLink(
                 new vscode.Range(linkStart, linkEnd),

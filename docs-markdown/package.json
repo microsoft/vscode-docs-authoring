@@ -177,6 +177,23 @@
         "command": "updateMetadataDate",
         "title": "Update \"ms.date\" Metadata Value",
         "category": "Docs"
+      },
+      {
+        "command": "sortSelectionAscending",
+        "title": "Sort selection ascending (A to Z)",
+        "category": "Docs",
+        "enablement": "resourceLangId == markdown"
+      },
+      {
+        "command": "sortSelectionDescending",
+        "title": "Sort selection descending (Z to A)",
+        "category": "Docs",
+        "enablement": "resourceLangId == markdown"
+      },
+      {
+        "command": "insertLanguageIdentifier",
+        "title": "Insert language identifier",
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -192,6 +209,16 @@
         {
           "when": "resourceLangId == markdown",
           "command": "updateMetadataDate",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "sortSelectionAscending",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "sortSelectionDescending",
           "group": "1_modification"
         }
       ],
@@ -256,7 +283,7 @@
         {
           "command": "insertLink",
           "group": "Docs",
-          "when": "resourceLangId == markdown"
+          "when": "resourceLangId == markdown || resourceLangId == yaml"
         },
         {
           "command": "insertURL",
@@ -349,6 +376,11 @@
       "type": "object",
       "title": "Docs Markdown Extension Configuration",
       "properties": {
+        "markdown.allAvailableLanguages": {
+          "type": "boolean",
+          "default": false,
+          "description": "Provide all available languages (including unpopular languages) when suggesting code-fence language identifiers."
+        },
         "markdown.showToolbar": {
           "type": "boolean",
           "default": false,
