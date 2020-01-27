@@ -1,18 +1,33 @@
 import { output } from "../extension";
 
+const IMAGE_OPEN_RE = /image\s+(((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+))"\s*)+:::/gm;
+
 export const imageOptions = {
     marker: ":",
     validate(params) {
-        return params.trim().match(/image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?((type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?)?:::/g)
+        return params.trim().match(IMAGE_OPEN_RE)
             || params.trim().match(/image-end:::/g)
     },
     render(tokens, idx) {
-        const RE = /image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?((type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?)?:::/gm;
-        const start = RE.exec(tokens[idx].info.trim());
+        const start = IMAGE_OPEN_RE.exec(tokens[idx].info.trim());
+        const SOURCE_RE = /source\s*=\s*"([a-zA-Z0-9_.\/ -]+)"/gi
+        const LIGHTBOX_RE = /lightbox\s*=\s*"([a-zA-Z0-9_.\/ -]+)"/gi
+        const BORDER_RE = /border\s*=\s*"([a-zA-Z0-9_.\/ -]+)"/gi
         if (start) {
-            const source = start[start.indexOf("source") + 1]
+            const source = SOURCE_RE.exec(start[0])[1];
+            const lightboxMatch = LIGHTBOX_RE.exec(start[0]);
+            const borderMatch = BORDER_RE.exec(start[0]);
+
+            var html = `<img src=${source}>`;
+            if (!borderMatch || "true" === borderMatch[1].toLowerCase()) {
+                html = `<div class="mx-imgBorder"><p>${html}</p></div>`
+            }
+            if (lightboxMatch) {
+                html = `<a href="${lightboxMatch[1]}#lightbox" data-linktype="relative - path">${html}</a>`;
+            }
+
             // opening tag
-            return `<img src=${source}>`;
+            return html;
         } else {
             // closing tag
             return "";
@@ -21,14 +36,14 @@ export const imageOptions = {
 };
 
 
-// Sets the type complex to each of the positions type can be in. For example, type, source, alt-text vs source, type, alt-text
-export const IMAGE_END_RE = /(?<=:::image(\s)?(type|source|alt-text)="complex"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?:::)[^]+?:::image-end:::|(?<=:::image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?(type|source|alt-text)="complex"(\s)?:::)[^]+?:::image-end:::|(?<=:::image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\s(type|source|alt-text)="complex"(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?:::)[^]+?:::image-end:::/gm;
-export const IMAGE_ALL_RE = /:::image(\s)?(type|source|alt-text)="complex"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?:::[^]+?:::image-end:::|:::image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?(type|source|alt-text)="complex"(\s)?:::[^]+?:::image-end:::|:::image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)"\s(type|source|alt-text)="complex"(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?:::[^]+?:::image-end:::|((.:*)(.\s*)(image)(.\s*)(.*)(.:*))/gm
+// removes image-end and long description for rendering purposes
 export function image_end(md) {
+    const IMAGE_ALL_RE = /:::image\s+(((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+))"\s*)+:::((\s*\w*?)+?\s*:::image-end:::)/mi;
     const replaceImageEnd = (src: string) => {
         let captureGroup;
-        while ((captureGroup = IMAGE_END_RE.exec(src))) {
-            src = src.slice(0, captureGroup.index) + src.slice(captureGroup.index + captureGroup[0].length, src.length);
+        var matches = src.match(IMAGE_ALL_RE);
+        while ((captureGroup = IMAGE_ALL_RE.exec(src))) {
+            src = src.replace(captureGroup[5], "");
         }
         return src;
     };
