@@ -33,6 +33,7 @@ import { insertLanguageCommands, markdownCodeActionProvider, markdownCompletionI
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
+import { insertSortSelectionCommands } from "./controllers/sort-controller";
 
 export const output = window.createOutputChannel("docs-markdown");
 export let extensionPath: string;
@@ -84,6 +85,7 @@ export function activate(context: ExtensionContext) {
     insertRowsAndColumnsCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     insertImageCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     insertMetadataCommands().forEach((cmd) => AuthoringCommands.push(cmd));
+    insertSortSelectionCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     insertLanguageCommands().forEach((cmd) => AuthoringCommands.push(cmd));
 
     // Autocomplete
