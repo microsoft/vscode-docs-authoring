@@ -249,10 +249,9 @@ function getLanguage(language: string, ext: string | undefined) {
     return language;
 }
 
-export function internalLinkBuilder(isArt: boolean, pathSelection: any, selectedText: string = "") {
+export function internalLinkBuilder(isArt: boolean, pathSelection: string, selectedText: string = "", languageId?: string) {
     const os = require("os");
     let link = "";
-
     let startBrace = "";
     if (isArt) {
         startBrace = "![";
@@ -262,9 +261,15 @@ export function internalLinkBuilder(isArt: boolean, pathSelection: any, selected
 
     // replace the selected text with the properly formatted link
     if (pathSelection === "") {
-        link = startBrace + selectedText + "]()";
+        link = `${startBrace}${selectedText}]()`;
     } else {
-        link = startBrace + selectedText + "](" + pathSelection + ")";
+        link = `${startBrace}${selectedText}](${pathSelection})`;
+    }
+
+    const langId = languageId || "markdown";
+    const isYaml = langId === "yaml" && !isArt;
+    if (isYaml) {
+        link = pathSelection;
     }
 
     // The relative path comparison creates an additional level that is not needed and breaks linking.
