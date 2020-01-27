@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.34",
+  "version": "0.2.35",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -176,6 +176,11 @@
       {
         "command": "updateMetadataDate",
         "title": "Update \"ms.date\" Metadata Value",
+        "category": "Docs"
+      },
+      {
+        "command": "insertLanguageIdentifier",
+        "title": "Insert language identifier",
         "category": "Docs"
       }
     ],
@@ -349,6 +354,11 @@
       "type": "object",
       "title": "Docs Markdown Extension Configuration",
       "properties": {
+        "markdown.allAvailableLanguages": {
+          "type": "boolean",
+          "default": false,
+          "description": "Provide all available languages (including unpopular languages) when suggesting code-fence language identifiers."
+        },
         "markdown.showToolbar": {
           "type": "boolean",
           "default": false,
