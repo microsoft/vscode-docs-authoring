@@ -65,6 +65,14 @@ blockquote > pre {
   margin-bottom: .8rem;
 }
 
+body.vscode-dark blockquote > pre > code > div {
+  color: white;
+}
+
+body.vscode-high-contrast blockquote > pre > code > div {
+  color: white;
+}
+
 .content blockquote > ul {
   margin-bottom: .9rem;
 }
