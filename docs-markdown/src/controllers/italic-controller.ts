@@ -1,6 +1,6 @@
 "use strict";
 
-import * as vscode from "vscode";
+import { window, Selection, Range, TextEditorEdit } from "vscode";
 import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBoldAndItalic, isItalic } from "../helper/format-styles";
@@ -18,7 +18,7 @@ export function italicFormattingCommand() {
  * Replaces current selection with MD italic formated selection
  */
 export function formatItalic() {
-    const editor = vscode.window.activeTextEditor;
+    const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -31,31 +31,56 @@ export function formatItalic() {
             return;
         }
 
-        const selection = editor.selection;
-        const selectedText = editor.document.getText(selection);
+        // const selection = editor.selection;
+        // const selectedText = editor.document.getText(selection);
+        let selections: Selection[] = editor.selections;
         let range;
 
         // if unselect text, add italic syntax without any text
-        if (selectedText === "") {
+        if (selections.length == 0) {
             const cursorPosition = editor.selection.active;
+            const selectedText = "";
 
             // assumes the range of italic syntax
-            range = new vscode.Range(cursorPosition.with(cursorPosition.line,
+            range = new Range(cursorPosition.with(cursorPosition.line,
                 cursorPosition.character - 1 < 0 ? 0 : cursorPosition.character - 1),
                 cursorPosition.with(cursorPosition.line, cursorPosition.character + 1));
 
             // calls formatter and returns selectedText as MD bold
             const formattedText = italicize(selectedText, range);
             insertUnselectedText(editor, formatItalic.name, formattedText, range);
-        } else {
+        }
+
+        // if only a selection is made with a single cursor
+        if (selections.length == 1) {
+            const selection = editor.selection;
+            const selectedText = editor.document.getText(selection);
             const cursorPosition = editor.selection.active;
-            range = new vscode.Range(cursorPosition.with(cursorPosition.line,
+            range = new Range(cursorPosition.with(cursorPosition.line,
                 cursorPosition.character - 1 < 0 ? 0 : cursorPosition.character - 1),
                 cursorPosition.with(cursorPosition.line, cursorPosition.character + 1));
 
             // calls formatter and returns selectedText as MD Italic
             const formattedText = italicize(selectedText, range);
             insertContentToEditor(editor, formatItalic.name, formattedText, true);
+        }
+
+        // if mulitple cursors were used to make selections
+        if (selections.length > 1) {
+            editor.edit(function (edit: TextEditorEdit): void {
+                selections.forEach((selection: Selection, index: number) => {
+                    for (let i = selection.start.line; i <= selection.end.line; i++) {
+                        // let selLine: vscode.TextLine = doc.lineAt(i);
+                        let selectedText = editor.document.getText(selection);
+                        let formattedText = italicize(selectedText);
+                        edit.replace(selection, formattedText);
+                    }
+                });
+            }).then(success => {
+                if (!success) {
+                    return
+                }
+            })
         }
     }
     sendTelemetryData(telemetryCommand, "");
@@ -66,7 +91,7 @@ export function formatItalic() {
  * @param {string} content - selected text
  * @param {vscode.Range} range - If provided will get the text at the given range.
  */
-export function italicize(content: string, range: vscode.Range) {
+export function italicize(content: string, range?: Range) {
     // Clean up string if it is already formatted
     const selectedText = content.trim();
 
