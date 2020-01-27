@@ -9,7 +9,39 @@ export function insertMetadataCommands() {
     ];
 }
 
+const authorRegex = /\Aauthor:\s*\b(.+?)$/mi;
+const msAuthorRegex = /ms.author:\s*\b(.+?)$/mi;
 const msDateRegex = /ms.date:\s*\b(.+?)$/mi;
+const msServiceRegex = /ms.service:\s*\b(.+?)$/mi;
+const msSubserviceRegex = /ms.subservice:\s*\b(.+?)$/mi;
+const metadataExpressions = [
+    authorRegex,
+    msAuthorRegex,
+    msDateRegex,
+    msServiceRegex,
+    msSubserviceRegex,
+];
+
+export async function updateAllMetadataValues() {
+    const editor = window.activeTextEditor;
+    if (!editor) {
+        noActiveEditorMessage();
+        return;
+    }
+
+    if (!isMarkdownFileCheck(editor, false)) {
+        return;
+    }
+
+    const content = editor.document.getText();
+    if (content) {
+        metadataExpressions.forEach((exp) => {
+
+        });
+    }
+}
+
+
 
 export async function updateMetadataDate() {
     const editor = window.activeTextEditor;
@@ -40,14 +72,18 @@ export async function updateMetadataDate() {
                 });
 
                 if (wasEdited) {
-                    await commands.executeCommand("workbench.action.files.save");
-
-                    const telemetryCommand = "updateMetadata";
-                    sendTelemetryData(telemetryCommand, updateMetadataDate.name);
+                    saveAndSendTelemetry();
                 }
             }
         }
     }
+}
+
+async function saveAndSendTelemetry() {
+    await commands.executeCommand("workbench.action.files.save");
+
+    const telemetryCommand = "updateMetadata";
+    sendTelemetryData(telemetryCommand, updateMetadataDate.name);
 }
 
 function toShortDate(date: Date) {
