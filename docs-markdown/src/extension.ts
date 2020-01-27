@@ -29,6 +29,7 @@ import { insertTableCommand } from "./controllers/table-controller";
 import { applyXrefCommand } from "./controllers/xref-controller";
 import { yamlCommands } from "./controllers/yaml-controller";
 import { checkExtension, extractDocumentLink, generateTimestamp, matchAll, noActiveEditorMessage } from "./helper/common";
+import { insertLanguageCommands, markdownCodeActionProvider, markdownCompletionItemsProvider } from "./helper/highlight-langs";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
@@ -85,12 +86,13 @@ export function activate(context: ExtensionContext) {
     insertImageCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     insertMetadataCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     insertSortSelectionCommands().forEach((cmd) => AuthoringCommands.push(cmd));
+    insertLanguageCommands().forEach((cmd) => AuthoringCommands.push(cmd));
 
     // Autocomplete
     context.subscriptions.push(setupAutoComplete());
     vscode.languages.registerDocumentLinkProvider({ language: "markdown" }, {
         provideDocumentLinks(document: TextDocument, token: CancellationToken) {
-            const IMAGE_SOURCE_RE = /source="(.*?)"/gm
+            const IMAGE_SOURCE_RE = /source="(.*?)"/gm;
             const text = document.getText();
             const results: vscode.DocumentLink[] = [];
             for (const match of matchAll(IMAGE_SOURCE_RE, text)) {
@@ -100,8 +102,12 @@ export function activate(context: ExtensionContext) {
                 }
             }
             return results;
-        }
+        },
     });
+
+    vscode.languages.registerCompletionItemProvider("markdown", markdownCompletionItemsProvider, "`");
+    vscode.languages.registerCodeActionsProvider("markdown", markdownCodeActionProvider);
+
     // Telemetry
     context.subscriptions.push(new Reporter(context));
 
