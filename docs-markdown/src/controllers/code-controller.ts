@@ -2,7 +2,7 @@
 
 import { QuickPickOptions, Range, window, Selection, TextEditorEdit } from "vscode";
 import { DocsCodeLanguages, languageRequired } from "../constants/docs-code-languages";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData, showStatusMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
 
@@ -143,9 +143,8 @@ export function applyCodeFormatting(content: string, selectedContent: any, codeL
         // if mulitple cursors were used to make selections
         if (selections.length > 1) {
             editor.edit(function (edit: TextEditorEdit): void {
-                selections.forEach((selection: Selection, index: number) => {
+                selections.forEach((selection: Selection) => {
                     for (let i = selection.start.line; i <= selection.end.line; i++) {
-                        // let selLine: vscode.TextLine = doc.lineAt(i);
                         let selectedText = editor.document.getText(selection);
                         let formattedText = format(selectedText, codeLang, selectedContent.isSingleLine, emptyRange);
                         edit.replace(selection, formattedText);
@@ -153,7 +152,9 @@ export function applyCodeFormatting(content: string, selectedContent: any, codeL
                 });
             }).then(success => {
                 if (!success) {
-                    return
+                    postWarning("Could not format selections. Abandoning command.");
+                    showStatusMessage("Could not format selections. Abandoning command.");
+                    return;
                 }
             })
         }

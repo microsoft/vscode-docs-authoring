@@ -1,7 +1,7 @@
 "use strict";
 
 import { window, Selection, Range, TextEditorEdit } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData, postWarning, showStatusMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBoldAndItalic, isItalic } from "../helper/format-styles";
 
@@ -68,9 +68,8 @@ export function formatItalic() {
         // if mulitple cursors were used to make selections
         if (selections.length > 1) {
             editor.edit(function (edit: TextEditorEdit): void {
-                selections.forEach((selection: Selection, index: number) => {
+                selections.forEach((selection: Selection) => {
                     for (let i = selection.start.line; i <= selection.end.line; i++) {
-                        // let selLine: vscode.TextLine = doc.lineAt(i);
                         let selectedText = editor.document.getText(selection);
                         let formattedText = italicize(selectedText);
                         edit.replace(selection, formattedText);
@@ -78,7 +77,9 @@ export function formatItalic() {
                 });
             }).then(success => {
                 if (!success) {
-                    return
+                    postWarning("Could not format selections. Abandoning command.");
+                    showStatusMessage("Could not format selections. Abandoning command.");
+                    return;
                 }
             })
         }
