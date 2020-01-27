@@ -99,10 +99,10 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
     const path = require("path");
     let language: string = "";
     let selected: vscode.QuickPickItem | undefined;
-    let activeFilePath
+    let activeFilePath;
     let snippetLink: string = "";
     if (!crossReference) {
-        let searchTerm = await vscode.window.showInputBox({ prompt: "Enter snippet search terms." })
+        const searchTerm = await vscode.window.showInputBox({ prompt: "Enter snippet search terms." });
         if (!searchTerm) {
             return;
         }
@@ -153,13 +153,13 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
 
     vscode.window.showQuickPick(selectorOptions).then((selectorChoice) => {
         if (selectorChoice) {
-            let id: string;
-            let range: string;
+            let snippet: string;
+
             switch (selectorChoice.label.toLowerCase()) {
                 case "id":
                     vscode.window.showInputBox({ prompt: "Enter id to select" }).then((id) => {
                         if (id) {
-                            const snippet: string = snippetBuilder(language, snippetLink, id, range);
+                            snippet = snippetBuilder(language, snippetLink, id, undefined);
                             common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
                         }
                     });
@@ -167,13 +167,13 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
                 case "range":
                     vscode.window.showInputBox({ prompt: "Enter line selection range" }).then((range) => {
                         if (range) {
-                            const snippet: string = snippetBuilder(language, snippetLink, id, range);
+                            snippet = snippetBuilder(language, snippetLink, undefined, range);
                             common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
                         }
                     });
                     break;
                 default:
-                    const snippet: string = snippetBuilder(language, snippetLink);
+                    snippet = snippetBuilder(language, snippetLink);
                     common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
                     break;
             }
@@ -223,8 +223,8 @@ function getLanguage(language: string, ext: string | undefined) {
         { typescript: ["ts", ".ts"] },
         { xaml: [".xaml"] },
         { xml: ["xsl", "xslt", "xsd", "wsdl", ".xml", ".csdl", ".edmx", ".xsl", ".xslt", ".xsd", ".wsdl"] },
-        { vb: ["vbnet", "vbscript", ".vb", ".bas", ".vbs", ".vba"] }
-    ]
+        { vb: ["vbnet", "vbscript", ".vb", ".bas", ".vbs", ".vba"] },
+    ];
 
     for (const key in dict) {
         if (dict.hasOwnProperty(key)) {
@@ -246,13 +246,12 @@ function getLanguage(language: string, ext: string | undefined) {
         return ext.substr(1);
     }
 
-    return language
+    return language;
 }
 
-export function internalLinkBuilder(isArt: boolean, pathSelection: any, selectedText: string = "") {
+export function internalLinkBuilder(isArt: boolean, pathSelection: string, selectedText: string = "", languageId?: string) {
     const os = require("os");
     let link = "";
-
     let startBrace = "";
     if (isArt) {
         startBrace = "![";
@@ -262,9 +261,15 @@ export function internalLinkBuilder(isArt: boolean, pathSelection: any, selected
 
     // replace the selected text with the properly formatted link
     if (pathSelection === "") {
-        link = startBrace + selectedText + "]()";
+        link = `${startBrace}${selectedText}]()`;
     } else {
-        link = startBrace + selectedText + "](" + pathSelection + ")";
+        link = `${startBrace}${selectedText}](${pathSelection})`;
+    }
+
+    const langId = languageId || "markdown";
+    const isYaml = langId === "yaml" && !isArt;
+    if (isYaml) {
+        link = pathSelection;
     }
 
     // The relative path comparison creates an additional level that is not needed and breaks linking.

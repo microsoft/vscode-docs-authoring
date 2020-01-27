@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.33",
+  "version": "0.2.37",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -95,12 +95,7 @@
       },
       {
         "command": "applyImage",
-        "title": "Image (Docs Markdown)",
-        "category": "Docs"
-      },
-      {
-        "command": "insertImage",
-        "title": "Image (Standard Markdown)",
+        "title": "Image",
         "category": "Docs"
       },
       {
@@ -116,6 +111,11 @@
       {
         "command": "applyLocScope",
         "title": "Add localization scope to image",
+        "category": "Docs"
+      },
+      {
+        "command": "applyLightbox",
+        "title": "Add lightbox to image",
         "category": "Docs"
       },
       {
@@ -172,6 +172,28 @@
         "command": "insertRowsAndColumns",
         "title": "Columns",
         "category": "Docs"
+      },
+      {
+        "command": "updateMetadataDate",
+        "title": "Update \"ms.date\" Metadata Value",
+        "category": "Docs"
+      },
+      {
+        "command": "sortSelectionAscending",
+        "title": "Sort selection ascending (A to Z)",
+        "category": "Docs",
+        "enablement": "resourceLangId == markdown"
+      },
+      {
+        "command": "sortSelectionDescending",
+        "title": "Sort selection descending (Z to A)",
+        "category": "Docs",
+        "enablement": "resourceLangId == markdown"
+      },
+      {
+        "command": "insertLanguageIdentifier",
+        "title": "Insert language identifier",
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -181,6 +203,23 @@
           "command": "markdown.showPreview",
           "alt": "markdown.showPreviewToSide",
           "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "resourceLangId == markdown",
+          "command": "updateMetadataDate",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "sortSelectionAscending",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "sortSelectionDescending",
+          "group": "1_modification"
         }
       ],
       "commandPalette": [
@@ -244,7 +283,7 @@
         {
           "command": "insertLink",
           "group": "Docs",
-          "when": "resourceLangId == markdown"
+          "when": "resourceLangId == markdown || resourceLangId == yaml"
         },
         {
           "command": "insertURL",
@@ -253,11 +292,6 @@
         },
         {
           "command": "applyImage",
-          "group": "Docs",
-          "when": "resourceLangId == markdown"
-        },
-        {
-          "command": "insertImage",
           "group": "Docs",
           "when": "resourceLangId == markdown"
         },
@@ -273,6 +307,11 @@
         },
         {
           "command": "applyLocScope",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyLightbox",
           "group": "Docs",
           "when": "resourceLangId == markdown"
         },
@@ -337,6 +376,11 @@
       "type": "object",
       "title": "Docs Markdown Extension Configuration",
       "properties": {
+        "markdown.allAvailableLanguages": {
+          "type": "boolean",
+          "default": false,
+          "description": "Provide all available languages (including unpopular languages) when suggesting code-fence language identifiers."
+        },
         "markdown.showToolbar": {
           "type": "boolean",
           "default": false,

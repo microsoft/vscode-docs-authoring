@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.37 (January 21st, 2020)
+
+- Added Preview for Video markdown syntax
+
 ## 0.3.35 (December 19th, 2019)
 
 - Added Preview for triple colon code snippet extension

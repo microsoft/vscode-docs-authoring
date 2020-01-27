@@ -19,6 +19,7 @@ import { addFrontMatterTitle } from "./controllers/lint-config-controller";
 import { insertListsCommands } from "./controllers/list-controller";
 import { getMasterRedirectionCommand } from "./controllers/master-redirect-controller";
 import { insertLinksAndMediaCommands } from "./controllers/media-controller";
+import { insertMetadataCommands } from "./controllers/metadata-controller";
 import { noLocCompletionItemsMarkdown, noLocCompletionItemsMarkdownYamlHeader, noLocCompletionItemsYaml, noLocTextCommand } from "./controllers/no-loc-controller";
 import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
@@ -28,9 +29,11 @@ import { insertTableCommand } from "./controllers/table-controller";
 import { applyXrefCommand } from "./controllers/xref-controller";
 import { yamlCommands } from "./controllers/yaml-controller";
 import { checkExtension, extractDocumentLink, generateTimestamp, matchAll, noActiveEditorMessage } from "./helper/common";
+import { insertLanguageCommands, markdownCodeActionProvider, markdownCompletionItemsProvider } from "./helper/highlight-langs";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
+import { insertSortSelectionCommands } from "./controllers/sort-controller";
 
 export const output = window.createOutputChannel("docs-markdown");
 export let extensionPath: string;
@@ -81,12 +84,15 @@ export function activate(context: ExtensionContext) {
     noLocTextCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     insertRowsAndColumnsCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     insertImageCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    insertMetadataCommands().forEach((cmd) => AuthoringCommands.push(cmd));
+    insertSortSelectionCommands().forEach((cmd) => AuthoringCommands.push(cmd));
+    insertLanguageCommands().forEach((cmd) => AuthoringCommands.push(cmd));
 
     // Autocomplete
     context.subscriptions.push(setupAutoComplete());
     vscode.languages.registerDocumentLinkProvider({ language: "markdown" }, {
         provideDocumentLinks(document: TextDocument, token: CancellationToken) {
-            const IMAGE_SOURCE_RE = /source="(.*?)"/gm
+            const IMAGE_SOURCE_RE = /source="(.*?)"/gm;
             const text = document.getText();
             const results: vscode.DocumentLink[] = [];
             for (const match of matchAll(IMAGE_SOURCE_RE, text)) {
@@ -96,8 +102,12 @@ export function activate(context: ExtensionContext) {
                 }
             }
             return results;
-        }
+        },
     });
+
+    vscode.languages.registerCompletionItemProvider("markdown", markdownCompletionItemsProvider, "`");
+    vscode.languages.registerCodeActionsProvider("markdown", markdownCodeActionProvider);
+
     // Telemetry
     context.subscriptions.push(new Reporter(context));
 
