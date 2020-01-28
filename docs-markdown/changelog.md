@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.40 (January 28th, 2020)
+
+- Fix bug that prevented language identifiers from being suggested
+
 ## 0.2.39 (January 28th, 2020)
 
 - Multi-cursor/selection formatting
