@@ -333,7 +333,7 @@ export const markdownCompletionItemsProvider: CompletionItemProvider = {
                 const results = matchAll(TRIPLE_BACKTICK_RE, text);
                 if (results) {
                     for (let i = 0; i < results.length; ++i) {
-                        if (i % 2) {
+                        if (i % 2 === 0) {
                             const match = results[i];
                             if (match) {
                                 const index = match.index || -1;
