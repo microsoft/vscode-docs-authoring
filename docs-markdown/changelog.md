@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.38 (January 28nd, 2020)
+
+- Typing a triple backtick will trigger auto-completion for language identifiers
+- Sort selection added, both ASC and DESC sort available
+
 ## 0.2.37 (January 22nd, 2020)
 
 - Removed support for standard image insertion
