@@ -166,7 +166,7 @@ const languages: HighlightLanguages =
         { language: "Pony", aliases: ["pony"] },
         { language: "PostgreSQL & PL/pgSQL ", aliases: ["pgsql", "postgres", "postgresql"] },
         { language: "PowerShell", aliases: ["powershell", "ps"], isPopular: true },
-        { language: "PowerShell (Interactive)", aliases: ["azurepowershell"], isPopular: true },
+        { language: "PowerShell (Interactive)", aliases: ["powershell-interactive"], isPopular: true },
         { language: "Processing", aliases: ["processing"] },
         { language: "Prolog", aliases: ["prolog"] },
         { language: "Properties", aliases: ["properties"] },
@@ -339,8 +339,8 @@ export const markdownCompletionItemsProvider: CompletionItemProvider = {
                                 const index = match.index || -1;
                                 const pos = document.positionAt(index);
                                 const positionIsInRange =
-                                    pos.line === range.start.line && pos.character === range.start.character ||
-                                    pos.line === range.end.line && pos.character === range.end.character;
+                                    pos.line === range.start.line && pos.character >= range.start.character ||
+                                    pos.line === range.end.line && pos.character <= range.end.character;
                                 if (index >= 0 && positionIsInRange) {
                                     return getLanguageIdentifierCompletionItems(range, token.isCancellationRequested);
                                 }
