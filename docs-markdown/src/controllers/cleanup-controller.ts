@@ -775,29 +775,12 @@ function removeEmptyMetadataAttributes(workspacePath: string, progress: any, res
                             if (data.startsWith("---")) {
                                 const regex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
                                 const metadataMatch = data.match(regex);
+                                let matchers = [];
                                 if (metadataMatch) {
-                                    const origin = data;
-                                    data = handleYamlMetadata(data);
-                                    const diff = jsdiff.diffChars(origin, data)
-                                        .some((part: { added: any; removed: any; }) => {
-                                            return part.added || part.removed;
-                                        });
-
-                                    console.log(metadataMatch[2].split(" "));
-                                    if (diff) {
-                                        writeFile(file, data, err => {
-                                            promises.push(new Promise((resolve, reject) => {
-
-                                                if (err) {
-                                                    postError(`Error: ${err}`);
-                                                    reject();
-                                                }
-                                                percentComplete = showProgress(index, files, percentComplete, progress, message);
-                                            }).catch((error) => {
-                                                postError(error);
-                                            }));
-                                        });
-                                    }
+                                    // console.log(metadataMatch[2]);
+                                    // console.log(metadataMatch[2].split('\n'));
+                                    matchers.push(metadataMatch[2].split('\n'));
+                                    console.log(matchers);
                                 }
                             }
                             resolve();
