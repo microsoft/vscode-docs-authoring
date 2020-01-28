@@ -2,7 +2,7 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import * as dir from "node-dir";
+import * as glob from "glob";
 
 import { commands, Selection, TextEditor, window, workspace } from "vscode";
 import { isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
@@ -15,18 +15,20 @@ export function insertMetadataCommands() {
 }
 
 interface IDocFxMetadata {
-    fileMetadata?: {
-        "author"?: {
-            [glob: string]: string,
-        };
-        "ms.author"?: {
-            [glob: string]: string,
-        };
-        "ms.service"?: {
-            [glob: string]: string,
-        };
-        "ms.subservice"?: {
-            [glob: string]: string,
+    build: {
+        fileMetadata?: {
+            "author"?: {
+                [glob: string]: string,
+            };
+            "ms.author"?: {
+                [glob: string]: string,
+            };
+            "ms.service"?: {
+                [glob: string]: string,
+            };
+            "ms.subservice"?: {
+                [glob: string]: string,
+            };
         };
     };
 }
@@ -80,7 +82,7 @@ async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementF
         if (!!docFxJson && fs.existsSync(docFxJson)) {
             const jsonBuffer = fs.readFileSync(docFxJson);
             const metadata = JSON.parse(jsonBuffer.toString()) as IDocFxMetadata;
-            if (metadata && metadata.fileMetadata) {
+            if (metadata && metadata.build && metadata.build.fileMetadata) {
                 return [];
             }
         }
@@ -96,18 +98,13 @@ function tryFindDocFxJsonFile(rootPath: string) {
     if (exists) {
         return docFxJson;
     } else {
-        dir.subdirs(rootPath, (error: any, subDirectories: string[]) => {
-            if (error) {
-                global.console.error(error);
-            }
-
-            for (const directory of subDirectories.filter((d) => !d.startsWith("."))) {
-                const jsonFile = tryFindDocFxJsonFile(directory);
-                if (!!jsonFile) {
-                    return jsonFile;
-                }
-            }
+        const files = glob.sync("**/docfx.json", {
+            cwd: rootPath,
         });
+
+        if (files && files.length === 1) {
+            return path.join(rootPath, files[0]);
+        }
     }
 
     return undefined;
