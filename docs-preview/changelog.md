@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.39 (January 28th, 2020)
+
+- Support for both dark and high-contrast themes
+
 ## 0.3.37 (January 21st, 2020)
 
 - Added Preview for Video markdown syntax
