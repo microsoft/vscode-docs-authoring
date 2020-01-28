@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.39 (January 28th, 2020)
+
+- Multi-cursor/selection formatting
+
 ## 0.2.38 (January 28nd, 2020)
 
 - Typing a triple backtick will trigger auto-completion for language identifiers
