@@ -1,8 +1,8 @@
 "use strict";
 
-import { QuickPickOptions, Range, window } from "vscode";
+import { QuickPickOptions, Range, window, Selection, TextEditorEdit } from "vscode";
 import { DocsCodeLanguages, languageRequired } from "../constants/docs-code-languages";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData, showStatusMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
 
@@ -111,27 +111,52 @@ export function showSupportedLanguages(content: string, selectedContent: any) {
 export function applyCodeFormatting(content: string, selectedContent: any, codeLang: string) {
     const selectedText = content.trim();
     const editor = window.activeTextEditor;
+
     if (!editor) {
         noActiveEditorMessage();
         return;
     } else {
+        let selections: Selection[] = editor.selections;
         const emptyRange = new Range(editor.selection.active, editor.selection.active);
 
-        if (selectedText === "") {
+        // if unselect text, add bold syntax without any text
+        if (selections.length == 0) {
             const cursorPosition = editor.selection.active;
             // assumes the range of code syntax
             const range = new Range(cursorPosition.with(cursorPosition.line, cursorPosition.character - 1
                 < 0 ? 0 : cursorPosition.character - 1), cursorPosition.with
-                    (cursorPosition.line, cursorPosition.character + 1));
+                (cursorPosition.line, cursorPosition.character + 1));
 
             const formattedText = format(selectedText, "", selectedContent.isSingleLine, range);
 
             insertUnselectedText(editor, formatCode.name, formattedText, range);
-        } else {
+        }
+
+        // if only a selection is made with a single cursor
+        if (selections.length == 1) {
             // calls formatter and returns selectedText as MD Code
             const formattedText = format(selectedText, codeLang, selectedContent.isSingleLine, emptyRange);
 
             insertContentToEditor(editor, formatCode.name, formattedText, true);
+        }
+
+        // if mulitple cursors were used to make selections
+        if (selections.length > 1) {
+            editor.edit(function (edit: TextEditorEdit): void {
+                selections.forEach((selection: Selection) => {
+                    for (let i = selection.start.line; i <= selection.end.line; i++) {
+                        let selectedText = editor.document.getText(selection);
+                        let formattedText = format(selectedText, codeLang, selectedContent.isSingleLine, emptyRange);
+                        edit.replace(selection, formattedText);
+                    }
+                });
+            }).then(success => {
+                if (!success) {
+                    postWarning("Could not format selections. Abandoning command.");
+                    showStatusMessage("Could not format selections. Abandoning command.");
+                    return;
+                }
+            })
         }
     }
 }

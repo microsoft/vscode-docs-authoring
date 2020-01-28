@@ -360,7 +360,6 @@ export function matchAll(
     pattern.lastIndex = 0;
     let match: RegExpMatchArray | null = pattern.exec(text);
     while (match) {
-        match = pattern.exec(text);
         if (match) {
             // This is necessary to avoid infinite loops with zero-width matches
             if (match.index === pattern.lastIndex) {
@@ -369,6 +368,8 @@ export function matchAll(
 
             out.push(match);
         }
+
+        match = pattern.exec(text);
     }
     return out;
 }
