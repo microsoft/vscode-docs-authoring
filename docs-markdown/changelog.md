@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.38 (January 28th, 2020)
+## 0.2.39 (January 28th, 2020)
 
 - Multi-cursor/selection formatting
 
