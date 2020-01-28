@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.38 (January 28th, 2020)
+
+- Multi-cursor/selection formatting
+
 ## 0.2.37 (January 22nd, 2020)
 
 - Removed support for standard image insertion
