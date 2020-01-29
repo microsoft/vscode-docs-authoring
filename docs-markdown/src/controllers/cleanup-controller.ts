@@ -7,6 +7,7 @@ import { ProgressLocation, window, workspace } from "vscode";
 import { postError, sendTelemetryData, showStatusMessage } from "../helper/common";
 import { reporter } from "../helper/telemetry";
 import { generateMasterRedirectionFile } from "./master-redirect-controller";
+import { deleteEmptyMetadata, deleteNaMetadata, deleteCommentedMetadata } from "../helper/cleanup";
 // tslint:disable no-var-requires
 const recursive = require("recursive-readdir");
 const jsyaml = require("js-yaml");
@@ -759,7 +760,17 @@ function removeEmptyMetadataAttributes(workspacePath: string, progress: any, res
                                 if (cleanupType === "empty") {
                                     data = deleteEmptyMetadata(data);
                                 }
-
+                                if (cleanupType === "na") {
+                                    data = deleteNaMetadata(data);
+                                }
+                                if (cleanupType === "commented") {
+                                    data = deleteCommentedMetadata(data);
+                                }
+                                if (cleanupType === "all") {
+                                    data = deleteEmptyMetadata(data);
+                                    data = deleteNaMetadata(data);
+                                    data = deleteCommentedMetadata(data);
+                                }
                                 const diff = jsdiff.diffChars(origin, data)
                                     .some((part: { added: any; removed: any; }) => {
                                         return part.added || part.removed;
@@ -795,9 +806,4 @@ function removeEmptyMetadataAttributes(workspacePath: string, progress: any, res
         });
 }
 
-function deleteEmptyMetadata(data: any) {
-    const msProdRegex: any = new RegExp(/(ms\.prod:)\s[a-zA-Z0-9]/)
-    if (data.match(msProdRegex[1]) && !data.match(msProdRegex)) {
-        return data.replace("ms.prod:", "");
-    }
-}
+
