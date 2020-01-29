@@ -15,7 +15,6 @@ const jsdiff = require("diff");
 const telemetryCommand: string = "applyCleanup";
 let commandOption: string;
 
-
 export function applyCleanupCommand() {
     const commands = [
         { command: applyCleanup.name, callback: applyCleanup },
@@ -38,22 +37,16 @@ function getCleanUpQuickPick() {
         description: "",
         label: "Capitalization of metadata values",
     });
-    items.push({
-        description: "",
-        label: "Master redirection file",
-    });
-    items.push({
-        description: "",
-        label: "Everything",
-    });
 
     return { items, opts };
 }
 
 export async function applyCleanupFile(file: string) {
-
     const { items, opts } = getCleanUpQuickPick();
-    delete items[3];
+    items.push({
+        description: "",
+        label: "Everything",
+    });
     const selection = await window.showQuickPick(items, opts);
     if (!selection) {
         return;
@@ -103,7 +96,7 @@ export async function applyCleanupFile(file: string) {
                     commandOption = "redirects";
                     break;
                 case "everything":
-                    runAll(progress, promises, file, percentComplete, null, null);
+                    promises = runAll(progress, promises, file, percentComplete, null, null);
                     commandOption = "everything";
                     break;
             }
@@ -120,8 +113,97 @@ export async function applyCleanupFile(file: string) {
     })
 }
 
+export async function applyCleanupFolder(folder: string) {
+    const { items, opts } = getCleanUpQuickPick();
+    items.push({
+        description: "",
+        label: "Everything",
+    });
+    const selection = await window.showQuickPick(items, opts);
+    if (!selection) {
+        return;
+    }
+    window.withProgress({
+        location: ProgressLocation.Notification,
+        title: "Cleanup",
+        cancellable: true,
+    }, (progress, token) => {
+        token.onCancellationRequested(() => {
+            postError("User canceled the long running operation");
+        });
+        progress.report({ increment: 0 });
+        return new Promise((resolve, reject) => {
+            let message = "";
+            let statusMessage = "";
+            recursive(folder,
+                [".git", ".github", ".vscode", ".vs", "node_module"],
+                (err: any, files: string[]) => {
+                    if (err) {
+                        postError(err);
+                    }
+                    let percentComplete = 0;
+                    let promises: Array<Promise<any>> = [];
+                    files.map((file, index) => {
+                        switch (selection.label.toLowerCase()) {
+                            case "single-valued metadata":
+                                showStatusMessage("Cleanup: Single-Valued metadata started.");
+                                message = "Single-Valued metadata completed.";
+                                statusMessage = "Cleanup: Single-Valued metadata completed.";
+                                promises = handleSingleValuedMetadata(progress, promises, file, percentComplete, files, index);
+                                commandOption = "single-value";
+                                break;
+                            case "microsoft links":
+                                showStatusMessage("Cleanup: Microsoft Links started.");
+                                message = "Microsoft Links completed.";
+                                statusMessage = "Cleanup: Microsoft Links completed.";
+                                promises = microsoftLinks(progress, promises, file, percentComplete, files, index);
+                                commandOption = "links";
+                                break;
+                            case "capitalization of metadata values":
+                                showStatusMessage("Cleanup: Capitalization of metadata values started.");
+                                message = "Capitalization of metadata values completed.";
+                                statusMessage = "Cleanup: Capitalization of metadata values completed.";
+                                promises = capitalizationOfMetadata(progress, promises, file, percentComplete, files, index);
+                                commandOption = "capitalization";
+                                break;
+                            case "master redirection file":
+                                showStatusMessage("Cleanup: Master redirection started.");
+                                message = "Master redirection complete.";
+                                statusMessage = "Cleanup: Master redirection completed.";
+                                generateMasterRedirectionFile(folder, resolve);
+                                commandOption = "redirects";
+                                break;
+                            case "everything":
+                                promises = runAll(progress, promises, file, percentComplete, files, index);
+                                commandOption = "everything";
+                                break;
+                        }
+                    })
+                    Promise.all(promises).then(() => {
+                        progress.report({ increment: 100, message });
+                        showStatusMessage(statusMessage);
+                        progress.report({ increment: 100, message: `100%` });
+                        resolve();
+                    }).catch(err => {
+                        postError(err);
+                    });
+                    commandOption = "single-value";
+                });
+            sendTelemetryData(telemetryCommand, commandOption);
+        })
+    });
+}
+
 export async function applyCleanup() {
     const { items, opts } = getCleanUpQuickPick();
+    items.push({
+        description: "",
+        label: "Master redirection file",
+    });
+    items.push({
+        description: "",
+        label: "Everything",
+    });
     const selection = await window.showQuickPick(items, opts);
     if (!selection) {
         return;
@@ -185,7 +267,7 @@ export async function applyCleanup() {
                                         showStatusMessage("Cleanup: Capitalization of metadata values started.");
                                         message = "Capitalization of metadata values completed.";
                                         statusMessage = "Cleanup: Capitalization of metadata values completed.";
-                                        promises = capitalizationOfMetadata(progress, promises, file, percentComplete, null, null);
+                                        promises = capitalizationOfMetadata(progress, promises, file, percentComplete, files, index);
                                         commandOption = "capitalization";
                                         break;
                                     case "master redirection file":
@@ -308,6 +390,7 @@ function runAll(progress: any, promises: Array<Promise<any>>, file: string, perc
             postError(error);
         }));
     }
+    return promises;
 }
 
 function runAllWorkspace(workspacePath: string, progress: any, resolve: any) {
@@ -499,7 +582,6 @@ function handleSingleValuedMetadata(progress: any, promises: Array<Promise<any>>
                         if (diff) {
                             writeFile(file, data, err => {
                                 promises.push(new Promise((resolve, reject) => {
-
                                     if (err) {
                                         postError(`Error: ${err}`);
                                         reject();
@@ -781,7 +863,7 @@ function capitalizationOfMetadata(progress: any, promises: Array<Promise<any>>, 
  * @param variable metadata key to use in regex to replace
  */
 function lowerCaseData(data: any, variable: string) {
-    const regex = new RegExp(`^(${variable}:\\s?)(.*\\s)`, "m");
+    const regex = new RegExp(`^(${variable}:\\s?)(.*?\\s?)`, "m");
     const captureParts = regex.exec(data);
     let value = ""
     if (captureParts && captureParts.length > 2) {

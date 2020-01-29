@@ -10,7 +10,7 @@ import { CancellationToken, commands, CompletionItem, ConfigurationTarget, Exten
 import * as vscode from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
-import { applyCleanupCommand, applyCleanupFile } from "./controllers/cleanup-controller";
+import { applyCleanupCommand, applyCleanupFile, applyCleanupFolder } from "./controllers/cleanup-controller";
 import { codeFormattingCommand } from "./controllers/code-controller";
 import { insertImageCommand } from "./controllers/image-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
@@ -87,13 +87,6 @@ export function activate(context: ExtensionContext) {
     insertMetadataCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     insertSortSelectionCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     insertLanguageCommands().forEach((cmd) => AuthoringCommands.push(cmd));
-    vscode.commands.registerCommand('cleanupFile', async (uri: Uri) => {
-        vscode.window.withProgress({
-            location: vscode.ProgressLocation.Window
-        }, async progress => {
-            await applyCleanupFile(uri.fsPath);
-        });
-    })
     // Autocomplete
     context.subscriptions.push(setupAutoComplete());
     vscode.languages.registerDocumentLinkProvider({ language: "markdown" }, {
@@ -122,6 +115,12 @@ export function activate(context: ExtensionContext) {
         AuthoringCommands.map((cmd: any) => {
             const commandName = cmd.command;
             const command = commands.registerCommand(commandName, cmd.callback);
+            vscode.commands.registerCommand('cleanupFile', async (uri: Uri) => {
+                await applyCleanupFile(uri.fsPath);
+            })
+            vscode.commands.registerCommand('cleanupInFolder', async (uri: Uri) => {
+                await applyCleanupFolder(uri.fsPath);
+            })
             context.subscriptions.push(command);
         });
     } catch (error) {
