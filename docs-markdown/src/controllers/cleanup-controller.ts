@@ -15,6 +15,7 @@ const jsdiff = require("diff");
 const telemetryCommand: string = "applyCleanup";
 let commandOption: string;
 
+
 export function applyCleanupCommand() {
     const commands = [
         { command: applyCleanup.name, callback: applyCleanup },
@@ -22,7 +23,7 @@ export function applyCleanupCommand() {
     return commands;
 }
 
-export function applyCleanup() {
+function getCleanUpQuickPick() {
     const opts: vscode.QuickPickOptions = { placeHolder: "Cleanup..." };
     const items: vscode.QuickPickItem[] = [];
     items.push({
@@ -46,66 +47,173 @@ export function applyCleanup() {
         label: "Everything",
     });
 
-    window.showQuickPick(items, opts).then((selection) => {
-        if (!selection) {
-            return;
-        }
-        window.withProgress({
-            location: ProgressLocation.Notification,
-            title: "Cleanup",
-            cancellable: true,
-        }, (progress, token) => {
-            token.onCancellationRequested(() => {
-                postError("User canceled the long running operation");
-            });
-            progress.report({ increment: 0 });
-            return new Promise((resolve, reject) => {
-                const editor = window.activeTextEditor;
-                if (editor) {
-                    const resource = editor.document.uri;
-                    const folder = workspace.getWorkspaceFolder(resource);
+    return { items, opts };
+}
 
-                    if (folder) {
-                        const workspacePath = folder.uri.fsPath;
+export async function applyCleanupFile(file: string) {
 
-                        if (workspacePath == null) {
-                            postError("No workspace is opened.");
-                            reject();
-                        }
+    const { items, opts } = getCleanUpQuickPick();
+    const selection = await window.showQuickPick(items, opts);
+    if (!selection) {
+        return;
+    }
+    window.withProgress({
+        location: ProgressLocation.Notification,
+        title: "Cleanup",
+        cancellable: true,
+    }, (progress, token) => {
+        token.onCancellationRequested(() => {
+            postError("User canceled the long running operation");
+        });
+        progress.report({ increment: 0 });
+        let percentComplete = 0;
+        let promises: Array<Promise<any>> = [];
+        return new Promise((resolve, reject) => {
+            switch (selection.label.toLowerCase()) {
+                case "single-valued metadata":
+                    promises = handleSingleValuedMetadata(progress, promises, file, percentComplete, null, null);
+                    Promise.all(promises).then(() => {
+                        progress.report({ increment: 100, message: "Single-Valued metadata completed." });
+                        showStatusMessage(`Cleanup: Single-Valued metadata completed.`);
+                        progress.report({ increment: 100, message: `100%` });
+                        resolve();
+                    }).catch(err => {
+                        postError(err);
+                    });
+                    commandOption = "single-value";
+                    break;
+                case "microsoft links":
+                    showStatusMessage("Cleanup: Microsoft Links started.");
+                    const message = "Microsoft Links";
+                    progress.report({ increment: 0, message });
+                    promises = microsoftLinks(progress, promises, file, percentComplete, null, null);
+                    Promise.all(promises).then(() => {
+                        progress.report({ increment: 100, message: "Microsoft Links completed." });
+                        showStatusMessage(`Cleanup: Microsoft Links completed.`);
+                        resolve();
+                    }).catch((error) => {
+                        postError(error);
+                    });
 
-                        // Check if the current workspace is the root folder of a repo by checking if the .git folder is present
-                        const gitDir = join(workspacePath, ".git");
-                        if (!existsSync(gitDir)) {
-                            postError("Current workspace is not root folder of a repo.");
-                            reject();
-                        }
+                    commandOption = "links";
+                    break;
+                // case "capitalization of metadata values":
+                //     capitalizationOfMetadata(workspacePath, progress, resolve);
+                //     commandOption = "capitalization";
+                //     break;
+                // case "master redirection file":
+                //     generateMasterRedirectionFile(workspacePath, resolve);
+                //     commandOption = "redirects";
+                //     break;
+                // case "everything":
+                //     runAll(workspacePath, progress, resolve);
+                //     commandOption = "everything";
+                //     break;
+            }
+            sendTelemetryData(telemetryCommand, commandOption);
+        });
+    })
+}
 
-                        switch (selection.label.toLowerCase()) {
-                            case "single-valued metadata":
-                                handleSingleValuedMetadata(workspacePath, progress, resolve);
-                                commandOption = "single-value";
-                                break;
-                            case "microsoft links":
-                                microsoftLinks(workspacePath, progress, resolve);
-                                commandOption = "links";
-                                break;
-                            case "capitalization of metadata values":
-                                capitalizationOfMetadata(workspacePath, progress, resolve);
-                                commandOption = "capitalization";
-                                break;
-                            case "master redirection file":
-                                generateMasterRedirectionFile(workspacePath, resolve);
-                                commandOption = "redirects";
-                                break;
-                            case "everything":
-                                runAll(workspacePath, progress, resolve);
-                                commandOption = "everything";
-                                break;
-                        }
-                        sendTelemetryData(telemetryCommand, commandOption);
+export async function applyCleanup() {
+    const { items, opts } = getCleanUpQuickPick();
+    const selection = await window.showQuickPick(items, opts);
+    if (!selection) {
+        return;
+    }
+    window.withProgress({
+        location: ProgressLocation.Notification,
+        title: "Cleanup",
+        cancellable: true,
+    }, (progress, token) => {
+        token.onCancellationRequested(() => {
+            postError("User canceled the long running operation");
+        });
+        progress.report({ increment: 0 });
+        return new Promise((resolve, reject) => {
+            const editor = window.activeTextEditor;
+            if (editor) {
+                const resource = editor.document.uri;
+                const folder = workspace.getWorkspaceFolder(resource);
+
+                if (folder) {
+                    const workspacePath = folder.uri.fsPath;
+
+                    if (workspacePath == null) {
+                        postError("No workspace is opened.");
+                        reject();
                     }
+
+                    // Check if the current workspace is the root folder of a repo by checking if the .git folder is present
+                    const gitDir = join(workspacePath, ".git");
+                    if (!existsSync(gitDir)) {
+                        postError("Current workspace is not root folder of a repo.");
+                        reject();
+                    }
+
+                    switch (selection.label.toLowerCase()) {
+                        case "single-valued metadata":
+                            recursive(workspacePath,
+                                [".git", ".github", ".vscode", ".vs", "node_module"],
+                                (err: any, files: string[]) => {
+                                    if (err) {
+                                        postError(err);
+                                    }
+                                    let percentComplete = 0;
+                                    let promises: Array<Promise<any>> = [];
+                                    files.map((file, index) => {
+                                        promises = handleSingleValuedMetadata(progress, promises, file, percentComplete, files, index);
+                                    })
+                                    Promise.all(promises).then(() => {
+                                        progress.report({ increment: 100, message: "Single-Valued metadata completed." });
+                                        showStatusMessage(`Cleanup: Single-Valued metadata completed.`);
+                                        progress.report({ increment: 100, message: `100%` });
+                                        resolve();
+                                    }).catch(err => {
+                                        postError(err);
+                                    });
+                                    commandOption = "single-value";
+                                });
+                            break;
+                        case "microsoft links":
+                            recursive(workspacePath,
+                                [".git", ".github", ".vscode", ".vs", "node_module"],
+                                (err: any, files: string[]) => {
+                                    if (err) {
+                                        postError(err);
+                                    }
+                                    const percentComplete = 0;
+                                    let promises: Array<Promise<any>> = [];
+                                    files.map((file, index) => {
+                                        promises = microsoftLinks(progress, promises, file, percentComplete, index, files);
+                                    });
+                                    Promise.all(promises).then(() => {
+                                        progress.report({ increment: 100, message: "Microsoft Links completed." });
+                                        showStatusMessage(`Cleanup: Microsoft Links completed.`);
+                                        resolve();
+                                    }).catch((error) => {
+                                        postError(error);
+                                    });
+                                },
+                            );
+                            commandOption = "links";
+                            break;
+                        case "capitalization of metadata values":
+                            capitalizationOfMetadata(workspacePath, progress, resolve);
+                            commandOption = "capitalization";
+                            break;
+                        case "master redirection file":
+                            generateMasterRedirectionFile(workspacePath, resolve);
+                            commandOption = "redirects";
+                            break;
+                        case "everything":
+                            runAll(workspacePath, progress, resolve);
+                            commandOption = "everything";
+                            break;
+                    }
+                    sendTelemetryData(telemetryCommand, commandOption);
                 }
-            });
+            }
         });
     });
 }
@@ -233,7 +341,10 @@ function runAll(workspacePath: string, progress: any, resolve: any) {
  * @param files list of files
  * @param percentComplete percentage complete for program
  */
-function showProgress(index: number, files: string[], percentComplete: number, progress: any, message: string) {
+function showProgress(index: number | null, files: string[] | null, percentComplete: number, progress: any, message: string) {
+    if (!files || !index) {
+        return 100;
+    }
     const currentCompletedPercent = Math.round(((index / files.length) * 100));
     if (percentComplete < currentCompletedPercent) {
         percentComplete = currentCompletedPercent;
@@ -247,101 +358,82 @@ function showProgress(index: number, files: string[], percentComplete: number, p
  * and cleans up Yaml Metadata values that have single array items
  * then converts the array to single item.
  */
-function handleSingleValuedMetadata(workspacePath: string, progress: any, resolve: any) {
+function handleSingleValuedMetadata(progress: any, promises: Array<Promise<any>>, file: string, percentComplete: number, files: Array<string> | null, index: number | null) {
     reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     showStatusMessage("Cleanup: Single-Valued metadata started.");
     const message = "Single-Valued metadata";
     progress.report({ increment: 0, message });
-    recursive(workspacePath,
-        [".git", ".github", ".vscode", ".vs", "node_module"],
-        (err: any, files: string[]) => {
-            if (err) {
-                postError(err);
-            }
-            let percentComplete = 0;
-            const promises: Array<Promise<any>> = [];
-            files.map((file, index) => {
-                if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
-                    promises.push(new Promise((resolve, reject) => {
-                        readFile(file, "utf8", (err, data) => {
+    if (file.endsWith(".yml")) {
+        promises.push(new Promise((resolve, reject) => {
+            readFile(file, "utf8", (err, data) => {
+                if (err) {
+                    postError(`Error: ${err}`);
+                    reject();
+                }
+                const origin = data;
+                data = handleYamlMetadata(data);
+                const diff = jsdiff.diffChars(origin, data)
+                    .some((part: { added: any; removed: any; }) => {
+                        return part.added || part.removed;
+                    });
+                if (diff) {
+                    writeFile(file, data, (err) => {
+                        promises.push(new Promise((resolve, reject) => {
                             if (err) {
                                 postError(`Error: ${err}`);
                                 reject();
                             }
-                            const origin = data;
-                            data = handleYamlMetadata(data);
-                            const diff = jsdiff.diffChars(origin, data)
-                                .some((part: { added: any; removed: any; }) => {
-                                    return part.added || part.removed;
-                                });
-                            if (diff) {
-                                writeFile(file, data, (err) => {
-                                    promises.push(new Promise((resolve, reject) => {
-                                        if (err) {
-                                            postError(`Error: ${err}`);
-                                            reject();
-                                        }
-                                        percentComplete = showProgress(index, files, percentComplete, progress, message);
-                                        resolve();
-                                    }).catch((error) => {
-                                        postError(error);
-                                    }));
-                                });
-                            }
+                            percentComplete = showProgress(index, files, percentComplete, progress, message);
                             resolve();
-                        });
-                    }).catch((error) => {
-                        postError(error);
-                    }));
-                } else if (file.endsWith(".md")) {
-                    promises.push(new Promise((resolve, reject) => {
-                        readFile(file, "utf8", (err, data) => {
-                            if (err) {
-                                postError(`Error: ${err}`);
-                            }
-                            if (data.startsWith("---")) {
-                                const regex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
-                                const metadataMatch = data.match(regex);
-                                if (metadataMatch) {
-                                    const origin = data;
-                                    data = handleMarkdownMetadata(data, metadataMatch[2]);
-                                    const diff = jsdiff.diffChars(origin, data)
-                                        .some((part: { added: any; removed: any; }) => {
-                                            return part.added || part.removed;
-                                        });
-                                    if (diff) {
-                                        writeFile(file, data, err => {
-                                            promises.push(new Promise((resolve, reject) => {
-
-                                                if (err) {
-                                                    postError(`Error: ${err}`);
-                                                    reject();
-                                                }
-                                                percentComplete = showProgress(index, files, percentComplete, progress, message);
-                                            }).catch((error) => {
-                                                postError(error);
-                                            }));
-                                        });
-                                    }
-                                }
-                            }
-                            resolve();
-                        });
-                    }).catch((error) => {
-                        postError(error);
-                    }));
+                        }).catch((error) => {
+                            postError(error);
+                        }));
+                    });
                 }
-            });
-            Promise.all(promises).then(() => {
-                progress.report({ increment: 100, message: "Single-Valued metadata completed." });
-                showStatusMessage(`Cleanup: Single-Valued metadata completed.`);
-                progress.report({ increment: 100, message: `100%` });
                 resolve();
-            }).catch(err => {
-                postError(err);
             });
-        },
-    );
+        }).catch((error) => {
+            postError(error);
+        }));
+    } else if (file.endsWith(".md")) {
+        promises.push(new Promise((resolve, reject) => {
+            readFile(file, "utf8", (err, data) => {
+                if (err) {
+                    postError(`Error: ${err}`);
+                }
+                if (data.startsWith("---")) {
+                    const regex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
+                    const metadataMatch = data.match(regex);
+                    if (metadataMatch) {
+                        const origin = data;
+                        data = handleMarkdownMetadata(data, metadataMatch[2]);
+                        const diff = jsdiff.diffChars(origin, data)
+                            .some((part: { added: any; removed: any; }) => {
+                                return part.added || part.removed;
+                            });
+                        if (diff) {
+                            writeFile(file, data, err => {
+                                promises.push(new Promise((resolve, reject) => {
+
+                                    if (err) {
+                                        postError(`Error: ${err}`);
+                                        reject();
+                                    }
+                                    percentComplete = showProgress(index, files, percentComplete, progress, message);
+                                }).catch((error) => {
+                                    postError(error);
+                                }));
+                            });
+                        }
+                    }
+                }
+                resolve();
+            });
+        }).catch((error) => {
+            postError(error);
+        }));
+    }
+    return promises;
 }
 
 /**
@@ -473,58 +565,39 @@ function singleValueMetadata(data: any, variable: string) {
 /**
  * Converts http:// to https:// for all microsoft links.
  */
-function microsoftLinks(workspacePath: string, progress: any, resolve: any) {
+function microsoftLinks(progress: any, promises: Array<Promise<any>>, file: string, percentComplete: number, index: number | null, files: Array<string> | null) {
     showStatusMessage("Cleanup: Microsoft Links started.");
     const message = "Microsoft Links";
     progress.report({ increment: 0, message });
-    recursive(workspacePath,
-        [".git", ".github", ".vscode", ".vs", "node_module"],
-        (err: any, files: string[]) => {
-            if (err) {
-                postError(err);
-            }
-            let percentComplete = 0;
-            const promises: Array<Promise<any>> = [];
-            files.map((file, index) => {
-                if (file.endsWith(".md")) {
+    if (file.endsWith(".md")) {
+        promises.push(new Promise((resolve, reject) => {
+            readFile(file, "utf8", (err, data) => {
+                const origin = data;
+                data = handleLinksWithRegex(data);
+                const diff = jsdiff.diffChars(origin, data)
+                    .some((part: { added: any; removed: any; }) => {
+                        return part.added || part.removed;
+                    });
+                if (diff) {
                     promises.push(new Promise((resolve, reject) => {
-                        readFile(file, "utf8", (err, data) => {
-                            const origin = data;
-                            data = handleLinksWithRegex(data);
-                            const diff = jsdiff.diffChars(origin, data)
-                                .some((part: { added: any; removed: any; }) => {
-                                    return part.added || part.removed;
-                                });
-                            if (diff) {
-                                promises.push(new Promise((resolve, reject) => {
-                                    writeFile(file, data, err => {
-                                        if (err) {
-                                            postError(`Error: ${err}`);
-                                        }
-                                        percentComplete = showProgress(index, files, percentComplete, progress, message);
-                                        resolve();
-                                    });
-                                }).catch((error) => {
-                                    postError(error);
-                                }));
+                        writeFile(file, data, err => {
+                            if (err) {
+                                postError(`Error: ${err}`);
                             }
+                            percentComplete = showProgress(index, files, percentComplete, progress, message);
                             resolve();
                         });
                     }).catch((error) => {
                         postError(error);
                     }));
                 }
-            });
-
-            Promise.all(promises).then(() => {
-                progress.report({ increment: 100, message: "Microsoft Links completed." });
-                showStatusMessage(`Cleanup: Microsoft Links completed.`);
                 resolve();
-            }).catch((error) => {
-                postError(error);
             });
-        },
-    );
+        }).catch((error) => {
+            postError(error);
+        }));
+    };
+    return promises;
 }
 
 /**

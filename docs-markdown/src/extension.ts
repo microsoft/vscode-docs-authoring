@@ -6,11 +6,11 @@
  Logging, Error Handling, VS Code window updates, etc.
 */
 
-import { CancellationToken, commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, TextDocument, window, workspace } from "vscode";
+import { CancellationToken, commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, TextDocument, window, workspace, Uri } from "vscode";
 import * as vscode from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
-import { applyCleanupCommand } from "./controllers/cleanup-controller";
+import { applyCleanupCommand, applyCleanupFile } from "./controllers/cleanup-controller";
 import { codeFormattingCommand } from "./controllers/code-controller";
 import { insertImageCommand } from "./controllers/image-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
@@ -87,7 +87,13 @@ export function activate(context: ExtensionContext) {
     insertMetadataCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     insertSortSelectionCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     insertLanguageCommands().forEach((cmd) => AuthoringCommands.push(cmd));
-
+    vscode.commands.registerCommand('cleanupFile', async (uri: Uri) => {
+        vscode.window.withProgress({
+            location: vscode.ProgressLocation.Window
+        }, async progress => {
+            await applyCleanupFile(uri.fsPath);
+        });
+    })
     // Autocomplete
     context.subscriptions.push(setupAutoComplete());
     vscode.languages.registerDocumentLinkProvider({ language: "markdown" }, {

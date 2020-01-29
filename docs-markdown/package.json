@@ -192,7 +192,16 @@
       },
       {
         "command": "insertLanguageIdentifier",
-        "title": "Insert language identifier",
+        "title": "Insert language identifier"
+      },
+      {
+        "command": "cleanupInFolder",
+        "title": "Folder level Cleanup script",
+        "category": "Docs"
+      },
+      {
+        "command": "cleanupFile",
+        "title": "Cleanup file",
         "category": "Docs"
       }
     ],
@@ -220,6 +229,18 @@
           "when": "editorHasSelection",
           "command": "sortSelectionDescending",
           "group": "1_modification"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "cleanupInFolder",
+          "group": "1_modification",
+          "when": "explorerResourceIsFolder"
+        },
+        {
+          "command": "cleanupFile",
+          "group": "1_modification",
+          "when": "resourceLangId == markdown && !listMultipleSelection"
         }
       ],
       "commandPalette": [
@@ -369,6 +390,14 @@
           "command": "insertRowsAndColumns",
           "group": "Docs",
           "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "cleanupInFolder",
+          "when": "false"
+        },
+        {
+          "command": "cleanupFile",
+          "when": "false"
         }
       ]
     },
