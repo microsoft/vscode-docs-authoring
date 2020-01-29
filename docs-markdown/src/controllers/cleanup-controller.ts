@@ -710,19 +710,19 @@ function emptyMetadataQuickPick(workspacePath: string, progress: any, resolve: a
 
                 switch (selection.label.toLowerCase()) {
                     case "remove metadata attributes with empty values":
-                        removeEmptyMetadataAttributes(workspacePath, progress, resolve);
+                        removeEmptyMetadataAttributes(workspacePath, progress, resolve, "empty");
                         commandOption = "remove-empty";
                         break;
                     case `remove metadata attributes with "na" or "n/a"`:
-                        findAttributesToRemove(1, "la", "la");
+                        removeEmptyMetadataAttributes(workspacePath, progress, resolve, "na");
                         commandOption = "remove-na";
                         break;
                     case "remove commented out metadata attributes":
-                        findAttributesToRemove(1, "la", "la");
+                        removeEmptyMetadataAttributes(workspacePath, progress, resolve, "commented");
                         commandOption = "remove-commented";
                         break;
                     case "remove all":
-                        findAttributesToRemove(1, "la", "la");
+                        removeEmptyMetadataAttributes(workspacePath, progress, resolve, "all");
                         commandOption = "remove-all-empty";
                         break;
                 }
@@ -732,30 +732,12 @@ function emptyMetadataQuickPick(workspacePath: string, progress: any, resolve: a
     });
 }
 
-function findAttributesToRemove(data: any, variable: string, type: string) {
-    const regex = new RegExp(`^(${variable}:\\s?)(.*\\s)`, "m");
-    const captureParts = regex.exec(data);
-    let value = ""
-    if (captureParts && captureParts.length > 2) {
-        value = captureParts[2].toLowerCase();
-        if (value.match(/^\s*$/) !== null) {
-            return data;
-        }
-        try {
-            return data.replace(regex, `${variable}: ${value}`);
-        } catch (error) {
-            postError(`Error occurred: ${error}`);
-        }
-    }
-    return data;
-}
-
 /**
  * Lower cases all metadata found in .md files
  */
-function removeEmptyMetadataAttributes(workspacePath: string, progress: any, resolve: any) {
-    showStatusMessage("Cleanup: Capitalization of metadata values started.");
-    const message = "Capitalization of metadata values";
+function removeEmptyMetadataAttributes(workspacePath: string, progress: any, resolve: any, cleanupType: string) {
+    showStatusMessage("Cleanup: Removal of metadata values started.");
+    const message = "Removal of metadata values";
     progress.report({ increment: 0, message });
     recursive(workspacePath,
         [".git", ".github", ".vscode", ".vs", "node_module"],
@@ -773,14 +755,27 @@ function removeEmptyMetadataAttributes(workspacePath: string, progress: any, res
                                 postError(`Error: ${err}`);
                             }
                             if (data.startsWith("---")) {
-                                const regex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
-                                const metadataMatch = data.match(regex);
-                                let matchers = [];
-                                if (metadataMatch) {
-                                    // console.log(metadataMatch[2]);
-                                    // console.log(metadataMatch[2].split('\n'));
-                                    matchers.push(metadataMatch[2].split('\n'));
-                                    console.log(matchers);
+                                const origin = data;
+                                if (cleanupType === "empty") {
+                                    data = deleteEmptyMetadata(data);
+                                }
+
+                                const diff = jsdiff.diffChars(origin, data)
+                                    .some((part: { added: any; removed: any; }) => {
+                                        return part.added || part.removed;
+                                    });
+                                if (diff) {
+                                    promises.push(new Promise((resolve) => {
+                                        writeFile(file, data, (err) => {
+                                            if (err) {
+                                                postError(`Error: ${err}`);
+                                            }
+                                            percentComplete = showProgress(index, files, percentComplete, progress, message);
+                                            resolve();
+                                        });
+                                    }).catch((error) => {
+                                        postError(error);
+                                    }));
                                 }
                             }
                             resolve();
@@ -791,11 +786,18 @@ function removeEmptyMetadataAttributes(workspacePath: string, progress: any, res
                 }
             });
             Promise.all(promises).then(() => {
-                progress.report({ increment: 100, message: "Capitalization of metadata values completed." });
-                showStatusMessage(`Cleanup: Capitalization of metadata values completed.`);
+                progress.report({ increment: 100, message: "Removal of metadata values completed." });
+                showStatusMessage(`Cleanup: Removal of metadata values completed.`);
                 resolve();
             }).catch((error) => {
                 postError(error);
             });
         });
+}
+
+function deleteEmptyMetadata(data: any) {
+    const msProdRegex: any = new RegExp(/(ms\.prod:)\s[a-zA-Z0-9]/)
+    if (data.match(msProdRegex[1]) && !data.match(msProdRegex)) {
+        return data.replace("ms.prod:", "");
+    }
 }
