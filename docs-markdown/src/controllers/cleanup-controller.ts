@@ -53,6 +53,7 @@ function getCleanUpQuickPick() {
 export async function applyCleanupFile(file: string) {
 
     const { items, opts } = getCleanUpQuickPick();
+    delete items[3];
     const selection = await window.showQuickPick(items, opts);
     if (!selection) {
         return;
@@ -67,49 +68,53 @@ export async function applyCleanupFile(file: string) {
         });
         progress.report({ increment: 0 });
         let percentComplete = 0;
+        let message = "Cleanup";
+        let statusMessage = "";
         let promises: Array<Promise<any>> = [];
-        return new Promise((resolve, reject) => {
+        progress.report({ increment: 0, message });
+        return new Promise((resolve) => {
             switch (selection.label.toLowerCase()) {
                 case "single-valued metadata":
+                    showStatusMessage("Cleanup: Single-Valued metadata started.");
+                    message = "Single-Valued metadata completed.";
+                    statusMessage = "Cleanup: Single-Valued metadata completed.";
                     promises = handleSingleValuedMetadata(progress, promises, file, percentComplete, null, null);
-                    Promise.all(promises).then(() => {
-                        progress.report({ increment: 100, message: "Single-Valued metadata completed." });
-                        showStatusMessage(`Cleanup: Single-Valued metadata completed.`);
-                        progress.report({ increment: 100, message: `100%` });
-                        resolve();
-                    }).catch(err => {
-                        postError(err);
-                    });
                     commandOption = "single-value";
                     break;
                 case "microsoft links":
                     showStatusMessage("Cleanup: Microsoft Links started.");
-                    const message = "Microsoft Links";
-                    progress.report({ increment: 0, message });
+                    message = "Microsoft Links completed.";
+                    statusMessage = "Cleanup: Microsoft Links completed.";
                     promises = microsoftLinks(progress, promises, file, percentComplete, null, null);
-                    Promise.all(promises).then(() => {
-                        progress.report({ increment: 100, message: "Microsoft Links completed." });
-                        showStatusMessage(`Cleanup: Microsoft Links completed.`);
-                        resolve();
-                    }).catch((error) => {
-                        postError(error);
-                    });
-
                     commandOption = "links";
                     break;
-                // case "capitalization of metadata values":
-                //     capitalizationOfMetadata(workspacePath, progress, resolve);
-                //     commandOption = "capitalization";
-                //     break;
-                // case "master redirection file":
-                //     generateMasterRedirectionFile(workspacePath, resolve);
-                //     commandOption = "redirects";
-                //     break;
-                // case "everything":
-                //     runAll(workspacePath, progress, resolve);
-                //     commandOption = "everything";
-                //     break;
+                case "capitalization of metadata values":
+                    showStatusMessage("Cleanup: Capitalization of metadata values started.");
+                    message = "Capitalization of metadata values completed.";
+                    statusMessage = "Cleanup: Capitalization of metadata values completed.";
+                    promises = capitalizationOfMetadata(progress, promises, file, percentComplete, null, null);
+                    commandOption = "capitalization";
+                    break;
+                case "master redirection file":
+                    showStatusMessage("Cleanup: Master redirection started.");
+                    message = "Master redirection complete.";
+                    statusMessage = "Cleanup: Master redirection completed.";
+                    generateMasterRedirectionFile(file, resolve);
+                    commandOption = "redirects";
+                    break;
+                case "everything":
+                    runAll(progress, promises, file, percentComplete, null, null);
+                    commandOption = "everything";
+                    break;
             }
+            Promise.all(promises).then(() => {
+                progress.report({ increment: 100, message });
+                showStatusMessage(statusMessage);
+                progress.report({ increment: 100, message: `100%` });
+                resolve();
+            }).catch(err => {
+                postError(err);
+            });
             sendTelemetryData(telemetryCommand, commandOption);
         });
     })
@@ -150,67 +155,62 @@ export async function applyCleanup() {
                         postError("Current workspace is not root folder of a repo.");
                         reject();
                     }
-
-                    switch (selection.label.toLowerCase()) {
-                        case "single-valued metadata":
-                            recursive(workspacePath,
-                                [".git", ".github", ".vscode", ".vs", "node_module"],
-                                (err: any, files: string[]) => {
-                                    if (err) {
-                                        postError(err);
-                                    }
-                                    let percentComplete = 0;
-                                    let promises: Array<Promise<any>> = [];
-                                    files.map((file, index) => {
+                    let message = "";
+                    let statusMessage = "";
+                    recursive(workspacePath,
+                        [".git", ".github", ".vscode", ".vs", "node_module"],
+                        (err: any, files: string[]) => {
+                            if (err) {
+                                postError(err);
+                            }
+                            let percentComplete = 0;
+                            let promises: Array<Promise<any>> = [];
+                            files.map((file, index) => {
+                                switch (selection.label.toLowerCase()) {
+                                    case "single-valued metadata":
+                                        showStatusMessage("Cleanup: Single-Valued metadata started.");
+                                        message = "Single-Valued metadata completed.";
+                                        statusMessage = "Cleanup: Single-Valued metadata completed.";
                                         promises = handleSingleValuedMetadata(progress, promises, file, percentComplete, files, index);
-                                    })
-                                    Promise.all(promises).then(() => {
-                                        progress.report({ increment: 100, message: "Single-Valued metadata completed." });
-                                        showStatusMessage(`Cleanup: Single-Valued metadata completed.`);
-                                        progress.report({ increment: 100, message: `100%` });
-                                        resolve();
-                                    }).catch(err => {
-                                        postError(err);
-                                    });
-                                    commandOption = "single-value";
-                                });
-                            break;
-                        case "microsoft links":
-                            recursive(workspacePath,
-                                [".git", ".github", ".vscode", ".vs", "node_module"],
-                                (err: any, files: string[]) => {
-                                    if (err) {
-                                        postError(err);
-                                    }
-                                    const percentComplete = 0;
-                                    let promises: Array<Promise<any>> = [];
-                                    files.map((file, index) => {
-                                        promises = microsoftLinks(progress, promises, file, percentComplete, index, files);
-                                    });
-                                    Promise.all(promises).then(() => {
-                                        progress.report({ increment: 100, message: "Microsoft Links completed." });
-                                        showStatusMessage(`Cleanup: Microsoft Links completed.`);
-                                        resolve();
-                                    }).catch((error) => {
-                                        postError(error);
-                                    });
-                                },
-                            );
-                            commandOption = "links";
-                            break;
-                        case "capitalization of metadata values":
-                            capitalizationOfMetadata(workspacePath, progress, resolve);
-                            commandOption = "capitalization";
-                            break;
-                        case "master redirection file":
-                            generateMasterRedirectionFile(workspacePath, resolve);
-                            commandOption = "redirects";
-                            break;
-                        case "everything":
-                            runAll(workspacePath, progress, resolve);
-                            commandOption = "everything";
-                            break;
-                    }
+                                        commandOption = "single-value";
+                                        break;
+                                    case "microsoft links":
+                                        showStatusMessage("Cleanup: Microsoft Links started.");
+                                        message = "Microsoft Links completed.";
+                                        statusMessage = "Cleanup: Microsoft Links completed.";
+                                        promises = microsoftLinks(progress, promises, file, percentComplete, files, index);
+                                        commandOption = "links";
+                                        break;
+                                    case "capitalization of metadata values":
+                                        showStatusMessage("Cleanup: Capitalization of metadata values started.");
+                                        message = "Capitalization of metadata values completed.";
+                                        statusMessage = "Cleanup: Capitalization of metadata values completed.";
+                                        promises = capitalizationOfMetadata(progress, promises, file, percentComplete, null, null);
+                                        commandOption = "capitalization";
+                                        break;
+                                    case "master redirection file":
+                                        showStatusMessage("Cleanup: Master redirection started.");
+                                        message = "Master redirection complete.";
+                                        statusMessage = "Cleanup: Master redirection completed.";
+                                        generateMasterRedirectionFile(workspacePath, resolve);
+                                        commandOption = "redirects";
+                                        break;
+                                    case "everything":
+                                        runAllWorkspace(workspacePath, progress, resolve);
+                                        commandOption = "everything";
+                                        break;
+                                }
+                            })
+                            Promise.all(promises).then(() => {
+                                progress.report({ increment: 100, message });
+                                showStatusMessage(statusMessage);
+                                progress.report({ increment: 100, message: `100%` });
+                                resolve();
+                            }).catch(err => {
+                                postError(err);
+                            });
+                            commandOption = "single-value";
+                        });
                     sendTelemetryData(telemetryCommand, commandOption);
                 }
             }
@@ -225,7 +225,92 @@ export async function applyCleanup() {
  * capitalizationOfMetadata() => lower cases all metadata found in .md files
  * generateMasterRedirectionFile() => creates master redirection file for root.
  */
-function runAll(workspacePath: string, progress: any, resolve: any) {
+function runAll(progress: any, promises: Array<Promise<any>>, file: string, percentComplete: number, files: Array<string> | null, index: number | null) {
+    showStatusMessage("Cleanup: Everything started.");
+    const message = "Everything";
+    progress.report({ increment: 0, message });
+    if (file.endsWith(".yml")) {
+        promises.push(new Promise((resolve, reject) => {
+            readFile(file, "utf8", (err, data) => {
+                if (err) {
+                    postError(`Error: ${err}`);
+                    reject();
+                }
+                const origin = data;
+                data = handleYamlMetadata(data);
+                const diff = jsdiff.diffChars(origin, data)
+                    .some((part: { added: any; removed: any; }) => {
+                        return part.added || part.removed;
+                    });
+                if (diff) {
+                    promises.push(new Promise((resolve, reject) => {
+                        writeFile(file, data, (err) => {
+                            if (err) {
+                                postError(`Error: ${err}`);
+                                reject();
+                            }
+                            percentComplete = showProgress(index, files, percentComplete, progress, message);
+                            resolve();
+                        });
+                    }).catch((error) => {
+                        postError(error);
+                    }));
+                }
+                resolve();
+            });
+        }).catch((error) => {
+            postError(error);
+        }));
+    } else if (file.endsWith(".md")) {
+        promises.push(new Promise((resolve, reject) => {
+            readFile(file, "utf8", (err, data) => {
+                if (err) {
+                    postError(`Error: ${err}`);
+                    reject();
+                }
+                const origin = data;
+                data = handleLinksWithRegex(data);
+                if (data.startsWith("---")) {
+                    data = lowerCaseData(data, "ms.author");
+                    data = lowerCaseData(data, "author");
+                    data = lowerCaseData(data, "ms.prod");
+                    data = lowerCaseData(data, "ms.service");
+                    data = lowerCaseData(data, "ms.subservice");
+                    data = lowerCaseData(data, "ms.technology");
+                    data = lowerCaseData(data, "ms.topic");
+                    const regex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
+                    const metadataMatch = data.match(regex);
+                    if (metadataMatch) {
+                        data = handleMarkdownMetadata(data, metadataMatch[2]);
+                    }
+                }
+                const diff = jsdiff.diffChars(origin, data)
+                    .some((part: { added: any; removed: any; }) => {
+                        return part.added || part.removed;
+                    });
+                if (diff) {
+                    promises.push(new Promise((resolve, reject) => {
+                        writeFile(file, data, (err) => {
+                            if (err) {
+                                postError(`Error: ${err}`);
+                                reject();
+                            }
+                            percentComplete = showProgress(index, files, percentComplete, progress, message);
+                            resolve();
+                        });
+                    }).catch((error) => {
+                        postError(error);
+                    }));
+                }
+                resolve();
+            });
+        }).catch((error) => {
+            postError(error);
+        }));
+    }
+}
+
+function runAllWorkspace(workspacePath: string, progress: any, resolve: any) {
     showStatusMessage("Cleanup: Everything started.");
     const message = "Everything";
     progress.report({ increment: 0, message });
@@ -565,7 +650,7 @@ function singleValueMetadata(data: any, variable: string) {
 /**
  * Converts http:// to https:// for all microsoft links.
  */
-function microsoftLinks(progress: any, promises: Array<Promise<any>>, file: string, percentComplete: number, index: number | null, files: Array<string> | null) {
+function microsoftLinks(progress: any, promises: Array<Promise<any>>, file: string, percentComplete: number, files: Array<string> | null, index: number | null) {
     showStatusMessage("Cleanup: Microsoft Links started.");
     const message = "Microsoft Links";
     progress.report({ increment: 0, message });
@@ -645,67 +730,48 @@ function handleLinksWithRegex(data: string) {
 /**
  * Lower cases all metadata found in .md files
  */
-function capitalizationOfMetadata(workspacePath: string, progress: any, resolve: any) {
-    showStatusMessage("Cleanup: Capitalization of metadata values started.");
+function capitalizationOfMetadata(progress: any, promises: Array<Promise<any>>, file: string, percentComplete: number, files: Array<string> | null, index: number | null) {
     const message = "Capitalization of metadata values";
-    progress.report({ increment: 0, message });
-    recursive(workspacePath,
-        [".git", ".github", ".vscode", ".vs", "node_module"],
-        (err: any, files: string[]) => {
-            if (err) {
-                postError(err);
-            }
-            let percentComplete = 0;
-            const promises: Array<Promise<any>> = [];
-            files.map((file, index) => {
-                if (file.endsWith(".md")) {
-                    promises.push(new Promise((resolve) => {
-                        readFile(file, "utf8", (err, data) => {
-                            if (err) {
-                                postError(`Error: ${err}`);
-                            }
-                            if (data.startsWith("---")) {
-                                const origin = data;
-                                data = lowerCaseData(data, "ms.author");
-                                data = lowerCaseData(data, "author");
-                                data = lowerCaseData(data, "ms.prod");
-                                data = lowerCaseData(data, "ms.service");
-                                data = lowerCaseData(data, "ms.subservice");
-                                data = lowerCaseData(data, "ms.technology");
-                                data = lowerCaseData(data, "ms.topic");
-                                const diff = jsdiff.diffChars(origin, data)
-                                    .some((part: { added: any; removed: any; }) => {
-                                        return part.added || part.removed;
-                                    });
-                                if (diff) {
-                                    promises.push(new Promise((resolve) => {
-                                        writeFile(file, data, (err) => {
-                                            if (err) {
-                                                postError(`Error: ${err}`);
-                                            }
-                                            percentComplete = showProgress(index, files, percentComplete, progress, message);
-                                            resolve();
-                                        });
-                                    }).catch((error) => {
-                                        postError(error);
-                                    }));
-                                }
-                            }
-                            resolve();
-                        });
-                    }).catch((error) => {
-                        postError(error);
-                    }));
+    if (file.endsWith(".md")) {
+        promises.push(new Promise((resolve) => {
+            readFile(file, "utf8", (err, data) => {
+                if (err) {
+                    postError(`Error: ${err}`);
                 }
-            });
-            Promise.all(promises).then(() => {
-                progress.report({ increment: 100, message: "Capitalization of metadata values completed." });
-                showStatusMessage(`Cleanup: Capitalization of metadata values completed.`);
+                if (data.startsWith("---")) {
+                    const origin = data;
+                    data = lowerCaseData(data, "ms.author");
+                    data = lowerCaseData(data, "author");
+                    data = lowerCaseData(data, "ms.prod");
+                    data = lowerCaseData(data, "ms.service");
+                    data = lowerCaseData(data, "ms.subservice");
+                    data = lowerCaseData(data, "ms.technology");
+                    data = lowerCaseData(data, "ms.topic");
+                    const diff = jsdiff.diffChars(origin, data)
+                        .some((part: { added: any; removed: any; }) => {
+                            return part.added || part.removed;
+                        });
+                    if (diff) {
+                        promises.push(new Promise((resolve) => {
+                            writeFile(file, data, (err) => {
+                                if (err) {
+                                    postError(`Error: ${err}`);
+                                }
+                                percentComplete = showProgress(index, files, percentComplete, progress, message);
+                                resolve();
+                            });
+                        }).catch((error) => {
+                            postError(error);
+                        }));
+                    }
+                }
                 resolve();
-            }).catch((error) => {
-                postError(error);
             });
-        });
+        }).catch((error) => {
+            postError(error);
+        }));
+    }
+    return promises;
 }
 
 /**
