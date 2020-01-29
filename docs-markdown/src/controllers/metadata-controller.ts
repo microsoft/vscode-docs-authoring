@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as glob from "glob";
 import * as path from "path";
 
-import { commands, Selection, TextEditor, window, workspace, TextEdit } from "vscode";
+import { commands, Selection, TextEditor, window, workspace } from "vscode";
 import { isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 
 export function insertMetadataCommands() {
@@ -35,12 +35,12 @@ interface IDocFxMetadata {
 
 type MetadataType = "author" | "ms.author" | "ms.date" | "ms.service" | "ms.subservice";
 
-interface Replacement {
+interface IReplacement {
     selection: Selection;
     value: string;
 }
 
-type Replacements = Replacement[];
+type Replacements = IReplacement[];
 
 class ReplacementFormat {
     constructor(
@@ -53,7 +53,7 @@ class ReplacementFormat {
     }
 }
 
-const authorRegex = /\Aauthor:\s*\b(.+?)$/mi;
+const authorRegex = /^author:\s*\b(.+?)$/mi;
 const msAuthorRegex = /ms.author:\s*\b(.+?)$/mi;
 const msDateRegex = /ms.date:\s*\b(.+?)$/mi;
 const msServiceRegex = /ms.service:\s*\b(.+?)$/mi;
@@ -94,13 +94,13 @@ export async function updateAllMetadataValues() {
                 }
             }
 
-            applyReplacements(replacements, editor);
+            await applyReplacements(replacements, editor);
             saveAndSendTelemetry();
         }
     }
 }
 
-function findReplacement(editor: TextEditor, content: string, value: string, expression?: RegExp): Replacement | undefined {
+function findReplacement(editor: TextEditor, content: string, value: string, expression?: RegExp): IReplacement | undefined {
     const result = expression ? expression.exec(content) : null;
     if (result !== null && result.length) {
         const match = result[0];
@@ -117,14 +117,13 @@ function findReplacement(editor: TextEditor, content: string, value: string, exp
     return undefined;
 }
 
-function applyReplacements(replacements: Replacements, editor: TextEditor) {
+async function applyReplacements(replacements: Replacements, editor: TextEditor) {
     if (replacements) {
-        replacements.forEach(async (replacement) => {
-            await editor.edit((builder) => {
+        await editor.edit((builder) => {
+            replacements.forEach((replacement) =>
                 builder.replace(
                     replacement.selection,
-                    replacement.value);
-            });
+                    replacement.value));
         });
     }
 }
@@ -241,7 +240,7 @@ export async function updateMetadataDate() {
     if (content) {
         const replacement = findReplacement(editor, content, `ms.date: ${toShortDate(new Date())}`, msDateRegex);
         if (replacement) {
-            applyReplacements([replacement], editor);
+            await applyReplacements([replacement], editor);
             saveAndSendTelemetry();
         }
     }
