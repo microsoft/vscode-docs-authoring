@@ -181,7 +181,8 @@
       {
         "command": "updateImplicitMetadataValues",
         "title": "Update Implicit Metadata Values",
-        "category": "Docs"
+        "category": "Docs",
+        "enablement": "resourceLangId == markdown"
       },
       {
         "command": "sortSelectionAscending",
@@ -203,7 +204,8 @@
       {
         "command": "updateImplicitMetadataValues",
         "title": "Update Implicit Metadata Values",
-        "category": "Docs"
+        "category": "Docs",
+        "enablement": "resourceLangId == markdown"
       }
     ],
     "menus": {
@@ -217,13 +219,13 @@
       ],
       "editor/context": [
         {
-          "when": "resourceLangId == markdown",
+          "when": "editorTextFocus",
           "command": "updateMetadataDate",
           "group": "1_modification"
         },
         {
-          "when": "resourceLangId == markdown",
-          "command": "updateAllMetadataValues",
+          "when": "editorTextFocus",
+          "command": "updateImplicitMetadataValues",
           "group": "1_modification"
         },
         {
