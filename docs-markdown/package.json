@@ -201,8 +201,8 @@
         "category": "Docs"
       },
       {
-        "command": "updateAllMetadataValues",
-        "title": "Update All Metadata Values",
+        "command": "updateImplicitMetadataValues",
+        "title": "Update Implicit Metadata Values",
         "category": "Docs"
       }
     ],
