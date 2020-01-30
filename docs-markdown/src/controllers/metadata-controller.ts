@@ -10,7 +10,7 @@ import { isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from ".
 export function insertMetadataCommands() {
     return [
         { command: updateMetadataDate.name, callback: updateMetadataDate },
-        { command: updateAllMetadataValues.name, callback: updateAllMetadataValues },
+        { command: updateImplicitMetadataValues.name, callback: updateImplicitMetadataValues },
     ];
 }
 
@@ -18,6 +18,12 @@ interface IDocFxMetadata {
     build: {
         fileMetadata?: {
             "author"?: {
+                [glob: string]: string,
+            };
+            "manager"?: {
+                [glob: string]: string,
+            };
+            "titleSuffix"?: {
                 [glob: string]: string,
             };
             "ms.author"?: {
@@ -33,7 +39,14 @@ interface IDocFxMetadata {
     };
 }
 
-type MetadataType = "author" | "ms.author" | "ms.date" | "ms.service" | "ms.subservice";
+type MetadataType =
+    "author" |
+    "manager" |
+    "titleSuffix" |
+    "ms.author" |
+    "ms.date" |
+    "ms.service" |
+    "ms.subservice";
 
 interface IReplacement {
     selection: Selection;
@@ -54,6 +67,8 @@ class ReplacementFormat {
 }
 
 const authorRegex = /^author:\s*\b(.+?)$/mi;
+const managerRegex = /^manager:\s*\b(.+?)$/mi;
+const titleSuffixRegex = /^titleSuffix:\s*\b(.+?)$/mi;
 const msAuthorRegex = /ms.author:\s*\b(.+?)$/mi;
 const msDateRegex = /ms.date:\s*\b(.+?)$/mi;
 const msServiceRegex = /ms.service:\s*\b(.+?)$/mi;
@@ -61,13 +76,15 @@ const msSubserviceRegex = /ms.subservice:\s*\b(.+?)$/mi;
 
 const metadataExpressions: Map<MetadataType, RegExp> = new Map([
     ["author", authorRegex],
+    ["manager", managerRegex],
+    ["titleSuffix", titleSuffixRegex],
     ["ms.author", msAuthorRegex],
     ["ms.date", msDateRegex],
     ["ms.service", msServiceRegex],
     ["ms.subservice", msSubserviceRegex],
 ]);
 
-export async function updateAllMetadataValues() {
+export async function updateImplicitMetadataValues() {
     const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -95,7 +112,7 @@ export async function updateAllMetadataValues() {
             }
 
             await applyReplacements(replacements, editor);
-            saveAndSendTelemetry();
+            await saveAndSendTelemetry();
         }
     }
 }
@@ -164,6 +181,9 @@ async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementF
                         replacements.push(new ReplacementFormat("ms.author", alias));
                     }
                 }
+
+                tryAssignReplacement(fsPath, "manager", fileMetadata["manager"]);
+                tryAssignReplacement(fsPath, "titleSuffix", fileMetadata["titleSuffix"]);
                 tryAssignReplacement(fsPath, "ms.service", fileMetadata["ms.service"]);
                 tryAssignReplacement(fsPath, "ms.subservice", fileMetadata["ms.subservice"]);
 
@@ -241,7 +261,7 @@ export async function updateMetadataDate() {
         const replacement = findReplacement(editor, content, `ms.date: ${toShortDate(new Date())}`, msDateRegex);
         if (replacement) {
             await applyReplacements([replacement], editor);
-            saveAndSendTelemetry();
+            await saveAndSendTelemetry();
         }
     }
 }
