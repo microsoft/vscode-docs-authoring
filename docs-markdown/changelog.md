@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.40 (January 28th, 2020)
+
+- Fix bug that prevented language identifiers from being suggested
+
 ## 0.2.39 (January 28th, 2020)
 
 - Multi-cursor/selection formatting
@@ -8,11 +12,6 @@
 
 - Typing a triple backtick will trigger auto-completion for language identifiers
 - Sort selection added, both ASC and DESC sort available
-
-## 0.2.37 (January 22nd, 2020)
-
-- Removed support for standard image insertion
-- Added lightbox insertion to image
 
 ## 0.2.33 (January 14th, 2020)
 

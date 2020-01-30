@@ -21,12 +21,10 @@ module.exports.noLocDoubleQuotes = `Bad syntax for non-localization. Double quot
 // image
 module.exports.imageCaseSensitive = `Bad syntax for image. "image" and its attributes must be lower-case.`;
 module.exports.imageNonAllowedAttribute = `Bad syntax for image. "___" is not an allowed attribute.`;
-module.exports.imageAttributeWrongStrongTypeBoolean = `Bad syntax for image. The value for "___" is not valid. It must be "true" or "false"`;
 module.exports.imageNonAllowedType = `Bad syntax for image. "___" is not an allowed type. Options are "content", "complex", "icon"`;
 module.exports.imageComplexLongDescriptionRequired = `Bad syntax for image. If image type is "complex", a long description is required.`;
 module.exports.imageComplexEndTagRequired = `Bad syntax for image. If image type is "complex", ":::image-end:::" is required.`;
 module.exports.imageSourceRequired = `Bad syntax for image. "source" required.`;
-module.exports.imageLightboxSourceInvalid = `Bad syntax for image. An image source for the "lightbox" attribute is needed.`;
 module.exports.imageAltTextRequired = `Bad syntax for image. "alt-text" required for "complex" and "content" image types.`;
 module.exports.imageIconRemoveLocScope = `Bad syntax for image. "loc-scope" not allowed for icon images`;
 module.exports.imageIconRemoveAltText = `Bad syntax for image. "alt-text" not allowed for icon images`;
