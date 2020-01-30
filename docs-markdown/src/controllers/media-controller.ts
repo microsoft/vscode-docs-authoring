@@ -14,6 +14,7 @@ export function insertLinksAndMediaCommands() {
         { command: insertVideo.name, callback: insertVideo },
         { command: insertURL.name, callback: insertURL },
         { command: insertLink.name, callback: insertLink },
+        // { command: insertImage.name, callback: insertImage },
         { command: selectLinkType.name, callback: selectLinkType },
         { command: selectLinkTypeToolbar.name, callback: selectLinkTypeToolbar },
         { command: selectMediaType.name, callback: selectMediaType },

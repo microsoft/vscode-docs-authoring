@@ -42,12 +42,12 @@ module.exports.syntaxNoLoc = /:::no-loc\stext="(.*?)":::/gm;
 //image
 module.exports.syntaxImageLooseMatch = /((:+)(.\s*)(image.*(complex))(.\s*)(.*)(.:*)\s*(.*)\s*(.:*)([a-z]*-[a-z]*)(.:*))|((:+)(.\s*)(image)(.\s*)(.*)(.:*))/gmi;
 module.exports.syntaxImageAttributes = /(:image)|([a-z-]*(?==))/gmi;
+module.exports.allowedImageAttributes = [":image", "type", "source", "alt-text", "loc-scope"];
 module.exports.allowedImageTypes = ["content", "complex", "icon"];
 module.exports.imageTypeMatch = /type\s*=\s*"([a-z]*)"/m;
 module.exports.imageLongDescriptionMatch = /(:::)(.*)(:::)(((\s)*(.*))+)(:::)(.*)(:::)/mi;
 module.exports.imageComplexEndTagMatch = /:::(\s*)?image-end:::/gmi;
 module.exports.imageOpen = /:::image/gmi;
-module.exports.imageLightboxMatch = /lightbox\s*=\s*"(.*?)"/m;
 module.exports.imageSourceMatch = /source\s*=\s*"(.*?)"/m;
 module.exports.imageAltTextMatch = /alt-text\s*=\s*"(.*?)"/m;
 module.exports.imageLocScopeMatch = /loc-scope\s*=\s*"(.*?)"/m;
