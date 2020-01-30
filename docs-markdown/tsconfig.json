@@ -9,8 +9,7 @@
         "noImplicitAny": true,
         "noImplicitThis": true,
         "lib": [
-            "es6",
-            "es2017.object"
+            "es6"
         ],
         "sourceMap": true,
         "rootDir": "."
