@@ -46,12 +46,18 @@ export function insertVideo() {
         noActiveEditorMessage();
         return;
     } else {
+        const validateInput = (urlInput: string) => {
+            const urlLowerCase = urlInput.toLowerCase();
+            return urlLowerCase.startsWith("https://channel9.msdn.com")
+                && urlLowerCase.split("?")[0].endsWith("player")
+                || urlLowerCase.startsWith("https://www.youtube.com/embed")
+                || urlLowerCase.startsWith("https://www.microsoft.com/en-us/videoplayer/embed")
+                ? ""
+                : "https://channel9.msdn.com, https://www.youtube.com/embed or https://www.microsoft.com/en-us/videoplayer/embed are required prefixes for video URLs. Link will not be added if prefix is not present."
+        };
         vscode.window.showInputBox({
             placeHolder: "Enter URL; Begin typing to see the allowed video URL prefixes.",
-            validateInput: (urlInput) => urlInput.toLowerCase().startsWith("https://channel9.msdn.com") && urlInput.toLowerCase().split("?")[0].endsWith("player") ||
-                urlInput.toLowerCase().startsWith("https://www.youtube.com/embed") ||
-                urlInput.toLowerCase().startsWith("https://www.microsoft.com/en-us/videoplayer/embed") ? "" :
-                "https://channel9.msdn.com, https://www.youtube.com/embed or https://www.microsoft.com/en-us/videoplayer/embed are required prefixes for video URLs. Link will not be added if prefix is not present.",
+            validateInput: validateInput
         }).then((val) => {
             // If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
             if (val === undefined) {
