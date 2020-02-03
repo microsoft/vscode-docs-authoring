@@ -10,7 +10,7 @@ import { CancellationToken, commands, CompletionItem, ConfigurationTarget, Exten
 import * as vscode from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
-import { applyCleanupCommand } from "./controllers/cleanup/cleanup-controller";
+import { applyCleanupCommand, applyCleanupFile, applyCleanupFolder } from "./controllers/cleanup/cleanup-controller";
 import { codeFormattingCommand } from "./controllers/code-controller";
 import { insertImageCommand } from "./controllers/image-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";

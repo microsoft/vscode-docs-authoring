@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "graceful-fs";
 import { postError } from "../../helper/common";
-import { showProgress } from "./cleanup-controller";
+import { showProgress } from "./utilities";
 const jsdiff = require("diff");
 
 /**

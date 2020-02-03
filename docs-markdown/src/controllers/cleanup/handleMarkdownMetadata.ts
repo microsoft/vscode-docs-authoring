@@ -1,5 +1,5 @@
-import { singleValueMetadata, handleSingleItemArray } from "./cleanup-controller";
 import { postError } from "../../helper/common";
+import { handleSingleItemArray, singleValueMetadata } from "./utilities";
 const jsyaml = require("js-yaml");
 
 /**

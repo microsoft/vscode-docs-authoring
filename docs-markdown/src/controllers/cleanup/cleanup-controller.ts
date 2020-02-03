@@ -1,6 +1,6 @@
 "use strict";
 
-import { existsSync, readFile } from "graceful-fs";
+import { existsSync } from "graceful-fs";
 import { join } from "path";
 import * as vscode from "vscode";
 import { ProgressLocation, window, workspace } from "vscode";

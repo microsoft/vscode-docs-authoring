@@ -1,6 +1,14 @@
 import { reporter } from "../../helper/telemetry";
+import { readFile, writeFile } from "graceful-fs";
+import { postError } from "../../helper/common";
+import { handleYamlMetadata } from "./handleYamlMetadata";
+import { showProgress } from "./utilities";
+import { handleMarkdownMetadata } from "./handleMarkdownMetadata";
+const jsdiff = require("diff");
+
 const telemetryCommand: string = "applyCleanup";
 let commandOption: string;
+
 /**
  * Searches through all directories from rootPath
  * and cleans up Yaml Metadata values that have single array items

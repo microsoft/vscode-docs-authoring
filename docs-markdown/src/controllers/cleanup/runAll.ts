@@ -1,6 +1,11 @@
 import { readFile, writeFile } from "graceful-fs";
 import { postError, showStatusMessage } from "../../helper/common";
-import { handleYamlMetadata, showProgress, handleLinksWithRegex, lowerCaseData, handleMarkdownMetadata } from "./cleanup-controller";
+import { handleYamlMetadata } from "./handleYamlMetadata";
+import { showProgress } from "./utilities";
+import { handleLinksWithRegex } from "./microsoftLinks";
+import { lowerCaseData } from "./capitalizationOfMetadata";
+import { handleMarkdownMetadata } from "./handleMarkdownMetadata";
+import { generateMasterRedirectionFile } from "../master-redirect-controller";
 const jsdiff = require("diff");
 const recursive = require("recursive-readdir");
 
