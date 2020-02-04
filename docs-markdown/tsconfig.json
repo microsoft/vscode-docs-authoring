@@ -9,7 +9,7 @@
         "noImplicitAny": true,
         "noImplicitThis": true,
         "lib": [
-            "es6",
+            "es6"
         ],
         "sourceMap": true,
         "rootDir": "."
