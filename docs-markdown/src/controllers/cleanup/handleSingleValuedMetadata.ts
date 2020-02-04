@@ -7,7 +7,6 @@ import { handleMarkdownMetadata } from "./handleMarkdownMetadata";
 const jsdiff = require("diff");
 
 const telemetryCommand: string = "applyCleanup";
-let commandOption: string;
 
 /**
  * Searches through all directories from rootPath
