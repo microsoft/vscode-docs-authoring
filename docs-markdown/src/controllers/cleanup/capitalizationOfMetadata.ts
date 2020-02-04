@@ -57,7 +57,7 @@ export function capitalizationOfMetadata(progress: any, promises: Array<Promise<
  * @param variable metadata key to use in regex to replace
  */
 export function lowerCaseData(data: any, variable: string) {
-    const regex = new RegExp(`^(${variable}:\\s?)(.*?\\s?)`, "m");
+    const regex = new RegExp(`^(${variable}:)(.*(\\S\\s)?)`, "m");
     const captureParts = regex.exec(data);
     let value = ""
     if (captureParts && captureParts.length > 2) {
@@ -66,7 +66,7 @@ export function lowerCaseData(data: any, variable: string) {
             return data;
         }
         try {
-            return data.replace(regex, `${variable}: ${value}`);
+            return data.replace(regex, `${variable}:${value}`);
         } catch (error) {
             postError(`Error occurred: ${error}`);
         }

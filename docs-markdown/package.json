@@ -196,7 +196,7 @@
       },
       {
         "command": "cleanupInFolder",
-        "title": "Run cleanup script in folder",
+        "title": "Cleanup files in folder",
         "category": "Docs"
       },
       {
