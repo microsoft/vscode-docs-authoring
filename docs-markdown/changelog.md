@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.44 (February 4th, 2020)
+
+- Added folder level and file level cleanup script
+
 ## 0.2.40 (January 28th, 2020)
 
 - Fix bug that prevented language identifiers from being suggested
@@ -210,4 +214,4 @@ First release with the following functionality:
 - Tables
 - Includes
 - Snippets
-- Preview 
+- Preview
