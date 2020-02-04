@@ -3,7 +3,6 @@
 ## 0.2.44 (February 4th, 2020)
 
 - Added folder level and file level cleanup script
-- Added empty metadata removal cleanup script
 
 ## 0.2.40 (January 28th, 2020)
 
