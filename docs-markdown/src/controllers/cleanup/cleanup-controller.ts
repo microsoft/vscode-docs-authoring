@@ -10,6 +10,7 @@ import { capitalizationOfMetadata } from "./capitalizationOfMetadata";
 import { handleSingleValuedMetadata } from "./handleSingleValuedMetadata";
 import { microsoftLinks } from "./microsoftLinks";
 import { runAll, runAllWorkspace } from "./runAll";
+import { removeEmptyMetadata } from "./removeEmptyMetadata";
 // tslint:disable no-var-requires
 const recursive = require("recursive-readdir");
 
@@ -103,6 +104,13 @@ export async function applyCleanupFile(file: string) {
                     promises = runAll(progress, promises, file, percentComplete, null, null);
                     commandOption = "everything";
                     break;
+                case "empty metadata":
+                    showStatusMessage("Cleanup: Master redirection started.");
+                    message = "Master redirection complete.";
+                    statusMessage = "Cleanup: Master redirection completed.";
+                    promises = emptyMetadataQuickPick(progress, promises, file, percentComplete, null, null);
+                    commandOption = "empty-metadata";
+                    break;
             }
             Promise.all(promises).then(() => {
                 progress.report({ increment: 100, message });
@@ -183,6 +191,13 @@ export async function applyCleanupFolder(folder: string) {
                                 promises = runAll(progress, promises, file, percentComplete, files, index);
                             });
                             commandOption = "everything";
+                            break;
+                        case "empty metadata":
+                            showStatusMessage("Cleanup: Master redirection started.");
+                            message = "Master redirection complete.";
+                            statusMessage = "Cleanup: Master redirection completed.";
+                            promises = emptyMetadataQuickPick(progress, promises, file, percentComplete, files, index);
+                            commandOption = "empty-metadata";
                             break;
                     }
                     Promise.all(promises).then(() => {
@@ -321,5 +336,75 @@ export async function applyCleanup() {
                 }
             }
         });
+    });
+}
+
+function emptyMetadataQuickPick(workspacePath: string, progress: any, resolve: any) {
+    const opts: vscode.QuickPickOptions = { placeHolder: "Cleanup..." };
+    const items: vscode.QuickPickItem[] = [];
+    items.push({
+        description: "",
+        label: "Remove metadata attributes with empty values",
+    });
+    items.push({
+        description: "",
+        label: `Remove metadata attributes with "na" or "n/a"`,
+    });
+    items.push({
+        description: "",
+        label: "Remove commented out metadata attributes",
+    });
+    items.push({
+        description: "",
+        label: "Remove all",
+    });
+    window.showQuickPick(items, opts).then((selection) => {
+        if (!selection) {
+            return;
+        }
+        const editor = window.activeTextEditor;
+        if (editor) {
+            const resource = editor.document.uri;
+            const folder = workspace.getWorkspaceFolder(resource);
+
+            if (folder) {
+                const workspacePath = folder.uri.fsPath;
+
+                if (workspacePath == null) {
+                    postError("No workspace is opened.");
+                }
+
+                // Check if the current workspace is the root folder of a repo by checking if the .git folder is present
+                const gitDir = join(workspacePath, ".git");
+                if (!existsSync(gitDir)) {
+                    postError("Current workspace is not root folder of a repo.");
+                }
+
+                switch (selection.label.toLowerCase()) {
+                    case "remove metadata attributes with empty values":
+                        showStatusMessage("Cleanup: Microsoft Links started.");
+                        message = "Microsoft Links completed.";
+                        statusMessage = "Cleanup: Microsoft Links completed.";
+                        files.map((file, index) => {
+                            promises = microsoftLinks(progress, promises, file, percentComplete, files, index);
+                        });
+                        commandOption = "links";
+                        break;
+                    /* case `remove metadata attributes with "na" or "n/a"`:
+                        removeEmptyMetadataAttributes(workspacePath, progress, resolve, "na");
+                        commandOption = "remove-na";
+                        break;
+                    case "remove commented out metadata attributes":
+                        removeEmptyMetadataAttributes(workspacePath, progress, resolve, "commented");
+                        commandOption = "remove-commented";
+                        break;
+                    case "remove all":
+                        removeEmptyMetadataAttributes(workspacePath, progress, resolve, "all");
+                        commandOption = "remove-all-empty";
+                        break; */
+                }
+                sendTelemetryData(telemetryCommand, commandOption);
+            }
+        }
     });
 }
