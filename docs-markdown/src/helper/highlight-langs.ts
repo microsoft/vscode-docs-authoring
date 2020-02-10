@@ -41,6 +41,7 @@ type HighlightLanguages = IHighlightLanguage[];
  */
 const languages: HighlightLanguages =
     [
+        { language: ".NET Core CLI", aliases: ["dotnetcli"], isPopular: true },
         { language: "1C", aliases: ["1c"] },
         { language: "ABNF", aliases: ["abnf"] },
         { language: "Access logs ", aliases: ["accesslog"] },
