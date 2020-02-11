@@ -65,7 +65,6 @@ const languages: HighlightLanguages =
         { language: "Bash", aliases: ["bash", "sh", "zsh"] },
         { language: "Basic", aliases: ["basic"] },
         { language: "BNF", aliases: ["bnf"] },
-        { language: "Brainfuck", aliases: ["brainfuck", "bf"] },
         { language: "C#", aliases: ["csharp", "cs"] },
         { language: "C# (Interactive)", aliases: ["csharp-interactive"] },
         { language: "C++", aliases: ["cpp", "c", "cc", "h", "c++", "h++", "hpp"] },
@@ -316,7 +315,7 @@ function getConfiguredLanguages() {
     }
 
     const docsetLanguages = configuration.docsetLanguages as string[];
-    const result = configuration.allAvailableLanguages || !docsetLanguages
+    const result = configuration.allAvailableLanguages || !docsetLanguages || !docsetLanguages.length
         ? languages
         : languages.filter((lang) => docsetLanguages.some((langId) => langId === lang.language));
 
