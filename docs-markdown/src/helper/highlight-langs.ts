@@ -230,8 +230,9 @@ export const languages: HighlightLanguages =
         { language: "x86 Assembly", aliases: ["x86asm"] },
         { language: "XL", aliases: ["xl", "tao"] },
         { language: "XQuery", aliases: ["xquery", "xpath", "xq"] },
-        { language: "YAML", aliases: ["yml", "yaml"] },
+        { language: "XAML", aliases: ["xaml"] },
         { language: "XML", aliases: ["xml", "xhtml", "rss", "atom", "xjb", "xsd", "xsl", "plist"] },
+        { language: "YAML", aliases: ["yml", "yaml"] },
         { language: "Zephir", aliases: ["zephir", "zep"] },
     ];
 
