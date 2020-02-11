@@ -37,6 +37,7 @@ export type HighlightLanguages = IHighlightLanguage[];
 /**
  * The various syntax highlighting languages available.
  * Source langs: https://raw.githubusercontent.com/DuncanmaMSFT/highlight.js/master/README.md
+ * If this changes, we need to update "contributes/configuration/markdown.docsetLanguages" schema.
  */
 export const languages: HighlightLanguages =
     [
