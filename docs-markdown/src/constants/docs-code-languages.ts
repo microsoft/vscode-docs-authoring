@@ -1,47 +1,9 @@
 "use strict";
 
-export const DocsCodeLanguages = [
-    "aspx-csharp",
-    "aspx-vb",
-    "azcopy",
-    "azurecli",
-    "azurepowershell",
-    "bash",
-    "console",
-    "cpp",
-    "cppcx",
-    "cppwinrt",
-    "csharp-interactive",
-    "csharp",
-    "cshtml",
-    "dax",
-    "dockerfile",
-    "dotnetcli",
-    "fsharp",
-    "go",
-    "html",
-    "http",
-    "java",
-    "javascript",
-    "json",
-    "kusto",
-    "md",
-    "objc",
-    "odata",
-    "php",
-    "powerapps-comma",
-    "powerapps-dot",
-    "powershell",
-    "python",
-    "qsharp",
-    "r",
-    "ruby",
-    "sql",
-    "swift",
-    "typescript",
-    "vb",
-    "xaml",
-    "xml",
-];
+import { naturalLanguageCompare } from "../helper/common";
+import { IHighlightLanguage, languages } from "../helper/highlight-langs";
 
+const languageAliases = languages.map((lang: IHighlightLanguage) => lang.aliases[0]);
+languageAliases.sort(naturalLanguageCompare);
+export const DocsCodeLanguages = languageAliases;
 export const languageRequired = "Select a programming language (required)";

@@ -27,18 +27,18 @@ export function insertLanguageCommands() {
     ];
 }
 
-interface IHighlightLanguage {
+export interface IHighlightLanguage {
     readonly language: string;
     readonly aliases: string[];
 }
 
-type HighlightLanguages = IHighlightLanguage[];
+export type HighlightLanguages = IHighlightLanguage[];
 
 /**
  * The various syntax highlighting languages available.
  * Source langs: https://raw.githubusercontent.com/DuncanmaMSFT/highlight.js/master/README.md
  */
-const languages: HighlightLanguages =
+export const languages: HighlightLanguages =
     [
         { language: ".NET Core CLI", aliases: ["dotnetcli"] },
         { language: "1C", aliases: ["1c"] },
