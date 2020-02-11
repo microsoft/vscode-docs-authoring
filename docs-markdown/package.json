@@ -425,7 +425,7 @@
         "markdown.allAvailableLanguages": {
           "type": "boolean",
           "default": false,
-          "description": "Provide all available languages (including unpopular languages) when suggesting code-fence language identifiers."
+          "markdownDescription": "Provide all available languages when suggesting code-fence language identifiers. Overrides `markdown.docsetLanguages` setting."
         },
         "markdown.docsetLanguages": {
           "type": [
@@ -433,7 +433,7 @@
             "null"
           ],
           "title": "Language Identifiers",
-          "markdownDescription": "When the \"All Available Languages\" flag is set to `false`, the suggested completion list displayed when typing an opening code-block (` ``` `) is filtered to the provided language identifiers.",
+          "markdownDescription": "When the \"All Available Languages\" (`markdown.allAvailableLanguages`) flag is set to `false`, the suggested completion list displayed when typing an opening code-block (` ``` `) is filtered to the provided language identifiers.",
           "items": {
             "type": "string",
             "enum": [
