@@ -41,7 +41,7 @@ function getCleanUpQuickPick() {
     });
     items.push({
         description: "",
-        label: "Empty Metadata",
+        label: "Empty metadata",
     });
 
     return { items, opts };
@@ -450,27 +450,27 @@ export async function applyCleanup() {
                                                 })
                                                 commandOption = "remove-empty";
                                                 break;
-                                            case "remove metadata attributes with empty values":
+                                            case `remove metadata attributes with "na" or "n/a"`:
                                                 files.map((file, index) => {
                                                     promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "na");
                                                 })
                                                 commandOption = "remove-na";
                                                 break;
-                                            case "remove metadata attributes with empty values":
+                                            case "remove commented out metadata attributes":
                                                 files.map((file, index) => {
                                                     promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "commented");
                                                 })
                                                 commandOption = "remove-commented";
                                                 break;
-                                            case "remove metadata attributes with empty values":
+                                            case "remove all":
                                                 files.map((file, index) => {
                                                     promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "all");
                                                 })
                                                 commandOption = "remove-all";
                                                 break;
                                         }
-                                    })
-                            })
+                                    });
+                            });
                     }
                     Promise.all(promises).then(() => {
                         progress.report({ increment: 100, message });
