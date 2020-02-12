@@ -403,3 +403,7 @@ export function extractDocumentLink(
         return undefined;
     }
 }
+
+export const naturalLanguageCompare = (a: string, b: string) => {
+    return (!!a && !!b) ? a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }) : 0;
+};
