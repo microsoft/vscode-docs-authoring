@@ -39,6 +39,10 @@ function getCleanUpQuickPick() {
         description: "",
         label: "Capitalization of metadata values",
     });
+    items.push({
+        description: "",
+        label: "Empty Metadata",
+    });
 
     return { items, opts };
 }
@@ -105,9 +109,9 @@ export async function applyCleanupFile(file: string) {
                     commandOption = "everything";
                     break;
                 case "empty metadata":
-                    showStatusMessage("Cleanup: Master redirection started.");
-                    message = "Master redirection complete.";
-                    statusMessage = "Cleanup: Master redirection completed.";
+                    showStatusMessage("Cleanup: Metadata attribute cleanup started.");
+                    message = "Empty metadata attribute cleanup complete.";
+                    statusMessage = "Cleanup: Metadata attribute cleanup completed.";
                     promises = emptyMetadataQuickPick(progress, promises, file, percentComplete, null, null);
                     commandOption = "empty-metadata";
                     break;
@@ -193,10 +197,12 @@ export async function applyCleanupFolder(folder: string) {
                             commandOption = "everything";
                             break;
                         case "empty metadata":
-                            showStatusMessage("Cleanup: Master redirection started.");
-                            message = "Master redirection complete.";
-                            statusMessage = "Cleanup: Master redirection completed.";
-                            promises = emptyMetadataQuickPick(progress, promises, file, percentComplete, files, index);
+                            showStatusMessage("Cleanup: Metadata attribute cleanup started.");
+                            message = "Empty metadata attribute cleanup completed.";
+                            statusMessage = "Cleanup: Metadata attribute cleanup completed.";
+                            files.map((file, index) => {
+                                promises = emptyMetadataQuickPick(progress, promises, file, percentComplete, files, index);
+                            });
                             commandOption = "empty-metadata";
                             break;
                     }
@@ -322,6 +328,22 @@ export async function applyCleanup() {
                             runAllWorkspace(workspacePath, progress, resolve);
                             commandOption = "everything";
                             break;
+                        case "empty metadata":
+                            showStatusMessage("Cleanup: Metadata attribute cleanup started.");
+                            message = "Empty metadata attribute cleanup complete.";
+                            statusMessage = "Cleanup: Metadata attribute cleanup completed.";
+                            recursive(workspacePath,
+                                [".git", ".github", ".vscode", ".vs", "node_module"],
+                                (err: any, files: string[]) => {
+                                    if (err) {
+                                        postError(err);
+                                    }
+                                    files.map((file, index) => {
+                                        promises = emptyMetadataQuickPick(progress, promises, file, percentComplete, files, index);
+                                    })
+                                })
+                            commandOption = "links";
+                            break;
                     }
                     Promise.all(promises).then(() => {
                         progress.report({ increment: 100, message });
@@ -339,7 +361,7 @@ export async function applyCleanup() {
     });
 }
 
-function emptyMetadataQuickPick(workspacePath: string, progress: any, resolve: any) {
+export function emptyMetadataQuickPick(progress: any, promises: Array<Promise<any>>, file: string, percentComplete: number, files: Array<string> | null, index: number | null) {
     const opts: vscode.QuickPickOptions = { placeHolder: "Cleanup..." };
     const items: vscode.QuickPickItem[] = [];
     items.push({
@@ -362,49 +384,24 @@ function emptyMetadataQuickPick(workspacePath: string, progress: any, resolve: a
         if (!selection) {
             return;
         }
-        const editor = window.activeTextEditor;
-        if (editor) {
-            const resource = editor.document.uri;
-            const folder = workspace.getWorkspaceFolder(resource);
-
-            if (folder) {
-                const workspacePath = folder.uri.fsPath;
-
-                if (workspacePath == null) {
-                    postError("No workspace is opened.");
-                }
-
-                // Check if the current workspace is the root folder of a repo by checking if the .git folder is present
-                const gitDir = join(workspacePath, ".git");
-                if (!existsSync(gitDir)) {
-                    postError("Current workspace is not root folder of a repo.");
-                }
-
-                switch (selection.label.toLowerCase()) {
-                    case "remove metadata attributes with empty values":
-                        showStatusMessage("Cleanup: Microsoft Links started.");
-                        message = "Microsoft Links completed.";
-                        statusMessage = "Cleanup: Microsoft Links completed.";
-                        files.map((file, index) => {
-                            promises = microsoftLinks(progress, promises, file, percentComplete, files, index);
-                        });
-                        commandOption = "links";
-                        break;
-                    /* case `remove metadata attributes with "na" or "n/a"`:
-                        removeEmptyMetadataAttributes(workspacePath, progress, resolve, "na");
-                        commandOption = "remove-na";
-                        break;
-                    case "remove commented out metadata attributes":
-                        removeEmptyMetadataAttributes(workspacePath, progress, resolve, "commented");
-                        commandOption = "remove-commented";
-                        break;
-                    case "remove all":
-                        removeEmptyMetadataAttributes(workspacePath, progress, resolve, "all");
-                        commandOption = "remove-all-empty";
-                        break; */
-                }
-                sendTelemetryData(telemetryCommand, commandOption);
-            }
+        switch (selection.label.toLowerCase()) {
+            case "remove metadata attributes with empty values":
+                removeEmptyMetadata(progress, promises, file, percentComplete, null, null, "empty");
+                commandOption = "remove-empty";
+                break;
+            case `remove metadata attributes with "na" or "n/a"`:
+                removeEmptyMetadata(progress, promises, file, percentComplete, null, null, "na");
+                commandOption = "remove-na";
+                break;
+            case "remove commented out metadata attributes":
+                removeEmptyMetadata(progress, promises, file, percentComplete, null, null, "commented");
+                commandOption = "remove-commented";
+                break;
+            case "remove all":
+                removeEmptyMetadata(progress, promises, file, percentComplete, null, null, "all");
+                commandOption = "remove-all-empty";
+                break;
         }
     });
+    return promises;
 }
