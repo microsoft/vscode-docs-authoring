@@ -91,14 +91,17 @@ export class ImageCompressor {
 
     private filePathHasValidExtension(filePath: string) {
         if (filePath) {
-            const result = this.fileExtensionExpression.exec(filePath);
-            const fileExtension = result ? result[0] : null;
-
+            const fileExtension = this.getFileExtension(filePath);
             return fileExtension
-                && this.imageExtensions.some(ext => ext === fileExtension);
+                && this.imageExtensions.some(ext => ext === fileExtension.toLowerCase());
         }
 
         return false;
+    }
+
+    private getFileExtension(filePath: string) {
+        const result = this.fileExtensionExpression.exec(filePath);
+        return result ? result[0] : null;
     }
 
     private async tryApplyImageDimensions(filePath: string, maxWidth: number = 0, maxHeight: number = 0) {
@@ -127,20 +130,49 @@ export class ImageCompressor {
     }
 
     private async tryApplyImageCompression(filePath: string) {
+        const plugins = [];
+        const fileExtension = this.getFileExtension(filePath);
+        switch ((fileExtension || "").toLowerCase()) {
+            case ".png":
+                plugins.push(
+                    imageminPng({   // https://www.npmjs.com/package/imagemin-optipng#optimizationlevel
+                        optimizationLevel: 3
+                    }));
+                break;
+            case ".jpg":
+            case ".jpeg":
+                plugins.push(
+                    imageminJpeg({  // https://www.npmjs.com/package/imagemin-jpegtran#api
+                        arithmetic: true
+                    }));
+                break;
+            case ".gif":
+                plugins.push(
+                    imageminGif({   // https://www.npmjs.com/package/imagemin-gifsicle#optimizationlevel
+                        optimizationLevel: 2
+                    }));
+                break;
+            case ".svg":
+                plugins.push(
+                    imageminSvg());  // https://github.com/svg/svgo#what-it-can-do);
+                break;
+            case ".webp":
+                plugins.push(
+                    imageminWebp({  // https://www.npmjs.com/package/imagemin-webp#api
+                        lossless: true,
+                        metadata: "all"
+                    }));
+                break;
+        }
+
+        if (!plugins || !plugins.length){
+            return false;
+        }
+
         const options: imagemin.Options = {
             destination: "temp/images",
             glob: false,
-            plugins: [
-                imageminJpeg(), // https://www.npmjs.com/package/imagemin-jpegtran#api
-                imageminPng({   // https://www.npmjs.com/package/imagemin-optipng#optimizationlevel
-                    optimizationLevel: 5
-                }),
-                imageminGif({   // https://www.npmjs.com/package/imagemin-gifsicle#optimizationlevel
-                    optimizationLevel: 2
-                }),
-                imageminSvg(),  // https://github.com/svg/svgo#what-it-can-do
-                imageminWebp()  // https://www.npmjs.com/package/imagemin-webp#api
-            ]
+            plugins: plugins
         };
 
         let wasCompressed = false;
