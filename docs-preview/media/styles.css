@@ -48,7 +48,7 @@ code {
 pre {
   border: 1px solid hsla(0,0%,89%,1);
   border: 1px solid var(--border);
-  background-color: hsla(0,0%,98%,1)!important;
+  background-color: hsla(0,0%,98%,1);
   background-color: var(--body-background-medium);
   margin: 12px 0 0;
 }
@@ -59,6 +59,10 @@ pre:not(.hljs), pre.hljs code > div {
 
 pre > code {
   font-size: 13px;
+}
+
+body.vscode-dark pre {
+  background-color: #454545;
 }
 
 .content .doc-outline ol {

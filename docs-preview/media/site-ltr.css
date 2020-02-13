@@ -3999,7 +3999,7 @@ a.has-text-danger:active {
   --danger-invert: white;
 }
 
-.theme-dark {
+body.vscode-dark {
   --text: #e3e3e3;
   --text-subtle: #c7c7c7;
   --text-invert: #2e2e2e;
@@ -4076,7 +4076,7 @@ a.has-text-danger:active {
   --danger-invert: white;
 }
 
-.theme-high-contrast {
+body.vscode-high-contrast {
   --text: white;
   --text-subtle: white;
   --text-invert: black;
@@ -4154,8 +4154,8 @@ a.has-text-danger:active {
 }
 
 .theme-light,
-.theme-dark,
-.theme-high-contrast {
+body.vscode-dark,
+body.vscode-high-contrast {
   color: hsla(0, 0%, 0%, 1);
   color: var(--text);
   background-color: hsla(0, 0%, 100%, 0.999);
@@ -8275,7 +8275,7 @@ a.box:active {
   margin-bottom: 1px;
 }
 
-.theme-high-contrast .xp-tag-xp {
+body.vscode-high-contrast .xp-tag-xp {
   color: hsla(0, 0%, 100%, 1);
   color: var(--text-invert);
 }
@@ -11537,11 +11537,11 @@ h2 .heading-anchor {
   border: none;
 }
 
-.theme-dark .progress::-ms-fill {
+body.vscode-dark .progress::-ms-fill {
   background: #e3e3e3;
 }
 
-.theme-high-contrast .progress::-ms-fill {
+body.vscode-high-contrast .progress::-ms-fill {
   background-color: #e3e3e3;
 }
 
@@ -11597,7 +11597,7 @@ h2 .heading-anchor {
   overflow: visible;
 }
 
-.theme-high-contrast .level-status .progress.level-status-progress {
+body.vscode-high-contrast .level-status .progress.level-status-progress {
   background-color: #e3e3e3;
 }
 
@@ -11664,7 +11664,7 @@ body[dir='rtl'] .level-status .level-status-progress-container:after {
   border: 1px solid var(--border-yellow-high-contrast);
 }
 
-.theme-high-contrast .level-status-square {
+body.vscode-high-contrast .level-status-square {
   background: black;
 }
 
@@ -12915,8 +12915,8 @@ a.tag:hover {
   height: 3rem;
 }
 
-.theme-dark .overflow-fade .bottom-to-top-fade,
-.theme-high-contrast .overflow-fade .bottom-to-top-fade {
+body.vscode-dark .overflow-fade .bottom-to-top-fade,
+body.vscode-high-contrast .overflow-fade .bottom-to-top-fade {
   background: linear-gradient(rgba(0, 0, 0, 0), currentColor 50%);
 }
 
@@ -16611,128 +16611,128 @@ Visual Studio-like style based on original C# coloring by Jason Diamond <jason@d
   color: #cd3131;
 }
 
-.theme-dark .line-highlight,
-.theme-high-contrast .line-highlight {
+body.vscode-dark .line-highlight,
+body.vscode-high-contrast .line-highlight {
   background-color: darkgreen;
 }
 
-.theme-dark .hljs-comment,
-.theme-high-contrast .hljs-comment {
+body.vscode-dark .hljs-comment,
+body.vscode-high-contrast .hljs-comment {
   color: #57A64A;
 }
 
-.theme-dark .hljs-number,
-.theme-high-contrast .hljs-number {
+body.vscode-dark .hljs-number,
+body.vscode-high-contrast .hljs-number {
   color: #b5cea8;
 }
 
-.theme-dark .hljs-pscommand,
-.theme-dark .hljs-keyword,
-.theme-dark .hljs-selector-tag,
-.theme-dark .hljs-built_in,
-.theme-dark .hljs-name,
-.theme-dark .hljs-tag,
-.theme-high-contrast .hljs-pscommand,
-.theme-high-contrast .hljs-keyword,
-.theme-high-contrast .hljs-selector-tag,
-.theme-high-contrast .hljs-built_in,
-.theme-high-contrast .hljs-name,
-.theme-high-contrast .hljs-tag {
+body.vscode-dark .hljs-pscommand,
+body.vscode-dark .hljs-keyword,
+body.vscode-dark .hljs-selector-tag,
+body.vscode-dark .hljs-built_in,
+body.vscode-dark .hljs-name,
+body.vscode-dark .hljs-tag,
+body.vscode-high-contrast .hljs-pscommand,
+body.vscode-high-contrast .hljs-keyword,
+body.vscode-high-contrast .hljs-selector-tag,
+body.vscode-high-contrast .hljs-built_in,
+body.vscode-high-contrast .hljs-name,
+body.vscode-high-contrast .hljs-tag {
   color: #569cd6;
 }
 
-.theme-dark .hljs-literal,
-.theme-high-contrast .hljs-literal {
+body.vscode-dark .hljs-literal,
+body.vscode-high-contrast .hljs-literal {
   color: #569cd6;
 }
 
-.theme-dark .hljs-title,
-.theme-high-contrast .hljs-title {
+body.vscode-dark .hljs-title,
+body.vscode-high-contrast .hljs-title {
   color: #4EC9B0;
 }
 
-.theme-dark .hljs-string,
-.theme-dark .hljs-section,
-.theme-dark .hljs-attribute,
-.theme-dark .hljs-template-tag,
-.theme-dark .hljs-template-variable,
-.theme-dark .hljs-deletion,
-.theme-dark .hljs-type,
-.theme-dark .hljs-code,
-.theme-high-contrast .hljs-string,
-.theme-high-contrast .hljs-section,
-.theme-high-contrast .hljs-attribute,
-.theme-high-contrast .hljs-template-tag,
-.theme-high-contrast .hljs-template-variable,
-.theme-high-contrast .hljs-deletion,
-.theme-high-contrast .hljs-type,
-.theme-high-contrast .hljs-code {
+body.vscode-dark .hljs-string,
+body.vscode-dark .hljs-section,
+body.vscode-dark .hljs-attribute,
+body.vscode-dark .hljs-template-tag,
+body.vscode-dark .hljs-template-variable,
+body.vscode-dark .hljs-deletion,
+body.vscode-dark .hljs-type,
+body.vscode-dark .hljs-code,
+body.vscode-high-contrast .hljs-string,
+body.vscode-high-contrast .hljs-section,
+body.vscode-high-contrast .hljs-attribute,
+body.vscode-high-contrast .hljs-template-tag,
+body.vscode-high-contrast .hljs-template-variable,
+body.vscode-high-contrast .hljs-deletion,
+body.vscode-high-contrast .hljs-type,
+body.vscode-high-contrast .hljs-code {
   color: #ce9178;
 }
 
-.theme-dark .hljs-addition,
-.theme-dark .hljs-selector-attr,
-.theme-dark .hljs-selector-pseudo,
-.theme-dark .hljs-meta,
-.theme-high-contrast .hljs-addition,
-.theme-high-contrast .hljs-selector-attr,
-.theme-high-contrast .hljs-selector-pseudo,
-.theme-high-contrast .hljs-meta {
+body.vscode-dark .hljs-addition,
+body.vscode-dark .hljs-selector-attr,
+body.vscode-dark .hljs-selector-pseudo,
+body.vscode-dark .hljs-meta,
+body.vscode-high-contrast .hljs-addition,
+body.vscode-high-contrast .hljs-selector-attr,
+body.vscode-high-contrast .hljs-selector-pseudo,
+body.vscode-high-contrast .hljs-meta {
   color: #2b91af;
 }
 
-.theme-dark .hljs-doctag,
-.theme-high-contrast .hljs-doctag {
+body.vscode-dark .hljs-doctag,
+body.vscode-high-contrast .hljs-doctag {
   color: #808080;
 }
 
-.theme-dark .hljs-attr,
-.theme-high-contrast .hljs-attr {
+body.vscode-dark .hljs-attr,
+body.vscode-high-contrast .hljs-attr {
   color: #9cdcfe;
 }
 
-.theme-dark .hljs-parameter,
-.theme-dark .hljs-type,
-.theme-dark .hljs-attribute,
-.theme-dark .hljs-title,
-.theme-dark .hljs-addition,
-.theme-dark .hljs-selector-attr,
-.theme-dark .hljs-selector-pseudo,
-.theme-dark .hljs-meta,
-.theme-high-contrast .hljs-parameter,
-.theme-high-contrast .hljs-type,
-.theme-high-contrast .hljs-attribute,
-.theme-high-contrast .hljs-title,
-.theme-high-contrast .hljs-addition,
-.theme-high-contrast .hljs-selector-attr,
-.theme-high-contrast .hljs-selector-pseudo,
-.theme-high-contrast .hljs-meta {
+body.vscode-dark .hljs-parameter,
+body.vscode-dark .hljs-type,
+body.vscode-dark .hljs-attribute,
+body.vscode-dark .hljs-title,
+body.vscode-dark .hljs-addition,
+body.vscode-dark .hljs-selector-attr,
+body.vscode-dark .hljs-selector-pseudo,
+body.vscode-dark .hljs-meta,
+body.vscode-high-contrast .hljs-parameter,
+body.vscode-high-contrast .hljs-type,
+body.vscode-high-contrast .hljs-attribute,
+body.vscode-high-contrast .hljs-title,
+body.vscode-high-contrast .hljs-addition,
+body.vscode-high-contrast .hljs-selector-attr,
+body.vscode-high-contrast .hljs-selector-pseudo,
+body.vscode-high-contrast .hljs-meta {
   color: #01cfff;
 }
 
-.theme-dark .hljs-control,
-.theme-high-contrast .hljs-control {
+body.vscode-dark .hljs-control,
+body.vscode-high-contrast .hljs-control {
   color: #c586c0;
 }
 
-.theme-dark .hljs-helper,
-.theme-high-contrast .hljs-helper {
+body.vscode-dark .hljs-helper,
+body.vscode-high-contrast .hljs-helper {
   color: #dcdcaa;
 }
 
-.theme-dark .hljs-symbol,
-.theme-dark .hljs-bullet,
-.theme-dark .hljs-link,
-.theme-high-contrast .hljs-symbol,
-.theme-high-contrast .hljs-bullet,
-.theme-high-contrast .hljs-link {
+body.vscode-dark .hljs-symbol,
+body.vscode-dark .hljs-bullet,
+body.vscode-dark .hljs-link,
+body.vscode-high-contrast .hljs-symbol,
+body.vscode-high-contrast .hljs-bullet,
+body.vscode-high-contrast .hljs-link {
   color: #808080;
 }
 
-.theme-dark .hljs-reserved,
-.theme-dark .hljs-constant,
-.theme-high-contrast .hljs-reserved,
-.theme-high-contrast .hljs-constant {
+body.vscode-dark .hljs-reserved,
+body.vscode-dark .hljs-constant,
+body.vscode-high-contrast .hljs-reserved,
+body.vscode-high-contrast .hljs-constant {
   color: #f44747;
 }
 
@@ -17424,7 +17424,7 @@ USAGE:
   border: 0;
 }
 
-.theme-dark .hubpage .cardsB .card, .theme-dark
+body.vscode-dark .hubpage .cardsB .card, body.vscode-dark
 .landingpage .cardsB .card {
   box-shadow: none;
   border: 0;
@@ -17521,7 +17521,7 @@ USAGE:
   padding: 0;
 }
 
-.theme-dark .hubpage .cardsD .card, .theme-dark
+body.vscode-dark .hubpage .cardsD .card, body.vscode-dark
 .landingpage .cardsD .card {
   box-shadow: none;
   border: 0;
@@ -17591,7 +17591,7 @@ USAGE:
   overflow: visible;
 }
 
-html.theme-dark .hubpage .cardsF .card, html.theme-dark
+htmlbody.vscode-dark .hubpage .cardsF .card, htmlbody.vscode-dark
 .landingpage .cardsF .card {
   box-shadow: none;
   border: 0;
@@ -17691,7 +17691,7 @@ html.theme-dark .hubpage .cardsF .card, html.theme-dark
   border: 0;
 }
 
-html.theme-dark .hubpage .cardsG .card, html.theme-dark
+htmlbody.vscode-dark .hubpage .cardsG .card, htmlbody.vscode-dark
 .landingpage .cardsG .card {
   box-shadow: none;
   border: 0;
@@ -18019,7 +18019,7 @@ html.theme-dark .hubpage .cardsG .card, html.theme-dark
   padding: 0;
 }
 
-.theme-dark .hubpage .cardsW .card, .theme-dark
+body.vscode-dark .hubpage .cardsW .card, body.vscode-dark
 .landingpage .cardsW .card {
   box-shadow: none;
   border: 0;
@@ -19434,7 +19434,7 @@ input:checked + .quiz-choice .custom-radio:before {
   font-size: 90%;
 }
 
-html.theme-dark .rest-tryit-form .request-section .url-group .url-input {
+htmlbody.vscode-dark .rest-tryit-form .request-section .url-group .url-input {
   border-color: hsla(0, 0%, 37%, 1);
   border-color: var(--text-subtle);
 }
