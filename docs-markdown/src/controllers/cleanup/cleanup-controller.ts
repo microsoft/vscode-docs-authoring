@@ -1,10 +1,10 @@
 "use strict";
 
 import { existsSync } from "graceful-fs";
-import { join } from "path";
+import { join, basename, extname } from "path";
 import * as vscode from "vscode";
 import { ProgressLocation, window, workspace } from "vscode";
-import { postError, sendTelemetryData, showStatusMessage } from "../../helper/common";
+import { postError, sendTelemetryData, showStatusMessage, showWarningMessage } from "../../helper/common";
 import { generateMasterRedirectionFile } from "../master-redirect-controller";
 import { capitalizationOfMetadata } from "./capitalizationOfMetadata";
 import { handleSingleValuedMetadata } from "./handleSingleValuedMetadata";
@@ -47,8 +47,9 @@ function getCleanUpQuickPick() {
     return { items, opts };
 }
 
-export async function applyCleanupFile(file: string) {
+export async function applyCleanupFile(uri: vscode.Uri) {
     const { items, opts } = getCleanUpQuickPick();
+    const file = uri.fsPath;
     items.push({
         description: "",
         label: "Everything",
@@ -57,6 +58,14 @@ export async function applyCleanupFile(file: string) {
     if (!selection) {
         return;
     }
+    // check for dirty file
+    workspace.openTextDocument(vscode.Uri.parse(uri.path)).then(doc => {
+        console.log(uri.path)
+        if (doc.isDirty) {
+            showWarningMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
+            showStatusMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
+        }
+    });
     window.withProgress({
         location: ProgressLocation.Notification,
         title: "Cleanup",
@@ -167,7 +176,7 @@ export async function applyCleanupFile(file: string) {
     });
 }
 
-export async function applyCleanupFolder(folder: string) {
+export async function applyCleanupFolder(uri: vscode.Uri) {
     const { items, opts } = getCleanUpQuickPick();
     items.push({
         description: "",
@@ -191,12 +200,25 @@ export async function applyCleanupFolder(folder: string) {
             let statusMessage = "";
             const percentComplete = 0;
             let promises: Array<Promise<any>> = [];
-            recursive(folder,
+            recursive(uri.fsPath,
                 [".git", ".github", ".vscode", ".vs", "node_module"],
                 (err: any, files: string[]) => {
                     if (err) {
                         postError(err);
                     }
+                    // check for dirty files
+                    files.map((file, index) => {
+                        let fileName = basename(file);
+                        let modifiedUri = join(uri.path, fileName).replace(/\\/g, "/");
+                        if (extname(modifiedUri) == '.md') {
+                            workspace.openTextDocument(vscode.Uri.parse(modifiedUri)).then(doc => {
+                                if (doc.isDirty) {
+                                    showWarningMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
+                                    showStatusMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
+                                }
+                            });
+                        }
+                    });
                     switch (selection.label.toLowerCase()) {
                         case "single-valued metadata":
                             showStatusMessage("Cleanup: Single-Valued metadata started.");
