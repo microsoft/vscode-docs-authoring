@@ -1,10 +1,10 @@
 "use-strict";
 
 import * as vscode from "vscode";
-import * as common from "./common";
-import * as log from "./log";
-import { languages, IHighlightLanguage, HighlightLanguages, getLanguageIdentifierQuickPickItems } from "./highlight-langs";
 import { QuickPickOptions } from "vscode";
+import * as common from "./common";
+import { getLanguageIdentifierQuickPickItems, IHighlightLanguage, languages } from "./highlight-langs";
+import * as log from "./log";
 
 /**
  * Checks the user input for table creation.
@@ -100,7 +100,7 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
     const dir = require("node-dir");
     const path = require("path");
     let language: string | null = "";
-    let possibleLanguage: IHighlightLanguage | null;
+    let possibleLanguage: IHighlightLanguage | null = null;
     let selected: vscode.QuickPickItem | undefined;
     let activeFilePath;
     let snippetLink: string = "";
@@ -203,7 +203,7 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
     }
 }
 
-function inferLanguageFromFileExtension(fileExtension: string): IHighlightLanguage | null {
+export function inferLanguageFromFileExtension(fileExtension: string): IHighlightLanguage | null {
     const matches = languages.filter((lang) => {
         return lang.extensions
             ? lang.extensions.some((ext) => ext === fileExtension)
