@@ -148,7 +148,7 @@ export const languages: HighlightLanguages =
         { language: "LiveScript", aliases: ["livescript", "ls"] },
         { language: "Lua", aliases: ["lua"], extensions: [".lua"] },
         { language: "Makefile", aliases: ["makefile", "mk", "mak"], extensions: [".gmk", ".mk", ".mak"] },
-        { language: "Markdown", aliases: ["markdown", "md", "mkdown", "mkd"], extensions: [".md", ".mkdown", ".mkd"] },
+        { language: "Markdown", aliases: ["markdown", "md", "mkdown", "mkd"], extensions: [".md", ".markdown", ".mdown", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".rmd"] },
         { language: "Mathematica", aliases: ["mathematica", "mma", "wl"] },
         { language: "Matlab", aliases: ["matlab"], extensions: [".matlab"] },
         { language: "Maxima", aliases: ["maxima"] },
