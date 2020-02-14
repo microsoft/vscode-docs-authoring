@@ -17591,7 +17591,7 @@ body.vscode-dark .hubpage .cardsD .card, body.vscode-dark
   overflow: visible;
 }
 
-htmlbody.vscode-dark .hubpage .cardsF .card, htmlbody.vscode-dark
+html.body.vscode-dark .hubpage .cardsF .card, html.body.vscode-dark
 .landingpage .cardsF .card {
   box-shadow: none;
   border: 0;
@@ -17691,7 +17691,7 @@ htmlbody.vscode-dark .hubpage .cardsF .card, htmlbody.vscode-dark
   border: 0;
 }
 
-htmlbody.vscode-dark .hubpage .cardsG .card, htmlbody.vscode-dark
+html.body.vscode-dark .hubpage .cardsG .card, html.body.vscode-dark
 .landingpage .cardsG .card {
   box-shadow: none;
   border: 0;
@@ -19434,7 +19434,7 @@ input:checked + .quiz-choice .custom-radio:before {
   font-size: 90%;
 }
 
-htmlbody.vscode-dark .rest-tryit-form .request-section .url-group .url-input {
+html.body.vscode-dark .rest-tryit-form .request-section .url-group .url-input {
   border-color: hsla(0, 0%, 37%, 1);
   border-color: var(--text-subtle);
 }
