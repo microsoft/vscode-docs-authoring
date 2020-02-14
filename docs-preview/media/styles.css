@@ -51,7 +51,7 @@ pre:not(.hljs), pre.hljs code > div {
 }
 
 body.vscode-dark pre {
-  background-color: #454545;
+  background-color: #2e2e2e;
 }
 
 .content .doc-outline ol {
