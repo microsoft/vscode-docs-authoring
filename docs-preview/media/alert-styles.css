@@ -5,9 +5,17 @@ blockquote {
   background-position: top left;
   background-repeat: no-repeat;
   text-indent: 0px;
-  line-height: 160%;
-  font-family: "Segoe UI","SegoeUI","Segoe WP","Helvetica Neue","Helvetica","Tahoma","Arial","sans-serif";
-  font-weight: 400;
+}
+
+body.vscode-high-contrast blockquote {
+  border-radius: 6px;
+  padding: 0.0em 0.8em 0.1em .8em !important;
+  margin: 1em 0 0 0 !important;
+  background-position: top left;
+  background-repeat: no-repeat;
+  text-indent: 0px;
+  background: transparent;
+  color: white!important;
 }
 
 blockquote ul {
@@ -16,7 +24,6 @@ blockquote ul {
 
 blockquote p {
   margin: 0px 0 10px 0;
-  font-size: 13px;
 }
 
 blockquote p:first-child { 
@@ -32,11 +39,6 @@ blockquote a {
     color: hsla(206,100%,15%,1);
     color: var(--primary-dark);
     text-decoration: none;
-    font-weight: 500;
-}
-
-blockquote strong, blockquote b {
-  font-weight: 600;
 }
 
 blockquote span {
@@ -49,6 +51,10 @@ blockquote span {
 
 blockquote > pre {
   margin-bottom: .8rem;
+}
+
+body.vscode-high-contrast blockquote > pre > code > div {
+  color: white;
 }
 
 .content blockquote > ul {
@@ -65,6 +71,24 @@ blockquote.NOTE p {
   color: #38225d!important;
 }
 
+body.vscode-high-contrast blockquote.NOTE {
+  border: solid #a47af3;
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-high-contrast blockquote.NOTE p {
+  color: #e2daf1!important;
+}
+
+body.vscode-dark blockquote.NOTE {
+  background: #38225d;
+  color: white!important;
+}
+
+body.vscode-dark blockquote.NOTE p {
+  color: #e2daf1!important;
+}
 blockquote.TIP {
   color: #094409!important;
   background:  #d2f9d2;
@@ -73,6 +97,25 @@ blockquote.TIP {
 
 blockquote.TIP p {
   color: #094409!important;
+}
+
+body.vscode-high-contrast blockquote.TIP {
+  border: solid  #72ec72;
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-dark blockquote.TIP p {
+  color: #d2f9d2!important;
+}
+
+body.vscode-dark blockquote.TIP {
+  background: #094409;
+  color: white!important;
+}
+
+body.vscode-high-contrast blockquote.TIP p {
+  color: #d2f9d2!important;
 }
 
 blockquote.IMPORTANT {
@@ -85,6 +128,25 @@ blockquote.IMPORTANT p {
   color: #002b4d!important;
 }
 
+body.vscode-high-contrast blockquote.IMPORTANT {
+  border: solid  yellow;
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-high-contrast blockquote.IMPORTANT p {
+  color: yellow!important;
+}
+
+body.vscode-dark blockquote.IMPORTANT {
+  background: #002b4d;
+  color: white!important;
+}
+
+body.vscode-dark blockquote.IMPORTANT p {
+  color: #a3d7ff!important;
+}
+
 blockquote.CAUTION {
   color: #651b01!important;
   background: #ffdacc;
@@ -95,6 +157,25 @@ blockquote.CAUTION p {
   color: #651b01!important;
 }
 
+body.vscode-high-contrast blockquote.CAUTION {
+  border: solid  #fa9183;
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-high-contrast blockquote.CAUTION p {
+  color: #fa9183!important;
+}
+
+body.vscode-dark blockquote.CAUTION {
+  background: #651b01;
+  color: white!important;
+}
+
+body.vscode-dark blockquote.CAUTION p {
+  color: #fa9183!important;
+}
+
 blockquote.WARNING {
   color: #664b00!important;
   background: #fff1cc;
@@ -102,4 +183,23 @@ blockquote.WARNING {
 }
 blockquote.WARNING p {
   color: #664b00!important;
+}
+
+body.vscode-high-contrast blockquote.WARNING {
+  border: solid  #eecc6f;
+  border-width: thin;
+  color: white!important;
+}
+
+body.vscode-high-contrast blockquote.WARNING p {
+  color: #eecc6f!important;
+}
+
+body.vscode-dark blockquote.WARNING {
+  background: #664b00;
+  color: white!important;
+}
+
+body.vscode-dark blockquote.WARNING p {
+  color: #eecc6f!important;
 }
