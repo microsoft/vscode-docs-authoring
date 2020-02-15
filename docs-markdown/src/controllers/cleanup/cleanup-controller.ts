@@ -60,7 +60,6 @@ export async function applyCleanupFile(uri: vscode.Uri) {
     }
     // check for dirty file
     workspace.openTextDocument(vscode.Uri.parse(uri.path)).then(doc => {
-        console.log(uri.path)
         if (doc.isDirty) {
             showWarningMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
             showStatusMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
