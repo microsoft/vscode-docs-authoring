@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.47 (February 14th, 2020)
+
+- Added empty metadata cleanup script
+
 ## 0.2.44 (February 4th, 2020)
 
 - Added folder level and file level cleanup script

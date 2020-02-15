@@ -113,10 +113,10 @@ export function activate(context: ExtensionContext) {
     // Attempts the registration of commands with VS Code and then add them to the extension context.
     try {
         vscode.commands.registerCommand('cleanupFile', async (uri: Uri) => {
-            await applyCleanupFile(uri.fsPath);
+            await applyCleanupFile(uri);
         })
         vscode.commands.registerCommand('cleanupInFolder', async (uri: Uri) => {
-            await applyCleanupFolder(uri.fsPath);
+            await applyCleanupFolder(uri);
         })
         AuthoringCommands.map((cmd: any) => {
             const commandName = cmd.command;
