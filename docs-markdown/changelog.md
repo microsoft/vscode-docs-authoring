@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.46 (February 12th, 2020)
+## 0.2.47 (February 14th, 2020)
 
 - Added empty metadata cleanup script
 
