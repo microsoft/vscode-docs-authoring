@@ -10,6 +10,7 @@ import { capitalizationOfMetadata } from "./capitalizationOfMetadata";
 import { handleSingleValuedMetadata } from "./handleSingleValuedMetadata";
 import { microsoftLinks } from "./microsoftLinks";
 import { runAll, runAllWorkspace } from "./runAll";
+import { removeUnusedImagesAndIncludes } from "../remove-unused-assets-controller";
 // tslint:disable no-var-requires
 const recursive = require("recursive-readdir");
 
@@ -208,6 +209,10 @@ export async function applyCleanup() {
     });
     items.push({
         description: "",
+        label: "Unused images and includes",
+    });
+    items.push({
+        description: "",
         label: "Everything",
     });
     const selection = await window.showQuickPick(items, opts);
@@ -302,6 +307,13 @@ export async function applyCleanup() {
                             statusMessage = "Cleanup: Master redirection completed.";
                             generateMasterRedirectionFile(workspacePath, resolve);
                             commandOption = "redirects";
+                            break;
+                        case "unused images and includes":
+                            showStatusMessage("Cleanup: Unused Images and includes.");
+                            message = "Removal of unused images and includes complete.";
+                            statusMessage = "Cleanup: Removing unused images and includes";
+                            removeUnusedImagesAndIncludes(workspacePath, progress, resolve);
+                            commandOption = "unused-images-and-includes";
                             break;
                         case "everything":
                             runAllWorkspace(workspacePath, progress, resolve);
