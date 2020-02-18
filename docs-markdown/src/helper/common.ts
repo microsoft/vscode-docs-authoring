@@ -1,11 +1,35 @@
 "use-strict";
 
-import os = require("os");
-import path = require("path");
+import * as fs from "fs";
+import * as glob from "glob";
+import * as os from "os";
+import * as path from "path";
 import * as vscode from "vscode";
 import { output } from "../extension";
 import * as log from "./log";
 import { reporter } from "./telemetry";
+
+export function tryFindFile(rootPath: string, fileName: string) {
+    try {
+        const fullPath = path.resolve(rootPath, fileName);
+        const exists = fs.existsSync(fullPath);
+        if (exists) {
+            return fullPath;
+        } else {
+            const files = glob.sync(`**/${fileName}`, {
+                cwd: rootPath,
+            });
+
+            if (files && files.length === 1) {
+                return path.join(rootPath, files[0]);
+            }
+        }
+    } catch (error) {
+        postError(error.toString());
+    }
+
+    return undefined;
+}
 
 /**
  * Provide current os platform
