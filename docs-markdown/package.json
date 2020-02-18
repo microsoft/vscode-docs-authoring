@@ -771,6 +771,7 @@
     "vscode": "^1.1.33"
   },
   "jest": {
+    "verbose": true,
     "preset": "ts-jest",
     "roots": [
       "<rootDir>/test"

@@ -1,7 +1,4 @@
-"use-strict";
-
-import * as vscode from "vscode";
-import { QuickPickOptions } from "vscode";
+import { QuickPickItem, QuickPickOptions, Range, Selection, TextEditor, window } from "vscode";
 import * as common from "./common";
 import { getLanguageIdentifierQuickPickItems, IHighlightLanguage, languages } from "./highlight-langs";
 import * as log from "./log";
@@ -96,16 +93,16 @@ export function tableBuilder(col: number, row: number) {
  * @param {string} fullPath - optional, the folder to start the search under.
  */
 
-export async function search(editor: vscode.TextEditor, selection: vscode.Selection, folderPath: string, fullPath?: string, crossReference?: string) {
+export async function search(editor: TextEditor, selection: Selection, folderPath: string, fullPath?: string, crossReference?: string) {
     const dir = require("node-dir");
     const path = require("path");
     let language: string | null = "";
     let possibleLanguage: IHighlightLanguage | null = null;
-    let selected: vscode.QuickPickItem | undefined;
+    let selected: QuickPickItem | undefined;
     let activeFilePath;
     let snippetLink: string = "";
     if (!crossReference) {
-        const searchTerm = await vscode.window.showInputBox({ prompt: "Enter snippet search terms." });
+        const searchTerm = await window.showInputBox({ prompt: "Enter snippet search terms." });
         if (!searchTerm) {
             return;
         }
@@ -115,7 +112,7 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
 
         // searches for all files at the given directory path.
         const files = await dir.promiseFiles(fullPath);
-        const fileOptions: vscode.QuickPickItem[] = [];
+        const fileOptions: QuickPickItem[] = [];
 
         for (const file in files) {
             if (files.hasOwnProperty(file)) {
@@ -128,7 +125,7 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
         }
 
         // select from all files found that match search term.
-        selected = await vscode.window.showQuickPick(fileOptions);
+        selected = await window.showQuickPick(fileOptions);
         activeFilePath = (path.parse(editor.document.fileName).dir);
         if (!selected) {
             return;
@@ -141,7 +138,7 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
         // change path separator syntax for commonmark
         snippetLink = path.join(relativePath, target.base).replace(/\\/g, "/");
     } else {
-        const inputRepoPath = await vscode.window.showInputBox({ prompt: "Enter file path for Cross-Reference GitHub Repo" });
+        const inputRepoPath = await window.showInputBox({ prompt: "Enter file path for Cross-Reference GitHub Repo" });
         if (inputRepoPath) {
             possibleLanguage = inferLanguageFromFileExtension(path.extname(inputRepoPath));
             snippetLink = `~/${crossReference}/${inputRepoPath}`;
@@ -156,7 +153,7 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
         const options: QuickPickOptions = {
             placeHolder: "Select a programming language (required)",
         };
-        const qpSelection = await vscode.window.showQuickPick(supportedLanguages, options);
+        const qpSelection = await window.showQuickPick(supportedLanguages, options);
         if (!qpSelection) {
             common.postWarning("No code language selected. Abandoning command.");
             return;
@@ -171,25 +168,25 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
         return;
     }
 
-    const selectionRange = new vscode.Range(selection.start.line, selection.start.character, selection.end.line, selection.end.character);
-    const selectorOptions: vscode.QuickPickItem[] = [];
+    const selectionRange = new Range(selection.start.line, selection.start.character, selection.end.line, selection.end.character);
+    const selectorOptions: QuickPickItem[] = [];
     selectorOptions.push({ label: "Id", description: "Select code by id tag (for example: <Snippet1>)" });
     selectorOptions.push({ label: "Range", description: "Select code by line range (for example: 1-15,18,20)" });
     selectorOptions.push({ label: "None", description: "Select entire file" });
 
-    const choice = await vscode.window.showQuickPick(selectorOptions);
+    const choice = await window.showQuickPick(selectorOptions);
     if (choice) {
         let snippet: string;
         switch (choice.label.toLowerCase()) {
             case "id":
-                const id = await vscode.window.showInputBox({ prompt: "Enter id to select" });
+                const id = await window.showInputBox({ prompt: "Enter id to select" });
                 if (id) {
                     snippet = snippetBuilder(language, snippetLink, id, undefined);
                     common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
                 }
                 break;
             case "range":
-                const range = await vscode.window.showInputBox({ prompt: "Enter line selection range" });
+                const range = await window.showInputBox({ prompt: "Enter line selection range" });
                 if (range) {
                     snippet = snippetBuilder(language, snippetLink, undefined, range);
                     common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
