@@ -28,6 +28,7 @@ export function tryFindFile(rootPath: string, fileName: string) {
         postError(error.toString());
     }
 
+    postWarning(`Unable to find a file named "${fileName}", recursively at root "${rootPath}".`);
     return undefined;
 }
 
