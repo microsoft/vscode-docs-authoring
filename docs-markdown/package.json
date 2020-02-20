@@ -79,6 +79,11 @@
         "category": "Docs"
       },
       {
+        "command": "formatTable",
+        "title": "Format Selected Table",
+        "category": "Docs"
+      },
+      {
         "command": "selectLinkType",
         "title": "Link to heading",
         "category": "Docs"
@@ -250,6 +255,11 @@
           "when": "editorHasSelection",
           "command": "sortSelectionDescending",
           "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "formatTable",
+          "group": "1_modification"
         }
       ],
       "explorer/context": [
@@ -308,6 +318,11 @@
         },
         {
           "command": "insertTable",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "formatTable",
           "group": "Docs",
           "when": "resourceLangId == markdown"
         },
