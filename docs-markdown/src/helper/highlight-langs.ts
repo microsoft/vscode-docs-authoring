@@ -14,6 +14,7 @@ import {
     Position,
     QuickPickItem,
     Range,
+    SnippetString,
     TextDocument,
     window,
     workspace,
@@ -301,17 +302,17 @@ function getLanguageIdentifierCompletionItems(range: Range | undefined, isCancel
         const langs = getConfiguredLanguages();
         if (langs) {
             langs.forEach((lang) => {
+                const langId = lang.aliases[0];
+                const markdownSample = new MarkdownString();
+                markdownSample.appendText("*Output:*");
+                markdownSample.appendCodeblock("", langId);
+
                 const item = new CompletionItem(lang.language, CompletionItemKind.Value);
+                item.detail = markdownSample.value;
+                item.documentation = new MarkdownString(`Use the _${lang.language}_ language identifer (alias: _${langId}_).`);
+                item.insertText = new SnippetString(`${langId}\n$0\n\`\`\``);
                 item.sortText = lang.language;
-                const langId = item.insertText = lang.aliases[0];
-                const doc = new MarkdownString(`Use the "${lang.language}" language identifer (alias: ${item.insertText}).`);
-                doc.appendText("\nSample:\n");
-                doc.appendCodeblock(`\`\`\`${langId}`, "markdown");
-                doc.appendCodeblock("// some code...", "markdown");
-                doc.appendCodeblock("\n", "markdown");
-                doc.appendCodeblock("```", "markdown"); // This is missing from the completion item!
-                doc.appendText("");
-                item.documentation = doc;
+
                 completionItems.push(item);
             });
         }
