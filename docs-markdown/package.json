@@ -669,6 +669,11 @@
           "type": "boolean",
           "default": true,
           "description": "Used to add the front_matter_title parameter (MD025) to the markdownlint.config file."
+        },
+        "markdown.previewFeatures": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable PREVIEW to use beta features."
         }
       }
     },
