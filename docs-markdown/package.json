@@ -39,6 +39,11 @@
         "category": "Docs"
       },
       {
+        "command": "sortMasterRedirectionFile",
+        "title": "Sort master redirection file",
+        "category": "Docs"
+      },
+      {
         "command": "formatBold",
         "title": "Bold",
         "category": "Docs"
@@ -265,6 +270,10 @@
         },
         {
           "command": "generateMasterRedirectionFile",
+          "group": "Docs"
+        },
+        {
+          "command": "sortMasterRedirectionFile",
           "group": "Docs"
         },
         {
