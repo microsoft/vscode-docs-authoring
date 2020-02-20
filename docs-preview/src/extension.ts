@@ -13,6 +13,7 @@ import { rowOptions, rowEndOptions } from "./markdown-extensions/row";
 import { xref } from "./xref/xref";
 import { div_plugin, divOptions } from "./markdown-extensions/div";
 import { imageOptions, image_end } from "./markdown-extensions/image";
+import { video_plugin, videoOptions } from "./markdown-extensions/video";
 
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
@@ -49,7 +50,8 @@ export function activate(context: ExtensionContext) {
                 .use(container_plugin, "column-end", columnEndOptions)
                 .use(div_plugin, "div", divOptions)
                 .use(container_plugin, "image", imageOptions)
-                .use(image_end);
+                .use(image_end)
+                .use(video_plugin, "video", videoOptions);
         },
     };
 }

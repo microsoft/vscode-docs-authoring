@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.32",
+  "version": "0.2.49",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -36,6 +36,11 @@
       {
         "command": "generateMasterRedirectionFile",
         "title": "Generate master redirection file",
+        "category": "Docs"
+      },
+      {
+        "command": "sortMasterRedirectionFile",
+        "title": "Sort master redirection file",
         "category": "Docs"
       },
       {
@@ -172,6 +177,48 @@
         "command": "insertRowsAndColumns",
         "title": "Columns",
         "category": "Docs"
+      },
+      {
+        "command": "updateMetadataDate",
+        "title": "Update \"ms.date\" Metadata Value",
+        "category": "Docs"
+      },
+      {
+        "command": "updateImplicitMetadataValues",
+        "title": "Update Implicit Metadata Values",
+        "category": "Docs",
+        "enablement": "resourceLangId == markdown"
+      },
+      {
+        "command": "sortSelectionAscending",
+        "title": "Sort selection ascending (A to Z)",
+        "category": "Docs"
+      },
+      {
+        "command": "sortSelectionDescending",
+        "title": "Sort selection descending (Z to A)",
+        "category": "Docs"
+      },
+      {
+        "command": "insertLanguageIdentifier",
+        "title": "Insert language identifier",
+        "category": "Docs"
+      },
+      {
+        "command": "cleanupInFolder",
+        "title": "Cleanup files in folder",
+        "category": "Docs"
+      },
+      {
+        "command": "cleanupFile",
+        "title": "Cleanup file",
+        "category": "Docs"
+      },
+      {
+        "command": "updateImplicitMetadataValues",
+        "title": "Update Implicit Metadata Values",
+        "category": "Docs",
+        "enablement": "resourceLangId == markdown"
       }
     ],
     "menus": {
@@ -183,12 +230,50 @@
           "group": "navigation"
         }
       ],
+      "editor/context": [
+        {
+          "when": "editorTextFocus",
+          "command": "updateMetadataDate",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorTextFocus",
+          "command": "updateImplicitMetadataValues",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "sortSelectionAscending",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "sortSelectionDescending",
+          "group": "1_modification"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "cleanupInFolder",
+          "group": "1_modification",
+          "when": "explorerResourceIsFolder"
+        },
+        {
+          "command": "cleanupFile",
+          "group": "1_modification",
+          "when": "resourceLangId == markdown && !listMultipleSelection"
+        }
+      ],
       "commandPalette": [
         {
           "command": "markdownQuickPick"
         },
         {
           "command": "generateMasterRedirectionFile",
+          "group": "Docs"
+        },
+        {
+          "command": "sortMasterRedirectionFile",
           "group": "Docs"
         },
         {
@@ -244,7 +329,7 @@
         {
           "command": "insertLink",
           "group": "Docs",
-          "when": "resourceLangId == markdown"
+          "when": "resourceLangId == markdown || resourceLangId == yaml"
         },
         {
           "command": "insertURL",
@@ -330,6 +415,14 @@
           "command": "insertRowsAndColumns",
           "group": "Docs",
           "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "cleanupInFolder",
+          "when": "false"
+        },
+        {
+          "command": "cleanupFile",
+          "when": "false"
         }
       ]
     },
@@ -337,6 +430,244 @@
       "type": "object",
       "title": "Docs Markdown Extension Configuration",
       "properties": {
+        "markdown.allAvailableLanguages": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Provide all available languages when suggesting code-fence language identifiers. Overrides `markdown.docsetLanguages` setting."
+        },
+        "markdown.docsetLanguages": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Language Identifiers",
+          "markdownDescription": "When the \"All Available Languages\" (`markdown.allAvailableLanguages`) flag is set to `false`, the suggested completion list displayed when typing an opening code-block (` ``` `) is filtered to the provided language identifiers.",
+          "items": {
+            "type": "string",
+            "enum": [
+              ".NET Core CLI",
+              "1C",
+              "ABNF",
+              "Access logs",
+              "Ada",
+              "ARM assembler",
+              "AVR assembler",
+              "ActionScript",
+              "Alan",
+              "ANTLR",
+              "AngelScript",
+              "Apache",
+              "AppleScript",
+              "Arcade",
+              "AsciiDoc",
+              "AspectJ",
+              "ASPX",
+              "ASP.NET (C#)",
+              "ASP.NET (VB)",
+              "AutoHotkey",
+              "AutoIt",
+              "Awk",
+              "Axapta",
+              "AzCopy",
+              "Azure CLI",
+              "Azure CLI (Interactive)",
+              "Azure Powershell",
+              "Azure Powershell (Interactive)",
+              "Bash",
+              "Basic",
+              "BNF",
+              "C",
+              "C#",
+              "C# (Interactive)",
+              "C++",
+              "C++/CX",
+              "C++/WinRT",
+              "C/AL",
+              "Cache Object Script",
+              "CMake",
+              "Coq",
+              "CSP",
+              "CSS",
+              "Cap’n Proto",
+              "Clojure",
+              "CoffeeScript",
+              "Crmsh",
+              "Crystal",
+              "Cypher (Neo4j)",
+              "D",
+              "DAX Power BI",
+              "DNS Zone file",
+              "DOS",
+              "Dart",
+              "Delphi",
+              "Diff",
+              "Django",
+              "Dockerfile",
+              "dsconfig",
+              "DTS (Device Tree)",
+              "Dust",
+              "Dylan",
+              "EBNF",
+              "Elixir",
+              "Elm",
+              "Erlang",
+              "Excel",
+              "Extempore",
+              "F#",
+              "FIX",
+              "Fortran",
+              "G-Code",
+              "Gams",
+              "GAUSS",
+              "GDScript",
+              "Gherkin",
+              "GN for Ninja",
+              "Go",
+              "Golo",
+              "Gradle",
+              "Groovy",
+              "HTML",
+              "HTTP",
+              "Haml",
+              "Handlebars",
+              "Haskell",
+              "Haxe",
+              "Hy",
+              "Ini",
+              "Inform7",
+              "IRPF90",
+              "JSON",
+              "Java",
+              "JavaScript",
+              "Kotlin",
+              "Kusto",
+              "Leaf",
+              "Lasso",
+              "Less",
+              "LDIF",
+              "Lisp",
+              "LiveCode Server",
+              "LiveScript",
+              "Lua",
+              "Makefile",
+              "Markdown",
+              "Mathematica",
+              "Matlab",
+              "Maxima",
+              "Maya Embedded Language",
+              "Mercury",
+              "mIRC Scripting Language",
+              "Mizar",
+              "Managed Object Format",
+              "Mojolicious",
+              "Monkey",
+              "Moonscript",
+              "MS Graph (Interactive)",
+              "N1QL",
+              "NSIS",
+              "Nginx",
+              "Nimrod",
+              "Nix",
+              "OCaml",
+              "Objective C",
+              "OpenGL Shading Language",
+              "OpenSCAD",
+              "Oracle Rules Language",
+              "Oxygene",
+              "PF",
+              "PHP",
+              "Parser3",
+              "Perl",
+              "Plaintext no highlight",
+              "Pony",
+              "PostgreSQL & PL/pgSQL",
+              "PowerShell",
+              "PowerShell (Interactive)",
+              "Processing",
+              "Prolog",
+              "Properties",
+              "Protocol Buffers",
+              "Puppet",
+              "Python",
+              "Python profiler results",
+              "Q#",
+              "Q",
+              "QML",
+              "R",
+              "Razor CSHTML",
+              "ReasonML",
+              "RenderMan RIB",
+              "RenderMan RSL",
+              "Roboconf",
+              "Robot Framework",
+              "RPM spec files",
+              "Ruby",
+              "Rust",
+              "SAS",
+              "SCSS",
+              "SQL",
+              "STEP Part 21",
+              "Scala",
+              "Scheme",
+              "Scilab",
+              "Shape Expressions",
+              "Shell",
+              "Smali",
+              "Smalltalk",
+              "Solidity",
+              "Stan",
+              "Stata",
+              "Structured Text",
+              "Stylus",
+              "SubUnit",
+              "Supercollider",
+              "Swift",
+              "Tcl",
+              "Terraform (HCL)",
+              "Test Anything Protocol",
+              "TeX",
+              "Thrift",
+              "TOML",
+              "TP",
+              "Twig",
+              "TypeScript",
+              "VB.NET",
+              "VBScript",
+              "VHDL",
+              "Vala",
+              "Verilog",
+              "Vim Script",
+              "X++",
+              "x86 Assembly",
+              "XL",
+              "XQuery",
+              "XAML",
+              "XML",
+              "YAML",
+              "Zephir"
+            ]
+          },
+          "minItems": 1,
+          "default": null,
+          "examples": [
+            [
+              ".NET Core CLI",
+              "Azure CLI",
+              "C#",
+              "CSS",
+              "Dockerfile",
+              "HTML",
+              "JSON",
+              "JavaScript",
+              "Markdown",
+              "Nginx",
+              "PowerShell",
+              "Protocol Buffers",
+              "Razor CSHTML",
+              "TypeScript"
+            ]
+          ]
+        },
         "markdown.showToolbar": {
           "type": "boolean",
           "default": false,
@@ -437,6 +768,7 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "@types/glob": "^5.0.35",
     "@types/graceful-fs": "^2.0.30",
     "@types/jest": "24.0.12",
     "@types/lodash.merge": "^4.6.3",
@@ -453,6 +785,7 @@
     "vscode": "^1.1.33"
   },
   "jest": {
+    "verbose": true,
     "preset": "ts-jest",
     "roots": [
       "<rootDir>/test"
