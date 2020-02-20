@@ -1,7 +1,6 @@
-"use-strict";
-
-import * as vscode from "vscode";
+import { QuickPickItem, QuickPickOptions, Range, Selection, TextEditor, window } from "vscode";
 import * as common from "./common";
+import { getLanguageIdentifierQuickPickItems, IHighlightLanguage, languages } from "./highlight-langs";
 import * as log from "./log";
 
 /**
@@ -94,15 +93,16 @@ export function tableBuilder(col: number, row: number) {
  * @param {string} fullPath - optional, the folder to start the search under.
  */
 
-export async function search(editor: vscode.TextEditor, selection: vscode.Selection, folderPath: string, fullPath?: string, crossReference?: string) {
+export async function search(editor: TextEditor, selection: Selection, folderPath: string, fullPath?: string, crossReference?: string) {
     const dir = require("node-dir");
     const path = require("path");
-    let language: string = "";
-    let selected: vscode.QuickPickItem | undefined;
-    let activeFilePath
+    let language: string | null = "";
+    let possibleLanguage: IHighlightLanguage | null = null;
+    let selected: QuickPickItem | undefined;
+    let activeFilePath;
     let snippetLink: string = "";
     if (!crossReference) {
-        let searchTerm = await vscode.window.showInputBox({ prompt: "Enter snippet search terms." })
+        const searchTerm = await window.showInputBox({ prompt: "Enter snippet search terms." });
         if (!searchTerm) {
             return;
         }
@@ -112,7 +112,7 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
 
         // searches for all files at the given directory path.
         const files = await dir.promiseFiles(fullPath);
-        const fileOptions: vscode.QuickPickItem[] = [];
+        const fileOptions: QuickPickItem[] = [];
 
         for (const file in files) {
             if (files.hasOwnProperty(file)) {
@@ -125,7 +125,7 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
         }
 
         // select from all files found that match search term.
-        selected = await vscode.window.showQuickPick(fileOptions);
+        selected = await window.showQuickPick(fileOptions);
         activeFilePath = (path.parse(editor.document.fileName).dir);
         if (!selected) {
             return;
@@ -133,126 +133,90 @@ export async function search(editor: vscode.TextEditor, selection: vscode.Select
         const target = path.parse(selected.description);
         const relativePath = path.relative(activeFilePath, target.dir);
 
-        language = getLanguage(language, target.ext);
+        possibleLanguage = inferLanguageFromFileExtension(target.ext);
 
         // change path separator syntax for commonmark
         snippetLink = path.join(relativePath, target.base).replace(/\\/g, "/");
     } else {
-        const inputRepoPath = await vscode.window.showInputBox({ prompt: "Enter file path for Cross-Reference GitHub Repo" });
+        const inputRepoPath = await window.showInputBox({ prompt: "Enter file path for Cross-Reference GitHub Repo" });
         if (inputRepoPath) {
-            language = getLanguage(language, inputRepoPath.split(".").pop());
+            possibleLanguage = inferLanguageFromFileExtension(path.extname(inputRepoPath));
             snippetLink = `~/${crossReference}/${inputRepoPath}`;
         }
     }
-    const selectionRange = new vscode.Range(selection.start.line, selection.start.character, selection.end.line, selection.end.character);
 
-    const selectorOptions: vscode.QuickPickItem[] = [];
+    if (!!possibleLanguage) {
+        language = possibleLanguage.aliases[0];
+    }
+    if (!language) {
+        const supportedLanguages = getLanguageIdentifierQuickPickItems();
+        const options: QuickPickOptions = {
+            placeHolder: "Select a programming language (required)",
+        };
+        const qpSelection = await window.showQuickPick(supportedLanguages, options);
+        if (!qpSelection) {
+            common.postWarning("No code language selected. Abandoning command.");
+            return;
+        } else {
+            const selectedLang = languages.find((lang) => lang.language === qpSelection.label);
+            language = selectedLang ? selectedLang.aliases[0] : null;
+        }
+    }
+
+    if (!language) {
+        common.postWarning("Unable to determine language. Abandoning command.");
+        return;
+    }
+
+    const selectionRange = new Range(selection.start.line, selection.start.character, selection.end.line, selection.end.character);
+    const selectorOptions: QuickPickItem[] = [];
     selectorOptions.push({ label: "Id", description: "Select code by id tag (for example: <Snippet1>)" });
     selectorOptions.push({ label: "Range", description: "Select code by line range (for example: 1-15,18,20)" });
     selectorOptions.push({ label: "None", description: "Select entire file" });
 
-    vscode.window.showQuickPick(selectorOptions).then((selectorChoice) => {
-        if (selectorChoice) {
-            let id: string;
-            let range: string;
-            switch (selectorChoice.label.toLowerCase()) {
-                case "id":
-                    vscode.window.showInputBox({ prompt: "Enter id to select" }).then((id) => {
-                        if (id) {
-                            const snippet: string = snippetBuilder(language, snippetLink, id, range);
-                            common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
-                        }
-                    });
-                    break;
-                case "range":
-                    vscode.window.showInputBox({ prompt: "Enter line selection range" }).then((range) => {
-                        if (range) {
-                            const snippet: string = snippetBuilder(language, snippetLink, id, range);
-                            common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
-                        }
-                    });
-                    break;
-                default:
-                    const snippet: string = snippetBuilder(language, snippetLink);
+    const choice = await window.showQuickPick(selectorOptions);
+    if (choice) {
+        let snippet: string;
+        switch (choice.label.toLowerCase()) {
+            case "id":
+                const id = await window.showInputBox({ prompt: "Enter id to select" });
+                if (id) {
+                    snippet = snippetBuilder(language, snippetLink, id, undefined);
                     common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
-                    break;
-            }
-        }
-    });
-}
-
-function getLanguage(language: string, ext: string | undefined) {
-    if (!ext) {
-        return language;
-    }
-    const dict = [
-        { actionscript: [".as"] },
-        { arduino: [".ino"] },
-        { assembly: ["nasm", ".asm"] },
-        { batchfile: [".bat", ".cmd"] },
-        { cpp: ["c", "c++", "objective-c", "obj-c", "objc", "objectivec", ".c", ".cpp", ".h", ".hpp", ".cc"] },
-        { csharp: ["cs", ".cs"] },
-        { cuda: [".cu", ".cuh"] },
-        { d: ["dlang", ".d"] },
-        { erlang: [".erl"] },
-        { fsharp: ["fs", ".fs", ".fsi", ".fsx"] },
-        { go: ["golang", ".go"] },
-        { haskell: [".hs"] },
-        { html: [".html", ".jsp", ".asp", ".aspx", ".ascx"] },
-        { cshtml: [".cshtml", "aspx-cs", "aspx-csharp"] },
-        { vbhtml: [".vbhtml", "aspx-vb"] },
-        { java: [".java"] },
-        { javascript: ["js", "node", ".js"] },
-        { lisp: [".lisp", ".lsp"] },
-        { lua: [".lua"] },
-        { matlab: [".matlab"] },
-        { pascal: [".pas"] },
-        { perl: [".pl"] },
-        { php: [".php"] },
-        { powershell: ["posh", ".ps1"] },
-        { processing: [".pde"] },
-        { python: [".py"] },
-        { r: [".r"] },
-        { ruby: ["ru", ".ru", ".ruby"] },
-        { rust: [".rs"] },
-        { scala: [".scala"] },
-        { shell: ["sh", "bash", ".sh", ".bash"] },
-        { smalltalk: [".st"] },
-        { sql: [".sql"] },
-        { swift: [".swift"] },
-        { typescript: ["ts", ".ts"] },
-        { xaml: [".xaml"] },
-        { xml: ["xsl", "xslt", "xsd", "wsdl", ".xml", ".csdl", ".edmx", ".xsl", ".xslt", ".xsd", ".wsdl"] },
-        { vb: ["vbnet", "vbscript", ".vb", ".bas", ".vbs", ".vba"] }
-    ]
-
-    for (const key in dict) {
-        if (dict.hasOwnProperty(key)) {
-            const element: any = dict[key];
-            for (const extension in element) {
-                if (element.hasOwnProperty(extension)) {
-                    const val: string[] = element[extension];
-                    for (const x in val) {
-                        if (val[x] === ext) {
-                            language = extension;
-                            break;
-                        }
-                    }
                 }
-            }
+                break;
+            case "range":
+                const range = await window.showInputBox({ prompt: "Enter line selection range" });
+                if (range) {
+                    snippet = snippetBuilder(language, snippetLink, undefined, range);
+                    common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
+                }
+                break;
+            default:
+                snippet = snippetBuilder(language, snippetLink);
+                common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
+                break;
         }
     }
-    if (!language) {
-        return ext.substr(1);
-    }
-
-    return language
 }
 
-export function internalLinkBuilder(isArt: boolean, pathSelection: any, selectedText: string = "") {
+export function inferLanguageFromFileExtension(fileExtension: string): IHighlightLanguage | null {
+    const matches = languages.filter((lang) => {
+        return lang.extensions
+            ? lang.extensions.some((ext) => ext === fileExtension)
+            : false;
+    });
+
+    if (matches && matches.length) {
+        return matches[0];
+    }
+
+    return null;
+}
+
+export function internalLinkBuilder(isArt: boolean, pathSelection: string, selectedText: string = "", languageId?: string) {
     const os = require("os");
     let link = "";
-
     let startBrace = "";
     if (isArt) {
         startBrace = "![";
@@ -262,9 +226,15 @@ export function internalLinkBuilder(isArt: boolean, pathSelection: any, selected
 
     // replace the selected text with the properly formatted link
     if (pathSelection === "") {
-        link = startBrace + selectedText + "]()";
+        link = `${startBrace}${selectedText}]()`;
     } else {
-        link = startBrace + selectedText + "](" + pathSelection + ")";
+        link = `${startBrace}${selectedText}](${pathSelection})`;
+    }
+
+    const langId = languageId || "markdown";
+    const isYaml = langId === "yaml" && !isArt;
+    if (isYaml) {
+        link = pathSelection;
     }
 
     // The relative path comparison creates an additional level that is not needed and breaks linking.
@@ -286,30 +256,30 @@ export function externalLinkBuilder(link: string, title: string = "") {
     if (title === "") {
         title = link;
     }
-    const externalLink = "[" + title + "]" + "(" + link + ")";
+
+    const externalLink = `[${title}](${link})`;
     return externalLink;
 }
 
 export function videoLinkBuilder(link: string) {
-    const videoLink = "> [!VIDEO " + link + "]";
+    const videoLink = `> [!VIDEO ${link}]`;
     return videoLink;
 }
 
 export function includeBuilder(link: string, title: string) {
     // Include link syntax for reference: [!INCLUDE[sampleinclude](./includes/sampleinclude.md)]
-    const include = "[!INCLUDE [" + title + "](" + link + ")]";
-
+    const include = `[!INCLUDE [${title}](${link})]`;
     return include;
 
 }
 
 export function snippetBuilder(language: string, relativePath: string, id?: string, range?: string) {
     if (id) {
-        return ":::code language=\"" + language + "\" source=\"" + relativePath + "\" id=\"" + id + "\":::"
+        return `:::code language="${language}" source="${relativePath}" id=${id}":::`;
     } else if (range) {
-        return ":::code language=\"" + language + "\" source=\"" + relativePath + "\" range=\"" + range + "\":::"
+        return `:::code language="${language}" source="${relativePath}" range="${range}":::`;
     } else {
-        return ":::code language=\"" + language + "\" source=\"" + relativePath + "\":::";
+        return `:::code language="${language}" source="${relativePath}":::`;
     }
 }
 

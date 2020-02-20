@@ -5,13 +5,13 @@ import { output } from "../extension";
 import { checkExtension, generateTimestamp } from "../helper/common";
 import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
-import { applyCleanup } from "./cleanup-controller";
+import { applyCleanup } from "./cleanup/cleanup-controller";
 import { formatCode } from "./code-controller";
 import { pickImageType } from "./image-controller";
 import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
-import { insertVideo } from "./media-controller";
+import { insertVideo, insertLink } from "./media-controller";
 import { noLocText } from "./no-loc-controller";
 import { previewTopic } from "./preview-controller";
 import { insertRowsAndColumns } from "./row-columns-controller";
@@ -128,6 +128,10 @@ export function markdownQuickPick() {
         },
         {
             description: "",
+            label: "$(link) Insert link",
+        },
+        {
+            description: "",
             label: "$(lock) Non-localizable text",
         },
     );
@@ -217,6 +221,9 @@ export function markdownQuickPick() {
                 break;
             case "parent node":
                 insertExpandableParentNode();
+                break;
+            case "insert link":
+                insertLink();
                 break;
             case "columns":
                 insertRowsAndColumns();

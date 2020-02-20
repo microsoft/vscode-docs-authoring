@@ -1,10 +1,10 @@
 "use strict";
 
-import { QuickPickOptions, Range, window } from "vscode";
-import { DocsCodeLanguages, languageRequired } from "../constants/docs-code-languages";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData } from "../helper/common";
+import { QuickPickOptions, Range, Selection, TextEditorEdit, window } from "vscode";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData, showStatusMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
+import { getLanguageIdentifierQuickPickItems, languages } from "../helper/highlight-langs";
 
 const telemetryCommand: string = "formatCode";
 
@@ -62,7 +62,7 @@ export function format(content: string, codeLang: string, isSingleLine: boolean,
     let styleCode = "";
 
     // If the selection is contained in a single line treat it as inline code
-    // If the selection spans muliple lines apply fenced code formatting
+    // If the selection spans multiple lines apply fenced code formatting
     if (isSingleLine) {
         // Clean up string if it is already formatted
         if (isInlineCode(selectedText)) {
@@ -87,51 +87,72 @@ export function format(content: string, codeLang: string, isSingleLine: boolean,
  * Returns a list of code languages for users to choose from.  The languages will be displayed in a quick pick menu.
  */
 
-export function showSupportedLanguages(content: string, selectedContent: any) {
-    let selectedCodeLang: any;
-    const supportedLanguages: any = [];
-    const options: QuickPickOptions = { placeHolder: languageRequired };
-    DocsCodeLanguages.sort().forEach((codeLang) => {
-        supportedLanguages.push(codeLang);
-    });
-    window.showQuickPick(supportedLanguages, options).then((qpSelection) => {
-        if (!qpSelection) {
-            postWarning("No code language selected. Abandoning command.");
-            return;
-        }
-        selectedCodeLang = qpSelection;
-        applyCodeFormatting(content, selectedContent, selectedCodeLang);
-        if (!qpSelection) {
-            postWarning("No code language selected. Abandoning command.");
-            return;
-        }
-    });
+export async function showSupportedLanguages(content: string, selectedContent: any) {
+    const supportedLanguages = getLanguageIdentifierQuickPickItems();
+    const options: QuickPickOptions = {
+        matchOnDescription: true,
+        placeHolder: "Select a programming language (required)",
+    };
+    const qpSelection = await window.showQuickPick(supportedLanguages, options);
+    if (!qpSelection) {
+        postWarning("No code language selected. Abandoning command.");
+        return;
+    }
+
+    const language = languages.find((lang) => lang.language === qpSelection.label);
+    const alias = language!.aliases[0];
+    await applyCodeFormatting(content, selectedContent, alias);
 }
 
-export function applyCodeFormatting(content: string, selectedContent: any, codeLang: string) {
+export async function applyCodeFormatting(content: string, selectedContent: any, codeLang: string) {
     const selectedText = content.trim();
     const editor = window.activeTextEditor;
+
     if (!editor) {
         noActiveEditorMessage();
         return;
     } else {
+        const selections: Selection[] = editor.selections;
         const emptyRange = new Range(editor.selection.active, editor.selection.active);
 
-        if (selectedText === "") {
+        // if unselect text, add bold syntax without any text
+        if (selections.length === 0) {
             const cursorPosition = editor.selection.active;
             // assumes the range of code syntax
             const range = new Range(cursorPosition.with(cursorPosition.line, cursorPosition.character - 1
                 < 0 ? 0 : cursorPosition.character - 1), cursorPosition.with
-                    (cursorPosition.line, cursorPosition.character + 1));
+                (cursorPosition.line, cursorPosition.character + 1));
 
             const formattedText = format(selectedText, "", selectedContent.isSingleLine, range);
 
             insertUnselectedText(editor, formatCode.name, formattedText, range);
-        } else {
+        }
+
+        // if only a selection is made with a single cursor
+        if (selections.length === 1) {
             // calls formatter and returns selectedText as MD Code
             const formattedText = format(selectedText, codeLang, selectedContent.isSingleLine, emptyRange);
 
             insertContentToEditor(editor, formatCode.name, formattedText, true);
+        }
+
+        // if multiple cursors were used to make selections
+        if (selections.length > 1) {
+            const success = await editor.edit((edit: TextEditorEdit) => {
+                selections.forEach((selection: Selection) => {
+                    for (let i = selection.start.line; i <= selection.end.line; i++) {
+                        const text = editor.document.getText(selection);
+                        const formattedText = format(text, codeLang, selectedContent.isSingleLine, emptyRange);
+                        edit.replace(selection, formattedText);
+                    }
+                });
+            });
+
+            if (!success) {
+                postWarning("Could not format selections. Abandoning command.");
+                showStatusMessage("Could not format selections. Abandoning command.");
+                return;
+            }
         }
     }
 }

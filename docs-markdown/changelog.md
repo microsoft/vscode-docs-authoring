@@ -1,5 +1,30 @@
 # Change Log
 
+## 0.2.47 (February 14th, 2020)
+
+- Added empty metadata cleanup script
+
+## 0.2.44 (February 4th, 2020)
+
+- Added folder level and file level cleanup script
+
+## 0.2.40 (January 28th, 2020)
+
+- Fix bug that prevented language identifiers from being suggested
+
+## 0.2.39 (January 28th, 2020)
+
+- Multi-cursor/selection formatting
+
+## 0.2.38 (January 28nd, 2020)
+
+- Typing a triple backtick will trigger auto-completion for language identifiers
+- Sort selection added, both ASC and DESC sort available
+
+## 0.2.33 (January 14th, 2020)
+
+- Extend include scope
+
 ## 0.2.32 (January 10th, 2020)
 
 - Fixed alt text image bug on macOS
