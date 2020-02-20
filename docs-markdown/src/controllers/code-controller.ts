@@ -90,6 +90,7 @@ export function format(content: string, codeLang: string, isSingleLine: boolean,
 export async function showSupportedLanguages(content: string, selectedContent: any) {
     const supportedLanguages = getLanguageIdentifierQuickPickItems();
     const options: QuickPickOptions = {
+        matchOnDescription: true,
         placeHolder: "Select a programming language (required)",
     };
     const qpSelection = await window.showQuickPick(supportedLanguages, options);
