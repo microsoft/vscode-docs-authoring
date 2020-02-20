@@ -4,7 +4,7 @@ import { QuickPickOptions, Range, Selection, TextEditorEdit, window } from "vsco
 import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData, showStatusMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
-import { getLanguageIdentifierQuickPickItems } from "../helper/highlight-langs";
+import { getLanguageIdentifierQuickPickItems, languages } from "../helper/highlight-langs";
 
 const telemetryCommand: string = "formatCode";
 
@@ -88,7 +88,6 @@ export function format(content: string, codeLang: string, isSingleLine: boolean,
  */
 
 export async function showSupportedLanguages(content: string, selectedContent: any) {
-    let selectedCodeLang: any;
     const supportedLanguages = getLanguageIdentifierQuickPickItems();
     const options: QuickPickOptions = {
         placeHolder: "Select a programming language (required)",
@@ -98,12 +97,10 @@ export async function showSupportedLanguages(content: string, selectedContent: a
         postWarning("No code language selected. Abandoning command.");
         return;
     }
-    selectedCodeLang = qpSelection;
-    applyCodeFormatting(content, selectedContent, selectedCodeLang);
-    if (!qpSelection) {
-        postWarning("No code language selected. Abandoning command.");
-        return;
-    }
+
+    const language = languages.find((lang) => lang.language === qpSelection.label);
+    const alias = language!.aliases[0];
+    await applyCodeFormatting(content, selectedContent, alias);
 }
 
 export async function applyCodeFormatting(content: string, selectedContent: any, codeLang: string) {
