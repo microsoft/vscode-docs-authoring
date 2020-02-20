@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.47",
+  "version": "0.2.49",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -771,6 +771,7 @@
     "vscode": "^1.1.33"
   },
   "jest": {
+    "verbose": true,
     "preset": "ts-jest",
     "roots": [
       "<rootDir>/test"
