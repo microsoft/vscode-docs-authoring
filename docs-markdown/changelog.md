@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.50 (February 20th, 2020)
+
+- Added config setting for loc-scope
+
 ## 0.2.47 (February 14th, 2020)
 
 - Added empty metadata cleanup script

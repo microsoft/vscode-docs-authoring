@@ -13,6 +13,7 @@ const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp", ".svg"];
 
 const telemetryCommand: string = "insertImage";
 let commandOption: string;
+const locScopeItems: QuickPickItem[] = [];
 
 export function insertImageCommand() {
     const commands = [
@@ -28,14 +29,23 @@ export function insertImageCommand() {
 export function pickImageType() {
     const opts: QuickPickOptions = { placeHolder: "Select an Image type" };
     const items: QuickPickItem[] = [];
-    items.push({
-        description: "",
-        label: "Image (Standard Markdown)",
-    });
-    items.push({
-        description: "",
-        label: "Image (Docs Markdown)",
-    });
+    const config = workspace.getConfiguration("markdown");
+    const alwaysIncludeLocScope = config.get<boolean>("alwaysIncludeLocScope");
+    if (!alwaysIncludeLocScope) {
+        items.push({
+            description: "",
+            label: "Image (Standard Markdown)",
+        });
+        items.push({
+            description: "",
+            label: "Image (Docs Markdown)",
+        });
+    } else {
+        items.push({
+            description: "",
+            label: "Image",
+        });
+    }
     items.push({
         description: "",
         label: "Icon image",
@@ -44,11 +54,12 @@ export function pickImageType() {
         description: "",
         label: "Complex image",
     });
-    items.push({
-        description: "",
-        label: "Add localization scope to image",
-    });
-
+    if (!alwaysIncludeLocScope) {
+        items.push({
+            description: "",
+            label: "Add localization scope to image",
+        });
+    }
     window.showQuickPick(items, opts).then((selection) => {
         if (!selection) {
             return;
@@ -59,6 +70,10 @@ export function pickImageType() {
                 commandOption = "image (standard markdown)";
                 break;
             case "image (docs markdown)":
+                applyImage();
+                commandOption = "image (docs markdown)";
+                break;
+            case "image":
                 applyImage();
                 commandOption = "image (docs markdown)";
                 break;
@@ -139,13 +154,62 @@ export async function applyImage() {
                 } else {
                     altText = selectedText;
                 }
+
+                const config = workspace.getConfiguration("markdown");
+                const alwaysIncludeLocScope = config.get<boolean>("alwaysIncludeLocScope");
+                if (alwaysIncludeLocScope) {
+                    const notCached = locScopeItems.length <= 0;
+                    if (notCached) {
+                        await getLocScopeProducts();
+                    }
+                    // show quickpick to user for products list.
+                    const locScope = await window.showQuickPick(locScopeItems, { placeHolder: "Select from product list" })
+                    if (locScope) {
+                        image = `:::image type="content" source="${sourcePath}" alt-text="${altText}" loc-scope="${locScope.label}":::`;
+                    }
+                } else {
+                    image = `:::image type="content" source="${sourcePath}" alt-text="${altText}":::`;
+                }
                 // output image content type
-                image = `:::image type="content" source="${sourcePath}" alt-text="${altText}":::`;
                 insertContentToEditor(editor, applyImage.name, image, true);
             }
         });
     }
 }
+
+async function getLocScopeProducts() {
+    // if user is inside :::image::: tag, then ask them for quickpick of products based on allow list
+    // call allowlist with API Auth Token
+    // you will need auth token to call list
+    const response = await Axios.get("https://docs.microsoft.com/api/metadata/allowlists")
+    // get products from response
+    let products: string[] = []
+    Object.keys(response.data)
+        .filter((x) => x.startsWith("list:product"))
+        .map((item: string) => {
+            const set = item.split(":");
+            if (set.length > 2) {
+                products.push(set[2]);
+                Object.keys(response.data[item].values)
+                    .map((prod: string) =>
+                        // push the response products into the list of quickpicks.
+                        products.push(prod)
+                    );
+            }
+        });
+    products.sort().map((item) => {
+        locScopeItems.push({
+            label: item
+        })
+    });
+    locScopeItems.push({
+        label: "other"
+    });
+    locScopeItems.push({
+        label: "third-party"
+    });
+}
+
 function checkEditor(editor: any) {
     let actionType: string = "Get File for Image";
 
@@ -302,11 +366,28 @@ export async function applyComplex() {
                 } else {
                     altText = selectedText;
                 }
-                // output image content type
-                // output image complex type
-                image = `:::image type="complex" source="${sourcePath}" alt-text="${altText}":::
+                const config = workspace.getConfiguration("markdown");
+                const alwaysIncludeLocScope = config.get<boolean>("alwaysIncludeLocScope");
+                if (alwaysIncludeLocScope) {
+                    const notCached = locScopeItems.length <= 0;
+                    if (notCached) {
+                        await getLocScopeProducts();
+                    }
+                    // show quickpick to user for products list.
+                    const locScope = await window.showQuickPick(locScopeItems, { placeHolder: "Select from product list" })
+                    if (locScope) {
+                        image = `:::image type="complex" source="${sourcePath}" alt-text="${altText}" loc-scope="${locScope.label}":::
 
 :::image-end:::`;
+                    }
+                } else {
+
+                    // output image complex type
+                    image = `:::image type="complex" source="${sourcePath}" alt-text="${altText}":::
+
+:::image-end:::`;
+                }
+
                 insertContentToEditor(editor, applyImage.name, image, true);
                 // Set editor position to the middle of long description body
                 setCursorPosition(editor, editor.selection.active.line + 1, editor.selection.active.character);
@@ -314,7 +395,7 @@ export async function applyComplex() {
         });
     }
 }
-const items: QuickPickItem[] = [];
+
 export async function applyLocScope() {
     // get editor, its needed to apply the output to editor window.
     const editor = window.activeTextEditor;
@@ -337,43 +418,13 @@ export async function applyLocScope() {
                 return;
             }
         }
-
         // if user is inside :::image::: tag, then ask them for quickpick of products based on allow list
-        const cached = items.length <= 0;
-        if (cached) {
-            // call allowlist with API Auth Token
-            // you will need auth token to call list
-            const response = await Axios.get("https://docs.microsoft.com/api/metadata/allowlists")
-            // get products from response
-            let products: string[] = []
-            Object.keys(response.data)
-                .filter((x) => x.startsWith("list:product"))
-                .map((item: string) => {
-                    const set = item.split(":");
-                    if (set.length > 2) {
-                        products.push(set[2]);
-                        Object.keys(response.data[item].values)
-                            .map((prod: string) =>
-                                // push the response products into the list of quickpicks.
-                                products.push(prod)
-                            );
-                    }
-                });
-            products.sort().map((item) => {
-                items.push({
-                    label: item
-                })
-            });
-            items.push({
-                label: "other"
-            });
-            items.push({
-                label: "third-party"
-            });
+        const notCached = locScopeItems.length <= 0;
+        if (notCached) {
+            await getLocScopeProducts();
         }
-
         // show quickpick to user for products list.
-        const product = await window.showQuickPick(items, { placeHolder: "Select from product list" });
+        const product = await window.showQuickPick(locScopeItems, { placeHolder: "Select from product list" });
         if (!product) {
             // if user did not select source image then exit.
             return;
