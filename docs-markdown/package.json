@@ -270,7 +270,7 @@
         {
           "command": "formatBold",
           "group": "Docs",
-          "when": "resourceLangId == markdown && config.markdown.previewFeatures"
+          "when": "resourceLangId == markdown"
         },
         {
           "command": "formatItalic",

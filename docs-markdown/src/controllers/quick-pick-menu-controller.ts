@@ -45,6 +45,10 @@ export function markdownQuickPick() {
 
     markdownItems.push(
         {
+            description: "Beta feature",
+            label: "$(pencil) Bold",
+        },
+        {
             description: "",
             label: "$(info) Italic",
         },
@@ -103,14 +107,9 @@ export function markdownQuickPick() {
     );
 
     // push commands marked for preview (beta)
+    // add description and label to this section for preview features
     const previewSetting = vscode.workspace.getConfiguration("markdown").previewFeatures;
     if (previewSetting == true) {
-        markdownItems.push(
-            {
-                description: "Beta feature",
-                label: "$(pencil) Bold",
-            }
-        );
     }
 
     if (checkExtension("docsmsft.docs-article-templates")) {
