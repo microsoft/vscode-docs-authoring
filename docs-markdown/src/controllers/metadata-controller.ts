@@ -1,11 +1,10 @@
 "use strict";
 
 import * as fs from "fs";
-import * as glob from "glob";
 import * as path from "path";
 
 import { commands, Selection, TextEditor, window, workspace } from "vscode";
-import { isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData, tryFindFile } from "../helper/common";
 
 export function insertMetadataCommands() {
     return [
@@ -149,7 +148,7 @@ async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementF
     const folder = workspace.getWorkspaceFolder(editor.document.uri);
     if (folder) {
         // Read the DocFX.json file, search for metadata defaults.
-        const docFxJson = tryFindDocFxJsonFile(folder.uri.fsPath);
+        const docFxJson = tryFindFile(folder.uri.fsPath, "docfx.json");
         if (!!docFxJson && fs.existsSync(docFxJson)) {
             const jsonBuffer = fs.readFileSync(docFxJson);
             const metadata = JSON.parse(jsonBuffer.toString()) as IDocFxMetadata;
@@ -221,24 +220,6 @@ function getReplacementValue(globs: { [glob: string]: string }, fsPath: string):
                     return globs[globKey.key];
                 }
             }
-        }
-    }
-
-    return undefined;
-}
-
-function tryFindDocFxJsonFile(rootPath: string) {
-    const docFxJson = path.resolve(rootPath, "docfx.json");
-    const exists = fs.existsSync(docFxJson);
-    if (exists) {
-        return docFxJson;
-    } else {
-        const files = glob.sync("**/docfx.json", {
-            cwd: rootPath,
-        });
-
-        if (files && files.length === 1) {
-            return path.join(rootPath, files[0]);
         }
     }
 

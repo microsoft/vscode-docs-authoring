@@ -14,6 +14,7 @@ import {
     Position,
     QuickPickItem,
     Range,
+    SnippetString,
     TextDocument,
     window,
     workspace,
@@ -30,6 +31,7 @@ export function insertLanguageCommands() {
 export interface IHighlightLanguage {
     readonly language: string;
     readonly aliases: string[];
+    readonly extensions?: string[];
 }
 
 export type HighlightLanguages = IHighlightLanguage[];
@@ -48,7 +50,7 @@ export const languages: HighlightLanguages =
         { language: "Ada", aliases: ["ada"] },
         { language: "ARM assembler", aliases: ["armasm", "arm"] },
         { language: "AVR assembler", aliases: ["avrasm"] },
-        { language: "ActionScript", aliases: ["actionscript", "as"] },
+        { language: "ActionScript", aliases: ["actionscript", "as"], extensions: [".as"] },
         { language: "Alan", aliases: ["alan", "i"] },
         { language: "AngelScript", aliases: ["angelscript", "asc"] },
         { language: "ANTLR", aliases: ["antlr"] },
@@ -69,13 +71,13 @@ export const languages: HighlightLanguages =
         { language: "Azure CLI (Interactive)", aliases: ["azurecli-interactive"] },
         { language: "Azure Powershell", aliases: ["azurepowershell"] },
         { language: "Azure Powershell (Interactive)", aliases: ["azurepowershell-interactive"] },
-        { language: "Bash", aliases: ["bash", "sh", "zsh"] },
+        { language: "Bash", aliases: ["bash", "sh", "zsh"], extensions: [".sh", ".bash"] },
         { language: "Basic", aliases: ["basic"] },
         { language: "BNF", aliases: ["bnf"] },
-        { language: "C", aliases: ["c"] },
-        { language: "C#", aliases: ["csharp", "cs"] },
+        { language: "C", aliases: ["c"], extensions: [".c"] },
+        { language: "C#", aliases: ["csharp", "cs"], extensions: [".cs"] },
         { language: "C# (Interactive)", aliases: ["csharp-interactive"] },
-        { language: "C++", aliases: ["cpp", "c", "cc", "h", "c++", "h++", "hpp"] },
+        { language: "C++", aliases: ["cpp", "c", "cc", "h", "c++", "h++", "hpp"], extensions: [".cpp", ".h", ".hpp", ".cc"] },
         { language: "C++/CX", aliases: ["cppcx"] },
         { language: "C++/WinRT", aliases: ["cppwinrt"] },
         { language: "C/AL", aliases: ["cal"] },
@@ -90,10 +92,10 @@ export const languages: HighlightLanguages =
         { language: "Crmsh", aliases: ["crmsh", "crm", "pcmk"] },
         { language: "Crystal", aliases: ["crystal", "cr"] },
         { language: "Cypher (Neo4j)", aliases: ["cypher"] },
-        { language: "D", aliases: ["d"] },
+        { language: "D", aliases: ["d"], extensions: [".d"] },
         { language: "DAX Power BI", aliases: ["dax"] },
         { language: "DNS Zone file", aliases: ["dns", "zone", "bind"] },
-        { language: "DOS", aliases: ["dos", "bat", "cmd"] },
+        { language: "DOS", aliases: ["dos", "bat", "cmd"], extensions: [".bat", ".cmd"] },
         { language: "Dart", aliases: ["dart"] },
         { language: "Delphi", aliases: ["delphi", "dpr", "dfm", "pas", "pascal", "freepascal", "lazarus", "lpr", "lfm"] },
         { language: "Diff", aliases: ["diff", "patch"] },
@@ -106,10 +108,10 @@ export const languages: HighlightLanguages =
         { language: "EBNF", aliases: ["ebnf"] },
         { language: "Elixir", aliases: ["elixir"] },
         { language: "Elm", aliases: ["elm"] },
-        { language: "Erlang", aliases: ["erlang", "erl"] },
+        { language: "Erlang", aliases: ["erlang", "erl"], extensions: [".erl"] },
         { language: "Excel", aliases: ["excel", "xls", "xlsx"] },
         { language: "Extempore", aliases: ["extempore", "xtlang", "xtm"] },
-        { language: "F#", aliases: ["fsharp", "fs"] },
+        { language: "F#", aliases: ["fsharp", "fs"], extensions: [".fs", ".fsi", ".fsx"] },
         { language: "FIX", aliases: ["fix"] },
         { language: "Fortran", aliases: ["fortran", "f90", "f95"] },
         { language: "G-Code", aliases: ["gcode", "nc"] },
@@ -118,37 +120,37 @@ export const languages: HighlightLanguages =
         { language: "GDScript", aliases: ["godot", "gdscript"] },
         { language: "Gherkin", aliases: ["gherkin"] },
         { language: "GN for Ninja", aliases: ["gn", "gni"] },
-        { language: "Go", aliases: ["go", "golang"] },
+        { language: "Go", aliases: ["go", "golang"], extensions: [".go"] },
         { language: "Golo", aliases: ["golo", "gololang"] },
         { language: "Gradle", aliases: ["gradle"] },
         { language: "Groovy", aliases: ["groovy"] },
-        { language: "HTML", aliases: ["html", "xhtml"] },
+        { language: "HTML", aliases: ["html", "xhtml"], extensions: [".html", ".xhtml"] },
         { language: "HTTP", aliases: ["http", "https"] },
         { language: "Haml", aliases: ["haml"] },
         { language: "Handlebars", aliases: ["handlebars", "hbs", "html.hbs", "html.handlebars"] },
         { language: "Haskell", aliases: ["haskell", "hs"] },
         { language: "Haxe", aliases: ["haxe", "hx"] },
         { language: "Hy", aliases: ["hy", "hylang"] },
-        { language: "Ini", aliases: ["ini"] },
+        { language: "Ini", aliases: ["ini"], extensions: [".ini"] },
         { language: "Inform7", aliases: ["inform7", "i7"] },
         { language: "IRPF90", aliases: ["irpf90"] },
-        { language: "JSON", aliases: ["json"] },
-        { language: "Java", aliases: ["java", "jsp"] },
-        { language: "JavaScript", aliases: ["javascript", "js", "jsx"] },
+        { language: "JSON", aliases: ["json"], extensions: [".json"] },
+        { language: "Java", aliases: ["java", "jsp"], extensions: [".java", ".jsp"] },
+        { language: "JavaScript", aliases: ["javascript", "js", "jsx"], extensions: [".js", ".jsx"] },
         { language: "Kotlin", aliases: ["kotlin", "kt"] },
         { language: "Kusto", aliases: ["kusto"] },
         { language: "Leaf", aliases: ["leaf"] },
         { language: "Lasso", aliases: ["lasso", "ls", "lassoscript"] },
-        { language: "Less", aliases: ["less"] },
+        { language: "Less", aliases: ["less"], extensions: [".less"] },
         { language: "LDIF", aliases: ["ldif"] },
-        { language: "Lisp", aliases: ["lisp"] },
+        { language: "Lisp", aliases: ["lisp"], extensions: [".lisp", ".lsp"] },
         { language: "LiveCode Server", aliases: ["livecodeserver"] },
         { language: "LiveScript", aliases: ["livescript", "ls"] },
-        { language: "Lua", aliases: ["lua"] },
-        { language: "Makefile", aliases: ["makefile", "mk", "mak"] },
-        { language: "Markdown", aliases: ["markdown", "md", "mkdown", "mkd"] },
+        { language: "Lua", aliases: ["lua"], extensions: [".lua"] },
+        { language: "Makefile", aliases: ["makefile", "mk", "mak"], extensions: [".gmk", ".mk", ".mak"] },
+        { language: "Markdown", aliases: ["markdown", "md", "mkdown", "mkd"], extensions: [".md", ".markdown", ".mdown", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".rmd"] },
         { language: "Mathematica", aliases: ["mathematica", "mma", "wl"] },
-        { language: "Matlab", aliases: ["matlab"] },
+        { language: "Matlab", aliases: ["matlab"], extensions: [".matlab"] },
         { language: "Maxima", aliases: ["maxima"] },
         { language: "Maya Embedded Language", aliases: ["mel"] },
         { language: "Mercury", aliases: ["mercury"] },
@@ -165,45 +167,45 @@ export const languages: HighlightLanguages =
         { language: "Nimrod", aliases: ["nimrod", "nim"] },
         { language: "Nix", aliases: ["nix"] },
         { language: "OCaml", aliases: ["ocaml", "ml"] },
-        { language: "Objective C", aliases: ["objectivec", "mm", "objc", "obj-c"] },
+        { language: "Objective C", aliases: ["objectivec", "mm", "objc", "obj-c"], extensions: [".m", ".h"] },
         { language: "OpenGL Shading Language", aliases: ["glsl"] },
         { language: "OpenSCAD", aliases: ["openscad", "scad"] },
         { language: "Oracle Rules Language", aliases: ["ruleslanguage"] },
         { language: "Oxygene", aliases: ["oxygene"] },
         { language: "PF", aliases: ["pf", "pf.conf"] },
-        { language: "PHP", aliases: ["php", "php3", "php4", "php5", "php6"] },
+        { language: "PHP", aliases: ["php", "php3", "php4", "php5", "php6"], extensions: [".php", ".php3", ".php4", ".php5", ".phtml"] },
         { language: "Parser3", aliases: ["parser3"] },
-        { language: "Perl", aliases: ["perl", "pl", "pm"] },
+        { language: "Perl", aliases: ["perl", "pl", "pm"], extensions: [".pl"] },
         { language: "Plaintext no highlight", aliases: ["plaintext"] },
         { language: "Pony", aliases: ["pony"] },
         { language: "PostgreSQL & PL/pgSQL", aliases: ["pgsql", "postgres", "postgresql"] },
-        { language: "PowerShell", aliases: ["powershell", "ps"] },
+        { language: "PowerShell", aliases: ["powershell", "ps"], extensions: [".ps", ".ps1", ".psd1", ".psm1"] },
         { language: "PowerShell (Interactive)", aliases: ["powershell-interactive"] },
         { language: "Processing", aliases: ["processing"] },
         { language: "Prolog", aliases: ["prolog"] },
         { language: "Properties", aliases: ["properties"] },
         { language: "Protocol Buffers", aliases: ["protobuf"] },
         { language: "Puppet", aliases: ["puppet", "pp"] },
-        { language: "Python", aliases: ["python", "py", "gyp"] },
+        { language: "Python", aliases: ["python", "py", "gyp"], extensions: [".py"] },
         { language: "Python profiler results", aliases: ["profile"] },
         { language: "Q#", aliases: ["qsharp"] },
         { language: "Q", aliases: ["k", "kdb"] },
         { language: "QML", aliases: ["qml"] },
-        { language: "R", aliases: ["r"] },
-        { language: "Razor CSHTML", aliases: ["cshtml", "razor", "razor-cshtml"] },
+        { language: "R", aliases: ["r"], extensions: [".r"] },
+        { language: "Razor CSHTML", aliases: ["cshtml", "razor", "razor-cshtml"], extensions: [".cshtml", ".razor"] },
         { language: "ReasonML", aliases: ["reasonml", "re"] },
         { language: "RenderMan RIB", aliases: ["rib"] },
         { language: "RenderMan RSL", aliases: ["rsl"] },
         { language: "Roboconf", aliases: ["graph", "instances"] },
         { language: "Robot Framework", aliases: ["robot", "rf"] },
         { language: "RPM spec files", aliases: ["rpm-specfile", "rpm", "spec", "rpm-spec", "specfile"] },
-        { language: "Ruby", aliases: ["ruby", "rb", "gemspec", "podspec", "thor", "irb"] },
-        { language: "Rust", aliases: ["rust", "rs"] },
+        { language: "Ruby", aliases: ["ruby", "rb", "gemspec", "podspec", "thor", "irb"], extensions: [".rb"] },
+        { language: "Rust", aliases: ["rust", "rs"], extensions: [".rs", ".rust"] },
         { language: "SAS", aliases: ["SAS", "sas"] },
-        { language: "SCSS", aliases: ["scss"] },
-        { language: "SQL", aliases: ["sql"] },
+        { language: "SCSS", aliases: ["scss"], extensions: [".scss"] },
+        { language: "SQL", aliases: ["sql"], extensions: [".sql"] },
         { language: "STEP Part 21", aliases: ["p21", "step", "stp"] },
-        { language: "Scala", aliases: ["scala"] },
+        { language: "Scala", aliases: ["scala"], extensions: [".scala", ".sc"] },
         { language: "Scheme", aliases: ["scheme"] },
         { language: "Scilab", aliases: ["scilab", "sci"] },
         { language: "Shape Expressions", aliases: ["shexc"] },
@@ -217,29 +219,29 @@ export const languages: HighlightLanguages =
         { language: "Stylus", aliases: ["stylus", "styl"] },
         { language: "SubUnit", aliases: ["subunit"] },
         { language: "Supercollider", aliases: ["supercollider", "sc"] },
-        { language: "Swift", aliases: ["swift"] },
+        { language: "Swift", aliases: ["swift"], extensions: [".swift"] },
         { language: "Tcl", aliases: ["tcl", "tk"] },
         { language: "Terraform (HCL)", aliases: ["terraform", "tf", "hcl"] },
         { language: "Test Anything Protocol", aliases: ["tap"] },
         { language: "TeX", aliases: ["tex"] },
         { language: "Thrift", aliases: ["thrift"] },
-        { language: "TOML", aliases: ["toml"] },
+        { language: "TOML", aliases: ["toml"], extensions: [".toml"] },
         { language: "TP", aliases: ["tp"] },
         { language: "Twig", aliases: ["twig", "craftcms"] },
-        { language: "TypeScript", aliases: ["typescript", "ts"] },
-        { language: "VB.NET", aliases: ["vbnet", "vb"] },
-        { language: "VBScript", aliases: ["vbscript", "vbs"] },
+        { language: "TypeScript", aliases: ["typescript", "ts"], extensions: [".ts", ".d.ts"] },
+        { language: "VB.NET", aliases: ["vbnet", "vb"], extensions: [".vb", ".bas", ".vba"] },
+        { language: "VBScript", aliases: ["vbscript", "vbs"], extensions: [".vbs"] },
         { language: "VHDL", aliases: ["vhdl"] },
         { language: "Vala", aliases: ["vala"] },
         { language: "Verilog", aliases: ["verilog", "v"] },
         { language: "Vim Script", aliases: ["vim"] },
-        { language: "X++", aliases: ["xpp"] },
+        { language: "X++", aliases: ["xpp"], extensions: [".xpp"] },
         { language: "x86 Assembly", aliases: ["x86asm"] },
         { language: "XL", aliases: ["xl", "tao"] },
         { language: "XQuery", aliases: ["xquery", "xpath", "xq"] },
-        { language: "XAML", aliases: ["xaml"] },
-        { language: "XML", aliases: ["xml", "xhtml", "rss", "atom", "xjb", "xsd", "xsl", "plist"] },
-        { language: "YAML", aliases: ["yml", "yaml"] },
+        { language: "XAML", aliases: ["xaml"], extensions: [".xaml"] },
+        { language: "XML", aliases: ["xml", "xhtml", "rss", "atom", "xjb", "xsd", "xsl", "plist"], extensions: [".xml", ".xhtml", ".rss", ".atom", ".xjb", ".xsd", ".xsl", ".plist", ".xml", ".csdl", ".edmx", ".xslt", ".wsdl"] },
+        { language: "YAML", aliases: ["yml", "yaml"], extensions: ["yml", "yaml"] },
         { language: "Zephir", aliases: ["zephir", "zep"] },
     ];
 
@@ -279,7 +281,7 @@ export async function insertLanguageIdentifier(range: Range) {
     }
 }
 
-function getLanguageIdentifierQuickPickItems() {
+export function getLanguageIdentifierQuickPickItems() {
     const items: QuickPickItem[] = [];
     const langs = getConfiguredLanguages();
     if (langs) {
@@ -301,17 +303,17 @@ function getLanguageIdentifierCompletionItems(range: Range | undefined, isCancel
         const langs = getConfiguredLanguages();
         if (langs) {
             langs.forEach((lang) => {
+                const langId = lang.aliases[0];
+                const markdownSample = new MarkdownString();
+                markdownSample.appendText("*Output:*");
+                markdownSample.appendCodeblock("", langId);
+
                 const item = new CompletionItem(lang.language, CompletionItemKind.Value);
+                item.detail = markdownSample.value;
+                item.documentation = new MarkdownString(`Use the _${lang.language}_ language identifer (alias: _${langId}_).`);
+                item.insertText = new SnippetString(`${langId}\n$0\n\`\`\``);
                 item.sortText = lang.language;
-                const langId = item.insertText = lang.aliases[0];
-                const doc = new MarkdownString(`Use the "${lang.language}" language identifer (alias: ${item.insertText}).`);
-                doc.appendText("\nSample:\n");
-                doc.appendCodeblock(`\`\`\`${langId}`, "markdown");
-                doc.appendCodeblock("// some code...", "markdown");
-                doc.appendCodeblock("\n", "markdown");
-                doc.appendCodeblock("```", "markdown"); // This is missing from the completion item!
-                doc.appendText("");
-                item.documentation = doc;
+
                 completionItems.push(item);
             });
         }

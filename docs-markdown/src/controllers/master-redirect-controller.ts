@@ -5,24 +5,34 @@ import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
 import { Uri, window, workspace, WorkspaceFolder } from "vscode";
-import { output } from "../extension";
-import { generateTimestamp, postError, sendTelemetryData } from "../helper/common";
-import * as yamlMetadata from "../helper/yaml-metadata";
 import YAML = require("yamljs");
+import { output } from "../extension";
+import { generateTimestamp, naturalLanguageCompare, postError, postWarning, sendTelemetryData, tryFindFile } from "../helper/common";
+import * as yamlMetadata from "../helper/yaml-metadata";
 
 const telemetryCommand: string = "masterRedirect";
+const redirectFileName: string = ".openpublishing.redirection.json";
 
 export function getMasterRedirectionCommand() {
-    const command = [
+    return [
         { command: generateMasterRedirectionFile.name, callback: generateMasterRedirectionFile },
+        { command: sortMasterRedirectionFile.name, callback: sortMasterRedirectionFile },
     ];
+}
 
-    return command;
+export interface IMasterRedirections {
+    redirections: IMasterRedirection[];
+}
+
+export interface IMasterRedirection {
+    source_path: string;
+    redirect_url: string;
+    redirect_document_id?: boolean;
 }
 
 /* tslint:disable:max-classes-per-file variable-name*/
 
-export class MasterRedirection {
+export class MasterRedirection implements IMasterRedirections {
     public redirections: RedirectionFile[];
 
     constructor(redirectionFiles: RedirectionFile[]) {
@@ -30,7 +40,7 @@ export class MasterRedirection {
     }
 }
 
-export class RedirectionFile {
+export class RedirectionFile implements IMasterRedirection {
     public fileFullPath: string;
     public isAlreadyInMasterRedirectionFile: boolean = false;
     public resource: any;
@@ -60,6 +70,33 @@ function showStatusMessage(message: string) {
     const { msTimeValue } = generateTimestamp();
     output.appendLine(`[${msTimeValue}] - ` + message);
     output.show();
+}
+
+export async function sortMasterRedirectionFile() {
+    const editor = window.activeTextEditor;
+    if (!editor) {
+        postWarning("Editor not active. Abandoning command.");
+        return;
+    }
+
+    const folder = workspace.getWorkspaceFolder(editor.document.uri);
+    if (folder) {
+        const file = tryFindFile(folder.uri.fsPath, redirectFileName);
+        if (!!file && fs.existsSync(file)) {
+            const jsonBuffer = fs.readFileSync(file);
+            const redirects = JSON.parse(jsonBuffer.toString()) as IMasterRedirections;
+            if (redirects && redirects.redirections && redirects.redirections.length) {
+
+                redirects.redirections.sort((a, b) => {
+                    return naturalLanguageCompare(a.source_path, b.source_path);
+                });
+
+                fs.writeFileSync(
+                    file,
+                    JSON.stringify(redirects, ["redirections", "source_path", "redirect_url", "redirect_document_id"], 4));
+            }
+        }
+    }
 }
 
 export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) {
@@ -128,12 +165,14 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
 
                 if (redirectionFiles.length === 0) {
                     showStatusMessage("No redirection files found.");
-                    if (resolve) resolve();
+                    if (resolve) {
+                        resolve();
+                    }
                 }
 
                 if (redirectionFiles.length > 0) {
                     let masterRedirection: MasterRedirection | null;
-                    const masterRedirectionFilePath: string = join(workspacePath, ".openpublishing.redirection.json");
+                    const masterRedirectionFilePath: string = join(workspacePath, redirectFileName);
                     // If there is already a master redirection file, read its content to load into masterRedirection variable
                     if (fs.existsSync(masterRedirectionFilePath)) {
                         // test for valid json
@@ -170,13 +209,22 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
                                     masterRedirection.redirections.push(item);
                                 } else {
                                     showStatusMessage("No redirection files found to add.");
-                                    if (resolve) resolve();
+                                    if (resolve) {
+                                        resolve();
+                                    }
                                 }
                             }
                         });
                     }
                     if (masterRedirection.redirections.length > 0) {
-                        fs.writeFileSync(masterRedirectionFilePath, JSON.stringify(masterRedirection, ["redirections", "source_path", "redirect_url", "redirect_document_id"], 4));
+                        masterRedirection.redirections.sort((a, b) => {
+                            return naturalLanguageCompare(a.source_path, b.source_path);
+                        });
+
+                        fs.writeFileSync(
+                            masterRedirectionFilePath,
+                            JSON.stringify(masterRedirection, ["redirections", "source_path", "redirect_url", "redirect_document_id"], 4));
+
                         const currentYear = date.getFullYear();
                         const currentMonth = (date.getMonth() + 1);
                         const currentDay = date.getDate();
@@ -210,7 +258,7 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
                             source.on("close", () => {
                                 fs.unlink(item.fileFullPath, (err) => {
                                     if (err) {
-                                        postError(`Error: ${err}`)
+                                        postError(`Error: ${err}`);
                                     }
                                 });
                             });
@@ -226,7 +274,9 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
 
                         showStatusMessage("Redirected files copied to " + deletedRedirectsPath);
                         showStatusMessage("Done");
-                        if (resolve) resolve();
+                        if (resolve) {
+                            resolve();
+                        }
                     }
                 }
             });
