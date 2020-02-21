@@ -100,12 +100,7 @@
       },
       {
         "command": "applyImage",
-        "title": "Image (Docs Markdown)",
-        "category": "Docs"
-      },
-      {
-        "command": "insertImage",
-        "title": "Image (Standard Markdown)",
+        "title": "Image",
         "category": "Docs"
       },
       {
@@ -121,6 +116,11 @@
       {
         "command": "applyLocScope",
         "title": "Add localization scope to image",
+        "category": "Docs"
+      },
+      {
+        "command": "applyLightbox",
+        "title": "Add lightbox to image",
         "category": "Docs"
       },
       {
@@ -342,11 +342,6 @@
           "when": "resourceLangId == markdown"
         },
         {
-          "command": "insertImage",
-          "group": "Docs",
-          "when": "resourceLangId == markdown"
-        },
-        {
           "command": "applyIcon",
           "group": "Docs",
           "when": "resourceLangId == markdown"
@@ -358,6 +353,11 @@
         },
         {
           "command": "applyLocScope",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyLightbox",
           "group": "Docs",
           "when": "resourceLangId == markdown"
         },
