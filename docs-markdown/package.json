@@ -683,6 +683,11 @@
           "type": "boolean",
           "default": false,
           "description": "Always include loc-scope for images."
+        },
+        "markdown.previewFeatures": {
+          "type": "boolean",
+          "default": false,
+          "description": "When enabled, beta features will become available."
         }
       }
     },

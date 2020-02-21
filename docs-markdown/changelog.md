@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.51 (February 21st, 2020)
+
+- Add preview/beta feature setting
+
 ## 0.2.50 (February 20th, 2020)
 
 - Added config setting for loc-scope
