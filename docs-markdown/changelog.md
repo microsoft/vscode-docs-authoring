@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.51 (February 21st, 2020)
+
+- Add preview/beta feature setting
+
 ## 0.2.47 (February 14th, 2020)
 
 - Added empty metadata cleanup script
