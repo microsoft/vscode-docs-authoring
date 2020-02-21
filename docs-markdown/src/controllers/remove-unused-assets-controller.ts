@@ -43,7 +43,7 @@ function showStatusMessage(message: string) {
 /**
  * Removes all unused images and includes.
  */
-const INCLUDE_RE = /\[!include \[.*\]\((.*)\)\]|:::image .* source="(.*?)"\s*.*:::|<\s*img.*src="(.*?)"\s*.*>|\!\[.*\]\((.*)\)/gmi;
+const INCLUDE_RE = /\[!include \[.*\]\((.*)\)\]|<\s*img.*src="(.*?)"\s*.*>|\((.*?.(?:png|jpg|jpeg|svg|tiff|gif))\)|source\s*=\s*"(.*?)"|lightbox\s*=\s*"(.*?)"/gmi;
 export function removeUnusedImagesAndIncludes(workspacePath: string, progress: any, resolve: any) {
     const message = "Removing unused images and includes";
 
@@ -69,7 +69,7 @@ export function removeUnusedImagesAndIncludes(workspacePath: string, progress: a
                             var match: any;
                             while (match = INCLUDE_RE.exec(data)) {
                                 unusedFiles = unusedFiles.filter(ff => {
-                                    const ffPath = (match[1] || match[2] || match[3] || match[4]).toLowerCase();
+                                    const ffPath = decodeURI((match[1] || match[2] || match[3] || match[4] || match[5]).toLowerCase());
                                     return ffPath.indexOf(ff.label.toLowerCase()) === -1;
                                 })
                             }
