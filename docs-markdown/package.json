@@ -688,6 +688,7 @@
           "type": "boolean",
           "default": false,
           "description": "When enabled, beta features will become available."
+        }
       }
     },
     "keybindings": [
