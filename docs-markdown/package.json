@@ -781,7 +781,7 @@
     "@types/node-dir": "0.0.32",
     "@types/recursive-readdir": "^2.2.0",
     "@types/yamljs": "^0.2.30",
-    "jest": "^25.1.0",
+    "jest": "^24.7.1",
     "jest-junit": "^6.3.0",
     "octicons": "^7.3.0",
     "ts-jest": "^24.0.2",
@@ -814,15 +814,7 @@
     "collectCoverage": true,
     "collectCoverageFrom": [
       "src/**/*"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 80,
-        "functions": 80,
-        "lines": 80,
-        "statements": -10
-      }
-    }
+    ]
   },
   "jest-junit": {
     "output": "test-results-jest.xml",
