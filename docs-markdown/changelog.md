@@ -1,5 +1,17 @@
 # Change Log
 
+## 0.2.51 (February 21st, 2020)
+
+- Add preview/beta feature setting
+
+## 0.2.50 (February 20th, 2020)
+
+- Added config setting for loc-scope
+
+## 0.2.47 (February 14th, 2020)
+
+- Added empty metadata cleanup script
+
 ## 0.2.44 (February 4th, 2020)
 
 - Added folder level and file level cleanup script

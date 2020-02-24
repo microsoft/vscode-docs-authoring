@@ -48,6 +48,7 @@ module.exports = {
                     const content = (!imageMatch.match(common.imageComplexEndTagMatch)) ?
                         fullLooseMatches.filter((match) => match.includes(imageMatch))[0] :
                         imageMatch;
+
                     //malformed colons
                     if (!content.match(common.openAndClosingValidTripleColon)) {
                         onError({
@@ -65,6 +66,18 @@ module.exports = {
                             onError({
                                 lineNumber: text.lineNumber,
                                 detail: detailStrings.imageSourceRequired,
+                                context: text.line
+                            });
+                        }
+                    }
+
+                    //lightbox source check
+                    if (!notImageComplexEndTagMatch) {
+                        const sourceMatch = "common.imageLightboxMatch.exec(content)";
+                        if (sourceMatch && sourceMatch[1] === "") {
+                            onError({
+                                lineNumber: text.lineNumber,
+                                detail: detailStrings.imageLightboxSourceInvalid,
                                 context: text.line
                             });
                         }
@@ -90,6 +103,21 @@ module.exports = {
                                 context: text.line
                             });
                         }
+
+                        //make sure the value of each attribute is strong type matched
+                        if (attr !== ":image" && imageDataResponse.properties[attr].type === "boolean") {
+                            var attrValueRegEx = new RegExp(`${attr}\\s*=\\s*"([a-z]*)"`, 'm')
+                            const attrValueMatch = attrValueRegEx.exec(content);
+                            if ("true" != attrValueMatch[1].toLowerCase()
+                                && "false" != attrValueMatch[1].toLowerCase()) {
+                                onError({
+                                    lineNumber: text.lineNumber,
+                                    detail: detailStrings.imageAttributeWrongStrongTypeBoolean.replace("___", attr),
+                                    context: text.line
+                                });
+                            }
+                        }
+
                     });
 
                     //check if the type is valid

@@ -1,16 +1,17 @@
 "use strict";
 
 import { existsSync } from "graceful-fs";
-import { join } from "path";
+import { join, basename, extname } from "path";
 import * as vscode from "vscode";
 import { ProgressLocation, window, workspace } from "vscode";
-import { postError, sendTelemetryData, showStatusMessage } from "../../helper/common";
+import { postError, sendTelemetryData, showStatusMessage, showWarningMessage } from "../../helper/common";
 import { generateMasterRedirectionFile } from "../master-redirect-controller";
 import { capitalizationOfMetadata } from "./capitalizationOfMetadata";
 import { handleSingleValuedMetadata } from "./handleSingleValuedMetadata";
 import { microsoftLinks } from "./microsoftLinks";
 import { runAll, runAllWorkspace } from "./runAll";
 import { removeUnusedImagesAndIncludes } from "../remove-unused-assets-controller";
+import { removeEmptyMetadata } from "./removeEmptyMetadata";
 // tslint:disable no-var-requires
 const recursive = require("recursive-readdir");
 
@@ -39,12 +40,17 @@ function getCleanUpQuickPick() {
         description: "",
         label: "Capitalization of metadata values",
     });
+    items.push({
+        description: "",
+        label: "Empty metadata",
+    });
 
     return { items, opts };
 }
 
-export async function applyCleanupFile(file: string) {
+export async function applyCleanupFile(uri: vscode.Uri) {
     const { items, opts } = getCleanUpQuickPick();
+    const file = uri.fsPath;
     items.push({
         description: "",
         label: "Everything",
@@ -53,6 +59,13 @@ export async function applyCleanupFile(file: string) {
     if (!selection) {
         return;
     }
+    // check for dirty file
+    workspace.openTextDocument(vscode.Uri.parse(uri.path)).then(doc => {
+        if (doc.isDirty) {
+            showWarningMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
+            showStatusMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
+        }
+    });
     window.withProgress({
         location: ProgressLocation.Notification,
         title: "Cleanup",
@@ -104,6 +117,51 @@ export async function applyCleanupFile(file: string) {
                     promises = runAll(progress, promises, file, percentComplete, null, null);
                     commandOption = "everything";
                     break;
+                case "empty metadata":
+                    const opts: vscode.QuickPickOptions = { placeHolder: "Cleanup..." };
+                    const items: vscode.QuickPickItem[] = [];
+                    items.push({
+                        description: "",
+                        label: "Remove metadata attributes with empty values",
+                    });
+                    items.push({
+                        description: "",
+                        label: `Remove metadata attributes with "na" or "n/a"`,
+                    });
+                    items.push({
+                        description: "",
+                        label: "Remove commented out metadata attributes",
+                    });
+                    items.push({
+                        description: "",
+                        label: "Remove all",
+                    });
+                    showStatusMessage("Cleanup: Metadata attribute cleanup started.");
+                    message = "Empty metadata attribute cleanup completed.";
+                    statusMessage = "Cleanup: Metadata attribute cleanup completed.";
+                    window.showQuickPick(items, opts).then((selection) => {
+                        if (!selection) {
+                            return;
+                        }
+                        switch (selection.label.toLowerCase()) {
+                            case "remove metadata attributes with empty values":
+                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, null, null, "empty");
+                                commandOption = "remove-empty";
+                                break;
+                            case `remove metadata attributes with "na" or "n/a"`:
+                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, null, null, "na");
+                                commandOption = "remove-na";
+                                break;
+                            case "remove commented out metadata attributes":
+                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, null, null, "commented");
+                                commandOption = "remove-commented";
+                                break;
+                            case "remove all":
+                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, null, null, "all");
+                                commandOption = "remove-all-empty";
+                                break;
+                        }
+                    });
             }
             Promise.all(promises).then(() => {
                 progress.report({ increment: 100, message });
@@ -118,7 +176,7 @@ export async function applyCleanupFile(file: string) {
     });
 }
 
-export async function applyCleanupFolder(folder: string) {
+export async function applyCleanupFolder(uri: vscode.Uri) {
     const { items, opts } = getCleanUpQuickPick();
     items.push({
         description: "",
@@ -142,12 +200,25 @@ export async function applyCleanupFolder(folder: string) {
             let statusMessage = "";
             const percentComplete = 0;
             let promises: Array<Promise<any>> = [];
-            recursive(folder,
+            recursive(uri.fsPath,
                 [".git", ".github", ".vscode", ".vs", "node_module"],
-                (err: any, files: string[]) => {
+                async (err: any, files: string[]) => {
                     if (err) {
                         postError(err);
                     }
+                    // check for dirty files
+                    files.map((file, index) => {
+                        let fileName = basename(file);
+                        let modifiedUri = join(uri.path, fileName).replace(/\\/g, "/");
+                        if (extname(modifiedUri) == '.md') {
+                            workspace.openTextDocument(vscode.Uri.parse(modifiedUri)).then(doc => {
+                                if (doc.isDirty) {
+                                    showWarningMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
+                                    showStatusMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
+                                }
+                            });
+                        }
+                    });
                     switch (selection.label.toLowerCase()) {
                         case "single-valued metadata":
                             showStatusMessage("Cleanup: Single-Valued metadata started.");
@@ -185,6 +256,77 @@ export async function applyCleanupFolder(folder: string) {
                             });
                             commandOption = "everything";
                             break;
+                        case "empty metadata":
+                            const opts: vscode.QuickPickOptions = { placeHolder: "Cleanup..." };
+                            const items: vscode.QuickPickItem[] = [];
+                            items.push({
+                                description: "",
+                                label: "Remove metadata attributes with empty values",
+                            });
+                            items.push({
+                                description: "",
+                                label: `Remove metadata attributes with "na" or "n/a"`,
+                            });
+                            items.push({
+                                description: "",
+                                label: "Remove commented out metadata attributes",
+                            });
+                            items.push({
+                                description: "",
+                                label: "Remove all",
+                            });
+                            showStatusMessage("Cleanup: Metadata attribute cleanup started.");
+                            const selection = await window.showQuickPick(items, opts);
+                            if (!selection) {
+                                return;
+                            }
+                            window.withProgress({
+                                location: ProgressLocation.Notification,
+                                title: "Cleanup: Empty metadata attributes.",
+                                cancellable: true,
+                            }, (progress: any, token: any) => {
+                                token.onCancellationRequested(() => {
+                                    postError("User canceled the long running operation");
+                                });
+                                return new Promise((resolve, reject) => {
+                                    message = "Empty metadata attribute cleanup completed.";
+                                    statusMessage = "Cleanup: Metadata attribute cleanup completed.";
+                                    let promises: Array<Promise<any>> = [];
+                                    switch (selection.label.toLowerCase()) {
+                                        case "remove metadata attributes with empty values":
+                                            files.map((file, index) => {
+                                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "empty");
+                                            });
+                                            commandOption = "remove-empty";
+                                            break;
+                                        case `remove metadata attributes with "na" or "n/a"`:
+                                            files.map((file, index) => {
+                                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "na");
+                                            });
+                                            commandOption = "remove-na";
+                                            break;
+                                        case "remove commented out metadata attributes":
+                                            files.map((file, index) => {
+                                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "commented");
+                                            });
+                                            commandOption = "remove-commented";
+                                            break;
+                                        case "remove all":
+                                            files.map((file, index) => {
+                                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "all");
+                                            });
+                                            commandOption = "remove-all-empty";
+                                            break;
+                                    }
+                                    Promise.all(promises).then(() => {
+                                        progress.report({ increment: 100, message });
+                                        progress.report({ increment: 100, message: `100%` });
+                                        resolve();
+                                    }).catch((err) => {
+                                        postError(err);
+                                    });
+                                });
+                            });
                     }
                     Promise.all(promises).then(() => {
                         progress.report({ increment: 100, message });
@@ -228,7 +370,7 @@ export async function applyCleanup() {
             postError("User canceled the long running operation");
         });
         progress.report({ increment: 0 });
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const editor = window.activeTextEditor;
             if (editor) {
                 const resource = editor.document.uri;
@@ -319,6 +461,84 @@ export async function applyCleanup() {
                             runAllWorkspace(workspacePath, progress, resolve);
                             commandOption = "everything";
                             break;
+                        case "empty metadata":
+                            const opts: vscode.QuickPickOptions = { placeHolder: "Cleanup..." };
+                            const items: vscode.QuickPickItem[] = [];
+                            items.push({
+                                description: "",
+                                label: "Remove metadata attributes with empty values",
+                            });
+                            items.push({
+                                description: "",
+                                label: `Remove metadata attributes with "na" or "n/a"`,
+                            });
+                            items.push({
+                                description: "",
+                                label: "Remove commented out metadata attributes",
+                            });
+                            items.push({
+                                description: "",
+                                label: "Remove all",
+                            });
+                            showStatusMessage("Cleanup: Metadata attribute cleanup started.");
+                            const selection = await window.showQuickPick(items, opts);
+                            if (!selection) {
+                                return;
+                            }
+                            window.withProgress({
+                                location: ProgressLocation.Notification,
+                                title: "Cleanup: Empty metadata attributes.",
+                                cancellable: true,
+                            }, (progress: any, token: any) => {
+                                token.onCancellationRequested(() => {
+                                    postError("User canceled the long running operation");
+                                });
+                                return new Promise((resolve, reject) => {
+                                    message = "Empty metadata attribute cleanup completed.";
+                                    statusMessage = "Cleanup: Metadata attribute cleanup completed.";
+                                    let promises: Array<Promise<any>> = [];
+                                    recursive(workspacePath,
+                                        [".git", ".github", ".vscode", ".vs", "node_module"],
+                                        (err: any, files: string[]) => {
+                                            if (err) {
+                                                postError(err);
+                                            }
+                                            switch (selection.label.toLowerCase()) {
+                                                case "remove metadata attributes with empty values":
+                                                    files.map((file, index) => {
+                                                        promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "empty");
+                                                    })
+                                                    commandOption = "remove-empty";
+                                                    break;
+                                                case `remove metadata attributes with "na" or "n/a"`:
+                                                    files.map((file, index) => {
+                                                        promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "na");
+                                                    })
+                                                    commandOption = "remove-na";
+                                                    break;
+                                                case "remove commented out metadata attributes":
+                                                    files.map((file, index) => {
+                                                        promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "commented");
+                                                    })
+                                                    commandOption = "remove-commented";
+                                                    break;
+                                                case "remove all":
+                                                    files.map((file, index) => {
+                                                        promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "all");
+                                                    })
+                                                    commandOption = "remove-all";
+                                                    break;
+                                            }
+                                            Promise.all(promises).then(() => {
+                                                progress.report({ increment: 100, message });
+                                                progress.report({ increment: 100, message: `100%` });
+                                                resolve();
+                                            }).catch((err) => {
+                                                postError(err);
+                                            });
+                                        });
+                                });
+                            });
                     }
                     Promise.all(promises).then(() => {
                         progress.report({ increment: 100, message });
@@ -335,3 +555,5 @@ export async function applyCleanup() {
         });
     });
 }
+
+

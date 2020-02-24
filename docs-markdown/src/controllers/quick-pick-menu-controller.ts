@@ -106,6 +106,16 @@ export function markdownQuickPick() {
         },
     );
 
+    // push commands marked for preview (beta)
+    // add description and label to this section for preview features. Example below:
+    // {
+    //    description: "Beta preview",
+    //    label: "$(tasklist) Cleanup...",
+    // }
+    const previewSetting = vscode.workspace.getConfiguration("markdown").previewFeatures;
+    if (previewSetting == true) {
+    }
+
     if (checkExtension("docsmsft.docs-article-templates")) {
         markdownItems.push({
             description: "",
