@@ -458,10 +458,24 @@
       "type": "object",
       "title": "Docs Markdown Extension Configuration",
       "properties": {
+<<<<<<< HEAD
         "markdown.replaceSmartQuotes": {
           "type": "boolean",
           "default": true,
           "markdownDescription": "When `true`, automatically replace smart quotes (`“, ”, ‘, and ’`) with standard quotes (`\" and '`) in markdown files. This feature extends to other characters as well, i.e.; (`©, ™, ®, •`, subscript and superscript characters). This is useful when pasting text from Word documents."
+=======
+        "markdown.docsetName": {
+          "type": "string",
+          "default": "azure",
+          "markdownDescription": "The name of the docset, most often the route segment immediately following the locale in the URL, (i.e.; https://docs.microsoft.com/en-us/azure/ would be 'azure'). Sometimes this value is specified in the `docfx.json` file under the `build/dest` node.",
+          "scope": "window"
+        },
+        "markdown.docsetRootFolderName": {
+          "type": "string",
+          "default": "articles",
+          "markdownDescription": "The name of the docset root folder. Sometimes this value is specified in the `docfx.json` file under the `build/resource/src` node.",
+          "scope": "window"
+>>>>>>> Initial bits for handling daisy chains in redirects.
         },
         "markdown.allAvailableLanguages": {
           "type": "boolean",

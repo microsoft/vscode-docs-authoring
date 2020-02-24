@@ -4,12 +4,13 @@ import * as fs from "fs";
 import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
+import { URL } from "url";
 import { Uri, window, workspace, WorkspaceFolder } from "vscode";
 import * as YAML from "yamljs";
 import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
+import { output } from "../helper/output";
 import { sendTelemetryData } from "../helper/telemetry";
 import * as yamlMetadata from "../helper/yaml-metadata";
-import { output } from "../helper/output";
 
 const telemetryCommand: string = "masterRedirect";
 const redirectFileName: string = ".openpublishing.redirection.json";
@@ -67,10 +68,100 @@ export class RedirectionFile implements IMasterRedirection {
     }
 }
 
+interface IMarkdownConfig {
+    docsetName: string;
+    docsetRootFolderName: string;
+}
+
+class RedirectUrl {
+    public static parse(config: IMarkdownConfig, value: string): RedirectUrl | null {
+        try {
+            const url = new URL(`https://docs.microsoft.com${value}`);
+            return new RedirectUrl(config, value, url, url.hash, url.search);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    private _normalizedPath: string = "";
+    get normalizedPath(): string {
+        if (!!this._normalizedPath) {
+            return this._normalizedPath;
+        }
+
+        const config = this.config;
+        const replacedSegmentUrl = this.originalValue.substring(1).replace(config.docsetName, config.docsetRootFolderName);
+        this._normalizedPath = `${replacedSegmentUrl}.md`;
+
+        return this._normalizedPath;
+    }
+
+    private constructor(
+        private readonly config: IMarkdownConfig,
+        public readonly originalValue: string,
+        public readonly url: URL,
+        public readonly hash: string,
+        public readonly query: string) { }
+}
+
 function showStatusMessage(message: string) {
     const { msTimeValue } = generateTimestamp();
     output.appendLine(`[${msTimeValue}] - ` + message);
     output.show();
+}
+
+function applyRedirectDaisyChainShortcuts(redirects: IMasterRedirections) {
+    if (!redirects || !redirects.redirections) {
+        return;
+    }
+
+    const redirectsLookup = new Map<string, IMasterRedirection>();
+    redirects.redirections.forEach((redirect) => redirectsLookup.set(redirect.source_path, redirect));
+
+    const docsetName = workspace.getConfiguration("markdown").docsetName;
+    const docsetRootFolderName = workspace.getConfiguration("markdown").docsetRootFolderName;
+    const options = { docsetName, docsetRootFolderName };
+    const docsetRoute = `/${docsetName}/`;
+
+    redirectsLookup.forEach((redirect, sourcePath) => {
+        let currentTarget = redirect.redirect_url;
+        if (!currentTarget.startsWith(docsetRoute)) {
+            return;
+        }
+
+        // Put the URL into the same format as source_path
+        let redirectUrl = RedirectUrl.parse(options, currentTarget);
+        if (!redirectUrl) {
+            return;
+        }
+
+        let normalizedTargetPath = redirectUrl.normalizedPath;
+        while (redirectsLookup.has(normalizedTargetPath)) {
+            const current = redirectsLookup.get(normalizedTargetPath);
+            // Avoid an infinite loop by checking that this isn't the same key/value pair.
+            if (current!.source_path === currentTarget) {
+                break;
+            }
+
+            currentTarget = current!.redirect_url;
+            if (!currentTarget.startsWith(docsetRoute)) {
+                break;
+            }
+
+            redirectUrl = RedirectUrl.parse(options, currentTarget);
+            if (!redirectUrl) {
+                break;
+            }
+
+            normalizedTargetPath = redirectUrl.normalizedPath;
+        }
+
+        if (currentTarget !== redirect.redirect_url) {
+            // Replacing target URL '{redirectPair.Value}' with '{currentTarget}'
+            // fileText = fileText.Replace($"\"redirect_url\": \"{redirectPair.Value}\"", $"\"redirect_url\": \"{currentTarget}\"");
+        }
+    });
+
 }
 
 export async function sortMasterRedirectionFile() {
