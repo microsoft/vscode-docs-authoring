@@ -43,7 +43,7 @@ function showStatusMessage(message: string) {
 /**
  * Removes all unused images and includes.
  */
-const INCLUDE_RE = /\[!include \[.*\]\((.*)\)\]|<\s*img.*src="(.*?)"\s*.*>|\((.*?.(?:png|jpg|jpeg|svg|tiff|gif))\)|source\s*=\s*"(.*?)"|lightbox\s*=\s*"(.*?)"/gmi;
+const INCLUDE_RE = /\[!include \[.*\]\((.*)\)\]|<img[^>]+src="([^">]+)"|\((.*?.(?:png|jpg|jpeg|svg|tiff|gif))\s*(?:".*")*\)|source\s*=\s*"(.*?)"|lightbox\s*=\s*"(.*?)"|"\s*source_path\s*"\s*:\s*"(.*?)"|href\s*:\s*(.*)"/gmi;
 export function removeUnusedImagesAndIncludes(workspacePath: string, progress: any, resolve: any) {
     const message = "Removing unused images and includes";
 
@@ -53,7 +53,7 @@ export function removeUnusedImagesAndIncludes(workspacePath: string, progress: a
     //loop through, and see what images and includes are used
     progress.report({ increment: 0, message });
     recursive(workspacePath,
-        [".git", ".github", ".vscode", ".vs", "node_module", "*.yml"],
+        [".git", ".github", ".vscode", ".vs", "node_module"],
         (err: any, files: string[]) => {
             if (err) {
                 postError(err);
@@ -61,7 +61,9 @@ export function removeUnusedImagesAndIncludes(workspacePath: string, progress: a
             let percentComplete = 0;
             const promises: Array<Promise<{} | void>> = [];
             files.map((file, index) => {
-                if (file.endsWith(".md")) {
+                if (file.endsWith(".md")
+                    || file.endsWith(".openpublishing.redirection.json")
+                    || file.endsWith("toc.yml")) {
                     promises.push(new Promise<any>((resolve, reject) => {
                         readFile(file, "utf8", (err, data) => {
                             //read through data and get images and includes, 
@@ -69,7 +71,7 @@ export function removeUnusedImagesAndIncludes(workspacePath: string, progress: a
                             var match: any;
                             while (match = INCLUDE_RE.exec(data)) {
                                 unusedFiles = unusedFiles.filter(ff => {
-                                    const ffPath = decodeURI((match[1] || match[2] || match[3] || match[4] || match[5]).toLowerCase());
+                                    const ffPath = decodeURI((match[1] || match[2] || match[3] || match[4] || match[5] || match[6] || match[7]).toLowerCase());
                                     return ffPath.indexOf(ff.label.toLowerCase()) === -1;
                                 })
                             }
