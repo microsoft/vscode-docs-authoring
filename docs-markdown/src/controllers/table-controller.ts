@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import { output } from "../extension";
 import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData } from "../helper/common";
-import { MarkdownTable } from "../helper/markdown-table";
+import { FormatOptions, MarkdownTable } from "../helper/markdown-table";
 import { tableBuilder, validateTableRowAndColumnCount } from "../helper/utility";
 
 const telemetryCommand: string = "insertTable";
@@ -11,12 +11,21 @@ let commandOption: string;
 
 export function insertTableCommand() {
     return [
-        { command: formatTable.name, callback: formatTable },
+        { command: consolidateTable.name, callback: consolidateTable },
+        { command: distributeTable.name, callback: distributeTable },
         { command: insertTable.name, callback: insertTable },
     ];
 }
 
-export async function formatTable() {
+export async function consolidateTable() {
+    await reformatTable(FormatOptions.Consolidate);
+}
+
+export async function distributeTable() {
+    await reformatTable(FormatOptions.Distribute);
+}
+
+async function reformatTable(formatOptions: FormatOptions) {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -30,7 +39,7 @@ export async function formatTable() {
 
     const table = MarkdownTable.parse(selection, editor.document);
     if (table) {
-        await table.reformat(editor);
+        await table.reformat(editor, formatOptions);
     }
 }
 

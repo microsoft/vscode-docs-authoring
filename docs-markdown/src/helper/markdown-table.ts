@@ -7,6 +7,11 @@ enum ColumnAlignment {
     Right,
 }
 
+export enum FormatOptions {
+    Distribute,
+    Consolidate,
+}
+
 export class MarkdownTable {
     public static parse(selection: Selection, document: TextDocument): MarkdownTable | null {
         if (!selection || selection.isSingleLine || !document) {
@@ -33,7 +38,7 @@ export class MarkdownTable {
         private readonly selection: Selection,
         private readonly lines: string[]) { }
 
-    public async reformat(editor: TextEditor) {
+    public async reformat(editor: TextEditor, formatOptions: FormatOptions = FormatOptions.Distribute) {
         let isFirstColumnSpace: boolean = false;
         const columnSpanLengths = new Map<number, number>();
         const columnAlignments = new Map<number, ColumnAlignment>();
@@ -62,6 +67,7 @@ export class MarkdownTable {
             }
         });
 
+        const calculatePadding = formatOptions === FormatOptions.Distribute;
         const values: string[] = [];
         this.lines.forEach((line, index, _) => {
             const isAlignmentRow = index === 1;
@@ -78,7 +84,7 @@ export class MarkdownTable {
                     continue;
                 }
 
-                const padding = columnSpanLengths.get(i) || 0;
+                let padding = calculatePadding ? (columnSpanLengths.get(i) || 0) : 0;
                 const isLastColumn = isLastIteration(i, columns);
                 if (isAlignmentRow) {
                     const columnAlignment = columnAlignments.get(i) || ColumnAlignment.None;
@@ -97,8 +103,8 @@ export class MarkdownTable {
                             break;
                     }
                 } else {
-                    const emojiCount = this.countEmoji(column);
-                    value += `| ${column.padEnd(padding - emojiCount)} `;
+                    padding = padding - this.countEmoji(column);
+                    value += `| ${column.padEnd(calculatePadding ? padding : 0)} `;
                 }
 
                 if (isLastColumn) {
