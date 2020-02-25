@@ -79,6 +79,16 @@
         "category": "Docs"
       },
       {
+        "command": "distributeTable",
+        "title": "Evenly distribute selected table",
+        "category": "Docs"
+      },
+      {
+        "command": "consolidateTable",
+        "title": "Consolidate selected table",
+        "category": "Docs"
+      },
+      {
         "command": "selectLinkType",
         "title": "Link to heading",
         "category": "Docs"
@@ -250,6 +260,16 @@
           "when": "editorHasSelection",
           "command": "sortSelectionDescending",
           "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "distributeTable",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "consolidateTable",
+          "group": "1_modification"
         }
       ],
       "explorer/context": [
@@ -308,6 +328,16 @@
         },
         {
           "command": "insertTable",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "distributeTable",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "consolidateTable",
           "group": "Docs",
           "when": "resourceLangId == markdown"
         },
