@@ -7,7 +7,8 @@
     "rules": {
         "max-line-length": false,
         "no-unused-expression": true,
-        "no-duplicate-imports": true
+        "no-duplicate-imports": true,
+        "ordered-imports": true
     },
     "rulesDirectory": []
 }
