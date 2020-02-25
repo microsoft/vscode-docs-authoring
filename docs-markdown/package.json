@@ -794,7 +794,8 @@
     "verbose": true,
     "preset": "ts-jest",
     "roots": [
-      "<rootDir>/test"
+      "<rootDir>/test",
+      "<rootDir>/src"
     ],
     "moduleFileExtensions": [
       "ts",
@@ -803,14 +804,18 @@
       "node"
     ],
     "coverageReporters": [
-      "text",
-      "cobertura"
+      "text-summary",
+      "cobertura",
+      "html"
     ],
     "reporters": [
       "default",
       "jest-junit"
     ],
-    "collectCoverage": true
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*"
+    ]
   },
   "jest-junit": {
     "output": "test-results-jest.xml",
