@@ -1,20 +1,14 @@
 "use strict";
 
 import * as fs from "fs";
-import * as dir from "node-dir";
 import { homedir } from "os";
-import { basename, extname, join, relative } from "path";
-import { Uri, window, workspace, WorkspaceFolder } from "vscode";
-import { output } from "../extension";
-import { generateTimestamp, postError, sendTelemetryData } from "../helper/common";
-import * as yamlMetadata from "../helper/yaml-metadata";
-import YAML = require("yamljs");
-import { imageExtensions, markdownExtensionFilter } from "./media-controller";
-import { showProgress } from "./cleanup/utilities";
+import { join } from "path";
+import { output } from "../../extension";
+import { generateTimestamp, postError } from "../../helper/common";
+import { imageExtensions, markdownExtensionFilter } from "../media-controller";
+import { showProgress } from "./utilities";
 import { readFile } from "fs";
 const recursive = require("recursive-readdir");
-
-const telemetryCommand: string = "unusedImagesAndIncludes";
 
 export function getUnusedImagesAndIncludesCommand() {
     const command = [
@@ -44,8 +38,8 @@ function showStatusMessage(message: string) {
  * Removes all unused images and includes.
  */
 const INCLUDE_RE = /\[!include \[.*\]\((.*)\)\]|<img[^>]+src="([^">]+)"|\((.*?.(?:png|jpg|jpeg|svg|tiff|gif))\s*(?:".*")*\)|source\s*=\s*"(.*?)"|lightbox\s*=\s*"(.*?)"|"\s*source_path\s*"\s*:\s*"(.*?)"|href\s*:\s*(.*)"/gmi;
-export function removeUnusedImagesAndIncludes(workspacePath: string, progress: any, resolve: any) {
-    const message = "Removing unused images and includes";
+export function removeUnusedImagesAndIncludes(workspacePath: string, progress: any, promises: any, resolve: any) {
+    const message = "Removing unused images and includes. This could take several minutes.";
 
     //get a list of all images
     var unusedFiles = getFiles(workspacePath);

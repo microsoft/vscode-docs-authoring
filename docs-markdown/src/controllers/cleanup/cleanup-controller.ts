@@ -10,7 +10,7 @@ import { capitalizationOfMetadata } from "./capitalizationOfMetadata";
 import { handleSingleValuedMetadata } from "./handleSingleValuedMetadata";
 import { microsoftLinks } from "./microsoftLinks";
 import { runAll, runAllWorkspace } from "./runAll";
-import { removeUnusedImagesAndIncludes } from "../remove-unused-assets-controller";
+import { removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller";
 import { removeEmptyMetadata } from "./removeEmptyMetadata";
 // tslint:disable no-var-requires
 const recursive = require("recursive-readdir");
@@ -375,6 +375,7 @@ export async function applyCleanup() {
             if (editor) {
                 const resource = editor.document.uri;
                 const folder = workspace.getWorkspaceFolder(resource);
+                var shoudShowFileLevelProgress = true;
 
                 if (folder) {
                     const workspacePath = folder.uri.fsPath;
@@ -448,17 +449,20 @@ export async function applyCleanup() {
                             message = "Master redirection complete.";
                             statusMessage = "Cleanup: Master redirection completed.";
                             generateMasterRedirectionFile(workspacePath, resolve);
+                            shoudShowFileLevelProgress = false;
                             commandOption = "redirects";
                             break;
                         case "unused images and includes":
                             showStatusMessage("Cleanup: Unused Images and includes.");
                             message = "Removal of unused images and includes complete.";
-                            statusMessage = "Cleanup: Removing unused images and includes";
-                            removeUnusedImagesAndIncludes(workspacePath, progress, resolve);
+                            statusMessage = "Cleanup: Removing unused images and includes. This could take several minutes.";
+                            removeUnusedImagesAndIncludes(workspacePath, progress, promises, resolve);
+                            shoudShowFileLevelProgress = false;
                             commandOption = "unused-images-and-includes";
                             break;
                         case "everything":
                             runAllWorkspace(workspacePath, progress, resolve);
+                            shoudShowFileLevelProgress = false;
                             commandOption = "everything";
                             break;
                         case "empty metadata":
@@ -541,10 +545,13 @@ export async function applyCleanup() {
                             });
                     }
                     Promise.all(promises).then(() => {
-                        progress.report({ increment: 100, message });
-                        showStatusMessage(statusMessage);
-                        progress.report({ increment: 100, message: `100%` });
-                        resolve();
+                        if (shoudShowFileLevelProgress) {
+                            progress.report({ increment: 100, message });
+                            showStatusMessage(statusMessage);
+                            progress.report({ increment: 100, message: `100%` });
+                            resolve();
+                        }
+
                     }).catch((err) => {
                         postError(err);
                     });
