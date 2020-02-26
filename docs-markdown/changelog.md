@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.54 (February 21st, 2020)
+
+- Separated custom markdownlint rules into its own docs-linting project
+
 ## 0.2.51 (February 21st, 2020)
 
 - Add preview/beta feature setting
