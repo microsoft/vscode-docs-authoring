@@ -57,9 +57,6 @@ export function activate(context: ExtensionContext) {
     // check for docs extensions
     installedExtensionsCheck();
 
-    // Update markdownlint.config to fix MD025 issue
-    //addFrontMatterTitle();
-
     // Creates an array of commands from each command file.
     const AuthoringCommands: any = [];
     insertAlertCommand().forEach((cmd) => AuthoringCommands.push(cmd));
