@@ -6,7 +6,7 @@
  Logging, Error Handling, VS Code window updates, etc.
 */
 
-import { CancellationToken, commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, TextDocument, window, workspace, Uri } from "vscode";
+import { CancellationToken, commands, CompletionItem, ExtensionContext, languages, TextDocument, window, workspace, Uri } from "vscode";
 import * as vscode from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
@@ -15,7 +15,6 @@ import { codeFormattingCommand } from "./controllers/code-controller";
 import { insertImageCommand } from "./controllers/image-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
 import { italicFormattingCommand } from "./controllers/italic-controller";
-import { addFrontMatterTitle } from "./controllers/lint-config-controller";
 import { insertListsCommands } from "./controllers/list-controller";
 import { getMasterRedirectionCommand } from "./controllers/master-redirect-controller";
 import { insertLinksAndMediaCommands } from "./controllers/media-controller";
@@ -58,11 +57,8 @@ export function activate(context: ExtensionContext) {
     // check for docs extensions
     installedExtensionsCheck();
 
-    // Markdownlint custom rule check
-    checkMarkdownlintCustomProperty();
-
     // Update markdownlint.config to fix MD025 issue
-    addFrontMatterTitle();
+    //addFrontMatterTitle();
 
     // Creates an array of commands from each command file.
     const AuthoringCommands: any = [];
@@ -156,46 +152,6 @@ export function installedExtensionsCheck() {
         const inactiveMessage = `[${msTimeValue}] - The ${friendlyName} extension is not installed.`;
         checkExtension(extensionName, inactiveMessage);
     });
-}
-
-/**
- * Method to check for the docs custom markdownlint value.
- * Checks for markdownlint.customRules property.  If markdownlint isn't installed, do nothing.  If markdownlint is installed, check for custom property values.
- */
-export function checkMarkdownlintCustomProperty() {
-    const { msTimeValue } = generateTimestamp();
-    const customProperty = "markdownlint.customRules";
-    const customRuleset = "{docsmsft.docs-markdown}/markdownlint-custom-rules/rules.js";
-    const customPropertyData: any = workspace.getConfiguration().inspect(customProperty);
-    // new list for string comparison and updating.
-    const existingUserSettings: string[] = [];
-    if (customPropertyData) {
-        // if the markdownlint.customRules property exists, pull the global values (user settings) into a string.
-        if (customPropertyData.globalValue) {
-            const valuesToString = customPropertyData.globalValue.toString();
-            const individualValues = valuesToString.split(",");
-            individualValues.forEach((setting: string) => {
-                existingUserSettings.push(setting);
-            });
-            // if the customRuleset already exist, write a notification to the output window and continue.
-            if (existingUserSettings.indexOf(customRuleset) > -1) {
-                output.appendLine(`[${msTimeValue}] - Docs custom markdownlint ruleset is already set at a global level.`);
-            } else {
-                // if the customRuleset does not exists, append it to the other values in the list if there are any or add it as the only value.
-                existingUserSettings.push(customRuleset);
-                // update the user settings with new/updated values and notify user.
-                // if a user has specific workspace settings for customRules, vscode will use those. this is done so we don't override non-docs repos.
-                workspace.getConfiguration().update(customProperty, existingUserSettings, ConfigurationTarget.Global);
-                output.appendLine(`[${msTimeValue}] - Docs custom markdownlint ruleset added to user settings.`);
-            }
-        }
-        // if no custom rules exist, create array and add docs custom ruleset.
-        if (customPropertyData.globalValue === undefined) {
-            const customPropertyValue = [customRuleset];
-            workspace.getConfiguration().update(customProperty, customPropertyValue, ConfigurationTarget.Global);
-            output.appendLine(`[${msTimeValue}] - Docs custom markdownlint ruleset added to user settings.`);
-        }
-    }
 }
 
 function setupAutoComplete() {
