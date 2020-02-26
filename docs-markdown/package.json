@@ -790,7 +790,6 @@
     "diff": "^4.0.1",
     "file-exists": "^5.0.1",
     "fs-exists-sync": "^0.1.0",
-    "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
     "graceful-fs": "^4.1.15",
     "js-yaml": "^3.13.1",

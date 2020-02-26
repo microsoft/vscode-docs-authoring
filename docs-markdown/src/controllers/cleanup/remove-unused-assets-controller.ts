@@ -94,9 +94,10 @@ export function removeUnusedImagesAndIncludes(workspacePath: string, progress: a
                     fs.mkdirSync(unusedImagesDirectory);
                 }
 
-                var fsa = require('fs-extra');
-                unusedFiles.forEach(uf => {
-                    fsa.copy(join(uf.description, uf.label), join(unusedImagesDirectory, uf.label));
+                unusedFiles.forEach(async uf => {
+                    fs.rename(join(uf.description, uf.label), join(unusedImagesDirectory, uf.label), err => {
+                        output.appendLine(`failed to move ${uf.label}`);
+                    });
                 })
 
                 progress.report({ increment: 100, message: "Cleanup: Removal of unused images and includes completed." });
