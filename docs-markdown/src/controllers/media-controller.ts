@@ -21,12 +21,8 @@ export function insertLinksAndMediaCommands() {
     return commands;
 }
 
-interface IOptions {
-    languageId: string;
-}
-
-const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp"];
-const markdownExtensionFilter = [".md"];
+export const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp"];
+export const markdownExtensionFilter = [".md"];
 
 export const h1TextRegex = /\n {0,3}(#{1,6})(.*)/;
 export const headingTextRegex = /^(#+)[\s](.*)[\r]?[\n]/gm;
@@ -137,7 +133,7 @@ export function insertImage() {
     Insert(MediaType.ImageOrVideo);
 }
 
-export function getFilesShowQuickPick(mediaType: MediaType, altText: string, options?: IOptions) {
+export function getFilesShowQuickPick(mediaType: MediaType, altText: string, options?: any) {
     const path = require("path");
     const dir = require("node-dir");
     const os = require("os");
@@ -249,7 +245,7 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
  * @param {MediaType} mediaType - the media type to insert.
  * @param {IOptions} [options] - optionally specifies the language identifier of the target file.
  */
-export function Insert(mediaType: MediaType, options?: IOptions) {
+export function Insert(mediaType: MediaType, options?: any) {
 
     let actionType: string = Insert.name;
 
