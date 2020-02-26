@@ -460,6 +460,11 @@
       "type": "object",
       "title": "Docs Markdown Extension Configuration",
       "properties": {
+        "markdown.replaceSmartQuotes": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "When `true`, automatically replace smart quotes (`“, ”, ‘, and ’`) such as those found in Word documents - with standard quotes (`\" and '`) in markdown files."
+        },
         "markdown.allAvailableLanguages": {
           "type": "boolean",
           "default": false,

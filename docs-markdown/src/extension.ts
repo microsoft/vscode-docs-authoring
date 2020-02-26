@@ -34,6 +34,7 @@ import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
 import { insertSortSelectionCommands } from "./controllers/sort-controller";
+import { replaceSmartQuotes } from "./helper/utility";
 
 export const output = window.createOutputChannel("docs-markdown");
 export let extensionPath: string;
@@ -107,17 +108,20 @@ export function activate(context: ExtensionContext) {
     vscode.languages.registerCompletionItemProvider("markdown", markdownCompletionItemsProvider, "`");
     vscode.languages.registerCodeActionsProvider("markdown", markdownCodeActionProvider);
 
+    // When the document changes, search and replace smart quotes if found.
+    vscode.workspace.onDidChangeTextDocument(replaceSmartQuotes);
+
     // Telemetry
     context.subscriptions.push(new Reporter(context));
 
     // Attempts the registration of commands with VS Code and then add them to the extension context.
     try {
-        vscode.commands.registerCommand('cleanupFile', async (uri: Uri) => {
+        vscode.commands.registerCommand("cleanupFile", async (uri: Uri) => {
             await applyCleanupFile(uri);
-        })
-        vscode.commands.registerCommand('cleanupInFolder', async (uri: Uri) => {
+        });
+        vscode.commands.registerCommand("cleanupInFolder", async (uri: Uri) => {
             await applyCleanupFolder(uri);
-        })
+        });
         AuthoringCommands.map((cmd: any) => {
             const commandName = cmd.command;
             const command = commands.registerCommand(commandName, cmd.callback);
@@ -131,9 +135,7 @@ export function activate(context: ExtensionContext) {
 
     // if the user changes markdown.showToolbar in settings.json, display message telling them to reload.
     workspace.onDidChangeConfiguration((e: any) => {
-
         if (e.affectsConfiguration("markdown.showToolbar")) {
-
             window.showInformationMessage("Your updated configuration has been recorded, but you must reload to see its effects.", "Reload")
                 .then((res) => {
                     if (res === "Reload") {

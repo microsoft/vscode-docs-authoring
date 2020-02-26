@@ -3,8 +3,9 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import { commands, Selection, TextEditor, window, workspace } from "vscode";
+import { commands, TextEditor, window, workspace } from "vscode";
 import { isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData, tryFindFile } from "../helper/common";
+import { Replacements, findReplacement, applyReplacements } from "../helper/utility";
 
 export function insertMetadataCommands() {
     return [
@@ -46,13 +47,6 @@ type MetadataType =
     "ms.date" |
     "ms.service" |
     "ms.subservice";
-
-interface IReplacement {
-    selection: Selection;
-    value: string;
-}
-
-type Replacements = IReplacement[];
 
 class ReplacementFormat {
     constructor(
@@ -103,7 +97,7 @@ export async function updateImplicitMetadataValues() {
                 const replacementFormat = replacementFormats[i];
                 if (replacementFormat) {
                     const expression = metadataExpressions.get(replacementFormat.type);
-                    const replacement = findReplacement(editor, content, replacementFormat.toReplacementString(), expression);
+                    const replacement = findReplacement(editor.document, content, replacementFormat.toReplacementString(), expression);
                     if (replacement) {
                         replacements.push(replacement);
                     }
@@ -113,34 +107,6 @@ export async function updateImplicitMetadataValues() {
             await applyReplacements(replacements, editor);
             await saveAndSendTelemetry();
         }
-    }
-}
-
-function findReplacement(editor: TextEditor, content: string, value: string, expression?: RegExp): IReplacement | undefined {
-    const result = expression ? expression.exec(content) : null;
-    if (result !== null && result.length) {
-        const match = result[0];
-        if (match) {
-            const index = result.index;
-            const startPosition = editor.document.positionAt(index);
-            const endPosition = editor.document.positionAt(index + match.length);
-            const selection = new Selection(startPosition, endPosition);
-
-            return { selection, value };
-        }
-    }
-
-    return undefined;
-}
-
-async function applyReplacements(replacements: Replacements, editor: TextEditor) {
-    if (replacements) {
-        await editor.edit((builder) => {
-            replacements.forEach((replacement) =>
-                builder.replace(
-                    replacement.selection,
-                    replacement.value));
-        });
     }
 }
 
@@ -239,7 +205,7 @@ export async function updateMetadataDate() {
 
     const content = editor.document.getText();
     if (content) {
-        const replacement = findReplacement(editor, content, `ms.date: ${toShortDate(new Date())}`, msDateRegex);
+        const replacement = findReplacement(editor.document, content, `ms.date: ${toShortDate(new Date())}`, msDateRegex);
         if (replacement) {
             await applyReplacements([replacement], editor);
             await saveAndSendTelemetry();

@@ -1,7 +1,8 @@
-import { QuickPickItem, QuickPickOptions, Range, Selection, TextEditor, window } from "vscode";
+import { QuickPickItem, QuickPickOptions, Range, Selection, TextDocument, TextDocumentChangeEvent, TextEditor, window, workspace } from "vscode";
 import * as common from "./common";
 import { getLanguageIdentifierQuickPickItems, IHighlightLanguage, languages } from "./highlight-langs";
 import * as log from "./log";
+import { isMarkdownFileCheck } from "./common";
 
 /**
  * Checks the user input for table creation.
@@ -304,4 +305,86 @@ export function createChildProcess(path: any, args: any, options: any) {
     const promise = spawn(path, args, options);
     const childProcess = promise.childProcess;
     return childProcess;
+}
+
+const leftDblSmartQuoteRegExp = /\u201c/gm;    // “
+const rightDblSmartQuoteRegExp = /\u201d/gm;    // ”
+const leftSglSmartQuoteRegExp = /\u2018/gm;    // ‘
+const rightSglSmartQuoteRegExp = /\u2019/gm;    // ’
+
+interface IQuoteReplacement {
+    expression: RegExp;
+    replacement: string;
+}
+
+const smartQuoteToStandardMap: IQuoteReplacement[] = [
+    { expression: leftDblSmartQuoteRegExp, replacement: '"' },
+    { expression: rightDblSmartQuoteRegExp, replacement: '"' },
+    { expression: leftSglSmartQuoteRegExp, replacement: "'" },
+    { expression: rightSglSmartQuoteRegExp, replacement: "'" },
+];
+
+/**
+ * Replaces smart quotes (`“, ”, ‘, and ’` such as those found in Word documents) with standard quotes.
+ * @param event the event fired.
+ */
+export async function replaceSmartQuotes(event: TextDocumentChangeEvent) {
+    if (!workspace.getConfiguration("markdown").replaceSmartQuotes) {
+        return;
+    }
+
+    if (!!event && event.document) {
+        const editor = window.activeTextEditor;
+        if (editor && isMarkdownFileCheck(editor, false)) {
+            const document = event.document;
+            const content = document.getText();
+            if (!!content) {
+                const replacements: Replacements = [];
+                smartQuoteToStandardMap.forEach((quoteReplacement: IQuoteReplacement) => {
+                    const replacement = findReplacement(document, content, quoteReplacement.replacement, quoteReplacement.expression);
+                    if (replacement) {
+                        replacements.push(replacement);
+                    }
+                });
+                await applyReplacements(replacements, editor);
+            }
+        }
+    }
+
+    return event;
+}
+
+export interface IReplacement {
+    selection: Selection;
+    value: string;
+}
+
+export type Replacements = IReplacement[];
+
+export function findReplacement(document: TextDocument, content: string, value: string, expression?: RegExp): IReplacement | undefined {
+    const result = expression ? expression.exec(content) : null;
+    if (result !== null && result.length) {
+        const match = result[0];
+        if (match) {
+            const index = result.index;
+            const startPosition = document.positionAt(index);
+            const endPosition = document.positionAt(index + match.length);
+            const selection = new Selection(startPosition, endPosition);
+
+            return { selection, value };
+        }
+    }
+
+    return undefined;
+}
+
+export async function applyReplacements(replacements: Replacements, editor: TextEditor) {
+    if (replacements) {
+        await editor.edit((builder) => {
+            replacements.forEach((replacement) =>
+                builder.replace(
+                    replacement.selection,
+                    replacement.value));
+        });
+    }
 }
