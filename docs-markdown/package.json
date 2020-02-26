@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.52",
+  "version": "0.2.53",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -803,11 +803,11 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@types/glob": "^5.0.35",
+    "@types/glob": "^5.0.36",
     "@types/graceful-fs": "^2.0.30",
     "@types/jest": "24.0.12",
     "@types/lodash.merge": "^4.6.3",
-    "@types/node": "^7.10.5",
+    "@types/node": "^7.10.9",
     "@types/node-dir": "0.0.32",
     "@types/recursive-readdir": "^2.2.0",
     "@types/yamljs": "^0.2.30",
