@@ -21,7 +21,7 @@
             "outFiles": [
                 "${workspaceRoot}/out/src"
             ],
-            "preLaunchTask": "npm",
+            "preLaunchTask": "npm"
         },
         {
             "name": "Launch Tests",
