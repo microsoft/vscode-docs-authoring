@@ -5,7 +5,7 @@ import * as path from "path";
 
 import { commands, TextEditor, window, workspace } from "vscode";
 import { isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData, tryFindFile } from "../helper/common";
-import { Replacements, findReplacement, applyReplacements } from "../helper/utility";
+import { applyReplacements, findReplacement, Replacements } from "../helper/utility";
 
 export function insertMetadataCommands() {
     return [
