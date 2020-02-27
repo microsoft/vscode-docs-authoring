@@ -6,7 +6,7 @@
  Logging, Error Handling, VS Code window updates, etc.
 */
 
-import { CancellationToken, commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, TextDocument, window, workspace, Uri } from "vscode";
+import { CancellationToken, commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, TextDocument, Uri, window, workspace } from "vscode";
 import * as vscode from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
@@ -25,6 +25,7 @@ import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertRowsAndColumnsCommand } from "./controllers/row-columns-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
+import { insertSortSelectionCommands } from "./controllers/sort-controller";
 import { insertTableCommand } from "./controllers/table-controller";
 import { applyXrefCommand } from "./controllers/xref-controller";
 import { yamlCommands } from "./controllers/yaml-controller";
@@ -32,9 +33,8 @@ import { checkExtension, extractDocumentLink, generateTimestamp, matchAll, noAct
 import { insertLanguageCommands, markdownCodeActionProvider, markdownCompletionItemsProvider } from "./helper/highlight-langs";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
-import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
-import { insertSortSelectionCommands } from "./controllers/sort-controller";
 import { replaceSmartQuotes } from "./helper/utility";
+import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
 
 export const output = window.createOutputChannel("docs-markdown");
 export let extensionPath: string;
