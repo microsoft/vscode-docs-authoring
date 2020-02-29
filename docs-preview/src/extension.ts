@@ -2,7 +2,7 @@
 
 import { rename } from "fs";
 import { basename } from "path";
-import { commands, ExtensionContext, TextDocument, window } from "vscode";
+import { commands, ExtensionContext, TextDocument, window, workspace, ConfigurationTarget } from "vscode";
 import { sendTelemetryData } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { include } from "./markdown-extensions/includes";
@@ -19,7 +19,39 @@ export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
 const telemetryCommand: string = "preview";
 
+// update markdown.PreviewScripts based on user setting
+const previewThemeSetting = "preview.previewTheme";
+const previewScripts = "markdown.previewScripts";
+const dynamicWrapper = "./media/wrapper.js";
+const darkWrapper = "./media/wrapper-dark.js";
+const lightWrapper = "./media/wrapper-light.js";
+const highContrastWrapper = "./media/wrapper-high-contrast.js";
+
 export function activate(context: ExtensionContext) {
+    const selectedPreviewTheme = workspace.getConfiguration().get(previewThemeSetting);
+    switch (selectedPreviewTheme) {
+        case "Use current VS Code theme":
+            workspace.getConfiguration().update(previewScripts, dynamicWrapper, ConfigurationTarget.Global);
+            break;
+        case "Light":
+            workspace.getConfiguration().update(previewScripts, lightWrapper, ConfigurationTarget.Global);
+            break;
+        case "Dark":
+            workspace.getConfiguration().update(previewScripts, darkWrapper, ConfigurationTarget.Global);
+            break;
+        case "High Contrast":
+            workspace.getConfiguration().update(previewScripts, highContrastWrapper, ConfigurationTarget.Global);
+            break;
+    }
+    launchPreview(context);
+}
+
+// this method is called when your extension is deactivated
+export function deactivate() {
+    output.appendLine("Deactivating extension.");
+}
+
+export function launchPreview(context) {
     const filePath = window.visibleTextEditors[0].document.fileName;
     const workingPath = filePath.replace(basename(filePath), "");
     extensionPath = context.extensionPath;
@@ -54,9 +86,4 @@ export function activate(context: ExtensionContext) {
                 .use(video_plugin, "video", videoOptions);
         },
     };
-}
-
-// this method is called when your extension is deactivated
-export function deactivate() {
-    output.appendLine("Deactivating extension.");
 }

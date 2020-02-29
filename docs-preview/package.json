@@ -32,6 +32,29 @@
   ],
   "main": "./out/src/extension",
   "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Docs Preview Extension Configuration",
+      "properties": {
+        "preview.previewTheme": {
+          "type": "string",
+          "enum": [
+            "Use current VS Code theme",
+            "Light",
+            "Dark",
+            "High Contrast"
+          ],
+          "enumDescriptions": [
+            "Preview will be displayed in current VS Code theme",
+            "Preview will be displayed in light theme",
+            "Preview will be displayed in dark theme",
+            "Preview will be displayed in high contrast theme"
+          ],
+          "default": "Use current VS Code theme",
+          "description": "Select preview theme."
+        }
+      }
+    },
     "markdown.previewScripts": [
       "./media/common.js",
       "./media/noloc.js",
