@@ -307,28 +307,23 @@ export function createChildProcess(path: any, args: any, options: any) {
     return childProcess;
 }
 
-const leftDblSmartQuoteRegExp = /\u201c/gm;    // “
-const rightDblSmartQuoteRegExp = /\u201d/gm;    // ”
-const leftSglSmartQuoteRegExp = /\u2018/gm;    // ‘
-const rightSglSmartQuoteRegExp = /\u2019/gm;    // ’
-
-interface IQuoteReplacement {
+interface IExpressionReplacementPair {
     expression: RegExp;
     replacement: string;
 }
 
-const smartQuoteToStandardMap: IQuoteReplacement[] = [
-    { expression: leftDblSmartQuoteRegExp, replacement: '"' },
-    { expression: rightDblSmartQuoteRegExp, replacement: '"' },
-    { expression: leftSglSmartQuoteRegExp, replacement: "'" },
-    { expression: rightSglSmartQuoteRegExp, replacement: "'" },
+const expressionToReplacementMap: IExpressionReplacementPair[] = [
+    { expression: /\u201c/gm /* double left quote  “ */, replacement: '"' },
+    { expression: /\u201d/gm /* double right quote ” */, replacement: '"' },
+    { expression: /\u2018/gm /* single left quote  ‘ */, replacement: "'" },
+    { expression: /\u2019/gm /* single right quote ’ */, replacement: "'" },
 ];
 
 /**
- * Replaces smart quotes (`“, ”, ‘, and ’` such as those found in Word documents) with standard quotes.
- * @param event the event fired.
+ * Finds and replaces target expressions. For example, smart quotes (`“, ”, ‘, and ’` such as those found in Word documents) with standard quotes.
+ * @param event the event fired when a text document is changed.
  */
-export async function replaceSmartQuotes(event: TextDocumentChangeEvent) {
+export async function findAndReplaceTargetExpressions(event: TextDocumentChangeEvent) {
     if (!workspace.getConfiguration("markdown").replaceSmartQuotes) {
         return;
     }
@@ -340,7 +335,7 @@ export async function replaceSmartQuotes(event: TextDocumentChangeEvent) {
             const content = document.getText();
             if (!!content) {
                 const replacements: Replacements = [];
-                smartQuoteToStandardMap.forEach((quoteReplacement: IQuoteReplacement) => {
+                expressionToReplacementMap.forEach((quoteReplacement: IExpressionReplacementPair) => {
                     const replacement = findReplacement(document, content, quoteReplacement.replacement, quoteReplacement.expression);
                     if (replacement) {
                         replacements.push(replacement);

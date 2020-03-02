@@ -6,8 +6,7 @@
  Logging, Error Handling, VS Code window updates, etc.
 */
 
-import { CancellationToken, commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, TextDocument, Uri, window, workspace } from "vscode";
-import * as vscode from "vscode";
+import { CancellationToken, commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, TextDocument, Uri, window, workspace, DocumentLink } from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand, applyCleanupFile, applyCleanupFolder } from "./controllers/cleanup/cleanup-controller";
@@ -33,7 +32,7 @@ import { checkExtension, extractDocumentLink, generateTimestamp, matchAll, noAct
 import { insertLanguageCommands, markdownCodeActionProvider, markdownCompletionItemsProvider } from "./helper/highlight-langs";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
-import { replaceSmartQuotes } from "./helper/utility";
+import { findAndReplaceTargetExpressions } from "./helper/utility";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
 
 export const output = window.createOutputChannel("docs-markdown");
@@ -90,11 +89,11 @@ export function activate(context: ExtensionContext) {
     insertLanguageCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     // Autocomplete
     context.subscriptions.push(setupAutoComplete());
-    vscode.languages.registerDocumentLinkProvider({ language: "markdown" }, {
+    languages.registerDocumentLinkProvider({ language: "markdown" }, {
         provideDocumentLinks(document: TextDocument, token: CancellationToken) {
             const IMAGE_SOURCE_RE = /source="(.*?)"/gm;
             const text = document.getText();
-            const results: vscode.DocumentLink[] = [];
+            const results: DocumentLink[] = [];
             for (const match of matchAll(IMAGE_SOURCE_RE, text)) {
                 const matchLink = extractDocumentLink(document, match[1], match.index);
                 if (matchLink) {
@@ -105,21 +104,21 @@ export function activate(context: ExtensionContext) {
         },
     });
 
-    vscode.languages.registerCompletionItemProvider("markdown", markdownCompletionItemsProvider, "`");
-    vscode.languages.registerCodeActionsProvider("markdown", markdownCodeActionProvider);
+    languages.registerCompletionItemProvider("markdown", markdownCompletionItemsProvider, "`");
+    languages.registerCodeActionsProvider("markdown", markdownCodeActionProvider);
 
-    // When the document changes, search and replace smart quotes if found.
-    vscode.workspace.onDidChangeTextDocument(replaceSmartQuotes);
+    // When the document changes, find and replace target expressions (for example, smart quotes).
+    workspace.onDidChangeTextDocument(findAndReplaceTargetExpressions);
 
     // Telemetry
     context.subscriptions.push(new Reporter(context));
 
     // Attempts the registration of commands with VS Code and then add them to the extension context.
     try {
-        vscode.commands.registerCommand("cleanupFile", async (uri: Uri) => {
+        commands.registerCommand("cleanupFile", async (uri: Uri) => {
             await applyCleanupFile(uri);
         });
-        vscode.commands.registerCommand("cleanupInFolder", async (uri: Uri) => {
+        commands.registerCommand("cleanupInFolder", async (uri: Uri) => {
             await applyCleanupFolder(uri);
         });
         AuthoringCommands.map((cmd: any) => {
