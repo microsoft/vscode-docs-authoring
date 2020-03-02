@@ -463,7 +463,7 @@
         "markdown.replaceSmartQuotes": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "When `true`, automatically replace smart quotes (`“, ”, ‘, and ’`) such as those found in Word documents - with standard quotes (`\" and '`) in markdown files."
+          "markdownDescription": "When `true`, automatically replace smart quotes (`“, ”, ‘, and ’`) such as those found in Word documents - with standard quotes (`\" and '`) in markdown files. This feature extends to other characters as well, i.e.; `©, ™, ®, and •` as well as subscript and superscript."
         },
         "markdown.allAvailableLanguages": {
           "type": "boolean",
