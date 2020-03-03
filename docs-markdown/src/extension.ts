@@ -24,6 +24,7 @@ import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
 import { insertRowsAndColumnsCommand } from "./controllers/row-columns-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
+import { insertSortSelectionCommands } from "./controllers/sort-controller";
 import { insertTableCommand } from "./controllers/table-controller";
 import { applyXrefCommand } from "./controllers/xref-controller";
 import { yamlCommands } from "./controllers/yaml-controller";
@@ -31,8 +32,8 @@ import { checkExtension, extractDocumentLink, generateTimestamp, matchAll, noAct
 import { insertLanguageCommands, markdownCodeActionProvider, markdownCompletionItemsProvider } from "./helper/highlight-langs";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
+import { findAndReplaceTargetExpressions } from "./helper/utility";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
-import { insertSortSelectionCommands } from "./controllers/sort-controller";
 
 export const output = window.createOutputChannel("docs-markdown");
 export let extensionPath: string;
@@ -82,11 +83,11 @@ export function activate(context: ExtensionContext) {
     insertLanguageCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     // Autocomplete
     context.subscriptions.push(setupAutoComplete());
-    vscode.languages.registerDocumentLinkProvider({ language: "markdown" }, {
+    languages.registerDocumentLinkProvider({ language: "markdown" }, {
         provideDocumentLinks(document: TextDocument, token: CancellationToken) {
             const IMAGE_SOURCE_RE = /source="(.*?)"/gm;
             const text = document.getText();
-            const results: vscode.DocumentLink[] = [];
+            const results: DocumentLink[] = [];
             for (const match of matchAll(IMAGE_SOURCE_RE, text)) {
                 const matchLink = extractDocumentLink(document, match[1], match.index);
                 if (matchLink) {
@@ -97,20 +98,23 @@ export function activate(context: ExtensionContext) {
         },
     });
 
-    vscode.languages.registerCompletionItemProvider("markdown", markdownCompletionItemsProvider, "`");
-    vscode.languages.registerCodeActionsProvider("markdown", markdownCodeActionProvider);
+    languages.registerCompletionItemProvider("markdown", markdownCompletionItemsProvider, "`");
+    languages.registerCodeActionsProvider("markdown", markdownCodeActionProvider);
+
+    // When the document changes, find and replace target expressions (for example, smart quotes).
+    workspace.onDidChangeTextDocument(findAndReplaceTargetExpressions);
 
     // Telemetry
     context.subscriptions.push(new Reporter(context));
 
     // Attempts the registration of commands with VS Code and then add them to the extension context.
     try {
-        vscode.commands.registerCommand('cleanupFile', async (uri: Uri) => {
+        commands.registerCommand("cleanupFile", async (uri: Uri) => {
             await applyCleanupFile(uri);
-        })
-        vscode.commands.registerCommand('cleanupInFolder', async (uri: Uri) => {
+        });
+        commands.registerCommand("cleanupInFolder", async (uri: Uri) => {
             await applyCleanupFolder(uri);
-        })
+        });
         AuthoringCommands.map((cmd: any) => {
             const commandName = cmd.command;
             const command = commands.registerCommand(commandName, cmd.callback);
@@ -124,9 +128,7 @@ export function activate(context: ExtensionContext) {
 
     // if the user changes markdown.showToolbar in settings.json, display message telling them to reload.
     workspace.onDidChangeConfiguration((e: any) => {
-
         if (e.affectsConfiguration("markdown.showToolbar")) {
-
             window.showInformationMessage("Your updated configuration has been recorded, but you must reload to see its effects.", "Reload")
                 .then((res) => {
                     if (res === "Reload") {

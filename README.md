@@ -35,7 +35,7 @@ To access the Docs Markdown menu, type `ALT+M`. You can click or use up/down arr
 1. Click the plus that appears near the command name when you mouse over the line.
 1. After a new input box is visible, type the keyboard shortcut you want to bind to that particular command. For example, to use the common shortcut for bold, type `ctrl+b`.
 1. It's a good idea to insert a `when` clause into your keybinding, so it won't be available in files other than Markdown. To do this, open keybindings.json and insert the following line below the command name (be sure to add a comma between lines):
-   
+
     `"when": "editorTextFocus && editorLangId == 'markdown'"`
 
     Your completed custom keybinding should look like this in keybindings.json:
@@ -68,11 +68,11 @@ Former users of the extension code-named "Gauntlet" will notice that the authori
 - [External bookmarks] Linux: File list is displayed but no headings are shown to select.
 - [Includes] Linux: File list is displayed but no link is added after selection is made.
 
-# Contributing
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
+the rights to use your contribution. For details, visit [https://cla.microsoft.com](https://cla.microsoft.com).
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
 a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions

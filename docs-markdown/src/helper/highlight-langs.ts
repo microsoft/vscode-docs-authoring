@@ -304,8 +304,7 @@ function getLanguageIdentifierCompletionItems(range: Range | undefined, isCancel
         if (langs) {
             langs.forEach((lang) => {
                 const langId = lang.aliases[0];
-                const markdownSample = new MarkdownString();
-                markdownSample.appendText("*Output:*");
+                const markdownSample = new MarkdownString("Output:");
                 markdownSample.appendCodeblock("", langId);
 
                 const item = new CompletionItem(lang.language, CompletionItemKind.Value);

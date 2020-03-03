@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.54",
+  "version": "0.2.55",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -460,6 +460,11 @@
       "type": "object",
       "title": "Docs Markdown Extension Configuration",
       "properties": {
+        "markdown.replaceSmartQuotes": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "When `true`, automatically replace smart quotes (`“, ”, ‘, and ’`) with standard quotes (`\" and '`) in markdown files. This feature extends to other characters as well, i.e.; (`©, ™, ®, •`, subscript and superscript characters). This is useful when pasting text from Word documents."
+        },
         "markdown.allAvailableLanguages": {
           "type": "boolean",
           "default": false,
@@ -783,7 +788,8 @@
     "compile": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test-core": "node ./node_modules/vscode/bin/test",
-    "test": "jest"
+    "test": "jest",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
     "axios": "^0.19.0",
@@ -814,7 +820,7 @@
     "jest-junit": "^6.3.0",
     "octicons": "^7.3.0",
     "ts-jest": "^24.0.2",
-    "tslint": "^5.9.1",
+    "tslint": "^5.20.1",
     "typescript": "3.4.5",
     "vscode": "^1.1.33"
   },
