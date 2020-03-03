@@ -5867,37 +5867,37 @@ body {
   outline-offset: 0.125rem;
 }
 
-.mainContainer {
+.vscode-body {
   flex-grow: 1;
   flex-shrink: 1;
 }
 
-.mainContainer .primary-holder,
-.mainContainer .left-container,
-.mainContainer .right-container {
+.vscode-body .primary-holder,
+.vscode-body .left-container,
+.vscode-body .right-container {
   padding-top: 1.5rem;
 }
 
-html.profilelist .mainContainer .primary-holder,
-html.profilelist .mainContainer .left-container {
+html.profilelist .vscode-body .primary-holder,
+html.profilelist .vscode-body .left-container {
   padding-top: 0;
 }
 
 @media print {
   body,
-  body > .mainContainer > .columns,
-  body > .mainContainer > .columns > .primary-holder > .columns {
+  body > .vscode-body > .columns,
+  body > .vscode-body > .columns > .primary-holder > .columns {
     display: block !important;
     margin: 0 auto !important;
   }
-  body > :not(.mainContainer),
-  body > .mainContainer > .columns > .primary-holder > .columns > :not(.column),
+  body > :not(.vscode-body),
+  body > .vscode-body > .columns > .primary-holder > .columns > :not(.column),
   .left-container,
   .right-container,
   .feedback-section {
     display: none !important;
   }
-  .mainContainer,
+  .vscode-body,
   .primary-holder {
     max-width: 100% !important;
     width: 100% !important;
@@ -13190,7 +13190,7 @@ html.has-interactive body {
   height: 100%;
 }
 
-html.has-interactive .mainContainer {
+html.has-interactive .vscode-body {
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -13199,7 +13199,7 @@ html.has-interactive .mainContainer {
   min-height: 1px;
 }
 
-html.has-interactive .mainContainer > .columns {
+html.has-interactive .vscode-body > .columns {
   width: 100%;
   align-items: stretch;
 }
@@ -13248,18 +13248,18 @@ html.has-interactive .footer-layout > :not(:last-child) {
   }
 }
 
-.mainContainer {
+.vscode-body {
   flex-grow: 1;
   flex-shrink: 1;
 }
 
-.mainContainer .primary-holder,
-.mainContainer .left-container {
+.vscode-body .primary-holder,
+.vscode-body .left-container {
   padding-top: 1.5rem;
 }
 
-html.profilelist .mainContainer .primary-holder,
-html.profilelist .mainContainer .left-container {
+html.profilelist .vscode-body .primary-holder,
+html.profilelist .vscode-body .left-container {
   padding-top: 0;
 }
 
