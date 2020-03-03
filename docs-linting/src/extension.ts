@@ -41,6 +41,7 @@ export function checkMarkdownlintCustomProperty() {
     const { msTimeValue } = generateTimestamp();
     const customProperty = "markdownlint.customRules";
     const customRuleset = "{docsmsft.docs-linting}/markdownlint-custom-rules/rules.js";
+    const docsMarkdownRuleset = "{docsmsft.docs-markdown}/markdownlint-custom-rules/rules.js";
     const customPropertyData: any = workspace.getConfiguration().inspect(customProperty);
     // new list for string comparison and updating.
     const existingUserSettings: string[] = [];
@@ -48,10 +49,13 @@ export function checkMarkdownlintCustomProperty() {
         // if the markdownlint.customRules property exists, pull the global values (user settings) into a string.
         if (customPropertyData.globalValue) {
             const valuesToString = customPropertyData.globalValue.toString();
-            const individualValues = valuesToString.split(",");
+            var individualValues = valuesToString.split(",");
             individualValues.forEach((setting: string) => {
-                existingUserSettings.push(setting);
+                if (setting === customRuleset) {
+                    existingUserSettings.push(setting);
+                }
             });
+
             // if the customRuleset already exist, write a notification to the output window and continue.
             if (existingUserSettings.indexOf(customRuleset) > -1) {
                 output.appendLine(`[${msTimeValue}] - Docs custom markdownlint ruleset is already set at a global level.`);
@@ -63,6 +67,16 @@ export function checkMarkdownlintCustomProperty() {
                 workspace.getConfiguration().update(customProperty, existingUserSettings, ConfigurationTarget.Global);
                 output.appendLine(`[${msTimeValue}] - Docs custom markdownlint ruleset added to user settings.`);
             }
+
+            //remove docs-markdown ruleset setting if necessary
+            if (individualValues.indexOf(docsMarkdownRuleset) > -1) {
+                individualValues = existingUserSettings.filter(userSetting => {
+                    return userSetting !== docsMarkdownRuleset;
+                });
+                workspace.getConfiguration().update(customProperty, individualValues, ConfigurationTarget.Global);
+                output.appendLine(`[${msTimeValue}] - docs-markdown custom markdownlint ruleset removed from user settings.`);
+            }
+
         }
         // if no custom rules exist, create array and add docs custom ruleset.
         if (customPropertyData.globalValue === undefined) {
