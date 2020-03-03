@@ -7,7 +7,6 @@
 */
 
 import { CancellationToken, commands, CompletionItem, ExtensionContext, languages, TextDocument, window, workspace, Uri } from "vscode";
-import * as vscode from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand, applyCleanupFile, applyCleanupFolder } from "./controllers/cleanup/cleanup-controller";
