@@ -419,7 +419,7 @@ export function findReplacements(document: TextDocument, content: string, value:
         if (result !== null && result.length) {
             const match = result[0];
             if (match) {
-                const index = result.index ?? -1;
+                const index = result.index !== undefined ? result.index : -1;
                 if (index === -1) {
                     continue;
                 }
