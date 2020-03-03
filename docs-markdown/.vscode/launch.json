@@ -39,6 +39,20 @@
                 "${workspaceRoot}/out/test"
             ],
             "preLaunchTask": "npm"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Jest Tests",
+            "program": "${workspaceRoot}\\node_modules\\jest\\bin\\jest.js",
+            "args": [
+                "-i"
+            ],
+            "preLaunchTask": "npm",
+            "internalConsoleOptions": "openOnSessionStart",
+            "outFiles": [
+                "${workspaceRoot}/dist/**/*"
+            ],
         }
     ]
 }
