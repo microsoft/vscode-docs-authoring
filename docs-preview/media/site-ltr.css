@@ -5883,6 +5883,29 @@ html.profilelist .mainContainer .left-container {
   padding-top: 0;
 }
 
+@media print {
+  body,
+  body > .mainContainer > .columns,
+  body > .mainContainer > .columns > .primary-holder > .columns {
+    display: block !important;
+    margin: 0 auto !important;
+  }
+  .mainContainer,
+  .primary-holder {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  pre {
+    white-space: pre-wrap !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    -webkit-hyphens: auto !important;
+        -ms-hyphens: auto !important;
+            hyphens: auto !important;
+  }
+}
+
 html.tutorial .tutorial-step-heading {
   margin-top: 0;
 }
