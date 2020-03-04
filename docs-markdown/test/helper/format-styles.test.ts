@@ -1,7 +1,17 @@
 import { isBold, isBoldAndItalic, isInlineCode, isItalic, isMultiLineCode, bold } from "../../src/helper/format-styles";
 
-/* tslint:disable:no-unused-expression */
-describe("Bold controller", () => {
+describe("Format style type checking,", () => {
+    const bolded = `**This is sample text in markdown bold format.**`;
+    const mulitlineBolded = `**This is sample text in\r\nMarkdown bold format, multiline**`;
+    const italized = `*This is sample text in\r\nMarkdown italic format, multiline*`;
+    const italizedMultiline = `*This is sample text in markdown italic format.*`;
+    const non = `This is sample text. Singleline, without formatting.`;
+    const nonMultiline = `This is sample text.\r\nIt has multiplelines in it.`;
+    const boldAndItalic = "***This is sample text in markdown bold format.***";
+    const boldAndItalicMultiline = `***This is sample text in\r\nMarkdown bold format, multiline***`;
+    const inlineCode = "`This is sample text in a markdown code block.`";
+    const multilineCode = "```\nThis is sample text in a markdown multiline code block.\n```\n";
+
     describe("format function", () => {
 
         const singleLineString = `This is single line of sample text.`;
@@ -40,21 +50,6 @@ describe("Bold controller", () => {
             expect(bold(boldedCodeBlock)).toBe(nestedCodeBlock);
         });
     });
-});
-
-
-describe("Format style type checking,", () => {
-    const bolded = `**This is sample text in markdown bold format.**`;
-    const mulitlineBolded = `**This is sample text in\r\nMarkdown bold format, multiline**`;
-    const italized = `*This is sample text in\r\nMarkdown italic format, multiline*`;
-    const italizedMultiline = `*This is sample text in markdown italic format.*`;
-    const non = `This is sample text. Singleline, without formatting.`;
-    const nonMultiline = `This is sample text.\r\nIt has multiplelines in it.`;
-    const boldAndItalic = "***This is sample text in markdown bold format.***";
-    const boldAndItalicMultiline = `***This is sample text in\r\nMarkdown bold format, multiline***`;
-    const inlineCode = "`This is sample text in a markdown code block.`";
-    const multilineCode = "```\nThis is sample text in a markdown multiline code block.\n```\n";
-
     describe("isInlineCode function", () => {
 
         it("returns true if text is inline code in any way.", () => {

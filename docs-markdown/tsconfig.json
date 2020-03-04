@@ -19,6 +19,9 @@
         "src/**/*",
         "test/**/*"
     ],
+    "setupFiles": [
+        "__mocks__/*"
+    ],
     "exclude": [
         ".vscode-test"
     ]
