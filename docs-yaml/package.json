@@ -45,7 +45,7 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
-        "fuse.js": "^3.4.5",
+        "fuse.js": "^3.4.6",
         "js-yaml": "^3.13.1",
         "vscode-extension-telemetry": "^0.1.1",
         "web-request": "^1.0.7"
