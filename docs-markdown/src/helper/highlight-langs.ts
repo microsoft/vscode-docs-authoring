@@ -387,7 +387,7 @@ export const markdownCodeActionProvider: CodeActionProvider = {
                         if (!isValidCodeLang(lang)) {
                             const action =
                                 new CodeAction(
-                                    `Click to fix "${lang}" unrecognized code-fence language identifer`,
+                                    `Click to fix unrecognized "${lang}" code-fence language identifer`,
                                     CodeActionKind.QuickFix);
 
                             const indexWithOffset = index + 3; // Account for "```".

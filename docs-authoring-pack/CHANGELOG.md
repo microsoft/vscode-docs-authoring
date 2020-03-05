@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.7 (March 4th, 2020)
+
+- [docs-linting](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-linting)
+
 ## 0.1.5 (December 30th, 2019)
 
 - [docs-images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images)
