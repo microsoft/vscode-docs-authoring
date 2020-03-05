@@ -1,13 +1,12 @@
 import { insertAlert, insertAlertCommand } from "../../src/controllers/alert-controller";
+jest.mock("../../src/helper/common");
 
 describe("Alert Controller", () => {
-    describe("insertAlertCommand function", () => {
-        it("Should apply alert of type note to single line text.", () => {
-            const commands = [
-                { command: insertAlert.name, callback: insertAlert },
-            ];
+    it("Should call insertAlertCommand.", () => {
+        const commands = [
+            { command: insertAlert.name, callback: insertAlert },
+        ];
 
-            expect(commands).toBe(insertAlertCommand());
-        });
+        expect(commands).toEqual(insertAlertCommand());
     });
 });

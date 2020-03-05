@@ -2,7 +2,8 @@
 
 import * as dir from "node-dir";
 import * as vscode from "vscode";
-import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 import { search } from "../helper/utility";
 import { workspace } from "vscode";
 import { resolve } from "path";

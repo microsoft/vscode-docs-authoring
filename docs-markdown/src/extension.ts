@@ -6,7 +6,7 @@
  Logging, Error Handling, VS Code window updates, etc.
 */
 
-import { CancellationToken, commands, CompletionItem, ExtensionContext, languages, TextDocument, window, workspace, Uri, DocumentLink } from "vscode";
+import { CancellationToken, commands, CompletionItem, DocumentLink, ExtensionContext, languages, TextDocument, Uri, window, workspace } from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand, applyCleanupFile, applyCleanupFolder } from "./controllers/cleanup/cleanup-controller";
@@ -29,12 +29,12 @@ import { applyXrefCommand } from "./controllers/xref-controller";
 import { yamlCommands } from "./controllers/yaml-controller";
 import { checkExtension, extractDocumentLink, generateTimestamp, matchAll, noActiveEditorMessage } from "./helper/common";
 import { insertLanguageCommands, markdownCodeActionProvider, markdownCompletionItemsProvider } from "./helper/highlight-langs";
+import { output } from "./helper/output";
 import { Reporter } from "./helper/telemetry";
 import { UiHelper } from "./helper/ui";
 import { findAndReplaceTargetExpressions } from "./helper/utility";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
 
-export const output = window.createOutputChannel("docs-markdown");
 export let extensionPath: string;
 
 /**

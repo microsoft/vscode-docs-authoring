@@ -1,7 +1,8 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { checkExtension, generateTimestamp, sendTelemetryData } from "../helper/common";
+import { checkExtension, generateTimestamp } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "applyTemplate";
 
