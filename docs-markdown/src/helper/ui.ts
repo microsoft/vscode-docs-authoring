@@ -80,7 +80,7 @@ export class UiHelper {
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Insert Image";
         statusBarItem.show();
-        statusBarItem.command = "insertImage";
+        statusBarItem.command = "pickImageType";
     }
 
     private uiInclude() {
