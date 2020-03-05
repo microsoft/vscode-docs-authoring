@@ -85,20 +85,36 @@ export function insertURL() {
             "http:// or https:// is required for URLs. Link will not be added if prefix is not present.",
     };
 
+    const altTextOptions: vscode.InputBoxOptions = {
+        placeHolder: "Enter alt text. If no text is entered, url will be used.",
+    };
+
     vscode.window.showInputBox(options).then((val) => {
+        let contentToInsert;
         // If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
         if (val === undefined) {
             postWarning("Incorrect link syntax. Abandoning command.");
         } else {
-            let contentToInsert;
-            if (selection.isEmpty) {
-                contentToInsert = externalLinkBuilder(val);
-                insertContentToEditor(editor, insertURL.name, contentToInsert);
-            } else {
+            // if user selected text, don't prompt for alt text
+            if (selectedText) {
                 contentToInsert = externalLinkBuilder(val, selectedText);
                 insertContentToEditor(editor, insertURL.name, contentToInsert, true);
             }
-            setCursorPosition(editor, selection.start.line, selection.start.character + contentToInsert.length);
+            // if no content is selected, prompt for alt text
+            // no alt text: use link
+            if (selection.isEmpty) {
+                vscode.window.showInputBox(altTextOptions).then((altText) => {
+                    if (selection.isEmpty && !altText) {
+                        contentToInsert = externalLinkBuilder(val);
+                        insertContentToEditor(editor, insertURL.name, contentToInsert);
+                    }
+                    if (altText) {
+                        contentToInsert = externalLinkBuilder(val, altText);
+                        insertContentToEditor(editor, insertURL.name, contentToInsert, true);
+                    }
+                    setCursorPosition(editor, selection.start.line, selection.start.character + contentToInsert.length);
+                });
+            }
         }
     });
     sendTelemetryData(telemetryCommandLink, commandOption);
