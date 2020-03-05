@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.56 (March 5th, 2020)
+
+- Bug fix for notification to user on file change
+- added download.microsoft.com link for cleanup script
+
 ## 0.2.55 (February 21st, 2020)
 
 - Moved custom markdown linting rules to its own project: docs-linting.
