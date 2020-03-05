@@ -85,8 +85,8 @@ export function insertURL() {
             "http:// or https:// is required for URLs. Link will not be added if prefix is not present.",
     };
 
-    const altTextOptions: vscode.InputBoxOptions = {
-        placeHolder: "Enter alt text. If no text is entered, url will be used.",
+    const linkTextOptions: vscode.InputBoxOptions = {
+        placeHolder: "Enter link text. If no text is entered, url will be used.",
     };
 
     vscode.window.showInputBox(options).then((val) => {
@@ -103,7 +103,7 @@ export function insertURL() {
             // if no content is selected, prompt for alt text
             // no alt text: use link
             if (selection.isEmpty) {
-                vscode.window.showInputBox(altTextOptions).then((altText) => {
+                vscode.window.showInputBox(linkTextOptions).then((altText) => {
                     if (selection.isEmpty && !altText) {
                         contentToInsert = externalLinkBuilder(val);
                         insertContentToEditor(editor, insertURL.name, contentToInsert);
