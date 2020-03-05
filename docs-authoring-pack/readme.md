@@ -74,6 +74,10 @@ Users of the pre-release version of the extension will notice that the authoring
 
    ![toolbar](https://raw.githubusercontent.com/Microsoft/vscode-docs-authoring/master/media/image/legacy-toolbar.png)
 
+## Docs Linting
+
+Docs Authoring Pack also supports comes with custom linting rules to aid in catching errors many run into when contributing to docs. This should automatically work with Docs Authoring Pack, and you will see the output in the "Problems" pane.
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
