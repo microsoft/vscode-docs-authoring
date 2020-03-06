@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.57 (March 6th, 2020)
+
+- Link text bug fix: [Issue 410](https://github.com/microsoft/vscode-docs-authoring/issues/410)
+
 ## 0.2.56 (March 5th, 2020)
 
 - Bug fix for notification to user on file change
