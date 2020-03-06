@@ -5,7 +5,7 @@ import {Uri} from 'vscode';
 export class DocsSchemaHolder {
     // The schemas definitions for Docs
     private definitions: { [yamlMime: string]: string; } = {};
-    
+
     private configFilePath: string;
 
     // Load Docs schema config
