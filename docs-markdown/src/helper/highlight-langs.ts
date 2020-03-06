@@ -68,7 +68,7 @@ export const languages: HighlightLanguages =
         { language: "Go", aliases: ["go", "golang"], extensions: [".go"] },
         { language: "Gradle", aliases: ["gradle"] },
         { language: "Groovy", aliases: ["groovy"] },
-        { language: "HashiCorp Configuration Language", aliases: ["terraform", "tf", "hcl"] },
+        { language: "HashiCorp Configuration Language (HCL)", aliases: ["terraform", "tf", "hcl"] },
         { language: "HTML", aliases: ["html", "xhtml"], extensions: [".html", ".xhtml"] },
         { language: "HTTP", aliases: ["http", "https"] },
         { language: "Ini", aliases: ["ini"], extensions: [".ini"] },
