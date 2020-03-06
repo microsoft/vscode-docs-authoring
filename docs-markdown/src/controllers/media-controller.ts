@@ -317,19 +317,9 @@ export function Insert(mediaType: MediaType, options?: any) {
         // Determine if there is selected text.  If selected text, no action.
         const languageId = !!options ? options.languageId : undefined;
         if (selectedText === "" && languageId !== "yaml") {
-            vscode.window.showInputBox({
-                placeHolder: "Add alt text (up to 250 characters)",
-            }).then((val) => {
-                if (!val) {
-                    getFilesShowQuickPick(mediaType, "", options);
-                    vscode.window.showInformationMessage("No alt entered or selected.  File name will be used.");
-                } else if (val.length < 250) {
-                    getFilesShowQuickPick(mediaType, val, options);
-                } else if (val.length > 250) {
-                    vscode.window.showWarningMessage("Alt text exceeds 250 characters!");
-                }
-            });
-        } else {
+            getFilesShowQuickPick(mediaType, "", options);
+        }
+        if (selectedText && languageId !== "yaml") {
             getFilesShowQuickPick(mediaType, selectedText, options);
         }
     }
