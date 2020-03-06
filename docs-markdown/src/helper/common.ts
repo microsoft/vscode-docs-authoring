@@ -296,6 +296,14 @@ export function isMarkdownFileCheck(editor: vscode.TextEditor, languageId: boole
     }
 }
 
+export function isMarkdownFileCheckWithoutNotification(editor: vscode.TextEditor) {
+    if (editor.document.languageId !== "markdown") {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 export function isValidFileCheck(editor: vscode.TextEditor, languageIds: string[]) {
     return languageIds.some((id) => editor.document.languageId === id);
 }
