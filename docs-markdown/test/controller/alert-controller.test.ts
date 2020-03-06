@@ -1,4 +1,5 @@
 import { insertAlert, insertAlertCommand } from "../../src/controllers/alert-controller";
+import { isMarkdownFileCheck } from "../../src/helper/common";
 jest.mock("../../src/helper/common");
 
 describe("Alert Controller", () => {
@@ -8,5 +9,9 @@ describe("Alert Controller", () => {
         ];
 
         expect(commands).toEqual(insertAlertCommand());
+    });
+    it("should call isMarkdownFileCheck", () => {
+        insertAlert();
+        expect(isMarkdownFileCheck).toHaveBeenCalled();
     });
 });

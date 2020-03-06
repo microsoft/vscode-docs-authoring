@@ -12,7 +12,15 @@ const window = {
     showWarningMessage: jest.fn(),
     createTextEditorDecorationType: jest.fn(),
     createOutputChannel: jest.fn(),
-    activeTextEditor: jest.fn()
+    activeTextEditor: {
+        document: {
+            languageId: jest.fn().mockReturnValue("markdown"),
+            getText: jest.fn().mockReturnValue("")
+        }
+    },
+    showQuickPick: (items) => {
+        return Promise.resolve('Continue');
+    }
 };
 
 const workspace = {
