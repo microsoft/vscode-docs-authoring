@@ -29,7 +29,7 @@ To configure the Docs Images, you can adjust the max height and max width of ima
 * .jpeg
 * .gif
 * .svg
-* .webp
+* .webp (note that webp images are not currently supported on Docs as they would require platform support for fallback images)
 
 ## Contributing
 
