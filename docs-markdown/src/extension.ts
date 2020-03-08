@@ -9,6 +9,7 @@
 import { CancellationToken, commands, CompletionItem, ConfigurationTarget, ExtensionContext, languages, TextDocument, window, workspace, Uri } from "vscode";
 import * as vscode from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
+import { insertMonikerCommand } from "./controllers/moniker-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand, applyCleanupFile, applyCleanupFolder } from "./controllers/cleanup/cleanup-controller";
 import { codeFormattingCommand } from "./controllers/code-controller";
@@ -67,6 +68,8 @@ export function activate(context: ExtensionContext) {
     // Creates an array of commands from each command file.
     const AuthoringCommands: any = [];
     insertAlertCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+    insertMonikerCommand().forEach((cmd) => AuthoringCommands.push(cmd));
+
     insertIncludeCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     insertLinksAndMediaCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     insertListsCommands().forEach((cmd) => AuthoringCommands.push(cmd));
