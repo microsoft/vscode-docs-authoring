@@ -5,7 +5,8 @@ import { files } from "node-dir";
 import { basename, dirname, extname, join, relative, resolve } from "path";
 import { QuickPickItem, window, workspace } from "vscode";
 import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/bookmark-builder";
-import { insertContentToEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { insertContentToEditor, noActiveEditorMessage } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertBookmark";
 let commandOption: string;

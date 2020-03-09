@@ -838,6 +838,9 @@
       "json",
       "node"
     ],
+    "testPathIgnorePatterns": [
+      "out"
+    ],
     "coverageReporters": [
       "text-summary",
       "cobertura",

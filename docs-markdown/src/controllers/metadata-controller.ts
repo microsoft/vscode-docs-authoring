@@ -4,7 +4,8 @@ import * as fs from "fs";
 import * as path from "path";
 
 import { commands, TextEditor, window, workspace } from "vscode";
-import { isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData, tryFindFile } from "../helper/common";
+import { isMarkdownFileCheck, noActiveEditorMessage, tryFindFile } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 import { applyReplacements, findReplacement, Replacements } from "../helper/utility";
 
 export function insertMetadataCommands() {
