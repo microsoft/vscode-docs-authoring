@@ -45,6 +45,7 @@ export const languages: HighlightLanguages =
     [
         { language: ".NET Core CLI", aliases: ["dotnetcli"] },
         { language: "Apache", aliases: ["apache", "apacheconf"] },
+        { language: "ARM assembler", aliases: ["armasm", "arm"] },
         { language: "ASPX", aliases: ["aspx"] },
         { language: "ASP.NET (C#)", aliases: ["aspx-csharp"] },
         { language: "ASP.NET (VB)", aliases: ["aspx-vb"] },
@@ -77,6 +78,7 @@ export const languages: HighlightLanguages =
         { language: "JavaScript", aliases: ["javascript", "js", "jsx"], extensions: [".js", ".jsx"] },
         { language: "Kotlin", aliases: ["kotlin", "kt"] },
         { language: "Kusto", aliases: ["kusto"] },
+        { language: "Makefile", aliases: ["makefile", "mk", "mak"], extensions: [".gmk", ".mk", ".mak"] },
         { language: "Markdown", aliases: ["markdown", "md", "mkdown", "mkd"], extensions: [".md", ".markdown", ".mdown", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".rmd"] },
         { language: "Managed Object Format", aliases: ["mof"] },
         { language: "MS Graph (Interactive)", aliases: ["msgraph-interactive"] },

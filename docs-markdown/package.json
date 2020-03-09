@@ -482,6 +482,7 @@
             "enum": [
               ".NET Core CLI",
               "Apache",
+              "ARM assembler",
               "ASPX",
               "ASP.NET (C#)",
               "ASP.NET (VB)",
@@ -514,6 +515,7 @@
               "JavaScript",
               "Kotlin",
               "Kusto",
+              "Makefile",
               "Markdown",
               "Managed Object Format",
               "MS Graph (Interactive)",
