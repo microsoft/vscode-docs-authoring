@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.58 (March 9th, 2020)
+
+- Updated Dev Languages for code block language completion
+
 ## 0.2.57 (March 6th, 2020)
 
 - Link text bug fix: [Issue 410](https://github.com/microsoft/vscode-docs-authoring/issues/410)
