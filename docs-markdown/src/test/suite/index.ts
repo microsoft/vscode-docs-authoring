@@ -11,10 +11,10 @@ export function run(): Promise<void> {
 	const nyc = new NYC({
 		cwd: path.join(__dirname, '..', '..', '..'),
 		include: [
-			"src/**/*.test"
+			"**/**.js"
 		],
 		exclude: [
-			"out/src/test/**/*.js"
+			"**/**.test.js"
 		],
 		reporter: ['text', 'html'],
 		all: true,
