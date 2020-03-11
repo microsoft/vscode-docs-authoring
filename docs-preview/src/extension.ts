@@ -1,60 +1,78 @@
 "use strict";
 
-import { rename } from "fs";
-import { basename } from "path";
-import { commands, ExtensionContext, TextDocument, window, workspace, ConfigurationTarget } from "vscode";
+import { appendFileSync, readFileSync, writeFileSync } from "fs";
+import { basename, join } from "path";
+import { commands, ExtensionContext, TextDocument, window, workspace } from "vscode";
 import { sendTelemetryData } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
-import { include } from "./markdown-extensions/includes";
 import { codeSnippets, tripleColonCodeSnippets } from "./markdown-extensions/codesnippet";
-import { columnOptions, column_end, columnEndOptions } from "./markdown-extensions/column";
+import { column_end, columnEndOptions, columnOptions } from "./markdown-extensions/column";
 import { container_plugin } from "./markdown-extensions/container";
-import { rowOptions, rowEndOptions } from "./markdown-extensions/row";
-import { xref } from "./xref/xref";
 import { div_plugin, divOptions } from "./markdown-extensions/div";
-import { imageOptions, image_end } from "./markdown-extensions/image";
+import { image_end, imageOptions } from "./markdown-extensions/image";
+import { include } from "./markdown-extensions/includes";
+import { rowEndOptions, rowOptions } from "./markdown-extensions/row";
 import { video_plugin, videoOptions } from "./markdown-extensions/video";
+import { xref } from "./xref/xref";
 
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
 const telemetryCommand: string = "preview";
 
-// update markdown.PreviewScripts based on user setting
 const previewThemeSetting = "preview.previewTheme";
-const previewScripts = "markdown.previewScripts";
-const dynamicWrapper = "./media/wrapper.js";
-const darkWrapper = "./media/wrapper-dark.js";
-const lightWrapper = "./media/wrapper-light.js";
-const highContrastWrapper = "./media/wrapper-high-contrast.js";
+let bodyAttribute: string = "";
 
 export function activate(context: ExtensionContext) {
-    const selectedPreviewTheme = workspace.getConfiguration().get(previewThemeSetting);
-    switch (selectedPreviewTheme) {
-        case "Use current VS Code theme":
-            workspace.getConfiguration().update(previewScripts, dynamicWrapper, ConfigurationTarget.Global);
-            break;
-        case "Light":
-            workspace.getConfiguration().update(previewScripts, lightWrapper, ConfigurationTarget.Global);
-            break;
-        case "Dark":
-            workspace.getConfiguration().update(previewScripts, darkWrapper, ConfigurationTarget.Global);
-            break;
-        case "High Contrast":
-            workspace.getConfiguration().update(previewScripts, highContrastWrapper, ConfigurationTarget.Global);
-            break;
-    }
-    launchPreview(context);
-}
-
-// this method is called when your extension is deactivated
-export function deactivate() {
-    output.appendLine("Deactivating extension.");
-}
-
-export function launchPreview(context) {
     const filePath = window.visibleTextEditors[0].document.fileName;
     const workingPath = filePath.replace(basename(filePath), "");
     extensionPath = context.extensionPath;
+    const wrapperPath = join(extensionPath, "media", "wrapper.js");
+    const wrapperJsData = readFileSync(wrapperPath, "utf8");
+    const selectedPreviewTheme = workspace.getConfiguration().get(previewThemeSetting);
+    switch (selectedPreviewTheme) {
+        case "Use current VS Code theme":
+            break;
+        case "Light":
+            if (wrapperJsData.includes("vscode-light")) {
+                output.appendLine(`Current theme: Light.`);
+            } else {
+                const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
+                writeFileSync(wrapperPath, updatedWrapperJsData, "utf8");
+                bodyAttribute = `body.setAttribute("class", "vscode-body scrollBeyondLastLine wordWrap showEditorSelection vscode-light");`;
+            }
+            break;
+        case "Dark":
+            if (wrapperJsData.includes("vscode-dark")) {
+                output.appendLine(`Current theme: Dark.`);
+            } else {
+                const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
+                writeFileSync(wrapperPath, updatedWrapperJsData, "utf8");
+                bodyAttribute = `body.setAttribute("class", "vscode-body scrollBeyondLastLine wordWrap showEditorSelection vscode-dark");`;
+            }
+            break;
+        case "High Contrast":
+            if (wrapperJsData.includes("vscode-high-contrast")) {
+                output.appendLine(`Current theme: High Contrast.`);
+            } else {
+                const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
+                writeFileSync(wrapperPath, updatedWrapperJsData, "utf8");
+                bodyAttribute = `body.setAttribute("class", "vscode-body scrollBeyondLastLine wordWrap showEditorSelection vscode-high-contrast");`;
+            }
+            break;
+    }
+    appendFileSync(wrapperPath, bodyAttribute, "utf8");
+
+    workspace.onDidChangeConfiguration((e: any) => {
+        if (e.affectsConfiguration(previewThemeSetting)) {
+            window.showInformationMessage("Your updated configuration has been recorded, but you must reload to see its effects.", "Reload")
+                .then((res) => {
+                    if (res === "Reload") {
+                        commands.executeCommand("workbench.action.reloadWindow");
+                    }
+                });
+        }
+    });
+
     context.subscriptions.push(new Reporter(context));
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
         commands.executeCommand("markdown.showPreviewToSide");
@@ -86,4 +104,9 @@ export function launchPreview(context) {
                 .use(video_plugin, "video", videoOptions);
         },
     };
+}
+
+// this method is called when your extension is deactivated
+export function deactivate() {
+    output.appendLine("Deactivating extension.");
 }
