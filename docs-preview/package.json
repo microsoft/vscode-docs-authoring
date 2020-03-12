@@ -28,7 +28,8 @@
     "docfx"
   ],
   "activationEvents": [
-    "onLanguage:markdown"
+    "onLanguage:markdown",
+    "onLanguage:yaml"
   ],
   "main": "./out/src/extension",
   "contributes": {

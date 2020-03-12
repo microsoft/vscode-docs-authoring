@@ -1,5 +1,5 @@
-const jsyaml = require("js-yaml");
-
+// const jsyaml = require("js-yaml");
+import * as jsyaml from "js-yaml";
 export function getFirstParagraph(markdown) {
     const frstParagraphRegex = new RegExp(`^(?!#).+`, "m");
     const firstParagraphMatch = markdown.match(frstParagraphRegex);
@@ -9,16 +9,35 @@ export function getFirstParagraph(markdown) {
     return markdown;
 }
 
-export function parseMetadata(metadata) {
+export function parseMarkdownMetadata(metadata) {
     const details = { title: "", description: "", date: "" };
     const yamlContent = jsyaml.load(metadata);
     if (yamlContent) {
-        details.title = `${yamlContent.title} | Microsoft Docs`;
-        details.title = shortenWithElipses(yamlContent.title, 68);
+        details.title = shortenWithElipses(`${yamlContent.title} | Microsoft Docs`, 68);
         details.description = shortenWithElipses(yamlContent.description, 280);
         details.date = yamlContent["ms.date"];
     }
     return details;
+}
+
+export function parseYamlMetadata(metadata) {
+    const details = { title: "", description: "" };
+    const yamlContent = jsyaml.load(metadata);
+    if (yamlContent && yamlContent.metadata) {
+        details.title = getMainContentIfExists(yamlContent.metadata.title, yamlContent.title);
+        details.title = shortenWithElipses(`${details.title} | Microsoft Docs`, 68);
+        details.description = getMainContentIfExists(yamlContent.metadata.description, yamlContent.summary);
+        details.description = shortenWithElipses(details.description, 280);
+    }
+    return details;
+}
+
+function getMainContentIfExists(main: string, alt: string) {
+    if (main) {
+        return main;
+    } else {
+        return alt;
+    }
 }
 
 export function getPath(basePath: any, filePath: any) {

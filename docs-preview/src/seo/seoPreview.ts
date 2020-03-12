@@ -1,5 +1,9 @@
-import * as fs from "fs";
-import * as path from "path";
+import { existsSync } from "fs";
+// const moment = require("moment");
+import * as moment from "moment";
+// const os = require("os");
+import * as os from "os";
+import { basename, dirname, join, relative } from "path";
 import {
     Event,
     EventEmitter,
@@ -9,10 +13,7 @@ import {
     window,
     workspace,
 } from "vscode";
-import { getFirstParagraph, parseMetadata, getPath } from "../helper/seoHelpers";
-import SEOPreviewConfig from "./seoPreviewConfig";
-const moment = require('moment');
-const os = require("os");
+import { getFirstParagraph, getPath, parseMarkdownMetadata, parseYamlMetadata } from "../helper/seoHelpers";
 
 const metadataRegex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
 
@@ -38,17 +39,17 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                 const content = document.getText();
 
                 if (!workspaceRoot) {
-                    return this.getHtmlFromMarkdown(content, path.basename(document.fileName), path.dirname(document.fileName));
+                    return this.buildHtmlFromContent(content, basename(document.fileName), dirname(document.fileName));
                 }
 
-                const basePath = path.dirname(document.fileName);
+                const basePath = dirname(document.fileName);
                 let docsetRoot = this.getDocsetRoot(basePath) || workspaceRoot;
-                let filePath = path.relative(docsetRoot, document.fileName);
+                let filePath = relative(docsetRoot, document.fileName);
                 if (os.type() === "Windows_NT") {
                     docsetRoot = docsetRoot.replace(/\\/g, "/");
                     filePath = filePath.replace(/\\/g, "/");
                 }
-                return this.getHtmlFromMarkdown(content, filePath, docsetRoot);
+                return this.buildHtmlFromContent(content, filePath, docsetRoot);
             });
     }
 
@@ -66,8 +67,8 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
         }
     }
 
-    private getHtmlFromMarkdown(markdown: string, filePath: string, basePath: string): string {
-        const body = this.parseFileIntoSEOHtml(markdown, filePath, basePath);
+    private buildHtmlFromContent(content: string, filePath: string, basePath: string): string {
+        const body = this.parseFileIntoSEOHtml(content, filePath, basePath);
 
         return `<!DOCTYPE html>
         <html>
@@ -81,32 +82,46 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
         </html>`;
     }
 
-    private parseFileIntoSEOHtml(markdown, filePath, basePath) {
+    private parseFileIntoSEOHtml(content, filePath, basePath) {
         const breadCrumbPath = getPath(basePath, filePath);
         if (filePath.endsWith(".md")) {
-            return this.markdownMetadataIntoSEOHtml(markdown, breadCrumbPath);
+            return this.markdownMetadataIntoSEOHtml(content, breadCrumbPath);
         } else if (filePath.endsWith(".yml") || filePath.endsWith(".yaml")) {
-            return this.ymlMetadataIntoSEOHtml(markdown, breadCrumbPath);
+            return this.ymlMetadataIntoSEOHtml(content, breadCrumbPath);
         } else {
             return "<div>Unable to read file metadata</div>";
         }
     }
 
-    private ymlMetadataIntoSEOHtml(markdown: any, path: string) {
-        return "";
+    private ymlMetadataIntoSEOHtml(content: string, breadCrumbPath: string) {
+        const { title, description } = parseYamlMetadata(content);
+        return `<div class="search-result">
+                    <div class="header">
+                        <div class="breadcrumbs">${breadCrumbPath}<span class="down-arrow"></span></div>
+                        <div><a href="#" class="title"><h3>${title}</h3></a></div>
+                    </div>
+                    <div>
+                        <p class="description">
+                            ${this.setDescriptionHtml(description, content)}
+                        </p>
+                    </div>;
+                </div>`;
     }
 
-    private markdownMetadataIntoSEOHtml(markdown: any, path: string) {
+    private markdownMetadataIntoSEOHtml(markdown: string, breadCrumbPath: string) {
         const metadataMatch = markdown.match(metadataRegex);
         if (metadataMatch) {
-            const { title, description, date } = parseMetadata(metadataMatch[2]);
+            const { title, description, date } = parseMarkdownMetadata(metadataMatch[2]);
             return `<div class="search-result">
                         <div class="header">
-                            <div class="breadcrumbs">${path}<span class="down-arrow"></span></div>
+                            <div class="breadcrumbs">${breadCrumbPath}<span class="down-arrow"></span></div>
                             <div><a href="#" class="title"><h3>${title}</h3></a></div>
                         </div>
-                        ${this.setDateHtml(date)}
-                        ${this.setDescriptionHtml(description, markdown)};
+                        <div>
+                            <p class="description">${this.setDateHtml(date)}
+                            ${this.setDescriptionHtml(description, markdown)}
+                            </p>
+                        </div>;
                     </div>`;
         } else {
             return "<div>Unable to read file metadata</div>";
@@ -117,26 +132,26 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
         if (!description) {
             description = getFirstParagraph(markdown);
         }
-        return `${description}</p></div>`;
+        return description;
     }
 
     private setDateHtml(date: string) {
         if (date) {
             date = moment(new Date(date)).format("ll");
-            return `<div><p class="description"><span class="date">${date} - </span>`;
+            return `<span class="date">${date} - </span>`;
         } else {
-            return `<div><p class="description">`;
+            return "";
         }
     }
 
     private getDocsetRoot(dir: string): string {
-        if (dir && path.dirname(dir) !== dir) {
-            const config = path.join(dir, "docfx.json");
-            if (fs.existsSync(config)) {
+        if (dir && dirname(dir) !== dir) {
+            const config = join(dir, "docfx.json");
+            if (existsSync(config)) {
                 return dir;
             }
 
-            return this.getDocsetRoot(path.dirname(dir));
+            return this.getDocsetRoot(dirname(dir));
         }
 
         return null;
@@ -153,7 +168,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
             .date {
                 color:rgb(112, 117, 122);
             }
-            .breadcrumbs { 
+            .breadcrumbs {
                 color: #3C4043;
                 font-size: 14px;
                 line-height: 1.3;
