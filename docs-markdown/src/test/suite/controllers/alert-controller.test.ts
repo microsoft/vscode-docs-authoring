@@ -1,10 +1,8 @@
 // You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
-//import { insertAlert, insertAlertCommand } from '../../../controllers/alert-controller';
-//import { isMarkdownFileCheck } from '../../../helper/common';
-// import * as myExtension from '../extension';
-
+import * as vscode from "vscode"
 import * as controller from "../../../controllers/alert-controller";
+import * as common from "../../../helper/common";
+import { selectLinkType } from "../../../controllers/media-controller";
 // import * as assert from 'assert';
 // import * as common from "../../../helper/common";
 //import { window } from "vscode";
@@ -25,13 +23,20 @@ suite('Alert Controller', () => {
         var comm = controller.insertAlertCommand();
         expect(comm[0].command).to.equal(commands[0].command);
     });
-    test('isMarkdownFileCheck', () => {
-        const spy = chai.spy.on(controller, "insertAlert");
+    test('noActiveEditorMessage', () => {
+        const spy = chai.spy.on(common, "noActiveEditorMessage");
         controller.insertAlert();
         expect(spy).to.have.been.called();
     });
-    test('noActiveEditorMessage', () => {
-        //const editor = window.activeTextEditor;
+    test('isMarkdownFileCheck', async () => {
+        __dirname
+        const uri = vscode.Uri.file('/_/repos/docs-markdown-testing');
+        let success = await vscode.commands.executeCommand('vscode.openFolder', uri);
+        if (success) {
+            const docUri = vscode.Uri.file('/_/repos/docs-markdown-testing/testing-docs/authoring/extensions/docs-markdown.md');
+            const document = await vscode.workspace.openTextDocument(docUri)
+        }
+
     });
 
 });
