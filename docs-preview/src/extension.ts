@@ -1,19 +1,19 @@
 "use strict";
 
-import { rename } from "fs";
 import { basename } from "path";
-import { commands, ExtensionContext, TextDocument, window } from "vscode";
+import { commands, ExtensionContext, ViewColumn, window } from "vscode";
 import { sendTelemetryData } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
-import { include } from "./markdown-extensions/includes";
 import { codeSnippets, tripleColonCodeSnippets } from "./markdown-extensions/codesnippet";
-import { columnOptions, column_end, columnEndOptions } from "./markdown-extensions/column";
+import { column_end, columnEndOptions, columnOptions } from "./markdown-extensions/column";
 import { container_plugin } from "./markdown-extensions/container";
-import { rowOptions, rowEndOptions } from "./markdown-extensions/row";
-import { xref } from "./xref/xref";
 import { div_plugin, divOptions } from "./markdown-extensions/div";
-import { imageOptions, image_end } from "./markdown-extensions/image";
+import { image_end, imageOptions } from "./markdown-extensions/image";
+import { include } from "./markdown-extensions/includes";
+import { rowEndOptions, rowOptions } from "./markdown-extensions/row";
 import { video_plugin, videoOptions } from "./markdown-extensions/video";
+import { DocumentContentProvider } from "./seo/seoPreview";
+import { xref } from "./xref/xref";
 
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
@@ -34,9 +34,22 @@ export function activate(context: ExtensionContext) {
         const commandOption = "show-preview-tab";
         sendTelemetryData(telemetryCommand, commandOption);
     });
+    const disposableSEOPreview = commands.registerCommand("docs.seoPreview", async () => {
+        // Create and show a new webview
+        const panel =
+            window.createWebviewPanel(
+                "seoPreview", // Identifies the type of the webview. Used internally
+                "SEO Preview", // Title of the panel displayed to the user
+                ViewColumn.One, // Editor column to show the new webview panel in.
+                {}, // Webview options. More on these later.
+            );
+        const provider = new DocumentContentProvider(context);
+        panel.webview.html = await provider.provideTextDocumentContent();
+    });
     context.subscriptions.push(
         disposableSidePreview,
-        disposableStandalonePreview);
+        disposableStandalonePreview,
+        disposableSEOPreview);
     return {
         extendMarkdownIt(md) {
             return md.use(include, { root: workingPath })
