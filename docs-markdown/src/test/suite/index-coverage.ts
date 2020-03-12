@@ -2,7 +2,43 @@ import * as path from 'path';
 import * as Mocha from 'mocha';
 import * as glob from 'glob';
 
+function setupNyc() {
+	const NYC = require('nyc');
+
+	// create an nyc instance, config here is the same as your package.json
+	const nyc = new NYC({
+		cwd: path.join(__dirname, '..', '..', '..'),
+		include: [
+			"**/**.js"
+		],
+		exclude: [
+			"**/**.test.js"
+		],
+		reporter: ['text', 'html'],
+		all: true,
+		instrument: true,
+		hookRequire: true,
+		hookRunInContext: true,
+		hookRunInThisContext: true,
+		extension: [
+			".ts",
+			".tsx"
+		],
+		require: [
+			"ts-node/register"
+		],
+		sourceMap: true
+	});
+
+	nyc.reset();
+	nyc.wrap();
+
+	return nyc;
+}
+
 export function run(): Promise<void> {
+
+	const nyc = setupNyc();
 
 	// Create the mocha test
 	const mocha = new Mocha({
@@ -33,6 +69,11 @@ export function run(): Promise<void> {
 			} catch (err) {
 				console.error(err);
 				e(err);
+			} finally {
+				if (nyc) {
+					nyc.writeCoverageFile();
+					nyc.report();
+				}
 			}
 		});
 	});

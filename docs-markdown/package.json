@@ -789,8 +789,7 @@
     "test": "jest",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
-    "test2": "node ./out/src/test/runTest.js",
-    "coverage": "nyc --reporter=html --reporter=text mocha --exit",
+    "mocha": "node ./out/src/test/runTest.js --coverage",
     "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
@@ -810,6 +809,8 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.10",
+    "@types/chai-spies": "^1.0.1",
     "@types/glob": "^7.1.1",
     "@types/graceful-fs": "^2.0.30",
     "@types/jest": "^24.0.12",
@@ -820,6 +821,8 @@
     "@types/recursive-readdir": "^2.2.0",
     "@types/vscode": "^1.43.0",
     "@types/yamljs": "^0.2.30",
+    "chai": "^4.2.0",
+    "chai-spies": "^1.0.0",
     "jest": "^24.9.0",
     "jest-junit": "^6.3.0",
     "mocha": "^7.0.1",

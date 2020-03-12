@@ -4,31 +4,34 @@
 //import { isMarkdownFileCheck } from '../../../helper/common';
 // import * as myExtension from '../extension';
 
-suite('Alert Controller Tests', () => {
+import * as controller from "../../../controllers/alert-controller";
+// import * as assert from 'assert';
+// import * as common from "../../../helper/common";
+//import { window } from "vscode";
 
-    // test('Should call insertAlertCommand', () => {
-    //     const commands = [
-    //         { command: insertAlert.name, callback: insertAlert },
-    //     ];
+const chai = require('chai')
+    , spies = require('chai-spies');
 
-    //     expect(commands).toEqual(insertAlertCommand());
-    // });
-    // test('isMarkdownFileCheck', () => {
-    //     insertAlert();
-    //     expect(isMarkdownFileCheck).toHaveBeenCalled();
-    // });
+chai.use(spies);
+
+const expect = chai.expect;
+
+suite('Alert Controller', () => {
+    test('insertAlertCommand', () => {
+        const commands = [
+            { command: controller.insertAlert.name, callback: controller.insertAlert },
+        ];
+
+        var comm = controller.insertAlertCommand();
+        expect(comm[0].command).to.equal(commands[0].command);
+    });
+    test('isMarkdownFileCheck', () => {
+        const spy = chai.spy.on(controller, "insertAlert");
+        controller.insertAlert();
+        expect(spy).to.have.been.called();
+    });
+    test('noActiveEditorMessage', () => {
+        //const editor = window.activeTextEditor;
+    });
+
 });
-
-// describe("Alert Controller", () => {
-//     it("Should call insertAlertCommand.", () => {
-// const commands = [
-//     { command: insertAlert.name, callback: insertAlert },
-// ];
-
-// expect(commands).toEqual(insertAlertCommand());
-//     });
-//     it("should call isMarkdownFileCheck", () => {
-//         insertAlert();
-//         expect(isMarkdownFileCheck).toHaveBeenCalled();
-//     });
-// });

@@ -31,10 +31,10 @@
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/out/src/test/suite/index",
-                "--colors",
+                "--colors"
             ],
             "outFiles": [
-                "${workspaceFolder}/out/test/**/*.js"
+                "${workspaceFolder}/out/src/**/*.js"
             ],
             "preLaunchTask": "npm"
         },
