@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.41 (March 13th, 2020)
+
+- Bug fix for triple colon image extension rendering
+
 ## 0.3.40 (March 5th, 2020)
 
 - Bug fix for print to PDF
