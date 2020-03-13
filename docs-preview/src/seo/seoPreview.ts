@@ -76,7 +76,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                     </div>
                     <div>
                         <p class="description">
-                            ${this.setDescriptionHtml(description, content)}
+                            ${description}
                         </p>
                     </div>;
                 </div>`;
@@ -85,7 +85,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
     private markdownMetadataIntoSEOHtml(markdown: string, breadCrumbPath: string) {
         const metadataMatch = markdown.match(metadataRegex);
         if (metadataMatch) {
-            const { title, description, date } = parseMarkdownMetadata(metadataMatch[2]);
+            const { title, description, date } = parseMarkdownMetadata(metadataMatch[2], markdown);
             return `<div class="search-result">
                         <div class="header">
                             <div class="breadcrumbs">${breadCrumbPath}<span class="down-arrow"></span></div>
@@ -93,20 +93,13 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                         </div>
                         <div>
                             <p class="description">${this.setDateHtml(date)}
-                            ${this.setDescriptionHtml(description, markdown)}
+                                ${description}
                             </p>
                         </div>;
                     </div>`;
         } else {
             return "<div>Unable to read file metadata</div>";
         }
-    }
-
-    private setDescriptionHtml(description: string, markdown: any) {
-        if (!description) {
-            description = getFirstParagraph(markdown);
-        }
-        return description;
     }
 
     private setDateHtml(date: string) {

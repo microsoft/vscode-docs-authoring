@@ -1,4 +1,3 @@
-// import Axios from "axios";
 import * as jsyaml from "js-yaml";
 export function getFirstParagraph(markdown) {
     const frstParagraphRegex = new RegExp(`^(?!#).+`, "m");
@@ -9,7 +8,7 @@ export function getFirstParagraph(markdown) {
     return markdown;
 }
 
-export function parseMarkdownMetadata(metadata) {
+export function parseMarkdownMetadata(metadata, markdown) {
     const details = { title: "", description: "", date: "" };
     const yamlContent = jsyaml.load(metadata);
     if (yamlContent) {
@@ -19,7 +18,11 @@ export function parseMarkdownMetadata(metadata) {
             details.title = `${yamlContent.title} | Microsoft Docs`;
         }
         details.title = shortenWithElipses(details.title, 63);
-        details.description = shortenWithElipses(yamlContent.description, 305);
+        details.description = yamlContent.description;
+        if (!details.description) {
+            details.description = getFirstParagraph(markdown);
+        }
+        details.description = shortenWithElipses(details.description, 305);
         details.date = yamlContent["ms.date"];
     }
     return details;
@@ -30,14 +33,46 @@ export function parseYamlMetadata(metadata, breadCrumb) {
     const yamlContent = jsyaml.load(metadata);
     if (yamlContent && yamlContent.metadata) {
         details.title = getMainContentIfExists(yamlContent.metadata.title, yamlContent.title);
+        details.description = getMainContentIfExists(yamlContent.metadata.description, yamlContent.summary);
         if (breadCrumb.includes("› Docs › Learn › Browse")) {
             details.title = `${details.title} - Learn`;
+            details.description = getYamlDescription(yamlContent);
         }
         details.title = shortenWithElipses(`${details.title} | Microsoft Docs`, 63);
-        details.description = getMainContentIfExists(yamlContent.metadata.description, yamlContent.summary);
         details.description = shortenWithElipses(details.description, 305);
     }
     return details;
+}
+
+function getYamlDescription(yamlContent) {
+    let description = "";
+    if (yamlContent.title) {
+        description = yamlContent.title;
+        description = endWithPeriod(yamlContent.title);
+    }
+    if (yamlContent.summary) {
+        description += ` ${yamlContent.summary}`;
+        description = endWithPeriod(description);
+    }
+    if (yamlContent.abstract) {
+        description += buildParagraphFromAbstract(yamlContent.abstract);
+    }
+    return description;
+}
+
+function buildParagraphFromAbstract(abstract) {
+    abstract = abstract.replace(/\n/g, "");
+    abstract = abstract.replace(/-\s+/mg, ". ");
+    abstract = abstract.replace(/:./g, ":");
+    abstract = endWithPeriod(abstract);
+    return abstract;
+}
+
+function endWithPeriod(content: string) {
+    if (!content.endsWith(".")) {
+        content += ".";
+    }
+    return content;
 }
 
 function getMainContentIfExists(main: string, alt: string) {
@@ -51,7 +86,7 @@ function getMainContentIfExists(main: string, alt: string) {
 export function getPath(basePath: any, filePath: any) {
     const repoMapping = [
         { repoName: "azure-docs", name: "azure" },
-        { repoName: "learn-pr", name: "Learn" },
+        { repoName: "learn", name: "Learn" },
         { repoName: "live-share", name: "live-share" },
         { repoName: "virtualization-documentation", name: "virtualization-documentation" },
         { repoName: "architecture-center", name: "architecture-center" },
@@ -533,36 +568,22 @@ export function getPath(basePath: any, filePath: any) {
         if (directory.name === "Learn") {
             breadCrumb += ` › Docs › ${directory.name} › Browse`;
         } else {
-            breadCrumb += ` › en-us › ${directory.name}`;
+            breadCrumb += ` › en - us › ${directory.name} `;
         }
     }
     const repoArr = filePath.split("/").slice(1, -1);
     repoArr.map((dir) => {
-        breadCrumb += ` › ${dir}`;
+        breadCrumb += ` › ${dir} `;
     });
     return shortenWithElipses(breadCrumb, 70);
 }
 
 export function shortenWithElipses(content, size) {
+    if (!content) {
+        return "";
+    }
     if (content.length > size) {
         return content.substring(0, size) + "...";
     }
     return content;
 }
-
-// async function getRepos() {
-//     let repos = []
-//     for (let index = 20; index < 53; index++) {
-//         try {
-//             const response = await Axios.get(`https://api.github.com/orgs/MicrosoftDocs/repos?type=public&sort=updated&per_page=100&page=${index}`)
-//             repos = repos.concat(response.data);
-//         } catch (error) {
-//             console.log(error)
-//         }
-//     }
-//     const regex = RegExp(/.*(\.[a-zA-z]{2}-[a-zA-z]{2}).*/);
-//     const repoList = repos.filter(repo => {
-//         return !regex.test(repo.name)
-//     }).map(x => x.name);
-//     console.log(repoList);
-// }
