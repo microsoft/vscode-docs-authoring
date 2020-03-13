@@ -72,3 +72,7 @@ export function sendTelemetryData(telemetryCommand: string, commandOption: strin
 export function isMarkdownFile(document: TextDocument) {
     return document.languageId === "markdown"; // prevent processing of own documents
 }
+
+export function isYamlFile(document: TextDocument) {
+    return document.languageId === "yaml" || document.languageId === "yml"; // prevent processing of own documents
+}

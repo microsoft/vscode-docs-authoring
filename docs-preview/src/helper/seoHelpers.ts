@@ -4,7 +4,7 @@ export function getFirstParagraph(markdown) {
     const frstParagraphRegex = new RegExp(`^(?!#).+`, "m");
     const firstParagraphMatch = markdown.match(frstParagraphRegex);
     if (firstParagraphMatch) {
-        return shortenWithElipses(firstParagraphMatch[0], 280);
+        return shortenWithElipses(firstParagraphMatch[0], 305);
     }
     return markdown;
 }
@@ -13,8 +13,13 @@ export function parseMarkdownMetadata(metadata) {
     const details = { title: "", description: "", date: "" };
     const yamlContent = jsyaml.load(metadata);
     if (yamlContent) {
-        details.title = shortenWithElipses(`${yamlContent.title} | Microsoft Docs`, 68);
-        details.description = shortenWithElipses(yamlContent.description, 280);
+        if (yamlContent.titleSuffix) {
+            details.title = `${yamlContent.title} - ${yamlContent.titleSuffix} | Microsoft Docs`;
+        } else {
+            details.title = `${yamlContent.title} | Microsoft Docs`;
+        }
+        details.title = shortenWithElipses(details.title, 61);
+        details.description = shortenWithElipses(yamlContent.description, 305);
         details.date = yamlContent["ms.date"];
     }
     return details;
@@ -25,9 +30,9 @@ export function parseYamlMetadata(metadata) {
     const yamlContent = jsyaml.load(metadata);
     if (yamlContent && yamlContent.metadata) {
         details.title = getMainContentIfExists(yamlContent.metadata.title, yamlContent.title);
-        details.title = shortenWithElipses(`${details.title} | Microsoft Docs`, 68);
+        details.title = shortenWithElipses(`${details.title} | Microsoft Docs`, 61);
         details.description = getMainContentIfExists(yamlContent.metadata.description, yamlContent.summary);
-        details.description = shortenWithElipses(details.description, 280);
+        details.description = shortenWithElipses(details.description, 305);
     }
     return details;
 }

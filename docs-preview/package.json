@@ -65,6 +65,10 @@
       },
       {
         "command": "docs.seoPreview",
+        "title": "Docs: SEO Preview in current tab"
+      },
+      {
+        "command": "docs.seoPreviewToSide",
         "title": "Docs: SEO Preview"
       }
     ],
@@ -81,6 +85,10 @@
         {
           "when": "resourceLangId == markdown || resourceLangId == yaml",
           "command": "docs.seoPreview"
+        },
+        {
+          "when": "resourceLangId == markdown || resourceLangId == yaml",
+          "command": "docs.seoPreviewToSide"
         }
       ]
     }

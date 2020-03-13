@@ -18,16 +18,10 @@ import { getFirstParagraph, getPath, parseMarkdownMetadata, parseYamlMetadata } 
 const metadataRegex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
 
 export class DocumentContentProvider implements TextDocumentContentProvider {
-    public static readonly scheme = "docsPreview";
+    public static readonly scheme = "seoPreview";
     private sourceUri: Uri;
     private onDidChangeEvent = new EventEmitter<Uri>();
     private waiting = false;
-    private context: ExtensionContext;
-
-    constructor(context: ExtensionContext) {
-        this.context = context;
-    }
-
     public provideTextDocumentContent(): Thenable<string> {
         const editor = window.activeTextEditor;
         this.sourceUri = editor.document.uri;
@@ -51,20 +45,6 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                 }
                 return this.buildHtmlFromContent(content, filePath, docsetRoot);
             });
-    }
-
-    get onDidChange(): Event<Uri> {
-        return this.onDidChangeEvent.event;
-    }
-
-    public update(uri: Uri) {
-        if (!this.waiting) {
-            this.waiting = true;
-            setTimeout(() => {
-                this.waiting = false;
-                this.onDidChangeEvent.fire(uri);
-            }, 50);
-        }
     }
 
     private buildHtmlFromContent(content: string, filePath: string, basePath: string): string {

@@ -1,8 +1,7 @@
 "use strict";
-
 import { basename } from "path";
-import { commands, ExtensionContext, ViewColumn, window } from "vscode";
-import { sendTelemetryData } from "./helper/common";
+import { commands, ExtensionContext, Uri, ViewColumn, WebviewPanel, window, workspace } from "vscode";
+import { isMarkdownFile, isYamlFile, sendTelemetryData } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { codeSnippets, tripleColonCodeSnippets } from "./markdown-extensions/codesnippet";
 import { column_end, columnEndOptions, columnOptions } from "./markdown-extensions/column";
@@ -20,6 +19,7 @@ export let extensionPath: string;
 const telemetryCommand: string = "preview";
 
 export function activate(context: ExtensionContext) {
+    let panel: WebviewPanel;
     const filePath = window.visibleTextEditors[0].document.fileName;
     const workingPath = filePath.replace(basename(filePath), "");
     extensionPath = context.extensionPath;
@@ -34,22 +34,21 @@ export function activate(context: ExtensionContext) {
         const commandOption = "show-preview-tab";
         sendTelemetryData(telemetryCommand, commandOption);
     });
-    const disposableSEOPreview = commands.registerCommand("docs.seoPreview", async () => {
-        // Create and show a new webview
-        const panel =
-            window.createWebviewPanel(
-                "seoPreview", // Identifies the type of the webview. Used internally
-                "SEO Preview", // Title of the panel displayed to the user
-                ViewColumn.One, // Editor column to show the new webview panel in.
-                {}, // Webview options. More on these later.
-            );
-        const provider = new DocumentContentProvider(context);
-        panel.webview.html = await provider.provideTextDocumentContent();
-    });
+    const provider = new DocumentContentProvider();
+
+    context.subscriptions.push(workspace.onDidChangeTextDocument(async (event) => {
+        if (isMarkdownFile(event.document) || isYamlFile(event.document)) {
+            panel.webview.html = await provider.provideTextDocumentContent();
+        }
+    }));
+
+    const disposableSEOPreview = commands.registerCommand("docs.seoPreview", seoPreview(ViewColumn.One));
+    const disposableSideSEOPreview = commands.registerCommand("docs.seoPreviewToSide", seoPreview(ViewColumn.Two));
     context.subscriptions.push(
         disposableSidePreview,
         disposableStandalonePreview,
-        disposableSEOPreview);
+        disposableSEOPreview,
+        disposableSideSEOPreview);
     return {
         extendMarkdownIt(md) {
             return md.use(include, { root: workingPath })
@@ -67,6 +66,26 @@ export function activate(context: ExtensionContext) {
                 .use(video_plugin, "video", videoOptions);
         },
     };
+
+    function seoPreview(column): (...args: any[]) => any {
+        return async () => {
+            // Create and show a new webview
+            panel = window.createWebviewPanel("seoPreview", "SEO Preview", { preserveFocus: true, viewColumn: column }, {});
+            panel.webview.html = await provider.provideTextDocumentContent();
+        };
+    }
+}
+
+function getPreviewUri(uri: Uri) {
+    if (uri.scheme === DocumentContentProvider.scheme) {
+        return uri;
+    }
+
+    return uri.with({
+        path: uri.fsPath + ".rendered",
+        query: uri.toString(),
+        scheme: DocumentContentProvider.scheme,
+    });
 }
 
 // this method is called when your extension is deactivated
