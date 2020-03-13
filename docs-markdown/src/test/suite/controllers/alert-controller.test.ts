@@ -32,7 +32,7 @@ suite('Alert Controller', () => {
     test('isMarkdownFileCheck', async () => {
         const docUri = vscode.Uri.file('/_/repos/docs-markdown-testing/testing-docs/authoring/extensions/docs-markdown.md');
         const document = await vscode.workspace.openTextDocument(docUri);
-        const editor = await vscode.window.showTextDocument(document);
+        await vscode.window.showTextDocument(document);
 
         const spy = chai.spy.on(common, "isMarkdownFileCheck");
         controller.insertAlert();
@@ -41,7 +41,7 @@ suite('Alert Controller', () => {
     test('insertContentToEditor - Note', async () => {
         const docUri = vscode.Uri.file('/_/repos/docs-markdown-testing/testing-docs/authoring/extensions/docs-markdown.md');
         const document = await vscode.workspace.openTextDocument(docUri);
-        const editor = await vscode.window.showTextDocument(document);
+        await vscode.window.showTextDocument(document);
 
         vscode.window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve('Note – Information the user should notice even if skimming') as Thenable<any>;
