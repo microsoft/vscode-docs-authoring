@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.41 (March 12th, 2020)
+
+- Expanded the usage of the update metadata values command to YAML
+
 ## 0.3.40 (March 5th, 2020)
 
 - Bug fix for print to PDF
