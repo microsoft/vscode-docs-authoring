@@ -8,9 +8,7 @@ function setupNyc() {
 	// create an nyc instance, config here is the same as your package.json
 	const nyc = new NYC({
 		cwd: path.join(__dirname, '..', '..', '..'),
-		include: [
-			"**/**.js"
-		],
+		cache: false,
 		exclude: [
 			"**/**.test.js"
 		],

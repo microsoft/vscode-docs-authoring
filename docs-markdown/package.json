@@ -789,7 +789,7 @@
     "test": "jest",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
-    "mocha": "node ./out/src/test/runTest.js --coverage",
+    "mocha": "node ./out/src/test/runTest.js",
     "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
@@ -834,24 +834,6 @@
     "tslint": "^5.20.1",
     "typescript": "^3.7.5",
     "vscode-test": "^1.3.0"
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.test.ts"
-    ],
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary",
-      "html"
-    ],
-    "sourceMap": true,
-    "instrument": true
   },
   "jest": {
     "verbose": true,
