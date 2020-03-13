@@ -38,7 +38,7 @@ export function activate(context: ExtensionContext) {
             } else {
                 const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
                 writeFileSync(wrapperPath, updatedWrapperJsData, "utf8");
-                bodyAttribute = `body.setAttribute("class", "vscode-body scrollBeyondLastLine wordWrap showEditorSelection vscode-light");`;
+                bodyAttribute = `body.setAttribute("class", "theme-light");`;
             }
             break;
         case "Dark":
@@ -47,7 +47,7 @@ export function activate(context: ExtensionContext) {
             } else {
                 const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
                 writeFileSync(wrapperPath, updatedWrapperJsData, "utf8");
-                bodyAttribute = `body.setAttribute("class", "vscode-body scrollBeyondLastLine wordWrap showEditorSelection vscode-dark");`;
+                bodyAttribute = `body.setAttribute("class", "theme-dark");`;
             }
             break;
         case "High Contrast":
@@ -56,7 +56,7 @@ export function activate(context: ExtensionContext) {
             } else {
                 const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
                 writeFileSync(wrapperPath, updatedWrapperJsData, "utf8");
-                bodyAttribute = `body.setAttribute("class", "vscode-body scrollBeyondLastLine wordWrap showEditorSelection vscode-high-contrast");`;
+                bodyAttribute = `body.setAttribute("class", "theme-high-contrast");`;
             }
             break;
     }
