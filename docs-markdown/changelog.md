@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.59 (March 12th, 2020)
+
+- Expanded the usage of the update metadata values command to YAML
+
 ## 0.2.58 (March 9th, 2020)
 
 - Updated Dev Languages for code block language completion
