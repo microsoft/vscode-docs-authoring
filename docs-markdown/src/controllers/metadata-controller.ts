@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 import { commands, TextEditor, window, workspace } from "vscode";
-import { isMarkdownFileCheck, noActiveEditorMessage, tryFindFile } from "../helper/common";
+import { noActiveEditorMessage, tryFindFile } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 import { applyReplacements, findReplacement, Replacements } from "../helper/utility";
 
@@ -85,7 +85,8 @@ export async function updateImplicitMetadataValues() {
         return;
     }
 
-    if (!isMarkdownFileCheck(editor, false)) {
+    if (editor.document.languageId !== "markdown" &&
+        editor.document.languageId !== "yaml") {
         return;
     }
 
@@ -200,7 +201,8 @@ export async function updateMetadataDate() {
         return;
     }
 
-    if (!isMarkdownFileCheck(editor, false)) {
+    if (editor.document.languageId !== "markdown" &&
+        editor.document.languageId !== "yaml") {
         return;
     }
 
