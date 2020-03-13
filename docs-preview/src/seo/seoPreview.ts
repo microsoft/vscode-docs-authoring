@@ -1,27 +1,21 @@
 import { existsSync } from "fs";
-// const moment = require("moment");
 import * as moment from "moment";
-// const os = require("os");
 import * as os from "os";
 import { basename, dirname, join, relative } from "path";
 import {
-    Event,
     EventEmitter,
-    ExtensionContext,
     TextDocumentContentProvider,
     Uri,
     window,
     workspace,
 } from "vscode";
-import { getFirstParagraph, getPath, parseMarkdownMetadata, parseYamlMetadata } from "../helper/seoHelpers";
+import { getFirstParagraph, getPath, parseMarkdownMetadata, parseYamlMetadata } from "./seoHelpers";
 
 const metadataRegex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
 
 export class DocumentContentProvider implements TextDocumentContentProvider {
     public static readonly scheme = "seoPreview";
     private sourceUri: Uri;
-    private onDidChangeEvent = new EventEmitter<Uri>();
-    private waiting = false;
     public provideTextDocumentContent(): Thenable<string> {
         const editor = window.activeTextEditor;
         this.sourceUri = editor.document.uri;
@@ -74,7 +68,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
     }
 
     private ymlMetadataIntoSEOHtml(content: string, breadCrumbPath: string) {
-        const { title, description } = parseYamlMetadata(content);
+        const { title, description } = parseYamlMetadata(content, breadCrumbPath);
         return `<div class="search-result">
                     <div class="header">
                         <div class="breadcrumbs">${breadCrumbPath}<span class="down-arrow"></span></div>
@@ -143,7 +137,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                 margin-top: 20px;
                 background-color: #fff;
                 font-size: 14px;
-                font-family: arial,sans-serif;
+                font-family: 'Roboto',arial,sans-serif;
             }
             .date {
                 color:rgb(112, 117, 122);
@@ -155,6 +149,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                 padding-bottom: 1px;
                 padding-top: 1px;
                 line-height: 1.57;
+                white-space: nowrap;
             }
             a.title > h3 {
                 font-size: 20px;
@@ -165,6 +160,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                 color: #1a0dab;
                 padding-top: 2px;
                 margin-bottom: 3px;
+                white-space: nowrap;
             }
             a {
                 text-decoration: none;

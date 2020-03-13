@@ -76,18 +76,6 @@ export function activate(context: ExtensionContext) {
     }
 }
 
-function getPreviewUri(uri: Uri) {
-    if (uri.scheme === DocumentContentProvider.scheme) {
-        return uri;
-    }
-
-    return uri.with({
-        path: uri.fsPath + ".rendered",
-        query: uri.toString(),
-        scheme: DocumentContentProvider.scheme,
-    });
-}
-
 // this method is called when your extension is deactivated
 export function deactivate() {
     output.appendLine("Deactivating extension.");
