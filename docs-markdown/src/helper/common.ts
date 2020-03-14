@@ -1,11 +1,36 @@
 "use-strict";
 
-import os = require("os");
-import path = require("path");
+import * as fs from "fs";
+import * as glob from "glob";
+import * as os from "os";
+import * as path from "path";
 import * as vscode from "vscode";
 import { output } from "../extension";
 import * as log from "./log";
 import { reporter } from "./telemetry";
+
+export function tryFindFile(rootPath: string, fileName: string) {
+    try {
+        const fullPath = path.resolve(rootPath, fileName);
+        const exists = fs.existsSync(fullPath);
+        if (exists) {
+            return fullPath;
+        } else {
+            const files = glob.sync(`**/${fileName}`, {
+                cwd: rootPath,
+            });
+
+            if (files && files.length === 1) {
+                return path.join(rootPath, files[0]);
+            }
+        }
+    } catch (error) {
+        postError(error.toString());
+    }
+
+    postWarning(`Unable to find a file named "${fileName}", recursively at root "${rootPath}".`);
+    return undefined;
+}
 
 /**
  * Provide current os platform
@@ -265,6 +290,14 @@ export function isMarkdownFileCheck(editor: vscode.TextEditor, languageId: boole
         if (editor.document.languageId !== "yaml") {
             postInformation("The docs-markdown extension only works on Markdown files.");
         }
+        return false;
+    } else {
+        return true;
+    }
+}
+
+export function isMarkdownFileCheckWithoutNotification(editor: vscode.TextEditor) {
+    if (editor.document.languageId !== "markdown") {
         return false;
     } else {
         return true;

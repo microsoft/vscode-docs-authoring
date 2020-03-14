@@ -2,17 +2,45 @@
 
 import * as vscode from "vscode";
 import { output } from "../extension";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData } from "../helper/common";
+import { FormatOptions, MarkdownTable } from "../helper/markdown-table";
 import { tableBuilder, validateTableRowAndColumnCount } from "../helper/utility";
 
 const telemetryCommand: string = "insertTable";
 let commandOption: string;
 
 export function insertTableCommand() {
-    const commands = [
+    return [
+        { command: consolidateTable.name, callback: consolidateTable },
+        { command: distributeTable.name, callback: distributeTable },
         { command: insertTable.name, callback: insertTable },
     ];
-    return commands;
+}
+
+export async function consolidateTable() {
+    await reformatTable(FormatOptions.Consolidate);
+}
+
+export async function distributeTable() {
+    await reformatTable(FormatOptions.Distribute);
+}
+
+async function reformatTable(formatOptions: FormatOptions) {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        noActiveEditorMessage();
+        return;
+    }
+    const selection = editor.selection;
+    if (!selection) {
+        postWarning("You must select a markdown table first.");
+        return;
+    }
+
+    const table = MarkdownTable.parse(selection, editor.document);
+    if (table) {
+        await table.reformat(editor, formatOptions);
+    }
 }
 
 export function insertTable() {

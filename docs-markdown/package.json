@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.47",
+  "version": "0.2.59",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -44,6 +44,11 @@
         "category": "Docs"
       },
       {
+        "command": "sortMasterRedirectionFile",
+        "title": "Sort master redirection file",
+        "category": "Docs"
+      },
+      {
         "command": "formatBold",
         "title": "Bold",
         "category": "Docs"
@@ -79,6 +84,16 @@
         "category": "Docs"
       },
       {
+        "command": "distributeTable",
+        "title": "Evenly distribute selected table",
+        "category": "Docs"
+      },
+      {
+        "command": "consolidateTable",
+        "title": "Consolidate selected table",
+        "category": "Docs"
+      },
+      {
         "command": "selectLinkType",
         "title": "Link to heading",
         "category": "Docs"
@@ -100,12 +115,7 @@
       },
       {
         "command": "applyImage",
-        "title": "Image (Docs Markdown)",
-        "category": "Docs"
-      },
-      {
-        "command": "insertImage",
-        "title": "Image (Standard Markdown)",
+        "title": "Image",
         "category": "Docs"
       },
       {
@@ -121,6 +131,11 @@
       {
         "command": "applyLocScope",
         "title": "Add localization scope to image",
+        "category": "Docs"
+      },
+      {
+        "command": "applyLightbox",
+        "title": "Add lightbox to image",
         "category": "Docs"
       },
       {
@@ -186,8 +201,7 @@
       {
         "command": "updateImplicitMetadataValues",
         "title": "Update Implicit Metadata Values",
-        "category": "Docs",
-        "enablement": "resourceLangId == markdown"
+        "category": "Docs"
       },
       {
         "command": "sortSelectionAscending",
@@ -217,8 +231,7 @@
       {
         "command": "updateImplicitMetadataValues",
         "title": "Update Implicit Metadata Values",
-        "category": "Docs",
-        "enablement": "resourceLangId == markdown"
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -232,12 +245,12 @@
       ],
       "editor/context": [
         {
-          "when": "editorTextFocus",
+          "when": "editorTextFocus && resourceLangId == markdown || resourceLangId == yaml",
           "command": "updateMetadataDate",
           "group": "1_modification"
         },
         {
-          "when": "editorTextFocus",
+          "when": "editorTextFocus && resourceLangId == markdown || resourceLangId == yaml",
           "command": "updateImplicitMetadataValues",
           "group": "1_modification"
         },
@@ -249,6 +262,16 @@
         {
           "when": "editorHasSelection",
           "command": "sortSelectionDescending",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "distributeTable",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "consolidateTable",
           "group": "1_modification"
         }
       ],
@@ -270,6 +293,10 @@
         },
         {
           "command": "generateMasterRedirectionFile",
+          "group": "Docs"
+        },
+        {
+          "command": "sortMasterRedirectionFile",
           "group": "Docs"
         },
         {
@@ -313,6 +340,16 @@
           "when": "resourceLangId == markdown"
         },
         {
+          "command": "distributeTable",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "consolidateTable",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
           "command": "selectLinkType",
           "group": "Docs",
           "when": "resourceLangId == markdown"
@@ -343,11 +380,6 @@
           "when": "resourceLangId == markdown"
         },
         {
-          "command": "insertImage",
-          "group": "Docs",
-          "when": "resourceLangId == markdown"
-        },
-        {
           "command": "applyIcon",
           "group": "Docs",
           "when": "resourceLangId == markdown"
@@ -359,6 +391,11 @@
         },
         {
           "command": "applyLocScope",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "applyLightbox",
           "group": "Docs",
           "when": "resourceLangId == markdown"
         },
@@ -431,6 +468,11 @@
       "type": "object",
       "title": "Docs Markdown Extension Configuration",
       "properties": {
+        "markdown.replaceSmartQuotes": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "When `true`, automatically replace smart quotes (`“, ”, ‘, and ’`) with standard quotes (`\" and '`) in markdown files. This feature extends to other characters as well, i.e.; (`©, ™, ®, •`, subscript and superscript characters). This is useful when pasting text from Word documents."
+        },
         "markdown.allAvailableLanguages": {
           "type": "boolean",
           "default": false,
@@ -447,205 +489,73 @@
             "type": "string",
             "enum": [
               ".NET Core CLI",
-              "1C",
-              "ABNF",
-              "Access logs",
-              "Ada",
-              "ARM assembler",
-              "AVR assembler",
-              "ActionScript",
-              "Alan",
-              "ANTLR",
-              "AngelScript",
               "Apache",
-              "AppleScript",
-              "Arcade",
-              "AsciiDoc",
-              "AspectJ",
+              "ARM assembler",
               "ASPX",
               "ASP.NET (C#)",
               "ASP.NET (VB)",
-              "AutoHotkey",
-              "AutoIt",
-              "Awk",
-              "Axapta",
               "AzCopy",
               "Azure CLI",
               "Azure CLI (Interactive)",
               "Azure Powershell",
               "Azure Powershell (Interactive)",
               "Bash",
-              "Basic",
-              "BNF",
               "C",
               "C#",
               "C# (Interactive)",
               "C++",
               "C++/CX",
               "C++/WinRT",
-              "C/AL",
-              "Cache Object Script",
-              "CMake",
-              "Coq",
-              "CSP",
               "CSS",
-              "Cap’n Proto",
-              "Clojure",
-              "CoffeeScript",
-              "Crmsh",
-              "Crystal",
-              "Cypher (Neo4j)",
-              "D",
               "DAX Power BI",
-              "DNS Zone file",
               "DOS",
-              "Dart",
-              "Delphi",
-              "Diff",
-              "Django",
               "Dockerfile",
-              "dsconfig",
-              "DTS (Device Tree)",
-              "Dust",
-              "Dylan",
-              "EBNF",
-              "Elixir",
-              "Elm",
-              "Erlang",
-              "Excel",
-              "Extempore",
               "F#",
-              "FIX",
-              "Fortran",
-              "G-Code",
-              "Gams",
-              "GAUSS",
-              "GDScript",
-              "Gherkin",
-              "GN for Ninja",
               "Go",
-              "Golo",
               "Gradle",
               "Groovy",
+              "HashiCorp Configuration Language (HCL)",
               "HTML",
               "HTTP",
-              "Haml",
-              "Handlebars",
-              "Haskell",
-              "Haxe",
-              "Hy",
               "Ini",
-              "Inform7",
-              "IRPF90",
               "JSON",
               "Java",
               "JavaScript",
               "Kotlin",
               "Kusto",
-              "Leaf",
-              "Lasso",
-              "Less",
-              "LDIF",
-              "Lisp",
-              "LiveCode Server",
-              "LiveScript",
-              "Lua",
               "Makefile",
               "Markdown",
-              "Mathematica",
-              "Matlab",
-              "Maxima",
-              "Maya Embedded Language",
-              "Mercury",
-              "mIRC Scripting Language",
-              "Mizar",
               "Managed Object Format",
-              "Mojolicious",
-              "Monkey",
-              "Moonscript",
               "MS Graph (Interactive)",
-              "N1QL",
-              "NSIS",
               "Nginx",
-              "Nimrod",
-              "Nix",
-              "OCaml",
+              "Node.js",
               "Objective C",
-              "OpenGL Shading Language",
-              "OpenSCAD",
-              "Oracle Rules Language",
-              "Oxygene",
-              "PF",
+              "Odata",
               "PHP",
-              "Parser3",
-              "Perl",
-              "Plaintext no highlight",
-              "Pony",
-              "PostgreSQL & PL/pgSQL",
+              "PowerApps Formula",
               "PowerShell",
               "PowerShell (Interactive)",
-              "Processing",
-              "Prolog",
               "Properties",
               "Protocol Buffers",
-              "Puppet",
               "Python",
-              "Python profiler results",
               "Q#",
-              "Q",
-              "QML",
               "R",
               "Razor CSHTML",
-              "ReasonML",
-              "RenderMan RIB",
-              "RenderMan RSL",
-              "Roboconf",
-              "Robot Framework",
-              "RPM spec files",
+              "REST API",
               "Ruby",
-              "Rust",
-              "SAS",
-              "SCSS",
               "SQL",
-              "STEP Part 21",
               "Scala",
-              "Scheme",
-              "Scilab",
-              "Shape Expressions",
-              "Shell",
-              "Smali",
-              "Smalltalk",
               "Solidity",
-              "Stan",
-              "Stata",
-              "Structured Text",
-              "Stylus",
-              "SubUnit",
-              "Supercollider",
               "Swift",
-              "Tcl",
-              "Terraform (HCL)",
-              "Test Anything Protocol",
-              "TeX",
-              "Thrift",
-              "TOML",
-              "TP",
-              "Twig",
+              "Transact-SQL",
               "TypeScript",
               "VB.NET",
+              "VB for Applications",
               "VBScript",
-              "VHDL",
-              "Vala",
-              "Verilog",
-              "Vim Script",
-              "X++",
-              "x86 Assembly",
-              "XL",
-              "XQuery",
+              "VSTS CLI",
               "XAML",
               "XML",
-              "YAML",
-              "Zephir"
+              "YAML"
             ]
           },
           "minItems": 1,
@@ -679,6 +589,16 @@
           "type": "boolean",
           "default": true,
           "description": "Used to add the front_matter_title parameter (MD025) to the markdownlint.config file."
+        },
+        "markdown.alwaysIncludeLocScope": {
+          "type": "boolean",
+          "default": false,
+          "description": "Always include loc-scope for images."
+        },
+        "markdown.previewFeatures": {
+          "type": "boolean",
+          "default": false,
+          "description": "When enabled, beta features will become available."
         }
       }
     },
@@ -744,7 +664,8 @@
     "compile": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test-core": "node ./node_modules/vscode/bin/test",
-    "test": "jest"
+    "test": "jest",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
     "axios": "^0.19.0",
@@ -755,7 +676,6 @@
     "graceful-fs": "^4.1.15",
     "js-yaml": "^3.13.1",
     "lodash.merge": "^4.6.2",
-    "markdownlint": "^0.11.0",
     "matcher": "^1.0.0",
     "node-dir": "^0.1.17",
     "recursive-readdir": "^2.2.2",
@@ -764,11 +684,11 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@types/glob": "^5.0.35",
+    "@types/glob": "^5.0.36",
     "@types/graceful-fs": "^2.0.30",
     "@types/jest": "24.0.12",
     "@types/lodash.merge": "^4.6.3",
-    "@types/node": "^7.10.5",
+    "@types/node": "^7.10.9",
     "@types/node-dir": "0.0.32",
     "@types/recursive-readdir": "^2.2.0",
     "@types/yamljs": "^0.2.30",
@@ -776,14 +696,16 @@
     "jest-junit": "^6.3.0",
     "octicons": "^7.3.0",
     "ts-jest": "^24.0.2",
-    "tslint": "^5.9.1",
+    "tslint": "^5.20.1",
     "typescript": "3.4.5",
     "vscode": "^1.1.33"
   },
   "jest": {
+    "verbose": true,
     "preset": "ts-jest",
     "roots": [
-      "<rootDir>/test"
+      "<rootDir>/test",
+      "<rootDir>/src"
     ],
     "moduleFileExtensions": [
       "ts",
@@ -792,14 +714,18 @@
       "node"
     ],
     "coverageReporters": [
-      "text",
-      "cobertura"
+      "text-summary",
+      "cobertura",
+      "html"
     ],
     "reporters": [
       "default",
       "jest-junit"
     ],
-    "collectCoverage": true
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*"
+    ]
   },
   "jest-junit": {
     "output": "test-results-jest.xml",

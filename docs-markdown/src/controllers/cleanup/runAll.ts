@@ -6,6 +6,7 @@ import { handleLinksWithRegex } from "./microsoftLinks";
 import { lowerCaseData } from "./capitalizationOfMetadata";
 import { handleMarkdownMetadata } from "./handleMarkdownMetadata";
 import { generateMasterRedirectionFile } from "../master-redirect-controller";
+import { removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller";
 const jsdiff = require("diff");
 const recursive = require("recursive-readdir");
 
@@ -196,6 +197,9 @@ export function runAllWorkspace(workspacePath: string, progress: any, resolve: a
             });
             promises.push(new Promise((resolve, reject) => {
                 generateMasterRedirectionFile(workspacePath, resolve);
+            }));
+            promises.push(new Promise((resolve, reject) => {
+                removeUnusedImagesAndIncludes(workspacePath, progress, promises, resolve);
             }));
             Promise.all(promises).then(() => {
                 progress.report({ increment: 100, message: "Everything completed." });

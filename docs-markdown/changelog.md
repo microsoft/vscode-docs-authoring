@@ -1,5 +1,34 @@
 # Change Log
 
+## 0.2.59 (March 12th, 2020)
+
+- Expanded the usage of the update metadata values command to YAML
+
+## 0.2.58 (March 9th, 2020)
+
+- Updated Dev Languages for code block language completion
+
+## 0.2.57 (March 6th, 2020)
+
+- Link text bug fix: [Issue 410](https://github.com/microsoft/vscode-docs-authoring/issues/410)
+
+## 0.2.56 (March 5th, 2020)
+
+- Bug fix for notification to user on file change
+- added download.microsoft.com link for cleanup script
+
+## 0.2.55 (February 21st, 2020)
+
+- Moved custom markdown linting rules to its own project: docs-linting.
+
+## 0.2.51 (February 21st, 2020)
+
+- Add preview/beta feature setting
+
+## 0.2.50 (February 20th, 2020)
+
+- Added config setting for loc-scope
+
 ## 0.2.47 (February 14th, 2020)
 
 - Added empty metadata cleanup script

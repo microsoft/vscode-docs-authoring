@@ -5890,12 +5890,11 @@ html.profilelist .mainContainer .left-container {
     display: block !important;
     margin: 0 auto !important;
   }
-  body > :not(.mainContainer),
-  body > .mainContainer > .columns > .primary-holder > .columns > :not(.column),
-  .left-container,
-  .right-container,
-  .feedback-section {
-    display: none !important;
+  body > .mainContainer > .columns > .primary-holder > .columns > :not(.column),	
+  .left-container,	
+  .right-container,	
+  .feedback-section {	
+    display: none !important;	
   }
   .mainContainer,
   .primary-holder {

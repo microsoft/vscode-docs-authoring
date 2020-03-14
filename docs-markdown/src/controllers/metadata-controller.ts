@@ -1,11 +1,11 @@
 "use strict";
 
 import * as fs from "fs";
-import * as glob from "glob";
 import * as path from "path";
 
-import { commands, Selection, TextEditor, window, workspace } from "vscode";
-import { isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { commands, TextEditor, window, workspace } from "vscode";
+import { noActiveEditorMessage, sendTelemetryData, tryFindFile } from "../helper/common";
+import { applyReplacements, findReplacement, Replacements } from "../helper/utility";
 
 export function insertMetadataCommands() {
     return [
@@ -48,13 +48,6 @@ type MetadataType =
     "ms.service" |
     "ms.subservice";
 
-interface IReplacement {
-    selection: Selection;
-    value: string;
-}
-
-type Replacements = IReplacement[];
-
 class ReplacementFormat {
     constructor(
         readonly type: MetadataType,
@@ -91,7 +84,8 @@ export async function updateImplicitMetadataValues() {
         return;
     }
 
-    if (!isMarkdownFileCheck(editor, false)) {
+    if (editor.document.languageId !== "markdown" &&
+        editor.document.languageId !== "yaml") {
         return;
     }
 
@@ -104,7 +98,7 @@ export async function updateImplicitMetadataValues() {
                 const replacementFormat = replacementFormats[i];
                 if (replacementFormat) {
                     const expression = metadataExpressions.get(replacementFormat.type);
-                    const replacement = findReplacement(editor, content, replacementFormat.toReplacementString(), expression);
+                    const replacement = findReplacement(editor.document, content, replacementFormat.toReplacementString(), expression);
                     if (replacement) {
                         replacements.push(replacement);
                     }
@@ -117,39 +111,11 @@ export async function updateImplicitMetadataValues() {
     }
 }
 
-function findReplacement(editor: TextEditor, content: string, value: string, expression?: RegExp): IReplacement | undefined {
-    const result = expression ? expression.exec(content) : null;
-    if (result !== null && result.length) {
-        const match = result[0];
-        if (match) {
-            const index = result.index;
-            const startPosition = editor.document.positionAt(index);
-            const endPosition = editor.document.positionAt(index + match.length);
-            const selection = new Selection(startPosition, endPosition);
-
-            return { selection, value };
-        }
-    }
-
-    return undefined;
-}
-
-async function applyReplacements(replacements: Replacements, editor: TextEditor) {
-    if (replacements) {
-        await editor.edit((builder) => {
-            replacements.forEach((replacement) =>
-                builder.replace(
-                    replacement.selection,
-                    replacement.value));
-        });
-    }
-}
-
 async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementFormat[]> {
     const folder = workspace.getWorkspaceFolder(editor.document.uri);
     if (folder) {
         // Read the DocFX.json file, search for metadata defaults.
-        const docFxJson = tryFindDocFxJsonFile(folder.uri.fsPath);
+        const docFxJson = tryFindFile(folder.uri.fsPath, "docfx.json");
         if (!!docFxJson && fs.existsSync(docFxJson)) {
             const jsonBuffer = fs.readFileSync(docFxJson);
             const metadata = JSON.parse(jsonBuffer.toString()) as IDocFxMetadata;
@@ -227,24 +193,6 @@ function getReplacementValue(globs: { [glob: string]: string }, fsPath: string):
     return undefined;
 }
 
-function tryFindDocFxJsonFile(rootPath: string) {
-    const docFxJson = path.resolve(rootPath, "docfx.json");
-    const exists = fs.existsSync(docFxJson);
-    if (exists) {
-        return docFxJson;
-    } else {
-        const files = glob.sync("**/docfx.json", {
-            cwd: rootPath,
-        });
-
-        if (files && files.length === 1) {
-            return path.join(rootPath, files[0]);
-        }
-    }
-
-    return undefined;
-}
-
 export async function updateMetadataDate() {
     const editor = window.activeTextEditor;
     if (!editor) {
@@ -252,13 +200,14 @@ export async function updateMetadataDate() {
         return;
     }
 
-    if (!isMarkdownFileCheck(editor, false)) {
+    if (editor.document.languageId !== "markdown" &&
+        editor.document.languageId !== "yaml") {
         return;
     }
 
     const content = editor.document.getText();
     if (content) {
-        const replacement = findReplacement(editor, content, `ms.date: ${toShortDate(new Date())}`, msDateRegex);
+        const replacement = findReplacement(editor.document, content, `ms.date: ${toShortDate(new Date())}`, msDateRegex);
         if (replacement) {
             await applyReplacements([replacement], editor);
             await saveAndSendTelemetry();
