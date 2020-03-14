@@ -1,10 +1,8 @@
 "use strict";
 
-
 import { Position, Range, Selection, TextEditor, window } from "vscode";
 import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
 import { isCursorInsideYamlHeader } from "../helper/yaml-metadata";
-
 
 const telemetryCommand: string = "insertMoniker";
 let cursorPosition: string;
@@ -16,7 +14,6 @@ export function insertMonikerCommand() {
     ];
     return commands;
 }
-
 
 export function insertMoniker() {
     const editor = window.activeTextEditor;
@@ -40,7 +37,7 @@ export function insertMoniker() {
             return;
         }
         if (qpSelection == moniker_options[0]) {
-            sign = "=";
+            sign = "";
 
         }
         if (qpSelection == moniker_options[1]) {
@@ -63,9 +60,6 @@ export function insertMoniker() {
 
 
     });
-
-
-
 }
 
 function insertYamlMoniker(editor: TextEditor, sign: string) {
@@ -84,16 +78,13 @@ function insertYamlMoniker(editor: TextEditor, sign: string) {
         const newSelection = new Selection(newPosition, newPosition);
         editor.selection = newSelection;
     }
-
-
-
 }
 
 function insertMarkdownMoniker(editor: TextEditor, sign: string) {
     cursorPosition = "markdown-body-entry"
-
     sendTelemetryData(telemetryCommand, cursorPosition);
     const textSelection = editor.document.getText(editor.selection);
+
     if (isContentOnCurrentLine(editor)) {
         window.showErrorMessage("Moniker must be inserted on a new line.");
         return;
@@ -122,5 +113,3 @@ function isContentOnCurrentLine(editor: TextEditor): boolean {
     if (lineText === "") { return false; }
     return !(/^\s+$/.test(lineText));
 }
-
-
