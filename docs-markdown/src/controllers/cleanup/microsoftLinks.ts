@@ -72,6 +72,8 @@ export function handleLinksWithRegex(data: string) {
     data = data.replace(technetRegex, "https://technet.microsoft.com");
     const technetRegex2 = new RegExp(/http:\/\/technet.com/g);
     data = data.replace(technetRegex2, "https://technet.com");
+    const downloadRegex = new RegExp(/http:\/\/download.microsoft.com/g);
+    data = data.replace(downloadRegex, "https://download.microsoft.com");
     const docsRegexLang = new RegExp(/https:\/\/docs.microsoft.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
     data = data.replace(docsRegexLang, "https://docs.microsoft.com/");
     const azureRegexLang = new RegExp(/https:\/\/azure.microsoft.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);

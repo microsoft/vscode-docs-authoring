@@ -3,7 +3,6 @@ import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, work
 import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData, setCursorPosition } from "../helper/common";
 
 import Axios from "axios";
-import { insertImage } from "./media-controller";
 
 const path = require("path");
 const dir = require("node-dir");
@@ -13,28 +12,28 @@ const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp", ".svg"];
 
 const telemetryCommand: string = "insertImage";
 let commandOption: string;
+const locScopeItems: QuickPickItem[] = [];
 
 export function insertImageCommand() {
     const commands = [
         { command: pickImageType.name, callback: pickImageType },
-        { command: insertImage.name, callback: insertImage },
         { command: applyImage.name, callback: applyImage },
         { command: applyIcon.name, callback: applyIcon },
         { command: applyComplex.name, callback: applyComplex },
         { command: applyLocScope.name, callback: applyLocScope },
+        { command: applyLightbox.name, callback: applyLightbox },
     ];
     return commands;
 }
 export function pickImageType() {
     const opts: QuickPickOptions = { placeHolder: "Select an Image type" };
     const items: QuickPickItem[] = [];
+    const config = workspace.getConfiguration("markdown");
+    const alwaysIncludeLocScope = config.get<boolean>("alwaysIncludeLocScope");
+
     items.push({
         description: "",
-        label: "Image (Standard Markdown)",
-    });
-    items.push({
-        description: "",
-        label: "Image (Docs Markdown)",
+        label: "Image",
     });
     items.push({
         description: "",
@@ -44,21 +43,26 @@ export function pickImageType() {
         description: "",
         label: "Complex image",
     });
+    if (!alwaysIncludeLocScope) {
+        items.push({
+            description: "",
+            label: "Add localization scope to image",
+        });
+    }
     items.push({
         description: "",
-        label: "Add localization scope to image",
+        label: "Add lightbox to image",
     });
-
     window.showQuickPick(items, opts).then((selection) => {
         if (!selection) {
             return;
         }
         switch (selection.label.toLowerCase()) {
-            case "image (standard markdown)":
-                insertImage();
-                commandOption = "image (standard markdown)";
+            case "image":
+                applyImage();
+                commandOption = "image";
                 break;
-            case "image (docs markdown)":
+            case "image":
                 applyImage();
                 commandOption = "image (docs markdown)";
                 break;
@@ -73,6 +77,10 @@ export function pickImageType() {
             case "add localization scope to image":
                 applyLocScope();
                 commandOption = "loc-scope";
+                break;
+            case "add lightbox to image":
+                applyLightbox();
+                commandOption = "lightbox";
                 break;
         }
         sendTelemetryData(telemetryCommand, commandOption);
@@ -139,13 +147,62 @@ export async function applyImage() {
                 } else {
                     altText = selectedText;
                 }
+
+                const config = workspace.getConfiguration("markdown");
+                const alwaysIncludeLocScope = config.get<boolean>("alwaysIncludeLocScope");
+                if (alwaysIncludeLocScope) {
+                    const notCached = locScopeItems.length <= 0;
+                    if (notCached) {
+                        await getLocScopeProducts();
+                    }
+                    // show quickpick to user for products list.
+                    const locScope = await window.showQuickPick(locScopeItems, { placeHolder: "Select from product list" })
+                    if (locScope) {
+                        image = `:::image type="content" source="${sourcePath}" alt-text="${altText}" loc-scope="${locScope.label}":::`;
+                    }
+                } else {
+                    image = `:::image type="content" source="${sourcePath}" alt-text="${altText}":::`;
+                }
                 // output image content type
-                image = `:::image type="content" source="${sourcePath}" alt-text="${altText}":::`;
                 insertContentToEditor(editor, applyImage.name, image, true);
             }
         });
     }
 }
+
+async function getLocScopeProducts() {
+    // if user is inside :::image::: tag, then ask them for quickpick of products based on allow list
+    // call allowlist with API Auth Token
+    // you will need auth token to call list
+    const response = await Axios.get("https://docs.microsoft.com/api/metadata/allowlists")
+    // get products from response
+    let products: string[] = []
+    Object.keys(response.data)
+        .filter((x) => x.startsWith("list:product"))
+        .map((item: string) => {
+            const set = item.split(":");
+            if (set.length > 2) {
+                products.push(set[2]);
+                Object.keys(response.data[item].values)
+                    .map((prod: string) =>
+                        // push the response products into the list of quickpicks.
+                        products.push(prod)
+                    );
+            }
+        });
+    products.sort().map((item) => {
+        locScopeItems.push({
+            label: item
+        })
+    });
+    locScopeItems.push({
+        label: "other"
+    });
+    locScopeItems.push({
+        label: "third-party"
+    });
+}
+
 function checkEditor(editor: any) {
     let actionType: string = "Get File for Image";
 
@@ -302,11 +359,28 @@ export async function applyComplex() {
                 } else {
                     altText = selectedText;
                 }
-                // output image content type
-                // output image complex type
-                image = `:::image type="complex" source="${sourcePath}" alt-text="${altText}":::
+                const config = workspace.getConfiguration("markdown");
+                const alwaysIncludeLocScope = config.get<boolean>("alwaysIncludeLocScope");
+                if (alwaysIncludeLocScope) {
+                    const notCached = locScopeItems.length <= 0;
+                    if (notCached) {
+                        await getLocScopeProducts();
+                    }
+                    // show quickpick to user for products list.
+                    const locScope = await window.showQuickPick(locScopeItems, { placeHolder: "Select from product list" })
+                    if (locScope) {
+                        image = `:::image type="complex" source="${sourcePath}" alt-text="${altText}" loc-scope="${locScope.label}":::
 
 :::image-end:::`;
+                    }
+                } else {
+
+                    // output image complex type
+                    image = `:::image type="complex" source="${sourcePath}" alt-text="${altText}":::
+
+:::image-end:::`;
+                }
+
                 insertContentToEditor(editor, applyImage.name, image, true);
                 // Set editor position to the middle of long description body
                 setCursorPosition(editor, editor.selection.active.line + 1, editor.selection.active.character);
@@ -314,7 +388,7 @@ export async function applyComplex() {
         });
     }
 }
-const items: QuickPickItem[] = [];
+
 export async function applyLocScope() {
     // get editor, its needed to apply the output to editor window.
     const editor = window.activeTextEditor;
@@ -324,7 +398,7 @@ export async function applyLocScope() {
     }
 
     // if user has not selected any text, then continue
-    const RE_LOC_SCOPE = /:::image(\s)?(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"\s(type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?((type|source|alt-text)="([a-zA-Z0-9_.\/ -]+)?"(\s)?)?:::/gm;
+    const RE_LOC_SCOPE = /:::image\s+((source|type|alt-text|lightbox|border)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
     const position = new Position(editor.selection.active.line, editor.selection.active.character);
     // get the current editor position and check if user is inside :::image::: tags
     const wordRange = editor.document.getWordRangeAtPosition(position, RE_LOC_SCOPE);
@@ -337,43 +411,13 @@ export async function applyLocScope() {
                 return;
             }
         }
-
         // if user is inside :::image::: tag, then ask them for quickpick of products based on allow list
-        const cached = items.length <= 0;
-        if (cached) {
-            // call allowlist with API Auth Token
-            // you will need auth token to call list
-            const response = await Axios.get("https://docs.microsoft.com/api/metadata/allowlists")
-            // get products from response
-            let products: string[] = []
-            Object.keys(response.data)
-                .filter((x) => x.startsWith("list:product"))
-                .map((item: string) => {
-                    const set = item.split(":");
-                    if (set.length > 2) {
-                        products.push(set[2]);
-                        Object.keys(response.data[item].values)
-                            .map((prod: string) =>
-                                // push the response products into the list of quickpicks.
-                                products.push(prod)
-                            );
-                    }
-                });
-            products.sort().map((item) => {
-                items.push({
-                    label: item
-                })
-            });
-            items.push({
-                label: "other"
-            });
-            items.push({
-                label: "third-party"
-            });
+        const notCached = locScopeItems.length <= 0;
+        if (notCached) {
+            await getLocScopeProducts();
         }
-
         // show quickpick to user for products list.
-        const product = await window.showQuickPick(items, { placeHolder: "Select from product list" });
+        const product = await window.showQuickPick(locScopeItems, { placeHolder: "Select from product list" });
         if (!product) {
             // if user did not select source image then exit.
             return;
@@ -384,10 +428,72 @@ export async function applyLocScope() {
             });
         }
     } else {
-        const RE_LOC_SCOPE_EXISTS = /:::image(\s)?(type|source|alt-text|loc-scope)="([a-zA-Z0-9_.\/ -]+)?"\s(type|source|alt-text|loc-scope)="([a-zA-Z0-9_.\/ -]+)?"(\s)?((type|source|alt-text|loc-scope)="([a-zA-Z0-9_.\/ -]+)?"(\s)?)?(type|source|alt-text|loc-scope)="([a-zA-Z0-9_.\/ -]+)?"(\s)?:::/gm
+        const RE_LOC_SCOPE_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
         const locScopeAlreadyExists = editor.document.getWordRangeAtPosition(position, RE_LOC_SCOPE_EXISTS);
         if (locScopeAlreadyExists) {
             window.showErrorMessage("loc-scope attribute already exists on :::image::: tag.");
+            return;
+        }
+
+        window.showErrorMessage("invalid cursor position. You must be inside :::image::: tags.");
+    }
+    return;
+}
+
+export async function applyLightbox() {
+    // get editor, its needed to apply the output to editor window.
+    const editor = window.activeTextEditor;
+    if (!editor) {
+        noActiveEditorMessage();
+        return;
+    }
+
+    // if user has not selected any text, then continue
+    const RE_LIGHTBOX = /:::image\s+((source|type|alt-text|loc-scope|border)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+    const position = new Position(editor.selection.active.line, editor.selection.active.character);
+    // get the current editor position and check if user is inside :::image::: tags
+    const wordRange = editor.document.getWordRangeAtPosition(position, RE_LIGHTBOX);
+    if (wordRange) {
+        let folderPath = "";
+        if (workspace.workspaceFolders) {
+            folderPath = workspace.workspaceFolders[0].uri.fsPath;
+        }
+        //get available files
+        dir.files(folderPath, async (err: any, files: any) => {
+            if (err) {
+                window.showErrorMessage(err);
+            }
+
+            const items: QuickPickItem[] = [];
+            files.sort();
+
+            files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+                items.push({ label: path.basename(file), description: path.dirname(file) });
+            });
+
+            // show quickpick to user available images.
+            const image = await window.showQuickPick(items, { placeHolder: "Select Image from repo" });
+            if (!image) {
+                // if user did not select source image then exit.
+                return;
+            } else {
+                // insert lightbox into editor
+                const activeFileDir = path.dirname(editor.document.fileName);
+
+                const imagePath = path.relative(activeFileDir, path.join
+                    (image.description, image.label).split("//").join("//"))
+                    .replace(/\\/g, "/");
+
+                editor.edit((selected) => {
+                    selected.insert(new Position(wordRange.end.line, wordRange.end.character - 3), ` lightbox="${imagePath}"`);
+                });
+            }
+        });
+    } else {
+        const RE_LIGHTBOX_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+        const lightboxAlreadyExists = editor.document.getWordRangeAtPosition(position, RE_LIGHTBOX_EXISTS);
+        if (lightboxAlreadyExists) {
+            window.showErrorMessage("lightbox attribute already exists on :::image::: tag.");
             return;
         }
 

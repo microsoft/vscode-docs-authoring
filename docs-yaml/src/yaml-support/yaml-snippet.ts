@@ -56,6 +56,6 @@ export class DocsYamlCompletionProvider implements CompletionItemProvider {
 
     // Parse a yaml snippet file into a CodeSnippet
     private readYamlCodeSnippet(filename: string): CodeSnippet {
-        return <CodeSnippet>safeLoad(readFileSync(filename, 'utf-8'));
+        return safeLoad(readFileSync(filename, 'utf-8')) as CodeSnippet;
     }
 }

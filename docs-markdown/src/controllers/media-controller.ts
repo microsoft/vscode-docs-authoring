@@ -14,7 +14,6 @@ export function insertLinksAndMediaCommands() {
         { command: insertVideo.name, callback: insertVideo },
         { command: insertURL.name, callback: insertURL },
         { command: insertLink.name, callback: insertLink },
-        // { command: insertImage.name, callback: insertImage },
         { command: selectLinkType.name, callback: selectLinkType },
         { command: selectLinkTypeToolbar.name, callback: selectLinkTypeToolbar },
         { command: selectMediaType.name, callback: selectMediaType },
@@ -22,12 +21,8 @@ export function insertLinksAndMediaCommands() {
     return commands;
 }
 
-interface IOptions {
-    languageId: string;
-}
-
-const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp"];
-const markdownExtensionFilter = [".md"];
+export const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp"];
+export const markdownExtensionFilter = [".md"];
 
 export const h1TextRegex = /\n {0,3}(#{1,6})(.*)/;
 export const headingTextRegex = /^(#+)[\s](.*)[\r]?[\n]/gm;
@@ -90,20 +85,36 @@ export function insertURL() {
             "http:// or https:// is required for URLs. Link will not be added if prefix is not present.",
     };
 
+    const linkTextOptions: vscode.InputBoxOptions = {
+        placeHolder: "Enter link text. If no text is entered, url will be used.",
+    };
+
     vscode.window.showInputBox(options).then((val) => {
+        let contentToInsert;
         // If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
         if (val === undefined) {
             postWarning("Incorrect link syntax. Abandoning command.");
         } else {
-            let contentToInsert;
-            if (selection.isEmpty) {
-                contentToInsert = externalLinkBuilder(val);
-                insertContentToEditor(editor, insertURL.name, contentToInsert);
-            } else {
+            // if user selected text, don't prompt for alt text
+            if (selectedText) {
                 contentToInsert = externalLinkBuilder(val, selectedText);
                 insertContentToEditor(editor, insertURL.name, contentToInsert, true);
             }
-            setCursorPosition(editor, selection.start.line, selection.start.character + contentToInsert.length);
+            // if no content is selected, prompt for alt text
+            // no alt text: use link
+            if (selection.isEmpty) {
+                vscode.window.showInputBox(linkTextOptions).then((altText) => {
+                    if (selection.isEmpty && !altText) {
+                        contentToInsert = externalLinkBuilder(val);
+                        insertContentToEditor(editor, insertURL.name, contentToInsert);
+                    }
+                    if (altText) {
+                        contentToInsert = externalLinkBuilder(val, altText);
+                        insertContentToEditor(editor, insertURL.name, contentToInsert, true);
+                    }
+                    setCursorPosition(editor, selection.start.line, selection.start.character + contentToInsert.length);
+                });
+            }
         }
     });
     sendTelemetryData(telemetryCommandLink, commandOption);
@@ -138,7 +149,7 @@ export function insertImage() {
     Insert(MediaType.ImageOrVideo);
 }
 
-export function getFilesShowQuickPick(mediaType: MediaType, altText: string, options?: IOptions) {
+export function getFilesShowQuickPick(mediaType: MediaType, altText: string, options?: any) {
     const path = require("path");
     const dir = require("node-dir");
     const os = require("os");
@@ -250,7 +261,7 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
  * @param {MediaType} mediaType - the media type to insert.
  * @param {IOptions} [options] - optionally specifies the language identifier of the target file.
  */
-export function Insert(mediaType: MediaType, options?: IOptions) {
+export function Insert(mediaType: MediaType, options?: any) {
 
     let actionType: string = Insert.name;
 
@@ -306,19 +317,9 @@ export function Insert(mediaType: MediaType, options?: IOptions) {
         // Determine if there is selected text.  If selected text, no action.
         const languageId = !!options ? options.languageId : undefined;
         if (selectedText === "" && languageId !== "yaml") {
-            vscode.window.showInputBox({
-                placeHolder: "Add alt text (up to 250 characters)",
-            }).then((val) => {
-                if (!val) {
-                    getFilesShowQuickPick(mediaType, "", options);
-                    vscode.window.showInformationMessage("No alt entered or selected.  File name will be used.");
-                } else if (val.length < 250) {
-                    getFilesShowQuickPick(mediaType, val, options);
-                } else if (val.length > 250) {
-                    vscode.window.showWarningMessage("Alt text exceeds 250 characters!");
-                }
-            });
-        } else {
+            getFilesShowQuickPick(mediaType, "", options);
+        }
+        if (selectedText && languageId !== "yaml") {
             getFilesShowQuickPick(mediaType, selectedText, options);
         }
     }
