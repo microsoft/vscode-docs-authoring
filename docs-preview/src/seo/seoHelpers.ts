@@ -3,6 +3,8 @@ import { resolve } from "path";
 import { getDocfxMetadata, tryGetFileMetadataTitleSuffix, tryGetGlobalMetadataTitleSuffix } from "./docFxHelpers";
 import { repoMapping } from "./repoMapping";
 export function getFirstParagraph(markdown) {
+    const metadataRegex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
+    markdown = markdown.replace(metadataRegex, "")
     const frstParagraphRegex = new RegExp(`^(?!#).+`, "m");
     const firstParagraphMatch = markdown.match(frstParagraphRegex);
     if (firstParagraphMatch) {
@@ -16,11 +18,20 @@ export function parseMarkdownMetadata(metadata, markdown, basePath, filePath) {
     const yamlContent = jsyaml.load(metadata);
     if (yamlContent) {
         details.title = getTitle(yamlContent, details.title, basePath, filePath);
-        details.title = shortenWithElipses(`${details.title} | Microsoft Docs`, 63);
+        details.title = checkIfContainsMicrosoftDocs(details.title);
+        details.title = shortenWithElipses(details.title, 63);
         details.description = getMarkdownDescription(details, yamlContent, markdown);
         details.date = yamlContent["ms.date"];
     }
     return details;
+}
+
+function checkIfContainsMicrosoftDocs(title) {
+    if (title.includes("| Microsoft Docs")) {
+        return title;
+    } else {
+        return `${title} | Microsoft Docs`;
+    }
 }
 
 function getMarkdownDescription(details: { title: string; description: string; date: string; }, yamlContent: any, markdown: any) {
@@ -63,7 +74,8 @@ export function parseYamlMetadata(metadata, breadCrumb, basePath, filePath) {
         } else {
             details.title = getTitle(yamlContent, details.title, basePath, filePath);
         }
-        details.title = shortenWithElipses(`${details.title} | Microsoft Docs`, 63);
+        details.title = checkIfContainsMicrosoftDocs(details.title)
+        details.title = shortenWithElipses(details.title, 63);
         details.description = shortenWithElipses(details.description, 305);
     }
     return details;
