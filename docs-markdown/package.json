@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.58",
+  "version": "0.2.59",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -196,8 +196,7 @@
       {
         "command": "updateImplicitMetadataValues",
         "title": "Update Implicit Metadata Values",
-        "category": "Docs",
-        "enablement": "resourceLangId == markdown"
+        "category": "Docs"
       },
       {
         "command": "sortSelectionAscending",
@@ -227,8 +226,7 @@
       {
         "command": "updateImplicitMetadataValues",
         "title": "Update Implicit Metadata Values",
-        "category": "Docs",
-        "enablement": "resourceLangId == markdown"
+        "category": "Docs"
       }
     ],
     "menus": {
@@ -242,12 +240,12 @@
       ],
       "editor/context": [
         {
-          "when": "editorTextFocus",
+          "when": "editorTextFocus && resourceLangId == markdown || resourceLangId == yaml",
           "command": "updateMetadataDate",
           "group": "1_modification"
         },
         {
-          "when": "editorTextFocus",
+          "when": "editorTextFocus && resourceLangId == markdown || resourceLangId == yaml",
           "command": "updateImplicitMetadataValues",
           "group": "1_modification"
         },
