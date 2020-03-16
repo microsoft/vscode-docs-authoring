@@ -31,7 +31,7 @@ export function activate(context: ExtensionContext) {
     const selectedPreviewTheme = workspace.getConfiguration().get(previewThemeSetting);
     switch (selectedPreviewTheme) {
         case "Light":
-            if (wrapperJsData.includes("vscode-light")) {
+            if (wrapperJsData.includes("theme-light")) {
                 output.appendLine(`Current theme: Light.`);
             } else {
                 const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
@@ -40,7 +40,7 @@ export function activate(context: ExtensionContext) {
             }
             break;
         case "Dark":
-            if (wrapperJsData.includes("vscode-dark")) {
+            if (wrapperJsData.includes("theme-dark")) {
                 output.appendLine(`Current theme: Dark.`);
             } else {
                 const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
@@ -49,7 +49,7 @@ export function activate(context: ExtensionContext) {
             }
             break;
         case "High Contrast":
-            if (wrapperJsData.includes("vscode-high-contrast")) {
+            if (wrapperJsData.includes("theme-high-contrast")) {
                 output.appendLine(`Current theme: High Contrast.`);
             } else {
                 const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
