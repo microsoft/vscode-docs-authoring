@@ -56,7 +56,7 @@ export function handleSingleValuedMetadata(progress: any, promises: Array<Promis
                     postError(`Error: ${err}`);
                 }
                 if (data.startsWith("---")) {
-                    const regex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
+                    const regex = new RegExp(`^(---)([^]+?)(---)$`, "m");
                     const metadataMatch = data.match(regex);
                     if (metadataMatch) {
                         const origin = data;
