@@ -30,8 +30,6 @@ export function activate(context: ExtensionContext) {
     const wrapperJsData = readFileSync(wrapperPath, "utf8");
     const selectedPreviewTheme = workspace.getConfiguration().get(previewThemeSetting);
     switch (selectedPreviewTheme) {
-        case "Use current VS Code theme":
-            break;
         case "Light":
             if (wrapperJsData.includes("vscode-light")) {
                 output.appendLine(`Current theme: Light.`);
