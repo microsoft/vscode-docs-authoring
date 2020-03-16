@@ -1,28 +1,76 @@
 "use strict";
 
-import { rename } from "fs";
-import { basename } from "path";
-import { commands, ExtensionContext, TextDocument, window } from "vscode";
+import { appendFileSync, readFileSync, writeFileSync } from "fs";
+import { basename, join } from "path";
+import { commands, ExtensionContext, TextDocument, window, workspace } from "vscode";
 import { sendTelemetryData } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
-import { include } from "./markdown-extensions/includes";
 import { codeSnippets, tripleColonCodeSnippets } from "./markdown-extensions/codesnippet";
-import { columnOptions, column_end, columnEndOptions } from "./markdown-extensions/column";
+import { column_end, columnEndOptions, columnOptions } from "./markdown-extensions/column";
 import { container_plugin } from "./markdown-extensions/container";
-import { rowOptions, rowEndOptions } from "./markdown-extensions/row";
-import { xref } from "./xref/xref";
 import { div_plugin, divOptions } from "./markdown-extensions/div";
-import { imageOptions, image_end } from "./markdown-extensions/image";
+import { image_end, imageOptions } from "./markdown-extensions/image";
+import { include } from "./markdown-extensions/includes";
+import { rowEndOptions, rowOptions } from "./markdown-extensions/row";
 import { video_plugin, videoOptions } from "./markdown-extensions/video";
+import { xref } from "./xref/xref";
 
 export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
 const telemetryCommand: string = "preview";
 
+const previewThemeSetting = "preview.previewTheme";
+let bodyAttribute: string = "";
+
 export function activate(context: ExtensionContext) {
     const filePath = window.visibleTextEditors[0].document.fileName;
     const workingPath = filePath.replace(basename(filePath), "");
     extensionPath = context.extensionPath;
+    const wrapperPath = join(extensionPath, "media", "wrapper.js");
+    const wrapperJsData = readFileSync(wrapperPath, "utf8");
+    const selectedPreviewTheme = workspace.getConfiguration().get(previewThemeSetting);
+    switch (selectedPreviewTheme) {
+        case "Light":
+            if (wrapperJsData.includes("theme-light")) {
+                output.appendLine(`Current theme: Light.`);
+            } else {
+                const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
+                writeFileSync(wrapperPath, updatedWrapperJsData, "utf8");
+                bodyAttribute = `body.setAttribute("class", "theme-light");`;
+            }
+            break;
+        case "Dark":
+            if (wrapperJsData.includes("theme-dark")) {
+                output.appendLine(`Current theme: Dark.`);
+            } else {
+                const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
+                writeFileSync(wrapperPath, updatedWrapperJsData, "utf8");
+                bodyAttribute = `body.setAttribute("class", "theme-dark");`;
+            }
+            break;
+        case "High Contrast":
+            if (wrapperJsData.includes("theme-high-contrast")) {
+                output.appendLine(`Current theme: High Contrast.`);
+            } else {
+                const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
+                writeFileSync(wrapperPath, updatedWrapperJsData, "utf8");
+                bodyAttribute = `body.setAttribute("class", "theme-high-contrast");`;
+            }
+            break;
+    }
+    appendFileSync(wrapperPath, bodyAttribute, "utf8");
+
+    workspace.onDidChangeConfiguration((e: any) => {
+        if (e.affectsConfiguration(previewThemeSetting)) {
+            window.showInformationMessage("Your updated configuration has been recorded, but you must reload to see its effects.", "Reload")
+                .then((res) => {
+                    if (res === "Reload") {
+                        commands.executeCommand("workbench.action.reloadWindow");
+                    }
+                });
+        }
+    });
+
     context.subscriptions.push(new Reporter(context));
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
         commands.executeCommand("markdown.showPreviewToSide");
