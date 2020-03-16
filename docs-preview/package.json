@@ -65,11 +65,11 @@
       },
       {
         "command": "docs.seoPreview",
-        "title": "Docs: SEO Preview in current tab"
+        "title": "Docs: Search Results Preview in current tab"
       },
       {
         "command": "docs.seoPreviewToSide",
-        "title": "Docs: SEO Preview"
+        "title": "Docs: Search Results Preview"
       }
     ],
     "menus": {

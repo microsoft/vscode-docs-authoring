@@ -59,16 +59,16 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
     private parseFileIntoSEOHtml(content, filePath, basePath) {
         const breadCrumbPath = getPath(basePath, filePath);
         if (filePath.endsWith(".md")) {
-            return this.markdownMetadataIntoSEOHtml(content, breadCrumbPath);
+            return this.markdownMetadataIntoSEOHtml(content, breadCrumbPath, basePath, filePath);
         } else if (filePath.endsWith(".yml") || filePath.endsWith(".yaml")) {
-            return this.ymlMetadataIntoSEOHtml(content, breadCrumbPath);
+            return this.ymlMetadataIntoSEOHtml(content, breadCrumbPath, basePath, filePath);
         } else {
             return "<div>Unable to read file metadata</div>";
         }
     }
 
-    private ymlMetadataIntoSEOHtml(content: string, breadCrumbPath: string) {
-        const { title, description } = parseYamlMetadata(content, breadCrumbPath);
+    private ymlMetadataIntoSEOHtml(content: string, breadCrumbPath: string, basePath, filePath) {
+        const { title, description } = parseYamlMetadata(content, breadCrumbPath, basePath, filePath);
         return `<div class="search-result">
                     <div class="header">
                         <div class="breadcrumbs">${breadCrumbPath}<span class="down-arrow"></span></div>
@@ -82,10 +82,10 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                 </div>`;
     }
 
-    private markdownMetadataIntoSEOHtml(markdown: string, breadCrumbPath: string) {
+    private markdownMetadataIntoSEOHtml(markdown: string, breadCrumbPath: string, basePath, filePath) {
         const metadataMatch = markdown.match(metadataRegex);
         if (metadataMatch) {
-            const { title, description, date } = parseMarkdownMetadata(metadataMatch[2], markdown);
+            const { title, description, date } = parseMarkdownMetadata(metadataMatch[2], markdown, basePath, filePath);
             return `<div class="search-result">
                         <div class="header">
                             <div class="breadcrumbs">${breadCrumbPath}<span class="down-arrow"></span></div>
