@@ -11,7 +11,7 @@ import {
 } from "vscode";
 import { getFirstParagraph, getPath, parseMarkdownMetadata, parseYamlMetadata } from "./seoHelpers";
 
-const metadataRegex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
+const metadataRegex = new RegExp(`^(---)([^]+?)(---)$`, "m");
 
 export class DocumentContentProvider implements TextDocumentContentProvider {
     public static readonly scheme = "seoPreview";

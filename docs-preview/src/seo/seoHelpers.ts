@@ -3,12 +3,12 @@ import { resolve } from "path";
 import { getDocfxMetadata, tryGetFileMetadataTitleSuffix, tryGetGlobalMetadataTitleSuffix } from "./docFxHelpers";
 import { repoMapping } from "./repoMapping";
 export function getFirstParagraph(markdown) {
-    const metadataRegex = new RegExp(`^(---)([^>]+?)(---)$`, "m");
+    const metadataRegex = new RegExp(`^(---)([^]+?)(---)$`, "m");
     markdown = markdown.replace(metadataRegex, "")
     const frstParagraphRegex = new RegExp(`^(?!#).+`, "m");
     const firstParagraphMatch = markdown.match(frstParagraphRegex);
     if (firstParagraphMatch) {
-        return shortenWithElipses(firstParagraphMatch[0], 305);
+        return shortenWithElipsesAtWordEnd(firstParagraphMatch[0], 305);
     }
     return markdown;
 }
@@ -19,7 +19,7 @@ export function parseMarkdownMetadata(metadata, markdown, basePath, filePath) {
     if (yamlContent) {
         details.title = getTitle(yamlContent, details.title, basePath, filePath);
         details.title = checkIfContainsMicrosoftDocs(details.title);
-        details.title = shortenWithElipses(details.title, 63);
+        details.title = shortenWithElipsesAtWordEnd(details.title, 63);
         details.description = getMarkdownDescription(details, yamlContent, markdown);
         details.date = yamlContent["ms.date"];
     }
@@ -39,7 +39,7 @@ function getMarkdownDescription(details: { title: string; description: string; d
     if (!details.description) {
         details.description = getFirstParagraph(markdown);
     }
-    return shortenWithElipses(details.description, 305);
+    return shortenWithElipsesAtWordEnd(details.description, 305);
 }
 
 function getTitle(yamlContent: any, title: string, basePath: any, filePath: any) {
@@ -75,8 +75,8 @@ export function parseYamlMetadata(metadata, breadCrumb, basePath, filePath) {
             details.title = getTitle(yamlContent, details.title, basePath, filePath);
         }
         details.title = checkIfContainsMicrosoftDocs(details.title)
-        details.title = shortenWithElipses(details.title, 63);
-        details.description = shortenWithElipses(details.description, 305);
+        details.title = shortenWithElipsesAtWordEnd(details.title, 63);
+        details.description = shortenWithElipsesAtWordEnd(details.description, 305);
     }
     return details;
 }
@@ -122,10 +122,7 @@ function getMainContentIfExists(main: string, alt: string) {
 
 export function getPath(basePath: any, filePath: any) {
     let breadCrumb = "docs.microsoft.com";
-    const repoName: string = basePath.split("/").pop().toLowerCase();
-    const directory = repoMapping.find((repo) => {
-        return repoName.startsWith(repo.repoName);
-    });
+    const directory = getDirectoryName(basePath.split("/"));
     if (directory) {
         if (directory.name === "Learn") {
             breadCrumb += ` › Docs › ${directory.name} › Browse`;
@@ -133,14 +130,41 @@ export function getPath(basePath: any, filePath: any) {
             breadCrumb += ` › en-us › ${directory.name} `;
         }
     }
-    const repoArr = filePath.split("/").slice(1, -1);
+    let repoArr = filePath.split("/")
+    if (filePath.startsWith("docs")) {
+        repoArr = repoArr.slice(0, -1);
+    } else {
+        repoArr = repoArr.slice(1, -1);
+    }
     repoArr.map((dir) => {
         breadCrumb += ` › ${dir} `;
     });
     return shortenWithElipses(breadCrumb, 70);
 }
 
+function getDirectoryName(repoArr: string[]) {
+    const repoName = repoArr.pop().toLowerCase();
+    const directory = repoMapping.find((repo) => {
+        return repoName.startsWith(repo.repoName);
+    });
+    if (directory) {
+        return directory;
+    } else {
+        return getDirectoryName(repoArr);
+    }
+}
+
 export function shortenWithElipses(content, size) {
+    if (!content) {
+        return "";
+    }
+    if (content.length > size) {
+        return content.substring(0, size) + "...";
+    }
+    return content;
+}
+
+export function shortenWithElipsesAtWordEnd(content, size) {
     if (!content) {
         return "";
     }
