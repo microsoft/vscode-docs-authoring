@@ -19,8 +19,11 @@ export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
 const telemetryCommand: string = "preview";
 
-const previewThemeSetting = "preview.previewTheme";
+const previewThemeSetting: string = "preview.previewTheme";
 let bodyAttribute: string = "";
+
+const reloadMessage = "Your updated configuration has been recorded, but you must reload to see its effects.";
+const failedReloadMessage = "The previous reload attempt failed. Click reload to try again.";
 
 export function activate(context: ExtensionContext) {
     const filePath = window.visibleTextEditors[0].document.fileName;
@@ -58,18 +61,14 @@ export function activate(context: ExtensionContext) {
             }
             break;
     }
+
     appendFileSync(wrapperPath, bodyAttribute, "utf8");
 
-    workspace.onDidChangeConfiguration((e: any) => {
-        if (e.affectsConfiguration(previewThemeSetting)) {
-            window.showInformationMessage("Your updated configuration has been recorded, but you must reload to see its effects.", "Reload")
-                .then((res) => {
-                    if (res === "Reload") {
-                        commands.executeCommand("workbench.action.reloadWindow");
-                    }
-                });
-        }
-    });
+    try {
+        promptForReload(reloadMessage);
+    } catch (error) {
+        promptForReload(failedReloadMessage);
+    }
 
     context.subscriptions.push(new Reporter(context));
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
@@ -107,4 +106,17 @@ export function activate(context: ExtensionContext) {
 // this method is called when your extension is deactivated
 export function deactivate() {
     output.appendLine("Deactivating extension.");
+}
+
+function promptForReload(message: string) {
+    workspace.onDidChangeConfiguration((e: any) => {
+        if (e.affectsConfiguration(previewThemeSetting)) {
+            window.showInformationMessage(message, "Reload")
+                .then((res) => {
+                    if (res === "Reload") {
+                        commands.executeCommand("workbench.action.reloadWindow");
+                    }
+                });
+        }
+    });
 }
