@@ -1,10 +1,9 @@
-import { equal } from "assert";
 import * as chai from "chai";
 import * as spies from "chai-spies";
 import { resolve } from "path";
 import { Uri, window, workspace } from "vscode";
 import { insertAlert, insertAlertCommand } from "../../../controllers/alert-controller";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../../../helper/common";
+import * as common from "../../../helper/common";
 
 chai.use(spies);
 
@@ -15,12 +14,10 @@ suite("Alert Controller", () => {
         const commands = [
             { command: insertAlert.name, callback: insertAlert },
         ];
-
-        const comm = insertAlertCommand();
-        equal(comm[0].command, commands[0].command);
+        expect(insertAlertCommand()).to.deep.equal(commands);
     });
     test("noActiveEditorMessage", () => {
-        const spy = chai.spy.on(noActiveEditorMessage, "noActiveEditorMessage");
+        const spy = chai.spy.on(common, "noActiveEditorMessage");
         insertAlert();
         expect(spy).to.have.been.called();
     });
@@ -30,7 +27,7 @@ suite("Alert Controller", () => {
         const document = await workspace.openTextDocument(docUri);
         await window.showTextDocument(document);
 
-        const spy = chai.spy.on(isMarkdownFileCheck, "isMarkdownFileCheck");
+        const spy = chai.spy.on(common, "isMarkdownFileCheck");
         insertAlert();
         expect(spy).to.have.been.called();
     });
@@ -43,7 +40,7 @@ suite("Alert Controller", () => {
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve("Note – Information the user should notice even if skimming") as Thenable<any>;
         };
-        const spy = chai.spy.on(insertContentToEditor, "insertContentToEditor");
+        const spy = chai.spy.on(common, "insertContentToEditor");
         insertAlert();
         await sleep(400);
         expect(spy).to.have.been.called();
