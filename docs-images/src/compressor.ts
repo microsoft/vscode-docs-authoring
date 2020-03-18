@@ -137,7 +137,7 @@ export class ImageCompressor {
             }
     
             return false;
-        });
+        }, Promise.resolve(false));
     }
 
     private async tryApplyImageCompression(filePath: string) {
@@ -210,7 +210,7 @@ export class ImageCompressor {
             }
 
             return wasCompressed;
-        });
+        }, Promise.resolve(false));
     }
 
     private updateStatus(status: Status, message: string) {
@@ -224,14 +224,14 @@ export class ImageCompressor {
             } else {
                 this.writeMessage(message);
             }
-        });
+        }, undefined);
     }
 
     private writeMessage(message: string) {
         this.tryAction(() => {
             this.output.appendLine(message);
             this.progress.report({ message });
-        });
+        }, undefined);
     }
 
     private statusToMessage(status: Status): string {
@@ -254,10 +254,10 @@ export class ImageCompressor {
             }
 
             return encodeURI(`file://${pathName}`);
-        }) || filePath;
+        }, filePath);
     }
 
-    private tryAction<T>(action: () => T): T | undefined {
+    private tryAction<T>(action: () => T, defaultValue: T): T {
         try {
             return action();
         } catch (error) {
@@ -267,5 +267,7 @@ export class ImageCompressor {
                 console.error(error);
             }
         }
+
+        return defaultValue;
     }
 }
