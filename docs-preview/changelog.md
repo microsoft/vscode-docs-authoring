@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.3.42 (March 16th, 2020)
+## 0.3.42 (March 18th, 2020)
 
 - Add preview theme selector and setting
 
