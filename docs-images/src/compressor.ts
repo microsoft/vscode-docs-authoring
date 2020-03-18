@@ -117,7 +117,10 @@ export class ImageCompressor {
                 if (dimensions &&
                     (dimensions.width ?? 0) > workingMaxWidth ||
                     (dimensions.height ?? 0) > workingMaxHeight) {
-                    this.updateStatus(Status.AttemptingResize, `Resizing large image ${dimensions.width}x${dimensions.height}.`);
+                    this.updateStatus(
+                        Status.AttemptingResize,
+                        `Attempting to resize large image: ${dimensions.width}x${dimensions.height}.`);
+
                     const image = await jimp.read(filePath);
                     image.resize(
                         maxWidth || jimp.AUTO,
@@ -125,8 +128,10 @@ export class ImageCompressor {
     
                     await image.writeAsync(filePath);
                     dimensions = size.imageSize(filePath);
-                    this.updateStatus(Status.AttemptingResize, `Resized image to ${dimensions.width}x${dimensions.height}.`);
-    
+                    this.updateStatus(
+                        Status.AttemptingResize,
+                        `Successfully resized image to: ${dimensions.width}x${dimensions.height}.`);
+
                     return true;
                 }
             }
@@ -144,12 +149,12 @@ export class ImageCompressor {
                     this.writeMessage(`Using .png compression plugin for: "${filePath}"`);
                     plugins.push(
                         imageminPng({   // https://www.npmjs.com/package/imagemin-optipng#optimizationlevel
-                            optimizationLevel: 3
+                            optimizationLevel: 7
                         }));
                     break;
                 case ".jpg":
                 case ".jpeg":
-                    this.writeMessage(`Using .jpg/.jpeg compression plugin for: "${filePath}"`);
+                    this.writeMessage(`Using .jpg & .jpeg compression plugin for: "${filePath}"`);
                     plugins.push(
                         imageminJpeg({  // https://www.npmjs.com/package/imagemin-jpegtran#api
                             arithmetic: true
@@ -159,7 +164,7 @@ export class ImageCompressor {
                     this.writeMessage(`Using .gif compression plugin for: "${filePath}"`);
                     plugins.push(
                         imageminGif({   // https://www.npmjs.com/package/imagemin-gifsicle#optimizationlevel
-                            optimizationLevel: 2
+                            optimizationLevel: 3
                         }));
                     break;
                 case ".svg":
@@ -198,10 +203,10 @@ export class ImageCompressor {
                     fs.unlinkSync(tempPath);
 
                     wasCompressed = true;
-                    this.updateStatus(Status.Done, `Successfully compressed "${filePath}".`);
+                    this.updateStatus(Status.Done, `Successfully compressed ${this.toFileUri(filePath)}.`);
                 }
             } else {
-                this.updateStatus(Status.Done, `Unable to compress "${filePath}".`);
+                this.updateStatus(Status.Done, `Unable to compress "${this.toFileUri(filePath)}".`);
             }
 
             return wasCompressed;
@@ -229,6 +234,29 @@ export class ImageCompressor {
         });
     }
 
+    private statusToMessage(status: Status): string {
+        switch (status) {
+            case Status.Initializing: return "Initializing image compression";
+            case Status.AttemptingResize: return "Attempting image resize";
+            case Status.AttemptingCompression: return "Attempting image compression";
+            case Status.Done: return "Image compression complete";
+            default: return "Idle...";
+        }
+    }
+
+    private toFileUri(filePath: string): string {
+        return this.tryAction(() => {
+            let pathName = path.resolve(filePath).replace(/\\/g, '/');
+
+            // Windows drive letter must be prefixed with a slash
+            if (pathName[0] !== '/') {
+                pathName = `/${pathName}`;
+            }
+
+            return encodeURI(`file://${pathName}`);
+        }) || filePath;
+    }
+
     private tryAction<T>(action: () => T): T | undefined {
         try {
             return action();
@@ -238,16 +266,6 @@ export class ImageCompressor {
             } else {
                 console.error(error);
             }
-        }
-    }
-
-    private statusToMessage(status: Status): string {
-        switch (status) {
-            case Status.Initializing: return "Initializing image compression";
-            case Status.AttemptingResize: return "Attempting image resize";
-            case Status.AttemptingCompression: return "Attempting image compression";
-            case Status.Done: return "Image compression complete";
-            default: return "Idle...";
         }
     }
 }
