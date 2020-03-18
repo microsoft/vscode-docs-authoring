@@ -1,8 +1,10 @@
 "use-strict";
 
-import { Uri, window, workspace, TextDocument } from "vscode";
+import * as fs from "fs";
+import * as glob from "glob";
+import * as path from "path";
+import { TextDocument, Uri, window, workspace } from "vscode";
 import { reporter } from "./telemetry";
-
 /**
  * Create a posted warning message and applies the message to the log
  * @param {string} message - the message to post to the editor as an warning.
@@ -71,4 +73,31 @@ export function sendTelemetryData(telemetryCommand: string, commandOption: strin
 
 export function isMarkdownFile(document: TextDocument) {
     return document.languageId === "markdown"; // prevent processing of own documents
+}
+
+export function isYamlFile(document: TextDocument) {
+    return document.languageId === "yaml" || document.languageId === "yml"; // prevent processing of own documents
+}
+
+export function tryFindFile(rootPath: string, fileName: string) {
+    try {
+        const fullPath = path.resolve(rootPath, fileName);
+        const exists = fs.existsSync(fullPath);
+        if (exists) {
+            return fullPath;
+        } else {
+            const files = glob.sync(`**/${fileName}`, {
+                cwd: rootPath,
+            });
+
+            if (files && files.length === 1) {
+                return path.join(rootPath, files[0]);
+            }
+        }
+    } catch (error) {
+        postError(error.toString());
+    }
+
+    postWarning(`Unable to find a file named "${fileName}", recursively at root "${rootPath}".`);
+    return undefined;
 }
