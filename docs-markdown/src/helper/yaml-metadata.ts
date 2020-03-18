@@ -3,7 +3,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as Collections from "typescript-collections";
-import YAML = require("yamljs");
+import * as YAML from "yamljs";
 import * as yamlMetadata from "../helper/yaml-metadata";
 import * as common from "./common";
 import * as utilityHelper from "./utility";
