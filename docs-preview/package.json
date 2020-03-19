@@ -3,7 +3,7 @@
   "displayName": "docs-preview",
   "description": "Docs Markdown Preview Extension",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.3.42",
+  "version": "0.3.43",
   "publisher": "docsmsft",
   "icon": "images/docs-logo-ms.png",
   "bugs": {
@@ -132,7 +132,9 @@
   },
   "dependencies": {
     "axios": "^0.19.0",
+    "glob": "^7.1.6",
     "js-base64": "^2.5.1",
+    "js-yaml": "^3.13.1",
     "markdown-it": "^8.4.2",
     "markdown-it-include": "^1.1.0",
     "moment": "^2.24.0",
