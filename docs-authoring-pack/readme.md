@@ -11,6 +11,7 @@ The Docs Authoring Pack provides the following extensions to help author content
 * [Docs Metadata](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-metadata), which speeds up editing of metadata throughout a Docs repository.
 * [LinkCheckMD](https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD), which generates a report on the links in the document, including broken links.
 * [Docs Images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images), which compresses and resizes images.
+* [Docs Linting](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-linting), which provides markdown linting specific to docs.
 
 ## Prerequisites and assumptions
 
@@ -20,9 +21,11 @@ To accurately insert relative links, images, and other embedded content with Doc
 
 To access the Docs Markdown Authoring menu, type <kbd>ALT+M</kbd>. You can click or use up/down arrows to select the function you want, or type to start filtering, then hit <kbd>ENTER</kbd> when the function you want is highlighted in the menu.
 
+![docs markdown quick pick](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/docs-markdown-quick-pick.png)
+
 You can also access the Docs commands from the VS Code command palette by hitting <kbd>F1</kbd> and typing to filter. All the Docs commands begin with "Docs":
 
-![docs commands](https://raw.githubusercontent.com/Microsoft/vscode-docs-authoring/master/media/image/docs-command-palette.png)
+![docs markdown command palette](https://raw.githubusercontent.com/Microsoft/vscode-docs-authoring/master/media/image/docs-command-palette.png)
 
 For more information about the Docs Markdown commands, see the [Docs Markdown readme](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown).
 
@@ -33,6 +36,28 @@ To access the Docs Images menu, right click on a folder or individual image file
 ![docs image context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/right-click-image-compression.png)
 
 For more information about the Docs Images extension, see the [Docs Images readme](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images).
+
+## How to use Docs YAML extension
+
+* The code intellisense is more intelligent now; the extension can provide the intellisense according to the schema structure, not just text mapping. To invoke intellisense, hit `ctrl + space` to view the list of schema options.
+* The extension can generate an input template for `object` (including required properties and optional properties with default value).
+* You can type a `-` and hit `ctrl + space` to trigger the intellisense for generating a new array item.
+
+Intellisense is automatically triggered by `ctrl + space` to get what you can type.
+
+![screencast](https://raw.githubusercontent.com/928PJY/docs-yaml/master/images/docs-yaml-extension-intellisense.gif)
+
+## How to use Docs Preview extension
+
+You can open docs-preview by opening a markdown document and clicking on the preview button. One opens the preview in your current window, and the other opens the markdown preview to the side. Alternatively you can hit `Alt + M` and select `Preview` or you can hit `F1` and select `Docs: Preview`
+
+![docs preview buttons](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/docs-preview-button.png)
+
+## How to use Docs Linting extension
+
+Docs Authoring Pack also supports comes with custom linting rules to aid in catching errors many run into when contributing to docs. This should automatically work with Docs Authoring Pack, and you will see the output in the "Problems" pane.
+
+![docs preview buttons](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/docs-linting-problem.png)
 
 ## How to assign keyboard shortcuts
 
@@ -73,10 +98,6 @@ Users of the pre-release version of the extension will notice that the authoring
 1. Now you will see the toolbar at the bottom of your VS Code window:
 
    ![toolbar](https://raw.githubusercontent.com/Microsoft/vscode-docs-authoring/master/media/image/legacy-toolbar.png)
-
-## Docs Linting
-
-Docs Authoring Pack also supports comes with custom linting rules to aid in catching errors many run into when contributing to docs. This should automatically work with Docs Authoring Pack, and you will see the output in the "Problems" pane.
 
 ## Contributing
 
