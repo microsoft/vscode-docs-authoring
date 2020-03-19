@@ -13,20 +13,18 @@ There are two types of files that we run schema validation against:
 
 ## Features
 
-### New features:
-
-* The code intellisense is more intelligent now; the extension can provide the intellisense according to the schema structure, not just text mapping. (v0.1.8 and later)
-* The extension can generate an input template for `object` (including required properties and optional properties with default value). (v0.1.8 and later)
-* You can type a `-` to trigger the intellisense for generating a new array item. (v0.1.8 and later)
+* The code intellisense is more intelligent now; the extension can provide the intellisense according to the schema structure, not just text mapping. To invoke intellisense, hit `ctrl + space` to view the list of schema options.
+* The extension can generate an input template for `object` (including required properties and optional properties with default value).
+* You can type a `-` and hit `ctrl + space` to trigger the intellisense for generating a new array item.
 
 ### 1. YAML validation
 
 * Apply schema validation according to the [YAMLMime](#YamlMime)
 * Detects errors such as:
-    * Invalid property value type
-    * Out of enum scope
-    * Required property is missing
-    * Unexpected property
+  * Invalid property value type
+  * Out of enum scope
+  * Required property is missing
+  * Unexpected property
 
 ![screencast](https://raw.githubusercontent.com/928PJY/docs-yaml/master/images/docs-yaml-extension-validation.gif)
 
