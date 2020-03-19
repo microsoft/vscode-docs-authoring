@@ -143,14 +143,17 @@ export function getPath(basePath: any, filePath: any) {
 }
 
 function getDirectoryName(repoArr: string[]) {
-    const repoName = repoArr.pop().toLowerCase();
-    const directory = repoMapping.find((repo) => {
-        return repoName.startsWith(repo.repoName);
-    });
-    if (directory) {
-        return directory;
-    } else {
-        return getDirectoryName(repoArr);
+    let repoName = repoArr.pop();
+    if (repoName) {
+        repoName = repoName.toLowerCase();
+        const directory = repoMapping.find((repo) => {
+            return repoName.startsWith(repo.repoName);
+        });
+        if (directory) {
+            return directory;
+        } else {
+            return getDirectoryName(repoArr);
+        }
     }
 }
 
