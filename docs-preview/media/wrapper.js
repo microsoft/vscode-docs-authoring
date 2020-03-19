@@ -11,4 +11,3 @@ while (body.firstChild) {
 
 // Append the wrapper to the body
 document.body.appendChild(mainContainer);
-body.setAttribute("class", "theme-light");
