@@ -3999,7 +3999,7 @@ a.has-text-danger:active {
   --danger-invert: white;
 }
 
-body.vscode-dark {
+body.theme-dark {
   --text: #e3e3e3;
   --text-subtle: #c7c7c7;
   --text-invert: #2e2e2e;
@@ -4076,7 +4076,7 @@ body.vscode-dark {
   --danger-invert: white;
 }
 
-body.vscode-high-contrast {
+body.theme-high-contrast {
   --text: white;
   --text-subtle: white;
   --text-invert: black;
@@ -4154,8 +4154,8 @@ body.vscode-high-contrast {
 }
 
 .theme-light,
-body.vscode-dark,
-body.vscode-high-contrast {
+body.theme-dark,
+body.theme-high-contrast {
   color: hsla(0, 0%, 0%, 1);
   color: var(--text);
   background-color: hsla(0, 0%, 100%, 0.999);
@@ -8274,7 +8274,7 @@ a.box:active {
   margin-bottom: 1px;
 }
 
-body.vscode-high-contrast .xp-tag-xp {
+body.theme-high-contrast .xp-tag-xp {
   color: hsla(0, 0%, 100%, 1);
   color: var(--text-invert);
 }
@@ -11536,11 +11536,11 @@ h2 .heading-anchor {
   border: none;
 }
 
-body.vscode-dark .progress::-ms-fill {
+body.theme-dark .progress::-ms-fill {
   background: #e3e3e3;
 }
 
-body.vscode-high-contrast .progress::-ms-fill {
+body.theme-high-contrast .progress::-ms-fill {
   background-color: #e3e3e3;
 }
 
@@ -11596,7 +11596,7 @@ body.vscode-high-contrast .progress::-ms-fill {
   overflow: visible;
 }
 
-body.vscode-high-contrast .level-status .progress.level-status-progress {
+body.theme-high-contrast .level-status .progress.level-status-progress {
   background-color: #e3e3e3;
 }
 
@@ -11663,7 +11663,7 @@ body[dir='rtl'] .level-status .level-status-progress-container:after {
   border: 1px solid var(--border-yellow-high-contrast);
 }
 
-body.vscode-high-contrast .level-status-square {
+body.theme-high-contrast .level-status-square {
   background: black;
 }
 
@@ -12914,8 +12914,8 @@ a.tag:hover {
   height: 3rem;
 }
 
-body.vscode-dark .overflow-fade .bottom-to-top-fade,
-body.vscode-high-contrast .overflow-fade .bottom-to-top-fade {
+body.theme-dark .overflow-fade .bottom-to-top-fade,
+body.theme-high-contrast .overflow-fade .bottom-to-top-fade {
   background: linear-gradient(rgba(0, 0, 0, 0), currentColor 50%);
 }
 
@@ -16610,128 +16610,128 @@ Visual Studio-like style based on original C# coloring by Jason Diamond <jason@d
   color: #cd3131;
 }
 
-body.vscode-dark .line-highlight,
-body.vscode-high-contrast .line-highlight {
+body.theme-dark .line-highlight,
+body.theme-high-contrast .line-highlight {
   background-color: darkgreen;
 }
 
-body.vscode-dark .hljs-comment,
-body.vscode-high-contrast .hljs-comment {
+body.theme-dark .hljs-comment,
+body.theme-high-contrast .hljs-comment {
   color: #57A64A;
 }
 
-body.vscode-dark .hljs-number,
-body.vscode-high-contrast .hljs-number {
+body.theme-dark .hljs-number,
+body.theme-high-contrast .hljs-number {
   color: #b5cea8;
 }
 
-body.vscode-dark .hljs-pscommand,
-body.vscode-dark .hljs-keyword,
-body.vscode-dark .hljs-selector-tag,
-body.vscode-dark .hljs-built_in,
-body.vscode-dark .hljs-name,
-body.vscode-dark .hljs-tag,
-body.vscode-high-contrast .hljs-pscommand,
-body.vscode-high-contrast .hljs-keyword,
-body.vscode-high-contrast .hljs-selector-tag,
-body.vscode-high-contrast .hljs-built_in,
-body.vscode-high-contrast .hljs-name,
-body.vscode-high-contrast .hljs-tag {
+body.theme-dark .hljs-pscommand,
+body.theme-dark .hljs-keyword,
+body.theme-dark .hljs-selector-tag,
+body.theme-dark .hljs-built_in,
+body.theme-dark .hljs-name,
+body.theme-dark .hljs-tag,
+body.theme-high-contrast .hljs-pscommand,
+body.theme-high-contrast .hljs-keyword,
+body.theme-high-contrast .hljs-selector-tag,
+body.theme-high-contrast .hljs-built_in,
+body.theme-high-contrast .hljs-name,
+body.theme-high-contrast .hljs-tag {
   color: #569cd6;
 }
 
-body.vscode-dark .hljs-literal,
-body.vscode-high-contrast .hljs-literal {
+body.theme-dark .hljs-literal,
+body.theme-high-contrast .hljs-literal {
   color: #569cd6;
 }
 
-body.vscode-dark .hljs-title,
-body.vscode-high-contrast .hljs-title {
+body.theme-dark .hljs-title,
+body.theme-high-contrast .hljs-title {
   color: #4EC9B0;
 }
 
-body.vscode-dark .hljs-string,
-body.vscode-dark .hljs-section,
-body.vscode-dark .hljs-attribute,
-body.vscode-dark .hljs-template-tag,
-body.vscode-dark .hljs-template-variable,
-body.vscode-dark .hljs-deletion,
-body.vscode-dark .hljs-type,
-body.vscode-dark .hljs-code,
-body.vscode-high-contrast .hljs-string,
-body.vscode-high-contrast .hljs-section,
-body.vscode-high-contrast .hljs-attribute,
-body.vscode-high-contrast .hljs-template-tag,
-body.vscode-high-contrast .hljs-template-variable,
-body.vscode-high-contrast .hljs-deletion,
-body.vscode-high-contrast .hljs-type,
-body.vscode-high-contrast .hljs-code {
+body.theme-dark .hljs-string,
+body.theme-dark .hljs-section,
+body.theme-dark .hljs-attribute,
+body.theme-dark .hljs-template-tag,
+body.theme-dark .hljs-template-variable,
+body.theme-dark .hljs-deletion,
+body.theme-dark .hljs-type,
+body.theme-dark .hljs-code,
+body.theme-high-contrast .hljs-string,
+body.theme-high-contrast .hljs-section,
+body.theme-high-contrast .hljs-attribute,
+body.theme-high-contrast .hljs-template-tag,
+body.theme-high-contrast .hljs-template-variable,
+body.theme-high-contrast .hljs-deletion,
+body.theme-high-contrast .hljs-type,
+body.theme-high-contrast .hljs-code {
   color: #ce9178;
 }
 
-body.vscode-dark .hljs-addition,
-body.vscode-dark .hljs-selector-attr,
-body.vscode-dark .hljs-selector-pseudo,
-body.vscode-dark .hljs-meta,
-body.vscode-high-contrast .hljs-addition,
-body.vscode-high-contrast .hljs-selector-attr,
-body.vscode-high-contrast .hljs-selector-pseudo,
-body.vscode-high-contrast .hljs-meta {
+body.theme-dark .hljs-addition,
+body.theme-dark .hljs-selector-attr,
+body.theme-dark .hljs-selector-pseudo,
+body.theme-dark .hljs-meta,
+body.theme-high-contrast .hljs-addition,
+body.theme-high-contrast .hljs-selector-attr,
+body.theme-high-contrast .hljs-selector-pseudo,
+body.theme-high-contrast .hljs-meta {
   color: #2b91af;
 }
 
-body.vscode-dark .hljs-doctag,
-body.vscode-high-contrast .hljs-doctag {
+body.theme-dark .hljs-doctag,
+body.theme-high-contrast .hljs-doctag {
   color: #808080;
 }
 
-body.vscode-dark .hljs-attr,
-body.vscode-high-contrast .hljs-attr {
+body.theme-dark .hljs-attr,
+body.theme-high-contrast .hljs-attr {
   color: #9cdcfe;
 }
 
-body.vscode-dark .hljs-parameter,
-body.vscode-dark .hljs-type,
-body.vscode-dark .hljs-attribute,
-body.vscode-dark .hljs-title,
-body.vscode-dark .hljs-addition,
-body.vscode-dark .hljs-selector-attr,
-body.vscode-dark .hljs-selector-pseudo,
-body.vscode-dark .hljs-meta,
-body.vscode-high-contrast .hljs-parameter,
-body.vscode-high-contrast .hljs-type,
-body.vscode-high-contrast .hljs-attribute,
-body.vscode-high-contrast .hljs-title,
-body.vscode-high-contrast .hljs-addition,
-body.vscode-high-contrast .hljs-selector-attr,
-body.vscode-high-contrast .hljs-selector-pseudo,
-body.vscode-high-contrast .hljs-meta {
+body.theme-dark .hljs-parameter,
+body.theme-dark .hljs-type,
+body.theme-dark .hljs-attribute,
+body.theme-dark .hljs-title,
+body.theme-dark .hljs-addition,
+body.theme-dark .hljs-selector-attr,
+body.theme-dark .hljs-selector-pseudo,
+body.theme-dark .hljs-meta,
+body.theme-high-contrast .hljs-parameter,
+body.theme-high-contrast .hljs-type,
+body.theme-high-contrast .hljs-attribute,
+body.theme-high-contrast .hljs-title,
+body.theme-high-contrast .hljs-addition,
+body.theme-high-contrast .hljs-selector-attr,
+body.theme-high-contrast .hljs-selector-pseudo,
+body.theme-high-contrast .hljs-meta {
   color: #01cfff;
 }
 
-body.vscode-dark .hljs-control,
-body.vscode-high-contrast .hljs-control {
+body.theme-dark .hljs-control,
+body.theme-high-contrast .hljs-control {
   color: #c586c0;
 }
 
-body.vscode-dark .hljs-helper,
-body.vscode-high-contrast .hljs-helper {
+body.theme-dark .hljs-helper,
+body.theme-high-contrast .hljs-helper {
   color: #dcdcaa;
 }
 
-body.vscode-dark .hljs-symbol,
-body.vscode-dark .hljs-bullet,
-body.vscode-dark .hljs-link,
-body.vscode-high-contrast .hljs-symbol,
-body.vscode-high-contrast .hljs-bullet,
-body.vscode-high-contrast .hljs-link {
+body.theme-dark .hljs-symbol,
+body.theme-dark .hljs-bullet,
+body.theme-dark .hljs-link,
+body.theme-high-contrast .hljs-symbol,
+body.theme-high-contrast .hljs-bullet,
+body.theme-high-contrast .hljs-link {
   color: #808080;
 }
 
-body.vscode-dark .hljs-reserved,
-body.vscode-dark .hljs-constant,
-body.vscode-high-contrast .hljs-reserved,
-body.vscode-high-contrast .hljs-constant {
+body.theme-dark .hljs-reserved,
+body.theme-dark .hljs-constant,
+body.theme-high-contrast .hljs-reserved,
+body.theme-high-contrast .hljs-constant {
   color: #f44747;
 }
 
@@ -17423,7 +17423,7 @@ USAGE:
   border: 0;
 }
 
-body.vscode-dark .hubpage .cardsB .card, body.vscode-dark
+body.theme-dark .hubpage .cardsB .card, body.theme-dark
 .landingpage .cardsB .card {
   box-shadow: none;
   border: 0;
@@ -17520,7 +17520,7 @@ body.vscode-dark .hubpage .cardsB .card, body.vscode-dark
   padding: 0;
 }
 
-body.vscode-dark .hubpage .cardsD .card, body.vscode-dark
+body.theme-dark .hubpage .cardsD .card, body.theme-dark
 .landingpage .cardsD .card {
   box-shadow: none;
   border: 0;
@@ -17590,7 +17590,7 @@ body.vscode-dark .hubpage .cardsD .card, body.vscode-dark
   overflow: visible;
 }
 
-html.body.vscode-dark .hubpage .cardsF .card, html.body.vscode-dark
+html.body.theme-dark .hubpage .cardsF .card, html.body.theme-dark
 .landingpage .cardsF .card {
   box-shadow: none;
   border: 0;
@@ -17690,7 +17690,7 @@ html.body.vscode-dark .hubpage .cardsF .card, html.body.vscode-dark
   border: 0;
 }
 
-html.body.vscode-dark .hubpage .cardsG .card, html.body.vscode-dark
+html.body.theme-dark .hubpage .cardsG .card, html.body.theme-dark
 .landingpage .cardsG .card {
   box-shadow: none;
   border: 0;
@@ -18018,7 +18018,7 @@ html.body.vscode-dark .hubpage .cardsG .card, html.body.vscode-dark
   padding: 0;
 }
 
-body.vscode-dark .hubpage .cardsW .card, body.vscode-dark
+body.theme-dark .hubpage .cardsW .card, body.theme-dark
 .landingpage .cardsW .card {
   box-shadow: none;
   border: 0;
@@ -19433,7 +19433,7 @@ input:checked + .quiz-choice .custom-radio:before {
   font-size: 90%;
 }
 
-html.body.vscode-dark .rest-tryit-form .request-section .url-group .url-input {
+html.body.theme-dark .rest-tryit-form .request-section .url-group .url-input {
   border-color: hsla(0, 0%, 37%, 1);
   border-color: var(--text-subtle);
 }

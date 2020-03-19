@@ -6,3 +6,4 @@ out/
 **/.vs/
 *.vsix
 install.Lock
+media/wrapper.js
