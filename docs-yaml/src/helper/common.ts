@@ -23,3 +23,25 @@ export function sendTelemetryData(telemetryCommand: string, commandOption: strin
     const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
     reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
 }
+
+export function matchAll(
+    pattern: RegExp,
+    text: string,
+): RegExpMatchArray[] {
+    const out: RegExpMatchArray[] = [];
+    pattern.lastIndex = 0;
+    let match: RegExpMatchArray | null = pattern.exec(text);
+    while (match) {
+        if (match) {
+            // This is necessary to avoid infinite loops with zero-width matches
+            if (match.index === pattern.lastIndex) {
+                pattern.lastIndex++;
+            }
+
+            out.push(match);
+        }
+
+        match = pattern.exec(text);
+    }
+    return out;
+}

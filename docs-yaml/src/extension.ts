@@ -5,6 +5,7 @@ import { Reporter } from "./helper/telemetry";
 import { SCHEMA_CONFIG_FILE, TOC_FILE_GLOBAL_PATTERN, TOC_SCHEMA_FILE, YAML_SCHEMA_CONFIG_NAME_OF_VSCODE_YAML_EXTENSION } from "./yaml-support/yaml-constant";
 import { registerYamlSchemaSupport } from './yaml-support/yaml-schema';
 import { DocsYamlCompletionProvider } from "./yaml-support/yaml-snippet";
+import { DocsYamlDashCompletionProvider } from './yaml-support/yaml-completion-provider';
 
 export const output = window.createOutputChannel("docs-yaml");
 export let mappingData: string;
@@ -17,10 +18,12 @@ export async function activate(context: ExtensionContext) {
     const subscriptions = [
         // Completion providers
         languages.registerCompletionItemProvider('yaml', new DocsYamlCompletionProvider()),
+        languages.registerCompletionItemProvider("yaml", new DocsYamlDashCompletionProvider(), "-");
     ];
     await loadSchemaConfig();
     await addTocSchemaToConfig();
     await registerYamlSchemaSupport();
+
     subscriptions.forEach((element) => {
         context.subscriptions.push(element);
     }, this);

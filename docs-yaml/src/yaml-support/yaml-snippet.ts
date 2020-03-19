@@ -27,6 +27,7 @@ export class DocsYamlCompletionProvider implements CompletionItemProvider {
         this.loadCodeSnippets();
     }
 
+    window.
     // Provide code snippets for vscode
     public provideCompletionItems(doc: TextDocument, pos: Position) {
         reporter.sendTelemetryEvent(`yaml.schemaError`);
