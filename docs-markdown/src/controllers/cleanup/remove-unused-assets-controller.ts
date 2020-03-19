@@ -3,11 +3,11 @@
 import * as fs from "fs";
 import { homedir } from "os";
 import { join } from "path";
-import { output } from "../../extension";
 import { generateTimestamp, postError } from "../../helper/common";
 import { imageExtensions, markdownExtensionFilter } from "../media-controller";
 import { showProgress } from "./utilities";
 import { readFile } from "fs";
+import { output } from "../../helper/output";
 const recursive = require("recursive-readdir");
 
 export function getUnusedImagesAndIncludesCommand() {

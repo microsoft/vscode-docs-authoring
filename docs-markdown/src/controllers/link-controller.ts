@@ -1,5 +1,6 @@
 import { commands, QuickPickItem, QuickPickOptions, window } from "vscode";
-import { checkExtension, sendTelemetryData } from "../helper/common";
+import { checkExtension } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 import { Insert, insertURL, MediaType, selectLinkType } from "./media-controller";
 import { applyXref } from "./xref-controller";
 

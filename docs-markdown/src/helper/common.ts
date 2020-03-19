@@ -5,9 +5,10 @@ import * as glob from "glob";
 import * as os from "os";
 import * as path from "path";
 import * as vscode from "vscode";
-import { output } from "../extension";
+
 import * as log from "./log";
-import { reporter } from "./telemetry";
+import { output } from "./output";
+
 
 export function tryFindFile(rootPath: string, fileName: string) {
     try {
@@ -347,29 +348,6 @@ export function checkExtension(extensionName: string, notInstalledMessage?: stri
 export function showStatusMessage(message: string) {
     const { msTimeValue } = generateTimestamp();
     output.appendLine(`[${msTimeValue}] - ${message}`);
-}
-
-/**
- * Return repo name
- * @param Uri
- */
-export function getRepoName(workspacePath: vscode.Uri) {
-    // let repoName;
-    const repo = vscode.workspace.getWorkspaceFolder(workspacePath);
-    if (repo) {
-        const repoName = repo.name;
-        return repoName;
-    }
-}
-
-export function sendTelemetryData(telemetryCommand: string, commandOption: string) {
-    const editor = vscode.window.activeTextEditor;
-    if (editor) {
-        const workspaceUri = editor.document.uri;
-        const activeRepo = getRepoName(workspaceUri);
-        const telemetryProperties = activeRepo ? { command_option: commandOption, repo_name: activeRepo } : { command_option: commandOption, repo_name: "" };
-        reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
-    }
 }
 
 export function detectFileExtension(filePath: string) {
