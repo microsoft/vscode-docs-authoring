@@ -1,7 +1,8 @@
 "use strict";
 
 import { Position, Range, Selection, TextEditor, window, CompletionItem } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 import { isCursorInsideYamlHeader } from "../helper/yaml-metadata";
 
 const telemetryCommand: string = "applyNoLoc";

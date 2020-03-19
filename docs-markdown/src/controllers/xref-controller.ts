@@ -1,7 +1,8 @@
 "use strict";
 
 import { CompletionItem, Position, QuickPickItem, Range, window } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData, setCursorPosition } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, setCursorPosition } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 import { getAsync } from "../helper/http-helper";
 import { reporter } from "../helper/telemetry";
 

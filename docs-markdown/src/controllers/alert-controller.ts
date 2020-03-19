@@ -1,8 +1,9 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { format } from "../helper/format";
+import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertAlert";
 let commandOption: string;

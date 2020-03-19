@@ -5,10 +5,11 @@ import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
 import { Uri, window, workspace, WorkspaceFolder } from "vscode";
-import YAML = require("yamljs");
-import { output } from "../extension";
-import { generateTimestamp, naturalLanguageCompare, postError, postWarning, sendTelemetryData, tryFindFile } from "../helper/common";
+import * as YAML from "yamljs";
+import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 import * as yamlMetadata from "../helper/yaml-metadata";
+import { output } from "../helper/output";
 
 const telemetryCommand: string = "masterRedirect";
 const redirectFileName: string = ".openpublishing.redirection.json";
