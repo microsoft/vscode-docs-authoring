@@ -1,7 +1,8 @@
 "use strict";
 
 import { window } from "vscode";
-import { isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 import { addNewColumn, addNewColumnWithSpan, createRow } from "../helper/rows-columns";
 
 const rowWithColumns = "Two-column structure";

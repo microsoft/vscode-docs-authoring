@@ -297,3 +297,5 @@ __pycache__/
 
 test-results-jest.xml
 test-results-mocha.xml
+
+.nyc_output/**/*
