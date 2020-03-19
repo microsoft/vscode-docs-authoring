@@ -1,6 +1,8 @@
 "use strict";
-import { basename } from "path";
-import { commands, ExtensionContext, Uri, ViewColumn, WebviewPanel, window, workspace } from "vscode";
+
+import { appendFileSync, readFileSync, writeFileSync } from "fs";
+import { basename, join } from "path";
+import { commands, ExtensionContext, ViewColumn, WebviewPanel, window, workspace } from "vscode";
 import { isMarkdownFile, isYamlFile, sendTelemetryData } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { codeSnippets, tripleColonCodeSnippets } from "./markdown-extensions/codesnippet";
@@ -18,11 +20,15 @@ export const output = window.createOutputChannel("docs-preview");
 export let extensionPath: string;
 const telemetryCommand: string = "preview";
 
-export function activate(context: ExtensionContext) {
+const previewThemeSetting: string = "preview.previewTheme";
+const reloadMessage = "Your updated configuration has been recorded, but you must reload to see its effects.";
+
+export async function activate(context: ExtensionContext) {
     let panel: WebviewPanel;
-    const filePath = window.visibleTextEditors[0].document.fileName;
-    const workingPath = filePath.replace(basename(filePath), "");
-    extensionPath = context.extensionPath;
+    themeHandler(context);
+
+    workspace.onDidChangeConfiguration((e: any) => promptForReload(e, reloadMessage));
+
     context.subscriptions.push(new Reporter(context));
     const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
         commands.executeCommand("markdown.showPreviewToSide");
@@ -34,6 +40,7 @@ export function activate(context: ExtensionContext) {
         const commandOption = "show-preview-tab";
         sendTelemetryData(telemetryCommand, commandOption);
     });
+
     const provider = new DocumentContentProvider();
 
     context.subscriptions.push(workspace.onDidChangeTextDocument(async (event) => {
@@ -49,6 +56,15 @@ export function activate(context: ExtensionContext) {
         disposableStandalonePreview,
         disposableSEOPreview,
         disposableSideSEOPreview);
+
+    let filePath = "";
+    const editor = window.activeTextEditor;
+    if (editor) {
+        filePath = editor.document.fileName;
+    }
+    filePath = await getRecentlyOpenDocument(filePath, context);
+    const workingPath = filePath.replace(basename(filePath), "");
+
     return {
         extendMarkdownIt(md) {
             return md.use(include, { root: workingPath })
@@ -76,7 +92,68 @@ export function activate(context: ExtensionContext) {
     }
 }
 
+function themeHandler(context: ExtensionContext) {
+    let bodyAttribute: string = "";
+    extensionPath = context.extensionPath;
+    const wrapperPath = join(extensionPath, "media", "wrapper.js");
+    const wrapperJsData = readFileSync(wrapperPath, "utf8");
+    const selectedPreviewTheme = workspace.getConfiguration().get(previewThemeSetting);
+    switch (selectedPreviewTheme) {
+        case "Light":
+            if (wrapperJsData.includes("theme-light")) {
+                output.appendLine(`Current theme: Light.`);
+            } else {
+                const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
+                writeFileSync(wrapperPath, updatedWrapperJsData, "utf8");
+                bodyAttribute = `body.setAttribute("class", "theme-light");`;
+            }
+            break;
+        case "Dark":
+            if (wrapperJsData.includes("theme-dark")) {
+                output.appendLine(`Current theme: Dark.`);
+            } else {
+                const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
+                writeFileSync(wrapperPath, updatedWrapperJsData, "utf8");
+                bodyAttribute = `body.setAttribute("class", "theme-dark");`;
+            }
+            break;
+        case "High Contrast":
+            if (wrapperJsData.includes("theme-high-contrast")) {
+                output.appendLine(`Current theme: High Contrast.`);
+            } else {
+                const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, "");
+                writeFileSync(wrapperPath, updatedWrapperJsData, "utf8");
+                bodyAttribute = `body.setAttribute("class", "theme-high-contrast");`;
+            }
+            break;
+    }
+    appendFileSync(wrapperPath, bodyAttribute, "utf8");
+}
+
 // this method is called when your extension is deactivated
 export function deactivate() {
     output.appendLine("Deactivating extension.");
+}
+
+function promptForReload(e, message: string) {
+    if (e.affectsConfiguration(previewThemeSetting)) {
+        window.showInformationMessage(message, "Reload")
+            .then((res) => {
+                if (res === "Reload") {
+                    commands.executeCommand("workbench.action.reloadWindow");
+                }
+            });
+    }
+}
+
+async function getRecentlyOpenDocument(filePath: string, context: ExtensionContext) {
+    if (!filePath) {
+        filePath = context.globalState.get("openDocument");
+    } else if (filePath === "extension-output-#1"
+        || filePath === "tasks") {
+        filePath = context.globalState.get("openDocument");
+    } else {
+        await context.globalState.update("openDocument", filePath);
+    }
+    return filePath;
 }

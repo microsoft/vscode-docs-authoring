@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
-import { resolve } from "path";
+import { resolve, basename } from "path";
 import { output } from "../extension";
-import { workspace } from "vscode";
+import { workspace, window } from "vscode";
 
 const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
 const FRONTMATTER_RE = /^---[\s\S]+?---/gmi;
@@ -9,15 +9,26 @@ const ROOTPATH_RE = /.*~/gmi;
 export function include(md, options) {
   const replaceIncludeWithContents = (src: string, rootdir: string) => {
     let captureGroup;
+    if (!rootdir) {
+      const filePath = window.activeTextEditor.document.fileName;
+      rootdir = filePath.replace(basename(filePath), "");
+    }
     while ((captureGroup = INCLUDE_RE.exec(src))) {
       const repoRoot = workspace.workspaceFolders[0].uri.fsPath;
       let filePath = resolve(rootdir, captureGroup[1].trim());
       if (filePath.includes("~")) {
         filePath = filePath.replace(ROOTPATH_RE, repoRoot);
       }
-      let mdSrc = readFileSync(filePath, "utf8");
-      mdSrc = mdSrc.replace(FRONTMATTER_RE, "");
+      let mdSrc = "";
+      try {
+        mdSrc = readFileSync(filePath, "utf8");
+        mdSrc = mdSrc.replace(FRONTMATTER_RE, "");
+      } catch (error) {
+        mdSrc = captureGroup[0].substring(1, captureGroup[0].length);
+        output.appendLine(error);
+      }
       src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
+
     }
     return src;
   };
