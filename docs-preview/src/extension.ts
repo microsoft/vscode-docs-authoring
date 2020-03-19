@@ -21,7 +21,6 @@ export let extensionPath: string;
 const telemetryCommand: string = "preview";
 
 const previewThemeSetting: string = "preview.previewTheme";
-let bodyAttribute: string = "";
 const reloadMessage = "Your updated configuration has been recorded, but you must reload to see its effects.";
 
 export async function activate(context: ExtensionContext) {
@@ -58,7 +57,11 @@ export async function activate(context: ExtensionContext) {
         disposableSEOPreview,
         disposableSideSEOPreview);
 
-    let filePath = window.visibleTextEditors[0].document.fileName;
+    let filePath = "";
+    const editor = window.activeTextEditor;
+    if (editor) {
+        filePath = editor.document.fileName;
+    }
     filePath = await getRecentlyOpenDocument(filePath, context);
     const workingPath = filePath.replace(basename(filePath), "");
 
@@ -90,6 +93,7 @@ export async function activate(context: ExtensionContext) {
 }
 
 function themeHandler(context: ExtensionContext) {
+    let bodyAttribute: string = "";
     extensionPath = context.extensionPath;
     const wrapperPath = join(extensionPath, "media", "wrapper.js");
     const wrapperJsData = readFileSync(wrapperPath, "utf8");
@@ -143,7 +147,9 @@ function promptForReload(e, message: string) {
 }
 
 async function getRecentlyOpenDocument(filePath: string, context: ExtensionContext) {
-    if (filePath === "extension-output-#1"
+    if (!filePath) {
+        filePath = context.globalState.get("openDocument");
+    } else if (filePath === "extension-output-#1"
         || filePath === "tasks") {
         filePath = context.globalState.get("openDocument");
     } else {
