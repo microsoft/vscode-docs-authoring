@@ -65,7 +65,7 @@ Docs Authoring Pack also supports comes with custom linting rules to aid in catc
 
 For more information about the Docs Linting commands, see the [Docs Linting readme](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-linting).
 
-## Docs Markdown Keyboard shortcuts and Toolbar
+## Docs Markdown keyboard shortcuts and toolbar
 
 ### How to assign keyboard shortcuts
 
