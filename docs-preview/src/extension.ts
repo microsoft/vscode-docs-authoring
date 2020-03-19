@@ -2,7 +2,7 @@
 
 import { appendFileSync, readFileSync, writeFileSync } from "fs";
 import { basename, join } from "path";
-import { commands, ExtensionContext, Uri, ViewColumn, WebviewPanel, TextDocument, window, workspace } from "vscode";
+import { commands, ExtensionContext, ViewColumn, WebviewPanel, window, workspace } from "vscode";
 import { isMarkdownFile, isYamlFile, sendTelemetryData } from "./helper/common";
 import { Reporter } from "./helper/telemetry";
 import { codeSnippets, tripleColonCodeSnippets } from "./markdown-extensions/codesnippet";
@@ -21,15 +21,79 @@ export let extensionPath: string;
 const telemetryCommand: string = "preview";
 
 const previewThemeSetting: string = "preview.previewTheme";
-let bodyAttribute: string = "";
-
 const reloadMessage = "Your updated configuration has been recorded, but you must reload to see its effects.";
-const failedReloadMessage = "The previous reload attempt failed. Click reload to try again.";
 
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
     let panel: WebviewPanel;
-    const filePath = window.visibleTextEditors[0].document.fileName;
+    themeHandler(context);
+
+    workspace.onDidChangeConfiguration((e: any) => promptForReload(e, reloadMessage));
+
+    context.subscriptions.push(new Reporter(context));
+    const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
+        commands.executeCommand("markdown.showPreviewToSide");
+        const commandOption = "show-preview-to-side";
+        sendTelemetryData(telemetryCommand, commandOption);
+    });
+    const disposableStandalonePreview = commands.registerCommand("docs.showPreview", (uri) => {
+        commands.executeCommand("markdown.showPreview");
+        const commandOption = "show-preview-tab";
+        sendTelemetryData(telemetryCommand, commandOption);
+    });
+
+    const provider = new DocumentContentProvider();
+
+    context.subscriptions.push(workspace.onDidChangeTextDocument(async (event) => {
+        if (isMarkdownFile(event.document) || isYamlFile(event.document)) {
+            panel.webview.html = await provider.provideTextDocumentContent();
+        }
+    }));
+
+    const disposableSEOPreview = commands.registerCommand("docs.seoPreview", seoPreview(ViewColumn.One));
+    const disposableSideSEOPreview = commands.registerCommand("docs.seoPreviewToSide", seoPreview(ViewColumn.Two));
+    context.subscriptions.push(
+        disposableSidePreview,
+        disposableStandalonePreview,
+        disposableSEOPreview,
+        disposableSideSEOPreview);
+
+    let filePath = "";
+    const editor = window.activeTextEditor;
+    if (editor) {
+        filePath = editor.document.fileName;
+    }
+    filePath = await getRecentlyOpenDocument(filePath, context);
     const workingPath = filePath.replace(basename(filePath), "");
+
+    return {
+        extendMarkdownIt(md) {
+            return md.use(include, { root: workingPath })
+                .use(codeSnippets, { root: workingPath })
+                .use(tripleColonCodeSnippets, { root: workingPath })
+                .use(xref)
+                .use(column_end)
+                .use(container_plugin, "row", rowOptions)
+                .use(container_plugin, "row-end", rowEndOptions)
+                .use(container_plugin, "column", columnOptions)
+                .use(container_plugin, "column-end", columnEndOptions)
+                .use(div_plugin, "div", divOptions)
+                .use(container_plugin, "image", imageOptions)
+                .use(image_end)
+                .use(video_plugin, "video", videoOptions);
+        },
+    };
+
+    function seoPreview(column): (...args: any[]) => any {
+        return async () => {
+            // Create and show a new webview
+            panel = window.createWebviewPanel("seoPreview", "SEO Preview", { preserveFocus: true, viewColumn: column }, {});
+            panel.webview.html = await provider.provideTextDocumentContent();
+        };
+    }
+}
+
+function themeHandler(context: ExtensionContext) {
+    let bodyAttribute: string = "";
     extensionPath = context.extensionPath;
     const wrapperPath = join(extensionPath, "media", "wrapper.js");
     const wrapperJsData = readFileSync(wrapperPath, "utf8");
@@ -63,66 +127,7 @@ export function activate(context: ExtensionContext) {
             }
             break;
     }
-
     appendFileSync(wrapperPath, bodyAttribute, "utf8");
-
-    try {
-        promptForReload(reloadMessage);
-    } catch (error) {
-        promptForReload(failedReloadMessage);
-    }
-
-    context.subscriptions.push(new Reporter(context));
-    const disposableSidePreview = commands.registerCommand("docs.showPreviewToSide", (uri) => {
-        commands.executeCommand("markdown.showPreviewToSide");
-        const commandOption = "show-preview-to-side";
-        sendTelemetryData(telemetryCommand, commandOption);
-    });
-    const disposableStandalonePreview = commands.registerCommand("docs.showPreview", (uri) => {
-        commands.executeCommand("markdown.showPreview");
-        const commandOption = "show-preview-tab";
-        sendTelemetryData(telemetryCommand, commandOption);
-    });
-    const provider = new DocumentContentProvider();
-
-    context.subscriptions.push(workspace.onDidChangeTextDocument(async (event) => {
-        if (isMarkdownFile(event.document) || isYamlFile(event.document)) {
-            panel.webview.html = await provider.provideTextDocumentContent();
-        }
-    }));
-
-    const disposableSEOPreview = commands.registerCommand("docs.seoPreview", seoPreview(ViewColumn.One));
-    const disposableSideSEOPreview = commands.registerCommand("docs.seoPreviewToSide", seoPreview(ViewColumn.Two));
-    context.subscriptions.push(
-        disposableSidePreview,
-        disposableStandalonePreview,
-        disposableSEOPreview,
-        disposableSideSEOPreview);
-    return {
-        extendMarkdownIt(md) {
-            return md.use(include, { root: workingPath })
-                .use(codeSnippets, { root: workingPath })
-                .use(tripleColonCodeSnippets, { root: workingPath })
-                .use(xref)
-                .use(column_end)
-                .use(container_plugin, "row", rowOptions)
-                .use(container_plugin, "row-end", rowEndOptions)
-                .use(container_plugin, "column", columnOptions)
-                .use(container_plugin, "column-end", columnEndOptions)
-                .use(div_plugin, "div", divOptions)
-                .use(container_plugin, "image", imageOptions)
-                .use(image_end)
-                .use(video_plugin, "video", videoOptions);
-        },
-    };
-
-    function seoPreview(column): (...args: any[]) => any {
-        return async () => {
-            // Create and show a new webview
-            panel = window.createWebviewPanel("seoPreview", "SEO Preview", { preserveFocus: true, viewColumn: column }, {});
-            panel.webview.html = await provider.provideTextDocumentContent();
-        };
-    }
 }
 
 // this method is called when your extension is deactivated
@@ -130,15 +135,25 @@ export function deactivate() {
     output.appendLine("Deactivating extension.");
 }
 
-function promptForReload(message: string) {
-    workspace.onDidChangeConfiguration((e: any) => {
-        if (e.affectsConfiguration(previewThemeSetting)) {
-            window.showInformationMessage(message, "Reload")
-                .then((res) => {
-                    if (res === "Reload") {
-                        commands.executeCommand("workbench.action.reloadWindow");
-                    }
-                });
-        }
-    });
+function promptForReload(e, message: string) {
+    if (e.affectsConfiguration(previewThemeSetting)) {
+        window.showInformationMessage(message, "Reload")
+            .then((res) => {
+                if (res === "Reload") {
+                    commands.executeCommand("workbench.action.reloadWindow");
+                }
+            });
+    }
+}
+
+async function getRecentlyOpenDocument(filePath: string, context: ExtensionContext) {
+    if (!filePath) {
+        filePath = context.globalState.get("openDocument");
+    } else if (filePath === "extension-output-#1"
+        || filePath === "tasks") {
+        filePath = context.globalState.get("openDocument");
+    } else {
+        await context.globalState.update("openDocument", filePath);
+    }
+    return filePath;
 }
