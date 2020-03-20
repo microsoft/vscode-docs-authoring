@@ -419,11 +419,3 @@ export function extractDocumentLink(
 export const naturalLanguageCompare = (a: string, b: string) => {
     return (!!a && !!b) ? a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }) : 0;
 };
-
-export function tryGetSelection(editor: TextEditor) {
-    if (!isMarkdownFileCheck(editor)) {
-        return;
-    }
-    const selection = editor.selection;
-    return editor.document.getText(selection);
-}
