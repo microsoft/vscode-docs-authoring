@@ -103,7 +103,7 @@ export async function applyXref() {
     noActiveEditorMessage();
     return;
   } else {
-    if (!isMarkdownFileCheck(editor, false)) {
+    if (!isMarkdownFileCheck(editor)) {
       return;
     }
   }

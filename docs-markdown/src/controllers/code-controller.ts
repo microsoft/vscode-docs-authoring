@@ -29,7 +29,7 @@ export function formatCode() {
             return;
         }
 
-        if (!isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor)) {
             return;
         }
 

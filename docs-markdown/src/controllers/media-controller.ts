@@ -339,7 +339,7 @@ export function selectLinkType() {
             return;
         }
 
-        if (!isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor)) {
             return;
         }
 
@@ -368,7 +368,7 @@ export function selectLinkTypeToolbar(toolbar?: boolean) {
         return;
     }
 
-    if (!isMarkdownFileCheck(editor, false)) {
+    if (!isMarkdownFileCheck(editor)) {
         return;
     }
 
@@ -399,7 +399,7 @@ export function selectMediaType() {
             return;
         }
 
-        if (!isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor)) {
             return;
         }
 

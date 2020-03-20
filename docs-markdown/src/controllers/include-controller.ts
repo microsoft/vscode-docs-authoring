@@ -36,7 +36,7 @@ export async function insertInclude() {
         folderPath = workspace.workspaceFolders[0].uri.fsPath;
     }
 
-    if (!isMarkdownFileCheck(editor, false)) {
+    if (!isMarkdownFileCheck(editor)) {
         return;
     }
 

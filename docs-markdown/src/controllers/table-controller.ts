@@ -55,7 +55,7 @@ export function insertTable() {
         return;
     }
 
-    if (!isMarkdownFileCheck(editor, false)) {
+    if (!isMarkdownFileCheck(editor)) {
         return;
     }
 

@@ -26,7 +26,7 @@ export function formatBold() {
         noActiveEditorMessage();
         return;
     } else {
-        if (!isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor)) {
             return;
         }
 

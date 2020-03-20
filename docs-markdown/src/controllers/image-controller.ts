@@ -216,7 +216,7 @@ function checkEditor(editor: any) {
         return;
     }
 
-    if (!isMarkdownFileCheck(editor, false)) {
+    if (!isMarkdownFileCheck(editor)) {
         return;
     }
 

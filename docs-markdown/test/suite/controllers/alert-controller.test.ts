@@ -2,8 +2,8 @@ import * as chai from "chai";
 import * as spies from "chai-spies";
 import { resolve } from "path";
 import { Uri, window, workspace } from "vscode";
-import { insertAlert, insertAlertCommand } from "../../../controllers/alert-controller";
-import * as common from "../../../helper/common";
+import { insertAlert, insertAlertCommand } from "../../../src/controllers/alert-controller";
+import * as common from "../../../src/helper/common";
 
 chai.use(spies);
 
@@ -22,7 +22,7 @@ suite("Alert Controller", () => {
         expect(spy).to.have.been.called();
     });
     test("isMarkdownFileCheck", async () => {
-        const filePath = resolve(__dirname, "../../../../../src/test/data/docs-markdown.md");
+        const filePath = resolve(__dirname, "../../../../test/data/docs-markdown.md");
         const docUri = Uri.file(filePath);
         const document = await workspace.openTextDocument(docUri);
         await window.showTextDocument(document);
@@ -32,7 +32,7 @@ suite("Alert Controller", () => {
         expect(spy).to.have.been.called();
     });
     test("insertContentToEditor - Note", async () => {
-        const filePath = resolve(__dirname, "../../../../../src/test/data/docs-markdown.md");
+        const filePath = resolve(__dirname, "../../../../test/data/docs-markdown.md");
         const docUri = Uri.file(filePath);
         const document = await workspace.openTextDocument(docUri);
         await window.showTextDocument(document);

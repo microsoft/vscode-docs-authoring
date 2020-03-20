@@ -8,6 +8,7 @@ import * as vscode from "vscode";
 
 import * as log from "./log";
 import { output } from "./output";
+import { TextEditor } from "vscode";
 
 
 export function tryFindFile(rootPath: string, fileName: string) {
@@ -286,7 +287,7 @@ export function rtrim(str: string, chr: string) {
  * Commands should only run on markdown files.
  * @param {vscode.TextEditor} editor - the active editor in vs code.
  */
-export function isMarkdownFileCheck(editor: vscode.TextEditor, languageId: boolean) {
+export function isMarkdownFileCheck(editor: vscode.TextEditor) {
     if (editor.document.languageId !== "markdown") {
         if (editor.document.languageId !== "yaml") {
             postInformation("The docs-markdown extension only works on Markdown files.");
@@ -418,3 +419,11 @@ export function extractDocumentLink(
 export const naturalLanguageCompare = (a: string, b: string) => {
     return (!!a && !!b) ? a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }) : 0;
 };
+
+export function tryGetSelection(editor: TextEditor) {
+    if (!isMarkdownFileCheck(editor)) {
+        return;
+    }
+    const selection = editor.selection;
+    return editor.document.getText(selection);
+}

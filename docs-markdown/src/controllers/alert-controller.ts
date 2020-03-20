@@ -28,7 +28,7 @@ export function insertAlert() {
         const selectedText = editor.document.getText(selection);
         let formattedText;
 
-        if (!isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor)) {
             return;
         }
 

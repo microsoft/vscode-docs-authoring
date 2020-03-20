@@ -35,7 +35,7 @@ export function insertNumberedList() {
             return;
         }
 
-        if (!isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor)) {
             return;
         }
 
@@ -62,7 +62,7 @@ export function insertBulletedList() {
             return;
         }
 
-        if (!isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor)) {
             return;
         }
 
@@ -93,7 +93,7 @@ export function automaticList() {
                 return;
             }
 
-            if (!isMarkdownFileCheck(editor, false)) {
+            if (!isMarkdownFileCheck(editor)) {
                 return;
             }
 
@@ -147,7 +147,7 @@ export function insertNestedList() {
             return;
         }
 
-        if (!isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor)) {
             return;
         }
 
@@ -204,7 +204,7 @@ export function removeNestedList() {
         noActiveEditorMessage();
         return;
     } else {
-        if (!isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor)) {
             return;
         }
 

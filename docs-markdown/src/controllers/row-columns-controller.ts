@@ -25,7 +25,7 @@ export function insertRowsAndColumns() {
         noActiveEditorMessage();
         return;
     } else {
-        if (!isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor)) {
             return;
         }
 

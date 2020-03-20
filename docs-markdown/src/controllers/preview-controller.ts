@@ -23,7 +23,7 @@ export function previewTopic() {
             return;
         }
 
-        if (!isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor)) {
             return;
         }
 

@@ -28,7 +28,7 @@ export function formatItalic() {
             return;
         }
 
-        if (!isMarkdownFileCheck(editor, false)) {
+        if (!isMarkdownFileCheck(editor)) {
             return;
         }
 

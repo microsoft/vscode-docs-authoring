@@ -34,7 +34,7 @@ export function insertSnippet() {
         return;
     }
 
-    if (!isMarkdownFileCheck(editor, false)) {
+    if (!isMarkdownFileCheck(editor)) {
         return;
     }
 

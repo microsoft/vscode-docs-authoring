@@ -37,7 +37,7 @@ export function noLocText() {
     }
 
     // is this a markdown file or yaml?
-    if (isMarkdownFileCheck(editor, false)) {
+    if (isMarkdownFileCheck(editor)) {
         // if markdown, is the user's cursor in the yaml header?
         if (isCursorInsideYamlHeader(editor)) {
             insertYamlNoLocEntry(editor);
@@ -57,7 +57,7 @@ function insertYamlNoLocEntry(editor: TextEditor) {
         return;
     }
 
-    if (isMarkdownFileCheck(editor, false)) {
+    if (isMarkdownFileCheck(editor)) {
         const insertText = "no-loc: []";
         insertContentToEditor(editor, insertYamlNoLocEntry.name, insertText, false);
         const newPosition = new Position(editor.selection.active.line, insertText.indexOf("]"));
