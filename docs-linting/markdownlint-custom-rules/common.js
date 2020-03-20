@@ -72,7 +72,7 @@ module.exports.linkPattern = /(http:\/\/(|www\.))(visualstudio\.com|msdn\.com|mi
 //xref
 module.exports.openXref = /(<|\()xref(:)?.*?(>|\))/gmi;
 module.exports.xrefHasSpace = /(<|\()xref:[ ]+((>|\)))?/gmi;
-module.exports.xrefShouldIncludeColon = /(<|\()xref(?!:)(.*?)?(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(>|\))/gmi;
+module.exports.xrefShouldIncludeColon = /(<|\()xref(?!:)(.*?)?(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(?<!.md)(>|\))/gmi;
 module.exports.missingUidAttributeXref = /(<|\()xref:(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(>|\))/g;
 module.exports.xrefHasPropertyQuestionMark = /(<|\()xref:(.*?)(\?)((>|\)))?/g;
 module.exports.xrefHasDisplayProperty = /displayProperty=/g;
