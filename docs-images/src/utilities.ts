@@ -52,8 +52,9 @@ export function resultsToString(results: Result[]): string {
     const count = results.length;
     const reduction = calculatePercentReduction(beforeSum, afterSum);
     const resizedMessage = !!resized ? ` (and resized ${resized})` : "";
+    const individualResults = results.map(r => `${resultToString(r)}`).join("\n");
 
-    return `Compressed ${count} images${resizedMessage}: from ${toHumanReadableString(beforeSum)} to ${toHumanReadableString(afterSum)}, reduced by ${reduction}`;
+    return `${individualResults}\nCompressed ${count} images${resizedMessage} in total, from ${toHumanReadableString(beforeSum)} to ${toHumanReadableString(afterSum)}, reduced by ${reduction}`;
 }
 
 function sum<T>(array: T[], selector: (t: T) => number): number {
