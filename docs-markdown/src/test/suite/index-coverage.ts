@@ -42,7 +42,7 @@ export function run(): Promise<void> {
 		timeout: 5000,
 		reporter: 'mocha-junit-reporter',
 		reporterOptions: {
-			mochaFile: '../../out/coverage/text-results.xml'
+			mochaFile: '../../out/coverage/test-results.xml'
 		}
 	});
 
