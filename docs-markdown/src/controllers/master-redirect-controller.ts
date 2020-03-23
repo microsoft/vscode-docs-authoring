@@ -5,7 +5,7 @@ import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
 import { URL } from "url";
-import { Uri, window, workspace, WorkspaceFolder } from "vscode";
+import { Position, Selection, Uri, window, workspace, WorkspaceFolder } from "vscode";
 import * as YAML from "yamljs";
 import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
 import { output } from "../helper/output";
@@ -19,6 +19,7 @@ export function getMasterRedirectionCommand() {
     return [
         { command: generateMasterRedirectionFile.name, callback: generateMasterRedirectionFile },
         { command: sortMasterRedirectionFile.name, callback: sortMasterRedirectionFile },
+        { command: applyRedirectDaisyChainResolution.name, callback: applyRedirectDaisyChainResolution },
     ];
 }
 
@@ -73,35 +74,45 @@ interface IMarkdownConfig {
     docsetRootFolderName: string;
 }
 
-class RedirectUrl {
+const docsMicrosoftCom = "https://docs.microsoft.com";
+
+export class RedirectUrl {
     public static parse(config: IMarkdownConfig, value: string): RedirectUrl | null {
         try {
-            const url = new URL(`https://docs.microsoft.com${value}`);
-            return new RedirectUrl(config, value, url, url.hash, url.search);
+            const url = new URL(value.startsWith(docsMicrosoftCom) ? value : `${docsMicrosoftCom}${value}`);
+            return new RedirectUrl(config, value, url);
         } catch (error) {
             return null;
         }
     }
 
-    private _normalizedPath: string = "";
-    get normalizedPath(): string {
-        if (!!this._normalizedPath) {
-            return this._normalizedPath;
+    private _filePath: string = "";
+    get filePath(): string {
+        if (!!this._filePath) {
+            return this._filePath;
         }
 
+        // Put the URL into the same format as source_path, instead of
+        // "/azure/cognitive-services/speech-service/overview" we'd get
+        // "articles/cognitive-services/speech-service/overview.md"
         const config = this.config;
-        const replacedSegmentUrl = this.originalValue.substring(1).replace(config.docsetName, config.docsetRootFolderName);
-        this._normalizedPath = `${replacedSegmentUrl}.md`;
+        const value = this.url.pathname;
+        const replacedSegmentUrl =
+            value.substring(1)
+                .replace(config.docsetName, config.docsetRootFolderName);
 
-        return this._normalizedPath;
+        return this._filePath = `${replacedSegmentUrl}.md`;
     }
 
     private constructor(
         private readonly config: IMarkdownConfig,
         public readonly originalValue: string,
-        public readonly url: URL,
-        public readonly hash: string,
-        public readonly query: string) { }
+        public readonly url: URL) { }
+
+    public toUrl(): string {
+        const withoutExtension = this.filePath.replace(".md", "");
+        return `/${withoutExtension.replace(this.config.docsetRootFolderName, this.config.docsetName)}`;
+    }
 }
 
 function showStatusMessage(message: string) {
@@ -110,58 +121,94 @@ function showStatusMessage(message: string) {
     output.show();
 }
 
-function applyRedirectDaisyChainShortcuts(redirects: IMasterRedirections) {
+async function applyRedirectDaisyChainResolution() {
+    const editor = window.activeTextEditor;
+    if (!editor) {
+        postWarning("Editor not active. Abandoning command.");
+        return;
+    }
+
+    let redirects: IMasterRedirections | null = null;
+    const folder = workspace.getWorkspaceFolder(editor.document.uri);
+    if (!folder) {
+        return;
+    }
+
+    const file = tryFindFile(folder.uri.fsPath, redirectFileName);
+    if (!!file && fs.existsSync(file)) {
+        const jsonBuffer = fs.readFileSync(file);
+        redirects = JSON.parse(jsonBuffer.toString()) as IMasterRedirections;
+    }
+
     if (!redirects || !redirects.redirections) {
         return;
     }
 
-    const redirectsLookup = new Map<string, IMasterRedirection>();
-    redirects.redirections.forEach((redirect) => redirectsLookup.set(redirect.source_path, redirect));
+    const config = workspace.getConfiguration("markdown");
+    const options = {
+        docsetName: config.docsetName,
+        docsetRootFolderName: config.docsetRootFolderName,
+    };
+    const redirectsLookup = new Map<string, { url: RedirectUrl | null, redirect: IMasterRedirection }>();
+    redirects.redirections.forEach((redirect) => {
+        redirectsLookup.set(redirect.source_path, {
+            redirect,
+            url: RedirectUrl.parse(options, redirect.redirect_url),
+        });
+    });
 
-    const docsetName = workspace.getConfiguration("markdown").docsetName;
-    const docsetRootFolderName = workspace.getConfiguration("markdown").docsetRootFolderName;
-    const options = { docsetName, docsetRootFolderName };
-    const docsetRoute = `/${docsetName}/`;
+    const findRedirect = (sourcePath: string) => {
+        return redirectsLookup.has(sourcePath)
+            ? redirectsLookup.get(sourcePath)
+            : null;
+    };
 
-    redirectsLookup.forEach((redirect, sourcePath) => {
-        let currentTarget = redirect.redirect_url;
-        if (!currentTarget.startsWith(docsetRoute)) {
+    let resolvedDaisyChains = false;
+    redirectsLookup.forEach((source, _) => {
+        const { url, redirect } = source;
+        if (!url || !redirect) {
             return;
         }
 
-        // Put the URL into the same format as source_path
-        let redirectUrl = RedirectUrl.parse(options, currentTarget);
-        if (!redirectUrl) {
-            return;
+        const redirectFilePath = url.filePath;
+
+        let daisyChainPath = null;
+        let targetRedirectUrl = null;
+        let targetRedirect = findRedirect(redirectFilePath);
+        while (targetRedirect !== null) {
+            targetRedirectUrl = targetRedirect!.url!.toUrl();
+            daisyChainPath = targetRedirect!.url!.filePath;
+            targetRedirect = findRedirect(daisyChainPath);
         }
 
-        let normalizedTargetPath = redirectUrl.normalizedPath;
-        while (redirectsLookup.has(normalizedTargetPath)) {
-            const current = redirectsLookup.get(normalizedTargetPath);
-            // Avoid an infinite loop by checking that this isn't the same key/value pair.
-            if (current!.source_path === currentTarget) {
-                break;
-            }
-
-            currentTarget = current!.redirect_url;
-            if (!currentTarget.startsWith(docsetRoute)) {
-                break;
-            }
-
-            redirectUrl = RedirectUrl.parse(options, currentTarget);
-            if (!redirectUrl) {
-                break;
-            }
-
-            normalizedTargetPath = redirectUrl.normalizedPath;
-        }
-
-        if (currentTarget !== redirect.redirect_url) {
-            // Replacing target URL '{redirectPair.Value}' with '{currentTarget}'
-            // fileText = fileText.Replace($"\"redirect_url\": \"{redirectPair.Value}\"", $"\"redirect_url\": \"{currentTarget}\"");
+        if (targetRedirectUrl && targetRedirectUrl !== source.redirect.redirect_url) {
+            source.redirect.redirect_url = targetRedirectUrl;
+            resolvedDaisyChains = true;
         }
     });
 
+    if (resolvedDaisyChains) {
+        const replacer = (key: string, value: string) => {
+            return key === "redirect_document_id"
+                ? !!value
+                    ? true
+                    : undefined
+                : value;
+        };
+
+        const lineCount = editor.document.lineCount - 1;
+        const lastLine = editor.document.lineAt(lineCount);
+        const entireDocSelection =
+            new Selection(
+                new Position(0, 0),
+                new Position(lineCount, lastLine.range.end.character));
+
+        await editor.edit((builder) => {
+            builder.replace(entireDocSelection, JSON.stringify(redirects, replacer, 4));
+        });
+
+        await editor.document.save();
+    }
 }
 
 export async function sortMasterRedirectionFile() {
@@ -183,9 +230,17 @@ export async function sortMasterRedirectionFile() {
                     return naturalLanguageCompare(a.source_path, b.source_path);
                 });
 
+                const replacer = (key: string, value: string) => {
+                    return key === "redirect_document_id"
+                        ? !!value
+                            ? true
+                            : undefined
+                        : value;
+                };
+
                 fs.writeFileSync(
                     file,
-                    JSON.stringify(redirects, ["redirections", "source_path", "redirect_url", "redirect_document_id"], 4));
+                    JSON.stringify(redirects, replacer, 4));
             }
         }
     }
