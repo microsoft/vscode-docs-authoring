@@ -1,7 +1,6 @@
 import * as glob from "glob";
 import * as Mocha from "mocha";
 import * as path from "path";
-import { output } from "../../helper/output";
 
 function setupNyc() {
 	const NYC = require("nyc");
@@ -47,7 +46,6 @@ export function run(): Promise<void> {
 	});
 
 	const testsRoot = path.resolve(__dirname, "..");
-	output.appendLine(testsRoot);
 	return new Promise((c, e) => {
 		glob("**/**.test.js", { cwd: testsRoot }, (err, files) => {
 			if (err) {
