@@ -1,10 +1,11 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { output } from "../extension";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, sendTelemetryData } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 import { FormatOptions, MarkdownTable } from "../helper/markdown-table";
 import { tableBuilder, validateTableRowAndColumnCount } from "../helper/utility";
+import { output } from "../helper/output";
 
 const telemetryCommand: string = "insertTable";
 let commandOption: string;

@@ -275,7 +275,7 @@ export function includeBuilder(link: string, title: string) {
 
 export function snippetBuilder(language: string, relativePath: string, id?: string, range?: string) {
     if (id) {
-        return `:::code language="${language}" source="${relativePath}" id=${id}":::`;
+        return `:::code language="${language}" source="${relativePath}" id="${id}":::`;
     } else if (range) {
         return `:::code language="${language}" source="${relativePath}" range="${range}":::`;
     } else {

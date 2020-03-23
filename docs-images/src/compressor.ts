@@ -69,8 +69,8 @@ export class ImageCompressor {
             const reduction = calculatePercentReduction(before, after);
 
             return {
-                wasCompressed,
-                wasResized,
+                wasCompressed: !!wasCompressed,
+                wasResized: !!wasResized,
                 file: getFileName(filePath),
                 originalSize: before,
                 before: toHumanReadableString(before),
@@ -100,110 +100,138 @@ export class ImageCompressor {
     }
 
     private getFileExtension(filePath: string) {
+        if (!filePath) {
+            return null;
+        }
+
         const result = this.fileExtensionExpression.exec(filePath);
         return result ? result[0] : null;
     }
 
     private async tryApplyImageDimensions(filePath: string, maxWidth: number = 0, maxHeight: number = 0) {
-        if (!!maxWidth || !!maxHeight) {
-            let dimensions = size.imageSize(filePath);
-            const workingMaxWidth = maxWidth > 0 ? maxWidth : dimensions.width ?? 0;
-            const workingMaxHeight = maxHeight > 0 ? maxHeight : dimensions.height ?? 0;
-            if (dimensions &&
-                (dimensions.width ?? 0) > workingMaxWidth ||
-                (dimensions.height ?? 0) > workingMaxHeight) {
-                this.updateStatus(Status.AttemptingResize, `Resizing large image ${dimensions.width}x${dimensions.height}.`);
-                const image = await jimp.read(filePath);
-                image.resize(
-                    maxWidth || jimp.AUTO,
-                    maxHeight || jimp.AUTO);
+        return await this.tryAction(async () => {
+            if (!!maxWidth || !!maxHeight) {
+                let dimensions = size.imageSize(filePath);
+                const workingMaxWidth = maxWidth > 0 ? maxWidth : dimensions.width ?? 0;
+                const workingMaxHeight = maxHeight > 0 ? maxHeight : dimensions.height ?? 0;
+                if (dimensions &&
+                    (dimensions.width ?? 0) > workingMaxWidth ||
+                    (dimensions.height ?? 0) > workingMaxHeight) {
+                    this.updateStatus(
+                        Status.AttemptingResize,
+                        `Attempting to resize large image: ${dimensions.width}x${dimensions.height}.`);
 
-                await image.writeAsync(filePath);
-                dimensions = size.imageSize(filePath);
-                this.updateStatus(Status.AttemptingResize, `Resized image to ${dimensions.width}x${dimensions.height}.`);
+                    const image = await jimp.read(filePath);
+                    image.resize(
+                        maxWidth || jimp.AUTO,
+                        maxHeight || jimp.AUTO);
+    
+                    await image.writeAsync(filePath);
+                    dimensions = size.imageSize(filePath);
+                    this.updateStatus(
+                        Status.AttemptingResize,
+                        `Successfully resized image to: ${dimensions.width}x${dimensions.height}.`);
 
-                return true;
+                    return true;
+                }
             }
-        }
-        
-        return false;
+    
+            return false;
+        }, Promise.resolve(false));
     }
 
     private async tryApplyImageCompression(filePath: string) {
-        const plugins = [];
-        const fileExtension = this.getFileExtension(filePath);
-        switch ((fileExtension || "").toLowerCase()) {
-            case ".png":
-                plugins.push(
-                    imageminPng({   // https://www.npmjs.com/package/imagemin-optipng#optimizationlevel
-                        optimizationLevel: 3
-                    }));
-                break;
-            case ".jpg":
-            case ".jpeg":
-                plugins.push(
-                    imageminJpeg({  // https://www.npmjs.com/package/imagemin-jpegtran#api
-                        arithmetic: true
-                    }));
-                break;
-            case ".gif":
-                plugins.push(
-                    imageminGif({   // https://www.npmjs.com/package/imagemin-gifsicle#optimizationlevel
-                        optimizationLevel: 2
-                    }));
-                break;
-            case ".svg":
-                plugins.push(
-                    imageminSvg());  // https://github.com/svg/svgo#what-it-can-do);
-                break;
-            case ".webp":
-                plugins.push(
-                    imageminWebp({  // https://www.npmjs.com/package/imagemin-webp#api
-                        lossless: true,
-                        metadata: "all"
-                    }));
-                break;
-        }
-
-        if (!plugins || !plugins.length){
-            return false;
-        }
-
-        const options: imagemin.Options = {
-            destination: "temp/images",
-            glob: false,
-            plugins: plugins
-        };
-
-        let wasCompressed = false;
-        const results = await imagemin([ filePath ], options);
-        if (!!results && results.length) {
-            const result = results[0];
-            if (!!result) {
-                const tempPath = path.resolve(result.destinationPath);
-                fs.copyFileSync(tempPath, result.sourcePath);
-                fs.unlinkSync(tempPath);
-
-                wasCompressed = true;
-                this.updateStatus(Status.Done, `Successfully compressed "${filePath}".`);
+        return await this.tryAction(async () => {
+            const plugins = [];
+            const fileExtension = this.getFileExtension(filePath);
+            switch ((fileExtension || "").toLowerCase()) {
+                case ".png":
+                    this.writeMessage(`Using .png compression plugin for: "${filePath}"`);
+                    plugins.push(
+                        imageminPng({   // https://www.npmjs.com/package/imagemin-optipng#optimizationlevel
+                            optimizationLevel: 7
+                        }));
+                    break;
+                case ".jpg":
+                case ".jpeg":
+                    this.writeMessage(`Using .jpg & .jpeg compression plugin for: "${filePath}"`);
+                    plugins.push(
+                        imageminJpeg({  // https://www.npmjs.com/package/imagemin-jpegtran#api
+                            arithmetic: true
+                        }));
+                    break;
+                case ".gif":
+                    this.writeMessage(`Using .gif compression plugin for: "${filePath}"`);
+                    plugins.push(
+                        imageminGif({   // https://www.npmjs.com/package/imagemin-gifsicle#optimizationlevel
+                            optimizationLevel: 3
+                        }));
+                    break;
+                case ".svg":
+                    this.writeMessage(`Using .svg compression plugin for: "${filePath}"`);
+                    plugins.push(
+                        imageminSvg());  // https://github.com/svg/svgo#what-it-can-do);
+                    break;
+                case ".webp":
+                    this.writeMessage(`Using .webp compression plugin for: "${filePath}"`);
+                    plugins.push(
+                        imageminWebp({  // https://www.npmjs.com/package/imagemin-webp#api
+                            lossless: true,
+                            metadata: "all"
+                        }));
+                    break;
             }
-        }
 
-        return wasCompressed;
+            if (!plugins || !plugins.length) {
+                this.writeMessage(`Unable to resolve plugin for: "${filePath}"`);
+                return false;
+            }
+
+            const options: imagemin.Options = {
+                destination: "temp/images",
+                glob: false,
+                plugins: plugins
+            };
+
+            let wasCompressed = false;
+            const results = await imagemin([ filePath ], options);
+            if (!!results && results.length) {
+                const result = results[0];
+                if (!!result) {
+                    const tempPath = path.resolve(result.destinationPath);
+                    fs.copyFileSync(tempPath, result.sourcePath);
+                    fs.unlinkSync(tempPath);
+
+                    wasCompressed = true;
+                    this.updateStatus(Status.Done, `Successfully compressed ${this.toFileUri(filePath)}.`);
+                }
+            } else {
+                this.updateStatus(Status.Done, `Unable to compress "${this.toFileUri(filePath)}".`);
+            }
+
+            return wasCompressed;
+        }, Promise.resolve(false));
     }
 
     private updateStatus(status: Status, message: string) {
-        if (this.isBatching) {
-            if (status > this.currentStatus) {
-                this.currentStatus = status;
-                const statusMsg = this.statusToMessage(status);
-                this.output.appendLine(statusMsg);
-                this.progress.report({ message: statusMsg });
+        this.tryAction(() => {
+            if (this.isBatching) {
+                if (status > this.currentStatus) {
+                    this.currentStatus = status;
+                    const statusMsg = this.statusToMessage(status);
+                    this.writeMessage(statusMsg);
+                }
+            } else {
+                this.writeMessage(message);
             }
-        } else {
+        }, undefined);
+    }
+
+    private writeMessage(message: string) {
+        this.tryAction(() => {
             this.output.appendLine(message);
             this.progress.report({ message });
-        }
+        }, undefined);
     }
 
     private statusToMessage(status: Status): string {
@@ -214,5 +242,32 @@ export class ImageCompressor {
             case Status.Done: return "Image compression complete";
             default: return "Idle...";
         }
+    }
+
+    private toFileUri(filePath: string): string {
+        return this.tryAction(() => {
+            let pathName = path.resolve(filePath).replace(/\\/g, '/');
+
+            // Windows drive letter must be prefixed with a slash
+            if (pathName[0] !== '/') {
+                pathName = `/${pathName}`;
+            }
+
+            return encodeURI(`file://${pathName}`);
+        }, filePath);
+    }
+
+    private tryAction<T>(action: () => T, defaultValue: T): T {
+        try {
+            return action();
+        } catch (error) {
+            if (error instanceof Error) {
+                this.output.appendLine(error.message);
+            } else {
+                console.error(error);
+            }
+        }
+
+        return defaultValue;
     }
 }
