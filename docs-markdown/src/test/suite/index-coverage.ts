@@ -20,7 +20,7 @@ function setupNyc() {
 		hookRunInContext: true,
 		hookRunInThisContext: true,
 		instrument: true,
-		reporter: ["text", "html"],
+		reporter: ["text", "html", "cobertura"],
 		require: [
 			"ts-node/register",
 		],
@@ -40,6 +40,10 @@ export function run(): Promise<void> {
 		color: true,
 		ui: "tdd",
 		timeout: 5000,
+		reporter: 'mocha-junit-reporter',
+		reporterOptions: {
+			mochaFile: '../../out/coverage/text-results.xml'
+		}
 	});
 
 	const testsRoot = path.resolve(__dirname, "..");
