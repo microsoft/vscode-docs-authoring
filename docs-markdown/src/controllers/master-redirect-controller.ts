@@ -224,6 +224,14 @@ async function applyRedirectDaisyChainResolution() {
                     ? targetRedirectUrl
                     : source.redirect!.adaptHashAndQueryString(targetRedirectUrl);
             source.redirection.redirect_url = newRedirectUrl;
+
+            if (source.redirection.redirect_document_id) {
+                if (isExternalUrl ||
+                    !newRedirectUrl.startsWith(`/${options.docsetName}/`)) {
+                    source.redirection.redirect_document_id = false;
+                }
+            }
+
             resolvedDaisyChains = true;
         }
     });
