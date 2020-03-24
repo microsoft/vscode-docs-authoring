@@ -113,6 +113,17 @@ export class RedirectUrl {
         const withoutExtension = this.filePath.replace(".md", "");
         return `/${withoutExtension.replace(this.config.docsetRootFolderName, this.config.docsetName)}`;
     }
+
+    public adaptHashAndQueryString(redirectUrl: string): string {
+        let resultingRedirectUrl = redirectUrl;
+        if (this.url.search) {
+            resultingRedirectUrl += this.url.search;
+        }
+        if (this.url.hash) {
+            resultingRedirectUrl += this.url.hash;
+        }
+        return resultingRedirectUrl;
+    }
 }
 
 async function applyRedirectDaisyChainResolution() {
@@ -184,7 +195,8 @@ async function applyRedirectDaisyChainResolution() {
 
         if (targetRedirectUrl && targetRedirectUrl !== source.redirect.redirect_url) {
             daisyChainsResolved++;
-            source.redirect.redirect_url = targetRedirectUrl;
+            const newRedirectUrl = source.url!.adaptHashAndQueryString(targetRedirectUrl);
+            source.redirect.redirect_url = newRedirectUrl;
             resolvedDaisyChains = true;
         }
     });
