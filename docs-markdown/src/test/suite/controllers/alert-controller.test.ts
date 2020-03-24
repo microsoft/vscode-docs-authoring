@@ -29,6 +29,7 @@ suite("Alert Controller", () => {
 
         const spy = chai.spy.on(common, "isMarkdownFileCheck");
         insertAlert();
+        await sleep(300);
         expect(spy).to.have.been.called();
     });
     test("insertContentToEditor - Note", async () => {
@@ -42,14 +43,14 @@ suite("Alert Controller", () => {
         };
         const spy = chai.spy.on(common, "insertContentToEditor");
         insertAlert();
-        await sleep(400);
+        await sleep(500);
         expect(spy).to.have.been.called();
     });
 
 });
 
 function sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
+    return new Promise((r) => {
+        setTimeout(r, ms);
     });
 }
