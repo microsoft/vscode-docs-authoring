@@ -45,7 +45,9 @@ export async function activate(context: ExtensionContext) {
 
     context.subscriptions.push(workspace.onDidChangeTextDocument(async (event) => {
         if (isMarkdownFile(event.document) || isYamlFile(event.document)) {
-            panel.webview.html = await provider.provideTextDocumentContent();
+            if (panel) {
+                panel.webview.html = await provider.provideTextDocumentContent();
+            }
         }
     }));
 
