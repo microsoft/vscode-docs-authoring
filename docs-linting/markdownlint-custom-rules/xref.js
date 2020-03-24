@@ -11,8 +11,6 @@ module.exports = {
     "tags": ["validation"],
     "function": function rule(params, onError) {
         try {
-
-
             const doc = params.lines.join("\n");
             const fullLooseMatches = doc.match(common.openXref);
             if (fullLooseMatches) {
