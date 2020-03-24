@@ -6,11 +6,11 @@ const expect = chai.expect;
 suite("Utility helper class", () => {
     test("inferLanguageFromFileExtension returns null when not found", () => {
         const lang = utility.inferLanguageFromFileExtension(".foobar");
-        expect(lang).to.be.null("The .foobar extension shouldn't infer a language.");
+        expect(lang).to.be.equal(null);
     });
 
     test("inferLanguageFromFileExtension returns correct language when found", () => {
         const lang = utility.inferLanguageFromFileExtension(".ts");
-        expect(lang ? lang.language : "").to.be("TypeScript");
+        expect(lang ? lang.language : "").to.be.equal("TypeScript");
     });
 });
