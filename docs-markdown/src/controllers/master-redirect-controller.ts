@@ -157,6 +157,8 @@ async function applyRedirectDaisyChainResolution() {
             : null;
     };
 
+    let daisyChainsResolved = 0;
+    let maxDepthResolved = 0;
     let resolvedDaisyChains = false;
     redirectsLookup.forEach((source, _) => {
         const { url, redirect } = source;
@@ -168,14 +170,20 @@ async function applyRedirectDaisyChainResolution() {
 
         let daisyChainPath = null;
         let targetRedirectUrl = null;
+        let depthResolved = 0;
         let targetRedirect = findRedirect(redirectFilePath);
         while (targetRedirect !== null) {
+            depthResolved++;
+            if (depthResolved > maxDepthResolved) {
+                maxDepthResolved = depthResolved;
+            }
             targetRedirectUrl = targetRedirect!.url!.toUrl();
             daisyChainPath = targetRedirect!.url!.filePath;
             targetRedirect = findRedirect(daisyChainPath);
         }
 
         if (targetRedirectUrl && targetRedirectUrl !== source.redirect.redirect_url) {
+            daisyChainsResolved++;
             source.redirect.redirect_url = targetRedirectUrl;
             resolvedDaisyChains = true;
         }
@@ -183,6 +191,8 @@ async function applyRedirectDaisyChainResolution() {
 
     if (resolvedDaisyChains) {
         await updateRedirects(editor, redirects, config);
+        const numberFormat = Intl.NumberFormat();
+        showStatusMessage(`Resolved ${numberFormat.format(daisyChainsResolved)} daisy chains, at a max-depth of ${maxDepthResolved}!`);
     }
 }
 
