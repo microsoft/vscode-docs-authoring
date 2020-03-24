@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.8 (March 4th, 2020)
+
+- Updated readme with info about each extension
+
 ## 0.1.7 (March 4th, 2020)
 
 - [docs-linting](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-linting)
