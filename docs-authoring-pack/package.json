@@ -3,7 +3,7 @@
   "displayName": "Docs Authoring Pack",
   "description": "Collection of extensions to assist with content development for docs.microsoft.com",
   "icon": "images/docs-logo-ms.png",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "publisher": "docsmsft",
   "engines": {
     "vscode": "^1.20.0"
