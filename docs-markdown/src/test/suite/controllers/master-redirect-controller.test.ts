@@ -45,4 +45,32 @@ suite("Master Redirect Controller", () => {
         expect(redirectUrl!.toUrl()).to.equal("/azure/subject/file");
         expect(redirectUrl!.url.search).to.equal("?pivot=lang-csharp");
     });
+
+    test("RedirectUrl adaptHashAndQueryString correctly maintains query", () => {
+        const url = "https://docs.microsoft.com/azure/subject/file?pivot=lang-csharp";
+        const redirectUrl = RedirectUrl.parse(options, url);
+
+        expect(redirectUrl!.adaptHashAndQueryString("/azure/file")).to.equal("/azure/file?pivot=lang-csharp");
+    });
+
+    test("RedirectUrl adaptHashAndQueryString correctly maintains hash", () => {
+        const url = "https://docs.microsoft.com/azure/subject/file#bookmark";
+        const redirectUrl = RedirectUrl.parse(options, url);
+
+        expect(redirectUrl!.adaptHashAndQueryString("/azure/file")).to.equal("/azure/file#bookmark");
+    });
+
+    test("RedirectUrl isExternalUrl returns false", () => {
+        const url = "https://docs.microsoft.com/azure/subject/file";
+        const redirectUrl = RedirectUrl.parse(options, url);
+
+        expect(redirectUrl!.isExternalUrl).to.be.equal(false);
+    });
+
+    test("RedirectUrl isExternalUrl returns true", () => {
+        const url = "https://github.com/azure-docs";
+        const redirectUrl = RedirectUrl.parse(options, url);
+
+        expect(redirectUrl!.isExternalUrl).to.be.equal(true);
+    });
 });

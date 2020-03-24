@@ -474,13 +474,13 @@
         },
         "markdown.docsetName": {
           "type": "string",
-          "default": "azure",
+          "default": "< Not set >",
           "markdownDescription": "The name of the docset, most often the route segment immediately following the locale in the URL, (i.e.; https://docs.microsoft.com/en-us/azure/ would be 'azure'). Sometimes this value is specified in the `docfx.json` file under the `build/dest` node.",
           "scope": "window"
         },
         "markdown.docsetRootFolderName": {
           "type": "string",
-          "default": "articles",
+          "default": "< Not set >",
           "markdownDescription": "The name of the docset root folder. Sometimes this value is specified in the `docfx.json` file under the `build/resource/src` node.",
           "scope": "window"
         },

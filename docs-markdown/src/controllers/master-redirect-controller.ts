@@ -5,7 +5,7 @@ import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
 import { URL } from "url";
-import { Position, Selection, TextEditor, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder } from "vscode";
+import { Position, Selection, TextEditor, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder, commands } from "vscode";
 import * as YAML from "yamljs";
 import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
 import { output } from "../helper/output";
@@ -74,16 +74,22 @@ interface IMarkdownConfig {
     docsetRootFolderName: string;
 }
 
-const docsMicrosoftCom = "https://docs.microsoft.com";
+const docsHost = "docs.microsoft.com";
+const docsMicrosoftCom = `https://${docsHost}`;
 
 export class RedirectUrl {
     public static parse(config: IMarkdownConfig, value: string): RedirectUrl | null {
         try {
-            const url = new URL(value.startsWith(docsMicrosoftCom) ? value : `${docsMicrosoftCom}${value}`);
+            const input = value.startsWith("/") ? `${docsMicrosoftCom}${value}` : value;
+            const url = new URL(input);
             return new RedirectUrl(config, value, url);
         } catch (error) {
             return null;
         }
+    }
+
+    get isExternalUrl(): boolean {
+        return this.url.host.toLocaleLowerCase() !== docsHost;
     }
 
     private _filePath: string = "";
@@ -154,11 +160,20 @@ async function applyRedirectDaisyChainResolution() {
         docsetName: config.docsetName,
         docsetRootFolderName: config.docsetRootFolderName,
     };
-    const redirectsLookup = new Map<string, { url: RedirectUrl | null, redirect: IMasterRedirection }>();
-    redirects.redirections.forEach((redirect) => {
-        redirectsLookup.set(redirect.source_path, {
-            redirect,
-            url: RedirectUrl.parse(options, redirect.redirect_url),
+    const notSet = "< Not set >";
+    if (options.docsetName === notSet ||
+        options.docsetRootFolderName === notSet) {
+        // Open the settings, and prompt the user to enter values.
+        await commands.executeCommand("workbench.action.openSettings", "@ext:docsmsft.docs-markdown");
+        postWarning("Please set the Docset Name and Docset Root Folder Name before using this command.");
+        return;
+    }
+
+    const redirectsLookup = new Map<string, { redirect: RedirectUrl | null, redirection: IMasterRedirection }>();
+    redirects.redirections.forEach((r) => {
+        redirectsLookup.set(r.source_path, {
+            redirect: RedirectUrl.parse(options, r.redirect_url),
+            redirection: r,
         });
     });
 
@@ -172,7 +187,7 @@ async function applyRedirectDaisyChainResolution() {
     let maxDepthResolved = 0;
     let resolvedDaisyChains = false;
     redirectsLookup.forEach((source, _) => {
-        const { url, redirect } = source;
+        const { redirect: url, redirection: redirect } = source;
         if (!url || !redirect) {
             return;
         }
@@ -182,21 +197,33 @@ async function applyRedirectDaisyChainResolution() {
         let daisyChainPath = null;
         let targetRedirectUrl = null;
         let depthResolved = 0;
+        let isExternalUrl = false;
         let targetRedirect = findRedirect(redirectFilePath);
         while (targetRedirect !== null) {
+            if (!targetRedirect!.redirect || !targetRedirect!.redirection) {
+                break;
+            }
+
             depthResolved++;
             if (depthResolved > maxDepthResolved) {
                 maxDepthResolved = depthResolved;
             }
-            targetRedirectUrl = targetRedirect!.url!.toUrl();
-            daisyChainPath = targetRedirect!.url!.filePath;
+            isExternalUrl = targetRedirect!.redirect.isExternalUrl;
+            targetRedirectUrl =
+                isExternalUrl
+                    ? targetRedirect!.redirect!.url.toString()
+                    : targetRedirect!.redirect!.toUrl();
+            daisyChainPath = targetRedirect!.redirect!.filePath;
             targetRedirect = findRedirect(daisyChainPath);
         }
 
-        if (targetRedirectUrl && targetRedirectUrl !== source.redirect.redirect_url) {
+        if (targetRedirectUrl && targetRedirectUrl !== source.redirection.redirect_url) {
             daisyChainsResolved++;
-            const newRedirectUrl = source.url!.adaptHashAndQueryString(targetRedirectUrl);
-            source.redirect.redirect_url = newRedirectUrl;
+            const newRedirectUrl =
+                isExternalUrl
+                    ? targetRedirectUrl
+                    : source.redirect!.adaptHashAndQueryString(targetRedirectUrl);
+            source.redirection.redirect_url = newRedirectUrl;
             resolvedDaisyChains = true;
         }
     });
