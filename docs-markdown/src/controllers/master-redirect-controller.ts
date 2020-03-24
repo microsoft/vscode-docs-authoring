@@ -5,7 +5,7 @@ import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
 import { URL } from "url";
-import { Position, Selection, Uri, window, workspace, WorkspaceFolder } from "vscode";
+import { Position, Selection, TextEditor, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder } from "vscode";
 import * as YAML from "yamljs";
 import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
 import { output } from "../helper/output";
@@ -115,12 +115,6 @@ export class RedirectUrl {
     }
 }
 
-function showStatusMessage(message: string) {
-    const { msTimeValue } = generateTimestamp();
-    output.appendLine(`[${msTimeValue}] - ` + message);
-    output.show();
-}
-
 async function applyRedirectDaisyChainResolution() {
     const editor = window.activeTextEditor;
     if (!editor) {
@@ -188,27 +182,36 @@ async function applyRedirectDaisyChainResolution() {
     });
 
     if (resolvedDaisyChains) {
-        const replacer = (key: string, value: string) => {
-            return key === "redirect_document_id"
-                ? !!value
-                    ? true
-                    : undefined
-                : value;
-        };
-
-        const lineCount = editor.document.lineCount - 1;
-        const lastLine = editor.document.lineAt(lineCount);
-        const entireDocSelection =
-            new Selection(
-                new Position(0, 0),
-                new Position(lineCount, lastLine.range.end.character));
-
-        await editor.edit((builder) => {
-            builder.replace(entireDocSelection, JSON.stringify(redirects, replacer, 2));
-        });
-
-        await editor.document.save();
+        await updateRedirects(editor, redirects, config);
     }
+}
+
+async function updateRedirects(editor: TextEditor, redirects: IMasterRedirections | null, config: WorkspaceConfiguration) {
+    const lineCount = editor.document.lineCount - 1;
+    const lastLine = editor.document.lineAt(lineCount);
+    const entireDocSelection =
+        new Selection(
+            new Position(0, 0),
+            new Position(lineCount, lastLine.range.end.character));
+
+    await editor.edit((builder) => {
+        builder.replace(entireDocSelection, redirectsToJson(redirects, config));
+    });
+
+    await editor.document.save();
+}
+
+function redirectsToJson(redirects: IMasterRedirections | null, config: WorkspaceConfiguration) {
+    const omitDefaultJsonProperties = config.omitDefaultJsonProperties;
+    const replacer = (key: string, value: string) => {
+        return omitDefaultJsonProperties && key === "redirect_document_id"
+            ? !!value
+                ? true
+                : undefined
+            : value;
+    };
+
+    return JSON.stringify(redirects, replacer, 2);
 }
 
 export async function sortMasterRedirectionFile() {
@@ -230,17 +233,8 @@ export async function sortMasterRedirectionFile() {
                     return naturalLanguageCompare(a.source_path, b.source_path);
                 });
 
-                const replacer = (key: string, value: string) => {
-                    return key === "redirect_document_id"
-                        ? !!value
-                            ? true
-                            : undefined
-                        : value;
-                };
-
-                fs.writeFileSync(
-                    file,
-                    JSON.stringify(redirects, replacer, 4));
+                const config = workspace.getConfiguration("markdown");
+                await updateRedirects(editor, redirects, config);
             }
         }
     }
@@ -429,4 +423,10 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
             });
         }
     }
+}
+
+function showStatusMessage(message: string) {
+    const { msTimeValue } = generateTimestamp();
+    output.appendLine(`[${msTimeValue}] - ` + message);
+    output.show();
 }

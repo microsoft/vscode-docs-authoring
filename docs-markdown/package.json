@@ -484,6 +484,12 @@
           "markdownDescription": "The name of the docset root folder. Sometimes this value is specified in the `docfx.json` file under the `build/resource/src` node.",
           "scope": "window"
         },
+        "markdown.omitDefaultJsonProperties": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "When `true` omits default JSON values when serializing objects, i.e.; the `.openpublishing.redirection.json` file would have the `redirect_document_id` properties omitted when they are `false`.",
+          "scope": "window"
+        },
         "markdown.allAvailableLanguages": {
           "type": "boolean",
           "default": false,
