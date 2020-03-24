@@ -6,6 +6,7 @@ import {
 	QuickPickItem,
 	QuickPickOptions,
 	RelativePattern,
+	TextDocument,
 	TextEditor,
 	Uri,
 	window,
@@ -68,8 +69,7 @@ export async function collapseRelativeLinksInFolder(uri: Uri) {
 				}
 				const file = filePaths[i];
 				const document = await workspace.openTextDocument(file);
-				const editor = await window.showTextDocument(document);
-				const collapsedLinkCount = await collapseRelativeLinksForEditor(editor);
+				const collapsedLinkCount = await collapseRelativeLinksForEditor(document, null);
 				if (collapsedLinkCount > 0) {
 					filesUpdated++;
 					message = `collapsed ${collapsedLinkCount} links in ${basename(file.fsPath)}`;
@@ -84,38 +84,49 @@ export async function collapseRelativeLinksInFolder(uri: Uri) {
 }
 
 export async function collapseRelativeLinks() {
-	await collapseRelativeLinksForEditor(window.activeTextEditor);
-}
-
-export async function collapseRelativeLinksForEditor(editor: TextEditor): Promise<number> {
+	const editor = window.activeTextEditor;
 	if (!editor) {
 		noActiveEditorMessage();
 		return;
 	}
 
-	const content = editor.document.getText();
+	await collapseRelativeLinksForEditor(editor.document, editor);
+}
+
+export async function collapseRelativeLinksForEditor(document : TextDocument, editor: TextEditor): Promise<number> {
+	const content = document.getText();
 	if (!content) {
 		return;
 	}
 
-	const directory = dirname(editor.document.fileName);
-	const tempReplacements = findReplacements(editor.document, content, null, linkRegex);
+	const directory = dirname(document.fileName);
+	const tempReplacements = findReplacements(document, content, null, linkRegex);
+	if (!tempReplacements || tempReplacements.length === 0) {
+		return 0;
+	}
+
 	const replacements: Replacements = [];
-	if (tempReplacements) {
-		// eslint-disable-next-line @typescript-eslint/prefer-for-of
-		for (let i = 0; i < tempReplacements.length; i++) {
-			const replacement = tempReplacements[i];
-			const absolutePath = join(directory, replacement.value);
-			if (replacement && existsSync(absolutePath)) {
-				const relativePath = relative(directory, absolutePath).replace(/\\/g, '/');
-				if (relativePath !== replacement.value && `./${relativePath}` !== replacement.value) {
-					replacements.push({
-						selection: replacement.selection,
-						value: relativePath
-					});
-				}
+	// eslint-disable-next-line @typescript-eslint/prefer-for-of
+	for (let i = 0; i < tempReplacements.length; i++) {
+		const replacement = tempReplacements[i];
+		const absolutePath = join(directory, replacement.value);
+		if (replacement && existsSync(absolutePath)) {
+			const relativePath = relative(directory, absolutePath).replace(/\\/g, '/');
+			if (relativePath !== replacement.value && `./${relativePath}` !== replacement.value) {
+				replacements.push({
+					selection: replacement.selection,
+					value: relativePath
+				});
 			}
 		}
+	}
+
+	if (replacements.length === 0) {
+		return 0;
+	}
+
+	if (!editor) {
+		editor = await window.showTextDocument(document);
 	}
 
 	await applyReplacements(replacements, editor);
