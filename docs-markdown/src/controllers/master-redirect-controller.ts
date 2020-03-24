@@ -204,7 +204,7 @@ async function applyRedirectDaisyChainResolution() {
                 new Position(lineCount, lastLine.range.end.character));
 
         await editor.edit((builder) => {
-            builder.replace(entireDocSelection, JSON.stringify(redirects, replacer, 4));
+            builder.replace(entireDocSelection, JSON.stringify(redirects, replacer, 2));
         });
 
         await editor.document.save();
