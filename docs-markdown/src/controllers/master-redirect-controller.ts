@@ -171,9 +171,8 @@ async function applyRedirectDaisyChainResolution() {
         docsetName: config.docsetName,
         docsetRootFolderName: config.docsetRootFolderName,
     };
-    const notSet = "< Not set >";
-    if (options.docsetName === notSet ||
-        options.docsetRootFolderName === notSet) {
+    if (options.docsetName === "" ||
+        options.docsetRootFolderName === "") {
         // Open the settings, and prompt the user to enter values.
         await commands.executeCommand("workbench.action.openSettings", "@ext:docsmsft.docs-markdown");
         postWarning("Please set the Docset Name and Docset Root Folder Name before using this command.");
@@ -251,6 +250,8 @@ async function applyRedirectDaisyChainResolution() {
         await updateRedirects(editor, redirects, config);
         const numberFormat = Intl.NumberFormat();
         showStatusMessage(`Resolved ${numberFormat.format(daisyChainsResolved)} daisy chains, at a max-depth of ${maxDepthResolved}!`);
+    } else {
+        showStatusMessage("There are no daisy chains found.");
     }
 }
 
