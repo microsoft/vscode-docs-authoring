@@ -147,6 +147,17 @@ async function applyRedirectDaisyChainResolution() {
 
     const file = tryFindFile(folder.uri.fsPath, redirectFileName);
     if (!!file && fs.existsSync(file)) {
+        if (!editor.document.uri.fsPath.endsWith(redirectFileName)) {
+            const openFile = await window.showErrorMessage(
+                `Unable to update the master redirects, please open the "${redirectFileName}" file then try again!`,
+                "Open File");
+            if (!!openFile) {
+                const document = await workspace.openTextDocument(file);
+                await window.showTextDocument(document);
+            }
+            return;
+        }
+
         const jsonBuffer = fs.readFileSync(file);
         redirects = JSON.parse(jsonBuffer.toString()) as IMasterRedirections;
     }
