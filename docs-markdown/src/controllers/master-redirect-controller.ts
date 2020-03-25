@@ -280,7 +280,12 @@ function redirectsToJson(redirects: IMasterRedirections | null, config: Workspac
             : value;
     };
 
-    return JSON.stringify(redirects, replacer, 2);
+    const space =
+        workspace.getConfiguration("editor").insertSpaces
+            ? workspace.getConfiguration("editor").tabSize as number || 2
+            : 2;
+
+    return JSON.stringify(redirects, replacer, space);
 }
 
 export async function sortMasterRedirectionFile() {

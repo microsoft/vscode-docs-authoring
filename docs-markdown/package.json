@@ -465,7 +465,7 @@
     },
     "configuration": {
       "type": "object",
-      "title": "Docs Markdown Extension Configuration",
+      "title": "Docs Markdown",
       "properties": {
         "markdown.replaceSmartQuotes": {
           "type": "boolean",
@@ -493,7 +493,7 @@
         "markdown.allAvailableLanguages": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Provide all available languages when suggesting code-fence language identifiers. Overrides `markdown.docsetLanguages` setting."
+          "markdownDescription": "Provide all available languages when suggesting code-fence language identifiers. Overrides [Markdown: Docset Languages](#markdown.docsetLanguages) setting."
         },
         "markdown.docsetLanguages": {
           "type": [
@@ -501,7 +501,7 @@
             "null"
           ],
           "title": "Language Identifiers",
-          "markdownDescription": "When the \"All Available Languages\" (`markdown.allAvailableLanguages`) flag is set to `false`, the suggested completion list displayed when typing an opening code-block (` ``` `) is filtered to the provided language identifiers.",
+          "markdownDescription": "When the [Markdown: All Available Languages](#markdown.allAvailableLanguages) flag is set to `false`, the suggested completion list displayed when typing an opening code-block (` ``` `) is filtered to the provided language identifiers.",
           "items": {
             "type": "string",
             "enum": [
