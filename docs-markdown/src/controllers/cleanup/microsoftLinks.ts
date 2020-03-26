@@ -6,40 +6,41 @@ const jsdiff = require("diff");
 /**
  * Converts http:// to https:// for all microsoft links.
  */
-export function microsoftLinks(progress: any, promises: Array<Promise<any>>, file: string, percentComplete: number, files: Array<string> | null, index: number | null) {
+export function microsoftLinks(progress: any, file: string, percentComplete: number, files: Array<string> | null, index: number | null) {
     const message = "Microsoft Links";
-    progress.report({ increment: 0, message });
     if (file.endsWith(".md")) {
-        promises.push(new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             readFile(file, "utf8", (err, data) => {
+                if (err) {
+                    postError(`Error: ${err}`);
+                    reject();
+                }
                 const origin = data;
                 data = handleLinksWithRegex(data);
-                const diff = jsdiff.diffChars(origin, data)
-                    .some((part: { added: any; removed: any; }) => {
-                        return part.added || part.removed;
-                    });
-                if (diff) {
-                    promises.push(new Promise((resolve, reject) => {
-                        writeFile(file, data, err => {
-                            if (err) {
-                                postError(`Error: ${err}`);
-                            }
-                            percentComplete = showProgress(index, files, percentComplete, progress, message);
-                            resolve();
-                        });
-                    }).catch((error) => {
-                        postError(error);
-                    }));
-                }
-                resolve();
+                resolve({ origin, data });
             });
-        }).catch((error) => {
-            postError(error);
-        }));
-    };
-    return promises;
+        }).then((result: any) => {
+            const diff = jsdiff.diffChars(result.origin, result.data)
+                .some((part: { added: any; removed: any; }) => {
+                    return part.added || part.removed;
+                });
+            return new Promise((resolve, reject) => {
+                if (diff) {
+                    writeFile(file, result.data, (error) => {
+                        if (error) {
+                            postError(`Error: ${error}`);
+                            reject();
+                        }
+                        percentComplete = showProgress(index, files, percentComplete, progress, message);
+                        resolve();
+                    });
+                } else {
+                    resolve();
+                }
+            });
+        });
+    } else { return Promise.resolve(); }
 }
-
 
 /**
  * replaces input data with regex values for microsoft links.

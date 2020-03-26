@@ -9,7 +9,6 @@ import * as vscode from "vscode";
 import * as log from "./log";
 import { output } from "./output";
 
-
 export function tryFindFile(rootPath: string, fileName: string) {
     try {
         const fullPath = path.resolve(rootPath, fileName);
@@ -418,3 +417,7 @@ export function extractDocumentLink(
 export const naturalLanguageCompare = (a: string, b: string) => {
     return (!!a && !!b) ? a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }) : 0;
 };
+
+export function escapeRegExp(content: string) {
+    return content.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}

@@ -7,9 +7,9 @@ import { basename, extname, join, relative } from "path";
 import { Uri, window, workspace, WorkspaceFolder } from "vscode";
 import * as YAML from "yamljs";
 import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
+import { output } from "../helper/output";
 import { sendTelemetryData } from "../helper/telemetry";
 import * as yamlMetadata from "../helper/yaml-metadata";
-import { output } from "../helper/output";
 
 const telemetryCommand: string = "masterRedirect";
 const redirectFileName: string = ".openpublishing.redirection.json";

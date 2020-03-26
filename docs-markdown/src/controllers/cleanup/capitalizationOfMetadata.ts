@@ -1,21 +1,23 @@
 import { readFile, writeFile } from "graceful-fs";
 import { postError } from "../../helper/common";
 import { showProgress } from "./utilities";
+// tslint:disable no-var-requires
 const jsdiff = require("diff");
 
 /**
  * Lower cases all metadata found in .md files
  */
-export function capitalizationOfMetadata(progress: any, promises: Array<Promise<any>>, file: string, percentComplete: number, files: Array<string> | null, index: number | null) {
+export function capitalizationOfMetadata(progress: any, file: string, percentComplete: number, files: string[] | null, index: number | null) {
     const message = "Capitalization of metadata values";
     if (file.endsWith(".md")) {
-        promises.push(new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             readFile(file, "utf8", (err, data) => {
                 if (err) {
                     postError(`Error: ${err}`);
+                    reject();
                 }
+                const origin = data;
                 if (data.startsWith("---")) {
-                    const origin = data;
                     data = lowerCaseData(data, "ms.author");
                     data = lowerCaseData(data, "author");
                     data = lowerCaseData(data, "ms.prod");
@@ -23,33 +25,31 @@ export function capitalizationOfMetadata(progress: any, promises: Array<Promise<
                     data = lowerCaseData(data, "ms.subservice");
                     data = lowerCaseData(data, "ms.technology");
                     data = lowerCaseData(data, "ms.topic");
-                    const diff = jsdiff.diffChars(origin, data)
-                        .some((part: { added: any; removed: any; }) => {
-                            return part.added || part.removed;
-                        });
-                    if (diff) {
-                        promises.push(new Promise((resolve) => {
-                            writeFile(file, data, (err) => {
-                                if (err) {
-                                    postError(`Error: ${err}`);
-                                }
-                                percentComplete = showProgress(index, files, percentComplete, progress, message);
-                                resolve();
-                            });
-                        }).catch((error) => {
-                            postError(error);
-                        }));
-                    }
                 }
-                resolve();
+                resolve({ origin, data });
             });
-        }).catch((error) => {
-            postError(error);
-        }));
-    }
-    return promises;
+        }).then((result: any) => {
+            const diff = jsdiff.diffChars(result.origin, result.data)
+                .some((part: { added: any; removed: any; }) => {
+                    return part.added || part.removed;
+                });
+            return new Promise((resolve, reject) => {
+                if (diff) {
+                    writeFile(file, result.data, (error) => {
+                        if (error) {
+                            postError(`Error: ${error}`);
+                            reject();
+                        }
+                        percentComplete = showProgress(index, files, percentComplete, progress, message);
+                        resolve();
+                    });
+                } else {
+                    resolve();
+                }
+            });
+        });
+    } else { return Promise.resolve(); }
 }
-
 /**
  * takes data as input, and passes variable into regex
  * to be used to find metadata key and replace value with lowercase data.
@@ -59,7 +59,7 @@ export function capitalizationOfMetadata(progress: any, promises: Array<Promise<
 export function lowerCaseData(data: any, variable: string) {
     const regex = new RegExp(`^(${variable}:)(.*(\\S\\s)?)`, "m");
     const captureParts = regex.exec(data);
-    let value = ""
+    let value = "";
     if (captureParts && captureParts.length > 2) {
         value = captureParts[2].toLowerCase();
         if (value.match(/^\s*$/) !== null) {
