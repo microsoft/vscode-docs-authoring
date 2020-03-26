@@ -1,22 +1,21 @@
-import { readFile, writeFile } from "graceful-fs";
 import { postError } from "../../helper/common";
-import { showProgress } from "./utilities";
-// tslint:disable no-var-requires
-const jsdiff = require("diff");
+import { reporter } from "../../helper/telemetry";
+import { readWriteFileWithProgress } from "./utilities";
 
+const telemetryCommand: string = "applyCleanup";
 /**
  * Lower cases all metadata found in .md files
  */
-export function capitalizationOfMetadata(progress: any, file: string, percentComplete: number, files: string[] | null, index: number | null) {
+export function capitalizationOfMetadata(progress: any, file: string, files: string[] | null, index: number | null) {
+    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     const message = "Capitalization of metadata values";
     if (file.endsWith(".md")) {
-        return new Promise((resolve, reject) => {
-            readFile(file, "utf8", (err, data) => {
-                if (err) {
-                    postError(`Error: ${err}`);
-                    reject();
-                }
-                const origin = data;
+        return readWriteFileWithProgress(progress,
+            file,
+            message,
+            files,
+            index,
+            (data) => {
                 if (data.startsWith("---")) {
                     data = lowerCaseData(data, "ms.author");
                     data = lowerCaseData(data, "author");
@@ -26,28 +25,8 @@ export function capitalizationOfMetadata(progress: any, file: string, percentCom
                     data = lowerCaseData(data, "ms.technology");
                     data = lowerCaseData(data, "ms.topic");
                 }
-                resolve({ origin, data });
+                return data;
             });
-        }).then((result: any) => {
-            const diff = jsdiff.diffChars(result.origin, result.data)
-                .some((part: { added: any; removed: any; }) => {
-                    return part.added || part.removed;
-                });
-            return new Promise((resolve, reject) => {
-                if (diff) {
-                    writeFile(file, result.data, (error) => {
-                        if (error) {
-                            postError(`Error: ${error}`);
-                            reject();
-                        }
-                        percentComplete = showProgress(index, files, percentComplete, progress, message);
-                        resolve();
-                    });
-                } else {
-                    resolve();
-                }
-            });
-        });
     } else { return Promise.resolve(); }
 }
 /**

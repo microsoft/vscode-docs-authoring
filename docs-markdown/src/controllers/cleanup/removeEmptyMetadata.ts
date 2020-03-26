@@ -1,22 +1,20 @@
-import { readFile, writeFile } from "graceful-fs";
-import { postError } from "../../helper/common";
-import { showProgress } from "./utilities";
-// tslint:disable no-var-requires
-const jsdiff = require("diff");
+import { reporter } from "../../helper/telemetry";
+import { readWriteFileWithProgress } from "./utilities";
 
+const telemetryCommand: string = "applyCleanup";
 /**
  * Cleanup empty, na and commented out metadata attributes found in .md files
  */
-export function removeEmptyMetadata(progress: any, file: string, percentComplete: number, files: string[] | null, index: number | null, cleanupType: string) {
+export function removeEmptyMetadata(progress: any, file: string, files: string[] | null, index: number | null, cleanupType: string) {
     const message = "Removal of metadata values";
+    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     if (file.endsWith(".md")) {
-        return new Promise((resolve, reject) => {
-            readFile(file, "utf8", (err, data) => {
-                if (err) {
-                    postError(`Error: ${err}`);
-                    reject();
-                }
-                const origin = data;
+        return readWriteFileWithProgress(progress,
+            file,
+            message,
+            files,
+            index,
+            (data: string) => {
                 if (data.startsWith("---")) {
                     if (cleanupType === "empty") {
                         data = deleteEmptyMetadata(data);
@@ -33,28 +31,8 @@ export function removeEmptyMetadata(progress: any, file: string, percentComplete
                         data = deleteCommentedMetadata(data);
                     }
                 }
-                resolve({ origin, data });
+                return data;
             });
-        }).then((result: any) => {
-            const diff = jsdiff.diffChars(result.origin, result.data)
-                .some((part: { added: any; removed: any; }) => {
-                    return part.added || part.removed;
-                });
-            return new Promise((resolve, reject) => {
-                if (diff) {
-                    writeFile(file, result.data, (error) => {
-                        if (error) {
-                            postError(`Error: ${error}`);
-                            reject();
-                        }
-                        percentComplete = showProgress(index, files, percentComplete, progress, message);
-                        resolve();
-                    });
-                } else {
-                    resolve();
-                }
-            });
-        });
     } else { return Promise.resolve(); }
 }
 

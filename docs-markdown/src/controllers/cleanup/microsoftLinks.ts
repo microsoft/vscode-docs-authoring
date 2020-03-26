@@ -1,44 +1,24 @@
-import { readFile, writeFile } from "graceful-fs";
-import { postError } from "../../helper/common";
-import { showProgress } from "./utilities";
-const jsdiff = require("diff");
+import { reporter } from "../../helper/telemetry";
+import { readWriteFileWithProgress } from "./utilities";
+
+const telemetryCommand: string = "applyCleanup";
 
 /**
  * Converts http:// to https:// for all microsoft links.
  */
-export function microsoftLinks(progress: any, file: string, percentComplete: number, files: Array<string> | null, index: number | null) {
+export function microsoftLinks(progress: any, file: string, files: string[] | null, index: number | null) {
     const message = "Microsoft Links";
+    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     if (file.endsWith(".md")) {
-        return new Promise((resolve, reject) => {
-            readFile(file, "utf8", (err, data) => {
-                if (err) {
-                    postError(`Error: ${err}`);
-                    reject();
-                }
-                const origin = data;
+        return readWriteFileWithProgress(progress,
+            file,
+            message,
+            files,
+            index,
+            (data: string) => {
                 data = handleLinksWithRegex(data);
-                resolve({ origin, data });
+                return data;
             });
-        }).then((result: any) => {
-            const diff = jsdiff.diffChars(result.origin, result.data)
-                .some((part: { added: any; removed: any; }) => {
-                    return part.added || part.removed;
-                });
-            return new Promise((resolve, reject) => {
-                if (diff) {
-                    writeFile(file, result.data, (error) => {
-                        if (error) {
-                            postError(`Error: ${error}`);
-                            reject();
-                        }
-                        percentComplete = showProgress(index, files, percentComplete, progress, message);
-                        resolve();
-                    });
-                } else {
-                    resolve();
-                }
-            });
-        });
     } else { return Promise.resolve(); }
 }
 

@@ -421,3 +421,7 @@ export const naturalLanguageCompare = (a: string, b: string) => {
 export function escapeRegExp(content: string) {
     return content.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
+
+export function splice(insertAsPosition: number, content: string, insertStr: string) {
+    return content.slice(0, insertAsPosition) + insertStr + content.slice(insertAsPosition);
+}

@@ -1,16 +1,18 @@
 import { readFile, writeFile } from "graceful-fs";
 import { postError, showStatusMessage } from "../../helper/common";
+import { reporter } from "../../helper/telemetry";
 import { generateMasterRedirectionFile } from "../master-redirect-controller";
 import { lowerCaseData } from "./capitalizationOfMetadata";
 import { handleMarkdownMetadata } from "./handleMarkdownMetadata";
 import { handleYamlMetadata } from "./handleYamlMetadata";
 import { handleLinksWithRegex } from "./microsoftLinks";
 import { getMdAndIncludesFiles, removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller";
-import { showProgress } from "./utilities";
+import { readWriteFileWithProgress, showProgress } from "./utilities";
 // tslint:disable-next-line: no-var-requires
 const jsdiff = require("diff");
 // tslint:disable-next-line: no-var-requires
 const recursive = require("recursive-readdir");
+const telemetryCommand: string = "applyCleanup";
 
 /**
  * Run all Cleanup... scripts.
@@ -19,16 +21,16 @@ const recursive = require("recursive-readdir");
  * capitalizationOfMetadata() => lower cases all metadata found in .md files
  * generateMasterRedirectionFile() => creates master redirection file for root.
  */
-export function runAll(progress: any, file: string, percentComplete: number, files: string[] | null, index: number | null) {
+export function runAll(progress: any, file: string, files: string[] | null, index: number | null) {
     const message = "Everything";
+    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     if (file.endsWith(".yml") || file.endsWith(".md")) {
-        return new Promise((resolve, reject) => {
-            readFile(file, "utf8", (err, data) => {
-                if (err) {
-                    postError(`Error: ${err}`);
-                    reject();
-                }
-                const origin = data;
+        return readWriteFileWithProgress(progress,
+            file,
+            message,
+            files,
+            index,
+            (data: string) => {
                 if (file.endsWith(".yml")) {
                     data = handleYamlMetadata(data);
                 } else if (file.endsWith(".md")) {
@@ -48,31 +50,10 @@ export function runAll(progress: any, file: string, percentComplete: number, fil
                         }
                     }
                 }
-                resolve({ origin, data });
+                return data;
             });
-        }).then((result: any) => {
-            const diff = jsdiff.diffChars(result.origin, result.data)
-                .some((part: { added: any; removed: any; }) => {
-                    return part.added || part.removed;
-                });
-            return new Promise((resolve, reject) => {
-                if (diff) {
-                    writeFile(file, result.data, (error) => {
-                        if (error) {
-                            postError(`Error: ${error}`);
-                            reject();
-                        }
-                        percentComplete = showProgress(index, files, percentComplete, progress, message);
-                        resolve();
-                    });
-                } else {
-                    resolve();
-                }
-            });
-        });
     } else { return Promise.resolve(); }
 }
-
 export async function runAllWorkspace(workspacePath: string, progress: any, resolve: any) {
     showStatusMessage("Cleanup: Everything started.");
     const message = "Everything";
@@ -84,11 +65,11 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
             (err: any, files: string[]) => {
                 if (err) {
                     postError(err);
+                    chainReject();
                 }
-                let percentComplete = 0;
                 const promises: Array<Promise<any>> = [];
                 files.map((file, index) => {
-                    promises.push(removeUnusedImagesAndIncludes(progress, file, percentComplete, files, index, workspacePath, unusedFiles));
+                    promises.push(removeUnusedImagesAndIncludes(progress, file, files, index, workspacePath, unusedFiles));
                     if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
                         promises.push(new Promise((resolve, reject) => {
                             readFile(file, "utf8", (err, data) => {
@@ -109,7 +90,7 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                                                 postError(`Error: ${err}`);
                                                 reject();
                                             }
-                                            percentComplete = showProgress(index, files, percentComplete, progress, message);
+                                            showProgress(index, files, progress, message);
                                             resolve();
                                         });
                                     }).catch((error) => {
@@ -155,7 +136,7 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                                                 postError(`Error: ${err}`);
                                                 reject();
                                             }
-                                            percentComplete = showProgress(index, files, percentComplete, progress, message);
+                                            showProgress(index, files, progress, message);
                                             resolve();
                                         });
                                     }).catch((error) => {
@@ -175,8 +156,10 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                 Promise.all(promises).then(() => {
                     progress.report({ increment: 100, message: "Everything completed." });
                     showStatusMessage(`Cleanup: Everything completed.`);
-                    chainResolve();
-                    resolve();
+                    setTimeout(() => {
+                        chainResolve();
+                        resolve();
+                    }, 2000);
                 }).catch((error) => {
                     postError(error);
                 });
