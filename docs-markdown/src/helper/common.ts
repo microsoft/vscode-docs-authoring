@@ -9,7 +9,6 @@ import * as vscode from "vscode";
 import * as log from "./log";
 import { output } from "./output";
 
-
 export function tryFindFile(rootPath: string, fileName: string) {
     try {
         const fullPath = path.resolve(rootPath, fileName);
