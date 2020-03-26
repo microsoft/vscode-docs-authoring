@@ -1,14 +1,15 @@
 import * as chai from "chai";
 import * as spies from "chai-spies";
-import { window, commands } from "vscode";
-import * as common from "../../../helper/common";
-import { insertBookmarkCommands, insertBookmarkExternal, insertBookmarkInternal } from "../../../controllers/bookmark-controller";
-import { createDocumentAndGetItReady, sleep, loadDocumentAndGetItReady } from "../../test.common/common";
-import * as telemetry from "../../../helper/telemetry";
 import { resolve } from "path";
+import { commands, window } from "vscode";
+import { insertBookmarkCommands, insertBookmarkExternal, insertBookmarkInternal } from "../../../controllers/bookmark-controller";
+import * as common from "../../../helper/common";
+import * as telemetry from "../../../helper/telemetry";
+import { createDocumentAndGetItReady, loadDocumentAndGetItReady, sleep } from "../../test.common/common";
 
 chai.use(spies);
 
+// tslint:disable-next-line: no-var-requires
 const sinon = require("sinon");
 
 const expect = chai.expect;
@@ -20,7 +21,7 @@ suite("Bookmark Controller", () => {
         chai.spy.restore(window);
     });
     suiteTeardown(async () => {
-        await commands.executeCommand('workbench.action.closeAllEditors');
+        await commands.executeCommand("workbench.action.closeAllEditors");
     });
 
     test("insertBookmarkCommands", () => {
@@ -37,12 +38,12 @@ suite("Bookmark Controller", () => {
     });
     test("insertBookmarkExternal::insertContentToEditor", async () => {
         await createDocumentAndGetItReady();
-        const basePath = resolve(__dirname, "../../../../../")
+        const basePath = resolve(__dirname, "../../../../../");
         const qpSelectionItems = [
-            { "label": "README.md", "description": `${basePath}\\src\\test\\data\\repo` },
-            { "label": "## Getting Started\r\n", "detail": " " }
-        ]
-        var counter = 0;
+            { label: "README.md", description: `${basePath}\\src\\test\\data\\repo` },
+            { label: "## Getting Started\r\n", detail: " " },
+        ];
+        let counter = 0;
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve(qpSelectionItems[counter++]) as Thenable<any>;
         };
@@ -65,7 +66,7 @@ suite("Bookmark Controller", () => {
         const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
         await loadDocumentAndGetItReady(filePath);
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-            return Promise.resolve({ "label": "### Third Level Heading\r\n", "detail": " " }) as Thenable<any>;
+            return Promise.resolve({ label: "### Third Level Heading\r\n", detail: " " }) as Thenable<any>;
         };
 
         const stub = sinon.stub(telemetry, "sendTelemetryData");
