@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.59 (March 23rd, 2020)
+
+- Added feature for resolving daisy chained paths in openpublishing.redirection.json
+- Added mocha junit test coverage and nyc code coverage reports
+
 ## 0.2.59 (March 12th, 2020)
 
 - Expanded the usage of the update metadata values command to YAML
