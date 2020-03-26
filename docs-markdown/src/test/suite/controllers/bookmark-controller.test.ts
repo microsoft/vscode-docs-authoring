@@ -37,8 +37,9 @@ suite("Bookmark Controller", () => {
     });
     test("insertBookmarkExternal::insertContentToEditor", async () => {
         await createDocumentAndGetItReady();
+        const basePath = resolve(__dirname, "../../../../../")
         const qpSelectionItems = [
-            { "label": "README.md", "description": "c:\\_\\vscode-docs-authoring\\docs-markdown\\src\\test\\data\\repo" },
+            { "label": "README.md", "description": `${basePath}\\src\\test\\data\\repo` },
             { "label": "## Getting Started\r\n", "detail": " " }
         ]
         var counter = 0;
@@ -77,5 +78,3 @@ suite("Bookmark Controller", () => {
     });
 
 });
-
-
