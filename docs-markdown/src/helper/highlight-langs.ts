@@ -110,7 +110,7 @@ export const languages: HighlightLanguages =
         { language: "VSTS CLI", aliases: ["vstscli"] },
         { language: "XAML", aliases: ["xaml"], extensions: [".xaml"] },
         { language: "XML", aliases: ["xml", "xhtml", "rss", "atom", "xjb", "xsd", "xsl", "plist"], extensions: [".xml", ".xhtml", ".rss", ".atom", ".xjb", ".xsd", ".xsl", ".plist", ".xml", ".csdl", ".edmx", ".xslt", ".wsdl"] },
-        { language: "YAML", aliases: ["yml", "yaml"], extensions: ["yml", "yaml"] }
+        { language: "YAML", aliases: ["yml", "yaml"], extensions: ["yml", "yaml"] },
     ];
 
 /**
