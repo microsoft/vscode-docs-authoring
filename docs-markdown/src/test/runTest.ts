@@ -13,8 +13,16 @@ async function main() {
 		// Passed to --extensionTestsPath
 		const extensionTestsPath = path.resolve(__dirname, "./suite/index-coverage");
 
+		//the path to the test data repo
+		// Passed to --launchArgs
+		const repoPath = path.resolve(__dirname, "../../../src/test/data/repo");
+
 		// Download VS Code, unzip it and run the integration test
-		await runTests({ extensionDevelopmentPath, extensionTestsPath });
+		await runTests({
+			"extensionDevelopmentPath": extensionDevelopmentPath,
+			"extensionTestsPath": extensionTestsPath,
+			"launchArgs": [repoPath]
+		});
 
 	} catch (err) {
 		// tslint:disable-next-line: no-console
