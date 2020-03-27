@@ -3,7 +3,7 @@ import { handleMarkdownMetadata } from "./handleMarkdownMetadata"
 import { handleYamlMetadata } from "./handleYamlMetadata"
 import { readWriteFileWithProgress } from "./utilities"
 
-const telemetryCommand = "applyCleanup"
+const telemetryCommand: string = "applyCleanup"
 
 /**
  * Searches through all directories from rootPath

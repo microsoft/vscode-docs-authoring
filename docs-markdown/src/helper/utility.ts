@@ -53,10 +53,10 @@ export function tableBuilder(col: number, row: number) {
 
     // / create header
     // DCR update: 893410 [Add leading pipe]
-    // tslint:disable-next-line:no-shadowed-variable
+
     for (let c = 1; c <= col; c++) {
         str += "|" + "Column" + c + "  |"
-        // tslint:disable-next-line:no-shadowed-variable
+
         for (c = 2; c <= col; c++) {
             str += "Column" + c + "  |"
         }
@@ -64,10 +64,10 @@ export function tableBuilder(col: number, row: number) {
     }
 
     // DCR update: 893410 [Add leading pipe]
-    // tslint:disable-next-line:no-shadowed-variable
+
     for (let c = 1; c <= col; c++) {
         str += "|" + "---------" + "|"
-        // tslint:disable-next-line:no-shadowed-variable
+
         for (c = 2; c <= col; c++) {
             str += "---------" + "|"
         }

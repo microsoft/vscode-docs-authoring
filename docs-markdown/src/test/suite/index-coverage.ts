@@ -63,10 +63,9 @@ export function run(): Promise<void> {
                         resolve()
                     }
                 })
-            } catch (err) {
-                // tslint:disable-next-line: no-console
-                console.error(err)
-                reject(err)
+            } catch (error) {
+                console.error(error)
+                reject(error)
             } finally {
                 if (nyc) {
                     nyc.writeCoverageFile()

@@ -8,9 +8,9 @@ import { handleYamlMetadata } from "./handleYamlMetadata"
 import { handleLinksWithRegex } from "./microsoftLinks"
 import { getMdAndIncludesFiles, removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller"
 import { readWriteFileWithProgress, showProgress } from "./utilities"
-// tslint:disable-next-line: no-var-requires
+
 const jsdiff = require("diff")
-// tslint:disable-next-line: no-var-requires
+
 const recursive = require("recursive-readdir")
 const telemetryCommand: string = "applyCleanup"
 
@@ -71,10 +71,10 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                 files.map((file, index) => {
                     promises.push(removeUnusedImagesAndIncludes(progress, file, files, index, workspacePath, unusedFiles))
                     if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
-                        promises.push(new Promise((resolve, reject) => {
-                            readFile(file, "utf8", (err, data) => {
-                                if (err) {
-                                    postError(`Error: ${err}`)
+                        promises.push(new Promise((r, reject) => {
+                            readFile(file, "utf8", (e, data) => {
+                                if (e) {
+                                    postError(`Error: ${e}`)
                                     reject()
                                 }
                                 const origin = data
@@ -84,29 +84,29 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                                         return part.added || part.removed
                                     })
                                 if (diff) {
-                                    promises.push(new Promise((resolve, reject) => {
-                                        writeFile(file, data, (err) => {
-                                            if (err) {
-                                                postError(`Error: ${err}`)
-                                                reject()
+                                    promises.push(new Promise((writeResolve, writeReject) => {
+                                        writeFile(file, data, (error) => {
+                                            if (error) {
+                                                postError(`Error: ${error}`)
+                                                writeReject()
                                             }
                                             showProgress(index, files, progress, message)
-                                            resolve()
+                                            writeResolve()
                                         })
                                     }).catch((error) => {
                                         postError(error)
                                     }))
                                 }
-                                resolve()
+                                r()
                             })
                         }).catch((error) => {
                             postError(error)
                         }))
                     } else if (file.endsWith(".md")) {
-                        promises.push(new Promise((resolve, reject) => {
-                            readFile(file, "utf8", (err, data) => {
-                                if (err) {
-                                    postError(`Error: ${err}`)
+                        promises.push(new Promise((r, reject) => {
+                            readFile(file, "utf8", (error, data) => {
+                                if (error) {
+                                    postError(`Error: ${error}`)
                                     reject()
                                 }
                                 const origin = data
@@ -130,28 +130,28 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                                         return part.added || part.removed
                                     })
                                 if (diff) {
-                                    promises.push(new Promise((resolve, reject) => {
-                                        writeFile(file, data, (err) => {
-                                            if (err) {
-                                                postError(`Error: ${err}`)
-                                                reject()
+                                    promises.push(new Promise((writeResolve, writeReject) => {
+                                        writeFile(file, data, (e) => {
+                                            if (e) {
+                                                postError(`Error: ${e}`)
+                                                writeReject()
                                             }
                                             showProgress(index, files, progress, message)
-                                            resolve()
+                                            writeResolve()
                                         })
-                                    }).catch((error) => {
-                                        postError(error)
+                                    }).catch((e) => {
+                                        postError(e)
                                     }))
                                 }
-                                resolve()
+                                r()
                             })
                         }).catch((error) => {
                             postError(error)
                         }))
                     }
                 })
-                promises.push(new Promise((resolve, reject) => {
-                    generateMasterRedirectionFile(workspacePath, resolve)
+                promises.push(new Promise((rediectResolve) => {
+                    generateMasterRedirectionFile(workspacePath, rediectResolve)
                 }))
                 Promise.all(promises).then(() => {
                     progress.report({ increment: 100, message: "Everything completed." })

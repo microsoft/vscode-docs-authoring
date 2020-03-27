@@ -9,7 +9,6 @@ import { createDocumentAndGetItReady, loadDocumentAndGetItReady, sleep } from ".
 
 chai.use(spies)
 
-// tslint:disable-next-line: no-var-requires
 const sinon = require("sinon")
 
 const expect = chai.expect

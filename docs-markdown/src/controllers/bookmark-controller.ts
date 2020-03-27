@@ -8,7 +8,7 @@ import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/bookmark-build
 import { insertContentToEditor, noActiveEditorMessage } from "../helper/common"
 import { sendTelemetryData } from "../helper/telemetry"
 
-const telemetryCommand = "insertBookmark"
+const telemetryCommand: string = "insertBookmark"
 let commandOption: string
 const markdownExtensionFilter = [".md"]
 
@@ -28,8 +28,8 @@ export function insertBookmarkCommands() {
  */
 export function insertBookmarkExternal() {
     commandOption = "external"
-    let folderPath = ""
-    let fullPath = ""
+    let folderPath: string = ""
+    let fullPath: string = ""
 
     const editor = window.activeTextEditor
     if (!editor) {
@@ -52,15 +52,15 @@ export function insertBookmarkExternal() {
     }
 
     // recursively get all the files from the root folder
-    files(folderPath, (err: any, files: any) => {
+    files(folderPath, (err: any, filesList: any) => {
         if (err) {
             window.showErrorMessage(err)
             throw err
         }
 
         const items: QuickPickItem[] = []
-        files.sort()
-        files.filter((file: any) => markdownExtensionFilter.includes(extname(file.toLowerCase()))).forEach((file: any) => {
+        filesList.sort()
+        filesList.filter((file: any) => markdownExtensionFilter.includes(extname(file.toLowerCase()))).forEach((file: any) => {
             items.push({ label: basename(file), description: dirname(file) })
         })
 

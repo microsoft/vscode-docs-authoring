@@ -24,7 +24,6 @@ async function main() {
             launchArgs: [repoPath]
         })
     } catch (err) {
-        // tslint:disable-next-line: no-console
         console.error("Failed to run tests")
         process.exit(1)
     }

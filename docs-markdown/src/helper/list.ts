@@ -435,7 +435,6 @@ export function addIndent(line: string) {
 }
 
 export function CountIndent(text: string) {
-    // tslint:disable-next-line:no-var-keyword
     for (let i = 0; i < text.length; i++) {
         if (text[i] !== " ") {
             return i
@@ -456,7 +455,6 @@ export function findCurrentNumberedListNextLine(editor: vscode.TextEditor, curre
     const regex = new RegExp(numberedListWithIndentRegexTemplate.replace("{0}", indentCount.toString()))
 
     while (++currentLine < editor.document.lineCount && editor.document.lineAt(currentLine).text.trim() !== "") {
-        // tslint:disable-next-line:variable-name
         const number = getNumberedLineWithRegex(regex, editor.document.lineAt(currentLine).text)
         if (number > 0) {
             return currentLine
@@ -476,7 +474,6 @@ export function findCurrentAlphabetListNextLine(editor: vscode.TextEditor, curre
     const regex = new RegExp(alphabetListWithIndentRegexTemplate.replace("{0}", indentCount.toString()))
 
     while (++currentLine < editor.document.lineCount && editor.document.lineAt(currentLine).text.trim() !== "") {
-        // tslint:disable-next-line:variable-name
         const number = getAlphabetLineWithRegex(regex, editor.document.lineAt(currentLine).text)
         if (number > 0) {
             return currentLine
@@ -500,7 +497,7 @@ export function findCurrentNumberedListLastLine(editor: vscode.TextEditor, curre
 
     while (++currentLine < editor.document.lineCount && editor.document.lineAt(currentLine).text.trim() !== "") {
         const regex = new RegExp(numberedListWithIndentRegexTemplate.replace("{0}", indentCount.toString()))
-        // tslint:disable-next-line:variable-name
+
         const number = getNumberedLineWithRegex(regex, editor.document.lineAt(currentLine).text)
         if (number > 0) {
             lastLine = currentLine

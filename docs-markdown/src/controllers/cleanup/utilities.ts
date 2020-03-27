@@ -1,8 +1,8 @@
 import { readFile, writeFile } from "graceful-fs"
 import { postError } from "../../helper/common"
-// tslint:disable no-var-requires
+
 const jsdiff = require("diff")
-// tslint:disable no-var-requires
+
 const recursive = require("recursive-readdir")
 
 let percentComplete = 1

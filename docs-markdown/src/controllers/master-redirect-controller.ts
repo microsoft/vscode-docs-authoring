@@ -33,8 +33,6 @@ export interface IMasterRedirection {
     redirectDocumentId?: boolean;
 }
 
-/* tslint:disable:max-classes-per-file variable-name */
-
 export class MasterRedirection implements IMasterRedirections {
     public redirections: RedirectionFile[];
 
@@ -463,9 +461,9 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
 
                             source.pipe(dest)
                             source.on("close", () => {
-                                fs.unlink(item.fileFullPath, err => {
-                                    if (err) {
-                                        postError(`Error: ${err}`)
+                                fs.unlink(item.fileFullPath, error => {
+                                    if (error) {
+                                        postError(`Error: ${error}`)
                                     }
                                 })
                             })

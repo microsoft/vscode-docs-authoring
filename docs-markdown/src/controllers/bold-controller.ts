@@ -6,7 +6,7 @@ import { sendTelemetryData, reporter } from "../helper/telemetry"
 import { insertUnselectedText } from "../helper/format-logic-manager"
 import { isBold, isBoldAndItalic } from "../helper/format-styles"
 
-const telemetryCommand = "formatBold"
+const telemetryCommand: string = "formatBold"
 
 export function boldFormattingCommand() {
     const commands = [

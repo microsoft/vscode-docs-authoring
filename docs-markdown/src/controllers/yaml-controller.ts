@@ -12,7 +12,6 @@ const telemetryCommand = "updateTOC"
 let commandOption: string
 
 export function yamlCommands() {
-  // tslint:disable-next-line: no-shadowed-variable
   const commands = [
     { command: insertTocEntry.name, callback: insertTocEntry },
     { command: insertTocEntryWithOptions.name, callback: insertTocEntryWithOptions },
@@ -45,16 +44,15 @@ export function showQuickPick(options: boolean) {
     folderPath = workspace.workspaceFolders[0].uri.fsPath
   }
 
-  // tslint:disable: no-shadowed-variable
-  files(folderPath, (err: any, files: any) => {
+  files(folderPath, (err: any, filesList: any) => {
     if (err) {
       window.showErrorMessage(err)
       throw err
     }
 
     const items: QuickPickItem[] = []
-    files.sort()
-    files.filter((file: any) => markdownExtensionFilter.includes(extname(file.toLowerCase()))).forEach((file: any) => {
+    filesList.sort()
+    filesList.filter((file: any) => markdownExtensionFilter.includes(extname(file.toLowerCase()))).forEach((file: any) => {
       items.push({ label: basename(file), description: dirname(file) })
     })
 
@@ -213,17 +211,17 @@ export function checkForPreviousEntry(options: boolean) {
       // next line should have a greater starting position
       if (i === currentLine &&
         i + 1 !== totalLines) {
-        const lineData = editor.document.lineAt(i + 1)
-        if (lineData.firstNonWhitespaceCharacterIndex > startingCursorPosition) {
+        const line = editor.document.lineAt(i + 1)
+        if (line.firstNonWhitespaceCharacterIndex > startingCursorPosition) {
           itemsIndex = false
           break
         }
       }
 
-      const lineData = editor.document.lineAt(i)
-      const lineText = lineData.text
-      if (lineText.match(itemsScalar)) {
-        const itemScalarPosition = lineData.firstNonWhitespaceCharacterIndex
+      const line = editor.document.lineAt(i)
+      const text = line.text
+      if (text.match(itemsScalar)) {
+        const itemScalarPosition = line.firstNonWhitespaceCharacterIndex
         if (startingCursorPosition === itemScalarPosition) {
           itemsIndex = true
           break
@@ -263,16 +261,16 @@ export function checkForPreviousEntry(options: boolean) {
       // next line should have a greater starting position
       if (i === currentLine &&
         i + 1 !== totalLines) {
-        const lineData = editor.document.lineAt(i + 1)
-        if (lineData.firstNonWhitespaceCharacterIndex > startingCursorPosition) {
+        const line = editor.document.lineAt(i + 1)
+        if (line.firstNonWhitespaceCharacterIndex > startingCursorPosition) {
           nameIndex = false
           break
         }
       }
-      const lineData = editor.document.lineAt(i)
-      const lineText = lineData.text
-      if (lineText.match(nameScalar)) {
-        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex
+      const line = editor.document.lineAt(i)
+      const text = line.text
+      if (text.match(nameScalar)) {
+        const nameScalarPosition = line.firstNonWhitespaceCharacterIndex
         if (nameScalarPosition === startingCursorPosition) {
           nameIndex = true
           break
@@ -287,9 +285,9 @@ export function checkForPreviousEntry(options: boolean) {
   // check 4: name scalar in first position
   if (currentLine > 0) {
     const startPosition = editor.selection.active.line
-    const totalLines = editor.document.lineCount
+    const lineCount = editor.document.lineCount
     let i = startPosition
-    for (i = startPosition; i < totalLines; i--) {
+    for (i = startPosition; i < lineCount; i--) {
       if (i === 0) {
         break
       }
@@ -312,17 +310,17 @@ export function checkForPreviousEntry(options: boolean) {
 
       // next line should have a greater starting position
       if (i === currentLine &&
-        i + 1 !== totalLines) {
-        const lineData = editor.document.lineAt(i + 1)
-        if (lineData.firstNonWhitespaceCharacterIndex > startingCursorPosition) {
+        i + 1 !== lineCount) {
+        const line = editor.document.lineAt(i + 1)
+        if (line.firstNonWhitespaceCharacterIndex > startingCursorPosition) {
           nameIndex = false
           break
         }
       }
-      const lineData = editor.document.lineAt(i)
-      const lineText = lineData.text
-      if (lineText.match(nameScalarFirstPosition)) {
-        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex
+      const line = editor.document.lineAt(i)
+      const text = line.text
+      if (text.match(nameScalarFirstPosition)) {
+        const nameScalarPosition = line.firstNonWhitespaceCharacterIndex
         if (nameScalarPosition === startingCursorPosition) {
           nameIndex = true
           break
