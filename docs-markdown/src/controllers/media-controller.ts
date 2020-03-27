@@ -49,7 +49,7 @@ export function insertVideo() {
                 || urlLowerCase.startsWith("https://www.youtube.com/embed")
                 || urlLowerCase.startsWith("https://www.microsoft.com/en-us/videoplayer/embed")
                 ? ""
-                : "https://channel9.msdn.com, https://www.youtube.com/embed or https://www.microsoft.com/en-us/videoplayer/embed are required prefixes for video URLs. Link will not be added if prefix is not present."
+                : "https://channel9.msdn.com, https://www.youtube.com/embed or https://www.microsoft.com/en-us/videoplayer/embed are required prefixes for video URLs. Link will not be added if prefix is not present.";
         };
         vscode.window.showInputBox({
             placeHolder: "Enter URL; Begin typing to see the allowed video URL prefixes.",
