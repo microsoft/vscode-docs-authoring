@@ -2,9 +2,8 @@
 
 import { CompletionItem, Position, QuickPickItem, Range, window } from "vscode";
 import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, setCursorPosition } from "../helper/common";
-import { sendTelemetryData } from "../helper/telemetry";
 import { getAsync } from "../helper/http-helper";
-import { reporter } from "../helper/telemetry";
+import { reporter, sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "applyXref";
 const rootUrl: string = "https://xref.docs.microsoft.com";

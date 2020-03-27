@@ -115,7 +115,7 @@ export function createEntry(name: string, href: string, options: boolean) {
   if (cursorPosition === 0 && !options) {
     const tocEntryLineStart =
       `- name: ${name}
-  href: ${href}`
+  href: ${href}`;
     insertContentToEditor(editor, insertTocEntry.name, tocEntryLineStart);
   }
 
@@ -123,7 +123,7 @@ export function createEntry(name: string, href: string, options: boolean) {
     const currentPosition = editor.selection.active.character;
     const tocEntryIndented =
       `- name: ${name}
-  ${attributeSpace.repeat(currentPosition)}href: ${href}`
+  ${attributeSpace.repeat(currentPosition)}href: ${href}`;
     insertContentToEditor(editor, insertTocEntry.name, tocEntryIndented);
   }
 
@@ -407,7 +407,7 @@ export function createParentNode() {
     const parentNodeLineStart = `- name:
   items:
   - name:
-    href:`
+    href:`;
     insertContentToEditor(editor, insertTocEntry.name, parentNodeLineStart);
   }
 
@@ -416,7 +416,7 @@ export function createParentNode() {
       `- name:
     ${attributeSpace.repeat(cursorPosition - 2)}items:
     ${attributeSpace.repeat(cursorPosition - 2)}- name:
-    ${attributeSpace.repeat(cursorPosition)}href:`
+    ${attributeSpace.repeat(cursorPosition)}href:`;
     insertContentToEditor(editor, insertTocEntry.name, parentNodeLineStart);
   }
 

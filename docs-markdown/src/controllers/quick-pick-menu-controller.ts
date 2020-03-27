@@ -2,6 +2,7 @@
 
 import * as vscode from "vscode";
 import { checkExtension, generateTimestamp } from "../helper/common";
+import { output } from "../helper/output";
 import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
 import { applyCleanup } from "./cleanup/cleanup-controller";
@@ -9,8 +10,9 @@ import { formatCode } from "./code-controller";
 import { pickImageType } from "./image-controller";
 import { insertInclude } from "./include-controller";
 import { formatItalic } from "./italic-controller";
+import { pickLinkType } from "./link-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
-import { insertVideo, insertLink } from "./media-controller";
+import { insertLink, insertVideo } from "./media-controller";
 import { noLocText } from "./no-loc-controller";
 import { previewTopic } from "./preview-controller";
 import { insertRowsAndColumns } from "./row-columns-controller";
@@ -19,8 +21,6 @@ import { insertTable } from "./table-controller";
 import { applyTemplate } from "./template-controller";
 import { applyXref } from "./xref-controller";
 import { insertExpandableParentNode, insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
-import { pickLinkType } from "./link-controller";
-import { output } from "../helper/output";
 
 export function quickPickMenuCommand() {
     const commands = [
@@ -113,7 +113,8 @@ export function markdownQuickPick() {
     //    label: "$(tasklist) Cleanup...",
     // }
     const previewSetting = vscode.workspace.getConfiguration("markdown").previewFeatures;
-    if (previewSetting == true) {
+    if (previewSetting === true) {
+        output.appendLine("Preview features will be enabled.");
     }
 
     if (checkExtension("docsmsft.docs-article-templates")) {

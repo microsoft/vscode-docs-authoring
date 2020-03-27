@@ -3,9 +3,9 @@
 import * as vscode from "vscode";
 import { ListType } from "../constants/list-type";
 import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
-import { sendTelemetryData } from "../helper/telemetry";
 import { addIndent, autolistAlpha, autolistNumbered, checkEmptyLine, checkEmptySelection, CountIndent, createBulletedListFromText, createNumberedListFromText, fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, insertList, isBulletedLine, nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern } from "../helper/list";
 import { output } from "../helper/output";
+import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertList";
 let commandOption: string;
