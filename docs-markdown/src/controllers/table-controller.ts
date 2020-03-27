@@ -2,10 +2,10 @@
 
 import * as vscode from "vscode";
 import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning } from "../helper/common";
-import { sendTelemetryData } from "../helper/telemetry";
 import { FormatOptions, MarkdownTable } from "../helper/markdown-table";
-import { tableBuilder, validateTableRowAndColumnCount } from "../helper/utility";
 import { output } from "../helper/output";
+import { sendTelemetryData } from "../helper/telemetry";
+import { tableBuilder, validateTableRowAndColumnCount } from "../helper/utility";
 
 const telemetryCommand: string = "insertTable";
 let commandOption: string;
@@ -71,8 +71,8 @@ export function insertTable() {
 
             /// check valid value and exceed 4*4
             if (validateTableRowAndColumnCount(size.length, size[0], size[1])) {
-                const col = Number.parseInt(size[0]);
-                const row = Number.parseInt(size[1]);
+                const col = Number.parseInt(size[0], undefined);
+                const row = Number.parseInt(size[1], undefined);
                 const str = tableBuilder(col, row);
                 insertContentToEditor(editor, insertTable.name, str);
                 logTableMessage = col + ":" + row;

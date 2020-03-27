@@ -5,7 +5,7 @@ import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
 import { URL } from "url";
-import { Position, Selection, TextEditor, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder, commands } from "vscode";
+import { commands, Position, Selection, TextEditor, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder } from "vscode";
 import * as YAML from "yamljs";
 import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
 import { output } from "../helper/output";
@@ -471,9 +471,9 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
 
                             source.pipe(dest);
                             source.on("close", () => {
-                                fs.unlink(item.fileFullPath, (err) => {
+                                fs.unlink(item.fileFullPath, (error) => {
                                     if (err) {
-                                        postError(`Error: ${err}`);
+                                        postError(`Error: ${error}`);
                                     }
                                 });
                             });

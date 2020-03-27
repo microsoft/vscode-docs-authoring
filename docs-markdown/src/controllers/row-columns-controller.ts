@@ -2,8 +2,8 @@
 
 import { window } from "vscode";
 import { isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
-import { sendTelemetryData } from "../helper/telemetry";
 import { addNewColumn, addNewColumnWithSpan, createRow } from "../helper/rows-columns";
+import { sendTelemetryData } from "../helper/telemetry";
 
 const rowWithColumns = "Two-column structure";
 const newColumn = "New column";
@@ -32,7 +32,7 @@ export function insertRowsAndColumns() {
         const commandOptions = [
             rowWithColumns,
             newColumn,
-            newColumnWithSpan
+            newColumnWithSpan,
         ];
         window.showQuickPick(commandOptions).then((qpSelection) => {
             if (!qpSelection) {
@@ -70,4 +70,3 @@ export function insertNewColumnWithSpan() {
     commandOption = "column-with-span";
     sendTelemetryData(telemetryCommand, commandOption);
 }
-
