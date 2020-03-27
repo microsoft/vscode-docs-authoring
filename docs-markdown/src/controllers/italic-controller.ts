@@ -1,7 +1,8 @@
 "use strict";
 
 import { window, Selection, Range, TextEditorEdit } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData, postWarning, showStatusMessage } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, showStatusMessage } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBoldAndItalic, isItalic } from "../helper/format-styles";
 

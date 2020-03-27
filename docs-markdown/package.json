@@ -4,14 +4,14 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.59",
+  "version": "0.2.61",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
     "url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
   },
   "engines": {
-    "vscode": "^1.22.0"
+    "vscode": "^1.43.0"
   },
   "repository": {
     "url": "https://github.com/Microsoft/vscode-docs-authoring.git"
@@ -45,6 +45,11 @@
       {
         "command": "sortMasterRedirectionFile",
         "title": "Sort master redirection file",
+        "category": "Docs"
+      },
+      {
+        "command": "applyRedirectDaisyChainResolution",
+        "title": "Resolve redirection file daisy-chains",
         "category": "Docs"
       },
       {
@@ -294,6 +299,10 @@
           "group": "Docs"
         },
         {
+          "command": "applyRedirectDaisyChainResolution",
+          "group": "Docs"
+        },
+        {
           "command": "formatBold",
           "group": "Docs",
           "when": "resourceLangId == markdown"
@@ -460,17 +469,35 @@
     },
     "configuration": {
       "type": "object",
-      "title": "Docs Markdown Extension Configuration",
+      "title": "Docs Markdown",
       "properties": {
         "markdown.replaceSmartQuotes": {
           "type": "boolean",
           "default": true,
           "markdownDescription": "When `true`, automatically replace smart quotes (`“, ”, ‘, and ’`) with standard quotes (`\" and '`) in markdown files. This feature extends to other characters as well, i.e.; (`©, ™, ®, •`, subscript and superscript characters). This is useful when pasting text from Word documents."
         },
+        "markdown.docsetName": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "The name of the docset, most often the route segment immediately following the locale in the URL, (i.e.; https://docs.microsoft.com/en-us/azure/ would be 'azure'). Sometimes this value is specified in the `docfx.json` file under the `build/dest` node.",
+          "scope": "window"
+        },
+        "markdown.docsetRootFolderName": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "The name of the docset root folder. Sometimes this value is specified in the `docfx.json` file under the `build/resource/src` node.",
+          "scope": "window"
+        },
+        "markdown.omitDefaultJsonProperties": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "When `true` omits default JSON values when serializing objects, i.e.; the `.openpublishing.redirection.json` file would have the `redirect_document_id` properties omitted when they are `false`.",
+          "scope": "window"
+        },
         "markdown.allAvailableLanguages": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Provide all available languages when suggesting code-fence language identifiers. Overrides `markdown.docsetLanguages` setting."
+          "markdownDescription": "Provide all available languages when suggesting code-fence language identifiers. Overrides [Markdown: Docset Languages](#markdown.docsetLanguages) setting."
         },
         "markdown.docsetLanguages": {
           "type": [
@@ -478,7 +505,7 @@
             "null"
           ],
           "title": "Language Identifiers",
-          "markdownDescription": "When the \"All Available Languages\" (`markdown.allAvailableLanguages`) flag is set to `false`, the suggested completion list displayed when typing an opening code-block (` ``` `) is filtered to the provided language identifiers.",
+          "markdownDescription": "When the [Markdown: All Available Languages](#markdown.allAvailableLanguages) flag is set to `false`, the suggested completion list displayed when typing an opening code-block (` ``` `) is filtered to the provided language identifiers.",
           "items": {
             "type": "string",
             "enum": [
@@ -650,10 +677,10 @@
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test-core": "node ./node_modules/vscode/bin/test",
-    "test": "jest",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "node ./out/src/test/runTest.js",
     "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
@@ -673,52 +700,30 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@types/glob": "^5.0.36",
+    "@types/chai": "^4.2.10",
+    "@types/chai-spies": "^1.0.1",
+    "@types/glob": "^7.1.1",
     "@types/graceful-fs": "^2.0.30",
-    "@types/jest": "24.0.12",
     "@types/lodash.merge": "^4.6.3",
-    "@types/node": "^7.10.9",
+    "@types/mocha": "^7.0.1",
+    "@types/node": "^12.11.7",
     "@types/node-dir": "0.0.32",
     "@types/recursive-readdir": "^2.2.0",
+    "@types/vscode": "^1.43.0",
     "@types/yamljs": "^0.2.30",
-    "jest": "^24.7.1",
-    "jest-junit": "^6.3.0",
+    "chai": "^4.2.0",
+    "chai-spies": "^1.0.0",
+    "mocha": "^7.0.1",
+    "mocha-junit-reporter": "^1.23.3",
+    "mock-require": "^3.0.3",
+    "nyc": "^15.0.0",
     "octicons": "^7.3.0",
-    "ts-jest": "^24.0.2",
+    "sinon": "^9.0.1",
+    "source-map-support": "^0.5.16",
+    "ts-node": "^8.6.2",
     "tslint": "^5.20.1",
-    "typescript": "3.4.5",
-    "vscode": "^1.1.33"
-  },
-  "jest": {
-    "verbose": true,
-    "preset": "ts-jest",
-    "roots": [
-      "<rootDir>/test",
-      "<rootDir>/src"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "json",
-      "node"
-    ],
-    "coverageReporters": [
-      "text-summary",
-      "cobertura",
-      "html"
-    ],
-    "reporters": [
-      "default",
-      "jest-junit"
-    ],
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/**/*"
-    ]
-  },
-  "jest-junit": {
-    "output": "test-results-jest.xml",
-    "usePathForSuiteName": "true"
+    "typescript": "^3.7.5",
+    "vscode-test": "^1.3.0"
   },
   "license": "MIT"
 }

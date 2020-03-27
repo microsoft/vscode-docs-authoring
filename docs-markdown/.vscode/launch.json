@@ -24,19 +24,18 @@
             "preLaunchTask": "npm"
         },
         {
-            "name": "Launch Tests",
+            "name": "Extension Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test",
+                "${workspaceFolder}/src/test/data/repo",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/out/src/test/suite/index",
+                "--colors"
             ],
-            "stopOnEntry": false,
-            "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/out/src",
-                "${workspaceRoot}/out/test"
+                "${workspaceFolder}/out/src/**/*.js"
             ],
             "preLaunchTask": "npm"
         }

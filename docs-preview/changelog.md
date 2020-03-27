@@ -1,5 +1,17 @@
 # Change Log
 
+## 0.3.44 (March 23rd, 2020)
+
+- Bug fix for webview on change event firing when no webview exists
+
+## 0.3.43 (March 18th, 2020)
+
+- Added seo search results preview
+
+## 0.3.42 (March 18th, 2020)
+
+- Add preview theme selector and setting
+
 ## 0.3.41 (March 13th, 2020)
 
 - Bug fix for triple colon image extension rendering

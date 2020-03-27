@@ -1,7 +1,7 @@
 
 import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, workspace } from "vscode";
-import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, sendTelemetryData, setCursorPosition } from "../helper/common";
-
+import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, setCursorPosition } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 import Axios from "axios";
 
 const path = require("path");

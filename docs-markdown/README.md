@@ -1,7 +1,8 @@
 [![Build Status](https://ceapex.visualstudio.com/Engineering/_apis/build/status/Authoring/docs-markdown%20CI?branchName=master)](https://ceapex.visualstudio.com/Engineering/_build/latest?definitionId=1346&branchName=master)
+
 # Docs Markdown Extension
 
-Welcome to the Docs Markdown authoring extension! This extension provides Markdown authoring assistance for docs.microsoft.com (Docs) content, including basic Markdown support and support for custom Markdown syntax on Docs. We also now support some YAML authoring commands. Here's a quick demo - the rest of the readme provides details about using the extension:
+Welcome to the Docs Markdown authoring extension! This extension provides Markdown authoring assistance for docs.microsoft.com (Docs) content, including basic Markdown support and support for custom Markdown syntax on Docs. We also now support some YAML authoring commands. Here's a quick demo - the rest of the readme provides details about using the extension. You can also get more details about all of the Docs Authoring Pack features here: [Docs Authoring Pack Overview](https://docs.microsoft.com/en-us/contribute/how-to-write-docs-auth-pack)
 
 ![demo](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/video/extension-demo.gif)
 
@@ -15,9 +16,11 @@ Some syntax supported by the extension, such as alerts and snippets, are custom 
 
 To access the Docs Markdown menu, type `ALT+M`. You can click or use up/down arrows to select the function you want, or type to start filtering, then hit `ENTER` when the function you want is highlighted in the menu.
 
+![docs markdown quick pick](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/docs-markdown-quick-pick.png)
+
 You can also now access the Docs commands from the VS Code command palette. Hit F1 to open the command palette and start typing to filter. All the Docs commands begin with "Docs":
 
-![Docs commands](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/docs-command-palette.png)
+![docs markdown command palette](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/docs-command-palette.png)
 
 The following commands are available in Markdown files:
 
@@ -79,7 +82,7 @@ Default keyboard shortcuts are available for some commands, as noted in the tabl
 
 See [Keybindings](https://code.visualstudio.com/docs/getstarted/keybindings) in the VS Code docs for more information.
 
-## How to show the legacy toolbar
+## How to show the docs-markdown toolbar
 
 Users of the pre-release version of the extension will notice that the authoring toolbar no longer appears at the bottom of the VS Code window when the Docs Markdown extension is installed. This is because the toolbar took up a lot of space on the VS Code status bar, and did not follow best practices for extension UX, so it is deprecated in the new extension. However, you can optionally show the toolbar by updating your VS Code settings.json file as follows:
 
@@ -90,17 +93,133 @@ Users of the pre-release version of the extension will notice that the authoring
 
    ![toolbar](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/legacy-toolbar.png)
 
-## Cleanup scripts
+## Context Menus
 
-Cleanup functionality has been added to docs-markdown to move the experience of fixing validation closer to your development environment. Instead of having to wait until build time, you can proactively reduce the number of validation errors and warnings by running these cleanup scripts. Get started by hitting `F1` and typing `Docs: Cleanup` or hit `Alt+M` and navigate to `Cleanup...` in the quick pick menu.
+There are multiple context menu options that have been added to the right mouse click button when editing markdown documents. This includes update metadata, and reformat tables. Or you can right mouse click on a markdown file or folder for the cleanup scripts context menu option.
+
+### Cleanup scripts
+
+Cleanup functionality has been added to docs-markdown to move the experience of fixing validation closer to your development environment. Instead of having to wait until build time, you can proactively reduce the number of validation errors and warnings by running these cleanup scripts. Get started by hitting `F1` and typing `Docs: Cleanup` or hit `Alt+M` and navigate to `Cleanup...` in the quick pick menu. Or right click on a file or folder in the explorer panel to see the `clean up file` option in the context menu.
+
+![cleanup script context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/cleanup-script-context-menu.png)
 
 Cleanup scripts available:
 
 - Single-valued metadata: Converts single value arrays of metadata into inline properties without array brackets.
-- Microsoft links: Converts http:// to https:// for microsoft docs, azure, technet, and msdn. Removes hardcoded locale from url.
+- Microsoft links: Converts `http://` to `https://` for microsoft docs, azure, technet, and msdn. Removes hardcoded locales (`en-us`) from url.
 - Capitalization of metadata values: Lowercases certain metadata properties.
 - Master redirection file: Adds redirect_url entries to the master redirect file and removes redirected Markdown files from the repo.
 - Everything: Runs all the available cleanup scripts.
+
+### Reformat Markdown tables
+
+In a Markdown (*\*.md*) file, when you select a complete table - two table formatting context menu items are now available. Right-click on the selected Markdown table to open the context menu. You will see something similar to the following menu items:
+
+![Reformat table context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/reformat-table-menu.png)
+
+This feature **does not** work with multiple table selections, but rather is intended for a single Markdown table. You must select the entire table, including headings for desired results.
+
+### Consolidate selected table
+
+Selecting the **Consolidate selected table** option will collapse the table headings and contents with only a single space on either side of each value.
+
+### Evenly distribute selected table
+
+Selecting the **Evenly distribute selected table** option will calculate the longest value in each column and evenly distribute all the other values accordingly with space.
+
+### Considerations
+
+The feature will not impact the rendering of the table, but it will help to improve the readability of the table - thus making more maintainable. The reformatting table feature will keep column alignment intact.
+
+Consider the following table:
+
+```markdown
+| Column1 | This is a long column name | Column3 |  |
+|--:|---------|:--:|:----|
+||         |  |         |
+|     |  |         |   a value      |
+||         |         |         |
+|     |         | This is a long value |       but why? |
+|     |         |         |         |
+|     |                                           |         | Here is something |
+|  |         |   |         |
+```
+
+After being "evenly distributed":
+
+```markdown
+| Column1 | This is a long column name | Column3              |                   |
+|--------:|----------------------------|:--------------------:|:------------------|
+|         |                            |                      |                   |
+|         |                            |                      | a value           |
+|         |                            |                      |                   |
+|         |                            | This is a long value | but why?          |
+|         |                            |                      |                   |
+|         |                            |                      | Here is something |
+|         |                            |                      |                   |
+```
+
+After being "consolidated":
+
+```markdown
+| Column1 | This is a long column name | Column3 |  |
+|-:|--|:-:|:-|
+|  |  |  |  |
+|  |  |  | a value |
+|  |  |  |  |
+|  |  | This is a long value | but why? |
+|  |  |  |  |
+|  |  |  | Here is something |
+|  |  |  |  |
+```
+
+### Update metadata
+
+In a Markdown (*\*.md*) file, there are two contextual menu items specific to metadata. When you right-click anywhere in the text editor, you will see something similar to the following menu items:
+
+![Update metadata context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/update-metadata-menu.png)
+
+### Update `ms.date` metadata value
+
+Selecting the **Update `ms.date` Metadata Value** option will set the current Markdown files `ms.date` value to today's date. If the document does not have an `ms.date` metadata field, no action is taken.
+
+### Update implicit metadata values
+
+Selecting the **Update implicit metadata values** option will find and replace all possible metadata values that could be implicitly specified. Metadata values are implicitly specified in the *docfx.json* file, under the `build/fileMetadata` node. Each key value pair in the `fileMetadata` node represents metadata defaults. For example, a Markdown file in the *top-level/sub-folder* directory that omits the `ms.author` metadata value could implicitly specify a default value to use in the `fileMetadata` node.
+
+```json
+{
+    "build": {
+        "fileMetadata": {
+            "ms.author": {
+                "top-level/sub-folder/**/**.md": "dapine"
+            }
+        }
+    }
+}
+```
+
+In this case, all Markdown files would implicitly take on the `ms.author: dapine` metadata value. The feature acts on these implicit settings found in the *docfx.json* file. If a Markdown file contains metadata with values that are explicitly set to something other than the implicit values, they are overridden.
+
+Consider the following Markdown file metadata, where this Markdown file resides in **top-level/sub-folder/includes/example.md**:
+
+```markdown
+---
+ms.author: someone-else
+---
+
+## Content
+```
+
+If the **Update implicit metadata values** option was executed on this file, with the assumed *docfx.json* content from above the metadata value would be updated to `ms.author: dapine`.
+
+```markdown
+---
+ms.author: dapine
+---
+
+# Content
+```
 
 ## Known issues
 
@@ -111,7 +230,7 @@ Cleanup scripts available:
 - [External bookmarks] Linux: File list is displayed but no headings are shown to select.
 - [Includes] Linux: File list is displayed but no link is added after selection is made.
 
-# Contributing
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to and actually do, grant us the rights to use your contribution. For details, visit our [Contributor License Agreement (CLA)](https://cla.microsoft.com).
 

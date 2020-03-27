@@ -2,7 +2,8 @@
 
 import * as vscode from "vscode";
 import { insertBookmarkExternal, insertBookmarkInternal } from "../controllers/bookmark-controller";
-import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, isValidFileCheck, noActiveEditorMessage, postWarning, sendTelemetryData, setCursorPosition, unsupportedFileMessage } from "../helper/common";
+import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, isValidFileCheck, noActiveEditorMessage, postWarning, setCursorPosition, unsupportedFileMessage } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 import { externalLinkBuilder, internalLinkBuilder, videoLinkBuilder } from "../helper/utility";
 
 const telemetryCommandMedia: string = "insertMedia";

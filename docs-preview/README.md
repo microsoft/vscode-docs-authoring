@@ -15,6 +15,12 @@ There are a few options for how to see Docs preview:
 
 You can also use the default keyboard shortcut, `Alt+DP`.
 
+## Theme Support
+
+The docs-preview extension supports light, dark and high contrast themes.  You can select a default theme by going to File => Preferences => Settings => Extensions => Docs Preview Extension Configuration and choosing a theme.  A toast notification will show after a theme is selected to prompt the user to reload the VS Code for the settings to take effect.
+
+![Preview setting](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-preview/images/preview-setting.gif)
+
 If you also have the [Docs Markdown](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown) extension installed, you can access preview from the Docs Markdown menu:
 
 1. Type `Alt+M` to open the menu.
