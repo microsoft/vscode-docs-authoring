@@ -1,28 +1,28 @@
-"use strict"
+"use strict";
 
 import * as fs from "fs"
 import * as path from "path"
 import * as Collections from "typescript-collections"
-import * as YAML from "yamljs"
+import { Range, TextEditor } from "vscode"
 import * as yamlMetadata from "../helper/yaml-metadata"
 import * as common from "./common"
 import * as utilityHelper from "./utility"
-import { TextEditor, Range } from "vscode"
+import YAML = require("yamljs");
 
 /* tslint:disable:no-var-requires max-classes-per-file */
 
-const lodash = require("lodash.merge")
-const matcher = require("matcher")
-const fsExistsSync = require("fs-exists-sync")
+const lodash = require("lodash.merge");
+const matcher = require("matcher");
+const fsExistsSync = require("fs-exists-sync");
 
 export enum MetadataSourceContentType { MarkdownFile, DocFxFile, GlobalMetadataFx, FileMetadataFx, YamlContent }
 
-export const dateTimeFormat = "MM/dd/yyyy"
+export const dateTimeFormat = "MM/dd/yyyy";
 
 export class EmptyYamlHeaderError extends Error {
     public constructor(message: string) {
-        super(message)
-        Object.setPrototypeOf(this, EmptyYamlHeaderError.prototype)
+        super(message);
+        Object.setPrototypeOf(this, EmptyYamlHeaderError.prototype);
     }
 }
 
@@ -33,51 +33,51 @@ export class MetadataContentBase {
     public RawMetadata: string;
 
     constructor(metadataType: MetadataSourceContentType, dataContent: string, fileName: string, rawMetadata: string) {
-        this.MetadataType = metadataType
-        this.OriginalData = dataContent
-        this.FileName = fileName
-        this.RawMetadata = rawMetadata
+        this.MetadataType = metadataType;
+        this.OriginalData = dataContent;
+        this.FileName = fileName;
+        this.RawMetadata = rawMetadata;
     }
 
     public getYamlMetadataContent(): string {
         try {
-            return this.getYamlMetadataContentInner()
+            return this.getYamlMetadataContentInner();
         } catch (err) {
-            this.checkSyntaxError(err.toString())
+            this.checkSyntaxError(err.toString());
 
-            throw new Error("Yaml header could not be parsed.  If any free-form text spans multiple lines, please wrap the entire string in quotes.")
+            throw new Error("Yaml header could not be parsed.  If any free-form text spans multiple lines, please wrap the entire string in quotes.");
         }
     }
 
     public getRawMetadataContent(): string {
         try {
-            return this.getRawMetadataContentInner()
+            return this.getRawMetadataContentInner();
         } catch (err) {
-            throw new Error("Yaml header could not be parsed.  If any free-form text spans multiple lines, please wrap the entire string in quotes.")
+            throw new Error("Yaml header could not be parsed.  If any free-form text spans multiple lines, please wrap the entire string in quotes.");
         }
     }
 
     public getYamlMetadataContentInner(): string {
-        return this.OriginalData
+        return this.OriginalData;
     }
 
     public getRawMetadataContentInner(): string {
-        return this.RawMetadata
+        return this.RawMetadata;
     }
 
     private translateSyntaxErrorMessage(errMsg: string): string {
         if (errMsg.includes("ms.date:")) {
-            return "ms.date format is incorrect. Change to " + dateTimeFormat + " and re-run validation."
+            return "ms.date format is incorrect. Change to " + dateTimeFormat + " and re-run validation.";
         } else if (errMsg.includes("Malformed inline YAML string")) {
-            return errMsg.replace("Malformed inline YAML string", "Incorrect YAML syntax in string") + ". Please fix YAML syntax and re-run validation."
+            return errMsg.replace("Malformed inline YAML string", "Incorrect YAML syntax in string") + ". Please fix YAML syntax and re-run validation.";
         }
-        return errMsg
+        return errMsg;
     }
 
     private checkSyntaxError(errMsg: string) {
         if (errMsg.includes("<ParseException> ")) {
-            errMsg = errMsg.replace("<ParseException> ", "")
-            throw new Error(this.translateSyntaxErrorMessage(errMsg).toString())
+            errMsg = errMsg.replace("<ParseException> ", "");
+            throw new Error(this.translateSyntaxErrorMessage(errMsg).toString());
         }
     }
 }
@@ -89,53 +89,53 @@ export class YamlMetadataContent extends MetadataContentBase {
     public RawMetadata!: string;
 
     constructor(originalContent: string, fileName: string, rawMetadata = "") {
-        super(MetadataSourceContentType.YamlContent, originalContent, fileName, rawMetadata)
+        super(MetadataSourceContentType.YamlContent, originalContent, fileName, rawMetadata);
     }
 
     public getYamlMetadataContentInner(): string {
-        return this.OriginalData
+        return this.OriginalData;
     }
 
     public getRawMetadataContentInner(): string {
-        return this.RawMetadata
+        return this.RawMetadata;
     }
 }
 
 export class MarkdownFileMetadataContent extends MetadataContentBase {
     constructor(originalContent: string, fileName: string, rawMetadata = "") {
-        super(MetadataSourceContentType.MarkdownFile, originalContent, fileName, rawMetadata)
+        super(MetadataSourceContentType.MarkdownFile, originalContent, fileName, rawMetadata);
     }
 
     public getYamlMetadataContentInner(): string {
-        const re = /^(-{3}(?:\n|\r)([\w\W]+?)(?:\n|\r)-{3})?([\w\W]*)*/
-        const results = re.exec(utilityHelper.stripBOMFromString(this.OriginalData.toString()) || "{}")
+        const re = /^(-{3}(?:\n|\r)([\w\W]+?)(?:\n|\r)-{3})?([\w\W]*)*/;
+        const results = re.exec(utilityHelper.stripBOMFromString(this.OriginalData.toString()) || "{}");
 
         if (results !== null) {
-            const result = results[1]
-            const trimmed = common.rtrim(result.trim(), "---")
-            const parsed = YAML.parse(trimmed)
+            const result = results[1];
+            const trimmed = common.rtrim(result.trim(), "---");
+            const parsed = YAML.parse(trimmed);
             if (parsed === null) {
                 // fix if yaml header is empty or contains only comments
-                return ""
+                return "";
             }
-            return YAML.stringify(parsed)
+            return YAML.stringify(parsed);
         }
-        return ""
+        return "";
     }
 
     public getRawMetadataContentInner(): string {
-        const re = /^(-{3}(?:\n|\r)([\w\W]+?)(?:\n|\r)-{3})?([\w\W]*)*/
-        const results = re.exec(this.OriginalData.toString())
+        const re = /^(-{3}(?:\n|\r)([\w\W]+?)(?:\n|\r)-{3})?([\w\W]*)*/;
+        const results = re.exec(this.OriginalData.toString());
 
         if (results !== null) {
-            const result = results[1]
+            const result = results[1];
             if (result === undefined) {
-                return ""
+                return "";
             }
-            return result
+            return result;
         }
 
-        return " "
+        return " ";
     }
 }
 
@@ -143,43 +143,43 @@ export class DocFxMetadataContent extends MetadataContentBase {
     private referenceTemplateFileName: string;
 
     constructor(originalContent: string, fileName: string, referenceTemplateFileName: string, rawMetadata = "") {
-        super(MetadataSourceContentType.DocFxFile, originalContent, fileName, rawMetadata)
-        this.referenceTemplateFileName = referenceTemplateFileName
+        super(MetadataSourceContentType.DocFxFile, originalContent, fileName, rawMetadata);
+        this.referenceTemplateFileName = referenceTemplateFileName;
     }
 
     public Expand(): YamlMetadataContent[] {
         try {
-            const result: yamlMetadata.YamlMetadataContent[] = []
-            const docfxParsed = JSON.parse(utilityHelper.stripBOMFromString(this.OriginalData.toString()) || "{}")
+            const result: yamlMetadata.YamlMetadataContent[] = [];
+            const docfxParsed = JSON.parse(utilityHelper.stripBOMFromString(this.OriginalData.toString()) || "{}");
             if (docfxParsed === undefined || docfxParsed.build === undefined) {
                 // log.debug("file '" + this.FileName + "' does not contain requested root element 'build'");
-                return result
+                return result;
             }
             if (docfxParsed.build.fileMetadata !== undefined) {
-                result.push(new FileFxMetadataContent(JSON.stringify(docfxParsed.build.fileMetadata), this.FileName, this.referenceTemplateFileName))
+                result.push(new FileFxMetadataContent(JSON.stringify(docfxParsed.build.fileMetadata), this.FileName, this.referenceTemplateFileName));
             }
             if (docfxParsed.build.globalMetadata !== undefined) {
-                result.push(new GlobalFxMetadataContent(JSON.stringify(docfxParsed.build.globalMetadata), this.FileName))
+                result.push(new GlobalFxMetadataContent(JSON.stringify(docfxParsed.build.globalMetadata), this.FileName));
             }
-            return result
+            return result;
         } catch (err) {
-            throw new Error("Yaml headers could not be parsed from file '" + this.FileName + "'. Original error :" + err.toString())
+            throw new Error("Yaml headers could not be parsed from file '" + this.FileName + "'. Original error :" + err.toString());
         }
     }
 }
 
 export class GlobalFxMetadataContent extends MetadataContentBase {
     constructor(originalContent: string, fileName: string, rawMetadata = "") {
-        super(MetadataSourceContentType.GlobalMetadataFx, originalContent, fileName, rawMetadata)
+        super(MetadataSourceContentType.GlobalMetadataFx, originalContent, fileName, rawMetadata);
     }
 
     public getYamlMetadataContentInner(): string {
         if (this.OriginalData === undefined || this.OriginalData === "") {
-            return ""
+            return "";
         }
 
-        const parsed = JSON.parse(utilityHelper.stripBOMFromString(this.OriginalData.toString()) || "{}")
-        return YAML.stringify(parsed)
+        const parsed = JSON.parse(utilityHelper.stripBOMFromString(this.OriginalData.toString()) || "{}");
+        return YAML.stringify(parsed);
     }
 }
 
@@ -187,43 +187,43 @@ export class FileFxMetadataContent extends MetadataContentBase {
     private referenceTopicFileName: string;
 
     constructor(originalContent: string, fileName: string, referenceTemplateFileName: string, rawMetadata = "") {
-        super(MetadataSourceContentType.FileMetadataFx, originalContent, fileName, rawMetadata)
-        this.referenceTopicFileName = referenceTemplateFileName
+        super(MetadataSourceContentType.FileMetadataFx, originalContent, fileName, rawMetadata);
+        this.referenceTopicFileName = referenceTemplateFileName;
     }
 
     public getYamlMetadataContentInner(): string {
         // parses file base metadata passed from from the docfx.json file. If filepattern is speficied it's taken only if
         // this.referenceTopicFileName is matched.
 
-        const parsed = JSON.parse(utilityHelper.stripBOMFromString(this.OriginalData.toString()) || "{}")
-        const returned: any = {}
+        const parsed = JSON.parse(utilityHelper.stripBOMFromString(this.OriginalData.toString()) || "{}");
+        const returned: any = {};
         for (const key in parsed) {
             if (parsed.hasOwnProperty(key)) {
-                const atributeItem = parsed[key]
+                const atributeItem = parsed[key];
                 if (atributeItem instanceof Object) {
                     for (const filePattern in atributeItem) {
                         if (atributeItem.hasOwnProperty(filePattern)) {
                             if (this.matchFilePattern(this.referenceTopicFileName.toString(), filePattern)) {
-                                returned[key] = atributeItem[filePattern]
+                                returned[key] = atributeItem[filePattern];
                             }
                         }
                     }
                 } else {
                     if (atributeItem instanceof String) {
-                        returned[key] = parsed[key]
+                        returned[key] = parsed[key];
                     }
                 }
             }
         }
 
-        return YAML.stringify(returned)
+        return YAML.stringify(returned);
     }
 
     private matchFilePattern(referenceFile: string, filePattern: string): boolean {
-        const newSearchPattern = path.dirname(this.FileName).replace(/\\/g, "/") + "/" + filePattern // normalizes path and replaces backslashes
-        const filePath = referenceFile.replace(/\\/g, "/") // normalizes path and replaces backslashes
-        const isJS = matcher.isMatch(filePath, newSearchPattern)
-        return isJS
+        const newSearchPattern = path.dirname(this.FileName).replace(/\\/g, "/") + "/" + filePattern; // normalizes path and replaces backslashes
+        const filePath = referenceFile.replace(/\\/g, "/"); // normalizes path and replaces backslashes
+        const isJS = matcher.isMatch(filePath, newSearchPattern);
+        return isJS;
     }
 }
 
@@ -231,9 +231,9 @@ export class FileFxMetadataContent extends MetadataContentBase {
  * Returns docfx.json metadata representation if find in the specified directory.
  */
 export function findDocFxMetadataForDir(dirname: string, referenceTopicFileName: string): DocFxMetadataContent | undefined {
-    const searchedMetadata = path.join(dirname, GetDocFxMetadataName())
+    const searchedMetadata = path.join(dirname, GetDocFxMetadataName());
     if (fsExistsSync(searchedMetadata)) {
-        return new DocFxMetadataContent(fs.readFileSync(searchedMetadata, "utf8"), searchedMetadata, referenceTopicFileName)
+        return new DocFxMetadataContent(fs.readFileSync(searchedMetadata, "utf8"), searchedMetadata, referenceTopicFileName);
     }
 }
 
@@ -243,42 +243,42 @@ export function findDocFxMetadataForDir(dirname: string, referenceTopicFileName:
  */
 function mergeYamlMetadata(higherPriorityMetadata: MetadataContentBase, lowerPriorityMetadata: MetadataContentBase): YamlMetadataContent {
     if (higherPriorityMetadata === undefined) {
-        throw new RangeError("higherPriorityMetadata must be defined.")
+        throw new RangeError("higherPriorityMetadata must be defined.");
     }
 
     if (lowerPriorityMetadata === undefined) {
-        throw new RangeError("lowerPriorityMetadata must be defined.")
+        throw new RangeError("lowerPriorityMetadata must be defined.");
     }
 
-    const contentHi = higherPriorityMetadata.getYamlMetadataContent()
-    const contentLo = lowerPriorityMetadata.getYamlMetadataContent()
-    const contentRaw = higherPriorityMetadata.getRawMetadataContent()
-    let mergedContent: string
-    const newFileName = higherPriorityMetadata.FileName
+    const contentHi = higherPriorityMetadata.getYamlMetadataContent();
+    const contentLo = lowerPriorityMetadata.getYamlMetadataContent();
+    const contentRaw = higherPriorityMetadata.getRawMetadataContent();
+    let mergedContent: string;
+    const newFileName = higherPriorityMetadata.FileName;
 
     if (contentHi === undefined || contentHi === "") {
         if (contentLo === undefined) {
-            mergedContent = ""
+            mergedContent = "";
         } else {
-            mergedContent = contentLo
+            mergedContent = contentLo;
         }
     } else if (contentLo === undefined || contentLo === "") {
         if (contentHi === undefined) {
-            mergedContent = ""
+            mergedContent = "";
         } else {
-            mergedContent = contentHi
+            mergedContent = contentHi;
         }
     } else {
-        const yamlFrontHi = YAML.parse(contentHi)
-        const yamlFrontLo = YAML.parse(contentLo)
-        const mergedContentAny = lodash(yamlFrontLo, yamlFrontHi)
-        mergedContent = YAML.stringify(mergedContentAny)
+        const yamlFrontHi = YAML.parse(contentHi);
+        const yamlFrontLo = YAML.parse(contentLo);
+        const mergedContentAny = lodash(yamlFrontLo, yamlFrontHi);
+        mergedContent = YAML.stringify(mergedContentAny);
         if (mergedContent.trim() === "{}") {
-            mergedContent = ""
+            mergedContent = "";
         }
     }
 
-    return new YamlMetadataContent(mergedContent, newFileName, contentRaw)
+    return new YamlMetadataContent(mergedContent, newFileName, contentRaw);
 }
 
 /**
@@ -287,40 +287,40 @@ function mergeYamlMetadata(higherPriorityMetadata: MetadataContentBase, lowerPri
  */
 export function mergeMetadata(priorityQueue: Collections.PriorityQueue<MetadataContentBase>): MetadataContentBase {
     if (priorityQueue === undefined) {
-        throw new RangeError("priorityStack must be defined.")
+        throw new RangeError("priorityStack must be defined.");
     }
 
-    const stack = new Collections.Stack<MetadataContentBase>()
+    const stack = new Collections.Stack<MetadataContentBase>();
     if (priorityQueue.isEmpty()) {
-        throw new RangeError("priorityQueue can't be empty.")
+        throw new RangeError("priorityQueue can't be empty.");
     }
     while (!priorityQueue.isEmpty()) {
-        const item = priorityQueue.dequeue()
+        const item = priorityQueue.dequeue();
         if (item !== undefined) {
             switch (item.MetadataType) {
                 case MetadataSourceContentType.MarkdownFile:
-                    stack.push(item)
-                    break
+                    stack.push(item);
+                    break;
                 case MetadataSourceContentType.GlobalMetadataFx:
                 case MetadataSourceContentType.FileMetadataFx:
                 case MetadataSourceContentType.YamlContent:
-                    stack.push(item)
-                    break
+                    stack.push(item);
+                    break;
                 case MetadataSourceContentType.DocFxFile:
-                    const docfxContent = item as DocFxMetadataContent
-                    const expandedList = docfxContent.Expand()
+                    const docfxContent = item as DocFxMetadataContent;
+                    const expandedList = docfxContent.Expand();
                     for (const expandedItem of expandedList) {
-                        stack.push(expandedItem)
+                        stack.push(expandedItem);
                     }
-                    break
+                    break;
                 default:
-                    throw new RangeError("switch value:" + item.MetadataType + " is not implemented")
+                    throw new RangeError("switch value:" + item.MetadataType + " is not implemented");
             }
         }
 
-        return mergeMetadataFromTop(stack)
+        return mergeMetadataFromTop(stack);
     }
-    return mergeMetadataFromTop(stack)
+    return mergeMetadataFromTop(stack);
 }
 
 /**
@@ -329,16 +329,16 @@ export function mergeMetadata(priorityQueue: Collections.PriorityQueue<MetadataC
  * Does not expand docfx.json content representation!
  */
 function mergeMetadataFromTop(stack: Collections.Stack<MetadataContentBase>): MetadataContentBase {
-    let currentMergedItem = stack.pop()!
+    let currentMergedItem = stack.pop()!;
     while (!stack.isEmpty()) {
-        currentMergedItem = mergeYamlMetadata(stack.pop()!, currentMergedItem)
+        currentMergedItem = mergeYamlMetadata(stack.pop()!, currentMergedItem);
     }
 
-    return currentMergedItem
+    return currentMergedItem;
 }
 
 function GetDocFxMetadataName(): string {
-    return "docfx.json"
+    return "docfx.json";
 }
 
 /**

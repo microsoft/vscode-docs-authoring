@@ -1,58 +1,39 @@
-import { readFile, writeFile } from "graceful-fs"
-import { postError } from "../../helper/common"
-import { showProgress } from "./utilities"
-const jsdiff = require("diff")
+import { reporter } from "../../helper/telemetry"
+import { readWriteFileWithProgress } from "./utilities"
 
+const telemetryCommand: string = "applyCleanup"
 /**
  * Cleanup empty, na and commented out metadata attributes found in .md files
  */
-export function removeEmptyMetadata(progress: any, promises: Promise<any>[], file: string, percentComplete: number, files: string[] | null, index: number | null, cleanupType: string) {
+export function removeEmptyMetadata(progress: any, file: string, files: string[] | null, index: number | null, cleanupType: string) {
     const message = "Removal of metadata values"
+    reporter.sendTelemetryEvent("command", { command: telemetryCommand })
     if (file.endsWith(".md")) {
-        promises.push(new Promise(resolve => {
-            readFile(file, "utf8", (err, data) => {
-                if (err) {
-                    postError(`Error: ${err}`)
-                }
+        return readWriteFileWithProgress(progress,
+            file,
+            message,
+            files,
+            index,
+            (data: string) => {
                 if (data.startsWith("---")) {
-                    const origin = data
                     if (cleanupType === "empty") {
-                        data = deleteEmptyMetadata(data)
+                        data = deleteEmptyMetadata(data);
                     }
                     if (cleanupType === "na") {
-                        data = deleteNaMetadata(data)
+                        data = deleteNaMetadata(data);
                     }
                     if (cleanupType === "commented") {
-                        data = deleteCommentedMetadata(data)
+                        data = deleteCommentedMetadata(data);
                     }
                     if (cleanupType === "all") {
-                        data = deleteEmptyMetadata(data)
-                        data = deleteNaMetadata(data)
-                        data = deleteCommentedMetadata(data)
-                    }
-                    const diff = jsdiff.diffChars(origin, data)
-                        .some((part: { added: any; removed: any }) => part.added || part.removed)
-                    if (diff) {
-                        promises.push(new Promise(resolve => {
-                            writeFile(file, data, err => {
-                                if (err) {
-                                    postError(`Error: ${err}`)
-                                }
-                                percentComplete = showProgress(index, files, percentComplete, progress, message)
-                                resolve()
-                            })
-                        }).catch(error => {
-                            postError(error)
-                        }))
+                        data = deleteEmptyMetadata(data);
+                        data = deleteNaMetadata(data);
+                        data = deleteCommentedMetadata(data);
                     }
                 }
-                resolve()
+                return data
             })
-        }).catch(error => {
-            postError(error)
-        }))
-    }
-    return promises
+    } else { return Promise.resolve() }
 }
 
 export function deleteEmptyMetadata(data: any) {

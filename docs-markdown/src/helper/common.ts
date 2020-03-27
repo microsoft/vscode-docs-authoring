@@ -5,7 +5,6 @@ import * as glob from "glob"
 import * as os from "os"
 import * as path from "path"
 import * as vscode from "vscode"
-
 import * as log from "./log"
 import { output } from "./output"
 
@@ -413,3 +412,11 @@ export function extractDocumentLink(
 }
 
 export const naturalLanguageCompare = (a: string, b: string) => (!!a && !!b) ? a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }) : 0
+
+export function escapeRegExp(content: string) {
+    return content.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // $& means the whole matched string
+}
+
+export function splice(insertAsPosition: number, content: string, insertStr: string) {
+    return content.slice(0, insertAsPosition) + insertStr + content.slice(insertAsPosition)
+}
