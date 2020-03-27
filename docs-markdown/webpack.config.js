@@ -24,6 +24,10 @@ const config = {
         // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
         extensions: ['.ts', '.js']
     },
+    optimization: {
+        // We no not want to minimize our code.
+        minimize: false
+    },
     module: {
         rules: [
             {

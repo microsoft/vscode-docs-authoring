@@ -145,6 +145,7 @@ Consider the following table:
 |  |         |   |         |
 ```
 
+
 After being "evenly distributed":
 
 ```markdown
