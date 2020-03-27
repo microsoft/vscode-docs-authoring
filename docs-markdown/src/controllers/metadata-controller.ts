@@ -1,40 +1,40 @@
-"use strict";
+"use strict"
 
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "fs"
+import * as path from "path"
 
-import { commands, TextEditor, window, workspace } from "vscode";
-import { noActiveEditorMessage, tryFindFile } from "../helper/common";
-import { sendTelemetryData } from "../helper/telemetry";
-import { applyReplacements, findReplacement, Replacements } from "../helper/utility";
+import { commands, TextEditor, window, workspace } from "vscode"
+import { noActiveEditorMessage, tryFindFile } from "../helper/common"
+import { sendTelemetryData } from "../helper/telemetry"
+import { applyReplacements, findReplacement, Replacements } from "../helper/utility"
 
 export function insertMetadataCommands() {
     return [
         { command: updateMetadataDate.name, callback: updateMetadataDate },
-        { command: updateImplicitMetadataValues.name, callback: updateImplicitMetadataValues },
-    ];
+        { command: updateImplicitMetadataValues.name, callback: updateImplicitMetadataValues }
+    ]
 }
 
 interface IDocFxMetadata {
     build: {
         fileMetadata?: {
             "author"?: {
-                [glob: string]: string,
+                [glob: string]: string;
             };
             "manager"?: {
-                [glob: string]: string,
+                [glob: string]: string;
             };
             "titleSuffix"?: {
-                [glob: string]: string,
+                [glob: string]: string;
             };
             "ms.author"?: {
-                [glob: string]: string,
+                [glob: string]: string;
             };
             "ms.service"?: {
-                [glob: string]: string,
+                [glob: string]: string;
             };
             "ms.subservice"?: {
-                [glob: string]: string,
+                [glob: string]: string;
             };
         };
     };
@@ -56,17 +56,17 @@ class ReplacementFormat {
     }
 
     public toReplacementString() {
-        return `${this.type}: ${this.value}`;
+        return `${this.type}: ${this.value}`
     }
 }
 
-const authorRegex = /^author:\s*\b(.+?)$/mi;
-const managerRegex = /^manager:\s*\b(.+?)$/mi;
-const titleSuffixRegex = /^titleSuffix:\s*\b(.+?)$/mi;
-const msAuthorRegex = /ms.author:\s*\b(.+?)$/mi;
-const msDateRegex = /ms.date:\s*\b(.+?)$/mi;
-const msServiceRegex = /ms.service:\s*\b(.+?)$/mi;
-const msSubserviceRegex = /ms.subservice:\s*\b(.+?)$/mi;
+const authorRegex = /^author:\s*\b(.+?)$/mi
+const managerRegex = /^manager:\s*\b(.+?)$/mi
+const titleSuffixRegex = /^titleSuffix:\s*\b(.+?)$/mi
+const msAuthorRegex = /ms.author:\s*\b(.+?)$/mi
+const msDateRegex = /ms.date:\s*\b(.+?)$/mi
+const msServiceRegex = /ms.service:\s*\b(.+?)$/mi
+const msSubserviceRegex = /ms.subservice:\s*\b(.+?)$/mi
 
 const metadataExpressions: Map<MetadataType, RegExp> = new Map([
     ["author", authorRegex],
@@ -75,160 +75,160 @@ const metadataExpressions: Map<MetadataType, RegExp> = new Map([
     ["ms.author", msAuthorRegex],
     ["ms.date", msDateRegex],
     ["ms.service", msServiceRegex],
-    ["ms.subservice", msSubserviceRegex],
-]);
+    ["ms.subservice", msSubserviceRegex]
+])
 
 export async function updateImplicitMetadataValues() {
-    const editor = window.activeTextEditor;
+    const editor = window.activeTextEditor
     if (!editor) {
-        noActiveEditorMessage();
-        return;
+        noActiveEditorMessage()
+        return
     }
 
     if (editor.document.languageId !== "markdown" &&
         editor.document.languageId !== "yaml") {
-        return;
+        return
     }
 
-    const content = editor.document.getText();
+    const content = editor.document.getText()
     if (content) {
-        const replacementFormats = await getMetadataReplacements(editor);
+        const replacementFormats = await getMetadataReplacements(editor)
         if (replacementFormats) {
-            const replacements: Replacements = [];
+            const replacements: Replacements = []
             for (let i = 0; i < replacementFormats.length; ++i) {
-                const replacementFormat = replacementFormats[i];
+                const replacementFormat = replacementFormats[i]
                 if (replacementFormat) {
-                    const expression = metadataExpressions.get(replacementFormat.type);
-                    const replacement = findReplacement(editor.document, content, replacementFormat.toReplacementString(), expression);
+                    const expression = metadataExpressions.get(replacementFormat.type)
+                    const replacement = findReplacement(editor.document, content, replacementFormat.toReplacementString(), expression)
                     if (replacement) {
-                        replacements.push(replacement);
+                        replacements.push(replacement)
                     }
                 }
             }
 
-            await applyReplacements(replacements, editor);
-            await saveAndSendTelemetry();
+            await applyReplacements(replacements, editor)
+            await saveAndSendTelemetry()
         }
     }
 }
 
 async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementFormat[]> {
-    const folder = workspace.getWorkspaceFolder(editor.document.uri);
+    const folder = workspace.getWorkspaceFolder(editor.document.uri)
     if (folder) {
         // Read the DocFX.json file, search for metadata defaults.
-        const docFxJson = tryFindFile(folder.uri.fsPath, "docfx.json");
+        const docFxJson = tryFindFile(folder.uri.fsPath, "docfx.json")
         if (!!docFxJson && fs.existsSync(docFxJson)) {
-            const jsonBuffer = fs.readFileSync(docFxJson);
-            const metadata = JSON.parse(jsonBuffer.toString()) as IDocFxMetadata;
+            const jsonBuffer = fs.readFileSync(docFxJson)
+            const metadata = JSON.parse(jsonBuffer.toString()) as IDocFxMetadata
             if (metadata && metadata.build && metadata.build.fileMetadata) {
-                const replacements: ReplacementFormat[] = [];
-                const fsPath = editor.document.uri.fsPath;
-                const fileMetadata = metadata.build.fileMetadata;
+                const replacements: ReplacementFormat[] = []
+                const fsPath = editor.document.uri.fsPath
+                const fileMetadata = metadata.build.fileMetadata
                 const tryAssignReplacement = (filePath: string, type: MetadataType, globs?: { [glob: string]: string }) => {
                     if (globs) {
-                        const value = getReplacementValue(globs, filePath);
+                        const value = getReplacementValue(globs, filePath)
                         if (value) {
-                            replacements.push(new ReplacementFormat(type, value));
-                            return true;
+                            replacements.push(new ReplacementFormat(type, value))
+                            return true
                         }
                     }
-                    return false;
-                };
+                    return false
+                }
 
                 // Fall back to templates config, if unable to find author and ms.author
                 if (!tryAssignReplacement(fsPath, "author", fileMetadata.author)) {
-                    const gitHubId = workspace.getConfiguration("docs.templates").githubid;
+                    const gitHubId = workspace.getConfiguration("docs.templates").githubid
                     if (gitHubId) {
-                        replacements.push(new ReplacementFormat("author", gitHubId));
+                        replacements.push(new ReplacementFormat("author", gitHubId))
                     }
                 }
                 if (!tryAssignReplacement(fsPath, "ms.author", fileMetadata["ms.author"])) {
-                    const alias = workspace.getConfiguration("docs.templates").alias;
+                    const alias = workspace.getConfiguration("docs.templates").alias
                     if (alias) {
-                        replacements.push(new ReplacementFormat("ms.author", alias));
+                        replacements.push(new ReplacementFormat("ms.author", alias))
                     }
                 }
 
-                tryAssignReplacement(fsPath, "manager", fileMetadata["manager"]);
-                tryAssignReplacement(fsPath, "titleSuffix", fileMetadata["titleSuffix"]);
-                tryAssignReplacement(fsPath, "ms.service", fileMetadata["ms.service"]);
-                tryAssignReplacement(fsPath, "ms.subservice", fileMetadata["ms.subservice"]);
+                tryAssignReplacement(fsPath, "manager", fileMetadata.manager)
+                tryAssignReplacement(fsPath, "titleSuffix", fileMetadata.titleSuffix)
+                tryAssignReplacement(fsPath, "ms.service", fileMetadata["ms.service"])
+                tryAssignReplacement(fsPath, "ms.subservice", fileMetadata["ms.subservice"])
 
-                replacements.push(new ReplacementFormat("ms.date", toShortDate(new Date())));
+                replacements.push(new ReplacementFormat("ms.date", toShortDate(new Date())))
 
-                return replacements;
+                return replacements
             }
         }
     }
 
-    return [];
+    return []
 }
 
 function getReplacementValue(globs: { [glob: string]: string }, fsPath: string): string | undefined {
     if (globs && fsPath) {
-        let segments = fsPath.split(path.sep);
-        const globKeys = Object.keys(globs).map((key) => ({ key, segments: key.split("/") }));
-        const firstSegment = globKeys[0].segments[0];
-        segments = segments.slice(segments.indexOf(firstSegment));
-        const length = segments.length;
+        let segments = fsPath.split(path.sep)
+        const globKeys = Object.keys(globs).map(key => ({ key, segments: key.split("/") }))
+        const firstSegment = globKeys[0].segments[0]
+        segments = segments.slice(segments.indexOf(firstSegment))
+        const length = segments.length
         for (let i = 0; i < globKeys.length; ++i) {
-            const globKey = globKeys[i];
+            const globKey = globKeys[i]
             if (length <= globKey.segments.length) {
-                let equals = false;
+                let equals = false
                 for (let f = 0; f < segments.length - 1; ++f) {
-                    const left = segments[f];
-                    const right = globKey.segments[f];
+                    const left = segments[f]
+                    const right = globKey.segments[f]
                     if (right.startsWith("*")) {
-                        break;
+                        break
                     }
-                    equals = left.toLowerCase() === right.toLowerCase();
+                    equals = left.toLowerCase() === right.toLowerCase()
                 }
 
                 if (equals) {
-                    return globs[globKey.key];
+                    return globs[globKey.key]
                 }
             }
         }
     }
 
-    return undefined;
+    return undefined
 }
 
 export async function updateMetadataDate() {
-    const editor = window.activeTextEditor;
+    const editor = window.activeTextEditor
     if (!editor) {
-        noActiveEditorMessage();
-        return;
+        noActiveEditorMessage()
+        return
     }
 
     if (editor.document.languageId !== "markdown" &&
         editor.document.languageId !== "yaml") {
-        return;
+        return
     }
 
-    const content = editor.document.getText();
+    const content = editor.document.getText()
     if (content) {
-        const replacement = findReplacement(editor.document, content, `ms.date: ${toShortDate(new Date())}`, msDateRegex);
+        const replacement = findReplacement(editor.document, content, `ms.date: ${toShortDate(new Date())}`, msDateRegex)
         if (replacement) {
-            await applyReplacements([replacement], editor);
-            await saveAndSendTelemetry();
+            await applyReplacements([replacement], editor)
+            await saveAndSendTelemetry()
         }
     }
 }
 
 async function saveAndSendTelemetry() {
-    await commands.executeCommand("workbench.action.files.save");
+    await commands.executeCommand("workbench.action.files.save")
 
-    const telemetryCommand = "updateMetadata";
-    sendTelemetryData(telemetryCommand, updateMetadataDate.name);
+    const telemetryCommand = "updateMetadata"
+    sendTelemetryData(telemetryCommand, updateMetadataDate.name)
 }
 
 function toShortDate(date: Date) {
-    const year = date.getFullYear();
-    const month = (1 + date.getMonth()).toString();
-    const monthStr = month.length > 1 ? month : `0${month}`;
-    const day = date.getDate().toString();
-    const dayStr = day.length > 1 ? day : `0${day}`;
+    const year = date.getFullYear()
+    const month = (1 + date.getMonth()).toString()
+    const monthStr = month.length > 1 ? month : `0${month}`
+    const day = date.getDate().toString()
+    const dayStr = day.length > 1 ? day : `0${day}`
 
-    return `${monthStr}/${dayStr}/${year}`;
+    return `${monthStr}/${dayStr}/${year}`
 }

@@ -1,6 +1,6 @@
-"use-strict";
+"use-strict"
 
-import { ListType } from "../constants/list-type";
+import { ListType } from "../constants/list-type"
 
 export class LineObjectModel {
     public line: number;
@@ -9,10 +9,10 @@ export class LineObjectModel {
     public listNumber: number;
     public listText: string;
     constructor(line: number, indent: string, listType: ListType, listNumber: number, listText: string) {
-        this.line = line;
-        this.indent = indent;
-        this.listType = listType;
-        this.listNumber = listNumber;
-        this.listText = listText;
+        this.line = line
+        this.indent = indent
+        this.listType = listType
+        this.listNumber = listNumber
+        this.listText = listText
     }
 }

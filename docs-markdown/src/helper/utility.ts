@@ -1,7 +1,7 @@
-import { QuickPickItem, QuickPickOptions, Range, Selection, TextDocument, TextDocumentChangeEvent, TextEditor, window, workspace } from "vscode";
-import * as common from "./common";
-import { getLanguageIdentifierQuickPickItems, IHighlightLanguage, languages } from "./highlight-langs";
-import * as log from "./log";
+import { QuickPickItem, QuickPickOptions, Range, Selection, TextDocument, TextDocumentChangeEvent, TextEditor, window, workspace } from "vscode"
+import * as common from "./common"
+import { getLanguageIdentifierQuickPickItems, IHighlightLanguage, languages } from "./highlight-langs"
+import * as log from "./log"
 
 /**
  * Checks the user input for table creation.
@@ -13,33 +13,33 @@ import * as log from "./log";
  * @param {string} rowStr - the string of requested rows
  */
 export function validateTableRowAndColumnCount(size: number, colStr: string, rowStr: string) {
-    const tableTextRegex = /^-?\d*$/;
-    const col = tableTextRegex.test(colStr) ? Number.parseInt(colStr) : undefined;
-    const row = tableTextRegex.test(rowStr) ? Number.parseInt(rowStr) : undefined;
-    log.debug("Trying to create a table of: " + col + " columns and " + row + " rows.");
+    const tableTextRegex = /^-?\d*$/
+    const col = tableTextRegex.test(colStr) ? Number.parseInt(colStr) : undefined
+    const row = tableTextRegex.test(rowStr) ? Number.parseInt(rowStr) : undefined
+    log.debug("Trying to create a table of: " + col + " columns and " + row + " rows.")
 
     if (col === undefined || row === undefined) {
-        return undefined;
+        return undefined
     }
 
     if (size !== 2 || isNaN(col) || isNaN(row)) {
-        const errorMsg = "Please input the number of columns and rows as C:R e.g. 3:4";
-        common.postWarning(errorMsg);
-        return false;
+        const errorMsg = "Please input the number of columns and rows as C:R e.g. 3:4"
+        common.postWarning(errorMsg)
+        return false
     } else if (col <= 0 || row <= 0) {
-        const errorMsg = "The number of rows or columns can't be zero or negative.";
-        common.postWarning(errorMsg);
-        return false;
+        const errorMsg = "The number of rows or columns can't be zero or negative."
+        common.postWarning(errorMsg)
+        return false
     } else if (col > 4) {
-        const errorMsg = "You can only insert up to four columns via Docs Markdown.";
-        common.postWarning(errorMsg);
-        return false;
+        const errorMsg = "You can only insert up to four columns via Docs Markdown."
+        common.postWarning(errorMsg)
+        return false
     } else if (row > 50) {
-        const errorMsg = "You can only insert up to 50 rows via Docs Markdown.";
-        common.postWarning(errorMsg);
-        return false;
+        const errorMsg = "You can only insert up to 50 rows via Docs Markdown."
+        common.postWarning(errorMsg)
+        return false
     } else {
-        return true;
+        return true
     }
 }
 
@@ -49,42 +49,42 @@ export function validateTableRowAndColumnCount(size: number, colStr: string, row
  * @param {number} row - the number of rows in the table
  */
 export function tableBuilder(col: number, row: number) {
-    let str = "\n";
+    let str = "\n"
 
-    /// create header
+    // / create header
     // DCR update: 893410 [Add leading pipe]
     // tslint:disable-next-line:no-shadowed-variable
     for (let c = 1; c <= col; c++) {
-        str += "|" + "Column" + c + "  |";
+        str += "|" + "Column" + c + "  |"
         // tslint:disable-next-line:no-shadowed-variable
         for (c = 2; c <= col; c++) {
-            str += "Column" + c + "  |";
+            str += "Column" + c + "  |"
         }
-        str += "\n";
+        str += "\n"
     }
 
     // DCR update: 893410 [Add leading pipe]
     // tslint:disable-next-line:no-shadowed-variable
     for (let c = 1; c <= col; c++) {
-        str += "|" + "---------" + "|";
+        str += "|" + "---------" + "|"
         // tslint:disable-next-line:no-shadowed-variable
         for (c = 2; c <= col; c++) {
-            str += "---------" + "|";
+            str += "---------" + "|"
         }
-        str += "\n";
+        str += "\n"
     }
 
-    /// create each row
+    // / create each row
     for (let r = 1; r <= row; r++) {
-        str += "|" + "Row" + r + "     |";
+        str += "|" + "Row" + r + "     |"
         for (let c = 2; c <= col; c++) {
-            str += "         |";
+            str += "         |"
         }
-        str += "\n";
+        str += "\n"
     }
 
-    log.debug("Table created: \r\n" + str);
-    return str;
+    log.debug("Table created: \r\n" + str)
+    return str
 }
 
 /**
@@ -94,192 +94,189 @@ export function tableBuilder(col: number, row: number) {
  */
 
 export async function search(editor: TextEditor, selection: Selection, folderPath: string, fullPath?: string, crossReference?: string) {
-    const dir = require("node-dir");
-    const path = require("path");
-    let language: string | null = "";
-    let possibleLanguage: IHighlightLanguage | null = null;
-    let selected: QuickPickItem | undefined;
-    let activeFilePath;
-    let snippetLink: string = "";
+    const dir = require("node-dir")
+    const path = require("path")
+    let language: string | null = ""
+    let possibleLanguage: IHighlightLanguage | null = null
+    let selected: QuickPickItem | undefined
+    let activeFilePath
+    let snippetLink = ""
     if (!crossReference) {
-        const searchTerm = await window.showInputBox({ prompt: "Enter snippet search terms." });
+        const searchTerm = await window.showInputBox({ prompt: "Enter snippet search terms." })
         if (!searchTerm) {
-            return;
+            return
         }
         if (fullPath == null) {
-            fullPath = folderPath;
+            fullPath = folderPath
         }
 
         // searches for all files at the given directory path.
-        const files = await dir.promiseFiles(fullPath);
-        const fileOptions: QuickPickItem[] = [];
+        const files = await dir.promiseFiles(fullPath)
+        const fileOptions: QuickPickItem[] = []
 
         for (const file in files) {
-            if (files.hasOwnProperty(file)) {
-                const baseName: string = (path.parse(files[file]).base);
-                const fileName: string = files[file];
+            if (Object.prototype.hasOwnProperty.call(files, file)) {
+                const baseName: string = (path.parse(files[file]).base)
+                const fileName: string = files[file]
                 if (fileName.includes(searchTerm)) {
-                    fileOptions.push({ label: baseName, description: fileName });
+                    fileOptions.push({ label: baseName, description: fileName })
                 }
             }
         }
 
         // select from all files found that match search term.
-        selected = await window.showQuickPick(fileOptions);
-        activeFilePath = (path.parse(editor.document.fileName).dir);
+        selected = await window.showQuickPick(fileOptions)
+        activeFilePath = (path.parse(editor.document.fileName).dir)
         if (!selected) {
-            return;
+            return
         }
-        const target = path.parse(selected.description);
-        const relativePath = path.relative(activeFilePath, target.dir);
+        const target = path.parse(selected.description)
+        const relativePath = path.relative(activeFilePath, target.dir)
 
-        possibleLanguage = inferLanguageFromFileExtension(target.ext);
+        possibleLanguage = inferLanguageFromFileExtension(target.ext)
 
         // change path separator syntax for commonmark
-        snippetLink = path.join(relativePath, target.base).replace(/\\/g, "/");
+        snippetLink = path.join(relativePath, target.base).replace(/\\/g, "/")
     } else {
-        const inputRepoPath = await window.showInputBox({ prompt: "Enter file path for Cross-Reference GitHub Repo" });
+        const inputRepoPath = await window.showInputBox({ prompt: "Enter file path for Cross-Reference GitHub Repo" })
         if (inputRepoPath) {
-            possibleLanguage = inferLanguageFromFileExtension(path.extname(inputRepoPath));
-            snippetLink = `~/${crossReference}/${inputRepoPath}`;
+            possibleLanguage = inferLanguageFromFileExtension(path.extname(inputRepoPath))
+            snippetLink = `~/${crossReference}/${inputRepoPath}`
         }
     }
 
-    if (!!possibleLanguage) {
-        language = possibleLanguage.aliases[0];
+    if (possibleLanguage) {
+        language = possibleLanguage.aliases[0]
     }
     if (!language) {
-        const supportedLanguages = getLanguageIdentifierQuickPickItems();
+        const supportedLanguages = getLanguageIdentifierQuickPickItems()
         const options: QuickPickOptions = {
-            placeHolder: "Select a programming language (required)",
-        };
-        const qpSelection = await window.showQuickPick(supportedLanguages, options);
+            placeHolder: "Select a programming language (required)"
+        }
+        const qpSelection = await window.showQuickPick(supportedLanguages, options)
         if (!qpSelection) {
-            common.postWarning("No code language selected. Abandoning command.");
-            return;
+            common.postWarning("No code language selected. Abandoning command.")
+            return
         } else {
-            const selectedLang = languages.find((lang) => lang.language === qpSelection.label);
-            language = selectedLang ? selectedLang.aliases[0] : null;
+            const selectedLang = languages.find(lang => lang.language === qpSelection.label)
+            language = selectedLang ? selectedLang.aliases[0] : null
         }
     }
 
     if (!language) {
-        common.postWarning("Unable to determine language. Abandoning command.");
-        return;
+        common.postWarning("Unable to determine language. Abandoning command.")
+        return
     }
 
-    const selectionRange = new Range(selection.start.line, selection.start.character, selection.end.line, selection.end.character);
-    const selectorOptions: QuickPickItem[] = [];
-    selectorOptions.push({ label: "Id", description: "Select code by id tag (for example: <Snippet1>)" });
-    selectorOptions.push({ label: "Range", description: "Select code by line range (for example: 1-15,18,20)" });
-    selectorOptions.push({ label: "None", description: "Select entire file" });
+    const selectionRange = new Range(selection.start.line, selection.start.character, selection.end.line, selection.end.character)
+    const selectorOptions: QuickPickItem[] = []
+    selectorOptions.push({ label: "Id", description: "Select code by id tag (for example: <Snippet1>)" })
+    selectorOptions.push({ label: "Range", description: "Select code by line range (for example: 1-15,18,20)" })
+    selectorOptions.push({ label: "None", description: "Select entire file" })
 
-    const choice = await window.showQuickPick(selectorOptions);
+    const choice = await window.showQuickPick(selectorOptions)
     if (choice) {
-        let snippet: string;
+        let snippet: string
         switch (choice.label.toLowerCase()) {
             case "id":
-                const id = await window.showInputBox({ prompt: "Enter id to select" });
+                const id = await window.showInputBox({ prompt: "Enter id to select" })
                 if (id) {
-                    snippet = snippetBuilder(language, snippetLink, id, undefined);
-                    common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
+                    snippet = snippetBuilder(language, snippetLink, id, undefined)
+                    common.insertContentToEditor(editor, search.name, snippet, true, selectionRange)
                 }
-                break;
+                break
             case "range":
-                const range = await window.showInputBox({ prompt: "Enter line selection range" });
+                const range = await window.showInputBox({ prompt: "Enter line selection range" })
                 if (range) {
-                    snippet = snippetBuilder(language, snippetLink, undefined, range);
-                    common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
+                    snippet = snippetBuilder(language, snippetLink, undefined, range)
+                    common.insertContentToEditor(editor, search.name, snippet, true, selectionRange)
                 }
-                break;
+                break
             default:
-                snippet = snippetBuilder(language, snippetLink);
-                common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
-                break;
+                snippet = snippetBuilder(language, snippetLink)
+                common.insertContentToEditor(editor, search.name, snippet, true, selectionRange)
+                break
         }
     }
 }
 
 export function inferLanguageFromFileExtension(fileExtension: string): IHighlightLanguage | null {
-    const matches = languages.filter((lang) => {
-        return lang.extensions
-            ? lang.extensions.some((ext) => ext === fileExtension)
-            : false;
-    });
+    const matches = languages.filter(lang => lang.extensions
+        ? lang.extensions.some(ext => ext === fileExtension)
+        : false)
 
     if (matches && matches.length) {
-        return matches[0];
+        return matches[0]
     }
 
-    return null;
+    return null
 }
 
-export function internalLinkBuilder(isArt: boolean, pathSelection: string, selectedText: string = "", languageId?: string) {
-    const os = require("os");
-    let link = "";
-    let startBrace = "";
+export function internalLinkBuilder(isArt: boolean, pathSelection: string, selectedText = "", languageId?: string) {
+    const os = require("os")
+    let link = ""
+    let startBrace = ""
     if (isArt) {
-        startBrace = "![";
+        startBrace = "!["
     } else {
-        startBrace = "[";
+        startBrace = "["
     }
 
     // replace the selected text with the properly formatted link
     if (pathSelection === "") {
-        link = `${startBrace}${selectedText}]()`;
+        link = `${startBrace}${selectedText}]()`
     } else {
-        link = `${startBrace}${selectedText}](${pathSelection})`;
+        link = `${startBrace}${selectedText}](${pathSelection})`
     }
 
-    const langId = languageId || "markdown";
-    const isYaml = langId === "yaml" && !isArt;
+    const langId = languageId || "markdown"
+    const isYaml = langId === "yaml" && !isArt
     if (isYaml) {
-        link = pathSelection;
+        link = pathSelection
     }
 
     // The relative path comparison creates an additional level that is not needed and breaks linking.
     // The path module adds an additional level so we'll need to handle this in our code.
     // Update slashes bug 944097.
     if (os.type() === "Windows_NT") {
-        link = link.replace(/\\/g, "/");
+        link = link.replace(/\\/g, "/")
     }
 
     if (isArt) {
         // Art links need backslashes to preview and publish correctly.
-        link = link.replace(/\\/g, "/");
+        link = link.replace(/\\/g, "/")
     }
 
-    return link;
+    return link
 }
 
-export function externalLinkBuilder(link: string, title: string = "") {
+export function externalLinkBuilder(link: string, title = "") {
     if (title === "") {
-        title = link;
+        title = link
     }
 
-    const externalLink = `[${title}](${link})`;
-    return externalLink;
+    const externalLink = `[${title}](${link})`
+    return externalLink
 }
 
 export function videoLinkBuilder(link: string) {
-    const videoLink = `> [!VIDEO ${link}]`;
-    return videoLink;
+    const videoLink = `> [!VIDEO ${link}]`
+    return videoLink
 }
 
 export function includeBuilder(link: string, title: string) {
     // Include link syntax for reference: [!INCLUDE[sampleinclude](./includes/sampleinclude.md)]
-    const include = `[!INCLUDE [${title}](${link})]`;
-    return include;
-
+    const include = `[!INCLUDE [${title}](${link})]`
+    return include
 }
 
 export function snippetBuilder(language: string, relativePath: string, id?: string, range?: string) {
     if (id) {
-        return `:::code language="${language}" source="${relativePath}" id="${id}":::`;
+        return `:::code language="${language}" source="${relativePath}" id="${id}":::`
     } else if (range) {
-        return `:::code language="${language}" source="${relativePath}" range="${range}":::`;
+        return `:::code language="${language}" source="${relativePath}" range="${range}":::`
     } else {
-        return `:::code language="${language}" source="${relativePath}":::`;
+        return `:::code language="${language}" source="${relativePath}":::`
     }
 }
 
@@ -290,20 +287,20 @@ export function snippetBuilder(language: string, relativePath: string, id?: stri
  */
 export function stripBOMFromString(originalText: string) {
     if (originalText === undefined) {
-        return undefined;
+        return undefined
     }
 
-    return originalText.replace(/^\uFEFF/, "");
+    return originalText.replace(/^\uFEFF/, "")
 }
 
 /**
  * Create child process.
  */
 export function createChildProcess(path: any, args: any, options: any) {
-    const spawn = require("child-process-promise").spawn;
-    const promise = spawn(path, args, options);
-    const childProcess = promise.childProcess;
-    return childProcess;
+    const spawn = require("child-process-promise").spawn
+    const promise = spawn(path, args, options)
+    const childProcess = promise.childProcess
+    return childProcess
 }
 
 interface IExpressionReplacementPair {
@@ -312,8 +309,8 @@ interface IExpressionReplacementPair {
 }
 
 const expressionToReplacementMap: IExpressionReplacementPair[] = [
-    { expression: /\u201c/gm /* double left quote               “ */, replacement: '"' },
-    { expression: /\u201d/gm /* double right quote              ” */, replacement: '"' },
+    { expression: /\u201c/gm /* double left quote               “ */, replacement: "\"" },
+    { expression: /\u201d/gm /* double right quote              ” */, replacement: "\"" },
     { expression: /\u2018/gm /* single left quote               ‘ */, replacement: "'" },
     { expression: /\u2019/gm /* single right quote              ’ */, replacement: "'" },
     { expression: /\u00A9/gm /* copyright character             © */, replacement: "&copy;" },
@@ -342,10 +339,10 @@ const expressionToReplacementMap: IExpressionReplacementPair[] = [
     { expression: /\u2086/gm /* 6 subscript character           ₆ */, replacement: "<sub>6</sub>" },
     { expression: /\u2087/gm /* 7 subscript character           ₇ */, replacement: "<sub>7</sub>" },
     { expression: /\u2088/gm /* 8 subscript character           ₈ */, replacement: "<sub>8</sub>" },
-    { expression: /\u2089/gm /* 9 subscript character           ₉ */, replacement: "<sub>9</sub>" },
-];
+    { expression: /\u2089/gm /* 9 subscript character           ₉ */, replacement: "<sub>9</sub>" }
+]
 
-const tabExpression: RegExp = /\t/gm;
+const tabExpression = /\t/gm
 
 /**
  * Finds and replaces target expressions. For example, smart quotes (`“, ”, ‘, and ’` such as those found in Word documents) with standard quotes.
@@ -353,23 +350,23 @@ const tabExpression: RegExp = /\t/gm;
  */
 export async function findAndReplaceTargetExpressions(event: TextDocumentChangeEvent) {
     if (!workspace.getConfiguration("markdown").replaceSmartQuotes) {
-        return;
+        return
     }
 
     if (!!event && event.document) {
-        const editor = window.activeTextEditor;
+        const editor = window.activeTextEditor
         if (editor && common.isMarkdownFileCheckWithoutNotification(editor)) {
-            const document = event.document;
-            const content = document.getText();
-            if (!!content) {
-                const replacements: Replacements = [];
+            const document = event.document
+            const content = document.getText()
+            if (content) {
+                const replacements: Replacements = []
                 if (workspace.getConfiguration("editor").insertSpaces) {
-                    const tabSize = workspace.getConfiguration("editor").tabSize as number || 4;
-                    if (!expressionToReplacementMap.some((pair) => pair.expression === tabExpression)) {
+                    const tabSize = workspace.getConfiguration("editor").tabSize as number || 4
+                    if (!expressionToReplacementMap.some(pair => pair.expression === tabExpression)) {
                         expressionToReplacementMap.push({
                             expression: tabExpression,
-                            replacement: "".padEnd(tabSize, " "),
-                        });
+                            replacement: "".padEnd(tabSize, " ")
+                        })
                     }
                 }
 
@@ -379,21 +376,21 @@ export async function findAndReplaceTargetExpressions(event: TextDocumentChangeE
                             document,
                             content,
                             expressionToReplacement.replacement,
-                            expressionToReplacement.expression);
+                            expressionToReplacement.expression)
                     if (targetReplacements && targetReplacements.length) {
                         for (let index = 0; index < targetReplacements.length; index++) {
-                            const replacement = targetReplacements[index];
-                            replacements.push(replacement);
+                            const replacement = targetReplacements[index]
+                            replacements.push(replacement)
                         }
                     }
-                });
+                })
 
-                await applyReplacements(replacements, editor);
+                await applyReplacements(replacements, editor)
             }
         }
     }
 
-    return event;
+    return event
 }
 
 export interface IReplacement {
@@ -405,61 +402,61 @@ export type Replacements = IReplacement[];
 
 export function findReplacements(document: TextDocument, content: string, value: string, expression?: RegExp): Replacements | undefined {
     if (!expression) {
-        return undefined;
+        return undefined
     }
 
-    const results = common.matchAll(expression, content);
+    const results = common.matchAll(expression, content)
     if (!results || !results.length) {
-        return undefined;
+        return undefined
     }
 
-    const replacements: Replacements = [];
+    const replacements: Replacements = []
     for (let i = 0; i < results.length; i++) {
-        const result = results[i];
+        const result = results[i]
         if (result !== null && result.length) {
-            const match = result[0];
+            const match = result[0]
             if (match) {
-                const index = result.index !== undefined ? result.index : -1;
+                const index = result.index !== undefined ? result.index : -1
                 if (index === -1) {
-                    continue;
+                    continue
                 }
 
-                const startPosition = document.positionAt(index);
-                const endPosition = document.positionAt(index + match.length);
-                const selection = new Selection(startPosition, endPosition);
+                const startPosition = document.positionAt(index)
+                const endPosition = document.positionAt(index + match.length)
+                const selection = new Selection(startPosition, endPosition)
 
-                replacements.push({ selection, value });
+                replacements.push({ selection, value })
             }
         }
     }
 
-    return replacements;
+    return replacements
 }
 
 export function findReplacement(document: TextDocument, content: string, value: string, expression?: RegExp): IReplacement | undefined {
-    const result = expression ? expression.exec(content) : null;
+    const result = expression ? expression.exec(content) : null
     if (result !== null && result.length) {
-        const match = result[0];
+        const match = result[0]
         if (match) {
-            const index = result.index;
-            const startPosition = document.positionAt(index);
-            const endPosition = document.positionAt(index + match.length);
-            const selection = new Selection(startPosition, endPosition);
+            const index = result.index
+            const startPosition = document.positionAt(index)
+            const endPosition = document.positionAt(index + match.length)
+            const selection = new Selection(startPosition, endPosition)
 
-            return { selection, value };
+            return { selection, value }
         }
     }
 
-    return undefined;
+    return undefined
 }
 
 export async function applyReplacements(replacements: Replacements, editor: TextEditor) {
     if (replacements) {
-        await editor.edit((builder) => {
-            replacements.forEach((replacement) =>
+        await editor.edit(builder => {
+            replacements.forEach(replacement =>
                 builder.replace(
                     replacement.selection,
-                    replacement.value));
-        });
+                    replacement.value))
+        })
     }
 }

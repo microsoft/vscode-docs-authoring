@@ -1,62 +1,61 @@
-"use strict";
+"use strict"
 
-import { window, Selection, Range, TextEditorEdit } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, postWarning, showStatusMessage } from "../helper/common";
-import { sendTelemetryData } from "../helper/telemetry";
-import { insertUnselectedText } from "../helper/format-logic-manager";
-import { isBold, isBoldAndItalic } from "../helper/format-styles";
-import { reporter } from "../helper/telemetry";
+import { window, Selection, Range, TextEditorEdit } from "vscode"
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, postWarning, showStatusMessage } from "../helper/common"
+import { sendTelemetryData, reporter } from "../helper/telemetry"
+import { insertUnselectedText } from "../helper/format-logic-manager"
+import { isBold, isBoldAndItalic } from "../helper/format-styles"
 
-const telemetryCommand: string = "formatBold";
+const telemetryCommand = "formatBold"
 
 export function boldFormattingCommand() {
     const commands = [
-        { command: formatBold.name, callback: formatBold },
-    ];
-    return commands;
+        { command: formatBold.name, callback: formatBold }
+    ]
+    return commands
 }
 
 /**
  * Replaces current selection with MD bold formated selection
  */
 export function formatBold() {
-    reporter.sendTelemetryEvent(`${telemetryCommand}`);
-    const editor = window.activeTextEditor;
+    reporter.sendTelemetryEvent(`${telemetryCommand}`)
+    const editor = window.activeTextEditor
     if (!editor) {
-        noActiveEditorMessage();
-        return;
+        noActiveEditorMessage()
+        return
     } else {
         if (!isMarkdownFileCheck(editor, false)) {
-            return;
+            return
         }
 
-        let selections: Selection[] = editor.selections;
-        let range;
+        const selections: Selection[] = editor.selections
+        let range
 
         // if unselect text, add bold syntax without any text
-        if (selections.length == 0) {
-            const cursorPosition = editor.selection.active;
-            const selectedText = "";
+        if (selections.length === 0) {
+            const cursorPosition = editor.selection.active
+            const selectedText = ""
             // assumes the range of bold syntax
             range = new Range(cursorPosition.with(cursorPosition.line,
                 cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
-                cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
+                cursorPosition.with(cursorPosition.line, cursorPosition.character + 2))
             // calls formatter and returns selectedText as MD bold
-            const formattedText = bold(selectedText);
-            insertUnselectedText(editor, formatBold.name, formattedText, range);
+            const formattedText = bold(selectedText)
+            insertUnselectedText(editor, formatBold.name, formattedText, range)
         }
 
         // if only a selection is made with a single cursor
-        if (selections.length == 1) {
-            const selection = editor.selection;
-            const selectedText = editor.document.getText(selection);
-            const cursorPosition = editor.selection.active;
+        if (selections.length === 1) {
+            const selection = editor.selection
+            const selectedText = editor.document.getText(selection)
+            const cursorPosition = editor.selection.active
             range = new Range(cursorPosition.with(cursorPosition.line,
                 cursorPosition.character - 2 < 0 ? 0 : cursorPosition.character - 2),
-                cursorPosition.with(cursorPosition.line, cursorPosition.character + 2));
+                cursorPosition.with(cursorPosition.line, cursorPosition.character + 2))
             // calls formatter and returns selectedText as MD Bold
-            const formattedText = bold(selectedText);
-            insertContentToEditor(editor, formatBold.name, formattedText, true);
+            const formattedText = bold(selectedText)
+            insertContentToEditor(editor, formatBold.name, formattedText, true)
         }
 
         // if mulitple cursors were used to make selections
@@ -64,21 +63,20 @@ export function formatBold() {
             editor.edit(function (edit: TextEditorEdit): void {
                 selections.forEach((selection: Selection) => {
                     for (let i = selection.start.line; i <= selection.end.line; i++) {
-                        let selectedText = editor.document.getText(selection);
-                        let formattedText = bold(selectedText);
-                        edit.replace(selection, formattedText);
+                        const selectedText = editor.document.getText(selection)
+                        const formattedText = bold(selectedText)
+                        edit.replace(selection, formattedText)
                     }
-                });
+                })
             }).then(success => {
                 if (!success) {
-                    postWarning("Could not format selections. Abandoning command.");
-                    showStatusMessage("Could not format selections. Abandoning command.");
-                    return;
+                    postWarning("Could not format selections. Abandoning command.")
+                    showStatusMessage("Could not format selections. Abandoning command.")
                 }
             })
         }
     }
-    sendTelemetryData(telemetryCommand, "");
+    sendTelemetryData(telemetryCommand, "")
 }
 
 /**
@@ -88,14 +86,13 @@ export function formatBold() {
  */
 export function bold(content: string, range?: Range) {
     // Clean up string if it is already formatted
-    const selectedText = content.trim();
+    const selectedText = content.trim()
 
     if (isBold(content) || isBoldAndItalic(content)) {
-
-        return selectedText.substring(2, selectedText.length - 2);
+        return selectedText.substring(2, selectedText.length - 2)
     }
 
     // Set sytax for bold formatting and replace original string with formatted string
-    const styleBold = `**${selectedText}**`;
-    return styleBold;
+    const styleBold = `**${selectedText}**`
+    return styleBold
 }

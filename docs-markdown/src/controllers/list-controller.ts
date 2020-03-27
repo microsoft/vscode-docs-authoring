@@ -1,14 +1,14 @@
-"use strict";
+"use strict"
 
-import * as vscode from "vscode";
-import { ListType } from "../constants/list-type";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
-import { sendTelemetryData } from "../helper/telemetry";
-import { addIndent, autolistAlpha, autolistNumbered, checkEmptyLine, checkEmptySelection, CountIndent, createBulletedListFromText, createNumberedListFromText, fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, insertList, isBulletedLine, nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern } from "../helper/list";
-import { output } from "../helper/output";
+import * as vscode from "vscode"
+import { ListType } from "../constants/list-type"
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common"
+import { sendTelemetryData } from "../helper/telemetry"
+import { addIndent, autolistAlpha, autolistNumbered, checkEmptyLine, checkEmptySelection, CountIndent, createBulletedListFromText, createNumberedListFromText, fixedBulletedListRegex, fixedNumberedListWithIndentRegexTemplate, getAlphabetLine, getNumberedLine, getNumberedLineWithRegex, insertList, isBulletedLine, nestedNumberedList, removeNestedListMultipleLine, removeNestedListSingleLine, tabPattern } from "../helper/list"
+import { output } from "../helper/output"
 
-const telemetryCommand: string = "insertList";
-let commandOption: string;
+const telemetryCommand = "insertList"
+let commandOption: string
 
 export function insertListsCommands() {
     const commands = [
@@ -16,35 +16,34 @@ export function insertListsCommands() {
         { command: insertBulletedList.name, callback: insertBulletedList },
         { command: insertNestedList.name, callback: insertNestedList },
         { command: insertNumberedList.name, callback: insertNumberedList },
-        { command: removeNestedList.name, callback: removeNestedList },
-    ];
-    return commands;
+        { command: removeNestedList.name, callback: removeNestedList }
+    ]
+    return commands
 }
 
 /**
  * Creates a numbered (numerical) list in the vscode editor.
  */
 export function insertNumberedList() {
-    commandOption = "numbered";
-    const editor = vscode.window.activeTextEditor;
+    commandOption = "numbered"
+    const editor = vscode.window.activeTextEditor
     if (!editor) {
-        noActiveEditorMessage();
-        return;
+        noActiveEditorMessage()
     } else {
         if (!isValidEditor(editor, false, "insert numbered list")) {
-            return;
+            return
         }
 
         if (!isMarkdownFileCheck(editor, false)) {
-            return;
+            return
         }
 
         if (checkEmptyLine(editor) || checkEmptySelection(editor)) {
-            insertList(editor, ListType.Numbered);
+            insertList(editor, ListType.Numbered)
         } else {
-            createNumberedListFromText(editor);
+            createNumberedListFromText(editor)
         }
-        sendTelemetryData(telemetryCommand, commandOption);
+        sendTelemetryData(telemetryCommand, commandOption)
     }
 }
 
@@ -52,30 +51,29 @@ export function insertNumberedList() {
  * Creates a bulleted (dash) list in the vscode editor.
  */
 export function insertBulletedList() {
-    commandOption = "bulleted";
-    const editor = vscode.window.activeTextEditor;
+    commandOption = "bulleted"
+    const editor = vscode.window.activeTextEditor
     if (!editor) {
-        noActiveEditorMessage();
-        return;
+        noActiveEditorMessage()
     } else {
         if (!isValidEditor(editor, false, "insert bulleted list")) {
-            return;
+            return
         }
 
         if (!isMarkdownFileCheck(editor, false)) {
-            return;
+            return
         }
 
         try {
             if (checkEmptyLine(editor)) {
-                insertList(editor, ListType.Bulleted);
+                insertList(editor, ListType.Bulleted)
             } else {
-                createBulletedListFromText(editor);
+                createBulletedListFromText(editor)
             }
         } catch (error) {
-            output.appendLine(error);
+            output.appendLine(error)
         }
-        sendTelemetryData(telemetryCommand, commandOption);
+        sendTelemetryData(telemetryCommand, commandOption)
     }
 }
 
@@ -83,51 +81,50 @@ export function insertBulletedList() {
  * Adds the next list item automatically. Either bulleted or numbered, includes indentation.
  */
 export function automaticList() {
-    const editor = vscode.window.activeTextEditor;
+    const editor = vscode.window.activeTextEditor
     if (!editor) {
-        noActiveEditorMessage();
-        return;
+        noActiveEditorMessage()
     } else {
         try {
             if (!isValidEditor(editor, false, "automatic list")) {
-                return;
+                return
             }
 
             if (!isMarkdownFileCheck(editor, false)) {
-                return;
+                return
             }
 
-            const cursorPosition = editor.selection.active;
+            const cursorPosition = editor.selection.active
             const numbered = getNumberedLine(editor.document.lineAt(cursorPosition.line)
-                .text.substring(0, cursorPosition.character));
+                .text.substring(0, cursorPosition.character))
             const alphabet = getAlphabetLine(editor.document.lineAt(cursorPosition.line)
-                .text.substring(0, cursorPosition.character));
+                .text.substring(0, cursorPosition.character))
 
             if (numbered > 0) {
-                autolistNumbered(editor, cursorPosition, numbered);
+                autolistNumbered(editor, cursorPosition, numbered)
             } else if (alphabet > 0) {
-                autolistAlpha(editor, cursorPosition, alphabet);
-            } else if (isBulletedLine(editor.document.lineAt(cursorPosition.line).text.trim())
-                && !cursorPosition.isEqual(cursorPosition.with(cursorPosition.line, 0))) {
+                autolistAlpha(editor, cursorPosition, alphabet)
+            } else if (isBulletedLine(editor.document.lineAt(cursorPosition.line).text.trim()) &&
+                !cursorPosition.isEqual(cursorPosition.with(cursorPosition.line, 0))) {
                 // Check if the line is a bulleted line
-                const strLine = editor.document.lineAt(cursorPosition.line).text;
-                let insertText = "";
-                const indent = addIndent(editor.document.lineAt(cursorPosition.line).text);
+                const strLine = editor.document.lineAt(cursorPosition.line).text
+                let insertText = ""
+                const indent = addIndent(editor.document.lineAt(cursorPosition.line).text)
                 if (strLine.trim() === "-" && (strLine.indexOf("-") === strLine.length - 1)) {
-                    insertText = " \n" + indent + "- ";
+                    insertText = " \n" + indent + "- "
                 } else {
-                    insertText = "\n" + indent + "- ";
+                    insertText = "\n" + indent + "- "
                 }
-                insertContentToEditor(editor, automaticList.name, insertText, false);
+                insertContentToEditor(editor, automaticList.name, insertText, false)
             } else {
                 // default case
-                const defaultText = "\n";
-                insertContentToEditor(editor, automaticList.name, defaultText, false);
+                const defaultText = "\n"
+                insertContentToEditor(editor, automaticList.name, defaultText, false)
             }
         } catch (Exception) {
-            const exceptionText = "\n";
+            const exceptionText = "\n"
             insertContentToEditor(editor, automaticList.name + ": catch exception handling",
-                exceptionText, false);
+                exceptionText, false)
         }
     }
 }
@@ -136,61 +133,60 @@ export function automaticList() {
  * Creates indentation in an existing list.
  */
 export function insertNestedList() {
-    const editor = vscode.window.activeTextEditor;
+    const editor = vscode.window.activeTextEditor
     if (!editor) {
-        noActiveEditorMessage();
-        return;
+        noActiveEditorMessage()
     } else {
-        const cursorPosition = editor.selection.active;
+        const cursorPosition = editor.selection.active
 
         if (!isValidEditor(editor, false, "insert nested list")) {
-            return;
+            return
         }
 
         if (!isMarkdownFileCheck(editor, false)) {
-            return;
+            return
         }
 
         // Check user selected multiple line (Still not support automatic nested list for multiple line)
         if (!editor.selection.isSingleLine) {
-            const startSelected = editor.selection.start;
-            const endSelected = editor.selection.end;
-            const selectedLines = [];
+            const startSelected = editor.selection.start
+            const endSelected = editor.selection.end
+            const selectedLines = []
 
             // Insert tab to multiple line
             for (let i = startSelected.line; i <= endSelected.line; i++) {
-                const lineText = editor.document.lineAt(i).text;
+                const lineText = editor.document.lineAt(i).text
 
-                selectedLines.push(tabPattern + lineText);
+                selectedLines.push(tabPattern + lineText)
             }
 
             // Replace editor's text
             const range: vscode.Range = new vscode.Range(startSelected.line, 0,
-                endSelected.line, editor.document.lineAt(endSelected.line).text.length);
+                endSelected.line, editor.document.lineAt(endSelected.line).text.length)
             const updateText =
-                selectedLines.join("\n");
-            insertContentToEditor(editor, insertNestedList.name, updateText, true, range);
+                selectedLines.join("\n")
+            insertContentToEditor(editor, insertNestedList.name, updateText, true, range)
         } else if (!checkEmptyLine(editor)) {
             const text = editor.document.getText(new vscode.Range(cursorPosition.with(cursorPosition.line, 0),
-                cursorPosition.with(cursorPosition.line, editor.selection.end.character)));
-            const indentCount = CountIndent(editor.document.lineAt(cursorPosition.line).text);
+                cursorPosition.with(cursorPosition.line, editor.selection.end.character)))
+            const indentCount = CountIndent(editor.document.lineAt(cursorPosition.line).text)
             const numberedRegex = new RegExp(fixedNumberedListWithIndentRegexTemplate.replace("{0}"
-                , indentCount.toString()));
+                , indentCount.toString()))
 
             // Handle nested list of bullet
             if (fixedBulletedListRegex.exec(text) != null) {
-                editor.edit((update) => {
+                editor.edit(update => {
                     update.insert(cursorPosition.with(cursorPosition.line, 0),
-                        tabPattern);
-                });
+                        tabPattern)
+                })
             } else if (getNumberedLineWithRegex(numberedRegex, text) > 0) {
-                nestedNumberedList(editor, cursorPosition, indentCount);
-                insertContentToEditor(editor, insertNestedList.name, tabPattern, false);
+                nestedNumberedList(editor, cursorPosition, indentCount)
+                insertContentToEditor(editor, insertNestedList.name, tabPattern, false)
             } else {
-                insertContentToEditor(editor, insertNestedList.name, tabPattern, false);
+                insertContentToEditor(editor, insertNestedList.name, tabPattern, false)
             }
         } else {
-            insertContentToEditor(editor, insertNestedList.name, tabPattern, false);
+            insertContentToEditor(editor, insertNestedList.name, tabPattern, false)
         }
     }
 }
@@ -199,23 +195,20 @@ export function insertNestedList() {
  *  Removes indentation from a nested list.
  */
 export function removeNestedList() {
-    const editor = vscode.window.activeTextEditor;
+    const editor = vscode.window.activeTextEditor
     if (!editor) {
-        noActiveEditorMessage();
-        return;
+        noActiveEditorMessage()
     } else {
         if (!isMarkdownFileCheck(editor, false)) {
-            return;
+            return
         }
 
         // Check user selected multiple line
         if (!editor.selection.isSingleLine) {
-
             // Delete multiple line
-            removeNestedListMultipleLine(editor);
-
+            removeNestedListMultipleLine(editor)
         } else {
-            removeNestedListSingleLine(editor);
+            removeNestedListSingleLine(editor)
         }
     }
 }

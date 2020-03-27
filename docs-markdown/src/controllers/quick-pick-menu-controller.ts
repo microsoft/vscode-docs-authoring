@@ -1,110 +1,110 @@
-"use strict";
+"use strict"
 
-import * as vscode from "vscode";
-import { checkExtension, generateTimestamp } from "../helper/common";
-import { insertAlert } from "./alert-controller";
-import { formatBold } from "./bold-controller";
-import { applyCleanup } from "./cleanup/cleanup-controller";
-import { formatCode } from "./code-controller";
-import { pickImageType } from "./image-controller";
-import { insertInclude } from "./include-controller";
-import { formatItalic } from "./italic-controller";
-import { insertBulletedList, insertNumberedList } from "./list-controller";
-import { insertVideo, insertLink } from "./media-controller";
-import { noLocText } from "./no-loc-controller";
-import { previewTopic } from "./preview-controller";
-import { insertRowsAndColumns } from "./row-columns-controller";
-import { insertSnippet } from "./snippet-controller";
-import { insertTable } from "./table-controller";
-import { applyTemplate } from "./template-controller";
-import { applyXref } from "./xref-controller";
-import { insertExpandableParentNode, insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
-import { pickLinkType } from "./link-controller";
-import { output } from "../helper/output";
+import * as vscode from "vscode"
+import { checkExtension, generateTimestamp } from "../helper/common"
+import { insertAlert } from "./alert-controller"
+import { formatBold } from "./bold-controller"
+import { applyCleanup } from "./cleanup/cleanup-controller"
+import { formatCode } from "./code-controller"
+import { pickImageType } from "./image-controller"
+import { insertInclude } from "./include-controller"
+import { formatItalic } from "./italic-controller"
+import { insertBulletedList, insertNumberedList } from "./list-controller"
+import { insertVideo, insertLink } from "./media-controller"
+import { noLocText } from "./no-loc-controller"
+import { previewTopic } from "./preview-controller"
+import { insertRowsAndColumns } from "./row-columns-controller"
+import { insertSnippet } from "./snippet-controller"
+import { insertTable } from "./table-controller"
+import { applyTemplate } from "./template-controller"
+import { applyXref } from "./xref-controller"
+import { insertExpandableParentNode, insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller"
+import { pickLinkType } from "./link-controller"
+import { output } from "../helper/output"
 
 export function quickPickMenuCommand() {
     const commands = [
-        { command: markdownQuickPick.name, callback: markdownQuickPick },
-    ];
-    return commands;
+        { command: markdownQuickPick.name, callback: markdownQuickPick }
+    ]
+    return commands
 }
 
 export function markdownQuickPick() {
-    const opts: vscode.QuickPickOptions = { placeHolder: "Which command would you like to run?" };
-    const markdownItems: vscode.QuickPickItem[] = [];
-    const yamlItems: vscode.QuickPickItem[] = [];
-    let items: vscode.QuickPickItem[] = [];
-    const activeTextDocument = vscode.window.activeTextEditor;
+    const opts: vscode.QuickPickOptions = { placeHolder: "Which command would you like to run?" }
+    const markdownItems: vscode.QuickPickItem[] = []
+    const yamlItems: vscode.QuickPickItem[] = []
+    let items: vscode.QuickPickItem[] = []
+    const activeTextDocument = vscode.window.activeTextEditor
 
     if (checkExtension("docsmsft.docs-preview")) {
         markdownItems.push({
             description: "",
-            label: "$(browser) Preview",
-        });
+            label: "$(browser) Preview"
+        })
     }
 
     markdownItems.push(
         {
             description: "",
-            label: "$(pencil) Bold",
+            label: "$(pencil) Bold"
         },
         {
             description: "",
-            label: "$(info) Italic",
+            label: "$(info) Italic"
         },
         {
             description: "",
-            label: "$(code) Code",
+            label: "$(code) Code"
         },
         {
             description: "Insert note, tip, important, caution, or warning",
-            label: "$(alert) Alert",
+            label: "$(alert) Alert"
         },
         {
             description: "",
-            label: "$(list-ordered) Numbered list",
+            label: "$(list-ordered) Numbered list"
         },
         {
             description: "",
-            label: "$(list-unordered) Bulleted list",
+            label: "$(list-unordered) Bulleted list"
         },
         {
             description: "",
-            label: "$(diff-added) Table",
+            label: "$(diff-added) Table"
         },
         {
             description: "",
-            label: "$(ellipsis) Columns",
+            label: "$(ellipsis) Columns"
         },
         {
             description: "",
-            label: "$(link) Link",
+            label: "$(link) Link"
         },
         {
             description: "",
-            label: "$(lock) Non-localizable text",
+            label: "$(lock) Non-localizable text"
         },
         {
             description: "",
-            label: "$(file-media) Image",
+            label: "$(file-media) Image"
         },
         {
             description: "",
-            label: "$(clippy) Include",
+            label: "$(clippy) Include"
         },
         {
             description: "",
-            label: "$(file-code) Snippet",
+            label: "$(file-code) Snippet"
         },
         {
             description: "",
-            label: "$(device-camera-video) Video",
+            label: "$(device-camera-video) Video"
         },
         {
             description: "",
-            label: "$(tasklist) Cleanup...",
-        },
-    );
+            label: "$(tasklist) Cleanup..."
+        }
+    )
 
     // push commands marked for preview (beta)
     // add description and label to this section for preview features. Example below:
@@ -112,135 +112,135 @@ export function markdownQuickPick() {
     //    description: "Beta preview",
     //    label: "$(tasklist) Cleanup...",
     // }
-    const previewSetting = vscode.workspace.getConfiguration("markdown").previewFeatures;
-    if (previewSetting == true) {
+    const previewSetting = vscode.workspace.getConfiguration("markdown").previewFeatures
+    if (previewSetting === true) {
     }
 
     if (checkExtension("docsmsft.docs-article-templates")) {
         markdownItems.push({
             description: "",
-            label: "$(diff) Template",
-        });
+            label: "$(diff) Template"
+        })
     }
 
     yamlItems.push(
         {
             description: "",
-            label: "$(note) TOC entry",
+            label: "$(note) TOC entry"
         },
         {
             description: "",
-            label: "$(note) TOC entry with optional attributes",
+            label: "$(note) TOC entry with optional attributes"
         },
         {
             description: "",
-            label: "$(note) Parent node",
+            label: "$(note) Parent node"
         },
         {
             description: "",
-            label: "$(link) Insert link",
+            label: "$(link) Insert link"
         },
         {
             description: "",
-            label: "$(lock) Non-localizable text",
-        },
-    );
+            label: "$(lock) Non-localizable text"
+        }
+    )
 
     if (activeTextDocument) {
-        const activeDocumentLanguage = activeTextDocument.document.languageId;
+        const activeDocumentLanguage = activeTextDocument.document.languageId
         switch (activeDocumentLanguage) {
             case "markdown":
-                items = markdownItems;
-                break;
+                items = markdownItems
+                break
             case "yaml":
-                items = yamlItems;
-                break;
+                items = yamlItems
+                break
         }
     }
 
     vscode.window.showQuickPick(items, opts).then((selection: any) => {
         if (!selection) {
-            return;
+            return
         }
 
         if (!vscode.window.activeTextEditor) {
-            vscode.window.showInformationMessage("Open a file first to manipulate text selections");
-            return;
+            vscode.window.showInformationMessage("Open a file first to manipulate text selections")
+            return
         }
 
-        const convertLabelToLowerCase = selection.label.toLowerCase();
-        const selectionWithoutIcon = convertLabelToLowerCase.split(")")[1].trim();
+        const convertLabelToLowerCase = selection.label.toLowerCase()
+        const selectionWithoutIcon = convertLabelToLowerCase.split(")")[1].trim()
 
         switch (selectionWithoutIcon) {
             case "bold":
-                formatBold();
-                break;
+                formatBold()
+                break
             case "italic":
-                formatItalic();
-                break;
+                formatItalic()
+                break
             case "code":
-                formatCode();
-                break;
+                formatCode()
+                break
             case "alert":
-                insertAlert();
-                break;
+                insertAlert()
+                break
             case "numbered list":
-                insertNumberedList();
-                break;
+                insertNumberedList()
+                break
             case "bulleted list":
-                insertBulletedList();
-                break;
+                insertBulletedList()
+                break
             case "table":
-                insertTable();
-                break;
+                insertTable()
+                break
             case "link":
-                pickLinkType();
-                break;
+                pickLinkType()
+                break
             case "non-localizable text":
-                noLocText();
-                break;
+                noLocText()
+                break
             case "image":
-                pickImageType();
-                break;
+                pickImageType()
+                break
             case "include":
-                insertInclude();
-                break;
+                insertInclude()
+                break
             case "snippet":
-                insertSnippet();
-                break;
+                insertSnippet()
+                break
             case "video":
-                insertVideo();
-                break;
+                insertVideo()
+                break
             case "preview":
-                previewTopic();
-                break;
+                previewTopic()
+                break
             case "template":
-                applyTemplate();
-                break;
+                applyTemplate()
+                break
             case "cleanup...":
-                applyCleanup();
-                break;
+                applyCleanup()
+                break
             case "link to xref":
-                applyXref();
-                break;
+                applyXref()
+                break
             case "toc entry":
-                insertTocEntry();
-                break;
+                insertTocEntry()
+                break
             case "toc entry with optional attributes":
-                insertTocEntryWithOptions();
-                break;
+                insertTocEntryWithOptions()
+                break
             case "parent node":
-                insertExpandableParentNode();
-                break;
+                insertExpandableParentNode()
+                break
             case "insert link":
-                insertLink();
-                break;
+                insertLink()
+                break
             case "columns":
-                insertRowsAndColumns();
-                break;
+                insertRowsAndColumns()
+                break
             default:
-                const { msTimeValue } = generateTimestamp();
-                output.appendLine(msTimeValue + " - No quickpick case was hit.");
+                const { msTimeValue } = generateTimestamp()
+                output.appendLine(msTimeValue + " - No quickpick case was hit.")
         }
-    });
+    })
 }

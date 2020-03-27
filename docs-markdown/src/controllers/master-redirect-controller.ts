@@ -1,26 +1,26 @@
-"use strict";
+"use strict"
 
-import * as fs from "fs";
-import * as dir from "node-dir";
-import { homedir } from "os";
-import { basename, extname, join, relative } from "path";
-import { URL } from "url";
-import { Position, Selection, TextEditor, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder, commands } from "vscode";
-import * as YAML from "yamljs";
-import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
-import { output } from "../helper/output";
-import { sendTelemetryData } from "../helper/telemetry";
-import * as yamlMetadata from "../helper/yaml-metadata";
+import * as fs from "fs"
+import * as dir from "node-dir"
+import { homedir } from "os"
+import { basename, extname, join, relative } from "path"
+import { URL } from "url"
+import { Position, Selection, TextEditor, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder, commands } from "vscode"
+import * as YAML from "yamljs"
+import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common"
+import { output } from "../helper/output"
+import { sendTelemetryData } from "../helper/telemetry"
+import * as yamlMetadata from "../helper/yaml-metadata"
 
-const telemetryCommand: string = "masterRedirect";
-const redirectFileName: string = ".openpublishing.redirection.json";
+const telemetryCommand = "masterRedirect"
+const redirectFileName = ".openpublishing.redirection.json"
 
 export function getMasterRedirectionCommand() {
     return [
         { command: generateMasterRedirectionFile.name, callback: generateMasterRedirectionFile },
         { command: sortMasterRedirectionFile.name, callback: sortMasterRedirectionFile },
-        { command: applyRedirectDaisyChainResolution.name, callback: applyRedirectDaisyChainResolution },
-    ];
+        { command: applyRedirectDaisyChainResolution.name, callback: applyRedirectDaisyChainResolution }
+    ]
 }
 
 export interface IMasterRedirections {
@@ -28,43 +28,43 @@ export interface IMasterRedirections {
 }
 
 export interface IMasterRedirection {
-    source_path: string;
-    redirect_url: string;
-    redirect_document_id?: boolean;
+    sourcePath: string;
+    redirectUrl: string;
+    redirectDocumentId?: boolean;
 }
 
-/* tslint:disable:max-classes-per-file variable-name*/
+/* tslint:disable:max-classes-per-file variable-name */
 
 export class MasterRedirection implements IMasterRedirections {
     public redirections: RedirectionFile[];
 
     constructor(redirectionFiles: RedirectionFile[]) {
-        this.redirections = redirectionFiles;
+        this.redirections = redirectionFiles
     }
 }
 
 export class RedirectionFile implements IMasterRedirection {
     public fileFullPath: string;
-    public isAlreadyInMasterRedirectionFile: boolean = false;
+    public isAlreadyInMasterRedirectionFile = false;
     public resource: any;
 
     // Members mapping to JSON elements in master redirection file
-    public source_path: string;
-    public redirect_url: string;
-    public redirect_document_id: boolean = false;
+    public sourcePath: string;
+    public redirectUrl: string;
+    public redirectDocumentId = false;
 
     constructor(filePath: string, redirectUrl: string, redirectDocumentId: boolean, folder: WorkspaceFolder | undefined) {
-        this.fileFullPath = filePath;
-        this.source_path = this.getRelativePathToRoot(filePath, folder);
-        this.redirect_url = redirectUrl;
-        this.redirect_document_id = redirectDocumentId;
+        this.fileFullPath = filePath
+        this.sourcePath = this.getRelativePathToRoot(filePath, folder)
+        this.redirectUrl = redirectUrl
+        this.redirectDocumentId = redirectDocumentId
     }
 
     public getRelativePathToRoot(filePath: any, folder: WorkspaceFolder | undefined): string {
         if (folder) {
-            return relative(folder.uri.fsPath, filePath).replace(/\\/g, "/");
+            return relative(folder.uri.fsPath, filePath).replace(/\\/g, "/")
         } else {
-            throw new Error("Failed to resolve relative path to repo root folder for file " + filePath + ". Original error: " + Error.toString());
+            throw new Error("Failed to resolve relative path to repo root folder for file " + filePath + ". Original error: " + Error.toString())
         }
     }
 }
@@ -74,40 +74,41 @@ interface IMarkdownConfig {
     docsetRootFolderName: string;
 }
 
-const docsHost = "docs.microsoft.com";
-const docsMicrosoftCom = `https://${docsHost}`;
+const docsHost = "docs.microsoft.com"
+const docsMicrosoftCom = `https://${docsHost}`
 
 export class RedirectUrl {
     public static parse(config: IMarkdownConfig, value: string): RedirectUrl | null {
         try {
-            const input = value.startsWith("/") ? `${docsMicrosoftCom}${value}` : value;
-            const url = new URL(input);
-            return new RedirectUrl(config, value, url);
+            const input = value.startsWith("/") ? `${docsMicrosoftCom}${value}` : value
+            const url = new URL(input)
+            return new RedirectUrl(config, value, url)
         } catch (error) {
-            return null;
+            return null
         }
     }
 
     get isExternalUrl(): boolean {
-        return this.url.host.toLocaleLowerCase() !== docsHost;
+        return this.url.host.toLocaleLowerCase() !== docsHost
     }
 
-    private _filePath: string = "";
+    private _filePath = "";
     get filePath(): string {
-        if (!!this._filePath) {
-            return this._filePath;
+        if (this._filePath) {
+            return this._filePath
         }
 
         // Put the URL into the same format as source_path, instead of
         // "/azure/cognitive-services/speech-service/overview" we'd get
         // "articles/cognitive-services/speech-service/overview.md"
-        const config = this.config;
-        const value = this.url.pathname;
+        const config = this.config
+        const value = this.url.pathname
         const replacedSegmentUrl =
             value.substring(1)
-                .replace(config.docsetName, config.docsetRootFolderName);
+                .replace(config.docsetName, config.docsetRootFolderName)
 
-        return this._filePath = `${replacedSegmentUrl}.md`;
+        this._filePath = `${replacedSegmentUrl}.md`
+        return this._filePath
     }
 
     private constructor(
@@ -116,391 +117,382 @@ export class RedirectUrl {
         public readonly url: URL) { }
 
     public toUrl(): string {
-        const withoutExtension = this.filePath.replace(".md", "");
-        return `/${withoutExtension.replace(this.config.docsetRootFolderName, this.config.docsetName)}`;
+        const withoutExtension = this.filePath.replace(".md", "")
+        return `/${withoutExtension.replace(this.config.docsetRootFolderName, this.config.docsetName)}`
     }
 
     public adaptHashAndQueryString(redirectUrl: string): string {
-        let resultingRedirectUrl = redirectUrl;
+        let resultingRedirectUrl = redirectUrl
         if (this.url.search) {
-            resultingRedirectUrl += this.url.search;
+            resultingRedirectUrl += this.url.search
         }
         if (this.url.hash) {
-            resultingRedirectUrl += this.url.hash;
+            resultingRedirectUrl += this.url.hash
         }
-        return resultingRedirectUrl;
+        return resultingRedirectUrl
     }
 }
 
 async function applyRedirectDaisyChainResolution() {
-    const editor = window.activeTextEditor;
+    const editor = window.activeTextEditor
     if (!editor) {
-        postWarning("Editor not active. Abandoning command.");
-        return;
+        postWarning("Editor not active. Abandoning command.")
+        return
     }
 
-    let redirects: IMasterRedirections | null = null;
-    const folder = workspace.getWorkspaceFolder(editor.document.uri);
+    let redirects: IMasterRedirections | null = null
+    const folder = workspace.getWorkspaceFolder(editor.document.uri)
     if (!folder) {
-        return;
+        return
     }
 
-    const file = tryFindFile(folder.uri.fsPath, redirectFileName);
+    const file = tryFindFile(folder.uri.fsPath, redirectFileName)
     if (!!file && fs.existsSync(file)) {
         if (!editor.document.uri.fsPath.endsWith(redirectFileName)) {
             const openFile = await window.showErrorMessage(
                 `Unable to update the master redirects, please open the "${redirectFileName}" file then try again!`,
-                "Open File");
-            if (!!openFile) {
-                const document = await workspace.openTextDocument(file);
-                await window.showTextDocument(document);
+                "Open File")
+            if (openFile) {
+                const document = await workspace.openTextDocument(file)
+                await window.showTextDocument(document)
             }
-            return;
+            return
         }
 
-        const jsonBuffer = fs.readFileSync(file);
-        redirects = JSON.parse(jsonBuffer.toString()) as IMasterRedirections;
+        const jsonBuffer = fs.readFileSync(file)
+        redirects = JSON.parse(jsonBuffer.toString()) as IMasterRedirections
     }
 
     if (!redirects || !redirects.redirections) {
-        return;
+        return
     }
 
-    const config = workspace.getConfiguration("markdown");
+    const config = workspace.getConfiguration("markdown")
     const options = {
         docsetName: config.docsetName,
-        docsetRootFolderName: config.docsetRootFolderName,
-    };
+        docsetRootFolderName: config.docsetRootFolderName
+    }
     if (options.docsetName === "" ||
         options.docsetRootFolderName === "") {
         // Open the settings, and prompt the user to enter values.
-        await commands.executeCommand("workbench.action.openSettings", "@ext:docsmsft.docs-markdown");
-        postWarning("Please set the Docset Name and Docset Root Folder Name before using this command.");
-        return;
+        await commands.executeCommand("workbench.action.openSettings", "@ext:docsmsft.docs-markdown")
+        postWarning("Please set the Docset Name and Docset Root Folder Name before using this command.")
+        return
     }
 
-    const redirectsLookup = new Map<string, { redirect: RedirectUrl | null, redirection: IMasterRedirection }>();
-    redirects.redirections.forEach((r) => {
-        redirectsLookup.set(r.source_path, {
-            redirect: RedirectUrl.parse(options, r.redirect_url),
-            redirection: r,
-        });
-    });
+    const redirectsLookup = new Map<string, { redirect: RedirectUrl | null; redirection: IMasterRedirection }>()
+    redirects.redirections.forEach(r => {
+        redirectsLookup.set(r.sourcePath, {
+            redirect: RedirectUrl.parse(options, r.redirectUrl),
+            redirection: r
+        })
+    })
 
-    const findRedirect = (sourcePath: string) => {
-        return redirectsLookup.has(sourcePath)
-            ? redirectsLookup.get(sourcePath)
-            : null;
-    };
+    const findRedirect = (sourcePath: string) => redirectsLookup.has(sourcePath)
+        ? redirectsLookup.get(sourcePath)
+        : null
 
-    let daisyChainsResolved = 0;
-    let maxDepthResolved = 0;
-    let resolvedDaisyChains = false;
+    let daisyChainsResolved = 0
+    let maxDepthResolved = 0
+    let resolvedDaisyChains = false
     redirectsLookup.forEach((source, _) => {
-        const { redirect: url, redirection: redirect } = source;
+        const { redirect: url, redirection: redirect } = source
         if (!url || !redirect) {
-            return;
+            return
         }
 
-        const redirectFilePath = url.filePath;
+        const redirectFilePath = url.filePath
 
-        let daisyChainPath = null;
-        let targetRedirectUrl = null;
-        let depthResolved = 0;
-        let isExternalUrl = false;
-        let targetRedirect = findRedirect(redirectFilePath);
+        let daisyChainPath = null
+        let targetRedirectUrl = null
+        let depthResolved = 0
+        let isExternalUrl = false
+        let targetRedirect = findRedirect(redirectFilePath)
         while (targetRedirect !== null) {
             if (!targetRedirect!.redirect || !targetRedirect!.redirection) {
-                break;
+                break
             }
 
-            depthResolved++;
+            depthResolved++
             if (depthResolved > maxDepthResolved) {
-                maxDepthResolved = depthResolved;
+                maxDepthResolved = depthResolved
             }
-            isExternalUrl = targetRedirect!.redirect.isExternalUrl;
+            isExternalUrl = targetRedirect!.redirect.isExternalUrl
             targetRedirectUrl =
                 isExternalUrl
-                    ? targetRedirect!.redirect!.url.toString()
-                    : targetRedirect!.redirect!.toUrl();
-            daisyChainPath = targetRedirect!.redirect!.filePath;
-            targetRedirect = findRedirect(daisyChainPath);
+                    ? targetRedirect!.redirect.url.toString()
+                    : targetRedirect!.redirect.toUrl()
+            daisyChainPath = targetRedirect!.redirect.filePath
+            targetRedirect = findRedirect(daisyChainPath)
         }
 
-        if (targetRedirectUrl && targetRedirectUrl !== source.redirection.redirect_url) {
-            daisyChainsResolved++;
+        if (targetRedirectUrl && targetRedirectUrl !== source.redirection.redirectUrl) {
+            daisyChainsResolved++
             const newRedirectUrl =
                 isExternalUrl
                     ? targetRedirectUrl
-                    : source.redirect!.adaptHashAndQueryString(targetRedirectUrl);
-            source.redirection.redirect_url = newRedirectUrl;
+                    : source.redirect!.adaptHashAndQueryString(targetRedirectUrl)
+            source.redirection.redirectUrl = newRedirectUrl
 
-            if (source.redirection.redirect_document_id) {
+            if (source.redirection.redirectDocumentId) {
                 if (isExternalUrl ||
                     !newRedirectUrl.startsWith(`/${options.docsetName}/`)) {
-                    source.redirection.redirect_document_id = false;
+                    source.redirection.redirectDocumentId = false
                 }
             }
 
-            resolvedDaisyChains = true;
+            resolvedDaisyChains = true
         }
-    });
+    })
 
     if (resolvedDaisyChains) {
-        await updateRedirects(editor, redirects, config);
-        const numberFormat = Intl.NumberFormat();
-        showStatusMessage(`Resolved ${numberFormat.format(daisyChainsResolved)} daisy chains, at a max-depth of ${maxDepthResolved}!`);
+        await updateRedirects(editor, redirects, config)
+        const numberFormat = Intl.NumberFormat()
+        showStatusMessage(`Resolved ${numberFormat.format(daisyChainsResolved)} daisy chains, at a max-depth of ${maxDepthResolved}!`)
     } else {
-        showStatusMessage("There are no daisy chains found.");
+        showStatusMessage("There are no daisy chains found.")
     }
 }
 
 async function updateRedirects(editor: TextEditor, redirects: IMasterRedirections | null, config: WorkspaceConfiguration) {
-    const lineCount = editor.document.lineCount - 1;
-    const lastLine = editor.document.lineAt(lineCount);
+    const lineCount = editor.document.lineCount - 1
+    const lastLine = editor.document.lineAt(lineCount)
     const entireDocSelection =
         new Selection(
             new Position(0, 0),
-            new Position(lineCount, lastLine.range.end.character));
+            new Position(lineCount, lastLine.range.end.character))
 
-    await editor.edit((builder) => {
-        builder.replace(entireDocSelection, redirectsToJson(redirects, config));
-    });
+    await editor.edit(builder => {
+        builder.replace(entireDocSelection, redirectsToJson(redirects, config))
+    })
 
-    await editor.document.save();
+    await editor.document.save()
 }
 
 function redirectsToJson(redirects: IMasterRedirections | null, config: WorkspaceConfiguration) {
-    const omitDefaultJsonProperties = config.omitDefaultJsonProperties;
-    const replacer = (key: string, value: string) => {
-        return omitDefaultJsonProperties && key === "redirect_document_id"
-            ? !!value
-                ? true
-                : undefined
-            : value;
-    };
+    const omitDefaultJsonProperties = config.omitDefaultJsonProperties
+    const replacer = (key: string, value: string) => omitDefaultJsonProperties && key === "redirect_document_id"
+        ? value
+            ? true
+            : undefined
+        : value
 
     const space =
         workspace.getConfiguration("editor").insertSpaces
             ? workspace.getConfiguration("editor").tabSize as number || 2
-            : 2;
+            : 2
 
-    return JSON.stringify(redirects, replacer, space);
+    return JSON.stringify(redirects, replacer, space)
 }
 
 export async function sortMasterRedirectionFile() {
-    const editor = window.activeTextEditor;
+    const editor = window.activeTextEditor
     if (!editor) {
-        postWarning("Editor not active. Abandoning command.");
-        return;
+        postWarning("Editor not active. Abandoning command.")
+        return
     }
 
-    const folder = workspace.getWorkspaceFolder(editor.document.uri);
+    const folder = workspace.getWorkspaceFolder(editor.document.uri)
     if (folder) {
-        const file = tryFindFile(folder.uri.fsPath, redirectFileName);
+        const file = tryFindFile(folder.uri.fsPath, redirectFileName)
         if (!!file && fs.existsSync(file)) {
-            const jsonBuffer = fs.readFileSync(file);
-            const redirects = JSON.parse(jsonBuffer.toString()) as IMasterRedirections;
+            const jsonBuffer = fs.readFileSync(file)
+            const redirects = JSON.parse(jsonBuffer.toString()) as IMasterRedirections
             if (redirects && redirects.redirections && redirects.redirections.length) {
+                redirects.redirections.sort((a, b) => naturalLanguageCompare(a.sourcePath, b.sourcePath))
 
-                redirects.redirections.sort((a, b) => {
-                    return naturalLanguageCompare(a.source_path, b.source_path);
-                });
-
-                const config = workspace.getConfiguration("markdown");
-                await updateRedirects(editor, redirects, config);
+                const config = workspace.getConfiguration("markdown")
+                await updateRedirects(editor, redirects, config)
             }
         }
     }
 }
 
 export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) {
-    const editor = window.activeTextEditor;
-    let workspacePath: string;
+    const editor = window.activeTextEditor
+    let workspacePath: string
     if (editor) {
-        sendTelemetryData(telemetryCommand, "");
-        const resource = editor.document.uri;
-        let folder = workspace.getWorkspaceFolder(resource);
+        sendTelemetryData(telemetryCommand, "")
+        const resource = editor.document.uri
+        let folder = workspace.getWorkspaceFolder(resource)
         if (!folder && rootPath) {
-            folder = workspace.getWorkspaceFolder(Uri.file(rootPath));
+            folder = workspace.getWorkspaceFolder(Uri.file(rootPath))
         }
         if (folder) {
-            const repoName = folder.name.toLowerCase();
-            workspacePath = folder.uri.fsPath;
+            const repoName = folder.name.toLowerCase()
+            workspacePath = folder.uri.fsPath
 
-            const date = new Date(Date.now());
+            const date = new Date(Date.now())
 
             if (workspacePath == null) {
-                postError("No workspace is opened.");
-                return;
+                postError("No workspace is opened.")
+                return
             }
 
             // Check if the current workspace is the root folder of a repo by checking if the .git folder is present
-            const gitDir = join(workspacePath, ".git");
+            const gitDir = join(workspacePath, ".git")
             if (!fs.existsSync(gitDir)) {
-                postError("Current workspace is not root folder of a repo.");
-                return;
+                postError("Current workspace is not root folder of a repo.")
+                return
             }
 
             dir.files(workspacePath, (err: any, files: any) => {
                 if (err) {
-                    window.showErrorMessage(err);
-                    return;
+                    window.showErrorMessage(err)
+                    return
                 }
 
-                const redirectionFiles: RedirectionFile[] = [];
-                const errorFiles: any[] = [];
+                const redirectionFiles: RedirectionFile[] = []
+                const errorFiles: any[] = []
 
-                showStatusMessage("Generating Master Redirection file.");
+                showStatusMessage("Generating Master Redirection file.")
 
                 files.filter((file: any) => extname(file.toLowerCase()) === ".md").forEach((file: any) => {
-                    const content = fs.readFileSync(file, "utf8");
-                    const mdContent = new yamlMetadata.MarkdownFileMetadataContent(content, file);
+                    const content = fs.readFileSync(file, "utf8")
+                    const mdContent = new yamlMetadata.MarkdownFileMetadataContent(content, file)
 
                     try {
-                        const metadataContent = mdContent.getYamlMetadataContent();
+                        const metadataContent = mdContent.getYamlMetadataContent()
 
                         if (metadataContent !== "") {
-                            const yamlHeader = YAML.parse(metadataContent.toLowerCase());
+                            const yamlHeader = YAML.parse(metadataContent.toLowerCase())
 
                             if (yamlHeader != null && yamlHeader.redirect_url != null) {
                                 if (yamlHeader.redirect_document_id !== true) {
-                                    yamlHeader.redirect_document_id = false;
+                                    yamlHeader.redirect_document_id = false
                                 }
-                                redirectionFiles.push(new RedirectionFile(file, yamlHeader.redirect_url, yamlHeader.redirect_document_id, folder));
+                                redirectionFiles.push(new RedirectionFile(file, yamlHeader.redirect_url, yamlHeader.redirect_document_id, folder))
                             }
                         }
                     } catch (error) {
                         errorFiles.push({
                             errorMessage: error,
-                            fileName: file,
-                        });
+                            fileName: file
+                        })
                     }
-                });
+                })
 
                 if (redirectionFiles.length === 0) {
-                    showStatusMessage("No redirection files found.");
+                    showStatusMessage("No redirection files found.")
                     if (resolve) {
-                        resolve();
+                        resolve()
                     }
                 }
 
                 if (redirectionFiles.length > 0) {
-                    let masterRedirection: MasterRedirection | null;
-                    const masterRedirectionFilePath: string = join(workspacePath, redirectFileName);
+                    let masterRedirection: MasterRedirection | null
+                    const masterRedirectionFilePath: string = join(workspacePath, redirectFileName)
                     // If there is already a master redirection file, read its content to load into masterRedirection variable
                     if (fs.existsSync(masterRedirectionFilePath)) {
                         // test for valid json
                         try {
-                            masterRedirection = JSON.parse(fs.readFileSync(masterRedirectionFilePath, "utf8"));
+                            masterRedirection = JSON.parse(fs.readFileSync(masterRedirectionFilePath, "utf8"))
                         } catch (error) {
-                            showStatusMessage("Invalid JSON: " + error);
-                            return;
+                            showStatusMessage("Invalid JSON: " + error)
+                            return
                         }
                     } else {
-                        masterRedirection = null;
-                        showStatusMessage("Created new redirection file.");
+                        masterRedirection = null
+                        showStatusMessage("Created new redirection file.")
                     }
 
                     if (masterRedirection == null) {
                         // This means there is no existing master redirection file, we will create master redirection file and write all scanned result into it
-                        masterRedirection = new MasterRedirection(redirectionFiles);
+                        masterRedirection = new MasterRedirection(redirectionFiles)
                     } else {
-                        const existingSourcePath: string[] = [];
+                        const existingSourcePath: string[] = []
 
-                        masterRedirection.redirections.forEach((item) => {
-                            if (!item.source_path) {
-                                showStatusMessage("An array is missing the source_path value. Please check .openpublishing.redirection.json.");
-                                return;
+                        masterRedirection.redirections.forEach(item => {
+                            if (!item.sourcePath) {
+                                showStatusMessage("An array is missing the source_path value. Please check .openpublishing.redirection.json.")
+                                return
                             }
-                            existingSourcePath.push(item.source_path.toLowerCase());
-                        });
+                            existingSourcePath.push(item.sourcePath.toLowerCase())
+                        })
 
-                        redirectionFiles.forEach((item) => {
-                            if (existingSourcePath.indexOf(item.source_path.toLowerCase()) >= 0) {
-                                item.isAlreadyInMasterRedirectionFile = true;
+                        redirectionFiles.forEach(item => {
+                            if (existingSourcePath.includes(item.sourcePath.toLowerCase())) {
+                                item.isAlreadyInMasterRedirectionFile = true
                             } else {
                                 if (masterRedirection != null) {
-                                    masterRedirection.redirections.push(item);
+                                    masterRedirection.redirections.push(item)
                                 } else {
-                                    showStatusMessage("No redirection files found to add.");
+                                    showStatusMessage("No redirection files found to add.")
                                     if (resolve) {
-                                        resolve();
+                                        resolve()
                                     }
                                 }
                             }
-                        });
+                        })
                     }
                     if (masterRedirection.redirections.length > 0) {
-                        masterRedirection.redirections.sort((a, b) => {
-                            return naturalLanguageCompare(a.source_path, b.source_path);
-                        });
+                        masterRedirection.redirections.sort((a, b) => naturalLanguageCompare(a.sourcePath, b.sourcePath))
 
                         fs.writeFileSync(
                             masterRedirectionFilePath,
-                            JSON.stringify(masterRedirection, ["redirections", "source_path", "redirect_url", "redirect_document_id"], 4));
+                            JSON.stringify(masterRedirection, ["redirections", "source_path", "redirect_url", "redirect_document_id"], 4))
 
-                        const currentYear = date.getFullYear();
-                        const currentMonth = (date.getMonth() + 1);
-                        const currentDay = date.getDate();
-                        const currentHour = date.getHours();
-                        const currentMinute = date.getMinutes();
-                        const currentMilliSeconds = date.getMilliseconds();
-                        const timeStamp = currentYear + `-` + currentMonth + `-` + currentDay + `_` + currentHour + `-` + currentMinute + `-` + currentMilliSeconds;
-                        const deletedRedirectsFolderName = repoName + "_deleted_redirects_" + timeStamp;
-                        const docsAuthoringHomeDirectory = join(homedir(), "Docs Authoring");
-                        const docsRedirectDirectory = join(docsAuthoringHomeDirectory, "redirects");
-                        const deletedRedirectsPath = join(docsRedirectDirectory, deletedRedirectsFolderName);
+                        const currentYear = date.getFullYear()
+                        const currentMonth = (date.getMonth() + 1)
+                        const currentDay = date.getDate()
+                        const currentHour = date.getHours()
+                        const currentMinute = date.getMinutes()
+                        const currentMilliSeconds = date.getMilliseconds()
+                        const timeStamp = currentYear + "-" + currentMonth + "-" + currentDay + "_" + currentHour + "-" + currentMinute + "-" + currentMilliSeconds
+                        const deletedRedirectsFolderName = repoName + "_deleted_redirects_" + timeStamp
+                        const docsAuthoringHomeDirectory = join(homedir(), "Docs Authoring")
+                        const docsRedirectDirectory = join(docsAuthoringHomeDirectory, "redirects")
+                        const deletedRedirectsPath = join(docsRedirectDirectory, deletedRedirectsFolderName)
                         if (fs.existsSync(docsRedirectDirectory)) {
-                            fs.mkdirSync(deletedRedirectsPath);
+                            fs.mkdirSync(deletedRedirectsPath)
                         } else {
                             if (!fs.existsSync(docsAuthoringHomeDirectory)) {
-                                fs.mkdirSync(docsAuthoringHomeDirectory);
+                                fs.mkdirSync(docsAuthoringHomeDirectory)
                             }
                             if (!fs.existsSync(docsRedirectDirectory)) {
-                                fs.mkdirSync(docsRedirectDirectory);
+                                fs.mkdirSync(docsRedirectDirectory)
                             }
                             if (!fs.existsSync(deletedRedirectsPath)) {
-                                fs.mkdirSync(deletedRedirectsPath);
+                                fs.mkdirSync(deletedRedirectsPath)
                             }
                         }
 
-                        redirectionFiles.forEach((item) => {
-                            const source = fs.createReadStream(item.fileFullPath);
-                            const dest = fs.createWriteStream(join(deletedRedirectsPath, basename(item.source_path)));
+                        redirectionFiles.forEach(item => {
+                            const source = fs.createReadStream(item.fileFullPath)
+                            const dest = fs.createWriteStream(join(deletedRedirectsPath, basename(item.sourcePath)))
 
-                            source.pipe(dest);
+                            source.pipe(dest)
                             source.on("close", () => {
-                                fs.unlink(item.fileFullPath, (err) => {
+                                fs.unlink(item.fileFullPath, err => {
                                     if (err) {
-                                        postError(`Error: ${err}`);
+                                        postError(`Error: ${err}`)
                                     }
-                                });
-                            });
-                        });
+                                })
+                            })
+                        })
 
-                        redirectionFiles.forEach((item) => {
+                        redirectionFiles.forEach(item => {
                             if (item.isAlreadyInMasterRedirectionFile) {
-                                showStatusMessage("Already in master redirection file: " + item.fileFullPath);
+                                showStatusMessage("Already in master redirection file: " + item.fileFullPath)
                             } else {
-                                showStatusMessage("Added to master redirection file. " + item.fileFullPath);
+                                showStatusMessage("Added to master redirection file. " + item.fileFullPath)
                             }
-                        });
+                        })
 
-                        showStatusMessage("Redirected files copied to " + deletedRedirectsPath);
-                        showStatusMessage("Done");
+                        showStatusMessage("Redirected files copied to " + deletedRedirectsPath)
+                        showStatusMessage("Done")
                         if (resolve) {
-                            resolve();
+                            resolve()
                         }
                     }
                 }
-            });
+            })
         }
     }
 }
 
 function showStatusMessage(message: string) {
-    const { msTimeValue } = generateTimestamp();
-    output.appendLine(`[${msTimeValue}] - ` + message);
-    output.show();
+    const { msTimeValue } = generateTimestamp()
+    output.appendLine(`[${msTimeValue}] - ` + message)
+    output.show()
 }

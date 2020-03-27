@@ -1,102 +1,102 @@
-"use strict";
+"use strict"
 
-import * as glob from "glob";
-import * as os from "os";
-import * as path from "path";
-import { QuickPickItem, window, workspace } from "vscode";
-import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
-import { includeBuilder } from "../helper/utility";
-import { sendTelemetryData } from "../helper/telemetry";
+import * as glob from "glob"
+import * as os from "os"
+import * as path from "path"
+import { QuickPickItem, window, workspace } from "vscode"
+import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common"
+import { includeBuilder } from "../helper/utility"
+import { sendTelemetryData } from "../helper/telemetry"
 
-const telemetryCommand: string = "insertInclude";
-const markdownExtension = ".md";
+const telemetryCommand = "insertInclude"
+const markdownExtension = ".md"
 
 export function insertIncludeCommand() {
     const commands = [
-        { command: insertInclude.name, callback: insertInclude },
-    ];
-    return commands;
+        { command: insertInclude.name, callback: insertInclude }
+    ]
+    return commands
 }
 
 /**
  * transforms the current selection into an include.
  */
 export async function insertInclude() {
-    const editor = window.activeTextEditor;
+    const editor = window.activeTextEditor
 
     if (!editor) {
-        noActiveEditorMessage();
-        return;
+        noActiveEditorMessage()
+        return
     }
 
-    const activeFileDir = path.dirname(editor.document.fileName);
-    let folderPath: string = "";
+    const activeFileDir = path.dirname(editor.document.fileName)
+    let folderPath = ""
 
     if (workspace.workspaceFolders) {
-        folderPath = workspace.workspaceFolders[0].uri.fsPath;
+        folderPath = workspace.workspaceFolders[0].uri.fsPath
     }
 
     if (!isMarkdownFileCheck(editor, false)) {
-        return;
+        return
     }
 
     if (!hasValidWorkSpaceRootPath(telemetryCommand)) {
-        return;
+        return
     }
 
     if (!folderPath) {
-        return;
+        return
     }
 
     await glob("**/includes/**/*.md", { cwd: folderPath, nocase: true, realpath: true }, async (er: any, files: string[]) => {
-        const items: QuickPickItem[] = [];
+        const items: QuickPickItem[] = []
 
         files.forEach((file: string) => items.push({
             description: path.dirname(file),
-            label: path.basename(file),
-        }));
+            label: path.basename(file)
+        }))
 
-        const descSelector = (item: QuickPickItem) => item && item.description || "";
+        const descSelector = (item: QuickPickItem) => (item && item.description) || ""
         items.sort((a, b) => {
-            const [aDesc, bDesc] = [descSelector(a), descSelector(b)];
+            const [aDesc, bDesc] = [descSelector(a), descSelector(b)]
             if (aDesc < bDesc) {
-                return -1;
+                return -1
             }
             if (aDesc > bDesc) {
-                return 1;
+                return 1
             }
 
-            return 0;
-        });
+            return 0
+        })
 
         // show the quick pick menu
-        const qpSelection = await window.showQuickPick(items);
+        const qpSelection = await window.showQuickPick(items)
 
         // replace the selected text with the properly formatted link
         if (!qpSelection) {
-            return;
+            return
         }
 
-        let result: string;
-        const position = editor.selection.active;
+        let result: string
+        const position = editor.selection.active
 
         // strip markdown extension from label text.
-        const includeText = qpSelection.label.replace(markdownExtension, "");
+        const includeText = qpSelection.label.replace(markdownExtension, "")
         switch (os.type()) {
             case "Windows_NT":
-                result = includeBuilder((path.relative(activeFileDir, path.join
-                    (qpSelection.description || "Unknown", qpSelection.label).split("\\").join("\\\\"))), includeText);
-                break;
+                result = includeBuilder((path.relative(activeFileDir,
+                    path.join(qpSelection.description || "Unknown", qpSelection.label).split("\\").join("\\\\"))), includeText)
+                break
             case "Darwin":
-                result = includeBuilder((path.relative(activeFileDir, path.join
-                    (qpSelection.description || "Unknown", qpSelection.label).split("//").join("//"))), includeText);
-                break;
+                result = includeBuilder((path.relative(activeFileDir,
+                    path.join(qpSelection.description || "Unknown", qpSelection.label).split("//").join("//"))), includeText)
+                break
         }
 
-        editor.edit((editBuilder) => {
-            editBuilder.insert(position, result.replace(/\\/g, "/"));
-        });
-    });
+        editor.edit(editBuilder => {
+            editBuilder.insert(position, result.replace(/\\/g, "/"))
+        })
+    })
 
-    sendTelemetryData(telemetryCommand, "");
+    sendTelemetryData(telemetryCommand, "")
 }

@@ -1,6 +1,6 @@
-"use-strict";
+"use-strict"
 
-import { LineObjectModel } from "./line-object-model";
+import { LineObjectModel } from "./line-object-model"
 
 export class ListObjectModel {
     public previousOuter: LineObjectModel | null = null;

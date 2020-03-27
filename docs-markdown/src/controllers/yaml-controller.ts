@@ -1,130 +1,130 @@
-"use strict";
+"use strict"
 
-import { readFileSync } from "fs";
-import { files } from "node-dir";
-import { basename, dirname, extname, join, relative } from "path";
-import { QuickPickItem, window, workspace } from "vscode";
-import { insertedTocEntry, invalidTocEntryPosition, noHeading, noHeadingSelected } from "../constants/log-messages";
-import { insertContentToEditor, noActiveEditorMessage, showStatusMessage } from "../helper/common";
-import { sendTelemetryData } from "../helper/telemetry";
+import { readFileSync } from "fs"
+import { files } from "node-dir"
+import { basename, dirname, extname, join, relative } from "path"
+import { window, workspace, QuickPickItem } from "vscode"
+import { insertedTocEntry, invalidTocEntryPosition, noHeading, noHeadingSelected } from "../constants/log-messages"
+import { insertContentToEditor, noActiveEditorMessage, showStatusMessage } from "../helper/common"
+import { sendTelemetryData } from "../helper/telemetry"
 
-const telemetryCommand: string = "updateTOC";
-let commandOption: string;
+const telemetryCommand = "updateTOC"
+let commandOption: string
 
 export function yamlCommands() {
   // tslint:disable-next-line: no-shadowed-variable
   const commands = [
     { command: insertTocEntry.name, callback: insertTocEntry },
     { command: insertTocEntryWithOptions.name, callback: insertTocEntryWithOptions },
-    { command: insertExpandableParentNode.name, callback: insertExpandableParentNode },
-  ];
-  return commands;
+    { command: insertExpandableParentNode.name, callback: insertExpandableParentNode }
+  ]
+  return commands
 }
 
 export function insertTocEntry() {
-  commandOption = "tocEntry";
-  checkForPreviousEntry(false);
+  commandOption = "tocEntry"
+  checkForPreviousEntry(false)
 }
 export function insertTocEntryWithOptions() {
-  commandOption = "tocEntryWithOptions";
-  checkForPreviousEntry(true);
+  commandOption = "tocEntryWithOptions"
+  checkForPreviousEntry(true)
 }
 
 export function insertExpandableParentNode() {
-  commandOption = "expandableParentNode";
-  createParentNode();
+  commandOption = "expandableParentNode"
+  createParentNode()
 }
 
 export function showQuickPick(options: boolean) {
-  const markdownExtensionFilter = [".md"];
-  const headingTextRegex = /^(# )(.*)/gm;
-  let folderPath: string = "";
-  let fullPath: string = "";
+  const markdownExtensionFilter = [".md"]
+  const headingTextRegex = /^(# )(.*)/gm
+  let folderPath = ""
+  let fullPath = ""
 
   if (workspace.workspaceFolders) {
-    folderPath = workspace.workspaceFolders[0].uri.fsPath;
+    folderPath = workspace.workspaceFolders[0].uri.fsPath
   }
 
   // tslint:disable: no-shadowed-variable
   files(folderPath, (err: any, files: any) => {
     if (err) {
-      window.showErrorMessage(err);
-      throw err;
+      window.showErrorMessage(err)
+      throw err
     }
 
-    const items: QuickPickItem[] = [];
-    files.sort();
-    files.filter((file: any) => markdownExtensionFilter.indexOf(extname(file.toLowerCase())) !== -1).forEach((file: any) => {
-      items.push({ label: basename(file), description: dirname(file) });
-    });
+    const items: QuickPickItem[] = []
+    files.sort()
+    files.filter((file: any) => markdownExtensionFilter.includes(extname(file.toLowerCase()))).forEach((file: any) => {
+      items.push({ label: basename(file), description: dirname(file) })
+    })
 
     // show the quick pick menu
-    const selectionPick = window.showQuickPick(items);
-    selectionPick.then((qpSelection) => {
-      const editor = window.activeTextEditor;
+    const selectionPick = window.showQuickPick(items)
+    selectionPick.then(qpSelection => {
+      const editor = window.activeTextEditor
       if (!editor) {
-        noActiveEditorMessage();
-        return;
+        noActiveEditorMessage()
+        return
       }
 
       if (!qpSelection) {
-        return;
+        return
       }
 
       if (qpSelection.description) {
-        fullPath = join(qpSelection.description, qpSelection.label);
+        fullPath = join(qpSelection.description, qpSelection.label)
       }
 
-      const content = readFileSync(fullPath, "utf8");
-      const headings = content.match(headingTextRegex);
+      const content = readFileSync(fullPath, "utf8")
+      const headings = content.match(headingTextRegex)
 
       if (!headings) {
-        window.showErrorMessage(noHeading);
-        return;
+        window.showErrorMessage(noHeading)
+        return
       }
-      let headingName = headings.toString().replace("# ", "");
-      const activeFilePath = editor.document.fileName;
-      const href = relative(activeFilePath, fullPath);
+      let headingName = headings.toString().replace("# ", "")
+      const activeFilePath = editor.document.fileName
+      const href = relative(activeFilePath, fullPath)
       // format href: remove addtional leading segment (support windows, macos and linux), set path separators to standard
-      const formattedHrefPath = href.replace("..\\", "").replace("../", "").replace(/\\/g, "/");
+      const formattedHrefPath = href.replace("..\\", "").replace("../", "").replace(/\\/g, "/")
       window.showInputBox({
         value: headingName,
-        valueSelection: [0, 0],
-      }).then((val) => {
+        valueSelection: [0, 0]
+      }).then(val => {
         if (!val) {
-          window.showInformationMessage(noHeadingSelected);
+          window.showInformationMessage(noHeadingSelected)
         }
         if (val) {
-          headingName = val;
+          headingName = val
         }
-        createEntry(headingName, formattedHrefPath, options);
-      });
-    });
-  });
+        createEntry(headingName, formattedHrefPath, options)
+      })
+    })
+  })
 }
 
 export function createEntry(name: string, href: string, options: boolean) {
-  const editor = window.activeTextEditor;
+  const editor = window.activeTextEditor
   if (!editor) {
-    return;
+    return
   }
-  const position = editor.selection.active;
-  const cursorPosition = position.character;
-  const attributeSpace = " ";
+  const position = editor.selection.active
+  const cursorPosition = position.character
+  const attributeSpace = " "
 
   if (cursorPosition === 0 && !options) {
     const tocEntryLineStart =
       `- name: ${name}
   href: ${href}`
-    insertContentToEditor(editor, insertTocEntry.name, tocEntryLineStart);
+    insertContentToEditor(editor, insertTocEntry.name, tocEntryLineStart)
   }
 
   if (cursorPosition > 0 && !options) {
-    const currentPosition = editor.selection.active.character;
+    const currentPosition = editor.selection.active.character
     const tocEntryIndented =
       `- name: ${name}
   ${attributeSpace.repeat(currentPosition)}href: ${href}`
-    insertContentToEditor(editor, insertTocEntry.name, tocEntryIndented);
+    insertContentToEditor(editor, insertTocEntry.name, tocEntryIndented)
   }
 
   if (cursorPosition === 0 && options) {
@@ -133,65 +133,65 @@ export function createEntry(name: string, href: string, options: boolean) {
   displayName: #optional string for searching TOC
   href: ${href}
   uid: #optional string
-  expanded: #true or false, false is default`;
-    insertContentToEditor(editor, insertTocEntryWithOptions.name, tocEntryWithOptions);
+  expanded: #true or false, false is default`
+    insertContentToEditor(editor, insertTocEntryWithOptions.name, tocEntryWithOptions)
   }
 
   if (cursorPosition > 0 && options) {
-    const currentPosition = editor.selection.active.character;
+    const currentPosition = editor.selection.active.character
     const tocEntryWithOptionsIndented =
       `- name: ${name}
   ${attributeSpace.repeat(currentPosition)}displayName: #optional string for searching TOC
   ${attributeSpace.repeat(currentPosition)}href: ${href}
   ${attributeSpace.repeat(currentPosition)}uid: #optional string
-  ${attributeSpace.repeat(currentPosition)}expanded: #true or false, false is default`;
-    insertContentToEditor(editor, insertTocEntryWithOptions.name, tocEntryWithOptionsIndented);
+  ${attributeSpace.repeat(currentPosition)}expanded: #true or false, false is default`
+    insertContentToEditor(editor, insertTocEntryWithOptions.name, tocEntryWithOptionsIndented)
   }
-  showStatusMessage(insertedTocEntry);
-  sendTelemetryData(telemetryCommand, commandOption);
+  showStatusMessage(insertedTocEntry)
+  sendTelemetryData(telemetryCommand, commandOption)
 }
 
 export function checkForPreviousEntry(options: boolean) {
-  const editor = window.activeTextEditor;
+  const editor = window.activeTextEditor
   if (!editor) {
-    return;
+    return
   }
 
   // position variables
-  const position = editor.selection.active;
-  const cursorPosition = position.character;
-  const currentLine = position.line;
-  const totalLines = editor.document.lineCount;
-  const startingCursorPosition = editor.selection.active.character;
+  const position = editor.selection.active
+  const cursorPosition = position.character
+  const currentLine = position.line
+  const totalLines = editor.document.lineCount
+  const startingCursorPosition = editor.selection.active.character
 
   // scalar variables
-  let itemsIndex: boolean = false;
-  let itemsIndexFirstPosition: boolean = false;
-  let nameIndex: boolean = false;
+  let itemsIndex = false
+  let itemsIndexFirstPosition = false
+  let nameIndex = false
 
   // scalar regex
-  const itemsScalarFirstPosition = /^items:/;
-  const itemsScalar = /^\s+items:/;
-  const nameScalarFirstPosition = /^-\sname:/;
-  const nameScalar = /^\s+(-\sname:)/;
-  const hrefScalar = /^\s+href:/;
-  const displayNameScalar = /^\s+displayName:/;
+  const itemsScalarFirstPosition = /^items:/
+  const itemsScalar = /^\s+items:/
+  const nameScalarFirstPosition = /^-\sname:/
+  const nameScalar = /^\s+(-\sname:)/
+  const hrefScalar = /^\s+href:/
+  const displayNameScalar = /^\s+displayName:/
 
   // check 1: opening items node
-  const lineData = editor.document.lineAt(0);
-  const lineText = lineData.text;
+  const lineData = editor.document.lineAt(0)
+  const lineText = lineData.text
   if (lineText.match(itemsScalarFirstPosition)) {
-    itemsIndexFirstPosition = true;
+    itemsIndexFirstPosition = true
   } else {
-    itemsIndexFirstPosition = false;
+    itemsIndexFirstPosition = false
   }
 
   // case 1: opening items alignment
   if (currentLine === 1 && itemsIndexFirstPosition) {
     if (cursorPosition === 2) {
-      launchQuickPick(options);
+      launchQuickPick(options)
     } else {
-      window.showErrorMessage(invalidTocEntryPosition);
+      window.showErrorMessage(invalidTocEntryPosition)
     }
   }
 
@@ -199,37 +199,37 @@ export function checkForPreviousEntry(options: boolean) {
   if (currentLine > 0) {
     for (let i = currentLine; i < totalLines; i--) {
       if (i === 0) {
-        break;
+        break
       }
 
-      const stopAtParent = editor.document.lineAt(i);
+      const stopAtParent = editor.document.lineAt(i)
       if (stopAtParent.text.match(itemsScalar)) {
         if (stopAtParent.firstNonWhitespaceCharacterIndex === 2 && startingCursorPosition > 2) {
-          itemsIndex = false;
-          break;
+          itemsIndex = false
+          break
         }
       }
 
       // next line should have a greater starting position
-      if (i === currentLine
-        && i + 1 !== totalLines) {
-        const lineData = editor.document.lineAt(i + 1);
+      if (i === currentLine &&
+        i + 1 !== totalLines) {
+        const lineData = editor.document.lineAt(i + 1)
         if (lineData.firstNonWhitespaceCharacterIndex > startingCursorPosition) {
-          itemsIndex = false;
-          break;
+          itemsIndex = false
+          break
         }
       }
 
-      const lineData = editor.document.lineAt(i);
-      const lineText = lineData.text;
+      const lineData = editor.document.lineAt(i)
+      const lineText = lineData.text
       if (lineText.match(itemsScalar)) {
-        const itemScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+        const itemScalarPosition = lineData.firstNonWhitespaceCharacterIndex
         if (startingCursorPosition === itemScalarPosition) {
-          itemsIndex = true;
-          break;
+          itemsIndex = true
+          break
         } else {
-          itemsIndex = false;
-          continue;
+          itemsIndex = false
+          continue
         }
       }
     }
@@ -237,48 +237,48 @@ export function checkForPreviousEntry(options: boolean) {
 
   // check 3: name scalar
   if (currentLine > 0) {
-    const startPosition = editor.selection.active.line;
-    let i = startPosition;
+    const startPosition = editor.selection.active.line
+    let i = startPosition
     for (i = startPosition; i < totalLines; i--) {
       if (i === 0) {
-        break;
+        break
       }
 
       if (startingCursorPosition === 0) {
-        const checkChild = editor.document.lineAt(i + 1);
+        const checkChild = editor.document.lineAt(i + 1)
         if (checkChild.firstNonWhitespaceCharacterIndex === startingCursorPosition) {
-          nameIndex = true;
-          break;
+          nameIndex = true
+          break
         }
       }
 
-      const stopAtParent = editor.document.lineAt(i);
+      const stopAtParent = editor.document.lineAt(i)
       if (stopAtParent.text.match(nameScalar)) {
         if (stopAtParent.firstNonWhitespaceCharacterIndex === 0) {
-          nameIndex = false;
-          break;
+          nameIndex = false
+          break
         }
       }
 
       // next line should have a greater starting position
-      if (i === currentLine
-        && i + 1 !== totalLines) {
-        const lineData = editor.document.lineAt(i + 1);
+      if (i === currentLine &&
+        i + 1 !== totalLines) {
+        const lineData = editor.document.lineAt(i + 1)
         if (lineData.firstNonWhitespaceCharacterIndex > startingCursorPosition) {
-          nameIndex = false;
-          break;
+          nameIndex = false
+          break
         }
       }
-      const lineData = editor.document.lineAt(i);
-      const lineText = lineData.text;
+      const lineData = editor.document.lineAt(i)
+      const lineText = lineData.text
       if (lineText.match(nameScalar)) {
-        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex
         if (nameScalarPosition === startingCursorPosition) {
-          nameIndex = true;
-          break;
+          nameIndex = true
+          break
         } else {
-          nameIndex = false;
-          continue;
+          nameIndex = false
+          continue
         }
       }
     }
@@ -286,49 +286,49 @@ export function checkForPreviousEntry(options: boolean) {
 
   // check 4: name scalar in first position
   if (currentLine > 0) {
-    const startPosition = editor.selection.active.line;
-    const totalLines = editor.document.lineCount;
-    let i = startPosition;
+    const startPosition = editor.selection.active.line
+    const totalLines = editor.document.lineCount
+    let i = startPosition
     for (i = startPosition; i < totalLines; i--) {
       if (i === 0) {
-        break;
+        break
       }
 
       if (startingCursorPosition === 0) {
-        const checkChild = editor.document.lineAt(i + 1);
+        const checkChild = editor.document.lineAt(i + 1)
         if (checkChild.firstNonWhitespaceCharacterIndex === startingCursorPosition) {
-          nameIndex = true;
-          break;
+          nameIndex = true
+          break
         }
       }
 
-      const stopAtParent = editor.document.lineAt(i);
+      const stopAtParent = editor.document.lineAt(i)
       if (stopAtParent.text.match(nameScalar)) {
         if (stopAtParent.firstNonWhitespaceCharacterIndex === 0) {
-          nameIndex = false;
-          break;
+          nameIndex = false
+          break
         }
       }
 
       // next line should have a greater starting position
-      if (i === currentLine
-        && i + 1 !== totalLines) {
-        const lineData = editor.document.lineAt(i + 1);
+      if (i === currentLine &&
+        i + 1 !== totalLines) {
+        const lineData = editor.document.lineAt(i + 1)
         if (lineData.firstNonWhitespaceCharacterIndex > startingCursorPosition) {
-          nameIndex = false;
-          break;
+          nameIndex = false
+          break
         }
       }
-      const lineData = editor.document.lineAt(i);
-      const lineText = lineData.text;
+      const lineData = editor.document.lineAt(i)
+      const lineText = lineData.text
       if (lineText.match(nameScalarFirstPosition)) {
-        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex
         if (nameScalarPosition === startingCursorPosition) {
-          nameIndex = true;
-          break;
+          nameIndex = true
+          break
         } else {
-          nameIndex = false;
-          continue;
+          nameIndex = false
+          continue
         }
       }
     }
@@ -336,11 +336,11 @@ export function checkForPreviousEntry(options: boolean) {
 
   // check if parent is href or displayName
   if (currentLine - 1 > 0) {
-    if (editor.document.lineAt(currentLine - 1).text.match(hrefScalar)
-      || editor.document.lineAt(currentLine - 1).text.match(displayNameScalar)) {
+    if (editor.document.lineAt(currentLine - 1).text.match(hrefScalar) ||
+      editor.document.lineAt(currentLine - 1).text.match(displayNameScalar)) {
       if (editor.document.lineAt(currentLine - 1).firstNonWhitespaceCharacterIndex === startingCursorPosition) {
-        nameIndex = false;
-        itemsIndex = false;
+        nameIndex = false
+        itemsIndex = false
       }
     }
   }
@@ -348,56 +348,56 @@ export function checkForPreviousEntry(options: boolean) {
   // case 2: scalar alignment
   if (currentLine > 1) {
     if (itemsIndex) {
-      launchQuickPick(options);
+      launchQuickPick(options)
     } else if (nameIndex) {
-      launchQuickPick(options);
+      launchQuickPick(options)
     } else {
-      window.showErrorMessage(invalidTocEntryPosition);
+      window.showErrorMessage(invalidTocEntryPosition)
     }
   }
 
   // case 3: beginning of toc/first line
   if (currentLine === 0) {
     if (cursorPosition === 0) {
-      launchQuickPick(options);
+      launchQuickPick(options)
     } else {
-      window.showErrorMessage(invalidTocEntryPosition);
+      window.showErrorMessage(invalidTocEntryPosition)
     }
   }
 }
 
 export function createParentNode() {
-  const editor = window.activeTextEditor;
+  const editor = window.activeTextEditor
   if (!editor) {
-    return;
+    return
   }
-  const position = editor.selection.active;
-  const cursorPosition = position.character;
-  const currentLine = position.line;
-  const nameScalar = /^\s+(-\sname:)/;
-  let nameIndex: boolean = false;
-  const attributeSpace = " ";
+  const position = editor.selection.active
+  const cursorPosition = position.character
+  const currentLine = position.line
+  const nameScalar = /^\s+(-\sname:)/
+  let nameIndex = false
+  const attributeSpace = " "
 
   if (currentLine > 0) {
-    const startPosition = editor.selection.active.line;
-    let startingCursorPosition: number;
-    const totalLines = editor.document.lineCount;
-    let i = startPosition;
+    const startPosition = editor.selection.active.line
+    let startingCursorPosition: number
+    const totalLines = editor.document.lineCount
+    let i = startPosition
     for (i = startPosition; i < totalLines; i--) {
-      startingCursorPosition = editor.selection.active.character;
+      startingCursorPosition = editor.selection.active.character
       if (i === 0) {
-        break;
+        break
       }
-      const lineData = editor.document.lineAt(i);
-      const lineText = lineData.text;
+      const lineData = editor.document.lineAt(i)
+      const lineText = lineData.text
       if (lineText.match(nameScalar)) {
-        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex;
+        const nameScalarPosition = lineData.firstNonWhitespaceCharacterIndex
         if (nameScalarPosition === startingCursorPosition) {
-          nameIndex = true;
-          break;
+          nameIndex = true
+          break
         } else {
-          nameIndex = false;
-          continue;
+          nameIndex = false
+          continue
         }
       }
     }
@@ -408,7 +408,7 @@ export function createParentNode() {
   items:
   - name:
     href:`
-    insertContentToEditor(editor, insertTocEntry.name, parentNodeLineStart);
+    insertContentToEditor(editor, insertTocEntry.name, parentNodeLineStart)
   }
 
   if (nameIndex && cursorPosition > 0) {
@@ -417,19 +417,18 @@ export function createParentNode() {
     ${attributeSpace.repeat(cursorPosition - 2)}items:
     ${attributeSpace.repeat(cursorPosition - 2)}- name:
     ${attributeSpace.repeat(cursorPosition)}href:`
-    insertContentToEditor(editor, insertTocEntry.name, parentNodeLineStart);
+    insertContentToEditor(editor, insertTocEntry.name, parentNodeLineStart)
   }
 
   if (!nameIndex && cursorPosition !== 0) {
-    window.showErrorMessage(invalidTocEntryPosition);
-    return;
+    window.showErrorMessage(invalidTocEntryPosition)
   }
 }
 
 export function launchQuickPick(options: boolean) {
   if (!options) {
-    showQuickPick(false);
+    showQuickPick(false)
   } else {
-    showQuickPick(true);
+    showQuickPick(true)
   }
 }

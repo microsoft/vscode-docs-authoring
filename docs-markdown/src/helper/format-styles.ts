@@ -1,4 +1,4 @@
-"use strict";
+"use strict"
 
 /**
  * Checks if the string input has code tags at the beginning and end.
@@ -7,13 +7,13 @@
  * @return {boolean} - true/false the line start or ends with bold.
  */
 export function isInlineCode(content: string) {
-    const regex = /^(\`)(.|\s*|[^`])+(\`)$/g;
+    const regex = /^(`)(.|\s*|[^`])+(`)$/g
 
     if (content.trim().match(regex) || content.trim() === "``") {
-        return true;
+        return true
     }
 
-    return false;
+    return false
 }
 
 /**
@@ -24,13 +24,13 @@ export function isInlineCode(content: string) {
  */
 export function isMultiLineCode(content: string) {
     // basically looking for [begin] ``` -> not ` -> anything -> not ` -> ``` [end], but everything between ``` and ``` is optional.
-    const regex = /^(\`\`\`)(.|\s*)+(\`\`\`)$/g;
+    const regex = /^(```)(.|\s*)+(```)$/g
 
     if (content.trim().match(regex) || content.trim() === "``````") {
-        return true;
+        return true
     }
 
-    return false;
+    return false
 }
 
 /**
@@ -40,15 +40,14 @@ export function isMultiLineCode(content: string) {
  * @return {boolean} - true/false the line start or ends with bold.
  */
 export function isBoldAndItalic(content: string) {
-
     // basically looking for [begin] *** -> not * -> anything -> not * -> *** [end], but everything between ** and ** is optional.
-    const regex = /^(\*\*\*)(.|\s*)+(\*\*\*)$/g;
+    const regex = /^(\*\*\*)(.|\s*)+(\*\*\*)$/g
 
     if (content.trim().match(regex) || content.trim() === "******") {
-        return true;
+        return true
     }
 
-    return false;
+    return false
 }
 
 /**
@@ -58,19 +57,18 @@ export function isBoldAndItalic(content: string) {
  * @return {boolean} - true/false the line start or ends with bold.
  */
 export function isBold(content: string) {
-
     // basically looking for [begin] ** -> not * -> anything -> not * -> ** [end], but everything between ** and ** is optional.
-    const boldRegex = /^(\*\*)(.|\s*)+(\*\*)$/g;
+    const boldRegex = /^(\*\*)(.|\s*)+(\*\*)$/g
 
     if (content.trim().match(boldRegex) || content.trim() === "****") {
-        return true;
+        return true
     }
 
     if (isBoldAndItalic(content)) {
-        return true;
+        return true
     }
 
-    return false;
+    return false
 }
 
 /**
@@ -80,19 +78,18 @@ export function isBold(content: string) {
  * @return {boolean} - true/false the line start or ends with bold.
  */
 export function isItalic(content: string) {
-
     // [begin] * -> not * -> anything -> not * -> * [end], but everything between ** and ** is optional.
-    const italicRegex = /^(\*)[^\*]+(.|\s*)+[^\*]+(\*)$/g;
+    const italicRegex = /^(\*)[^*]+(.|\s*)+[^*]+(\*)$/g
 
     if (content.trim().match(italicRegex) || content.trim() === "**") {
-        return true;
+        return true
     }
 
     if (isBoldAndItalic(content)) {
-        return true;
+        return true
     }
 
-    return false;
+    return false
 }
 
 /**
@@ -101,16 +98,14 @@ export function isItalic(content: string) {
  * @param {vscode.Range} range - If provided will get the text at the given range.
  */
 export function bold(content: string) {
-
     // Clean up string if it is already formatted
-    const selectedText = content.trim();
+    const selectedText = content.trim()
 
     if (isBold(content) || isBoldAndItalic(content)) {
-
-        return selectedText.substring(2, selectedText.length - 2);
+        return selectedText.substring(2, selectedText.length - 2)
     }
 
     // Set sytax for bold formatting and replace original string with formatted string
-    const styleBold = `**${selectedText}**`;
-    return styleBold;
+    const styleBold = `**${selectedText}**`
+    return styleBold
 }

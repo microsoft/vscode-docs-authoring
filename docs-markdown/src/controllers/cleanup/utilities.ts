@@ -6,7 +6,7 @@
  */
 export function handleSingleItemArray(content: string | undefined) {
     if (content && Array.isArray(content) && content.length == 1) {
-        return content[0];
+        return content[0]
     }
 }
 
@@ -18,16 +18,16 @@ export function handleSingleItemArray(content: string | undefined) {
  * @param variable metadata key as variable
  */
 export function singleValueMetadata(data: any, variable: string) {
-    const dashRegex = new RegExp(`${variable}:\\s+-\\s(["'\\sA-Za-z0-9\\-\\_]+)$`, "m");
-    const bracketRegex = new RegExp(`${variable}:\\s+\\[(["'\\sA-Za-z0-9\\-\\_]+)\\]$`, "m");
-    const dashMatches = dashRegex.exec(data);
-    const bracketMatch = bracketRegex.exec(data);
+    const dashRegex = new RegExp(`${variable}:\\s+-\\s(["'\\sA-Za-z0-9\\-\\_]+)$`, "m")
+    const bracketRegex = new RegExp(`${variable}:\\s+\\[(["'\\sA-Za-z0-9\\-\\_]+)\\]$`, "m")
+    const dashMatches = dashRegex.exec(data)
+    const bracketMatch = bracketRegex.exec(data)
     if (dashMatches) {
-        return data.replace(dashRegex, `${variable}: ${dashMatches[1]}`);
+        return data.replace(dashRegex, `${variable}: ${dashMatches[1]}`)
     } else if (bracketMatch) {
-        return data.replace(bracketRegex, `${variable}: ${bracketMatch[1]}`);
+        return data.replace(bracketRegex, `${variable}: ${bracketMatch[1]}`)
     } else {
-        return data;
+        return data
     }
 }
 
@@ -42,12 +42,12 @@ export function singleValueMetadata(data: any, variable: string) {
  */
 export function showProgress(index: number | null, files: string[] | null, percentComplete: number, progress: any, message: string) {
     if (!files || !index) {
-        return 100;
+        return 100
     }
-    const currentCompletedPercent = Math.round(((index / files.length) * 100));
+    const currentCompletedPercent = Math.round(((index / files.length) * 100))
     if (percentComplete < currentCompletedPercent) {
-        percentComplete = currentCompletedPercent;
-        progress.report({ increment: percentComplete, message: `${message} ${percentComplete}%` });
+        percentComplete = currentCompletedPercent
+        progress.report({ increment: percentComplete, message: `${message} ${percentComplete}%` })
     }
-    return percentComplete;
+    return percentComplete
 }

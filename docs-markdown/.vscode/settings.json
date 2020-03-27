@@ -1,11 +1,13 @@
-// Place your settings in this file to overwrite default and user settings.
 {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true,
+    },
     "files.exclude": {
-        "out": false // set this to true to hide the "out" folder with the compiled JS files
+        "out": false
     },
     "search.exclude": {
-        "out": true // set this to false to include "out" folder in search results
+        "out": true
     },
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "editor.formatOnSave": true // we want to use the TS server from our node_modules folder to control its version
+    "typescript.tsdk": "node_modules/typescript/lib"
 }

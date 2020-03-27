@@ -1,4 +1,4 @@
-import { AlertTags } from "../constants/alert-tags";
+import { AlertTags } from "../constants/alert-tags"
 
 /**
  * Returns the alert type
@@ -6,7 +6,7 @@ import { AlertTags } from "../constants/alert-tags";
  * @return {AlertType} - the type of alert i.e. Note, Warning, Important, Tip
  */
 export function getAlertType(content: string) {
-    return AlertTags.findIndex((tag) => content.startsWith(tag));
+        return AlertTags.findIndex(tag => content.startsWith(tag))
 }
 
 /**
@@ -15,11 +15,11 @@ export function getAlertType(content: string) {
  * @return {boolean} - true/false the content is an alert
  */
 export function isAlert(content: string) {
-    // Check if the content starts with an alert tag and if all paragraphs contain the ">" formatter
-    if ((AlertTags.some((tag) => content.startsWith(tag))) &&
-        (content.split("\n").every((line) => line.startsWith(">")))) {
-        return true;
-    } else {
-        return false;
-    }
+        // Check if the content starts with an alert tag and if all paragraphs contain the ">" formatter
+        if ((AlertTags.some(tag => content.startsWith(tag))) &&
+                (content.split("\n").every(line => line.startsWith(">")))) {
+                return true
+        } else {
+                return false
+        }
 }

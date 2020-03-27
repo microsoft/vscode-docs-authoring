@@ -1,4 +1,4 @@
-"use strict";
+"use strict"
 
 export enum ListType {
     Numbered,
