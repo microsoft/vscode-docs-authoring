@@ -1,45 +1,26 @@
-import { readFile, writeFile } from "graceful-fs";
-import { postError } from "../../helper/common";
-import { showProgress } from "./utilities";
-const jsdiff = require("diff");
+import { reporter } from "../../helper/telemetry";
+import { readWriteFileWithProgress } from "./utilities";
+
+const telemetryCommand: string = "applyCleanup";
 
 /**
  * Converts http:// to https:// for all microsoft links.
  */
-export function microsoftLinks(progress: any, promises: Array<Promise<any>>, file: string, percentComplete: number, files: Array<string> | null, index: number | null) {
+export function microsoftLinks(progress: any, file: string, files: string[] | null, index: number | null) {
     const message = "Microsoft Links";
-    progress.report({ increment: 0, message });
+    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     if (file.endsWith(".md")) {
-        promises.push(new Promise((resolve, reject) => {
-            readFile(file, "utf8", (err, data) => {
-                const origin = data;
+        return readWriteFileWithProgress(progress,
+            file,
+            message,
+            files,
+            index,
+            (data: string) => {
                 data = handleLinksWithRegex(data);
-                const diff = jsdiff.diffChars(origin, data)
-                    .some((part: { added: any; removed: any; }) => {
-                        return part.added || part.removed;
-                    });
-                if (diff) {
-                    promises.push(new Promise((resolve, reject) => {
-                        writeFile(file, data, err => {
-                            if (err) {
-                                postError(`Error: ${err}`);
-                            }
-                            percentComplete = showProgress(index, files, percentComplete, progress, message);
-                            resolve();
-                        });
-                    }).catch((error) => {
-                        postError(error);
-                    }));
-                }
-                resolve();
+                return data;
             });
-        }).catch((error) => {
-            postError(error);
-        }));
-    };
-    return promises;
+    } else { return Promise.resolve(); }
 }
-
 
 /**
  * replaces input data with regex values for microsoft links.

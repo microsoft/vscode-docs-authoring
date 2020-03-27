@@ -1,11 +1,18 @@
+import { readFile, writeFile } from "graceful-fs";
+import { postError } from "../../helper/common";
+// tslint:disable no-var-requires
+const jsdiff = require("diff");
+// tslint:disable no-var-requires
+const recursive = require("recursive-readdir");
 
+let percentComplete = 1;
 /**
  * Checks if array has only one item. if so, then return that item.
  * @param content takes in string data as content and retuns
  * first item in array if the array only has one item in array.
  */
 export function handleSingleItemArray(content: string | undefined) {
-    if (content && Array.isArray(content) && content.length == 1) {
+    if (content && Array.isArray(content) && content.length === 1) {
         return content[0];
     }
 }
@@ -40,14 +47,69 @@ export function singleValueMetadata(data: any, variable: string) {
  * @param files list of files
  * @param percentComplete percentage complete for program
  */
-export function showProgress(index: number | null, files: string[] | null, percentComplete: number, progress: any, message: string) {
+export function showProgress(index: number | null, files: string[] | null, progress: any, message: string) {
     if (!files || !index) {
         return 100;
     }
     const currentCompletedPercent = Math.round(((index / files.length) * 100));
     if (percentComplete < currentCompletedPercent) {
         percentComplete = currentCompletedPercent;
-        progress.report({ increment: percentComplete, message: `${message} ${percentComplete}%` });
     }
+    progress.report({ increment: percentComplete, message: `${message} ${percentComplete}%` });
     return percentComplete;
+}
+
+export function readWriteFileWithProgress(progress: any, file: string, message: string, files: string[] | null, index: number | null, callback: (data: string) => string) {
+    return new Promise((resolve, reject) => {
+        readFile(file, "utf8", (err, data) => {
+            if (err) {
+                postError(`Error: ${err}`);
+                reject();
+            }
+            const origin = data;
+            data = callback(data);
+            resolve({ origin, data });
+        });
+    }).then((result: any) => {
+        const diff = jsdiff.diffChars(result.origin, result.data)
+            .some((part: {
+                added: any;
+                removed: any;
+            }) => {
+                return part.added || part.removed;
+            });
+        return new Promise((resolve, reject) => {
+            if (diff) {
+                writeFile(file, result.data, (error) => {
+                    if (error) {
+                        postError(`Error: ${error}`);
+                        reject();
+                    }
+                    if (files && index) {
+                        showProgress(index, files, progress, message);
+                    }
+                    resolve();
+                });
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+export function recurseCallback(workspacePath: string, progress: any, callback: (progress: any, file: string, files: string[], index: number) => Promise<any>): Promise<any> {
+    return new Promise((chainResolve, chainReject) =>
+        recursive(workspacePath, [".git", ".github", ".vscode", ".vs", "node_module"], (err: any, files: string[]) => {
+            if (err) {
+                postError(err);
+                chainReject();
+            }
+            const filePromises: Array<Promise<any>> = [];
+            files.map((file, index) => {
+                filePromises.push(callback(progress, file, files, index));
+            });
+            Promise.all(filePromises).then(() => {
+                chainResolve();
+            });
+        }));
 }
