@@ -1,27 +1,57 @@
-// ${workspaceRoot}: the root folder of the team
-// ${file}: the current opened file
-// ${fileBasename}: the current opened file's basename
-// ${fileDirname}: the current opened file's dirname
-// ${fileExtname}: the current opened file's extension
-// ${cwd}: the current working directory of the spawned process
-// A task runner that calls a custom npm script that compiles the extension.
 {
-    "version": "0.1.0",
-    // we want to run npm
+    "name": "npmTask",
+    //...
+    "suppressTaskName": true,
     "command": "npm",
-    // the command is a shell script
     "isShellCommand": true,
-    // show the output window only if unrecognized errors occur.
-    "showOutput": "silent",
-    // we run the custom script "compile" as defined in package.json
     "args": [
-        "run",
-        "compile",
-        "--loglevel",
-        "silent"
+        "run"
     ],
-    // The tsc compiler is started in watching mode
-    "isWatching": true,
-    // use the standard tsc in watch mode problem matcher to find compile problems in the output.
-    "problemMatcher": "$tsc-watch"
+    "tasks": [
+        {
+            //Build Task
+            "taskName": "webpack",
+            //Run On Shift+Ctrl+B
+            "isBuildCommand": true,
+            //Don't run when Shift+Ctrl+T
+            "isTestCommand": false,
+            // Show the output window if error any
+            "showOutput": "silent",
+            //Npm Task Name
+            "args": [
+                "webpack"
+            ],
+            // use 2 regex:
+            // 1st the file, then the problem       
+            "problemMatcher": {
+                "owner": "webpack",
+                "severity": "error",
+                "fileLocation": "relative",
+                "pattern": [
+                    {
+                        "regexp": "ERROR in (.*)",
+                        "file": 1
+                    },
+                    {
+                        "regexp": "\\((\\d+),(\\d+)\\):(.*)",
+                        "line": 1,
+                        "column": 2,
+                        "message": 3
+                    }
+                ]
+            }
+        },
+        {
+            //Test Task   
+            "taskName": "mocha",
+            // Don't run on Shift+Ctrl+B
+            "isBuildCommand": false,
+            // Run on Shift+Ctrl+T
+            "isTestCommand": true,
+            "showOutput": "always",
+            "args": [
+                "compile"
+            ]
+        }
+    ]
 }
