@@ -28,10 +28,9 @@
   ],
   "main": "./out/src/extension",
   "contributes": {
-    "commands": [
-      {
+    "commands": [{
         "command": "insertMoniker",
-        "title": "Moniker",
+        "title": "Add moniker range",
         "category": "Docs"
       },
       {
@@ -235,16 +234,13 @@
       }
     ],
     "menus": {
-      "editor/title": [
-        {
-          "when": "resourceLangId == markdown",
-          "command": "markdown.showPreview",
-          "alt": "markdown.showPreviewToSide",
-          "group": "navigation"
-        }
-      ],
-      "editor/context": [
-        {
+      "editor/title": [{
+        "when": "resourceLangId == markdown",
+        "command": "markdown.showPreview",
+        "alt": "markdown.showPreviewToSide",
+        "group": "navigation"
+      }],
+      "editor/context": [{
           "when": "editorTextFocus && resourceLangId == markdown || resourceLangId == yaml",
           "command": "updateMetadataDate",
           "group": "1_modification"
@@ -275,8 +271,7 @@
           "group": "1_modification"
         }
       ],
-      "explorer/context": [
-        {
+      "explorer/context": [{
           "command": "cleanupInFolder",
           "group": "1_modification",
           "when": "explorerResourceIsFolder"
@@ -287,8 +282,7 @@
           "when": "resourceLangId == markdown && !listMultipleSelection"
         }
       ],
-      "commandPalette": [
-        {
+      "commandPalette": [{
           "command": "markdownQuickPick"
         },
         {
@@ -602,8 +596,7 @@
         }
       }
     },
-    "keybindings": [
-      {
+    "keybindings": [{
         "command": "markdownQuickPick",
         "key": "Alt+M",
         "mac": "Alt+M",
@@ -646,18 +639,14 @@
         "when": "editorTextFocus && editorLangId == 'markdown' && !vim.active"
       }
     ],
-    "yamlValidation": [
-      {
-        "fileMatch": "toc.yml",
-        "url": "./schema/toc.schema.json"
-      }
-    ],
-    "snippets": [
-      {
-        "language": "markdown",
-        "path": "./snippets/snippets.json"
-      }
-    ]
+    "yamlValidation": [{
+      "fileMatch": "toc.yml",
+      "url": "./schema/toc.schema.json"
+    }],
+    "snippets": [{
+      "language": "markdown",
+      "path": "./snippets/snippets.json"
+    }]
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
