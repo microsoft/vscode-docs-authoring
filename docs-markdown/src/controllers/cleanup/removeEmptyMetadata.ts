@@ -17,18 +17,18 @@ export function removeEmptyMetadata(progress: any, file: string, files: string[]
             (data: string) => {
                 if (data.startsWith("---")) {
                     if (cleanupType === "empty") {
-                        data = deleteEmptyMetadata(data);
+                        data = deleteEmptyMetadata(data)
                     }
                     if (cleanupType === "na") {
-                        data = deleteNaMetadata(data);
+                        data = deleteNaMetadata(data)
                     }
                     if (cleanupType === "commented") {
-                        data = deleteCommentedMetadata(data);
+                        data = deleteCommentedMetadata(data)
                     }
                     if (cleanupType === "all") {
-                        data = deleteEmptyMetadata(data);
-                        data = deleteNaMetadata(data);
-                        data = deleteCommentedMetadata(data);
+                        data = deleteEmptyMetadata(data)
+                        data = deleteNaMetadata(data)
+                        data = deleteCommentedMetadata(data)
                     }
                 }
                 return data

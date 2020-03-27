@@ -1,4 +1,4 @@
-"use strict";
+"use strict"
 
 import { existsSync } from "graceful-fs"
 import { basename, extname, join } from "path"
@@ -15,16 +15,16 @@ import { removeEmptyMetadata } from "./removeEmptyMetadata"
 import { runAll, runAllWorkspace } from "./runAll"
 import { recurseCallback } from "./utilities"
 // tslint:disable no-var-requires
-const recursive = require("recursive-readdir");
+const recursive = require("recursive-readdir")
 
-const telemetryCommand = "applyCleanup";
-let commandOption: string;
+const telemetryCommand = "applyCleanup"
+let commandOption: string
 
 export function applyCleanupCommand() {
     const commands = [
-        { command: applyCleanup.name, callback: applyCleanup },
-    ];
-    return commands;
+        { command: applyCleanup.name, callback: applyCleanup }
+    ]
+    return commands
 }
 
 function getCleanUpQuickPick() {
@@ -32,16 +32,16 @@ function getCleanUpQuickPick() {
     const items: QuickPickItem[] = []
     items.push({
         description: "",
-        label: "Single-valued metadata",
-    });
+        label: "Single-valued metadata"
+    })
     items.push({
         description: "",
-        label: "Microsoft links",
-    });
+        label: "Microsoft links"
+    })
     items.push({
         description: "",
-        label: "Capitalization of metadata values",
-    });
+        label: "Capitalization of metadata values"
+    })
     items.push({
         description: "",
         label: "Empty metadata"
@@ -51,7 +51,7 @@ function getCleanUpQuickPick() {
         label: "Add periods to alt text"
     })
 
-    return { items, opts };
+    return { items, opts }
 }
 
 export async function applyCleanupFile(uri: Uri) {
@@ -59,19 +59,19 @@ export async function applyCleanupFile(uri: Uri) {
     const file = uri.fsPath
     items.push({
         description: "",
-        label: "Everything",
-    });
-    const selection = await window.showQuickPick(items, opts);
+        label: "Everything"
+    })
+    const selection = await window.showQuickPick(items, opts)
     if (!selection) {
-        return;
+        return
     }
     // check for dirty file
     workspace.openTextDocument(Uri.parse(uri.path)).then((doc) => {
         if (doc.isDirty) {
-            showWarningMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
-            showStatusMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
+            showWarningMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`)
+            showStatusMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`)
         }
-    });
+    })
     window.withProgress({
         cancellable: true,
         location: ProgressLocation.Notification,
@@ -145,16 +145,16 @@ export async function applyCleanupFile(uri: Uri) {
                     const items: QuickPickItem[] = []
                     items.push({
                         description: "",
-                        label: "Remove metadata attributes with empty values",
-                    });
+                        label: "Remove metadata attributes with empty values"
+                    })
                     items.push({
                         description: "",
-                        label: "Remove metadata attributes with \"na\" or \"n/a\"",
-                    });
+                        label: "Remove metadata attributes with \"na\" or \"n/a\""
+                    })
                     items.push({
                         description: "",
-                        label: "Remove commented out metadata attributes",
-                    });
+                        label: "Remove commented out metadata attributes"
+                    })
                     items.push({
                         description: "",
                         label: "Remove all"
@@ -206,11 +206,11 @@ export async function applyCleanupFolder(uri: Uri) {
     const { items, opts } = getCleanUpQuickPick()
     items.push({
         description: "",
-        label: "Everything",
-    });
-    const selection = await window.showQuickPick(items, opts);
+        label: "Everything"
+    })
+    const selection = await window.showQuickPick(items, opts)
     if (!selection) {
-        return;
+        return
     }
     window.withProgress({
         cancellable: true,
@@ -227,7 +227,7 @@ export async function applyCleanupFolder(uri: Uri) {
                 [".git", ".github", ".vscode", ".vs", "node_module"],
                 async (err: any, files: string[]) => {
                     if (err) {
-                        postError(err);
+                        postError(err)
                     }
                     const promises: Array<Promise<any>> = []
                     // check for dirty files
@@ -237,12 +237,12 @@ export async function applyCleanupFolder(uri: Uri) {
                         if (extname(modifiedUri) === ".md") {
                             workspace.openTextDocument(Uri.parse(modifiedUri)).then((doc) => {
                                 if (doc.isDirty) {
-                                    showWarningMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
-                                    showStatusMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
+                                    showWarningMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`)
+                                    showStatusMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`)
                                 }
-                            });
+                            })
                         }
-                    });
+                    })
                     switch (selection.label.toLowerCase()) {
                         case "single-valued metadata":
                             showStatusMessage("Cleanup: Single-Valued metadata started.")
@@ -304,24 +304,24 @@ export async function applyCleanupFolder(uri: Uri) {
                             const items: QuickPickItem[] = []
                             items.push({
                                 description: "",
-                                label: "Remove metadata attributes with empty values",
-                            });
+                                label: "Remove metadata attributes with empty values"
+                            })
                             items.push({
                                 description: "",
-                                label: "Remove metadata attributes with \"na\" or \"n/a\"",
-                            });
+                                label: "Remove metadata attributes with \"na\" or \"n/a\""
+                            })
                             items.push({
                                 description: "",
-                                label: "Remove commented out metadata attributes",
-                            });
+                                label: "Remove commented out metadata attributes"
+                            })
                             items.push({
                                 description: "",
-                                label: "Remove all",
-                            });
-                            showStatusMessage("Cleanup: Metadata attribute cleanup started.");
-                            const selection = await window.showQuickPick(items, opts);
+                                label: "Remove all"
+                            })
+                            showStatusMessage("Cleanup: Metadata attribute cleanup started.")
+                            const selection = await window.showQuickPick(items, opts)
                             if (!selection) {
-                                return;
+                                return
                             }
                             message = "Metadata attribute cleanup started."
                             progress.report({ increment: 1, message })
@@ -371,22 +371,22 @@ export async function applyCleanupFolder(uri: Uri) {
 }
 
 export async function applyCleanup() {
-    const { items, opts } = getCleanUpQuickPick();
+    const { items, opts } = getCleanUpQuickPick()
     items.push({
         description: "",
-        label: "Master redirection file",
-    });
+        label: "Master redirection file"
+    })
     items.push({
         description: "",
-        label: "Unused images and includes",
-    });
+        label: "Unused images and includes"
+    })
     items.push({
         description: "",
-        label: "Everything",
-    });
-    const selection = await window.showQuickPick(items, opts);
+        label: "Everything"
+    })
+    const selection = await window.showQuickPick(items, opts)
     if (!selection) {
-        return;
+        return
     }
     window.withProgress({
         cancellable: true,
@@ -396,24 +396,24 @@ export async function applyCleanup() {
         token.onCancellationRequested(() => {
             postError("User canceled the long running operation")
         })
-        return new Promise(async (resolve, reject) => {
-            const editor = window.activeTextEditor;
+        return new Promise((resolve, reject) => {
+            const editor = window.activeTextEditor
             if (editor) {
                 const resource = editor.document.uri
                 const folder = workspace.getWorkspaceFolder(resource)
                 if (folder) {
-                    const workspacePath = folder.uri.fsPath;
+                    const workspacePath = folder.uri.fsPath
 
                     if (workspacePath == null) {
-                        postError("No workspace is opened.");
-                        reject();
+                        postError("No workspace is opened.")
+                        reject()
                     }
 
                     // Check if the current workspace is the root folder of a repo by checking if the .git folder is present
-                    const gitDir = join(workspacePath, ".git");
+                    const gitDir = join(workspacePath, ".git")
                     if (!existsSync(gitDir)) {
-                        postError("Current workspace is not root folder of a repo.");
-                        reject();
+                        postError("Current workspace is not root folder of a repo.")
+                        reject()
                     }
                     let message = ""
                     let statusMessage = ""
@@ -475,7 +475,7 @@ export async function applyCleanup() {
                             break
                         case "everything":
                             progress.report({ increment: 1, message })
-                            await runAllWorkspace(workspacePath, progress, resolve)
+                            Promise.resolve(runAllWorkspace(workspacePath, progress, resolve))
                             commandOption = "everything"
                             break
                         case "empty metadata":
@@ -483,22 +483,22 @@ export async function applyCleanup() {
                             const items: QuickPickItem[] = []
                             items.push({
                                 description: "",
-                                label: "Remove metadata attributes with empty values",
-                            });
+                                label: "Remove metadata attributes with empty values"
+                            })
                             items.push({
                                 description: "",
-                                label: "Remove metadata attributes with \"na\" or \"n/a\"",
-                            });
+                                label: "Remove metadata attributes with \"na\" or \"n/a\""
+                            })
                             items.push({
                                 description: "",
-                                label: "Remove commented out metadata attributes",
-                            });
+                                label: "Remove commented out metadata attributes"
+                            })
                             items.push({
                                 description: "",
-                                label: "Remove all",
-                            });
-                            showStatusMessage("Cleanup: Metadata attribute cleanup started.");
-                            const selection = await window.showQuickPick(items, opts);
+                                label: "Remove all"
+                            })
+                            showStatusMessage("Cleanup: Metadata attribute cleanup started.")
+                            const selection = await window.showQuickPick(items, opts)
                             if (!selection) {
                                 reject()
                                 return
@@ -562,6 +562,6 @@ export async function applyCleanup() {
                     sendTelemetryData(telemetryCommand, commandOption)
                 }
             }
-        });
-    });
+        })
+    })
 }

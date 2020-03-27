@@ -1,4 +1,4 @@
-import { AlertTags } from "../constants/alert-tags";
+import { AlertTags } from "../constants/alert-tags"
 
 /**
  * Returns the alert type
@@ -6,7 +6,7 @@ import { AlertTags } from "../constants/alert-tags";
  * @return {AlertType} - the type of alert i.e. Note, Warning, Important, Tip
  */
 export function getAlertType(content: string) {
-        return AlertTags.findIndex((tag) => content.startsWith(tag));
+        return AlertTags.findIndex((tag) => content.startsWith(tag))
 }
 
 /**

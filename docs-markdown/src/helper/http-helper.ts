@@ -1,4 +1,4 @@
-import Axios, { AxiosResponse } from "axios";
+import Axios, { AxiosResponse } from "axios"
 
 export async function getAsync(url: string): Promise<AxiosResponse> {
     try {

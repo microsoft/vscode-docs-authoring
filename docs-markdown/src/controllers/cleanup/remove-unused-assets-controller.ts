@@ -13,10 +13,10 @@ const recursive = require("recursive-readdir")
 
 export function getUnusedImagesAndIncludesCommand() {
     const command = [
-        { command: removeUnusedImagesAndIncludes.name, callback: removeUnusedImagesAndIncludes },
-    ];
+        { command: removeUnusedImagesAndIncludes.name, callback: removeUnusedImagesAndIncludes }
+    ]
 
-    return command;
+    return command
 }
 /**
  * Removes all unused images and includes.

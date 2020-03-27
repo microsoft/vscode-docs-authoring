@@ -30,6 +30,7 @@ module.exports = {
     "promise/param-names": 0,
     "no-var": 2,
     "no-useless-constructor": 0,
-    "quotes": ["error", "double"]
+    "quotes": ["error", "double"],
+    "no-cond-assign": 0
   }
 }
