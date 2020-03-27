@@ -46,10 +46,14 @@ function getCleanUpQuickPick() {
         description: "",
         label: "Empty metadata",
     });
-    items.push({
-        description: "",
-        label: "Add periods to alt text",
-    });
+    const config = workspace.getConfiguration("markdown");
+    const preview = config.get<boolean>("previewFeatures");
+    if (preview) {
+        items.push({
+            description: "",
+            label: "Add periods to alt text",
+        });
+    }
 
     return { items, opts };
 }
