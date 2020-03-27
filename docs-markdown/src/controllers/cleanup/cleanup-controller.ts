@@ -1,18 +1,19 @@
 "use strict";
 
 import { existsSync } from "graceful-fs";
-import { join, basename, extname } from "path";
-import * as vscode from "vscode";
-import { ProgressLocation, window, workspace } from "vscode";
+import { basename, extname, join } from "path";
+import { ProgressLocation, QuickPickItem, QuickPickOptions, Uri, window, workspace } from "vscode";
 import { postError, showStatusMessage, showWarningMessage } from "../../helper/common";
 import { sendTelemetryData } from "../../helper/telemetry";
 import { generateMasterRedirectionFile } from "../master-redirect-controller";
+import { addPeriodsToAlt } from "./addPeriodsToAlt";
 import { capitalizationOfMetadata } from "./capitalizationOfMetadata";
 import { handleSingleValuedMetadata } from "./handleSingleValuedMetadata";
 import { microsoftLinks } from "./microsoftLinks";
-import { runAll, runAllWorkspace } from "./runAll";
-import { removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller";
+import { removeUnused } from "./remove-unused-assets-controller";
 import { removeEmptyMetadata } from "./removeEmptyMetadata";
+import { runAll, runAllWorkspace } from "./runAll";
+import { recurseCallback } from "./utilities";
 // tslint:disable no-var-requires
 const recursive = require("recursive-readdir");
 
@@ -27,8 +28,8 @@ export function applyCleanupCommand() {
 }
 
 function getCleanUpQuickPick() {
-    const opts: vscode.QuickPickOptions = { placeHolder: "Cleanup..." };
-    const items: vscode.QuickPickItem[] = [];
+    const opts: QuickPickOptions = { placeHolder: "Cleanup..." };
+    const items: QuickPickItem[] = [];
     items.push({
         description: "",
         label: "Single-valued metadata",
@@ -45,11 +46,15 @@ function getCleanUpQuickPick() {
         description: "",
         label: "Empty metadata",
     });
+    items.push({
+        description: "",
+        label: "Add periods to alt text",
+    });
 
     return { items, opts };
 }
 
-export async function applyCleanupFile(uri: vscode.Uri) {
+export async function applyCleanupFile(uri: Uri) {
     const { items, opts } = getCleanUpQuickPick();
     const file = uri.fsPath;
     items.push({
@@ -61,66 +66,83 @@ export async function applyCleanupFile(uri: vscode.Uri) {
         return;
     }
     // check for dirty file
-    workspace.openTextDocument(vscode.Uri.parse(uri.path)).then(doc => {
+    workspace.openTextDocument(Uri.parse(uri.path)).then((doc) => {
         if (doc.isDirty) {
             showWarningMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
             showStatusMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
         }
     });
     window.withProgress({
+        cancellable: true,
         location: ProgressLocation.Notification,
         title: "Cleanup",
-        cancellable: true,
     }, (progress, token) => {
         token.onCancellationRequested(() => {
             postError("User canceled the long running operation");
         });
-        progress.report({ increment: 0 });
-        let percentComplete = 0;
         let message = "Cleanup";
         let statusMessage = "";
-        let promises: Array<Promise<any>> = [];
-        progress.report({ increment: 0, message });
-        return new Promise((resolve) => {
+        const promises: Array<Promise<any>> = [];
+        progress.report({ increment: 1, message });
+        return new Promise(async (resolve, reject) => {
             switch (selection.label.toLowerCase()) {
                 case "single-valued metadata":
                     showStatusMessage("Cleanup: Single-Valued metadata started.");
-                    message = "Single-Valued metadata completed.";
+                    message = "Single-Valued metadata started.";
+                    progress.report({ increment: 1, message });
                     statusMessage = "Cleanup: Single-Valued metadata completed.";
-                    promises = handleSingleValuedMetadata(progress, promises, file, percentComplete, null, null);
+                    promises.push(handleSingleValuedMetadata(progress, file, null, null));
+                    message = "Single-Valued metadata completed.";
                     commandOption = "single-value";
                     break;
                 case "microsoft links":
                     showStatusMessage("Cleanup: Microsoft Links started.");
-                    message = "Microsoft Links completed.";
+                    message = "Microsoft Links started.";
+                    progress.report({ increment: 1, message });
                     statusMessage = "Cleanup: Microsoft Links completed.";
-                    promises = microsoftLinks(progress, promises, file, percentComplete, null, null);
+                    promises.push(microsoftLinks(progress, file, null, null));
+                    message = "Microsoft Links completed.";
                     commandOption = "links";
                     break;
                 case "capitalization of metadata values":
                     showStatusMessage("Cleanup: Capitalization of metadata values started.");
-                    message = "Capitalization of metadata values completed.";
+                    message = "Capitalization of metadata values started.";
+                    progress.report({ increment: 1, message });
                     statusMessage = "Cleanup: Capitalization of metadata values completed.";
-                    promises = capitalizationOfMetadata(progress, promises, file, percentComplete, null, null);
+                    promises.push(capitalizationOfMetadata(progress, file, null, null));
+                    message = "Capitalization of metadata values completed.";
                     commandOption = "capitalization";
+                    break;
+                case "add periods to alt text":
+                    showStatusMessage("Cleanup: Add periods to alt text.");
+                    message = "Add periods to alt text values started.";
+                    progress.report({ increment: 1, message });
+                    statusMessage = "Cleanup: Add periods to alt text values completed.";
+                    promises.push(addPeriodsToAlt(progress, file, null, null));
+                    message = "Add periods to alt text values completed.";
+                    commandOption = "add-periods-to-alt-text";
                     break;
                 case "master redirection file":
                     showStatusMessage("Cleanup: Master redirection started.");
-                    message = "Master redirection complete.";
+                    message = "Master redirection started.";
+                    progress.report({ increment: 1, message });
                     statusMessage = "Cleanup: Master redirection completed.";
                     generateMasterRedirectionFile(file, resolve);
+                    message = "Master redirection complete.";
                     commandOption = "redirects";
                     break;
                 case "everything":
                     showStatusMessage("Cleanup: Everything started.");
-                    message = "Everything complete.";
+                    message = "Everything started.";
+                    progress.report({ increment: 1, message });
                     statusMessage = "Cleanup: Everything completed.";
-                    promises = runAll(progress, promises, file, percentComplete, null, null);
+                    promises.push(runAll(progress, file, null, null));
+                    message = "Everything complete.";
                     commandOption = "everything";
                     break;
                 case "empty metadata":
-                    const opts: vscode.QuickPickOptions = { placeHolder: "Cleanup..." };
-                    const items: vscode.QuickPickItem[] = [];
+                    const opts: QuickPickOptions = { placeHolder: "Cleanup..." };
+                    const items: QuickPickItem[] = [];
                     items.push({
                         description: "",
                         label: "Remove metadata attributes with empty values",
@@ -138,38 +160,41 @@ export async function applyCleanupFile(uri: vscode.Uri) {
                         label: "Remove all",
                     });
                     showStatusMessage("Cleanup: Metadata attribute cleanup started.");
-                    message = "Empty metadata attribute cleanup completed.";
-                    statusMessage = "Cleanup: Metadata attribute cleanup completed.";
+                    message = "Empty metadata attribute cleanup started.";
                     window.showQuickPick(items, opts).then((selection) => {
                         if (!selection) {
+                            reject();
                             return;
                         }
                         switch (selection.label.toLowerCase()) {
                             case "remove metadata attributes with empty values":
-                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, null, null, "empty");
+                                promises.push(removeEmptyMetadata(progress, file, null, null, "empty"));
                                 commandOption = "remove-empty";
                                 break;
                             case `remove metadata attributes with "na" or "n/a"`:
-                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, null, null, "na");
+                                promises.push(removeEmptyMetadata(progress, file, null, null, "na"));
                                 commandOption = "remove-na";
                                 break;
                             case "remove commented out metadata attributes":
-                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, null, null, "commented");
+                                promises.push(removeEmptyMetadata(progress, file, null, null, "commented"));
                                 commandOption = "remove-commented";
                                 break;
                             case "remove all":
-                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, null, null, "all");
+                                promises.push(removeEmptyMetadata(progress, file, null, null, "all"));
                                 commandOption = "remove-all-empty";
                                 break;
                         }
                     });
+                    statusMessage = "Cleanup: Metadata attribute cleanup completed.";
+                    message = "Empty metadata attribute cleanup completed.";
             }
             Promise.all(promises).then(() => {
-                progress.report({ increment: 100, message });
+                progress.report({ increment: 100, message: `${message} 100%` });
                 showStatusMessage(statusMessage);
-                progress.report({ increment: 100, message: `100%` });
-                resolve();
-            }).catch(err => {
+                setTimeout(() => {
+                    resolve();
+                }, 2000);
+            }).catch((err) => {
                 postError(err);
             });
             sendTelemetryData(telemetryCommand, commandOption);
@@ -177,7 +202,7 @@ export async function applyCleanupFile(uri: vscode.Uri) {
     });
 }
 
-export async function applyCleanupFolder(uri: vscode.Uri) {
+export async function applyCleanupFolder(uri: Uri) {
     const { items, opts } = getCleanUpQuickPick();
     items.push({
         description: "",
@@ -188,31 +213,29 @@ export async function applyCleanupFolder(uri: vscode.Uri) {
         return;
     }
     window.withProgress({
+        cancellable: true,
         location: ProgressLocation.Notification,
         title: "Cleanup",
-        cancellable: true,
     }, (progress, token) => {
         token.onCancellationRequested(() => {
             postError("User canceled the long running operation");
         });
-        progress.report({ increment: 0 });
         return new Promise((resolve, reject) => {
             let message = "";
             let statusMessage = "";
-            const percentComplete = 0;
-            let promises: Array<Promise<any>> = [];
             recursive(uri.fsPath,
                 [".git", ".github", ".vscode", ".vs", "node_module"],
                 async (err: any, files: string[]) => {
                     if (err) {
                         postError(err);
                     }
+                    const promises: Array<Promise<any>> = [];
                     // check for dirty files
-                    files.map((file, index) => {
-                        let fileName = basename(file);
-                        let modifiedUri = join(uri.path, fileName).replace(/\\/g, "/");
-                        if (extname(modifiedUri) == '.md') {
-                            workspace.openTextDocument(vscode.Uri.parse(modifiedUri)).then(doc => {
+                    files.map((file) => {
+                        const fileName = basename(file);
+                        const modifiedUri = join(uri.path, fileName).replace(/\\/g, "/");
+                        if (extname(modifiedUri) === ".md") {
+                            workspace.openTextDocument(Uri.parse(modifiedUri)).then((doc) => {
                                 if (doc.isDirty) {
                                     showWarningMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
                                     showStatusMessage(`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`);
@@ -223,43 +246,62 @@ export async function applyCleanupFolder(uri: vscode.Uri) {
                     switch (selection.label.toLowerCase()) {
                         case "single-valued metadata":
                             showStatusMessage("Cleanup: Single-Valued metadata started.");
-                            message = "Single-Valued metadata completed.";
+                            message = "Single-Valued metadata started.";
+                            progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Single-Valued metadata completed.";
                             files.map((file, index) => {
-                                promises = handleSingleValuedMetadata(progress, promises, file, percentComplete, files, index);
+                                promises.push(handleSingleValuedMetadata(progress, file, files, index));
                             });
+                            message = "Single-Valued metadata completed.";
                             commandOption = "single-value";
                             break;
                         case "microsoft links":
                             showStatusMessage("Cleanup: Microsoft Links started.");
-                            message = "Microsoft Links completed.";
+                            message = "Microsoft Links started.";
+                            progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Microsoft Links completed.";
                             files.map((file, index) => {
-                                promises = microsoftLinks(progress, promises, file, percentComplete, files, index);
+                                promises.push(microsoftLinks(progress, file, files, index));
                             });
+                            message = "Microsoft Links completed.";
                             commandOption = "links";
                             break;
                         case "capitalization of metadata values":
                             showStatusMessage("Cleanup: Capitalization of metadata values started.");
-                            message = "Capitalization of metadata values completed.";
+                            message = "Capitalization of metadata values started.";
+                            progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Capitalization of metadata values completed.";
                             files.map((file, index) => {
-                                promises = capitalizationOfMetadata(progress, promises, file, percentComplete, files, index);
+                                promises.push(capitalizationOfMetadata(progress, file, files, index));
                             });
+                            message = "Capitalization of metadata values completed.";
                             commandOption = "capitalization";
+                            break;
+                        case "add periods to alt text":
+                            showStatusMessage("Cleanup: Add periods to alt text.");
+                            message = "Add periods to alt text values started.";
+                            progress.report({ increment: 1, message });
+                            statusMessage = "Cleanup: Add periods to alt text values completed.";
+                            files.map((file, index) => {
+                                promises.push(addPeriodsToAlt(progress, file, files, index));
+                            });
+                            message = "Add periods to alt text values completed.";
+                            commandOption = "add-periods-to-alt-text";
                             break;
                         case "everything":
                             showStatusMessage("Cleanup: Everything started.");
-                            message = "Everything completed.";
+                            message = "Everything started.";
+                            progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Everything completed.";
                             files.map((file, index) => {
-                                promises = runAll(progress, promises, file, percentComplete, files, index);
+                                promises.push(runAll(progress, file, files, index));
                             });
+                            message = "Everything completed.";
                             commandOption = "everything";
                             break;
                         case "empty metadata":
-                            const opts: vscode.QuickPickOptions = { placeHolder: "Cleanup..." };
-                            const items: vscode.QuickPickItem[] = [];
+                            const opts: QuickPickOptions = { placeHolder: "Cleanup..." };
+                            const items: QuickPickItem[] = [];
                             items.push({
                                 description: "",
                                 label: "Remove metadata attributes with empty values",
@@ -281,59 +323,43 @@ export async function applyCleanupFolder(uri: vscode.Uri) {
                             if (!selection) {
                                 return;
                             }
-                            window.withProgress({
-                                location: ProgressLocation.Notification,
-                                title: "Cleanup: Empty metadata attributes.",
-                                cancellable: true,
-                            }, (progress: any, token: any) => {
-                                token.onCancellationRequested(() => {
-                                    postError("User canceled the long running operation");
-                                });
-                                return new Promise((resolve, reject) => {
-                                    message = "Empty metadata attribute cleanup completed.";
-                                    statusMessage = "Cleanup: Metadata attribute cleanup completed.";
-                                    let promises: Array<Promise<any>> = [];
-                                    switch (selection.label.toLowerCase()) {
-                                        case "remove metadata attributes with empty values":
-                                            files.map((file, index) => {
-                                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "empty");
-                                            });
-                                            commandOption = "remove-empty";
-                                            break;
-                                        case `remove metadata attributes with "na" or "n/a"`:
-                                            files.map((file, index) => {
-                                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "na");
-                                            });
-                                            commandOption = "remove-na";
-                                            break;
-                                        case "remove commented out metadata attributes":
-                                            files.map((file, index) => {
-                                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "commented");
-                                            });
-                                            commandOption = "remove-commented";
-                                            break;
-                                        case "remove all":
-                                            files.map((file, index) => {
-                                                promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "all");
-                                            });
-                                            commandOption = "remove-all-empty";
-                                            break;
-                                    }
-                                    Promise.all(promises).then(() => {
-                                        progress.report({ increment: 100, message });
-                                        progress.report({ increment: 100, message: `100%` });
-                                        resolve();
-                                    }).catch((err) => {
-                                        postError(err);
+                            message = "Metadata attribute cleanup started.";
+                            progress.report({ increment: 1, message });
+                            switch (selection.label.toLowerCase()) {
+                                case "remove metadata attributes with empty values":
+                                    files.map((file, index) => {
+                                        promises.push(removeEmptyMetadata(progress, file, files, index, "empty"));
                                     });
-                                });
-                            });
+                                    commandOption = "remove-empty";
+                                    break;
+                                case `remove metadata attributes with "na" or "n/a"`:
+                                    files.map((file, index) => {
+                                        promises.push(removeEmptyMetadata(progress, file, files, index, "na"));
+                                    });
+                                    commandOption = "remove-na";
+                                    break;
+                                case "remove commented out metadata attributes":
+                                    files.map((file, index) => {
+                                        promises.push(removeEmptyMetadata(progress, file, files, index, "commented"));
+                                    });
+                                    commandOption = "remove-commented";
+                                    break;
+                                case "remove all":
+                                    files.map((file, index) => {
+                                        promises.push(removeEmptyMetadata(progress, file, files, index, "all"));
+                                    });
+                                    commandOption = "remove-all-empty";
+                                    break;
+                            }
+                            message = "Metadata attribute cleanup completed.";
+                            statusMessage = "Cleanup: Metadata attribute cleanup completed.";
                     }
                     Promise.all(promises).then(() => {
-                        progress.report({ increment: 100, message });
+                        progress.report({ increment: 100, message: `${message} 100%` });
                         showStatusMessage(statusMessage);
-                        progress.report({ increment: 100, message: `100%` });
-                        resolve();
+                        setTimeout(() => {
+                            resolve();
+                        }, 2000);
                     }).catch((err) => {
                         postError(err);
                     });
@@ -363,21 +389,18 @@ export async function applyCleanup() {
         return;
     }
     window.withProgress({
+        cancellable: true,
         location: ProgressLocation.Notification,
         title: "Cleanup",
-        cancellable: true,
     }, (progress, token) => {
         token.onCancellationRequested(() => {
             postError("User canceled the long running operation");
         });
-        progress.report({ increment: 0 });
         return new Promise(async (resolve, reject) => {
             const editor = window.activeTextEditor;
             if (editor) {
                 const resource = editor.document.uri;
                 const folder = workspace.getWorkspaceFolder(resource);
-                var shoudShowFileLevelProgress = true;
-
                 if (folder) {
                     const workspacePath = folder.uri.fsPath;
 
@@ -394,81 +417,70 @@ export async function applyCleanup() {
                     }
                     let message = "";
                     let statusMessage = "";
-                    let promises: Array<Promise<any>> = [];
-                    const percentComplete = 0;
+                    const promises: Array<Promise<any>> = [];
                     switch (selection.label.toLowerCase()) {
                         case "single-valued metadata":
                             showStatusMessage("Cleanup: Single-Valued metadata started.");
-                            message = "Single-Valued metadata completed.";
+                            message = "Single-Valued metadata started.";
+                            progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Single-Valued metadata completed.";
-                            recursive(workspacePath,
-                                [".git", ".github", ".vscode", ".vs", "node_module"],
-                                (err: any, files: string[]) => {
-                                    if (err) {
-                                        postError(err);
-                                    }
-                                    files.map((file, index) => {
-                                        promises = handleSingleValuedMetadata(progress, promises, file, percentComplete, files, index);
-                                    })
-                                })
+                            promises.push(recurseCallback(workspacePath, progress, handleSingleValuedMetadata));
+                            message = "Single-Valued metadata completed.";
                             commandOption = "single-value";
                             break;
                         case "microsoft links":
                             showStatusMessage("Cleanup: Microsoft Links started.");
-                            message = "Microsoft Links completed.";
+                            message = "Microsoft Links started.";
+                            progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Microsoft Links completed.";
-                            recursive(workspacePath,
-                                [".git", ".github", ".vscode", ".vs", "node_module"],
-                                (err: any, files: string[]) => {
-                                    if (err) {
-                                        postError(err);
-                                    }
-                                    files.map((file, index) => {
-                                        promises = microsoftLinks(progress, promises, file, percentComplete, files, index);
-                                    })
-                                })
+                            promises.push(recurseCallback(workspacePath, progress, microsoftLinks));
+                            message = "Microsoft Links completed.";
                             commandOption = "links";
                             break;
                         case "capitalization of metadata values":
                             showStatusMessage("Cleanup: Capitalization of metadata values started.");
-                            message = "Capitalization of metadata values completed.";
+                            message = "Capitalization of metadata values started.";
+                            progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Capitalization of metadata values completed.";
-                            recursive(workspacePath,
-                                [".git", ".github", ".vscode", ".vs", "node_module"],
-                                (err: any, files: string[]) => {
-                                    if (err) {
-                                        postError(err);
-                                    }
-                                    files.map((file, index) => {
-                                        promises = capitalizationOfMetadata(progress, promises, file, percentComplete, files, index);
-                                    })
-                                })
+                            promises.push(recurseCallback(workspacePath, progress, capitalizationOfMetadata));
+                            message = "Capitalization of metadata values completed.";
                             commandOption = "capitalization";
+                            break;
+                        case "add periods to alt text":
+                            showStatusMessage("Cleanup: Add periods to alt text.");
+                            message = "Add periods to alt text values started.";
+                            progress.report({ increment: 1, message });
+                            statusMessage = "Cleanup: Add periods to alt text values completed.";
+                            promises.push(recurseCallback(workspacePath, progress, addPeriodsToAlt));
+                            message = "Add periods to alt text values completed.";
+                            commandOption = "add-periods-to-alt-text";
                             break;
                         case "master redirection file":
                             showStatusMessage("Cleanup: Master redirection started.");
-                            message = "Master redirection complete.";
+                            message = "Master redirection started.";
+                            progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Master redirection completed.";
                             generateMasterRedirectionFile(workspacePath, resolve);
-                            shoudShowFileLevelProgress = false;
+                            message = "Master redirection complete.";
                             commandOption = "redirects";
                             break;
                         case "unused images and includes":
                             showStatusMessage("Cleanup: Unused Images and includes.");
-                            message = "Removal of unused images and includes complete.";
+                            message = "Removal of unused images and includes started.";
+                            progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Removing unused images and includes. This could take several minutes.";
-                            removeUnusedImagesAndIncludes(workspacePath, progress, promises, resolve);
-                            shoudShowFileLevelProgress = false;
+                            promises.push(removeUnused(progress, workspacePath));
+                            message = "Removal of unused images and includes complete.";
                             commandOption = "unused-images-and-includes";
                             break;
                         case "everything":
-                            runAllWorkspace(workspacePath, progress, resolve);
-                            shoudShowFileLevelProgress = false;
+                            progress.report({ increment: 1, message });
+                            await runAllWorkspace(workspacePath, progress, resolve);
                             commandOption = "everything";
                             break;
                         case "empty metadata":
-                            const opts: vscode.QuickPickOptions = { placeHolder: "Cleanup..." };
-                            const items: vscode.QuickPickItem[] = [];
+                            const opts: QuickPickOptions = { placeHolder: "Cleanup..." };
+                            const items: QuickPickItem[] = [];
                             items.push({
                                 description: "",
                                 label: "Remove metadata attributes with empty values",
@@ -488,80 +500,68 @@ export async function applyCleanup() {
                             showStatusMessage("Cleanup: Metadata attribute cleanup started.");
                             const selection = await window.showQuickPick(items, opts);
                             if (!selection) {
+                                reject();
                                 return;
                             }
-                            window.withProgress({
-                                location: ProgressLocation.Notification,
-                                title: "Cleanup: Empty metadata attributes.",
-                                cancellable: true,
-                            }, (progress: any, token: any) => {
-                                token.onCancellationRequested(() => {
-                                    postError("User canceled the long running operation");
-                                });
-                                return new Promise((resolve, reject) => {
-                                    message = "Empty metadata attribute cleanup completed.";
-                                    statusMessage = "Cleanup: Metadata attribute cleanup completed.";
-                                    let promises: Array<Promise<any>> = [];
-                                    recursive(workspacePath,
-                                        [".git", ".github", ".vscode", ".vs", "node_module"],
-                                        (err: any, files: string[]) => {
-                                            if (err) {
-                                                postError(err);
-                                            }
-                                            switch (selection.label.toLowerCase()) {
-                                                case "remove metadata attributes with empty values":
-                                                    files.map((file, index) => {
-                                                        promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "empty");
-                                                    })
-                                                    commandOption = "remove-empty";
-                                                    break;
-                                                case `remove metadata attributes with "na" or "n/a"`:
-                                                    files.map((file, index) => {
-                                                        promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "na");
-                                                    })
-                                                    commandOption = "remove-na";
-                                                    break;
-                                                case "remove commented out metadata attributes":
-                                                    files.map((file, index) => {
-                                                        promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "commented");
-                                                    })
-                                                    commandOption = "remove-commented";
-                                                    break;
-                                                case "remove all":
-                                                    files.map((file, index) => {
-                                                        promises = removeEmptyMetadata(progress, promises, file, percentComplete, files, index, "all");
-                                                    })
-                                                    commandOption = "remove-all";
-                                                    break;
-                                            }
-                                            Promise.all(promises).then(() => {
-                                                progress.report({ increment: 100, message });
-                                                progress.report({ increment: 100, message: `100%` });
-                                                resolve();
-                                            }).catch((err) => {
-                                                postError(err);
-                                            });
+                            message = "Empty metadata attribute cleanup started.";
+                            progress.report({ increment: 1, message });
+                            statusMessage = "Cleanup: Metadata attribute cleanup completed.";
+                            promises.push(new Promise((chainResolve, chainReject) => {
+                                recursive(workspacePath,
+                                    [".git", ".github", ".vscode", ".vs", "node_module"],
+                                    (err: any, files: string[]) => {
+                                        if (err) {
+                                            postError(err);
+                                            chainReject();
+                                        }
+                                        const filePromises: Array<Promise<any>> = [];
+                                        switch (selection.label.toLowerCase()) {
+                                            case "remove metadata attributes with empty values":
+                                                files.map((file, index) => {
+                                                    filePromises.push(removeEmptyMetadata(progress, file, files, index, "empty"));
+                                                });
+                                                commandOption = "remove-empty";
+                                                break;
+                                            case `remove metadata attributes with "na" or "n/a"`:
+                                                files.map((file, index) => {
+                                                    filePromises.push(removeEmptyMetadata(progress, file, files, index, "na"));
+                                                });
+                                                commandOption = "remove-na";
+                                                break;
+                                            case "remove commented out metadata attributes":
+                                                files.map((file, index) => {
+                                                    filePromises.push(removeEmptyMetadata(progress, file, files, index, "commented"));
+                                                });
+                                                commandOption = "remove-commented";
+                                                break;
+                                            case "remove all":
+                                                files.map((file, index) => {
+                                                    filePromises.push(removeEmptyMetadata(progress, file, files, index, "all"));
+                                                });
+                                                commandOption = "remove-all";
+                                                break;
+                                        }
+                                        Promise.all(filePromises).then(() => {
+                                            chainResolve();
+                                        }).catch((err) => {
+                                            postError(err);
                                         });
-                                });
-                            });
+                                    });
+                                message = "Empty metadata attribute cleanup completed.";
+                            }));
                     }
-                    Promise.all(promises).then(() => {
-                        if (shoudShowFileLevelProgress) {
-                            progress.report({ increment: 100, message });
-                            showStatusMessage(statusMessage);
-                            progress.report({ increment: 100, message: `100%` });
+                    await Promise.all(promises).then(() => {
+                        progress.report({ increment: 100, message: `${message} 100%` });
+                        showStatusMessage(statusMessage);
+                        setTimeout(() => {
                             resolve();
-                        }
-
+                        }, 2000);
                     }).catch((err) => {
                         postError(err);
                     });
-                    commandOption = "single-value";
                     sendTelemetryData(telemetryCommand, commandOption);
                 }
             }
         });
     });
 }
-
-
