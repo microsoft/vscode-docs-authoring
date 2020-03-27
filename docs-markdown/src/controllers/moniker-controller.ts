@@ -1,8 +1,9 @@
 "use strict";
 
 import { Position, Range, Selection, TextEditor, window } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { isCursorInsideYamlHeader } from "../helper/yaml-metadata";
+import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertMoniker";
 let cursorPosition: string;
@@ -83,6 +84,7 @@ function insertYamlMoniker(editor: TextEditor, sign: string) {
         editor.selection = newSelection;
 
     }
+    return cursorIndex;
 }
 
 

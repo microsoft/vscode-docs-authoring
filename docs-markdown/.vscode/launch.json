@@ -1,8 +1,7 @@
 // A launch configuration that compiles the extension and then opens it inside a new window
 {
     "version": "0.1.0",
-    "configurations": [
-        {
+    "configurations": [{
             "type": "node",
             "request": "attach",
             "name": "Attach by Process ID",
@@ -29,6 +28,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
+                "--disable-extensions",
                 "${workspaceFolder}/src/test/data/repo",
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/out/src/test/suite/index",
