@@ -8,7 +8,6 @@ ms.date: 07/23/2018
 ms.prod: non-product-specific
 ms.topic: contributor-guide
 ms.custom: internal-contributor-guide
-monikerRange: ''
 ---
 
 # Docs Markdown Reference

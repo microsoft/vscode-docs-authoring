@@ -85,7 +85,7 @@ function insertYamlMoniker(editor: TextEditor, sign: string) {
 
 
 //cursor is in the Markdown body of the file
-export function insertMarkdownMoniker(editor: TextEditor, sign: string) {
+function insertMarkdownMoniker(editor: TextEditor, sign: string) {
 
     const insertText = `::: moniker range="${sign}"\n\n::: moniker-end`;
     insertContentToEditor(editor, insertMarkdownMoniker.name, insertText, false);
@@ -96,7 +96,7 @@ export function insertMarkdownMoniker(editor: TextEditor, sign: string) {
 
 }
 
-export function isContentOnCurrentLine(editor: TextEditor): boolean {
+function isContentOnCurrentLine(editor: TextEditor): boolean {
     const range = new Range(editor.selection.active.line, 0, editor.selection.active.line, 1000);
     const lineText = editor.document.getText(range);
     if (lineText === "") { return false; }
