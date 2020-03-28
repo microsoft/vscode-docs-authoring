@@ -26,6 +26,12 @@ export function insertMoniker() {
         return;
     }
 
+    //is cursor on a new line 
+    if (isContentOnCurrentLine(editor)) {
+        window.showErrorMessage("Moniker must be inserted on a new line.");
+        return;
+    }
+
     const moniker_options = [
         "range equals",
         "range greater than or equal",
@@ -45,17 +51,6 @@ export function insertMoniker() {
         }
         if (qpSelection == moniker_options[2]) {
             sign = "<=";
-        }
-
-        // is this a markdown file
-        if (!isMarkdownFileCheck(editor, false)) {
-            return;
-        }
-
-        //is cursor on a new line 
-        if (isContentOnCurrentLine(editor)) {
-            window.showErrorMessage("Moniker must be inserted on a new line.");
-            return;
         }
 
         // if markdown, is the user's cursor in the yaml header?
