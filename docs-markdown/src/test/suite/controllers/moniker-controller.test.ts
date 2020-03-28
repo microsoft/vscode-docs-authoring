@@ -1,26 +1,46 @@
 import * as chai from "chai";
 import * as spies from "chai-spies";
 import { resolve } from "path";
-import { window, commands } from "vscode";
+import { window, commands, TextEditor } from "vscode";
 import { insertMoniker, insertMonikerCommand } from "../../../controllers/moniker-controller";
 import * as telemetry from "../../../helper/telemetry";
 import * as common from "../../../helper/common";
-
-
 import { sleep, loadDocumentAndGetItReady } from "../../test.common/common";
 
 chai.use(spies);
 const sinon = require("sinon");
-
 const expect = chai.expect;
 
+function insert_blank_line(editor: TextEditor, line: number) {
+
+    const spy = chai.spy.on(common, "insertContentToEditor");
+    spy(editor, "test", "\r\n");
+    chai.spy.restore(spy);
+
+}
+function move_cursor(editor: TextEditor, y: number, x: number) {
+
+    const spy = chai.spy.on(common, "setCursorPosition");
+    spy(editor, y, x);
+    chai.spy.restore(spy);
+
+
+}
+
+const test_file = "../../../../../src/test/data/repo/articles/bookmark.md";
+const sleep_time = 100;
 const moniker_options = [
     "range equals",
     "range greater than or equal",
     "range less than or equal",
 ];
 
-const sleep_time = 100;
+//line ( y coord) , character (x coord)
+const yaml_line = 10;
+const yaml_character = 15;
+const mark_line = yaml_line + 4;
+const mark_character = 19;
+
 
 suite("Moniker Controller", () => {
     // Reset and tear down the spies
@@ -46,7 +66,7 @@ suite("Moniker Controller", () => {
     });
 
     test("isMarkdownFileCheck", async () => {
-        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/bookmark.md");
+        const filePath = resolve(__dirname, test_file);
         await loadDocumentAndGetItReady(filePath);
         const spy = chai.spy.on(common, "isMarkdownFileCheck");
         insertMoniker();
@@ -64,27 +84,24 @@ suite("Moniker Controller", () => {
     });
 
 
-    const yaml_line = 10;
-    const yaml_character = 15;
+    // YAML Header test
     test("insertYamlMoniker - equal - output", async () => {
 
-
-        const spy = chai.spy.on(common, "setCursorPosition");
-        const spy2 = chai.spy.on(common, "insertContentToEditor");
         const editor = window.activeTextEditor;
-        spy(editor, 10, 0);
-        spy2(editor, "test", "\r\n");
-        spy(editor, 10, 0);
-        spy2(editor, "test", "", true);
+        move_cursor(editor!, yaml_line, 0);
+        insert_blank_line(editor!, yaml_line);
+        move_cursor(editor!, yaml_line, 0); //move cursor back
         await sleep(sleep_time);
+
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve(moniker_options[0]) as Thenable<any>;
         };
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertMoniker();
         await sleep(sleep_time);
-        const output = editor?.document.lineAt(10).text;
+        const output = editor?.document.lineAt(yaml_line).text;
         stub.restore();
+
         expect(output).to.equal("monikerRange: ''");
 
     });
@@ -92,25 +109,18 @@ suite("Moniker Controller", () => {
     test("insertYamlMoniker - equal - cursorPosition", async () => {
 
         const editor = window.activeTextEditor;
-
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
-
         expect(cursorPosition).to.deep.equal([yaml_line, yaml_character]);
 
     });
 
-
-
     test("insertYamlMoniker - greater/equal - output", async () => {
 
-
-        const spy = chai.spy.on(common, "setCursorPosition");
-        const spy2 = chai.spy.on(common, "insertContentToEditor");
         const editor = window.activeTextEditor;
-        spy(editor, 10, 0);
-        spy2(editor, "test", "\r\n");
-        spy(editor, 10, 0);
-        spy2(editor, "test", "", true);
+        move_cursor(editor!, yaml_line, 0);
+        insert_blank_line(editor!, 10);
+        move_cursor(editor!, yaml_line, 0);
+
         await sleep(sleep_time);
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve(moniker_options[1]) as Thenable<any>;
@@ -118,8 +128,9 @@ suite("Moniker Controller", () => {
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertMoniker();
         await sleep(sleep_time);
-        const output = editor?.document.lineAt(10).text;
+        const output = editor?.document.lineAt(yaml_line).text;
         stub.restore();
+
         expect(output).to.equal("monikerRange: '>='");
 
     });
@@ -127,35 +138,30 @@ suite("Moniker Controller", () => {
     test("insertYamlMoniker - greater/equal - cursorPosition", async () => {
 
         const editor = window.activeTextEditor;
-
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
 
         expect(cursorPosition).to.deep.equal([yaml_line, yaml_character + 2]);
 
     });
 
-
-
-
     test("insertYamlMoniker - less/equal - output", async () => {
 
 
-        const spy = chai.spy.on(common, "setCursorPosition");
-        const spy2 = chai.spy.on(common, "insertContentToEditor");
         const editor = window.activeTextEditor;
-        spy(editor, 10, 0);
-        spy2(editor, "test", "\r\n");
-        spy(editor, 10, 0);
-        spy2(editor, "test", "", true);
+        move_cursor(editor!, yaml_line, 0);
+        insert_blank_line(editor!, yaml_line);
+        move_cursor(editor!, yaml_line, 0);
         await sleep(sleep_time);
+
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve(moniker_options[2]) as Thenable<any>;
         };
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertMoniker();
         await sleep(sleep_time);
-        const output = editor?.document.lineAt(10).text;
+        const output = editor?.document.lineAt(yaml_line).text;
         stub.restore();
+
         expect(output).to.equal("monikerRange: '<='");
 
     });
@@ -163,7 +169,6 @@ suite("Moniker Controller", () => {
     test("insertYamlMoniker - greater/equal - cursorPosition", async () => {
 
         const editor = window.activeTextEditor;
-
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
 
         expect(cursorPosition).to.deep.equal([yaml_line, yaml_character + 2]);
@@ -172,31 +177,30 @@ suite("Moniker Controller", () => {
 
 
 
-
-    const mark_line = yaml_line + 4;
-    const mark_character = 19;
-
+    // Markdown body test
     test("insertMarkdownMoniker - equal - output", async () => {
-        const spy = chai.spy.on(common, "setCursorPosition");
         const editor = window.activeTextEditor;
-        spy(editor, mark_line, 0);
+        move_cursor(editor!, mark_line, 0);
+
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve(moniker_options[0]) as Thenable<any>;
         };
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertMoniker();
         await sleep(sleep_time);
-        const output = editor?.document.lineAt(mark_line).text;
-
+        const line1 = editor?.document.lineAt(mark_line).text;
+        const line2 = editor?.document.lineAt(mark_line + 1).text;
+        const line3 = editor?.document.lineAt(mark_line + 2).text;
+        const output = line1! + line2 + line3;
         stub.restore();
-        expect(output).to.equal("::: moniker range=\"\"");
+
+        expect(output).to.equal("::: moniker range=\"\"::: moniker-end");
 
     });
 
     test("insertMarkdownMoniker - equal - cursorPosition", async () => {
 
         const editor = window.activeTextEditor;
-
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
 
         expect(cursorPosition).to.deep.equal([mark_line, mark_character]);
@@ -206,14 +210,12 @@ suite("Moniker Controller", () => {
 
 
     test("insertMarkdownMoniker - greater/equal - output", async () => {
-        const spy = chai.spy.on(common, "setCursorPosition");
-        const spy2 = chai.spy.on(common, "insertContentToEditor");
+
 
         const editor = window.activeTextEditor;
-        spy(editor, mark_line + 3, 0);
-        spy2(editor, "test", "\r\n");
-        spy(editor, mark_line + 3, 0);
-        spy2(editor, "test", "", true);
+        move_cursor(editor!, mark_line + 3, 0);
+        insert_blank_line(editor!, mark_line + 3);
+        move_cursor(editor!, mark_line + 3, 0);
         await sleep(sleep_time);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
@@ -222,35 +224,31 @@ suite("Moniker Controller", () => {
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertMoniker();
         await sleep(sleep_time);
-        const output = editor?.document.lineAt(mark_line + 3).text;
-
+        const line1 = editor?.document.lineAt(mark_line + 3).text;
+        const line2 = editor?.document.lineAt(mark_line + 4).text;
+        const line3 = editor?.document.lineAt(mark_line + 5).text;
+        const output = line1! + line2 + line3;
         stub.restore();
-        expect(output).to.equal("::: moniker range=\">=\"");
+
+        expect(output).to.equal("::: moniker range=\">=\"::: moniker-end");
 
     });
 
     test("insertMarkdownMoniker - greater/equal - cursorPosition", async () => {
 
         const editor = window.activeTextEditor;
-
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
 
         expect(cursorPosition).to.deep.equal([mark_line + 3, mark_character + 2]);
 
     });
 
-
-
-
     test("insertMarkdownMoniker - less/equal - output", async () => {
-        const spy = chai.spy.on(common, "setCursorPosition");
-        const spy2 = chai.spy.on(common, "insertContentToEditor");
 
         const editor = window.activeTextEditor;
-        spy(editor, mark_line + 6, 0);
-        spy2(editor, "test", "\r\n");
-        spy(editor, mark_line + 6, 0);
-        spy2(editor, "test", "", true);
+        move_cursor(editor!, mark_line + 6, 0);
+        insert_blank_line(editor!, mark_line + 3);
+        move_cursor(editor!, mark_line + 6, 0);
         await sleep(sleep_time);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
@@ -259,19 +257,20 @@ suite("Moniker Controller", () => {
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertMoniker();
         await sleep(sleep_time);
-        const output = editor?.document.lineAt(mark_line + 6).text;
-
+        const line1 = editor?.document.lineAt(mark_line + 6).text;
+        const line2 = editor?.document.lineAt(mark_line + 7).text;
+        const line3 = editor?.document.lineAt(mark_line + 8).text;
+        const output = line1! + line2 + line3;
         stub.restore();
-        expect(output).to.equal("::: moniker range=\"<=\"");
+
+        expect(output).to.equal("::: moniker range=\"<=\"::: moniker-end");
 
     });
 
     test("insertMarkdownMoniker - less/equal - cursorPosition", async () => {
 
         const editor = window.activeTextEditor;
-
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
-
         expect(cursorPosition).to.deep.equal([mark_line + 6, mark_character + 2]);
 
     });
