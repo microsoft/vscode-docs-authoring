@@ -5,6 +5,7 @@ import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, work
 import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, setCursorPosition } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 
+// tslint:disable-next-line: no-var-requires
 const path = require("path");
 const telemetryCommandMedia: string = "insertMedia";
 const telemetryCommandLink: string = "insertLink";

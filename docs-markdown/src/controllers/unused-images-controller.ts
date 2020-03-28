@@ -2,6 +2,7 @@ import { readFile } from "fs";
 import { workspace } from "vscode";
 import { output } from "../helper/output";
 
+// tslint:disable-next-line: no-var-requires
 const recursive = require("recursive-readdir");
 
 export function removeUnusedImages(uri: string) {
