@@ -28,7 +28,7 @@ function move_cursor(editor: TextEditor, y: number, x: number) {
 }
 
 const test_file = "../../../../../src/test/data/repo/articles/bookmark.md";
-const sleep_time = 2000;
+const sleep_time = 100;
 const moniker_options = [
     "range equals",
     "range greater than or equal",
