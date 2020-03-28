@@ -1,11 +1,12 @@
 
+import Axios from "axios";
 import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, workspace } from "vscode";
 import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, setCursorPosition } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
-import Axios from "axios";
 
 const path = require("path");
 const dir = require("node-dir");
+
 const telemetryCommandMedia: string = "insertMedia";
 const telemetryCommandLink: string = "insertLink";
 const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp", ".svg"];
@@ -138,7 +139,7 @@ export async function applyImage() {
                     // Ask user input for alt text
                     altText = await window.showInputBox({
                         placeHolder: "Add alt text (up to 250 characters)",
-                        validateInput: (text: string) => text !== "" ? text.length <= 250 ? "" : "alt text should be less than 250 characters" : "alt-text input must not be empty"
+                        validateInput: (text: string) => text !== "" ? text.length <= 250 ? "" : "alt text should be less than 250 characters" : "alt-text input must not be empty",
                     });
                     if (!altText) {
                         // if user did not enter any alt text, then exit.
@@ -156,7 +157,7 @@ export async function applyImage() {
                         await getLocScopeProducts();
                     }
                     // show quickpick to user for products list.
-                    const locScope = await window.showQuickPick(locScopeItems, { placeHolder: "Select from product list" })
+                    const locScope = await window.showQuickPick(locScopeItems, { placeHolder: "Select from product list" });
                     if (locScope) {
                         image = `:::image type="content" source="${sourcePath}" alt-text="${altText}" loc-scope="${locScope.label}":::`;
                     }
@@ -174,9 +175,9 @@ async function getLocScopeProducts() {
     // if user is inside :::image::: tag, then ask them for quickpick of products based on allow list
     // call allowlist with API Auth Token
     // you will need auth token to call list
-    const response = await Axios.get("https://docs.microsoft.com/api/metadata/allowlists")
+    const response = await Axios.get("https://docs.microsoft.com/api/metadata/allowlists");
     // get products from response
-    let products: string[] = []
+    const products: string[] = [];
     Object.keys(response.data)
         .filter((x) => x.startsWith("list:product"))
         .map((item: string) => {
@@ -186,20 +187,20 @@ async function getLocScopeProducts() {
                 Object.keys(response.data[item].values)
                     .map((prod: string) =>
                         // push the response products into the list of quickpicks.
-                        products.push(prod)
+                        products.push(prod),
                     );
             }
         });
     products.sort().map((item) => {
         locScopeItems.push({
-            label: item
-        })
+            label: item,
+        });
     });
     locScopeItems.push({
-        label: "other"
+        label: "other",
     });
     locScopeItems.push({
-        label: "third-party"
+        label: "third-party",
     });
 }
 
@@ -350,7 +351,7 @@ export async function applyComplex() {
                     // Ask user input for alt text
                     altText = await window.showInputBox({
                         placeHolder: "Add alt text (up to 250 characters)",
-                        validateInput: (text: string) => text !== "" ? text.length <= 250 ? "" : "alt text should be less than 250 characters" : "alt-text input must not be empty"
+                        validateInput: (text: string) => text !== "" ? text.length <= 250 ? "" : "alt text should be less than 250 characters" : "alt-text input must not be empty",
                     });
                     if (!altText) {
                         // if user did not enter any alt text, then exit.
@@ -367,7 +368,7 @@ export async function applyComplex() {
                         await getLocScopeProducts();
                     }
                     // show quickpick to user for products list.
-                    const locScope = await window.showQuickPick(locScopeItems, { placeHolder: "Select from product list" })
+                    const locScope = await window.showQuickPick(locScopeItems, { placeHolder: "Select from product list" });
                     if (locScope) {
                         image = `:::image type="complex" source="${sourcePath}" alt-text="${altText}" loc-scope="${locScope.label}":::
 
@@ -405,7 +406,7 @@ export async function applyLocScope() {
     if (wordRange) {
         const start = RE_LOC_SCOPE.exec(editor.document.getText(wordRange));
         if (start) {
-            const type = start[start.indexOf("type") + 1]
+            const type = start[start.indexOf("type") + 1];
             if (type.toLowerCase() === "icon") {
                 window.showErrorMessage("The loc-scope attribute should not be added to icons, which are not localized.");
                 return;
@@ -458,7 +459,7 @@ export async function applyLightbox() {
         if (workspace.workspaceFolders) {
             folderPath = workspace.workspaceFolders[0].uri.fsPath;
         }
-        //get available files
+        // get available files
         dir.files(folderPath, async (err: any, files: any) => {
             if (err) {
                 window.showErrorMessage(err);
@@ -502,9 +503,8 @@ export async function applyLightbox() {
     return;
 }
 
-
 export function imageKeyWordHasBeenTyped(editor: any) {
-    const RE_IMAGE = /image/g
+    const RE_IMAGE = /image/g;
     if (editor) {
         const position = new Position(editor.selection.active.line, editor.selection.active.character);
         const wordRange = editor.document.getWordRangeAtPosition(position, RE_IMAGE);
