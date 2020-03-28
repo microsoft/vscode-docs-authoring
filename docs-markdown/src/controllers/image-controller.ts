@@ -1,12 +1,11 @@
 
 import Axios from "axios";
+import { files } from "node-dir";
 import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, workspace } from "vscode";
 import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, setCursorPosition } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 
 const path = require("path");
-const dir = require("node-dir");
-
 const telemetryCommandMedia: string = "insertMedia";
 const telemetryCommandLink: string = "insertLink";
 const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp", ".svg"];
@@ -107,15 +106,15 @@ export async function applyImage() {
         }
 
         // recursively get all the files from the root folder
-        dir.files(folderPath, async (err: any, files: any) => {
+        files(folderPath, async (err: any, mdFiles: any) => {
             if (err) {
                 window.showErrorMessage(err);
             }
 
             const items: QuickPickItem[] = [];
-            files.sort();
+            mdFiles.sort();
 
-            files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+            mdFiles.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
                 items.push({ label: path.basename(file), description: path.dirname(file) });
             });
 
@@ -265,15 +264,15 @@ export async function applyIcon() {
             }
 
             // recursively get all the files from the root folder
-            dir.files(folderPath, async (err: any, files: any) => {
+            files(folderPath, async (err: any, mdFiles: any) => {
                 if (err) {
                     window.showErrorMessage(err);
                 }
 
                 const items: QuickPickItem[] = [];
-                files.sort();
+                mdFiles.sort();
 
-                files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+                mdFiles.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
                     items.push({ label: path.basename(file), description: path.dirname(file) });
                 });
 
@@ -320,15 +319,15 @@ export async function applyComplex() {
         }
 
         // recursively get all the files from the root folder
-        dir.files(folderPath, async (err: any, files: any) => {
+        files(folderPath, async (err: any, mdFiles: any) => {
             if (err) {
                 window.showErrorMessage(err);
             }
 
             const items: QuickPickItem[] = [];
-            files.sort();
+            mdFiles.sort();
 
-            files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+            mdFiles.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
                 items.push({ label: path.basename(file), description: path.dirname(file) });
             });
 
@@ -460,15 +459,15 @@ export async function applyLightbox() {
             folderPath = workspace.workspaceFolders[0].uri.fsPath;
         }
         // get available files
-        dir.files(folderPath, async (err: any, files: any) => {
+        files(folderPath, async (err: any, mdFiles: any) => {
             if (err) {
                 window.showErrorMessage(err);
             }
 
             const items: QuickPickItem[] = [];
-            files.sort();
+            mdFiles.sort();
 
-            files.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+            mdFiles.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
                 items.push({ label: path.basename(file), description: path.dirname(file) });
             });
 

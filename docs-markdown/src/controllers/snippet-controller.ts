@@ -1,17 +1,15 @@
 "use strict";
 
-// import * as dir from "node-dir";
+import { readFile } from "fs";
 import { subdirs } from "node-dir";
 import { resolve } from "path";
+import { promisify } from "util";
 import { QuickPickItem, window, workspace } from "vscode";
 import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 import { search } from "../helper/utility";
 
-const fs = require("fs");
-const util = require("util");
-const readFile = util.promisify(fs.readFile);
-
+const fileContent = promisify(readFile);
 const telemetryCommand: string = "insertSnippet";
 
 export function insertSnippetCommand() {
@@ -127,8 +125,7 @@ export function searchRepo() {
 
 async function getOpenPublishingFile(repoRoot: string) {
     const openPublishingFilePath = resolve(repoRoot, ".openpublishing.publish.config.json");
-    const openPublishingFile = await readFile(openPublishingFilePath, "utf8");
-    // filePath = filePath.replace(ROOTPATH_RE, repoRoot);
+    const openPublishingFile = await fileContent(openPublishingFilePath, "utf8");
     const openPublishingJson = JSON.parse(openPublishingFile);
     return openPublishingJson.dependent_repositories;
 }
