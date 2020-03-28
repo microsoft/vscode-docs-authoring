@@ -1,13 +1,12 @@
 "use strict";
 
-import { Position, Range, Selection, TextEditor, window } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
+import { Range, TextEditor, window } from "vscode";
+import { insertContentToEditor, setCursorPosition, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { isCursorInsideYamlHeader } from "../helper/yaml-metadata";
 import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertMoniker";
-let cursorPosition: string;
-let sign: string;
+let sign: string = "";
 
 export function insertMonikerCommand() {
     const commands = [
@@ -47,17 +46,25 @@ export function insertMoniker() {
         if (qpSelection == moniker_options[2]) {
             sign = "<=";
         }
-        // is this a markdown file or yaml?
-        if (isMarkdownFileCheck(editor, false)) {
-            // if markdown, is the user's cursor in the yaml header?
-            if (isCursorInsideYamlHeader(editor)) {
-                insertYamlMoniker(editor, sign);
-            } else {
-                insertMarkdownMoniker(editor, sign);
-            }
-        } else {
-            insertYamlMoniker(editor, sign);
+
+        // is this a markdown file
+        if (!isMarkdownFileCheck(editor, false)) {
+            return;
         }
+
+        //is cursor on a new line 
+        if (isContentOnCurrentLine(editor)) {
+            window.showErrorMessage("Moniker must be inserted on a new line.");
+            return;
+        }
+
+        // if markdown, is the user's cursor in the yaml header?
+        if (isCursorInsideYamlHeader(editor)) {
+            insertYamlMoniker(editor, sign);
+        } else {
+            insertMarkdownMoniker(editor, sign);
+        }
+
 
 
     });
@@ -67,48 +74,29 @@ export function insertMoniker() {
 // cursor is in the YAML metadata block
 function insertYamlMoniker(editor: TextEditor, sign: string) {
 
-    cursorPosition = "yaml-header-entry"
-    sendTelemetryData(telemetryCommand, cursorPosition);
-    let insertText: string = `monikerRange: '${sign}'`;
-
-    if (isContentOnCurrentLine(editor)) {
-        window.showErrorMessage("Moniker must be inserted on a new line.");
-        return;
-    }
-
+    const insertText = `monikerRange: '${sign}'`;
     const cursorIndex = insertText.indexOf("'") + sign.length + 1;
-    if (isMarkdownFileCheck(editor, false)) {
-        insertContentToEditor(editor, insertYamlMoniker.name, insertText, false);
-        const newPosition = new Position(editor.selection.active.line, cursorIndex);
-        const newSelection = new Selection(newPosition, newPosition);
-        editor.selection = newSelection;
+    insertContentToEditor(editor, insertYamlMoniker.name, insertText, false);
+    setCursorPosition(editor, editor.selection.active.line, cursorIndex);
 
-    }
-    return cursorIndex;
+    const cursorPosition = "yaml-header";
+    sendTelemetryData(telemetryCommand, cursorPosition);
 }
 
 
 //cursor is in the Markdown body of the file
-function insertMarkdownMoniker(editor: TextEditor, sign: string) {
-    cursorPosition = "markdown-body-entry"
-    sendTelemetryData(telemetryCommand, cursorPosition);
-    let insertText: string = `::: moniker range="${sign}"\n\n::: moniker-end`;
+export function insertMarkdownMoniker(editor: TextEditor, sign: string) {
 
-    if (isContentOnCurrentLine(editor)) {
-        window.showErrorMessage("Moniker must be inserted on a new line.");
-        return;
-    }
-
+    const insertText = `::: moniker range="${sign}"\n\n::: moniker-end`;
     insertContentToEditor(editor, insertMarkdownMoniker.name, insertText, false);
-    const cursorIndex = insertText.indexOf(`"`) + sign.length + 1
-    const newPosition = new Position(editor.selection.active.line, cursorIndex);
-    const newSelection = new Selection(newPosition, newPosition);
-    editor.selection = newSelection;
-    return cursorIndex;
+    const cursorIndex = insertText.indexOf(`"`) + sign.length + 1;
+    setCursorPosition(editor, editor.selection.active.line, cursorIndex);
+    const cursorPosition = "markdown-body";
+    sendTelemetryData(telemetryCommand, cursorPosition);
 
 }
 
-function isContentOnCurrentLine(editor: TextEditor): boolean {
+export function isContentOnCurrentLine(editor: TextEditor): boolean {
     const range = new Range(editor.selection.active.line, 0, editor.selection.active.line, 1000);
     const lineText = editor.document.getText(range);
     if (lineText === "") { return false; }
