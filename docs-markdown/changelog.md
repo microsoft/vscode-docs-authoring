@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.59 (March 28, 2020)
+
+- Added moniker insertion feature for metadata and markdown
+
 ## 0.2.59 (March 23rd, 2020)
 
 - Added feature for resolving daisy chained paths in openpublishing.redirection.json
