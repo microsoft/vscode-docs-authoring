@@ -59,36 +59,27 @@ export function insertMoniker() {
         } else {
             insertMarkdownMoniker(editor, sign);
         }
-
-
-
     });
 }
 
-
 // cursor is in the YAML metadata block
 function insertYamlMoniker(editor: TextEditor, sign: string) {
-
     const insertText = `monikerRange: '${sign}'`;
     const cursorIndex = insertText.indexOf("'") + sign.length + 1;
     insertContentToEditor(editor, insertYamlMoniker.name, insertText, false);
     setCursorPosition(editor, editor.selection.active.line, cursorIndex);
-
     const cursorPosition = "yaml-header";
     sendTelemetryData(telemetryCommand, cursorPosition);
 }
 
-
 //cursor is in the Markdown body of the file
 function insertMarkdownMoniker(editor: TextEditor, sign: string) {
-
     const insertText = `::: moniker range="${sign}"\n\n::: moniker-end`;
     insertContentToEditor(editor, insertMarkdownMoniker.name, insertText, false);
     const cursorIndex = insertText.indexOf(`"`) + sign.length + 1;
     setCursorPosition(editor, editor.selection.active.line, cursorIndex);
     const cursorPosition = "markdown-body";
     sendTelemetryData(telemetryCommand, cursorPosition);
-
 }
 
 function isContentOnCurrentLine(editor: TextEditor): boolean {
