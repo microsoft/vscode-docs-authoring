@@ -1,21 +1,22 @@
-import { readFile, writeFile } from "graceful-fs";
 import { postError } from "../../helper/common";
-import { showProgress } from "./utilities";
-const jsdiff = require("diff");
+import { reporter } from "../../helper/telemetry";
+import { readWriteFileWithProgress } from "./utilities";
 
+const telemetryCommand: string = "applyCleanup";
 /**
  * Lower cases all metadata found in .md files
  */
-export function capitalizationOfMetadata(progress: any, promises: Array<Promise<any>>, file: string, percentComplete: number, files: Array<string> | null, index: number | null) {
+export function capitalizationOfMetadata(progress: any, file: string, files: string[] | null, index: number | null) {
+    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     const message = "Capitalization of metadata values";
     if (file.endsWith(".md")) {
-        promises.push(new Promise((resolve) => {
-            readFile(file, "utf8", (err, data) => {
-                if (err) {
-                    postError(`Error: ${err}`);
-                }
+        return readWriteFileWithProgress(progress,
+            file,
+            message,
+            files,
+            index,
+            (data) => {
                 if (data.startsWith("---")) {
-                    const origin = data;
                     data = lowerCaseData(data, "ms.author");
                     data = lowerCaseData(data, "author");
                     data = lowerCaseData(data, "ms.prod");
@@ -23,33 +24,11 @@ export function capitalizationOfMetadata(progress: any, promises: Array<Promise<
                     data = lowerCaseData(data, "ms.subservice");
                     data = lowerCaseData(data, "ms.technology");
                     data = lowerCaseData(data, "ms.topic");
-                    const diff = jsdiff.diffChars(origin, data)
-                        .some((part: { added: any; removed: any; }) => {
-                            return part.added || part.removed;
-                        });
-                    if (diff) {
-                        promises.push(new Promise((resolve) => {
-                            writeFile(file, data, (err) => {
-                                if (err) {
-                                    postError(`Error: ${err}`);
-                                }
-                                percentComplete = showProgress(index, files, percentComplete, progress, message);
-                                resolve();
-                            });
-                        }).catch((error) => {
-                            postError(error);
-                        }));
-                    }
                 }
-                resolve();
+                return data;
             });
-        }).catch((error) => {
-            postError(error);
-        }));
-    }
-    return promises;
+    } else { return Promise.resolve(); }
 }
-
 /**
  * takes data as input, and passes variable into regex
  * to be used to find metadata key and replace value with lowercase data.
@@ -59,7 +38,7 @@ export function capitalizationOfMetadata(progress: any, promises: Array<Promise<
 export function lowerCaseData(data: any, variable: string) {
     const regex = new RegExp(`^(${variable}:)(.*(\\S\\s)?)`, "m");
     const captureParts = regex.exec(data);
-    let value = ""
+    let value = "";
     if (captureParts && captureParts.length > 2) {
         value = captureParts[2].toLowerCase();
         if (value.match(/^\s*$/) !== null) {

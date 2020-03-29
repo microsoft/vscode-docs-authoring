@@ -1,6 +1,6 @@
 "use strict";
 
-import { Position, Range, Selection, TextEditor, window, CompletionItem } from "vscode";
+import { CompletionItem, Position, Range, Selection, TextEditor, window } from "vscode";
 import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 import { isCursorInsideYamlHeader } from "../helper/yaml-metadata";
@@ -24,7 +24,6 @@ export function noLocCompletionItemsMarkdown() {
 export function noLocCompletionItemsYaml() {
     return [new CompletionItem(`no-loc:\n- `)];
 }
-
 
 /**
  * Inserts non-localizable text
@@ -50,7 +49,7 @@ export function noLocText() {
 }
 
 function insertYamlNoLocEntry(editor: TextEditor) {
-    commandOption = "yaml-entry"
+    commandOption = "yaml-entry";
     sendTelemetryData(telemetryCommand, commandOption);
     if (isContentOnCurrentLine(editor)) {
         window.showErrorMessage("The no-loc metadata must be inserted on a new line.");
@@ -83,7 +82,7 @@ function getTabInsertion(editor: TextEditor): string {
 }
 
 function insertMarkdownNoLocEntry(editor: TextEditor) {
-    commandOption = "markdown-entry"
+    commandOption = "markdown-entry";
     sendTelemetryData(telemetryCommand, commandOption);
     const textSelection = editor.document.getText(editor.selection);
     if (textSelection === "") {

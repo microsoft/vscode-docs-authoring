@@ -1,10 +1,10 @@
 "use strict";
 
-import { window, Selection, Range, TextEditorEdit } from "vscode";
+import { Range, Selection, TextEditorEdit, window } from "vscode";
 import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, showStatusMessage } from "../helper/common";
-import { sendTelemetryData } from "../helper/telemetry";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBoldAndItalic, isItalic } from "../helper/format-styles";
+import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "formatItalic";
 
@@ -34,11 +34,11 @@ export function formatItalic() {
 
         // const selection = editor.selection;
         // const selectedText = editor.document.getText(selection);
-        let selections: Selection[] = editor.selections;
+        const selections: Selection[] = editor.selections;
         let range;
 
         // if unselect text, add italic syntax without any text
-        if (selections.length == 0) {
+        if (selections.length === 0) {
             const cursorPosition = editor.selection.active;
             const selectedText = "";
 
@@ -53,7 +53,7 @@ export function formatItalic() {
         }
 
         // if only a selection is made with a single cursor
-        if (selections.length == 1) {
+        if (selections.length === 1) {
             const selection = editor.selection;
             const selectedText = editor.document.getText(selection);
             const cursorPosition = editor.selection.active;
@@ -68,21 +68,21 @@ export function formatItalic() {
 
         // if mulitple cursors were used to make selections
         if (selections.length > 1) {
-            editor.edit(function (edit: TextEditorEdit): void {
+            editor.edit((edit: TextEditorEdit): void => {
                 selections.forEach((selection: Selection) => {
                     for (let i = selection.start.line; i <= selection.end.line; i++) {
-                        let selectedText = editor.document.getText(selection);
-                        let formattedText = italicize(selectedText);
+                        const selectedText = editor.document.getText(selection);
+                        const formattedText = italicize(selectedText);
                         edit.replace(selection, formattedText);
                     }
                 });
-            }).then(success => {
+            }).then((success) => {
                 if (!success) {
                     postWarning("Could not format selections. Abandoning command.");
                     showStatusMessage("Could not format selections. Abandoning command.");
                     return;
                 }
-            })
+            });
         }
     }
     sendTelemetryData(telemetryCommand, "");

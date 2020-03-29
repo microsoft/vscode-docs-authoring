@@ -1,5 +1,6 @@
 import { postError } from "../../helper/common";
 import { handleSingleItemArray, singleValueMetadata } from "./utilities";
+// tslint:disable-next-line: no-var-requires
 const jsyaml = require("js-yaml");
 
 /**

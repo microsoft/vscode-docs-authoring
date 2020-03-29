@@ -2,10 +2,10 @@
 
 import { QuickPickOptions, Range, Selection, TextEditorEdit, window } from "vscode";
 import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, showStatusMessage } from "../helper/common";
-import { sendTelemetryData } from "../helper/telemetry";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
 import { getLanguageIdentifierQuickPickItems, languages } from "../helper/highlight-langs";
+import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "formatCode";
 
