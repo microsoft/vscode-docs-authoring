@@ -4,10 +4,12 @@ import * as fs from "fs";
 import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
-import { Uri, window, workspace, WorkspaceFolder } from "vscode";
-import YAML = require("yamljs");
-import { output } from "../extension";
-import { generateTimestamp, naturalLanguageCompare, postError, postWarning, sendTelemetryData, tryFindFile } from "../helper/common";
+import { URL } from "url";
+import { Position, Selection, TextEditor, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder, commands } from "vscode";
+import * as YAML from "yamljs";
+import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
+import { output } from "../helper/output";
+import { sendTelemetryData } from "../helper/telemetry";
 import * as yamlMetadata from "../helper/yaml-metadata";
 
 const telemetryCommand: string = "masterRedirect";
@@ -17,6 +19,7 @@ export function getMasterRedirectionCommand() {
     return [
         { command: generateMasterRedirectionFile.name, callback: generateMasterRedirectionFile },
         { command: sortMasterRedirectionFile.name, callback: sortMasterRedirectionFile },
+        { command: applyRedirectDaisyChainResolution.name, callback: applyRedirectDaisyChainResolution },
     ];
 }
 
@@ -66,10 +69,223 @@ export class RedirectionFile implements IMasterRedirection {
     }
 }
 
-function showStatusMessage(message: string) {
-    const { msTimeValue } = generateTimestamp();
-    output.appendLine(`[${msTimeValue}] - ` + message);
-    output.show();
+interface IMarkdownConfig {
+    docsetName: string;
+    docsetRootFolderName: string;
+}
+
+const docsHost = "docs.microsoft.com";
+const docsMicrosoftCom = `https://${docsHost}`;
+
+export class RedirectUrl {
+    public static parse(config: IMarkdownConfig, value: string): RedirectUrl | null {
+        try {
+            const input = value.startsWith("/") ? `${docsMicrosoftCom}${value}` : value;
+            const url = new URL(input);
+            return new RedirectUrl(config, value, url);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    get isExternalUrl(): boolean {
+        return this.url.host.toLocaleLowerCase() !== docsHost;
+    }
+
+    private _filePath: string = "";
+    get filePath(): string {
+        if (!!this._filePath) {
+            return this._filePath;
+        }
+
+        // Put the URL into the same format as source_path, instead of
+        // "/azure/cognitive-services/speech-service/overview" we'd get
+        // "articles/cognitive-services/speech-service/overview.md"
+        const config = this.config;
+        const value = this.url.pathname;
+        const replacedSegmentUrl =
+            value.substring(1)
+                .replace(config.docsetName, config.docsetRootFolderName);
+
+        return this._filePath = `${replacedSegmentUrl}.md`;
+    }
+
+    private constructor(
+        private readonly config: IMarkdownConfig,
+        public readonly originalValue: string,
+        public readonly url: URL) { }
+
+    public toUrl(): string {
+        const withoutExtension = this.filePath.replace(".md", "");
+        return `/${withoutExtension.replace(this.config.docsetRootFolderName, this.config.docsetName)}`;
+    }
+
+    public adaptHashAndQueryString(redirectUrl: string): string {
+        let resultingRedirectUrl = redirectUrl;
+        if (this.url.search) {
+            resultingRedirectUrl += this.url.search;
+        }
+        if (this.url.hash) {
+            resultingRedirectUrl += this.url.hash;
+        }
+        return resultingRedirectUrl;
+    }
+}
+
+async function applyRedirectDaisyChainResolution() {
+    const editor = window.activeTextEditor;
+    if (!editor) {
+        postWarning("Editor not active. Abandoning command.");
+        return;
+    }
+
+    let redirects: IMasterRedirections | null = null;
+    const folder = workspace.getWorkspaceFolder(editor.document.uri);
+    if (!folder) {
+        return;
+    }
+
+    const file = tryFindFile(folder.uri.fsPath, redirectFileName);
+    if (!!file && fs.existsSync(file)) {
+        if (!editor.document.uri.fsPath.endsWith(redirectFileName)) {
+            const openFile = await window.showErrorMessage(
+                `Unable to update the master redirects, please open the "${redirectFileName}" file then try again!`,
+                "Open File");
+            if (!!openFile) {
+                const document = await workspace.openTextDocument(file);
+                await window.showTextDocument(document);
+            }
+            return;
+        }
+
+        const jsonBuffer = fs.readFileSync(file);
+        redirects = JSON.parse(jsonBuffer.toString()) as IMasterRedirections;
+    }
+
+    if (!redirects || !redirects.redirections) {
+        return;
+    }
+
+    const config = workspace.getConfiguration("markdown");
+    const options = {
+        docsetName: config.docsetName,
+        docsetRootFolderName: config.docsetRootFolderName,
+    };
+    if (options.docsetName === "" ||
+        options.docsetRootFolderName === "") {
+        // Open the settings, and prompt the user to enter values.
+        await commands.executeCommand("workbench.action.openSettings", "@ext:docsmsft.docs-markdown");
+        postWarning("Please set the Docset Name and Docset Root Folder Name before using this command.");
+        return;
+    }
+
+    const redirectsLookup = new Map<string, { redirect: RedirectUrl | null, redirection: IMasterRedirection }>();
+    redirects.redirections.forEach((r) => {
+        redirectsLookup.set(r.source_path, {
+            redirect: RedirectUrl.parse(options, r.redirect_url),
+            redirection: r,
+        });
+    });
+
+    const findRedirect = (sourcePath: string) => {
+        return redirectsLookup.has(sourcePath)
+            ? redirectsLookup.get(sourcePath)
+            : null;
+    };
+
+    let daisyChainsResolved = 0;
+    let maxDepthResolved = 0;
+    let resolvedDaisyChains = false;
+    redirectsLookup.forEach((source, _) => {
+        const { redirect: url, redirection: redirect } = source;
+        if (!url || !redirect) {
+            return;
+        }
+
+        const redirectFilePath = url.filePath;
+
+        let daisyChainPath = null;
+        let targetRedirectUrl = null;
+        let depthResolved = 0;
+        let isExternalUrl = false;
+        let targetRedirect = findRedirect(redirectFilePath);
+        while (targetRedirect !== null) {
+            if (!targetRedirect!.redirect || !targetRedirect!.redirection) {
+                break;
+            }
+
+            depthResolved++;
+            if (depthResolved > maxDepthResolved) {
+                maxDepthResolved = depthResolved;
+            }
+            isExternalUrl = targetRedirect!.redirect.isExternalUrl;
+            targetRedirectUrl =
+                isExternalUrl
+                    ? targetRedirect!.redirect!.url.toString()
+                    : targetRedirect!.redirect!.toUrl();
+            daisyChainPath = targetRedirect!.redirect!.filePath;
+            targetRedirect = findRedirect(daisyChainPath);
+        }
+
+        if (targetRedirectUrl && targetRedirectUrl !== source.redirection.redirect_url) {
+            daisyChainsResolved++;
+            const newRedirectUrl =
+                isExternalUrl
+                    ? targetRedirectUrl
+                    : source.redirect!.adaptHashAndQueryString(targetRedirectUrl);
+            source.redirection.redirect_url = newRedirectUrl;
+
+            if (source.redirection.redirect_document_id) {
+                if (isExternalUrl ||
+                    !newRedirectUrl.startsWith(`/${options.docsetName}/`)) {
+                    source.redirection.redirect_document_id = false;
+                }
+            }
+
+            resolvedDaisyChains = true;
+        }
+    });
+
+    if (resolvedDaisyChains) {
+        await updateRedirects(editor, redirects, config);
+        const numberFormat = Intl.NumberFormat();
+        showStatusMessage(`Resolved ${numberFormat.format(daisyChainsResolved)} daisy chains, at a max-depth of ${maxDepthResolved}!`);
+    } else {
+        showStatusMessage("There are no daisy chains found.");
+    }
+}
+
+async function updateRedirects(editor: TextEditor, redirects: IMasterRedirections | null, config: WorkspaceConfiguration) {
+    const lineCount = editor.document.lineCount - 1;
+    const lastLine = editor.document.lineAt(lineCount);
+    const entireDocSelection =
+        new Selection(
+            new Position(0, 0),
+            new Position(lineCount, lastLine.range.end.character));
+
+    await editor.edit((builder) => {
+        builder.replace(entireDocSelection, redirectsToJson(redirects, config));
+    });
+
+    await editor.document.save();
+}
+
+function redirectsToJson(redirects: IMasterRedirections | null, config: WorkspaceConfiguration) {
+    const omitDefaultJsonProperties = config.omitDefaultJsonProperties;
+    const replacer = (key: string, value: string) => {
+        return omitDefaultJsonProperties && key === "redirect_document_id"
+            ? !!value
+                ? true
+                : undefined
+            : value;
+    };
+
+    const space =
+        workspace.getConfiguration("editor").insertSpaces
+            ? workspace.getConfiguration("editor").tabSize as number || 2
+            : 2;
+
+    return JSON.stringify(redirects, replacer, space);
 }
 
 export async function sortMasterRedirectionFile() {
@@ -91,9 +307,8 @@ export async function sortMasterRedirectionFile() {
                     return naturalLanguageCompare(a.source_path, b.source_path);
                 });
 
-                fs.writeFileSync(
-                    file,
-                    JSON.stringify(redirects, ["redirections", "source_path", "redirect_url", "redirect_document_id"], 4));
+                const config = workspace.getConfiguration("markdown");
+                await updateRedirects(editor, redirects, config);
             }
         }
     }
@@ -282,4 +497,10 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
             });
         }
     }
+}
+
+function showStatusMessage(message: string) {
+    const { msTimeValue } = generateTimestamp();
+    output.appendLine(`[${msTimeValue}] - ` + message);
+    output.show();
 }

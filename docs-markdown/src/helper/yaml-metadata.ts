@@ -3,11 +3,11 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as Collections from "typescript-collections";
+import { Range, TextEditor } from "vscode";
 import YAML = require("yamljs");
 import * as yamlMetadata from "../helper/yaml-metadata";
 import * as common from "./common";
 import * as utilityHelper from "./utility";
-import { TextEditor, Range } from "vscode";
 
 /* tslint:disable:no-var-requires max-classes-per-file */
 
@@ -345,10 +345,9 @@ function GetDocFxMetadataName(): string {
     return "docfx.json";
 }
 
-
 /**
  * Return true if cursor is within the YAML Header
- * @param 
+ * @param
  */
 export function isCursorInsideYamlHeader(editor: TextEditor) {
     const docText = editor.document.getText();

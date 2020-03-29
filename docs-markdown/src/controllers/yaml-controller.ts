@@ -5,7 +5,8 @@ import { files } from "node-dir";
 import { basename, dirname, extname, join, relative } from "path";
 import { QuickPickItem, window, workspace } from "vscode";
 import { insertedTocEntry, invalidTocEntryPosition, noHeading, noHeadingSelected } from "../constants/log-messages";
-import { insertContentToEditor, noActiveEditorMessage, sendTelemetryData, showStatusMessage } from "../helper/common";
+import { insertContentToEditor, noActiveEditorMessage, showStatusMessage } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "updateTOC";
 let commandOption: string;

@@ -1,7 +1,6 @@
 "use strict";
 import { Position, Selection, window } from "vscode";
-import { insertContentToEditor, showWarningMessage } from "../helper/common";
-import { showStatusMessage } from "../helper/common";
+import { insertContentToEditor, showStatusMessage, showWarningMessage } from "../helper/common";
 
 // strings
 const indentSpacing = "    ";
@@ -65,8 +64,8 @@ export function createRow(columnNumber: number) {
         let rowEndLineNumber;
         try {
             for (i = startPosition; i < totalLines; i--) {
-                var lineData = editor.document.lineAt(i);
-                var lineText = lineData.text;
+                const lineData = editor.document.lineAt(i);
+                const lineText = lineData.text;
                 if (lineText.match(rowStartRegex)) {
                     rowStartLineNumber = lineData.lineNumber;
                     break;
@@ -138,8 +137,8 @@ export function validatePosition(span?: boolean) {
         let rowStartLineNumber;
         try {
             for (i = startPosition; i < totalLines; i--) {
-                var lineData = editor.document.lineAt(i);
-                var lineText = lineData.text;
+                const lineData = editor.document.lineAt(i);
+                const lineText = lineData.text;
                 if (lineText.match(columnStartRegex)) {
                     columnStartLineNumber = lineData.lineNumber;
                     break;
@@ -167,9 +166,9 @@ export function validatePosition(span?: boolean) {
         if (rowStartLineNumber) {
             if (!columnStartLineNumber && !columnEndLineNumber) {
                 if (span) {
-                    insertColumn(true)
+                    insertColumn(true);
                 } else {
-                    insertColumn()
+                    insertColumn();
                 }
             }
         }
@@ -179,9 +178,9 @@ export function validatePosition(span?: boolean) {
         if (columnStartLineNumber && columnEndLineNumber) {
             if (columnStartLineNumber < startPosition && columnEndLineNumber < startPosition) {
                 if (span) {
-                    insertColumn(true)
+                    insertColumn(true);
                 } else {
-                    insertColumn()
+                    insertColumn();
                 }
             }
         }
@@ -192,9 +191,9 @@ export function insertIndentedColumn(content: string, position: number) {
     const editor = window.activeTextEditor;
     if (editor) {
         const activeLine = editor.selection.active.line;
-        editor.edit(editBuilder => {
+        editor.edit((editBuilder) => {
             editBuilder.insert(new Position(activeLine, position), content);
-        })
+        });
     }
 }
 
@@ -216,13 +215,13 @@ export function insertColumn(span?: boolean) {
             newSelection = new Selection(newPosition, newPosition);
             editor.selection = newSelection;
         }
-        if (!span && cursorPosition % 4 == 0) {
+        if (!span && cursorPosition % 4 === 0) {
             insertIndentedColumn(columnAdd, 0);
             newPosition = new Position(editor.selection.active.line + 1, 20);
             newSelection = new Selection(newPosition, newPosition);
             editor.selection = newSelection;
         }
-        if (span && cursorPosition % 4 == 0) {
+        if (span && cursorPosition % 4 === 0) {
             insertIndentedColumn(columnSpan, 0);
             newPosition = new Position(editor.selection.active.line, 20);
             newSelection = new Selection(newPosition, newPosition);
@@ -230,7 +229,6 @@ export function insertColumn(span?: boolean) {
         }
     }
 }
-
 
 export function checkForValidRow(span?: boolean) {
     const editor = window.activeTextEditor;
@@ -244,8 +242,8 @@ export function checkForValidRow(span?: boolean) {
         let i;
         try {
             for (i = startPosition; i < totalLines; i--) {
-                var lineData = editor.document.lineAt(i);
-                var lineText = lineData.text;
+                const lineData = editor.document.lineAt(i);
+                const lineText = lineData.text;
                 if (lineText.match(rowStartRegex)) {
                     rowStartLineNumber = lineData.lineNumber;
                     break;
@@ -253,8 +251,8 @@ export function checkForValidRow(span?: boolean) {
 
             }
             for (i = startPosition; i < totalLines; i++) {
-                var lineData = editor.document.lineAt(i);
-                var lineText = lineData.text;
+                const lineData = editor.document.lineAt(i);
+                const lineText = lineData.text;
                 if (lineText.match(rowEndRegex)) {
                     rowEndLineNumber = lineData.lineNumber;
                     break;
@@ -290,4 +288,3 @@ export function checkForValidRow(span?: boolean) {
         }
     }
 }
-

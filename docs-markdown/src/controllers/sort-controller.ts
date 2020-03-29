@@ -1,5 +1,6 @@
 import { Range, window } from "vscode";
-import { naturalLanguageCompare, noActiveEditorMessage, sendTelemetryData } from "../helper/common";
+import { naturalLanguageCompare, noActiveEditorMessage } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommandLink: string = "sortSelection";
 

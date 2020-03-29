@@ -3,7 +3,7 @@
   "displayName": "docs-linting",
   "description": "Docs Linting Extension",
   "icon": "images/docs-logo-ms.png",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-linting",
   "bugs": {

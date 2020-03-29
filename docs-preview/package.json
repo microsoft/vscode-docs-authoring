@@ -3,7 +3,7 @@
   "displayName": "docs-preview",
   "description": "Docs Markdown Preview Extension",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.3.41",
+  "version": "0.3.44",
   "publisher": "docsmsft",
   "icon": "images/docs-logo-ms.png",
   "bugs": {
@@ -15,7 +15,7 @@
     "url": "https://github.com/Microsoft/vscode-docs-authoring.git"
   },
   "engines": {
-    "vscode": "^1.23.0"
+    "vscode": "^1.43.0"
   },
   "categories": [
     "Snippets",
@@ -28,10 +28,32 @@
     "docfx"
   ],
   "activationEvents": [
-    "onLanguage:markdown"
+    "onLanguage:markdown",
+    "onLanguage:yaml"
   ],
   "main": "./out/src/extension",
   "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Docs Preview Extension Configuration",
+      "properties": {
+        "preview.previewTheme": {
+          "type": "string",
+          "enum": [
+            "Light",
+            "Dark",
+            "High Contrast"
+          ],
+          "enumDescriptions": [
+            "Preview will be displayed in light theme",
+            "Preview will be displayed in dark theme",
+            "Preview will be displayed in high contrast theme"
+          ],
+          "default": "Light",
+          "description": "Preview will be displayed in light theme."
+        }
+      }
+    },
     "markdown.previewScripts": [
       "./media/common.js",
       "./media/noloc.js",
@@ -61,6 +83,14 @@
         "command": "docs.showPreview",
         "title": "Docs: Preview in current tab",
         "when": "editorTextFocus"
+      },
+      {
+        "command": "docs.seoPreview",
+        "title": "Docs: Search results Preview in current tab"
+      },
+      {
+        "command": "docs.seoPreviewToSide",
+        "title": "Docs: Search results Preview"
       }
     ],
     "menus": {
@@ -72,6 +102,14 @@
         {
           "when": "resourceLangId == markdown",
           "command": "docs.showPreview"
+        },
+        {
+          "when": "resourceLangId == markdown || resourceLangId == yaml",
+          "command": "docs.seoPreview"
+        },
+        {
+          "when": "resourceLangId == markdown || resourceLangId == yaml",
+          "command": "docs.seoPreviewToSide"
         }
       ]
     }
@@ -90,13 +128,17 @@
     "mocha": "^5.2.0",
     "tslint": "^5.20.1",
     "typescript": "^2.5.2",
-    "vscode": "^1.1.33"
+    "vscode": "^1.1.36"
   },
   "dependencies": {
     "axios": "^0.19.0",
+    "glob": "^7.1.6",
     "js-base64": "^2.5.1",
+    "js-yaml": "^3.13.1",
     "markdown-it": "^8.4.2",
     "markdown-it-include": "^1.1.0",
+    "moment": "^2.24.0",
+    "os": "^0.1.1",
     "vscode-extension-telemetry": "^0.1.1"
   }
 }

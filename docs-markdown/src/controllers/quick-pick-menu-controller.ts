@@ -1,7 +1,6 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { output } from "../extension";
 import { checkExtension, generateTimestamp } from "../helper/common";
 import { insertAlert } from "./alert-controller";
 import { formatBold } from "./bold-controller";
@@ -21,6 +20,7 @@ import { applyTemplate } from "./template-controller";
 import { applyXref } from "./xref-controller";
 import { insertExpandableParentNode, insertTocEntry, insertTocEntryWithOptions } from "./yaml-controller";
 import { pickLinkType } from "./link-controller";
+import { output } from "../helper/output";
 
 export function quickPickMenuCommand() {
     const commands = [

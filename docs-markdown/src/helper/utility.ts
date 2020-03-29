@@ -1,5 +1,5 @@
 import { QuickPickItem, QuickPickOptions, Range, Selection, TextDocument, TextDocumentChangeEvent, TextEditor, window, workspace } from "vscode";
-import * as common from "./common";
+import { insertContentToEditor, isMarkdownFileCheckWithoutNotification, matchAll, postWarning } from "./common";
 import { getLanguageIdentifierQuickPickItems, IHighlightLanguage, languages } from "./highlight-langs";
 import * as log from "./log";
 
@@ -14,8 +14,8 @@ import * as log from "./log";
  */
 export function validateTableRowAndColumnCount(size: number, colStr: string, rowStr: string) {
     const tableTextRegex = /^-?\d*$/;
-    const col = tableTextRegex.test(colStr) ? Number.parseInt(colStr) : undefined;
-    const row = tableTextRegex.test(rowStr) ? Number.parseInt(rowStr) : undefined;
+    const col = tableTextRegex.test(colStr) ? Number.parseInt(colStr, undefined) : undefined;
+    const row = tableTextRegex.test(rowStr) ? Number.parseInt(rowStr, undefined) : undefined;
     log.debug("Trying to create a table of: " + col + " columns and " + row + " rows.");
 
     if (col === undefined || row === undefined) {
@@ -24,19 +24,19 @@ export function validateTableRowAndColumnCount(size: number, colStr: string, row
 
     if (size !== 2 || isNaN(col) || isNaN(row)) {
         const errorMsg = "Please input the number of columns and rows as C:R e.g. 3:4";
-        common.postWarning(errorMsg);
+        postWarning(errorMsg);
         return false;
     } else if (col <= 0 || row <= 0) {
         const errorMsg = "The number of rows or columns can't be zero or negative.";
-        common.postWarning(errorMsg);
+        postWarning(errorMsg);
         return false;
     } else if (col > 4) {
         const errorMsg = "You can only insert up to four columns via Docs Markdown.";
-        common.postWarning(errorMsg);
+        postWarning(errorMsg);
         return false;
     } else if (row > 50) {
         const errorMsg = "You can only insert up to 50 rows via Docs Markdown.";
-        common.postWarning(errorMsg);
+        postWarning(errorMsg);
         return false;
     } else {
         return true;
@@ -155,7 +155,7 @@ export async function search(editor: TextEditor, selection: Selection, folderPat
         };
         const qpSelection = await window.showQuickPick(supportedLanguages, options);
         if (!qpSelection) {
-            common.postWarning("No code language selected. Abandoning command.");
+            postWarning("No code language selected. Abandoning command.");
             return;
         } else {
             const selectedLang = languages.find((lang) => lang.language === qpSelection.label);
@@ -164,7 +164,7 @@ export async function search(editor: TextEditor, selection: Selection, folderPat
     }
 
     if (!language) {
-        common.postWarning("Unable to determine language. Abandoning command.");
+        postWarning("Unable to determine language. Abandoning command.");
         return;
     }
 
@@ -182,19 +182,19 @@ export async function search(editor: TextEditor, selection: Selection, folderPat
                 const id = await window.showInputBox({ prompt: "Enter id to select" });
                 if (id) {
                     snippet = snippetBuilder(language, snippetLink, id, undefined);
-                    common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
+                    insertContentToEditor(editor, search.name, snippet, true, selectionRange);
                 }
                 break;
             case "range":
                 const range = await window.showInputBox({ prompt: "Enter line selection range" });
                 if (range) {
                     snippet = snippetBuilder(language, snippetLink, undefined, range);
-                    common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
+                    insertContentToEditor(editor, search.name, snippet, true, selectionRange);
                 }
                 break;
             default:
                 snippet = snippetBuilder(language, snippetLink);
-                common.insertContentToEditor(editor, search.name, snippet, true, selectionRange);
+                insertContentToEditor(editor, search.name, snippet, true, selectionRange);
                 break;
         }
     }
@@ -275,7 +275,7 @@ export function includeBuilder(link: string, title: string) {
 
 export function snippetBuilder(language: string, relativePath: string, id?: string, range?: string) {
     if (id) {
-        return `:::code language="${language}" source="${relativePath}" id=${id}":::`;
+        return `:::code language="${language}" source="${relativePath}" id="${id}":::`;
     } else if (range) {
         return `:::code language="${language}" source="${relativePath}" range="${range}":::`;
     } else {
@@ -358,7 +358,7 @@ export async function findAndReplaceTargetExpressions(event: TextDocumentChangeE
 
     if (!!event && event.document) {
         const editor = window.activeTextEditor;
-        if (editor && common.isMarkdownFileCheckWithoutNotification(editor)) {
+        if (editor && isMarkdownFileCheckWithoutNotification(editor)) {
             const document = event.document;
             const content = document.getText();
             if (!!content) {
@@ -408,7 +408,7 @@ export function findReplacements(document: TextDocument, content: string, value:
         return undefined;
     }
 
-    const results = common.matchAll(expression, content);
+    const results = matchAll(expression, content);
     if (!results || !results.length) {
         return undefined;
     }
