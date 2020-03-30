@@ -11,14 +11,14 @@ chai.use(spies);
 const sinon = require("sinon");
 const expect = chai.expect;
 
-function insert_blank_line(editor: TextEditor, line: number) {
+function insertBlankLine(editor: TextEditor, line: number) {
 
     const spy = chai.spy.on(common, "insertContentToEditor");
     spy(editor, "test", "\r\n");
     chai.spy.restore(spy);
 
 }
-function move_cursor(editor: TextEditor, y: number, x: number) {
+function moveCursor(editor: TextEditor, y: number, x: number) {
 
     const spy = chai.spy.on(common, "setCursorPosition");
     spy(editor, y, x);
@@ -27,19 +27,19 @@ function move_cursor(editor: TextEditor, y: number, x: number) {
 
 }
 
-const test_file = "../../../../../src/test/data/repo/articles/bookmark.md";
-const sleep_time = 100;
-const moniker_options = [
+const testFile = "../../../../../src/test/data/repo/articles/bookmark.md";
+const sleepTime = 100;
+const monikerOptions = [
     "range equals",
     "range greater than or equal",
     "range less than or equal",
 ];
 
 //line ( y coord) , character (x coord)
-const yaml_line = 10;
-const yaml_character = 15;
-const mark_line = yaml_line + 4;
-const mark_character = 19;
+const yamlLine = 10;
+const yamlCharacter = 15;
+const markLine = yamlLine + 4;
+const markCharacter = 19;
 
 
 suite("Moniker Controller", () => {
@@ -66,11 +66,11 @@ suite("Moniker Controller", () => {
     });
 
     test("isMarkdownFileCheck", async () => {
-        const filePath = resolve(__dirname, test_file);
+        const filePath = resolve(__dirname, testFile);
         await loadDocumentAndGetItReady(filePath);
         const spy = chai.spy.on(common, "isMarkdownFileCheck");
         insertMoniker();
-        await sleep(sleep_time);
+        await sleep(sleepTime);
         expect(spy).to.have.been.called();
     });
 
@@ -78,7 +78,7 @@ suite("Moniker Controller", () => {
 
         const spy = chai.spy.on(window, "showErrorMessage");
         insertMoniker();
-        await sleep(sleep_time);
+        await sleep(sleepTime);
         expect(spy).to.have.been.called();
 
     });
@@ -88,18 +88,18 @@ suite("Moniker Controller", () => {
     test("insertYamlMoniker - equal - output", async () => {
 
         const editor = window.activeTextEditor;
-        move_cursor(editor!, yaml_line, 0);
-        insert_blank_line(editor!, yaml_line);
-        move_cursor(editor!, yaml_line, 0); //move cursor back
-        await sleep(sleep_time);
+        moveCursor(editor!, yamlLine, 0);
+        insertBlankLine(editor!, yamlLine);
+        moveCursor(editor!, yamlLine, 0); //move cursor back
+        await sleep(sleepTime);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-            return Promise.resolve(moniker_options[0]) as Thenable<any>;
+            return Promise.resolve(monikerOptions[0]) as Thenable<any>;
         };
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertMoniker();
-        await sleep(sleep_time);
-        const output = editor?.document.lineAt(yaml_line).text;
+        await sleep(sleepTime);
+        const output = editor?.document.lineAt(yamlLine).text;
         stub.restore();
 
         expect(output).to.equal("monikerRange: ''");
@@ -110,25 +110,25 @@ suite("Moniker Controller", () => {
 
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
-        expect(cursorPosition).to.deep.equal([yaml_line, yaml_character]);
+        expect(cursorPosition).to.deep.equal([yamlLine, yamlCharacter]);
 
     });
 
     test("insertYamlMoniker - greater/equal - output", async () => {
 
         const editor = window.activeTextEditor;
-        move_cursor(editor!, yaml_line, 0);
-        insert_blank_line(editor!, 10);
-        move_cursor(editor!, yaml_line, 0);
+        moveCursor(editor!, yamlLine, 0);
+        insertBlankLine(editor!, 10);
+        moveCursor(editor!, yamlLine, 0);
 
-        await sleep(sleep_time);
+        await sleep(sleepTime);
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-            return Promise.resolve(moniker_options[1]) as Thenable<any>;
+            return Promise.resolve(monikerOptions[1]) as Thenable<any>;
         };
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertMoniker();
-        await sleep(sleep_time);
-        const output = editor?.document.lineAt(yaml_line).text;
+        await sleep(sleepTime);
+        const output = editor?.document.lineAt(yamlLine).text;
         stub.restore();
 
         expect(output).to.equal("monikerRange: '>='");
@@ -140,7 +140,7 @@ suite("Moniker Controller", () => {
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
 
-        expect(cursorPosition).to.deep.equal([yaml_line, yaml_character + 2]);
+        expect(cursorPosition).to.deep.equal([yamlLine, yamlCharacter + 2]);
 
     });
 
@@ -148,18 +148,18 @@ suite("Moniker Controller", () => {
 
 
         const editor = window.activeTextEditor;
-        move_cursor(editor!, yaml_line, 0);
-        insert_blank_line(editor!, yaml_line);
-        move_cursor(editor!, yaml_line, 0);
-        await sleep(sleep_time);
+        moveCursor(editor!, yamlLine, 0);
+        insertBlankLine(editor!, yamlLine);
+        moveCursor(editor!, yamlLine, 0);
+        await sleep(sleepTime);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-            return Promise.resolve(moniker_options[2]) as Thenable<any>;
+            return Promise.resolve(monikerOptions[2]) as Thenable<any>;
         };
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertMoniker();
-        await sleep(sleep_time);
-        const output = editor?.document.lineAt(yaml_line).text;
+        await sleep(sleepTime);
+        const output = editor?.document.lineAt(yamlLine).text;
         stub.restore();
 
         expect(output).to.equal("monikerRange: '<='");
@@ -171,7 +171,7 @@ suite("Moniker Controller", () => {
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
 
-        expect(cursorPosition).to.deep.equal([yaml_line, yaml_character + 2]);
+        expect(cursorPosition).to.deep.equal([yamlLine, yamlCharacter + 2]);
 
     });
 
@@ -180,17 +180,17 @@ suite("Moniker Controller", () => {
     // Markdown body test
     test("insertMarkdownMoniker - equal - output", async () => {
         const editor = window.activeTextEditor;
-        move_cursor(editor!, mark_line, 0);
+        moveCursor(editor!, markLine, 0);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-            return Promise.resolve(moniker_options[0]) as Thenable<any>;
+            return Promise.resolve(monikerOptions[0]) as Thenable<any>;
         };
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertMoniker();
-        await sleep(sleep_time);
-        const line1 = editor?.document.lineAt(mark_line).text;
-        const line2 = editor?.document.lineAt(mark_line + 1).text;
-        const line3 = editor?.document.lineAt(mark_line + 2).text;
+        await sleep(sleepTime);
+        const line1 = editor?.document.lineAt(markLine).text;
+        const line2 = editor?.document.lineAt(markLine + 1).text;
+        const line3 = editor?.document.lineAt(markLine + 2).text;
         const output = line1! + line2 + line3;
         stub.restore();
 
@@ -203,7 +203,7 @@ suite("Moniker Controller", () => {
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
 
-        expect(cursorPosition).to.deep.equal([mark_line, mark_character]);
+        expect(cursorPosition).to.deep.equal([markLine, markCharacter]);
 
     });
 
@@ -213,20 +213,20 @@ suite("Moniker Controller", () => {
 
 
         const editor = window.activeTextEditor;
-        move_cursor(editor!, mark_line + 3, 0);
-        insert_blank_line(editor!, mark_line + 3);
-        move_cursor(editor!, mark_line + 3, 0);
-        await sleep(sleep_time);
+        moveCursor(editor!, markLine + 3, 0);
+        insertBlankLine(editor!, markLine + 3);
+        moveCursor(editor!, markLine + 3, 0);
+        await sleep(sleepTime);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-            return Promise.resolve(moniker_options[1]) as Thenable<any>;
+            return Promise.resolve(monikerOptions[1]) as Thenable<any>;
         };
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertMoniker();
-        await sleep(sleep_time);
-        const line1 = editor?.document.lineAt(mark_line + 3).text;
-        const line2 = editor?.document.lineAt(mark_line + 4).text;
-        const line3 = editor?.document.lineAt(mark_line + 5).text;
+        await sleep(sleepTime);
+        const line1 = editor?.document.lineAt(markLine + 3).text;
+        const line2 = editor?.document.lineAt(markLine + 4).text;
+        const line3 = editor?.document.lineAt(markLine + 5).text;
         const output = line1! + line2 + line3;
         stub.restore();
 
@@ -239,27 +239,27 @@ suite("Moniker Controller", () => {
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
 
-        expect(cursorPosition).to.deep.equal([mark_line + 3, mark_character + 2]);
+        expect(cursorPosition).to.deep.equal([markLine + 3, markCharacter + 2]);
 
     });
 
     test("insertMarkdownMoniker - less/equal - output", async () => {
 
         const editor = window.activeTextEditor;
-        move_cursor(editor!, mark_line + 6, 0);
-        insert_blank_line(editor!, mark_line + 3);
-        move_cursor(editor!, mark_line + 6, 0);
-        await sleep(sleep_time);
+        moveCursor(editor!, markLine + 6, 0);
+        insertBlankLine(editor!, markLine + 3);
+        moveCursor(editor!, markLine + 6, 0);
+        await sleep(sleepTime);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-            return Promise.resolve(moniker_options[2]) as Thenable<any>;
+            return Promise.resolve(monikerOptions[2]) as Thenable<any>;
         };
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertMoniker();
-        await sleep(sleep_time);
-        const line1 = editor?.document.lineAt(mark_line + 6).text;
-        const line2 = editor?.document.lineAt(mark_line + 7).text;
-        const line3 = editor?.document.lineAt(mark_line + 8).text;
+        await sleep(sleepTime);
+        const line1 = editor?.document.lineAt(markLine + 6).text;
+        const line2 = editor?.document.lineAt(markLine + 7).text;
+        const line3 = editor?.document.lineAt(markLine + 8).text;
         const output = line1! + line2 + line3;
         stub.restore();
 
@@ -271,7 +271,7 @@ suite("Moniker Controller", () => {
 
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
-        expect(cursorPosition).to.deep.equal([mark_line + 6, mark_character + 2]);
+        expect(cursorPosition).to.deep.equal([markLine + 6, markCharacter + 2]);
 
     });
 

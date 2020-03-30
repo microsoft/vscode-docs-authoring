@@ -5,8 +5,7 @@ import { insertContentToEditor, setCursorPosition, isMarkdownFileCheck, noActive
 import { isCursorInsideYamlHeader } from "../helper/yaml-metadata";
 import { sendTelemetryData } from "../helper/telemetry";
 
-const telemetryCommand: string = "insertMoniker";
-let sign: string = "";
+
 
 export function insertMonikerCommand() {
     const commands = [
@@ -16,7 +15,10 @@ export function insertMonikerCommand() {
 }
 
 export function insertMoniker() {
+
     const editor = window.activeTextEditor;
+    let sign: string = "";
+
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -32,24 +34,24 @@ export function insertMoniker() {
         return;
     }
 
-    const moniker_options = [
+    const monikerOptions = [
         "range equals",
         "range greater than or equal",
         "range less than or equal",
     ];
 
-    window.showQuickPick(moniker_options).then((qpSelection) => {
+    window.showQuickPick(monikerOptions).then((qpSelection) => {
         if (!qpSelection) {
             return;
         }
-        if (qpSelection == moniker_options[0]) {
+        if (qpSelection === monikerOptions[0]) {
             sign = "";
 
         }
-        if (qpSelection == moniker_options[1]) {
+        if (qpSelection === monikerOptions[1]) {
             sign = ">=";
         }
-        if (qpSelection == moniker_options[2]) {
+        if (qpSelection === monikerOptions[2]) {
             sign = "<=";
         }
 
@@ -68,7 +70,7 @@ export function insertMoniker() {
 
 // cursor is in the YAML metadata block
 function insertYamlMoniker(editor: TextEditor, sign: string) {
-
+    const telemetryCommand: string = "insertMoniker";
     const insertText = `monikerRange: '${sign}'`;
     const cursorIndex = insertText.indexOf("'") + sign.length + 1;
     insertContentToEditor(editor, insertYamlMoniker.name, insertText, false);
@@ -81,7 +83,7 @@ function insertYamlMoniker(editor: TextEditor, sign: string) {
 
 //cursor is in the Markdown body of the file
 function insertMarkdownMoniker(editor: TextEditor, sign: string) {
-
+    const telemetryCommand: string = "insertMoniker";
     const insertText = `::: moniker range="${sign}"\n\n::: moniker-end`;
     insertContentToEditor(editor, insertMarkdownMoniker.name, insertText, false);
     const cursorIndex = insertText.indexOf(`"`) + sign.length + 1;
