@@ -149,6 +149,7 @@ async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementF
                     }
                 }
 
+                // tslint:disable no-string-literal
                 tryAssignReplacement(fsPath, "manager", fileMetadata["manager"]);
                 tryAssignReplacement(fsPath, "titleSuffix", fileMetadata["titleSuffix"]);
                 tryAssignReplacement(fsPath, "ms.service", fileMetadata["ms.service"]);

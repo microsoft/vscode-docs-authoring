@@ -1,11 +1,10 @@
 "use strict";
 
-import { window, Selection, Range, TextEditorEdit } from "vscode";
+import { Range, Selection, TextEditorEdit, window } from "vscode";
 import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, postWarning, showStatusMessage } from "../helper/common";
-import { sendTelemetryData } from "../helper/telemetry";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBold, isBoldAndItalic } from "../helper/format-styles";
-import { reporter } from "../helper/telemetry";
+import { reporter, sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "formatBold";
 
@@ -30,11 +29,11 @@ export function formatBold() {
             return;
         }
 
-        let selections: Selection[] = editor.selections;
+        const selections: Selection[] = editor.selections;
         let range;
 
         // if unselect text, add bold syntax without any text
-        if (selections.length == 0) {
+        if (selections.length === 0) {
             const cursorPosition = editor.selection.active;
             const selectedText = "";
             // assumes the range of bold syntax
@@ -47,7 +46,7 @@ export function formatBold() {
         }
 
         // if only a selection is made with a single cursor
-        if (selections.length == 1) {
+        if (selections.length === 1) {
             const selection = editor.selection;
             const selectedText = editor.document.getText(selection);
             const cursorPosition = editor.selection.active;
@@ -61,21 +60,21 @@ export function formatBold() {
 
         // if mulitple cursors were used to make selections
         if (selections.length > 1) {
-            editor.edit(function (edit: TextEditorEdit): void {
+            editor.edit((edit: TextEditorEdit): void => {
                 selections.forEach((selection: Selection) => {
                     for (let i = selection.start.line; i <= selection.end.line; i++) {
-                        let selectedText = editor.document.getText(selection);
-                        let formattedText = bold(selectedText);
+                        const selectedText = editor.document.getText(selection);
+                        const formattedText = bold(selectedText);
                         edit.replace(selection, formattedText);
                     }
                 });
-            }).then(success => {
+            }).then((success) => {
                 if (!success) {
                     postWarning("Could not format selections. Abandoning command.");
                     showStatusMessage("Could not format selections. Abandoning command.");
                     return;
                 }
-            })
+            });
         }
     }
     sendTelemetryData(telemetryCommand, "");
