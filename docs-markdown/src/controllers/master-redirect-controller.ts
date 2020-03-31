@@ -1,16 +1,17 @@
 "use strict";
 
 import * as fs from "fs";
-import * as dir from "node-dir";
 import { homedir } from "os";
 import { basename, extname, join, relative } from "path";
+import * as recursive from "recursive-readdir";
 import { URL } from "url";
 import { commands, Position, Selection, TextEditor, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder } from "vscode";
-import * as YAML from "yamljs";
 import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
 import { output } from "../helper/output";
 import { sendTelemetryData } from "../helper/telemetry";
 import * as yamlMetadata from "../helper/yaml-metadata";
+// tslint:disable-next-line: no-var-requires
+const jsyaml = require("js-yaml");
 
 const telemetryCommand: string = "masterRedirect";
 const redirectFileName: string = ".openpublishing.redirection.json";
@@ -342,7 +343,7 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
                 return;
             }
 
-            dir.files(workspacePath, (err: any, files: any) => {
+            recursive(workspacePath, (err: any, files: any) => {
                 if (err) {
                     window.showErrorMessage(err);
                     return;
@@ -361,7 +362,7 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
                         const metadataContent = mdContent.getYamlMetadataContent();
 
                         if (metadataContent !== "") {
-                            const yamlHeader = YAML.parse(metadataContent.toLowerCase());
+                            const yamlHeader = jsyaml.load(metadataContent.toLowerCase());
 
                             if (yamlHeader != null && yamlHeader.redirect_url != null) {
                                 if (yamlHeader.redirect_document_id !== true) {

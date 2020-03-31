@@ -2,7 +2,10 @@
 
 'use strict';
 
+const TerserPlugin = require('terser-webpack-plugin');
+
 const path = require('path');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -26,7 +29,15 @@ const config = {
     },
     optimization: {
         // We no not want to minimize our code.
-        minimize: false
+        usedExports: true,
+        minimizer: [
+            new TerserPlugin({
+                terserOptions: {
+                    keep_classnames: true,
+                    keep_fnames: true
+                }
+            })
+        ]
     },
     module: {
         rules: [
@@ -40,6 +51,9 @@ const config = {
                 ]
             }
         ]
-    }
+    },
+    plugins: [
+        // new BundleAnalyzerPlugin()
+    ]
 };
 module.exports = config;

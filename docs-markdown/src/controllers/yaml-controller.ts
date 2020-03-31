@@ -1,8 +1,8 @@
 "use strict";
 
 import { readFileSync } from "fs";
-import { files } from "node-dir";
 import { basename, dirname, extname, join, relative } from "path";
+import * as recursive from "recursive-readdir";
 import { QuickPickItem, window, workspace } from "vscode";
 import { insertedTocEntry, invalidTocEntryPosition, noHeading, noHeadingSelected } from "../constants/log-messages";
 import { insertContentToEditor, noActiveEditorMessage, showStatusMessage } from "../helper/common";
@@ -46,7 +46,7 @@ export function showQuickPick(options: boolean) {
   }
 
   // tslint:disable: no-shadowed-variable
-  files(folderPath, (err: any, files: any) => {
+  recursive(folderPath, (err: any, files: any) => {
     if (err) {
       window.showErrorMessage(err);
       throw err;

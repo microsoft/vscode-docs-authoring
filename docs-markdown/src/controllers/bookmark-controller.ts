@@ -1,8 +1,8 @@
 "use strict";
 
-import { readFileSync } from "fs";
-import { files } from "node-dir";
+import { existsSync, readFileSync } from "fs";
 import { basename, dirname, extname, join, relative, resolve } from "path";
+import * as recursive from "recursive-readdir";
 import { QuickPickItem, window, workspace } from "vscode";
 import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/bookmark-builder";
 import { insertContentToEditor, noActiveEditorMessage } from "../helper/common";
@@ -41,9 +41,8 @@ export function insertBookmarkExternal() {
 
     // Check to see if the active file has been saved.  If it has not been saved, warn the user.
     // The user will still be allowed to add a link but it the relative path will not be resolved.
-    const fileExists = require("file-exists");
 
-    if (!fileExists(activeFileName)) {
+    if (!existsSync(activeFileName)) {
         window.showWarningMessage(`${activeFilePath} is not saved.  Cannot accurately resolve path to create link.`);
         return;
     }
@@ -52,7 +51,7 @@ export function insertBookmarkExternal() {
     }
 
     // recursively get all the files from the root folder
-    files(folderPath, (err: any, mdFiles: any) => {
+    recursive(folderPath, (err: any, mdFiles: any) => {
         if (err) {
             window.showErrorMessage(err);
             throw err;
