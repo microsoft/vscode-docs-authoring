@@ -1,5 +1,6 @@
 "use strict";
 
+import { existsSync } from "fs";
 import * as vscode from "vscode";
 import { insertBookmarkExternal, insertBookmarkInternal } from "../controllers/bookmark-controller";
 import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, isValidFileCheck, noActiveEditorMessage, postWarning, setCursorPosition, unsupportedFileMessage } from "../helper/common";
@@ -310,8 +311,7 @@ export function Insert(mediaType: MediaType, options?: any) {
 
         // Check to see if the active file has been saved.  If it has not been saved, warn the user.
         // The user will still be allowed to add a link but it the relative path will not be resolved.
-        const fileExists = require("file-exists");
-        if (!fileExists(activeFileName)) {
+        if (!existsSync(activeFileName)) {
             vscode.window.showWarningMessage(`${activeFilePath} is not saved. Cannot accurately resolve path to create link.`);
             return;
         }

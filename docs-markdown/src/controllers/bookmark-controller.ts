@@ -1,6 +1,6 @@
 "use strict";
 
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { files } from "node-dir";
 import { basename, dirname, extname, join, relative, resolve } from "path";
 import { QuickPickItem, window, workspace } from "vscode";
@@ -41,9 +41,8 @@ export function insertBookmarkExternal() {
 
     // Check to see if the active file has been saved.  If it has not been saved, warn the user.
     // The user will still be allowed to add a link but it the relative path will not be resolved.
-    const fileExists = require("file-exists");
 
-    if (!fileExists(activeFileName)) {
+    if (!existsSync(activeFileName)) {
         window.showWarningMessage(`${activeFilePath} is not saved.  Cannot accurately resolve path to create link.`);
         return;
     }

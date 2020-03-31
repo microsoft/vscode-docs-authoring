@@ -1,7 +1,7 @@
 "use strict";
 
 import { QuickPickOptions, Range, Selection, TextEditorEdit, window } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, showStatusMessage } from "../helper/common";
+import { checkEditor, insertContentToEditor, noActiveEditorMessage, postWarning, showStatusMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isInlineCode, isMultiLineCode } from "../helper/format-styles";
 import { getLanguageIdentifierQuickPickItems, languages } from "../helper/highlight-langs";
@@ -24,15 +24,8 @@ export function formatCode() {
     if (!editor) {
         noActiveEditorMessage();
         return;
-    } else {
-        if (!isValidEditor(editor, true, "format code")) {
-            return;
-        }
-
-        if (!isMarkdownFileCheck(editor, false)) {
-            return;
-        }
-
+    }
+    if (checkEditor(editor)) {
         const selection = editor.selection;
         const selectedText = editor.document.getText(selection);
         // Show code language list if the selected text spans multiple lines and is not already formatted as code block.

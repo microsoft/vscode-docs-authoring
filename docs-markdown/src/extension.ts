@@ -11,7 +11,7 @@ import { insertAlertCommand } from "./controllers/alert-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand, applyCleanupFile, applyCleanupFolder } from "./controllers/cleanup/cleanup-controller";
 import { codeFormattingCommand } from "./controllers/code-controller";
-import { insertImageCommand } from "./controllers/image-controller";
+import { insertImageCommand } from "./controllers/image/image-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
 import { italicFormattingCommand } from "./controllers/italic-controller";
 import { insertListsCommands } from "./controllers/list-controller";

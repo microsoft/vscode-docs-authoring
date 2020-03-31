@@ -8,6 +8,7 @@ import * as vscode from "vscode";
 
 import * as log from "./log";
 import { output } from "./output";
+import { sendTelemetryData } from "./telemetry";
 
 export function tryFindFile(rootPath: string, fileName: string) {
     try {
@@ -424,4 +425,44 @@ export function escapeRegExp(content: string) {
 
 export function splice(insertAsPosition: number, content: string, insertStr: string) {
     return content.slice(0, insertAsPosition) + insertStr + content.slice(insertAsPosition);
+}
+
+export function checkEditor(editor: any) {
+    const actionType: string = "Get File for Image or Code";
+    const telemetryCommandMedia: string = "insertMedia";
+    const telemetryCommandLink: string = "insertLink";
+    let commandOption: string;
+    // determines the name to set in the ValidEditor check
+    commandOption = "art";
+    sendTelemetryData(telemetryCommandMedia, commandOption);
+
+    // checks for valid environment
+    if (!isValidEditor(editor, false, actionType)) {
+        return;
+    }
+
+    if (!isMarkdownFileCheck(editor, false)) {
+        return;
+    }
+
+    if (!hasValidWorkSpaceRootPath(telemetryCommandLink)) {
+        return;
+    }
+
+    // The active file should be used as the origin for relative links.
+    // The path is split so the file type is not included when resolving the path.
+    const activeFileName = editor.document.fileName;
+    const pathDelimited = editor.document.fileName.split(".");
+    const activeFilePath = pathDelimited[0];
+
+    // Check to see if the active file has been saved.  If it has not been saved, warn the user.
+    // The user will still be allowed to add a link but it the relative path will not be resolved.
+
+    if (!fs.existsSync(activeFileName)) {
+        vscode.window.showWarningMessage(activeFilePath +
+            " is not saved.  Cannot accurately resolve path to create link.");
+        return;
+    }
+
+    return true;
 }
