@@ -9,6 +9,8 @@ import { extname, join, resolve } from "path";
 import * as log from "./log";
 import { output } from "./output";
 
+export const ignoreFiles = [".git", ".github", ".vscode", ".vs", "node_module"];
+
 export function tryFindFile(rootPath: string, fileName: string) {
     try {
         const fullPath = resolve(rootPath, fileName);

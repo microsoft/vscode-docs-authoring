@@ -1,6 +1,6 @@
 import * as recursive from "recursive-readdir";
 import { QuickPickItem, QuickPickOptions, Range, Selection, TextDocument, TextDocumentChangeEvent, TextEditor, window, workspace } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheckWithoutNotification, matchAll, postWarning } from "./common";
+import { ignoreFiles, insertContentToEditor, isMarkdownFileCheckWithoutNotification, matchAll, postWarning } from "./common";
 import { getLanguageIdentifierQuickPickItems, IHighlightLanguage, languages } from "./highlight-langs";
 import * as log from "./log";
 /**
@@ -110,7 +110,7 @@ export async function search(editor: TextEditor, selection: Selection, folderPat
         }
 
         // searches for all files at the given directory path.
-        const files = await recursive(fullPath);
+        const files = await recursive(fullPath, ignoreFiles);
         const fileOptions: QuickPickItem[] = [];
 
         for (const file in files) {

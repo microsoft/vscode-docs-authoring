@@ -1,5 +1,5 @@
 import { readFile, writeFile } from "graceful-fs";
-import { postError, showStatusMessage } from "../../helper/common";
+import { ignoreFiles, postError, showStatusMessage } from "../../helper/common";
 import { reporter } from "../../helper/telemetry";
 import { generateMasterRedirectionFile } from "../master-redirect-controller";
 import { lowerCaseData } from "./capitalizationOfMetadata";
@@ -61,7 +61,7 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
     const unusedFiles = await getMdAndIncludesFiles(workspacePath);
     return new Promise((chainResolve, chainReject) =>
         recursive(workspacePath,
-            [".git", ".github", ".vscode", ".vs", "node_module"],
+            ignoreFiles,
             (err: any, files: string[]) => {
                 if (err) {
                     postError(err);

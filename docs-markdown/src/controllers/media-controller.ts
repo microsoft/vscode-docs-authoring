@@ -4,7 +4,7 @@ import { existsSync } from "graceful-fs";
 import * as recursive from "recursive-readdir";
 import * as vscode from "vscode";
 import { insertBookmarkExternal, insertBookmarkInternal } from "../controllers/bookmark-controller";
-import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, isValidFileCheck, noActiveEditorMessage, postWarning, setCursorPosition, unsupportedFileMessage } from "../helper/common";
+import { hasValidWorkSpaceRootPath, ignoreFiles, insertContentToEditor, isMarkdownFileCheck, isValidEditor, isValidFileCheck, noActiveEditorMessage, postWarning, setCursorPosition, unsupportedFileMessage } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 import { externalLinkBuilder, internalLinkBuilder, videoLinkBuilder } from "../helper/utility";
 const telemetryCommandMedia: string = "insertMedia";
@@ -171,7 +171,7 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
     }
 
     // recursively get all the files from the root folder
-    recursive(folderPath, (err: any, files: any) => {
+    recursive(folderPath, ignoreFiles, (err: any, files: any) => {
         if (err) {
             vscode.window.showErrorMessage(err);
             throw err;

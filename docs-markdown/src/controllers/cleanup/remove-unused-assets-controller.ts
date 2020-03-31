@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, readFile, rename } from "graceful-fs";
 import { homedir } from "os";
 import { basename, dirname, extname, join } from "path";
 import { Progress } from "vscode";
-import { postError, showStatusMessage } from "../../helper/common";
+import { ignoreFiles, postError, showStatusMessage } from "../../helper/common";
 import { output } from "../../helper/output";
 import { imageExtensions, markdownExtensionFilter } from "../media-controller";
 import { showProgress } from "./utilities";
@@ -66,7 +66,7 @@ export function removeUnusedImagesAndIncludes(progress: any, file: string, files
 export async function removeUnused(progress: Progress<any>, workspacePath: string) {
     const unusedFiles = await getMdAndIncludesFiles(workspacePath);
     return new Promise((chainResolve, chainReject) =>
-        recursive(workspacePath, [".git", ".github", ".vscode", ".vs", "node_module"], (err: any, files: string[]) => {
+        recursive(workspacePath, ignoreFiles, (err: any, files: string[]) => {
             if (err) {
                 postError(err);
                 chainReject();

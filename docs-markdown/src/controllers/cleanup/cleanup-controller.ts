@@ -3,7 +3,7 @@
 import { existsSync } from "graceful-fs";
 import { basename, extname, join } from "path";
 import { ProgressLocation, QuickPickItem, QuickPickOptions, Uri, window, workspace } from "vscode";
-import { postError, showStatusMessage, showWarningMessage } from "../../helper/common";
+import { ignoreFiles, postError, showStatusMessage, showWarningMessage } from "../../helper/common";
 import { sendTelemetryData } from "../../helper/telemetry";
 import { generateMasterRedirectionFile } from "../master-redirect-controller";
 import { addPeriodsToAlt } from "./addPeriodsToAlt";
@@ -228,7 +228,7 @@ export async function applyCleanupFolder(uri: Uri) {
             let message = "";
             let statusMessage = "";
             recursive(uri.fsPath,
-                [".git", ".github", ".vscode", ".vs", "node_module"],
+                ignoreFiles,
                 async (err: any, files: string[]) => {
                     if (err) {
                         postError(err);
@@ -512,7 +512,7 @@ export async function applyCleanup() {
                             statusMessage = "Cleanup: Metadata attribute cleanup completed.";
                             promises.push(new Promise((chainResolve, chainReject) => {
                                 recursive(workspacePath,
-                                    [".git", ".github", ".vscode", ".vs", "node_module"],
+                                    ignoreFiles,
                                     (err: any, files: string[]) => {
                                         if (err) {
                                             postError(err);

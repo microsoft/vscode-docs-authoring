@@ -4,7 +4,7 @@ import { existsSync } from "fs";
 import { basename, dirname, extname, join, relative } from "path";
 import * as recursive from "recursive-readdir";
 import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, workspace } from "vscode";
-import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, setCursorPosition } from "../helper/common";
+import { hasValidWorkSpaceRootPath, ignoreFiles, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, setCursorPosition } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommandMedia: string = "insertMedia";
@@ -107,7 +107,7 @@ export async function applyImage() {
         }
 
         // recursively get all the files from the root folder
-        recursive(folderPath, async (err: any, files: any) => {
+        recursive(folderPath, ignoreFiles, async (err: any, files: any) => {
             if (err) {
                 window.showErrorMessage(err);
             }
@@ -262,7 +262,7 @@ export async function applyIcon() {
             }
 
             // recursively get all the files from the root folder
-            recursive(folderPath, async (err: any, files: any) => {
+            recursive(folderPath, ignoreFiles, async (err: any, files: any) => {
                 if (err) {
                     window.showErrorMessage(err);
                 }
@@ -314,7 +314,7 @@ export async function applyComplex() {
         }
 
         // recursively get all the files from the root folder
-        recursive(folderPath, async (err: any, files: any) => {
+        recursive(folderPath, ignoreFiles, async (err: any, files: any) => {
             if (err) {
                 window.showErrorMessage(err);
             }
@@ -451,7 +451,7 @@ export async function applyLightbox() {
             folderPath = workspace.workspaceFolders[0].uri.fsPath;
         }
         // get available files
-        recursive(folderPath, async (err: any, files: any) => {
+        recursive(folderPath, ignoreFiles, async (err: any, files: any) => {
             if (err) {
                 window.showErrorMessage(err);
             }

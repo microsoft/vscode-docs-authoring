@@ -6,7 +6,7 @@ import { basename, extname, join, relative } from "path";
 import * as recursive from "recursive-readdir";
 import { URL } from "url";
 import { commands, Position, Selection, TextEditor, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder } from "vscode";
-import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
+import { generateTimestamp, ignoreFiles, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
 import { output } from "../helper/output";
 import { sendTelemetryData } from "../helper/telemetry";
 import * as yamlMetadata from "../helper/yaml-metadata";
@@ -343,7 +343,7 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
                 return;
             }
 
-            recursive(workspacePath, (err: any, files: any) => {
+            recursive(workspacePath, ignoreFiles, (err: any, files: any) => {
                 if (err) {
                     window.showErrorMessage(err);
                     return;

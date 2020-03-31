@@ -5,7 +5,7 @@ import { basename, dirname, extname, join, relative, resolve } from "path";
 import * as recursive from "recursive-readdir";
 import { QuickPickItem, window, workspace } from "vscode";
 import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/bookmark-builder";
-import { insertContentToEditor, noActiveEditorMessage } from "../helper/common";
+import { ignoreFiles, insertContentToEditor, noActiveEditorMessage } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertBookmark";
@@ -51,7 +51,7 @@ export function insertBookmarkExternal() {
     }
 
     // recursively get all the files from the root folder
-    recursive(folderPath, (err: any, mdFiles: any) => {
+    recursive(folderPath, ignoreFiles, (err: any, mdFiles: any) => {
         if (err) {
             window.showErrorMessage(err);
             throw err;
