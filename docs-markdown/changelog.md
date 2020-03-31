@@ -98,7 +98,7 @@
 ## 0.2.24 (November 5th, 2019)
 
 - Update link UI
-- Add link checker extension support (<https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD)>
+- Add link checker extension support (https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD)
 
 ## 0.2.23 (October 14th, 2019)
 
