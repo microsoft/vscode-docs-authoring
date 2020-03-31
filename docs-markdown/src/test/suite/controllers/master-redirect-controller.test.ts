@@ -17,7 +17,7 @@ suite("Master Redirect Controller", () => {
         const redirectUrl = RedirectUrl.parse(options, url);
 
         expect(redirectUrl!.filePath).to.equal("articles/subject/file.md");
-        expect(redirectUrl!.toUrl()).to.equal("/azure/subject/file");
+        expect(redirectUrl!.toRelativeUrl()).to.equal("/azure/subject/file");
     });
 
     test("RedirectUrl parse relative standard path", () => {
@@ -25,7 +25,7 @@ suite("Master Redirect Controller", () => {
         const redirectUrl = RedirectUrl.parse(options, url);
 
         expect(redirectUrl!.filePath).to.equal("articles/subject/file.md");
-        expect(redirectUrl!.toUrl()).to.equal(url);
+        expect(redirectUrl!.toRelativeUrl()).to.equal(url);
     });
 
     test("RedirectUrl parse handles hash tag", () => {
@@ -33,7 +33,7 @@ suite("Master Redirect Controller", () => {
         const redirectUrl = RedirectUrl.parse(options, url);
 
         expect(redirectUrl!.filePath).to.equal("articles/subject/file.md");
-        expect(redirectUrl!.toUrl()).to.equal("/azure/subject/file");
+        expect(redirectUrl!.toRelativeUrl()).to.equal("/azure/subject/file");
         expect(redirectUrl!.url.hash).to.equal("#bookmark");
     });
 
@@ -42,7 +42,7 @@ suite("Master Redirect Controller", () => {
         const redirectUrl = RedirectUrl.parse(options, url);
 
         expect(redirectUrl!.filePath).to.equal("articles/subject/file.md");
-        expect(redirectUrl!.toUrl()).to.equal("/azure/subject/file");
+        expect(redirectUrl!.toRelativeUrl()).to.equal("/azure/subject/file");
         expect(redirectUrl!.url.search).to.equal("?pivot=lang-csharp");
     });
 

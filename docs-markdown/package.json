@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.61",
+  "version": "0.2.62",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -46,6 +46,16 @@
       {
         "command": "applyRedirectDaisyChainResolution",
         "title": "Resolve redirection file daisy-chains",
+        "category": "Docs"
+      },
+      {
+        "command": "detectInvalidDocumentIdRedirects",
+        "title": "Fix invalid redirect_document_ids",
+        "category": "Docs"
+      },
+      {
+        "command": "removeDefaultValuesInRedirects",
+        "title": "Remove default redirect_document_id values",
         "category": "Docs"
       },
       {
@@ -301,6 +311,14 @@
         },
         {
           "command": "applyRedirectDaisyChainResolution",
+          "group": "Docs"
+        },
+        {
+          "command": "detectInvalidDocumentIdRedirects",
+          "group": "Docs"
+        },
+        {
+          "command": "removeDefaultValuesInRedirects",
           "group": "Docs"
         },
         {

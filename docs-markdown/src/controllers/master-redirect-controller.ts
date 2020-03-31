@@ -3,9 +3,9 @@
 import * as fs from "fs";
 import * as dir from "node-dir";
 import { homedir } from "os";
-import { basename, extname, join, relative } from "path";
+import { basename, extname, join, relative, resolve } from "path";
 import { URL } from "url";
-import { commands, Position, Selection, TextEditor, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder } from "vscode";
+import { commands, Position, ProgressLocation, Selection, TextEditor, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder } from "vscode";
 import * as YAML from "yamljs";
 import { generateTimestamp, naturalLanguageCompare, postError, postWarning, tryFindFile } from "../helper/common";
 import { output } from "../helper/output";
@@ -20,6 +20,8 @@ export function getMasterRedirectionCommand() {
         { command: generateMasterRedirectionFile.name, callback: generateMasterRedirectionFile },
         { command: sortMasterRedirectionFile.name, callback: sortMasterRedirectionFile },
         { command: applyRedirectDaisyChainResolution.name, callback: applyRedirectDaisyChainResolution },
+        { command: detectInvalidDocumentIdRedirects.name, callback: detectInvalidDocumentIdRedirects },
+        { command: removeDefaultValuesInRedirects.name, callback: removeDefaultValuesInRedirects },
     ];
 }
 
@@ -72,6 +74,7 @@ export class RedirectionFile implements IMasterRedirection {
 interface IMarkdownConfig {
     docsetName: string;
     docsetRootFolderName: string;
+    omitDefaultJsonProperties?: boolean;
 }
 
 const docsHost = "docs.microsoft.com";
@@ -115,7 +118,7 @@ export class RedirectUrl {
         public readonly originalValue: string,
         public readonly url: URL) { }
 
-    public toUrl(): string {
+    public toRelativeUrl(): string {
         const withoutExtension = this.filePath.replace(".md", "");
         return `/${withoutExtension.replace(this.config.docsetRootFolderName, this.config.docsetName)}`;
     }
@@ -166,16 +169,8 @@ async function applyRedirectDaisyChainResolution() {
         return;
     }
 
-    const config = workspace.getConfiguration("markdown");
-    const options = {
-        docsetName: config.docsetName,
-        docsetRootFolderName: config.docsetRootFolderName,
-    };
-    if (options.docsetName === "" ||
-        options.docsetRootFolderName === "") {
-        // Open the settings, and prompt the user to enter values.
-        await commands.executeCommand("workbench.action.openSettings", "@ext:docsmsft.docs-markdown");
-        postWarning("Please set the Docset Name and Docset Root Folder Name before using this command.");
+    const { config, options } = await getMarkdownOptions();
+    if (!options) {
         return;
     }
 
@@ -195,7 +190,6 @@ async function applyRedirectDaisyChainResolution() {
 
     let daisyChainsResolved = 0;
     let maxDepthResolved = 0;
-    let resolvedDaisyChains = false;
     redirectsLookup.forEach((source, _) => {
         const { redirect: url, redirection: redirect } = source;
         if (!url || !redirect) {
@@ -222,7 +216,7 @@ async function applyRedirectDaisyChainResolution() {
             targetRedirectUrl =
                 isExternalUrl
                     ? targetRedirect!.redirect!.url.toString()
-                    : targetRedirect!.redirect!.toUrl();
+                    : targetRedirect!.redirect!.toRelativeUrl();
             daisyChainPath = targetRedirect!.redirect!.filePath;
             targetRedirect = findRedirect(daisyChainPath);
         }
@@ -241,18 +235,35 @@ async function applyRedirectDaisyChainResolution() {
                     source.redirection.redirect_document_id = false;
                 }
             }
-
-            resolvedDaisyChains = true;
         }
     });
 
-    if (resolvedDaisyChains) {
+    if (daisyChainsResolved > 0) {
         await updateRedirects(editor, redirects, config);
         const numberFormat = Intl.NumberFormat();
         showStatusMessage(`Resolved ${numberFormat.format(daisyChainsResolved)} daisy chains, at a max-depth of ${maxDepthResolved}!`);
     } else {
         showStatusMessage("There are no daisy chains found.");
     }
+}
+
+async function getMarkdownOptions(): Promise<{ config: WorkspaceConfiguration, options: IMarkdownConfig | null }> {
+    const config = workspace.getConfiguration("markdown");
+    const options = {
+        docsetName: config.docsetName,
+        docsetRootFolderName: config.docsetRootFolderName,
+        omitDefaultJsonProperties: config.omitDefaultJsonProperties,
+    };
+
+    if (options.docsetName === "" ||
+        options.docsetRootFolderName === "") {
+        // Open the settings, and prompt the user to enter values.
+        await commands.executeCommand("workbench.action.openSettings", "@ext:docsmsft.docs-markdown");
+        postWarning("Please set the Docset Name and Docset Root Folder Name before using this command.");
+        return { config, options: null };
+    }
+
+    return { config, options };
 }
 
 async function updateRedirects(editor: TextEditor, redirects: IMasterRedirections | null, config: WorkspaceConfiguration) {
@@ -314,7 +325,158 @@ export async function sortMasterRedirectionFile() {
     }
 }
 
-export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) {
+export async function removeDefaultValuesInRedirects() {
+    const editor = window.activeTextEditor;
+    if (!editor) {
+        postWarning("Editor not active. Abandoning command.");
+        return;
+    }
+
+    const folder = workspace.getWorkspaceFolder(editor.document.uri);
+    if (folder) {
+        const file = tryFindFile(folder.uri.fsPath, redirectFileName);
+        if (!!file && fs.existsSync(file)) {
+            const jsonBuffer = fs.readFileSync(file);
+            const redirects = JSON.parse(jsonBuffer.toString()) as IMasterRedirections;
+            if (redirects && redirects.redirections && redirects.redirections.length) {
+                const { config, options } = await getMarkdownOptions();
+                if (!options || !config) {
+                    return;
+                }
+
+                // Explicitly remove them from this command
+                options.omitDefaultJsonProperties = true;
+
+                let removedDefaults = 0;
+                redirects.redirections.forEach((redirect) => {
+                    if (redirect.redirect_document_id === false) {
+                        removedDefaults++;
+                    }
+                });
+
+                if (removedDefaults > 0) {
+                    await updateRedirects(editor, redirects, config);
+                    const numberFormat = Intl.NumberFormat();
+                    showStatusMessage(`Removed ${numberFormat.format(removedDefaults)} redirect_document_id values.`);
+                } else {
+                    showStatusMessage("All redirect_document_id values are either true or omitted.");
+                }
+            }
+        }
+    }
+}
+
+export async function detectInvalidDocumentIdRedirects() {
+    const editor = window.activeTextEditor;
+    if (!editor) {
+        postWarning("Editor not active. Abandoning command.");
+        return;
+    }
+
+    const folder = workspace.getWorkspaceFolder(editor.document.uri);
+    if (folder) {
+        const file = tryFindFile(folder.uri.fsPath, redirectFileName);
+        if (!!file && fs.existsSync(file)) {
+            const jsonBuffer = fs.readFileSync(file);
+            const redirects = JSON.parse(jsonBuffer.toString()) as IMasterRedirections;
+            if (redirects && redirects.redirections && redirects.redirections.length) {
+                const { config, options } = await getMarkdownOptions();
+                if (!options || !config) {
+                    return;
+                }
+
+                const redirectsLookup = new Map<string, { redirect: RedirectUrl | null, redirection: IMasterRedirection }>();
+                redirects.redirections.forEach((r) => {
+                    if (!r.redirect_document_id) {
+                        return;
+                    }
+                    redirectsLookup.set(r.source_path, {
+                        redirect: RedirectUrl.parse(options, r.redirect_url),
+                        redirection: r,
+                    });
+                });
+
+                const fileExists = (filePath: string) => {
+                    try {
+                        const fullPath = resolve(folder.uri.fsPath, filePath);
+                        return fs.existsSync(fullPath);
+                    } catch {
+                        return false;
+                    }
+                };
+
+                let fixesApplied = 0;
+                try {
+                    fixesApplied = await window.withProgress({
+                        cancellable: true,
+                        location: ProgressLocation.Notification,
+                        title: "Detecting invalid redirects",
+                    }, async (progress, token) => {
+                        token.onCancellationRequested(() => {
+                            postError("User canceled the long running operation");
+                        });
+
+                        const message = "Detecting invalid redirects, this may take a while.";
+                        showStatusMessage(message);
+                        progress.report({ message });
+
+                        const size = redirectsLookup.size;
+                        let index = 0;
+                        let fixes = 0;
+                        redirectsLookup.forEach(async (source, _) => {
+                            index++;
+                            progress.report({ message: `Validating ${index} of ${size}.`, increment: index });
+
+                            const { redirect: url, redirection: redirect } = source;
+                            if (!url || !redirect) {
+                                return;
+                            }
+
+                            if (!!redirect.redirect_document_id) {
+                                if (url.isExternalUrl) {
+                                    redirect.redirect_document_id = false;
+                                    fixes++;
+                                    return;
+                                }
+
+                                if (!redirect.redirect_url.startsWith(`/${options.docsetName}/`)) {
+                                    redirect.redirect_document_id = false;
+                                    fixes++;
+                                    return;
+                                }
+
+                                const files = [
+                                    url.filePath,
+                                    url.filePath.replace(".md", "/index.md"),
+                                    url.filePath.replace(".md", "/index.yml"),
+                                ];
+                                if (!files.some((path: string) => fileExists(path))) {
+                                    redirect.redirect_document_id = false;
+                                    fixes++;
+                                    return;
+                                }
+                            }
+                        });
+
+                        return fixes;
+                    });
+                } catch (error) {
+                    showStatusMessage(`Something went wrong: ${error.toString()}`);
+                }
+
+                if (fixesApplied > 0) {
+                    await updateRedirects(editor, redirects, config);
+                    const numberFormat = Intl.NumberFormat();
+                    showStatusMessage(`Fixed ${numberFormat.format(fixesApplied)} invalid redirect_document_id values.`);
+                } else {
+                    showStatusMessage("All redirect_document_id values appear to be valid.");
+                }
+            }
+        }
+    }
+}
+
+export function generateMasterRedirectionFile(rootPath?: string, done?: any) {
     const editor = window.activeTextEditor;
     let workspacePath: string;
     if (editor) {
@@ -380,8 +542,8 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
 
                 if (redirectionFiles.length === 0) {
                     showStatusMessage("No redirection files found.");
-                    if (resolve) {
-                        resolve();
+                    if (done) {
+                        done();
                     }
                 }
 
@@ -424,8 +586,8 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
                                     masterRedirection.redirections.push(item);
                                 } else {
                                     showStatusMessage("No redirection files found to add.");
-                                    if (resolve) {
-                                        resolve();
+                                    if (done) {
+                                        done();
                                     }
                                 }
                             }
@@ -489,8 +651,8 @@ export function generateMasterRedirectionFile(rootPath?: string, resolve?: any) 
 
                         showStatusMessage("Redirected files copied to " + deletedRedirectsPath);
                         showStatusMessage("Done");
-                        if (resolve) {
-                            resolve();
+                        if (done) {
+                            done();
                         }
                     }
                 }
