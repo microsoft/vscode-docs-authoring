@@ -21,25 +21,23 @@
             "args": [
                 "webpack"
             ],
-            // use 2 regex:
-            // 1st the file, then the problem       
-            "problemMatcher": {
-                "owner": "webpack",
-                "severity": "error",
-                "fileLocation": "relative",
-                "pattern": [
-                    {
-                        "regexp": "ERROR in (.*)",
-                        "file": 1
-                    },
-                    {
-                        "regexp": "\\((\\d+),(\\d+)\\):(.*)",
-                        "line": 1,
-                        "column": 2,
-                        "message": 3
+            "problemMatcher": [
+                {
+                    "pattern": [
+                        {
+                            "regexp": ".",
+                            "file": 1,
+                            "location": 2,
+                            "message": 3
+                        }
+                    ],
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": ".",
+                        "endsPattern": ".",
                     }
-                ]
-            }
+                }
+            ]
         },
         {
             //Test Task   

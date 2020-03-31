@@ -126,15 +126,6 @@ export async function applyCleanupFile(uri: Uri) {
                     message = "Add periods to alt text values completed.";
                     commandOption = "add-periods-to-alt-text";
                     break;
-                case "master redirection file":
-                    showStatusMessage("Cleanup: Master redirection started.");
-                    message = "Master redirection started.";
-                    progress.report({ increment: 1, message });
-                    statusMessage = "Cleanup: Master redirection completed.";
-                    generateMasterRedirectionFile(file, resolve);
-                    message = "Master redirection complete.";
-                    commandOption = "redirects";
-                    break;
                 case "everything":
                     showStatusMessage("Cleanup: Everything started.");
                     message = "Everything started.";
@@ -464,7 +455,7 @@ export async function applyCleanup() {
                             message = "Master redirection started.";
                             progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Master redirection completed.";
-                            generateMasterRedirectionFile(workspacePath, resolve);
+                            await generateMasterRedirectionFile(workspacePath, resolve);
                             message = "Master redirection complete.";
                             commandOption = "redirects";
                             break;
