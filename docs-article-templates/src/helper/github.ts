@@ -1,9 +1,9 @@
 "use-strict";
 
+import Axios from "axios";
 import { readdir, stat, unlinkSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
-import Axios from 'axios';
 import { displayTemplates } from "../controllers/quick-pick-controller";
 import { postWarning, showStatusMessage } from "../helper/common";
 

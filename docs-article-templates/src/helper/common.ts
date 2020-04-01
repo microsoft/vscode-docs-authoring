@@ -100,4 +100,3 @@ export function showStatusMessage(message: string) {
     const { msTimeValue } = generateTimestamp();
     output.appendLine(`[${msTimeValue}] - ` + message);
 }
-

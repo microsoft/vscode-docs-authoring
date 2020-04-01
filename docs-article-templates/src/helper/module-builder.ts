@@ -1,7 +1,6 @@
 import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { QuickPickItem, QuickPickOptions, TextDocumentShowOptions, Uri, ViewColumn, window, workspace } from "vscode";
-import { output } from "../extension";
 import { formatLearnNames, showStatusMessage } from "../helper/common";
 import { getUnitName, unitList } from "../helper/unit-builder";
 import { alias, gitHubID, learnRepoId } from "../helper/user-settings";
@@ -95,7 +94,7 @@ export function updateModule(units) {
     }
 
     /* tslint:disable:object-literal-sort-keys one-variable-per-declaration */
-    const yaml = require('js-yaml');
+    const yaml = require("js-yaml");
 
     const moduleMetadata = {
         "title": moduleTitle,
@@ -118,12 +117,13 @@ export function updateModule(units) {
         levels: `...`,
         roles: `...`,
         products: `...`,
+        // tslint:disable-next-line: object-literal-shorthand
         units: units,
         badge: [`{badge}`],
     };
     const moduleIndex = join(modulePath, "index.yml");
     const moduleContent = yaml.dump(moduleData);
-    writeFileSync(moduleIndex, moduleContent)
+    writeFileSync(moduleIndex, moduleContent);
     cleanupModule(moduleIndex);
 }
 
