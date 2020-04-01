@@ -30,6 +30,11 @@
   "contributes": {
     "commands": [
       {
+        "command": "insertMoniker",
+        "title": "Add moniker range",
+        "category": "Docs"
+      },
+      {
         "command": "markdownQuickPick",
         "title": "Docs: Markdown authoring menu"
       },
@@ -315,6 +320,11 @@
         },
         {
           "command": "insertAlert",
+          "group": "Docs",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "insertMoniker",
           "group": "Docs",
           "when": "resourceLangId == markdown"
         },
