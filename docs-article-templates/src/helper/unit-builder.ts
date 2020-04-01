@@ -55,7 +55,7 @@ export function createUnits() {
     }
 
     /* tslint:disable:object-literal-sort-keys one-variable-per-declaration */
-    const yaml = require('js-yaml');
+    const yaml = require("js-yaml");
 
     const unitMetadata = {
         "title": unitTitle,
@@ -124,8 +124,8 @@ export function addUnitToModule(existingModulePath: string) {
     }
 
     /* tslint:disable:object-literal-sort-keys one-variable-per-declaration */
-    const yaml = require('js-yaml');
-    const config = yaml.safeLoad(readFileSync(existingModulePath, 'utf8'));
+    const yaml = require("js-yaml");
+    const config = yaml.safeLoad(readFileSync(existingModulePath, "utf8"));
 
     const unitMetadata = {
         "title": unitTitle,
