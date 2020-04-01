@@ -12,13 +12,13 @@ export function addFrontMatterTitle() {
     // preserve existing markdownlint.config settings if they exist
     if (markdownlintData.globalValue && addFrontMatterTitleSetting) {
         const existingUserSettings = markdownlintData.globalValue;
-        Object.assign(existingUserSettings, { MD025: { "front_matter_title": "" } });
+        Object.assign(existingUserSettings, { MD025: { front_matter_title: "" } });
         workspace.getConfiguration().update(markdownlintProperty, existingUserSettings, ConfigurationTarget.Global);
         showStatusMessage(`Added front_matter_title property to Markdownlint config setting.`);
     }
     // add md025 property and front_matter_title property directly (no existing settings)
     if (!markdownlintData.globalValue && addFrontMatterTitleSetting) {
-        const frontMatterParameter = { MD025: { "front_matter_title": "" } };
+        const frontMatterParameter = { MD025: { front_matter_title: "" } };
         workspace.getConfiguration().update(markdownlintProperty, frontMatterParameter, ConfigurationTarget.Global);
         showStatusMessage(`Added front_matter_title property to Markdownlint config setting.`);
     }
