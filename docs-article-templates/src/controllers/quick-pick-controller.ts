@@ -72,7 +72,7 @@ export function displayTemplates() {
         }
 
         // tslint:disable-next-line:only-arrow-functions
-        templates.sort(function (a, b) {
+        templates.sort(function(a, b) {
             const firstLabel = a.label.toUpperCase();
             const secondLabel = b.label.toUpperCase();
             if (firstLabel < secondLabel) {

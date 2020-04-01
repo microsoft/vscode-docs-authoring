@@ -1,10 +1,15 @@
 # Change Log
 
-## 0.2.62 (March 27th, 2020)
+## 0.2.63 (April 2nd, 2020)
 
 - Bundling with webpack
 
-## 0.2.59 (March 23rd, 2020)
+## 0.2.62 (April 1st, 2020)
+
+- Added moniker insertion feature for metadata and markdown
+- Added the ability to fix invalid redirect_document_id values
+
+## 0.2.60 (March 23rd, 2020)
 
 - Added feature for resolving daisy chained paths in openpublishing.redirection.json
 - Added mocha junit test coverage and nyc code coverage reports
@@ -257,3 +262,4 @@ First release with the following functionality:
 - Includes
 - Snippets
 - Preview
+""''&copy;&trade;&reg;*

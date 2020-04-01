@@ -8,9 +8,8 @@ import { handleYamlMetadata } from "./handleYamlMetadata";
 import { handleLinksWithRegex } from "./microsoftLinks";
 import { getMdAndIncludesFiles, removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller";
 import { readWriteFileWithProgress, showProgress } from "./utilities";
-// tslint:disable-next-line: no-var-requires
+// tslint:disable no-var-requires
 const jsdiff = require("diff");
-// tslint:disable-next-line: no-var-requires
 const recursive = require("recursive-readdir");
 const telemetryCommand: string = "applyCleanup";
 

@@ -17,4 +17,4 @@ export const LinkMessages = {
 export const invalidTocEntryPosition = "Invalid TOC entry position.";
 export const insertedTocEntry = "Added TOC entry.";
 export const noHeading = "No H1 found in file.  Abandoning command.";
-export const noHeadingSelected = "No H1 selected.  Abandoning command."
+export const noHeadingSelected = "No H1 selected.  Abandoning command.";

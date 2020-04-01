@@ -73,9 +73,10 @@
     "vscode-extension-telemetry": "^0.1.1"
   },
   "devDependencies": {
-    "@types/node-dir": "0.0.32",
     "@types/mocha": "^2.2.42",
     "@types/node": "^7.0.43",
+    "@types/node-dir": "0.0.32",
+    "mocha": "^7.1.1",
     "tslint": "^5.20.1",
     "typescript": "^2.6.1",
     "vscode": "^1.1.33"

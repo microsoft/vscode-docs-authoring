@@ -119,7 +119,6 @@ export function searchRepo() {
 async function getOpenPublishingFile(repoRoot: string) {
     const openPublishingFilePath = resolve(repoRoot, ".openpublishing.publish.config.json");
     const openPublishingFile = await readFile(openPublishingFilePath, "utf8");
-    // filePath = filePath.replace(ROOTPATH_RE, repoRoot);
     const openPublishingJson = JSON.parse(openPublishingFile);
     return openPublishingJson.dependent_repositories;
 }

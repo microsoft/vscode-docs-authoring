@@ -54,11 +54,12 @@
 		"lint": "tslint -c tslint.json 'src/**/*.ts'"
 	},
 	"devDependencies": {
-		"typescript": "^3.3.1",
-		"vscode": "^1.1.28",
-		"tslint": "^5.20.1",
+		"@types/mocha": "^2.2.42",
 		"@types/node": "^10.12.21",
-		"@types/mocha": "^2.2.42"
+		"mocha": "^7.1.1",
+		"tslint": "^5.20.1",
+		"typescript": "^3.3.1",
+		"vscode": "^1.1.28"
 	},
 	"runtimeDependencies": [
 		{
