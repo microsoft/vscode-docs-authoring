@@ -5,7 +5,7 @@ import { basename, extname, join } from "path";
 import { ProgressLocation, QuickPickItem, QuickPickOptions, Uri, window, workspace } from "vscode";
 import { postError, showStatusMessage, showWarningMessage } from "../../helper/common";
 import { sendTelemetryData } from "../../helper/telemetry";
-import { generateMasterRedirectionFile } from "../redirects/controller";
+import { generateMasterRedirectionFile } from "../redirects/generateRedirectionFile";
 import { addPeriodsToAlt } from "./addPeriodsToAlt";
 import { capitalizationOfMetadata } from "./capitalizationOfMetadata";
 import { handleSingleValuedMetadata } from "./handleSingleValuedMetadata";
