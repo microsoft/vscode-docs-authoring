@@ -1,6 +1,6 @@
 node_modules/
 out/
-dist
+dist/
 .markdocs/
 **/bin/
 **/obj/
