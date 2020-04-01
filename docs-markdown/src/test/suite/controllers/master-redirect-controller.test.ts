@@ -1,6 +1,6 @@
 import * as chai from "chai";
 import * as spies from "chai-spies";
-import { RedirectUrl } from "../../../controllers/master-redirect-controller";
+import { RedirectUrl } from "../../../controllers/redirects/redirect-url";
 
 chai.use(spies);
 
