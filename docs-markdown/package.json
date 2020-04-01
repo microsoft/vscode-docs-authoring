@@ -159,11 +159,6 @@
         "category": "Docs"
       },
       {
-        "command": "applyTemplate",
-        "title": "Template",
-        "category": "Docs"
-      },
-      {
         "command": "applyCleanup",
         "title": "Cleanup...",
         "category": "Docs"
