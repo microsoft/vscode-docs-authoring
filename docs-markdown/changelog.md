@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.59 (March 28, 2020)
+## 0.2.62 (March 28th, 2020)
 
 - Added moniker insertion feature for metadata and markdown
 
@@ -98,7 +98,7 @@
 ## 0.2.24 (November 5th, 2019)
 
 - Update link UI
-- Add link checker extension support (https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD)
+- Add link checker extension support (<https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD)>
 
 ## 0.2.23 (October 14th, 2019)
 
