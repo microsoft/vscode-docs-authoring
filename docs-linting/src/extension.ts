@@ -49,7 +49,7 @@ export function checkMarkdownlintCustomProperty() {
         // if the markdownlint.customRules property exists, pull the global values (user settings) into a string.
         if (customPropertyData.globalValue) {
             const valuesToString = customPropertyData.globalValue.toString();
-            var individualValues = valuesToString.split(",");
+            let individualValues = valuesToString.split(",");
             individualValues.forEach((setting: string) => {
                 if (setting === customRuleset) {
                     existingUserSettings.push(setting);
@@ -68,9 +68,9 @@ export function checkMarkdownlintCustomProperty() {
                 output.appendLine(`[${msTimeValue}] - Docs custom markdownlint ruleset added to user settings.`);
             }
 
-            //remove docs-markdown ruleset setting if necessary
+            // remove docs-markdown ruleset setting if necessary
             if (individualValues.indexOf(docsMarkdownRuleset) > -1) {
-                individualValues = existingUserSettings.filter(userSetting => {
+                individualValues = existingUserSettings.filter((userSetting) => {
                     return userSetting !== docsMarkdownRuleset;
                 });
                 workspace.getConfiguration().update(customProperty, individualValues, ConfigurationTarget.Global);
