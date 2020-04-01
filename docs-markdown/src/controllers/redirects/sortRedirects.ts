@@ -1,31 +1,16 @@
-import * as fs from "fs";
-import { window, workspace } from "vscode";
-import { naturalLanguageCompare, postWarning, tryFindFile } from "../../helper/common";
-import { RedirectFileName } from "./constants";
-import { IMasterRedirections, updateRedirects } from "./utilities";
+import { naturalLanguageCompare } from "../../helper/common";
+import { initiateRedirectCommand, updateRedirects } from "./utilities";
 
 export async function sortMasterRedirectionFile() {
-    const editor = window.activeTextEditor;
-    if (!editor) {
-        postWarning("Editor not active. Abandoning command.");
+    const { isEnvironmentReady, redirectsAndConfigOptions } = await initiateRedirectCommand();
+    if (!isEnvironmentReady || !redirectsAndConfigOptions) {
         return;
     }
 
-    const folder = workspace.getWorkspaceFolder(editor.document.uri);
-    if (folder) {
-        const file = tryFindFile(folder.uri.fsPath, RedirectFileName);
-        if (!!file && fs.existsSync(file)) {
-            const jsonBuffer = fs.readFileSync(file);
-            const redirects = JSON.parse(jsonBuffer.toString()) as IMasterRedirections;
-            if (redirects && redirects.redirections && redirects.redirections.length) {
+    const { config, editor, redirects } = redirectsAndConfigOptions;
+    redirects.redirections.sort((a, b) => {
+        return naturalLanguageCompare(a.source_path, b.source_path);
+    });
 
-                redirects.redirections.sort((a, b) => {
-                    return naturalLanguageCompare(a.source_path, b.source_path);
-                });
-
-                const config = workspace.getConfiguration("markdown");
-                await updateRedirects(editor, redirects, config);
-            }
-        }
-    }
+    await updateRedirects(editor, redirects, config);
 }

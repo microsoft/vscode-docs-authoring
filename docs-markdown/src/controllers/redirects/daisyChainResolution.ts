@@ -1,49 +1,14 @@
-import * as fs from "fs";
-import { window, workspace } from "vscode";
-import { postWarning, showStatusMessage, tryFindFile } from "../../helper/common";
-import { RedirectFileName } from "./constants";
+import { showStatusMessage } from "../../helper/common";
 import { RedirectUrl } from "./redirect-url";
-import { getMarkdownOptions, IMasterRedirection, IMasterRedirections, updateRedirects } from "./utilities";
+import { IMasterRedirection, initiateRedirectCommand, updateRedirects } from "./utilities";
 
 export async function applyRedirectDaisyChainResolution() {
-    const editor = window.activeTextEditor;
-    if (!editor) {
-        postWarning("Editor not active. Abandoning command.");
+    const { isEnvironmentReady, redirectsAndConfigOptions } = await initiateRedirectCommand();
+    if (!isEnvironmentReady || !redirectsAndConfigOptions) {
         return;
     }
 
-    let redirects: IMasterRedirections | null = null;
-    const folder = workspace.getWorkspaceFolder(editor.document.uri);
-    if (!folder) {
-        return;
-    }
-
-    const file = tryFindFile(folder.uri.fsPath, RedirectFileName);
-    if (!!file && fs.existsSync(file)) {
-        if (!editor.document.uri.fsPath.endsWith(RedirectFileName)) {
-            const openFile = await window.showErrorMessage(
-                `Unable to update the master redirects, please open the "${RedirectFileName}" file then try again!`,
-                "Open File");
-            if (!!openFile) {
-                const document = await workspace.openTextDocument(file);
-                await window.showTextDocument(document);
-            }
-            return;
-        }
-
-        const jsonBuffer = fs.readFileSync(file);
-        redirects = JSON.parse(jsonBuffer.toString()) as IMasterRedirections;
-    }
-
-    if (!redirects || !redirects.redirections) {
-        return;
-    }
-
-    const { config, options } = await getMarkdownOptions();
-    if (!options) {
-        return;
-    }
-
+    const { config, editor, options, redirects } = redirectsAndConfigOptions;
     const redirectsLookup = new Map<string, { redirect: RedirectUrl | null, redirection: IMasterRedirection }>();
     redirects.redirections.forEach((r) => {
         redirectsLookup.set(r.source_path, {
