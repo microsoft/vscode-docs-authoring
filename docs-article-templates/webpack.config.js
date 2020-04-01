@@ -28,7 +28,6 @@ const config = {
         extensions: ['.ts', '.js', '.json'],
     },
     optimization: {
-        // We no not want to minimize our code.
         usedExports: true,
         minimizer: [
             new TerserPlugin({
