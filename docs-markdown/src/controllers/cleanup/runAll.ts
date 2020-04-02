@@ -83,14 +83,14 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                                         return part.added || part.removed;
                                     });
                                 if (diff) {
-                                    promises.push(new Promise((r, rej) => {
+                                    promises.push(new Promise((res, rej) => {
                                         writeFile(file, data, (e) => {
                                             if (e) {
                                                 postError(`Error: ${e}`);
                                                 rej();
                                             }
                                             showProgress(index, files, progress, message);
-                                            r();
+                                            res();
                                         });
                                     }).catch((e) => {
                                         postError(e);
@@ -129,14 +129,14 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                                         return part.added || part.removed;
                                     });
                                 if (diff) {
-                                    promises.push(new Promise((r, rej) => {
+                                    promises.push(new Promise((res, rej) => {
                                         writeFile(file, data, (e) => {
                                             if (e) {
                                                 postError(`Error: ${e}`);
                                                 rej();
                                             }
                                             showProgress(index, files, progress, message);
-                                            r();
+                                            res();
                                         });
                                     }).catch((e) => {
                                         postError(e);
