@@ -48,6 +48,7 @@
         "lint": "tslint -c tslint.json 'src/**/*.ts'"
     },
     "dependencies": {
+        "copy-webpack-plugin": "^5.1.1",
         "fuse.js": "3.4.5",
         "js-yaml": "^3.13.1",
         "vscode-extension-telemetry": "^0.1.1",
