@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "graceful-fs";
 import { ignoreFiles, postError, showStatusMessage } from "../../helper/common";
 import { reporter } from "../../helper/telemetry";
-import { generateMasterRedirectionFile } from "../master-redirect-controller";
+import { generateMasterRedirectionFile } from "../redirects/generateRedirectionFile";
 import { lowerCaseData } from "./capitalizationOfMetadata";
 import { handleMarkdownMetadata } from "./handleMarkdownMetadata";
 import { handleYamlMetadata } from "./handleYamlMetadata";

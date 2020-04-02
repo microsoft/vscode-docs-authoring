@@ -54,6 +54,16 @@
         "category": "Docs"
       },
       {
+        "command": "detectInvalidDocumentIdRedirects",
+        "title": "Fix invalid redirect_document_ids",
+        "category": "Docs"
+      },
+      {
+        "command": "removeDefaultValuesInRedirects",
+        "title": "Remove default redirect_document_id values",
+        "category": "Docs"
+      },
+      {
         "command": "formatBold",
         "title": "Bold",
         "category": "Docs"
@@ -301,6 +311,14 @@
         },
         {
           "command": "applyRedirectDaisyChainResolution",
+          "group": "Docs"
+        },
+        {
+          "command": "detectInvalidDocumentIdRedirects",
+          "group": "Docs"
+        },
+        {
+          "command": "removeDefaultValuesInRedirects",
           "group": "Docs"
         },
         {
