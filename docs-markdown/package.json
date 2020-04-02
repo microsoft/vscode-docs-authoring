@@ -745,6 +745,7 @@
     "mocha": "^7.1.1",
     "mocha-junit-reporter": "^1.23.3",
     "mock-require": "^3.0.3",
+    "msdocs-pre-push": "0.0.8",
     "nyc": "^15.0.0",
     "octicons": "^7.4.0",
     "sinon": "^9.0.1",
