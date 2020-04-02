@@ -9,7 +9,7 @@ export async function sortMasterRedirectionFile() {
 
     const { config, editor, redirects } = redirectsAndConfigOptions;
     redirects.redirections.sort((a, b) => {
-        return naturalLanguageCompare(a.source_path, b.source_path);
+        return naturalLanguageCompare(a.sourcePath, b.sourcePath);
     });
 
     await updateRedirects(editor, redirects, config);
