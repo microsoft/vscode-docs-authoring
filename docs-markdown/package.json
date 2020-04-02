@@ -707,10 +707,11 @@
     "test": "node ./out/src/test/runTest.js",
     "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
-  "pre-commit": [
-    "compile",
-    "lint"
-  ],
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run compile && npm lint"
+    }
+  },
   "dependencies": {
     "axios": "^0.19.2",
     "diff": "^4.0.2",
@@ -742,6 +743,7 @@
     "chai": "^4.2.0",
     "chai-spies": "^1.0.0",
     "git-pre-push": "0.0.5",
+    "husky": "^4.2.3",
     "mocha": "^7.1.1",
     "mocha-junit-reporter": "^1.23.3",
     "mock-require": "^3.0.3",
