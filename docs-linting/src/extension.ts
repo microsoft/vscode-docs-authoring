@@ -9,7 +9,7 @@
 import { ConfigurationTarget, ExtensionContext, window, workspace } from "vscode";
 import { addFrontMatterTitle } from "./controllers/lint-config-controller";
 import { generateTimestamp } from "./helper/common";
-
+const rules = require("../markdownlint-custom-rules/rules");
 export const output = window.createOutputChannel("docs-linting");
 export let extensionPath: string;
 
