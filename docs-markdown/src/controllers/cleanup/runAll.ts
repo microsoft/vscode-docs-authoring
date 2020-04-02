@@ -6,7 +6,7 @@ import { lowerCaseData } from "./capitalizationOfMetadata";
 import { handleMarkdownMetadata } from "./handleMarkdownMetadata";
 import { handleYamlMetadata } from "./handleYamlMetadata";
 import { handleLinksWithRegex } from "./microsoftLinks";
-import { getMdAndIncludesFiles, removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller";
+import { removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller";
 import { readWriteFileWithProgress, showProgress } from "./utilities";
 // tslint:disable no-var-requires
 const jsdiff = require("diff");
@@ -57,7 +57,6 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
     showStatusMessage("Cleanup: Everything started.");
     const message = "Everything";
     progress.report({ increment: 0, message });
-    const unusedFiles = await getMdAndIncludesFiles(workspacePath);
     return new Promise((chainResolve, chainReject) =>
         recursive(workspacePath,
             ignoreFiles,
@@ -67,8 +66,8 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                     chainReject();
                 }
                 const promises: Array<Promise<any>> = [];
-                files.map((file, index) => {
-                    promises.push(removeUnusedImagesAndIncludes(progress, file, files, index, workspacePath, unusedFiles));
+                files.map(async (file, index) => {
+
                     if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
                         promises.push(new Promise((resolve, reject) => {
                             readFile(file, "utf8", (err, data) => {
@@ -151,6 +150,9 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                 });
                 promises.push(new Promise((resolve, reject) => {
                     generateMasterRedirectionFile(workspacePath, resolve);
+                }));
+                promises.push(new Promise(async (resolve, reject) => {
+                    removeUnusedImagesAndIncludes(progress, workspacePath, resolve);
                 }));
                 Promise.all(promises).then(() => {
                     progress.report({ increment: 100, message: "Everything completed." });

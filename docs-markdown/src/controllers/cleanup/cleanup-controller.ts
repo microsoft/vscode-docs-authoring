@@ -10,7 +10,7 @@ import { addPeriodsToAlt } from "./addPeriodsToAlt";
 import { capitalizationOfMetadata } from "./capitalizationOfMetadata";
 import { handleSingleValuedMetadata } from "./handleSingleValuedMetadata";
 import { microsoftLinks } from "./microsoftLinks";
-import { removeUnused } from "./remove-unused-assets-controller";
+import { removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller";
 import { removeEmptyMetadata } from "./removeEmptyMetadata";
 import { runAll, runAllWorkspace } from "./runAll";
 import { recurseCallback } from "./utilities";
@@ -464,7 +464,9 @@ export async function applyCleanup() {
                             message = "Removal of unused images and includes started.";
                             progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Removing unused images and includes. This could take several minutes.";
-                            promises.push(removeUnused(progress, workspacePath));
+                            promises.push(new Promise((resolve) => {
+                                removeUnusedImagesAndIncludes(progress, workspacePath, resolve);
+                            }));
                             message = "Removal of unused images and includes complete.";
                             commandOption = "unused-images-and-includes";
                             break;
