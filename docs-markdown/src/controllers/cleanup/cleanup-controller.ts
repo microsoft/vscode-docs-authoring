@@ -145,32 +145,32 @@ export async function applyCleanupFile(uri: Uri) {
                     commandOption = "everything";
                     break;
                 case "empty metadata":
-                    const opts: QuickPickOptions = { placeHolder: "Cleanup..." };
-                    const items: QuickPickItem[] = [];
-                    items.push({
+                    const options: QuickPickOptions = { placeHolder: "Cleanup..." };
+                    const qpItems: QuickPickItem[] = [];
+                    qpItems.push({
                         description: "",
                         label: "Remove metadata attributes with empty values",
                     });
-                    items.push({
+                    qpItems.push({
                         description: "",
                         label: `Remove metadata attributes with "na" or "n/a"`,
                     });
-                    items.push({
+                    qpItems.push({
                         description: "",
                         label: "Remove commented out metadata attributes",
                     });
-                    items.push({
+                    qpItems.push({
                         description: "",
                         label: "Remove all",
                     });
                     showStatusMessage("Cleanup: Metadata attribute cleanup started.");
                     message = "Empty metadata attribute cleanup started.";
-                    window.showQuickPick(items, opts).then((selection) => {
-                        if (!selection) {
+                    window.showQuickPick(qpItems, options).then((selected) => {
+                        if (!selected) {
                             reject();
                             return;
                         }
-                        switch (selection.label.toLowerCase()) {
+                        switch (selected.label.toLowerCase()) {
                             case "remove metadata attributes with empty values":
                                 promises.push(removeEmptyMetadata(progress, file, null, null, "empty"));
                                 commandOption = "remove-empty";
@@ -304,32 +304,32 @@ export async function applyCleanupFolder(uri: Uri) {
                             commandOption = "everything";
                             break;
                         case "empty metadata":
-                            const opts: QuickPickOptions = { placeHolder: "Cleanup..." };
-                            const items: QuickPickItem[] = [];
-                            items.push({
+                            const options: QuickPickOptions = { placeHolder: "Cleanup..." };
+                            const qpItems: QuickPickItem[] = [];
+                            qpItems.push({
                                 description: "",
                                 label: "Remove metadata attributes with empty values",
                             });
-                            items.push({
+                            qpItems.push({
                                 description: "",
                                 label: `Remove metadata attributes with "na" or "n/a"`,
                             });
-                            items.push({
+                            qpItems.push({
                                 description: "",
                                 label: "Remove commented out metadata attributes",
                             });
-                            items.push({
+                            qpItems.push({
                                 description: "",
                                 label: "Remove all",
                             });
                             showStatusMessage("Cleanup: Metadata attribute cleanup started.");
-                            const selection = await window.showQuickPick(items, opts);
-                            if (!selection) {
+                            const selected = await window.showQuickPick(qpItems, options);
+                            if (!selected) {
                                 return;
                             }
                             message = "Metadata attribute cleanup started.";
                             progress.report({ increment: 1, message });
-                            switch (selection.label.toLowerCase()) {
+                            switch (selected.label.toLowerCase()) {
                                 case "remove metadata attributes with empty values":
                                     files.map((file, index) => {
                                         promises.push(removeEmptyMetadata(progress, file, files, index, "empty"));
@@ -364,8 +364,8 @@ export async function applyCleanupFolder(uri: Uri) {
                         setTimeout(() => {
                             resolve();
                         }, 2000);
-                    }).catch((err) => {
-                        postError(err);
+                    }).catch((error) => {
+                        postError(error);
                     });
                 });
             commandOption = "single-value";
@@ -483,27 +483,27 @@ export async function applyCleanup() {
                             commandOption = "everything";
                             break;
                         case "empty metadata":
-                            const opts: QuickPickOptions = { placeHolder: "Cleanup..." };
-                            const items: QuickPickItem[] = [];
-                            items.push({
+                            const options: QuickPickOptions = { placeHolder: "Cleanup..." };
+                            const qpItems: QuickPickItem[] = [];
+                            qpItems.push({
                                 description: "",
                                 label: "Remove metadata attributes with empty values",
                             });
-                            items.push({
+                            qpItems.push({
                                 description: "",
                                 label: `Remove metadata attributes with "na" or "n/a"`,
                             });
-                            items.push({
+                            qpItems.push({
                                 description: "",
                                 label: "Remove commented out metadata attributes",
                             });
-                            items.push({
+                            qpItems.push({
                                 description: "",
                                 label: "Remove all",
                             });
                             showStatusMessage("Cleanup: Metadata attribute cleanup started.");
-                            const selection = await window.showQuickPick(items, opts);
-                            if (!selection) {
+                            const selected = await window.showQuickPick(qpItems, options);
+                            if (!selected) {
                                 reject();
                                 return;
                             }
@@ -519,7 +519,7 @@ export async function applyCleanup() {
                                             chainReject();
                                         }
                                         const filePromises: Array<Promise<any>> = [];
-                                        switch (selection.label.toLowerCase()) {
+                                        switch (selected.label.toLowerCase()) {
                                             case "remove metadata attributes with empty values":
                                                 files.map((file, index) => {
                                                     filePromises.push(removeEmptyMetadata(progress, file, files, index, "empty"));
@@ -547,8 +547,8 @@ export async function applyCleanup() {
                                         }
                                         Promise.all(filePromises).then(() => {
                                             chainResolve();
-                                        }).catch((err) => {
-                                            postError(err);
+                                        }).catch((error) => {
+                                            postError(error);
                                         });
                                     });
                                 message = "Empty metadata attribute cleanup completed.";
