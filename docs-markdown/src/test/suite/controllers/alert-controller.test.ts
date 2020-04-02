@@ -56,4 +56,5 @@ suite("Alert Controller", () => {
         expect(spy).to.have.been.called();
         stub.restore();
     });
+
 });

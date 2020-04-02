@@ -708,8 +708,8 @@
     "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "pre-push": [
-    "compile",
-    "lint"
+    "cd ./docs-markdown npm run compile",
+    "cd ./docs-markdown npm run lint"
   ],
   "dependencies": {
     "axios": "^0.19.2",
