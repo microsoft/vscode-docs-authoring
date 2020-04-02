@@ -51,8 +51,8 @@ export function removeUnusedImagesAndIncludes(progress: any, file: string, files
                 }
 
                 unusedFiles.forEach((uf) => {
-                    rename(join(uf.description, uf.label), join(unusedImagesDirectory, uf.label), (err) => {
-                        if (err) {
+                    rename(join(uf.description, uf.label), join(unusedImagesDirectory, uf.label), (error) => {
+                        if (error) {
                             output.appendLine(`failed to move ${uf.label}`);
                         }
                     });
@@ -65,11 +65,11 @@ export function removeUnusedImagesAndIncludes(progress: any, file: string, files
 
 export async function removeUnused(progress: Progress<any>, workspacePath: string) {
     const unusedFiles = await getMdAndIncludesFiles(workspacePath);
-    return new Promise((chainResolve, chainReject) =>
+    return new Promise((resolve, reject) =>
         recursive(workspacePath, [".git", ".github", ".vscode", ".vs", "node_module"], (err: any, files: string[]) => {
             if (err) {
                 postError(err);
-                chainReject();
+                reject();
             }
             const filePromises: Array<Promise<any>> = [];
             files.map((file, index) => {
@@ -79,7 +79,7 @@ export async function removeUnused(progress: Progress<any>, workspacePath: strin
                 progress.report({ increment: 100, message: "Cleanup: Removal of unused images and includes completed." });
                 showStatusMessage(`Cleanup: Removal of unused images and includes completed.`);
                 setTimeout(() => {
-                    chainResolve();
+                    resolve();
                 }, 2000);
             });
         }));

@@ -13,7 +13,7 @@ export function handleYamlMetadata(data: string) {
     try {
         const yamlContent = jsyaml.load(data);
         if (yamlContent.metadata) {
-            if (handleSingleItemArray(yamlContent.metadata["author"])) {
+            if (handleSingleItemArray(yamlContent.metadata.author)) {
                 data = singleValueMetadata(data, "author");
             }
             if (handleSingleItemArray(yamlContent.metadata["ms.author"])) {

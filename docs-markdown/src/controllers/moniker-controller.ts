@@ -1,11 +1,9 @@
 "use strict";
 
 import { Range, TextEditor, window } from "vscode";
-import { insertContentToEditor, setCursorPosition, isMarkdownFileCheck, noActiveEditorMessage } from "../helper/common";
-import { isCursorInsideYamlHeader } from "../helper/yaml-metadata";
+import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, setCursorPosition } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
-
-
+import { isCursorInsideYamlHeader } from "../helper/yaml-metadata";
 
 export function insertMonikerCommand() {
     const commands = [
@@ -28,7 +26,7 @@ export function insertMoniker() {
         return;
     }
 
-    //is cursor on a new line 
+    // is cursor on a new line
     if (isContentOnCurrentLine(editor)) {
         window.showErrorMessage("Moniker must be inserted on a new line.");
         return;
@@ -61,12 +59,8 @@ export function insertMoniker() {
         } else {
             insertMarkdownMoniker(editor, sign);
         }
-
-
-
     });
 }
-
 
 // cursor is in the YAML metadata block
 function insertYamlMoniker(editor: TextEditor, sign: string) {
@@ -80,8 +74,7 @@ function insertYamlMoniker(editor: TextEditor, sign: string) {
     sendTelemetryData(telemetryCommand, cursorPosition);
 }
 
-
-//cursor is in the Markdown body of the file
+// cursor is in the Markdown body of the file
 function insertMarkdownMoniker(editor: TextEditor, sign: string) {
     const telemetryCommand: string = "insertMoniker";
     const insertText = `::: moniker range="${sign}"\n\n::: moniker-end`;
@@ -90,7 +83,6 @@ function insertMarkdownMoniker(editor: TextEditor, sign: string) {
     setCursorPosition(editor, editor.selection.active.line, cursorIndex);
     const cursorPosition = "markdown-body";
     sendTelemetryData(telemetryCommand, cursorPosition);
-
 }
 
 function isContentOnCurrentLine(editor: TextEditor): boolean {

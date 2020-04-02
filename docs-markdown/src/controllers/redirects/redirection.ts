@@ -8,15 +8,15 @@ export class RedirectionFile implements IMasterRedirection {
     public resource: any;
 
     // Members mapping to JSON elements in master redirection file
-    public source_path: string;
-    public redirect_url: string;
-    public redirect_document_id: boolean = false;
+    public sourcePath: string;
+    public redirectUrl: string;
+    public redirectDocumentId: boolean = false;
 
     constructor(filePath: string, redirectUrl: string, redirectDocumentId: boolean, folder: WorkspaceFolder | undefined) {
         this.fileFullPath = filePath;
-        this.source_path = this.getRelativePathToRoot(filePath, folder);
-        this.redirect_url = redirectUrl;
-        this.redirect_document_id = redirectDocumentId;
+        this.sourcePath = this.getRelativePathToRoot(filePath, folder);
+        this.redirectUrl = redirectUrl;
+        this.redirectDocumentId = redirectDocumentId;
     }
 
     public getRelativePathToRoot(filePath: any, folder: WorkspaceFolder | undefined): string {
