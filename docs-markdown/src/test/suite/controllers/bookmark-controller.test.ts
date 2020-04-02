@@ -40,10 +40,10 @@ suite("Bookmark Controller", () => {
         await createDocumentAndGetItReady();
         const filePath = resolve(__dirname, "../../../../../src/test/data/repo");
         const qpSelectionItems = [
-            { "label": "README.md", "description": filePath },
-            { "label": "## Getting Started\r\n", "detail": " " }
-        ]
-        var counter = 0;
+            { label: "README.md", description: filePath },
+            { label: "## Getting Started\r\n", detail: " " },
+        ];
+        let counter = 0;
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve(qpSelectionItems[counter++]) as Thenable<any>;
         };

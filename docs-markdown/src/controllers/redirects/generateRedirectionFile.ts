@@ -106,15 +106,15 @@ export function generateMasterRedirectionFile(rootPath?: string, done?: any) {
                         const existingSourcePath: string[] = [];
 
                         masterRedirection.redirections.forEach((item) => {
-                            if (!item.source_path) {
+                            if (!item.sourcePath) {
                                 showStatusMessage("An array is missing the source_path value. Please check .openpublishing.redirection.json.");
                                 return;
                             }
-                            existingSourcePath.push(item.source_path.toLowerCase());
+                            existingSourcePath.push(item.sourcePath.toLowerCase());
                         });
 
                         redirectionFiles.forEach((item) => {
-                            if (existingSourcePath.indexOf(item.source_path.toLowerCase()) >= 0) {
+                            if (existingSourcePath.indexOf(item.sourcePath.toLowerCase()) >= 0) {
                                 item.isAlreadyInMasterRedirectionFile = true;
                             } else {
                                 if (masterRedirection != null) {
@@ -130,7 +130,7 @@ export function generateMasterRedirectionFile(rootPath?: string, done?: any) {
                     }
                     if (masterRedirection.redirections.length > 0) {
                         masterRedirection.redirections.sort((a, b) => {
-                            return naturalLanguageCompare(a.source_path, b.source_path);
+                            return naturalLanguageCompare(a.sourcePath, b.sourcePath);
                         });
 
                         fs.writeFileSync(
@@ -164,7 +164,7 @@ export function generateMasterRedirectionFile(rootPath?: string, done?: any) {
 
                         redirectionFiles.forEach((item) => {
                             const source = fs.createReadStream(item.fileFullPath);
-                            const dest = fs.createWriteStream(join(deletedRedirectsPath, basename(item.source_path)));
+                            const dest = fs.createWriteStream(join(deletedRedirectsPath, basename(item.sourcePath)));
 
                             source.pipe(dest);
                             source.on("close", () => {

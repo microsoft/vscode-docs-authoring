@@ -37,12 +37,12 @@ export function run(): Promise<void> {
 	// Create the mocha test
 	const mocha = new Mocha({
 		color: true,
-		ui: "tdd",
-		timeout: 5000,
-		reporter: 'mocha-junit-reporter',
+		reporter: "mocha-junit-reporter",
 		reporterOptions: {
-			mochaFile: '../../out/coverage/test-results.xml'
-		}
+			mochaFile: "../../out/coverage/test-results.xml",
+		},
+		timeout: 5000,
+		ui: "tdd",
 	});
 
 	const testsRoot = path.resolve(__dirname, "..");

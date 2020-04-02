@@ -1,30 +1,26 @@
 import * as chai from "chai";
 import * as spies from "chai-spies";
 import { resolve } from "path";
-import { window, commands, TextEditor } from "vscode";
+import { commands, TextEditor, window } from "vscode";
 import { insertMoniker, insertMonikerCommand } from "../../../controllers/moniker-controller";
-import * as telemetry from "../../../helper/telemetry";
 import * as common from "../../../helper/common";
-import { sleep, loadDocumentAndGetItReady } from "../../test.common/common";
+import * as telemetry from "../../../helper/telemetry";
+import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
 
 chai.use(spies);
+// tslint:disable-next-line: no-var-requires
 const sinon = require("sinon");
 const expect = chai.expect;
 
 function insertBlankLine(editor: TextEditor, line: number) {
-
     const spy = chai.spy.on(common, "insertContentToEditor");
     spy(editor, "test", "\r\n");
     chai.spy.restore(spy);
-
 }
 function moveCursor(editor: TextEditor, y: number, x: number) {
-
     const spy = chai.spy.on(common, "setCursorPosition");
     spy(editor, y, x);
     chai.spy.restore(spy);
-
-
 }
 
 const testFile = "../../../../../src/test/data/repo/articles/bookmark.md";
@@ -35,24 +31,21 @@ const monikerOptions = [
     "range less than or equal",
 ];
 
-//line ( y coord) , character (x coord)
+// line ( y coord) , character (x coord)
 const yamlLine = 10;
 const yamlCharacter = 15;
 const markLine = yamlLine + 4;
 const markCharacter = 19;
-
 
 suite("Moniker Controller", () => {
     // Reset and tear down the spies
     teardown(() => {
         chai.spy.restore(common);
         chai.spy.restore(window);
-
     });
     suiteTeardown(async () => {
-        await commands.executeCommand('workbench.action.closeAllEditors');
+        await commands.executeCommand("workbench.action.closeAllEditors");
     });
-
     test("insertMonikerCommand", () => {
         const controllerCommands = [
             { command: insertMoniker.name, callback: insertMoniker },
@@ -64,7 +57,6 @@ suite("Moniker Controller", () => {
         insertMoniker();
         expect(spy).to.have.been.called();
     });
-
     test("isMarkdownFileCheck", async () => {
         const filePath = resolve(__dirname, testFile);
         await loadDocumentAndGetItReady(filePath);
@@ -73,7 +65,6 @@ suite("Moniker Controller", () => {
         await sleep(sleepTime);
         expect(spy).to.have.been.called();
     });
-
     test("isContentOnCurrentLine", async () => {
 
         const spy = chai.spy.on(window, "showErrorMessage");
@@ -82,15 +73,13 @@ suite("Moniker Controller", () => {
         expect(spy).to.have.been.called();
 
     });
-
-
     // YAML Header test
     test("insertYamlMoniker - equal - output", async () => {
 
         const editor = window.activeTextEditor;
         moveCursor(editor!, yamlLine, 0);
         insertBlankLine(editor!, yamlLine);
-        moveCursor(editor!, yamlLine, 0); //move cursor back
+        moveCursor(editor!, yamlLine, 0); // move cursor back
         await sleep(sleepTime);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
@@ -103,19 +92,15 @@ suite("Moniker Controller", () => {
         stub.restore();
 
         expect(output).to.equal("monikerRange: ''");
-
     });
 
     test("insertYamlMoniker - equal - cursorPosition", async () => {
-
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
         expect(cursorPosition).to.deep.equal([yamlLine, yamlCharacter]);
-
     });
 
     test("insertYamlMoniker - greater/equal - output", async () => {
-
         const editor = window.activeTextEditor;
         moveCursor(editor!, yamlLine, 0);
         insertBlankLine(editor!, 10);
@@ -132,21 +117,16 @@ suite("Moniker Controller", () => {
         stub.restore();
 
         expect(output).to.equal("monikerRange: '>='");
-
     });
 
     test("insertYamlMoniker - greater/equal - cursorPosition", async () => {
-
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
 
         expect(cursorPosition).to.deep.equal([yamlLine, yamlCharacter + 2]);
-
     });
 
     test("insertYamlMoniker - less/equal - output", async () => {
-
-
         const editor = window.activeTextEditor;
         moveCursor(editor!, yamlLine, 0);
         insertBlankLine(editor!, yamlLine);
@@ -163,19 +143,14 @@ suite("Moniker Controller", () => {
         stub.restore();
 
         expect(output).to.equal("monikerRange: '<='");
-
     });
 
     test("insertYamlMoniker - greater/equal - cursorPosition", async () => {
-
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
 
         expect(cursorPosition).to.deep.equal([yamlLine, yamlCharacter + 2]);
-
     });
-
-
 
     // Markdown body test
     test("insertMarkdownMoniker - equal - output", async () => {
@@ -199,19 +174,13 @@ suite("Moniker Controller", () => {
     });
 
     test("insertMarkdownMoniker - equal - cursorPosition", async () => {
-
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
 
         expect(cursorPosition).to.deep.equal([markLine, markCharacter]);
-
     });
 
-
-
     test("insertMarkdownMoniker - greater/equal - output", async () => {
-
-
         const editor = window.activeTextEditor;
         moveCursor(editor!, markLine + 3, 0);
         insertBlankLine(editor!, markLine + 3);
@@ -231,20 +200,16 @@ suite("Moniker Controller", () => {
         stub.restore();
 
         expect(output).to.equal("::: moniker range=\">=\"::: moniker-end");
-
     });
 
     test("insertMarkdownMoniker - greater/equal - cursorPosition", async () => {
-
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
 
         expect(cursorPosition).to.deep.equal([markLine + 3, markCharacter + 2]);
-
     });
 
     test("insertMarkdownMoniker - less/equal - output", async () => {
-
         const editor = window.activeTextEditor;
         moveCursor(editor!, markLine + 6, 0);
         insertBlankLine(editor!, markLine + 3);
@@ -264,18 +229,11 @@ suite("Moniker Controller", () => {
         stub.restore();
 
         expect(output).to.equal("::: moniker range=\"<=\"::: moniker-end");
-
     });
 
     test("insertMarkdownMoniker - less/equal - cursorPosition", async () => {
-
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
         expect(cursorPosition).to.deep.equal([markLine + 6, markCharacter + 2]);
-
     });
-
-
-
-
 });

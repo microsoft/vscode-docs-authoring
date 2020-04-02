@@ -14,11 +14,11 @@ export async function detectInvalidDocumentIdRedirects() {
     const { config, editor, folder, options, redirects } = redirectsAndConfigOptions;
     const redirectsLookup = new Map<string, { redirect: RedirectUrl | null, redirection: IMasterRedirection }>();
     redirects.redirections.forEach((r) => {
-        if (!r.redirect_document_id) {
+        if (!r.redirectDocumentId) {
             return;
         }
-        redirectsLookup.set(r.source_path, {
-            redirect: RedirectUrl.parse(options, r.redirect_url),
+        redirectsLookup.set(r.sourcePath, {
+            redirect: RedirectUrl.parse(options, r.redirectUrl),
             redirection: r,
         });
     });
@@ -59,15 +59,15 @@ export async function detectInvalidDocumentIdRedirects() {
                     return;
                 }
 
-                if (!!redirect.redirect_document_id) {
+                if (!!redirect.redirectDocumentId) {
                     if (url.isExternalUrl) {
-                        redirect.redirect_document_id = false;
+                        redirect.redirectDocumentId = false;
                         fixes++;
                         return;
                     }
 
-                    if (!redirect.redirect_url.startsWith(`/${options.docsetName}/`)) {
-                        redirect.redirect_document_id = false;
+                    if (!redirect.redirectUrl.startsWith(`/${options.docsetName}/`)) {
+                        redirect.redirectDocumentId = false;
                         fixes++;
                         return;
                     }
@@ -78,7 +78,7 @@ export async function detectInvalidDocumentIdRedirects() {
                         url.filePath.replace(".md", "/index.yml"),
                     ];
                     if (!files.some((path: string) => fileExists(path))) {
-                        redirect.redirect_document_id = false;
+                        redirect.redirectDocumentId = false;
                         fixes++;
                         return;
                     }
