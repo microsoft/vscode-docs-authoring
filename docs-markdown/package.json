@@ -707,9 +707,9 @@
     "test": "node ./out/src/test/runTest.js",
     "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
-  "pre-push": [
-    "cd ./docs-markdown npm run compile",
-    "cd ./docs-markdown npm run lint"
+  "pre-commit": [
+    "compile",
+    "lint"
   ],
   "dependencies": {
     "axios": "^0.19.2",
@@ -745,9 +745,9 @@
     "mocha": "^7.1.1",
     "mocha-junit-reporter": "^1.23.3",
     "mock-require": "^3.0.3",
-    "msdocs-pre-push": "0.0.8",
     "nyc": "^15.0.0",
     "octicons": "^7.4.0",
+    "pre-commit": "^1.2.2",
     "sinon": "^9.0.1",
     "source-map-support": "^0.5.16",
     "ts-node": "^8.8.1",
