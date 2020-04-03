@@ -1,12 +1,12 @@
 import { readFile, writeFile } from "graceful-fs";
-import { postError, showStatusMessage } from "../../helper/common";
+import { ignoreFiles, postError, showStatusMessage } from "../../helper/common";
 import { reporter } from "../../helper/telemetry";
-import { generateMasterRedirectionFile } from "../master-redirect-controller";
+import { generateMasterRedirectionFile } from "../redirects/generateRedirectionFile";
 import { lowerCaseData } from "./capitalizationOfMetadata";
 import { handleMarkdownMetadata } from "./handleMarkdownMetadata";
 import { handleYamlMetadata } from "./handleYamlMetadata";
 import { handleLinksWithRegex } from "./microsoftLinks";
-import { getMdAndIncludesFiles, removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller";
+import { removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller";
 import { readWriteFileWithProgress, showProgress } from "./utilities";
 // tslint:disable no-var-requires
 const jsdiff = require("diff");
@@ -57,24 +57,23 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
     showStatusMessage("Cleanup: Everything started.");
     const message = "Everything";
     progress.report({ increment: 0, message });
-    const unusedFiles = await getMdAndIncludesFiles(workspacePath);
     return new Promise((chainResolve, chainReject) =>
         recursive(workspacePath,
-            [".git", ".github", ".vscode", ".vs", "node_module"],
+            ignoreFiles,
             (err: any, files: string[]) => {
                 if (err) {
                     postError(err);
                     chainReject();
                 }
                 const promises: Array<Promise<any>> = [];
-                files.map((file, index) => {
-                    promises.push(removeUnusedImagesAndIncludes(progress, file, files, index, workspacePath, unusedFiles));
+                files.map(async (file, index) => {
+
                     if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
-                        promises.push(new Promise((resolve, reject) => {
-                            readFile(file, "utf8", (err, data) => {
-                                if (err) {
-                                    postError(`Error: ${err}`);
-                                    reject();
+                        promises.push(new Promise((readResolve, readReject) => {
+                            readFile(file, "utf8", (error, data) => {
+                                if (error) {
+                                    postError(`Error: ${error}`);
+                                    readReject();
                                 }
                                 const origin = data;
                                 data = handleYamlMetadata(data);
@@ -83,29 +82,29 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                                         return part.added || part.removed;
                                     });
                                 if (diff) {
-                                    promises.push(new Promise((resolve, reject) => {
-                                        writeFile(file, data, (err) => {
-                                            if (err) {
-                                                postError(`Error: ${err}`);
-                                                reject();
+                                    promises.push(new Promise((res, rej) => {
+                                        writeFile(file, data, (e) => {
+                                            if (e) {
+                                                postError(`Error: ${e}`);
+                                                rej();
                                             }
                                             showProgress(index, files, progress, message);
-                                            resolve();
+                                            res();
                                         });
-                                    }).catch((error) => {
-                                        postError(error);
+                                    }).catch((e) => {
+                                        postError(e);
                                     }));
                                 }
-                                resolve();
+                                readResolve();
                             });
                         }).catch((error) => {
                             postError(error);
                         }));
                     } else if (file.endsWith(".md")) {
-                        promises.push(new Promise((resolve, reject) => {
-                            readFile(file, "utf8", (err, data) => {
-                                if (err) {
-                                    postError(`Error: ${err}`);
+                        promises.push(new Promise((readResolve, reject) => {
+                            readFile(file, "utf8", (error, data) => {
+                                if (error) {
+                                    postError(`Error: ${error}`);
                                     reject();
                                 }
                                 const origin = data;
@@ -129,28 +128,31 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                                         return part.added || part.removed;
                                     });
                                 if (diff) {
-                                    promises.push(new Promise((resolve, reject) => {
-                                        writeFile(file, data, (err) => {
-                                            if (err) {
-                                                postError(`Error: ${err}`);
-                                                reject();
+                                    promises.push(new Promise((res, rej) => {
+                                        writeFile(file, data, (e) => {
+                                            if (e) {
+                                                postError(`Error: ${e}`);
+                                                rej();
                                             }
                                             showProgress(index, files, progress, message);
-                                            resolve();
+                                            res();
                                         });
-                                    }).catch((error) => {
-                                        postError(error);
+                                    }).catch((e) => {
+                                        postError(e);
                                     }));
                                 }
-                                resolve();
+                                readResolve();
                             });
                         }).catch((error) => {
                             postError(error);
                         }));
                     }
                 });
-                promises.push(new Promise((resolve, reject) => {
-                    generateMasterRedirectionFile(workspacePath, resolve);
+                promises.push(new Promise((res) => {
+                    generateMasterRedirectionFile(workspacePath, res);
+                }));
+                promises.push(new Promise(async (res) => {
+                    removeUnusedImagesAndIncludes(progress, workspacePath, res);
                 }));
                 Promise.all(promises).then(() => {
                     progress.report({ increment: 100, message: "Everything completed." });

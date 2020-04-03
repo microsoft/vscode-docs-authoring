@@ -1,8 +1,7 @@
+import * as recursive from "recursive-readdir";
 import { QuickPickItem, QuickPickOptions, Range, Selection, TextDocument, TextDocumentChangeEvent, TextEditor, window, workspace } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheckWithoutNotification, matchAll, postWarning } from "./common";
+import { ignoreFiles, insertContentToEditor, isMarkdownFileCheckWithoutNotification, matchAll, postWarning } from "./common";
 import { getLanguageIdentifierQuickPickItems, IHighlightLanguage, languages } from "./highlight-langs";
-import * as log from "./log";
-
 /**
  * Checks the user input for table creation.
  * Format - C:R.
@@ -16,7 +15,6 @@ export function validateTableRowAndColumnCount(size: number, colStr: string, row
     const tableTextRegex = /^-?\d*$/;
     const col = tableTextRegex.test(colStr) ? Number.parseInt(colStr, undefined) : undefined;
     const row = tableTextRegex.test(rowStr) ? Number.parseInt(rowStr, undefined) : undefined;
-    log.debug("Trying to create a table of: " + col + " columns and " + row + " rows.");
 
     if (col === undefined || row === undefined) {
         return undefined;
@@ -79,7 +77,6 @@ export function tableBuilder(col: number, row: number) {
         str += "\n";
     }
 
-    log.debug("Table created: \r\n" + str);
     return str;
 }
 
@@ -90,7 +87,6 @@ export function tableBuilder(col: number, row: number) {
  */
 
 export async function search(editor: TextEditor, selection: Selection, folderPath: string, fullPath?: string, crossReference?: string) {
-    const dir = require("node-dir");
     const path = require("path");
     let language: string | null = "";
     let possibleLanguage: IHighlightLanguage | null = null;
@@ -107,7 +103,7 @@ export async function search(editor: TextEditor, selection: Selection, folderPat
         }
 
         // searches for all files at the given directory path.
-        const files = await dir.promiseFiles(fullPath);
+        const files = await recursive(fullPath, ignoreFiles);
         const fileOptions: QuickPickItem[] = [];
 
         for (const file in files) {

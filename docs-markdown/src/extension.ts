@@ -8,7 +8,6 @@
 
 import { CancellationToken, commands, CompletionItem, DocumentLink, ExtensionContext, languages, TextDocument, Uri, window, workspace } from "vscode";
 import { insertAlertCommand } from "./controllers/alert-controller";
-import { insertMonikerCommand } from "./controllers/moniker-controller";
 import { boldFormattingCommand } from "./controllers/bold-controller";
 import { applyCleanupCommand, applyCleanupFile, applyCleanupFolder } from "./controllers/cleanup/cleanup-controller";
 import { codeFormattingCommand } from "./controllers/code-controller";
@@ -16,12 +15,13 @@ import { insertImageCommand } from "./controllers/image-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
 import { italicFormattingCommand } from "./controllers/italic-controller";
 import { insertListsCommands } from "./controllers/list-controller";
-import { getMasterRedirectionCommand } from "./controllers/master-redirect-controller";
 import { insertLinksAndMediaCommands } from "./controllers/media-controller";
 import { insertMetadataCommands } from "./controllers/metadata-controller";
+import { insertMonikerCommand } from "./controllers/moniker-controller";
 import { noLocCompletionItemsMarkdown, noLocCompletionItemsMarkdownYamlHeader, noLocCompletionItemsYaml, noLocTextCommand } from "./controllers/no-loc-controller";
 import { previewTopicCommand } from "./controllers/preview-controller";
 import { quickPickMenuCommand } from "./controllers/quick-pick-menu-controller";
+import { getMasterRedirectionCommand } from "./controllers/redirects/controller";
 import { insertRowsAndColumnsCommand } from "./controllers/row-columns-controller";
 import { insertSnippetCommand } from "./controllers/snippet-controller";
 import { insertSortSelectionCommands } from "./controllers/sort-controller";
@@ -62,7 +62,6 @@ export function activate(context: ExtensionContext) {
     const AuthoringCommands: any = [];
     insertAlertCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     insertMonikerCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-
     insertIncludeCommand().forEach((cmd) => AuthoringCommands.push(cmd));
     insertLinksAndMediaCommands().forEach((cmd) => AuthoringCommands.push(cmd));
     insertListsCommands().forEach((cmd) => AuthoringCommands.push(cmd));

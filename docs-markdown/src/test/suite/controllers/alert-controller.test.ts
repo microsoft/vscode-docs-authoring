@@ -1,14 +1,15 @@
 import * as chai from "chai";
 import * as spies from "chai-spies";
 import { resolve } from "path";
-import { window, commands } from "vscode";
+import { commands, window } from "vscode";
 import { insertAlert, insertAlertCommand } from "../../../controllers/alert-controller";
 import * as common from "../../../helper/common";
-import { sleep, loadDocumentAndGetItReady } from "../../test.common/common";
 import * as telemetry from "../../../helper/telemetry";
+import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
 
 chai.use(spies);
 
+// tslint:disable-next-line: no-var-requires
 const sinon = require("sinon");
 
 const expect = chai.expect;
@@ -19,7 +20,7 @@ suite("Alert Controller", () => {
         chai.spy.restore(common);
     });
     suiteTeardown(async () => {
-        await commands.executeCommand('workbench.action.closeAllEditors');
+        await commands.executeCommand("workbench.action.closeAllEditors");
     });
 
     test("insertAlertCommand", () => {
@@ -49,12 +50,11 @@ suite("Alert Controller", () => {
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve("Note – Information the user should notice even if skimming") as Thenable<any>;
         };
-        const stub = sinon.stub(telemetry, "sendTelemetryData")
+        const stub = sinon.stub(telemetry, "sendTelemetryData");
         const spy = chai.spy.on(common, "insertContentToEditor");
         insertAlert();
         await sleep(500);
         expect(spy).to.have.been.called();
         stub.restore();
     });
-
 });
