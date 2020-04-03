@@ -1,16 +1,19 @@
 "use-strict";
 
-import * as fs from "fs";
 import * as glob from "glob";
 import * as os from "os";
-import * as path from "path";
 import * as vscode from "vscode";
+
+import { existsSync } from "fs";
+import { extname, join, resolve } from "path";
 import { output } from "./output";
+
+export const ignoreFiles = [".git", ".github", ".vscode", ".vs", "node_module"];
 
 export function tryFindFile(rootPath: string, fileName: string) {
     try {
-        const fullPath = path.resolve(rootPath, fileName);
-        const exists = fs.existsSync(fullPath);
+        const fullPath = resolve(rootPath, fileName);
+        const exists = existsSync(fullPath);
         if (exists) {
             return fullPath;
         } else {
@@ -19,7 +22,7 @@ export function tryFindFile(rootPath: string, fileName: string) {
             });
 
             if (files && files.length === 1) {
-                return path.join(rootPath, files[0]);
+                return join(rootPath, files[0]);
             }
         }
     } catch (error) {
@@ -341,7 +344,7 @@ export function showStatusMessage(message: string) {
 }
 
 export function detectFileExtension(filePath: string) {
-    const fileExtension = path.extname(filePath);
+    const fileExtension = extname(filePath);
     return fileExtension;
 }
 
@@ -396,7 +399,7 @@ export function extractDocumentLink(
 
             const documentLink = new vscode.DocumentLink(
                 new vscode.Range(linkStart, linkEnd),
-                vscode.Uri.file(path.resolve(filePath, link)));
+                vscode.Uri.file(resolve(filePath, link)));
             return documentLink;
         }
 

@@ -1,11 +1,12 @@
 "use strict";
 
+import { existsSync } from "graceful-fs";
+import * as recursive from "recursive-readdir";
 import * as vscode from "vscode";
 import { insertBookmarkExternal, insertBookmarkInternal } from "../controllers/bookmark-controller";
-import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, isValidFileCheck, noActiveEditorMessage, postWarning, setCursorPosition, unsupportedFileMessage } from "../helper/common";
+import { hasValidWorkSpaceRootPath, ignoreFiles, insertContentToEditor, isMarkdownFileCheck, isValidEditor, isValidFileCheck, noActiveEditorMessage, postWarning, setCursorPosition, unsupportedFileMessage } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 import { externalLinkBuilder, internalLinkBuilder, videoLinkBuilder } from "../helper/utility";
-
 const telemetryCommandMedia: string = "insertMedia";
 const telemetryCommandLink: string = "insertLink";
 let commandOption: string;
@@ -53,8 +54,7 @@ export function insertVideo() {
         };
         vscode.window.showInputBox({
             placeHolder: "Enter URL; Begin typing to see the allowed video URL prefixes.",
-            // tslint:disable-next-line: object-literal-shorthand
-            validateInput: validateInput,
+            validateInput,
         }).then((val) => {
             // If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
             if (val === undefined) {
@@ -153,7 +153,6 @@ export function insertImage() {
 
 export function getFilesShowQuickPick(mediaType: MediaType, altText: string, options?: any) {
     const path = require("path");
-    const dir = require("node-dir");
     const os = require("os");
     const fs = require("fs");
 
@@ -172,7 +171,7 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
     }
 
     // recursively get all the files from the root folder
-    dir.files(folderPath, (err: any, files: any) => {
+    recursive(folderPath, ignoreFiles, (err: any, files: any) => {
         if (err) {
             vscode.window.showErrorMessage(err);
             throw err;
@@ -310,8 +309,7 @@ export function Insert(mediaType: MediaType, options?: any) {
 
         // Check to see if the active file has been saved.  If it has not been saved, warn the user.
         // The user will still be allowed to add a link but it the relative path will not be resolved.
-        const fileExists = require("file-exists");
-        if (!fileExists(activeFileName)) {
+        if (!existsSync(activeFileName)) {
             vscode.window.showWarningMessage(`${activeFilePath} is not saved. Cannot accurately resolve path to create link.`);
             return;
         }

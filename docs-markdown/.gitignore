@@ -14,6 +14,7 @@
 
 # Extension output and files
 out
+dist
 node_modules
 *.vsix
 /package-lock.json

@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.6 (April 2nd, 2020)
+
+- Bundling with webpack
+
 ## 0.2.6 (July 5th, 2019)
 
 - Logging improvements
