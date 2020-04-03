@@ -43,7 +43,7 @@ export class DocsYamlCompletionProvider implements CompletionItemProvider {
 
     // Load yaml code snippets from snippets folder
     private loadCodeSnippets(): void {
-        this.snippets = readdirSync(SNIPPETS_ROOT_PATH)
+        this.snippets = readdirSync(__dirname)
             .filter((filename: string): boolean => filename.endsWith('.yaml'))
             .map((filename: string): CodeSnippet => this.readYamlCodeSnippet(join(SNIPPETS_ROOT_PATH, filename)));
     }
