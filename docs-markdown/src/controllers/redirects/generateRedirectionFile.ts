@@ -3,13 +3,14 @@ import { homedir } from "os";
 import { basename, extname, join } from "path";
 import * as recursive from "recursive-readdir";
 import { Uri, window, workspace } from "vscode";
-import * as YAML from "yamljs";
 import { ignoreFiles, naturalLanguageCompare, postError, showStatusMessage } from "../../helper/common";
 import { sendTelemetryData } from "../../helper/telemetry";
 import * as yamlMetadata from "../../helper/yaml-metadata";
 import { RedirectFileName, RedirectTelemetryCommand } from "./constants";
 import { RedirectionFile } from "./redirection";
 import { MasterRedirection } from "./utilities";
+// tslint:disable-next-line: no-var-requires
+const jsyaml = require("js-yaml");
 
 export async function generateMasterRedirectionFile(rootPath?: string, done?: any) {
     const editor = window.activeTextEditor;
@@ -54,7 +55,7 @@ export async function generateMasterRedirectionFile(rootPath?: string, done?: an
                     const metadataContent = mdContent.getYamlMetadataContent();
 
                     if (metadataContent !== "") {
-                        const yamlHeader = YAML.parse(metadataContent.toLowerCase());
+                        const yamlHeader = jsyaml.load(metadataContent.toLowerCase());
 
                         if (yamlHeader != null && yamlHeader.redirect_url != null) {
                             if (yamlHeader.redirect_document_id !== true) {
