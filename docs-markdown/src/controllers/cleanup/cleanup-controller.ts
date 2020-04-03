@@ -3,14 +3,14 @@
 import { existsSync } from "graceful-fs";
 import { basename, extname, join } from "path";
 import { ProgressLocation, QuickPickItem, QuickPickOptions, Uri, window, workspace } from "vscode";
-import { postError, showStatusMessage, showWarningMessage } from "../../helper/common";
+import { ignoreFiles, postError, showStatusMessage, showWarningMessage } from "../../helper/common";
 import { sendTelemetryData } from "../../helper/telemetry";
 import { generateMasterRedirectionFile } from "../redirects/generateRedirectionFile";
 import { addPeriodsToAlt } from "./addPeriodsToAlt";
 import { capitalizationOfMetadata } from "./capitalizationOfMetadata";
 import { handleSingleValuedMetadata } from "./handleSingleValuedMetadata";
 import { microsoftLinks } from "./microsoftLinks";
-import { removeUnused } from "./remove-unused-assets-controller";
+import { removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller";
 import { removeEmptyMetadata } from "./removeEmptyMetadata";
 import { runAll, runAllWorkspace } from "./runAll";
 import { recurseCallback } from "./utilities";
@@ -126,15 +126,6 @@ export async function applyCleanupFile(uri: Uri) {
                     message = "Add periods to alt text values completed.";
                     commandOption = "add-periods-to-alt-text";
                     break;
-                case "master redirection file":
-                    showStatusMessage("Cleanup: Master redirection started.");
-                    message = "Master redirection started.";
-                    progress.report({ increment: 1, message });
-                    statusMessage = "Cleanup: Master redirection completed.";
-                    generateMasterRedirectionFile(file, resolve);
-                    message = "Master redirection complete.";
-                    commandOption = "redirects";
-                    break;
                 case "everything":
                     showStatusMessage("Cleanup: Everything started.");
                     message = "Everything started.";
@@ -145,32 +136,32 @@ export async function applyCleanupFile(uri: Uri) {
                     commandOption = "everything";
                     break;
                 case "empty metadata":
-                    const opts: QuickPickOptions = { placeHolder: "Cleanup..." };
-                    const items: QuickPickItem[] = [];
-                    items.push({
+                    const options: QuickPickOptions = { placeHolder: "Cleanup..." };
+                    const qpItems: QuickPickItem[] = [];
+                    qpItems.push({
                         description: "",
                         label: "Remove metadata attributes with empty values",
                     });
-                    items.push({
+                    qpItems.push({
                         description: "",
                         label: `Remove metadata attributes with "na" or "n/a"`,
                     });
-                    items.push({
+                    qpItems.push({
                         description: "",
                         label: "Remove commented out metadata attributes",
                     });
-                    items.push({
+                    qpItems.push({
                         description: "",
                         label: "Remove all",
                     });
                     showStatusMessage("Cleanup: Metadata attribute cleanup started.");
                     message = "Empty metadata attribute cleanup started.";
-                    window.showQuickPick(items, opts).then((selection) => {
-                        if (!selection) {
+                    window.showQuickPick(qpItems, options).then((selected) => {
+                        if (!selected) {
                             reject();
                             return;
                         }
-                        switch (selection.label.toLowerCase()) {
+                        switch (selected.label.toLowerCase()) {
                             case "remove metadata attributes with empty values":
                                 promises.push(removeEmptyMetadata(progress, file, null, null, "empty"));
                                 commandOption = "remove-empty";
@@ -228,7 +219,7 @@ export async function applyCleanupFolder(uri: Uri) {
             let message = "";
             let statusMessage = "";
             recursive(uri.fsPath,
-                [".git", ".github", ".vscode", ".vs", "node_module"],
+                ignoreFiles,
                 async (err: any, files: string[]) => {
                     if (err) {
                         postError(err);
@@ -304,32 +295,32 @@ export async function applyCleanupFolder(uri: Uri) {
                             commandOption = "everything";
                             break;
                         case "empty metadata":
-                            const opts: QuickPickOptions = { placeHolder: "Cleanup..." };
-                            const items: QuickPickItem[] = [];
-                            items.push({
+                            const options: QuickPickOptions = { placeHolder: "Cleanup..." };
+                            const qpItems: QuickPickItem[] = [];
+                            qpItems.push({
                                 description: "",
                                 label: "Remove metadata attributes with empty values",
                             });
-                            items.push({
+                            qpItems.push({
                                 description: "",
                                 label: `Remove metadata attributes with "na" or "n/a"`,
                             });
-                            items.push({
+                            qpItems.push({
                                 description: "",
                                 label: "Remove commented out metadata attributes",
                             });
-                            items.push({
+                            qpItems.push({
                                 description: "",
                                 label: "Remove all",
                             });
                             showStatusMessage("Cleanup: Metadata attribute cleanup started.");
-                            const selection = await window.showQuickPick(items, opts);
-                            if (!selection) {
+                            const selected = await window.showQuickPick(qpItems, options);
+                            if (!selected) {
                                 return;
                             }
                             message = "Metadata attribute cleanup started.";
                             progress.report({ increment: 1, message });
-                            switch (selection.label.toLowerCase()) {
+                            switch (selected.label.toLowerCase()) {
                                 case "remove metadata attributes with empty values":
                                     files.map((file, index) => {
                                         promises.push(removeEmptyMetadata(progress, file, files, index, "empty"));
@@ -364,8 +355,8 @@ export async function applyCleanupFolder(uri: Uri) {
                         setTimeout(() => {
                             resolve();
                         }, 2000);
-                    }).catch((err) => {
-                        postError(err);
+                    }).catch((error) => {
+                        postError(error);
                     });
                 });
             commandOption = "single-value";
@@ -464,7 +455,7 @@ export async function applyCleanup() {
                             message = "Master redirection started.";
                             progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Master redirection completed.";
-                            generateMasterRedirectionFile(workspacePath, resolve);
+                            await generateMasterRedirectionFile(workspacePath, resolve);
                             message = "Master redirection complete.";
                             commandOption = "redirects";
                             break;
@@ -473,7 +464,9 @@ export async function applyCleanup() {
                             message = "Removal of unused images and includes started.";
                             progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Removing unused images and includes. This could take several minutes.";
-                            promises.push(removeUnused(progress, workspacePath));
+                            promises.push(new Promise((res) => {
+                                removeUnusedImagesAndIncludes(progress, workspacePath, res);
+                            }));
                             message = "Removal of unused images and includes complete.";
                             commandOption = "unused-images-and-includes";
                             break;
@@ -483,27 +476,27 @@ export async function applyCleanup() {
                             commandOption = "everything";
                             break;
                         case "empty metadata":
-                            const opts: QuickPickOptions = { placeHolder: "Cleanup..." };
-                            const items: QuickPickItem[] = [];
-                            items.push({
+                            const options: QuickPickOptions = { placeHolder: "Cleanup..." };
+                            const qpItems: QuickPickItem[] = [];
+                            qpItems.push({
                                 description: "",
                                 label: "Remove metadata attributes with empty values",
                             });
-                            items.push({
+                            qpItems.push({
                                 description: "",
                                 label: `Remove metadata attributes with "na" or "n/a"`,
                             });
-                            items.push({
+                            qpItems.push({
                                 description: "",
                                 label: "Remove commented out metadata attributes",
                             });
-                            items.push({
+                            qpItems.push({
                                 description: "",
                                 label: "Remove all",
                             });
                             showStatusMessage("Cleanup: Metadata attribute cleanup started.");
-                            const selection = await window.showQuickPick(items, opts);
-                            if (!selection) {
+                            const selected = await window.showQuickPick(qpItems, options);
+                            if (!selected) {
                                 reject();
                                 return;
                             }
@@ -512,14 +505,14 @@ export async function applyCleanup() {
                             statusMessage = "Cleanup: Metadata attribute cleanup completed.";
                             promises.push(new Promise((chainResolve, chainReject) => {
                                 recursive(workspacePath,
-                                    [".git", ".github", ".vscode", ".vs", "node_module"],
+                                    ignoreFiles,
                                     (err: any, files: string[]) => {
                                         if (err) {
                                             postError(err);
                                             chainReject();
                                         }
                                         const filePromises: Array<Promise<any>> = [];
-                                        switch (selection.label.toLowerCase()) {
+                                        switch (selected.label.toLowerCase()) {
                                             case "remove metadata attributes with empty values":
                                                 files.map((file, index) => {
                                                     filePromises.push(removeEmptyMetadata(progress, file, files, index, "empty"));
@@ -547,8 +540,8 @@ export async function applyCleanup() {
                                         }
                                         Promise.all(filePromises).then(() => {
                                             chainResolve();
-                                        }).catch((err) => {
-                                            postError(err);
+                                        }).catch((error) => {
+                                            postError(error);
                                         });
                                     });
                                 message = "Empty metadata attribute cleanup completed.";

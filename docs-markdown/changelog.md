@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.63 (April 2nd, 2020)
+
+- Bundling with webpack
+
 ## 0.2.62 (April 1st, 2020)
 
 - Added moniker insertion feature for metadata and markdown
@@ -258,3 +262,4 @@ First release with the following functionality:
 - Includes
 - Snippets
 - Preview
+""''&copy;&trade;&reg;*

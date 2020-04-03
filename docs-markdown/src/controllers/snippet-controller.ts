@@ -1,15 +1,16 @@
 "use strict";
 
-import { readFile } from "fs";
-import { subdirs } from "node-dir";
-import { resolve } from "path";
-import { promisify } from "util";
+import { readdirSync, statSync } from "graceful-fs";
+import { join, resolve } from "path";
 import { QuickPickItem, window, workspace } from "vscode";
 import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 import { search } from "../helper/utility";
+// tslint:disable: no-var-requires
+const fs = require("fs").promises;
+const util = require("util");
+const readFile = util.promisify(fs.readFile);
 
-const fileContent = promisify(readFile);
 const telemetryCommand: string = "insertSnippet";
 
 export function insertSnippetCommand() {
@@ -65,7 +66,7 @@ export function searchRepo() {
     scopeOptions.push({ label: "Scoped Search", description: "Look in specific directories for snippet" });
     scopeOptions.push({ label: "Cross-Repository Reference", description: "Reference GitHub repository" });
 
-    window.showQuickPick(scopeOptions).then(async function searchType(selection) {
+    window.showQuickPick(scopeOptions).then(async (selection) => {
         if (!selection) {
             return;
         }
@@ -77,26 +78,21 @@ export function searchRepo() {
                 break;
             case "Scoped Search":
                 // gets all subdirectories to populate the scope search function.
-                subdirs(folderPath, (err: any, subDirs: any) => {
-                    if (err) {
-                        window.showErrorMessage(err);
-                        throw err;
-                    }
+                let subDirectories: string[] = [];
+                subDirectories = getSubDirectories(folderPath, [".git", ".github", ".vscode", ".vs", "node_module", "media", "breadcrumb", "includes"], subDirectories);
 
-                    const dirOptions: QuickPickItem[] = [];
+                const dirOptions: QuickPickItem[] = [];
 
-                    for (const folders in subDirs) {
-                        if (subDirs.hasOwnProperty(folders)) {
-                            dirOptions.push({ label: subDirs[folders], description: "sub directory" });
-                        }
-                    }
-
-                    window.showQuickPick(dirOptions).then((directory) => {
-                        if (directory) {
-                            search(editor, selected, directory.label);
-                        }
-                    });
+                subDirectories.forEach((subDir) => {
+                    dirOptions.push({ label: subDir, description: "sub directory" });
                 });
+
+                window.showQuickPick(dirOptions).then((directory) => {
+                    if (directory) {
+                        search(editor, selected, directory.label);
+                    }
+                });
+                break;
             default:
                 if (workspace) {
                     if (workspace.workspaceFolders) {
@@ -118,14 +114,26 @@ export function searchRepo() {
                     }
                 }
                 break;
-
         }
     });
 }
-
 async function getOpenPublishingFile(repoRoot: string) {
     const openPublishingFilePath = resolve(repoRoot, ".openpublishing.publish.config.json");
-    const openPublishingFile = await fileContent(openPublishingFilePath, "utf8");
+    const openPublishingFile = await readFile(openPublishingFilePath, "utf8");
     const openPublishingJson = JSON.parse(openPublishingFile);
     return openPublishingJson.dependent_repositories;
+}
+function getSubDirectories(dir: any, ignoreFiles: string[], fileList: string[]) {
+    const files = readdirSync(dir);
+    for (const file of files) {
+        const stat = statSync(join(dir, file));
+        if (stat.isDirectory()) {
+            const filePath: string = join(dir, file);
+            if (!ignoreFiles.some((ignore) => filePath.includes(ignore))) {
+                fileList.push(filePath);
+                fileList = getSubDirectories(join(dir, file), ignoreFiles, fileList);
+            }
+        }
+    }
+    return fileList;
 }

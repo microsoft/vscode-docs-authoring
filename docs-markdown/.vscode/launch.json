@@ -3,12 +3,6 @@
     "version": "0.1.0",
     "configurations": [
         {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach by Process ID",
-            "processId": "${command:PickProcess}"
-        },
-        {
             "name": "Launch Extension",
             "type": "extensionHost",
             "request": "launch",
@@ -16,12 +10,10 @@
             "args": [
                 "--extensionDevelopmentPath=${workspaceRoot}"
             ],
-            "stopOnEntry": false,
-            "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/out/src"
+                "${workspaceFolder}/dist/**/*.js"
             ],
-            "preLaunchTask": "npm"
+            "preLaunchTask": "webpack"
         },
         {
             "name": "Extension Tests",
@@ -37,7 +29,7 @@
             "outFiles": [
                 "${workspaceFolder}/out/src/**/*.js"
             ],
-            "preLaunchTask": "npm"
+            "preLaunchTask": "mocha"
         }
     ]
 }

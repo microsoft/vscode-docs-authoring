@@ -1,12 +1,12 @@
 
 import Axios from "axios";
-import { files } from "node-dir";
+import { existsSync } from "fs";
+import { basename, dirname, extname, join, relative } from "path";
+import * as recursive from "recursive-readdir";
 import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, workspace } from "vscode";
-import { hasValidWorkSpaceRootPath, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, setCursorPosition } from "../helper/common";
+import { hasValidWorkSpaceRootPath, ignoreFiles, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, setCursorPosition } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 
-// tslint:disable-next-line: no-var-requires
-const path = require("path");
 const telemetryCommandMedia: string = "insertMedia";
 const telemetryCommandLink: string = "insertLink";
 const imageExtensions = [".jpeg", ".jpg", ".png", ".gif", ".bmp", ".svg"];
@@ -107,28 +107,26 @@ export async function applyImage() {
         }
 
         // recursively get all the files from the root folder
-        files(folderPath, async (err: any, mdFiles: any) => {
+        recursive(folderPath, ignoreFiles, async (err: any, files: any) => {
             if (err) {
                 window.showErrorMessage(err);
             }
 
             const items: QuickPickItem[] = [];
-            mdFiles.sort();
+            files.sort();
 
-            mdFiles.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
-                items.push({ label: path.basename(file), description: path.dirname(file) });
+            files.filter((file: any) => imageExtensions.indexOf(extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+                items.push({ label: basename(file), description: dirname(file) });
             });
 
             // allow user to select source items from quickpick
             const source = await window.showQuickPick(items, { placeHolder: "Select Image from repo" });
-            if (!source) {
-                // if user did not select source image then exit.
-                return;
-            } else {
-                const activeFileDir = path.dirname(editor.document.fileName);
+            if (source && source.description) {
 
-                const sourcePath = path.relative(activeFileDir, path.join
-                    (source.description, source.label).split("//").join("//"))
+                const activeFileDir = dirname(editor.document.fileName);
+
+                const sourcePath = relative(activeFileDir,
+                    join(source.description, source.label).split("//").join("//"))
                     .replace(/\\/g, "/");
 
                 // Ask user input for alt text
@@ -233,9 +231,8 @@ function checkEditor(editor: any) {
 
     // Check to see if the active file has been saved.  If it has not been saved, warn the user.
     // The user will still be allowed to add a link but it the relative path will not be resolved.
-    const fileExists = require("file-exists");
 
-    if (!fileExists(activeFileName)) {
+    if (!existsSync(activeFileName)) {
         window.showWarningMessage(activeFilePath +
             " is not saved.  Cannot accurately resolve path to create link.");
         return;
@@ -265,28 +262,25 @@ export async function applyIcon() {
             }
 
             // recursively get all the files from the root folder
-            files(folderPath, async (err: any, mdFiles: any) => {
+            recursive(folderPath, ignoreFiles, async (err: any, files: any) => {
                 if (err) {
                     window.showErrorMessage(err);
                 }
 
                 const items: QuickPickItem[] = [];
-                mdFiles.sort();
+                files.sort();
 
-                mdFiles.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
-                    items.push({ label: path.basename(file), description: path.dirname(file) });
+                files.filter((file: any) => imageExtensions.indexOf(extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+                    items.push({ label: basename(file), description: dirname(file) });
                 });
 
                 // allow user to select source items from quickpick
                 const source = await window.showQuickPick(items, { placeHolder: "Select Image from repo" });
-                if (!source) {
-                    // if user did not select source image then exit.
-                    return;
-                } else {
-                    const activeFileDir = path.dirname(editor.document.fileName);
+                if (source && source.description) {
+                    const activeFileDir = dirname(editor.document.fileName);
 
-                    const sourcePath = path.relative(activeFileDir, path.join
-                        (source.description, source.label).split("//").join("//"))
+                    const sourcePath = relative(activeFileDir,
+                        join(source.description, source.label).split("//").join("//"))
                         .replace(/\\/g, "/");
 
                     // output image content type
@@ -320,28 +314,25 @@ export async function applyComplex() {
         }
 
         // recursively get all the files from the root folder
-        files(folderPath, async (err: any, mdFiles: any) => {
+        recursive(folderPath, ignoreFiles, async (err: any, files: any) => {
             if (err) {
                 window.showErrorMessage(err);
             }
 
             const items: QuickPickItem[] = [];
-            mdFiles.sort();
+            files.sort();
 
-            mdFiles.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
-                items.push({ label: path.basename(file), description: path.dirname(file) });
+            files.filter((file: any) => imageExtensions.indexOf(extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+                items.push({ label: basename(file), description: dirname(file) });
             });
 
             // allow user to select source items from quickpick
             const source = await window.showQuickPick(items, { placeHolder: "Select Image from repo" });
-            if (!source) {
-                // if user did not select source image then exit.
-                return;
-            } else {
-                const activeFileDir = path.dirname(editor.document.fileName);
+            if (source && source.description) {
+                const activeFileDir = dirname(editor.document.fileName);
 
-                const sourcePath = path.relative(activeFileDir, path.join
-                    (source.description, source.label).split("//").join("//"))
+                const sourcePath = relative(activeFileDir,
+                    join(source.description, source.label).split("//").join("//"))
                     .replace(/\\/g, "/");
 
                 const selection = editor.selection;
@@ -460,29 +451,26 @@ export async function applyLightbox() {
             folderPath = workspace.workspaceFolders[0].uri.fsPath;
         }
         // get available files
-        files(folderPath, async (err: any, mdFiles: any) => {
+        recursive(folderPath, ignoreFiles, async (err: any, files: any) => {
             if (err) {
                 window.showErrorMessage(err);
             }
 
             const items: QuickPickItem[] = [];
-            mdFiles.sort();
+            files.sort();
 
-            mdFiles.filter((file: any) => imageExtensions.indexOf(path.extname(file.toLowerCase())) !== -1).forEach((file: any) => {
-                items.push({ label: path.basename(file), description: path.dirname(file) });
+            files.filter((file: any) => imageExtensions.indexOf(extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+                items.push({ label: basename(file), description: dirname(file) });
             });
 
             // show quickpick to user available images.
             const image = await window.showQuickPick(items, { placeHolder: "Select Image from repo" });
-            if (!image) {
-                // if user did not select source image then exit.
-                return;
-            } else {
+            if (image && image.description) {
                 // insert lightbox into editor
-                const activeFileDir = path.dirname(editor.document.fileName);
+                const activeFileDir = dirname(editor.document.fileName);
 
-                const imagePath = path.relative(activeFileDir, path.join
-                    (image.description, image.label).split("//").join("//"))
+                const imagePath = relative(activeFileDir,
+                    join(image.description, image.label).split("//").join("//"))
                     .replace(/\\/g, "/");
 
                 editor.edit((selected) => {

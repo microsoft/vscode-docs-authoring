@@ -4,7 +4,7 @@
   "description": "Docs article templates",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "publisher": "docsmsft",
   "engines": {
     "vscode": "^1.23.0"
@@ -15,7 +15,7 @@
   "activationEvents": [
     "*"
   ],
-  "main": "./out/extension",
+  "main": "./dist/extension",
   "contributes": {
     "commands": [
       {
@@ -56,7 +56,9 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
@@ -78,8 +80,13 @@
     "@types/node-dir": "0.0.32",
     "mocha": "^7.1.1",
     "tslint": "^5.20.1",
+    "terser-webpack-plugin": "^2.3.5",
+    "ts-loader": "^6.2.2",
     "typescript": "^2.6.1",
-    "vscode": "^1.1.33"
+    "vscode": "^1.1.33",
+    "webpack": "^4.42.1",
+    "webpack-bundle-analyzer": "^3.6.1",
+    "webpack-cli": "^3.3.11"
   },
   "repository": {
     "type": "git",

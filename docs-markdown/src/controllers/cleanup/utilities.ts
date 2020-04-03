@@ -1,5 +1,5 @@
 import { readFile, writeFile } from "graceful-fs";
-import { postError } from "../../helper/common";
+import { ignoreFiles, postError } from "../../helper/common";
 // tslint:disable no-var-requires
 const jsdiff = require("diff");
 // tslint:disable no-var-requires
@@ -99,7 +99,7 @@ export function readWriteFileWithProgress(progress: any, file: string, message: 
 
 export function recurseCallback(workspacePath: string, progress: any, callback: (progress: any, file: string, files: string[], index: number) => Promise<any>): Promise<any> {
     return new Promise((chainResolve, chainReject) =>
-        recursive(workspacePath, [".git", ".github", ".vscode", ".vs", "node_module"], (err: any, files: string[]) => {
+        recursive(workspacePath, ignoreFiles, (err: any, files: string[]) => {
             if (err) {
                 postError(err);
                 chainReject();
