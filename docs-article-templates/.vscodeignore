@@ -1,8 +1,10 @@
-.vscode/**
-.vscode-test/**
-out/test/**
-out/**/*.map
-src/**
+.vscode
+.vscode-test/
+out/
+src/
 .gitignore
 tsconfig.json
-vsc-extension-quickstart.md
+node_modules
+webpack.config.js
+images/svg/file-dark.svg
+images/svg/file-light.svg
