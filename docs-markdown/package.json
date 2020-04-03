@@ -709,6 +709,11 @@
     "test": "node ./out/src/test/runTest.js",
     "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run compile && npm run lint"
+    }
+  },
   "dependencies": {
     "axios": "^0.19.2",
     "child-process-promise": "^2.2.1",
@@ -735,6 +740,7 @@
     "@types/yamljs": "^0.2.30",
     "chai": "^4.2.0",
     "chai-spies": "^1.0.0",
+    "husky": "^4.2.3",
     "mocha": "^7.1.1",
     "mocha-junit-reporter": "^1.23.3",
     "mock-require": "^3.0.3",

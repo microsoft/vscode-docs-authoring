@@ -69,11 +69,11 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                 files.map(async (file, index) => {
 
                     if (file.endsWith(".yml") || file.endsWith("docfx.json")) {
-                        promises.push(new Promise((resolve, reject) => {
-                            readFile(file, "utf8", (err, data) => {
-                                if (err) {
-                                    postError(`Error: ${err}`);
-                                    reject();
+                        promises.push(new Promise((readResolve, readReject) => {
+                            readFile(file, "utf8", (error, data) => {
+                                if (error) {
+                                    postError(`Error: ${error}`);
+                                    readReject();
                                 }
                                 const origin = data;
                                 data = handleYamlMetadata(data);
@@ -82,29 +82,29 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                                         return part.added || part.removed;
                                     });
                                 if (diff) {
-                                    promises.push(new Promise((resolve, reject) => {
-                                        writeFile(file, data, (err) => {
-                                            if (err) {
-                                                postError(`Error: ${err}`);
-                                                reject();
+                                    promises.push(new Promise((res, rej) => {
+                                        writeFile(file, data, (e) => {
+                                            if (e) {
+                                                postError(`Error: ${e}`);
+                                                rej();
                                             }
                                             showProgress(index, files, progress, message);
-                                            resolve();
+                                            res();
                                         });
-                                    }).catch((error) => {
-                                        postError(error);
+                                    }).catch((e) => {
+                                        postError(e);
                                     }));
                                 }
-                                resolve();
+                                readResolve();
                             });
                         }).catch((error) => {
                             postError(error);
                         }));
                     } else if (file.endsWith(".md")) {
-                        promises.push(new Promise((resolve, reject) => {
-                            readFile(file, "utf8", (err, data) => {
-                                if (err) {
-                                    postError(`Error: ${err}`);
+                        promises.push(new Promise((readResolve, reject) => {
+                            readFile(file, "utf8", (error, data) => {
+                                if (error) {
+                                    postError(`Error: ${error}`);
                                     reject();
                                 }
                                 const origin = data;
@@ -128,28 +128,28 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                                         return part.added || part.removed;
                                     });
                                 if (diff) {
-                                    promises.push(new Promise((resolve, reject) => {
-                                        writeFile(file, data, (err) => {
-                                            if (err) {
-                                                postError(`Error: ${err}`);
-                                                reject();
+                                    promises.push(new Promise((res, rej) => {
+                                        writeFile(file, data, (e) => {
+                                            if (e) {
+                                                postError(`Error: ${e}`);
+                                                rej();
                                             }
                                             showProgress(index, files, progress, message);
-                                            resolve();
+                                            res();
                                         });
-                                    }).catch((error) => {
-                                        postError(error);
+                                    }).catch((e) => {
+                                        postError(e);
                                     }));
                                 }
-                                resolve();
+                                readResolve();
                             });
                         }).catch((error) => {
                             postError(error);
                         }));
                     }
                 });
-                promises.push(new Promise((resolve, reject) => {
-                    generateMasterRedirectionFile(workspacePath, resolve);
+                promises.push(new Promise((r, reject) => {
+                    generateMasterRedirectionFile(workspacePath, r);
                 }));
                 promises.push(new Promise(async (resolve, reject) => {
                     removeUnusedImagesAndIncludes(progress, workspacePath, resolve);

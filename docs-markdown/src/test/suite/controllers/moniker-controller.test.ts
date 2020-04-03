@@ -16,7 +16,6 @@ function insertBlankLine(editor: TextEditor, line: number) {
     const spy = chai.spy.on(common, "insertContentToEditor");
     spy(editor, "test", "\r\n");
     chai.spy.restore(spy);
-
 }
 function moveCursor(editor: TextEditor, y: number, x: number) {
     const spy = chai.spy.on(common, "setCursorPosition");
@@ -43,12 +42,10 @@ suite("Moniker Controller", () => {
     teardown(() => {
         chai.spy.restore(common);
         chai.spy.restore(window);
-
     });
     suiteTeardown(async () => {
         await commands.executeCommand("workbench.action.closeAllEditors");
     });
-
     test("insertMonikerCommand", () => {
         const controllerCommands = [
             { command: insertMoniker.name, callback: insertMoniker },
@@ -60,7 +57,6 @@ suite("Moniker Controller", () => {
         insertMoniker();
         expect(spy).to.have.been.called();
     });
-
     test("isMarkdownFileCheck", async () => {
         const filePath = resolve(__dirname, testFile);
         await loadDocumentAndGetItReady(filePath);
@@ -69,14 +65,12 @@ suite("Moniker Controller", () => {
         await sleep(sleepTime);
         expect(spy).to.have.been.called();
     });
-
     test("isContentOnCurrentLine", async () => {
         const spy = chai.spy.on(window, "showErrorMessage");
         insertMoniker();
         await sleep(sleepTime);
         expect(spy).to.have.been.called();
     });
-
     // YAML Header test
     test("insertYamlMoniker - equal - output", async () => {
         const editor = window.activeTextEditor;
@@ -99,15 +93,12 @@ suite("Moniker Controller", () => {
     });
 
     test("insertYamlMoniker - equal - cursorPosition", async () => {
-
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
         expect(cursorPosition).to.deep.equal([yamlLine, yamlCharacter]);
-
     });
 
     test("insertYamlMoniker - greater/equal - output", async () => {
-
         const editor = window.activeTextEditor;
         moveCursor(editor!, yamlLine, 0);
         insertBlankLine(editor!, 10);
@@ -124,7 +115,6 @@ suite("Moniker Controller", () => {
         stub.restore();
 
         expect(output).to.equal("monikerRange: '>='");
-
     });
 
     test("insertYamlMoniker - greater/equal - cursorPosition", async () => {
@@ -135,7 +125,6 @@ suite("Moniker Controller", () => {
     });
 
     test("insertYamlMoniker - less/equal - output", async () => {
-
         const editor = window.activeTextEditor;
         moveCursor(editor!, yamlLine, 0);
         insertBlankLine(editor!, yamlLine);
@@ -152,7 +141,6 @@ suite("Moniker Controller", () => {
         stub.restore();
 
         expect(output).to.equal("monikerRange: '<='");
-
     });
 
     test("insertYamlMoniker - greater/equal - cursorPosition", async () => {
@@ -245,5 +233,4 @@ suite("Moniker Controller", () => {
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
         expect(cursorPosition).to.deep.equal([markLine + 6, markCharacter + 2]);
     });
-
 });
