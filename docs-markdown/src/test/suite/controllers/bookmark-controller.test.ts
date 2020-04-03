@@ -5,7 +5,7 @@ import { commands, window } from "vscode";
 import { insertBookmarkCommands, insertBookmarkExternal, insertBookmarkInternal } from "../../../controllers/bookmark-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
-import { createDocumentAndGetItReady, loadDocumentAndGetItReady, sleep } from "../../test.common/common";
+import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
 
 chai.use(spies);
 
@@ -37,8 +37,8 @@ suite("Bookmark Controller", () => {
         expect(spy).to.have.been.called();
     });
     test("insertBookmarkExternal::insertContentToEditor", async () => {
-        await createDocumentAndGetItReady();
         const filePath = resolve(__dirname, "../../../../../src/test/data/repo");
+        await loadDocumentAndGetItReady(`${filePath}/articles/bookmark.md`);
         const qpSelectionItems = [
             { label: "README.md", description: filePath },
             { label: "## Getting Started\r\n", detail: " " },
@@ -57,7 +57,8 @@ suite("Bookmark Controller", () => {
         stub.restore();
     });
     test("insertBookmarkInternal::no headings", async () => {
-        await createDocumentAndGetItReady();
+        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/bookmark.md");
+        await loadDocumentAndGetItReady(filePath);
         const spy = chai.spy.on(window, "showErrorMessage");
         await insertBookmarkInternal();
         expect(spy).to.have.been.called();

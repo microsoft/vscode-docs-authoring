@@ -3,14 +3,14 @@
 import { existsSync } from "graceful-fs";
 import { basename, extname, join } from "path";
 import { ProgressLocation, QuickPickItem, QuickPickOptions, Uri, window, workspace } from "vscode";
-import { postError, showStatusMessage, showWarningMessage } from "../../helper/common";
+import { ignoreFiles, postError, showStatusMessage, showWarningMessage } from "../../helper/common";
 import { sendTelemetryData } from "../../helper/telemetry";
 import { generateMasterRedirectionFile } from "../redirects/generateRedirectionFile";
 import { addPeriodsToAlt } from "./addPeriodsToAlt";
 import { capitalizationOfMetadata } from "./capitalizationOfMetadata";
 import { handleSingleValuedMetadata } from "./handleSingleValuedMetadata";
 import { microsoftLinks } from "./microsoftLinks";
-import { removeUnused } from "./remove-unused-assets-controller";
+import { removeUnusedImagesAndIncludes } from "./remove-unused-assets-controller";
 import { removeEmptyMetadata } from "./removeEmptyMetadata";
 import { runAll, runAllWorkspace } from "./runAll";
 import { recurseCallback } from "./utilities";
@@ -126,15 +126,6 @@ export async function applyCleanupFile(uri: Uri) {
                     message = "Add periods to alt text values completed.";
                     commandOption = "add-periods-to-alt-text";
                     break;
-                case "master redirection file":
-                    showStatusMessage("Cleanup: Master redirection started.");
-                    message = "Master redirection started.";
-                    progress.report({ increment: 1, message });
-                    statusMessage = "Cleanup: Master redirection completed.";
-                    generateMasterRedirectionFile(file, resolve);
-                    message = "Master redirection complete.";
-                    commandOption = "redirects";
-                    break;
                 case "everything":
                     showStatusMessage("Cleanup: Everything started.");
                     message = "Everything started.";
@@ -228,7 +219,7 @@ export async function applyCleanupFolder(uri: Uri) {
             let message = "";
             let statusMessage = "";
             recursive(uri.fsPath,
-                [".git", ".github", ".vscode", ".vs", "node_module"],
+                ignoreFiles,
                 async (err: any, files: string[]) => {
                     if (err) {
                         postError(err);
@@ -464,7 +455,7 @@ export async function applyCleanup() {
                             message = "Master redirection started.";
                             progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Master redirection completed.";
-                            generateMasterRedirectionFile(workspacePath, resolve);
+                            await generateMasterRedirectionFile(workspacePath, resolve);
                             message = "Master redirection complete.";
                             commandOption = "redirects";
                             break;
@@ -473,7 +464,9 @@ export async function applyCleanup() {
                             message = "Removal of unused images and includes started.";
                             progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Removing unused images and includes. This could take several minutes.";
-                            promises.push(removeUnused(progress, workspacePath));
+                            promises.push(new Promise((res) => {
+                                removeUnusedImagesAndIncludes(progress, workspacePath, res);
+                            }));
                             message = "Removal of unused images and includes complete.";
                             commandOption = "unused-images-and-includes";
                             break;
@@ -512,7 +505,7 @@ export async function applyCleanup() {
                             statusMessage = "Cleanup: Metadata attribute cleanup completed.";
                             promises.push(new Promise((chainResolve, chainReject) => {
                                 recursive(workspacePath,
-                                    [".git", ".github", ".vscode", ".vs", "node_module"],
+                                    ignoreFiles,
                                     (err: any, files: string[]) => {
                                         if (err) {
                                             postError(err);

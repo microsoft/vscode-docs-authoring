@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.61",
+  "version": "0.2.63",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -26,7 +26,7 @@
     "onLanguage:markdown",
     "onLanguage:yaml"
   ],
-  "main": "./out/src/extension",
+  "main": "./dist/extension",
   "contributes": {
     "commands": [
       {
@@ -700,7 +700,9 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "tsc -p ./",
+    "vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile",
@@ -714,19 +716,16 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "child-process-promise": "^2.2.1",
     "diff": "^4.0.2",
-    "file-exists": "^5.0.1",
-    "fs-exists-sync": "^0.1.0",
     "glob": "^7.1.6",
     "graceful-fs": "^4.2.3",
     "js-yaml": "^3.13.1",
     "lodash.merge": "^4.6.2",
     "matcher": "^1.1.1",
-    "node-dir": "^0.1.17",
     "recursive-readdir": "^2.2.2",
     "typescript-collections": "^1.3.3",
-    "vscode-extension-telemetry": "^0.1.1",
-    "yamljs": "^0.3.0"
+    "vscode-extension-telemetry": "^0.1.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
@@ -736,7 +735,6 @@
     "@types/lodash.merge": "^4.6.6",
     "@types/mocha": "^7.0.1",
     "@types/node": "^12.12.32",
-    "@types/node-dir": "0.0.32",
     "@types/recursive-readdir": "^2.2.0",
     "@types/vscode": "^1.43.0",
     "@types/yamljs": "^0.2.30",
@@ -750,10 +748,15 @@
     "octicons": "^7.4.0",
     "sinon": "^9.0.1",
     "source-map-support": "^0.5.16",
+    "terser-webpack-plugin": "^2.3.5",
+    "ts-loader": "^6.2.2",
     "ts-node": "^8.8.1",
     "tslint": "^5.20.1",
     "typescript": "^3.7.5",
-    "vscode-test": "^1.3.0"
+    "vscode-test": "^1.3.0",
+    "webpack": "^4.42.1",
+    "webpack-bundle-analyzer": "^3.6.1",
+    "webpack-cli": "^3.3.11"
   },
   "license": "MIT"
 }

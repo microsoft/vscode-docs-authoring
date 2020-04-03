@@ -1,5 +1,6 @@
 "use strict";
 
+import { readFileSync } from "fs";
 import { Disposable, ExtensionContext, Uri, window, workspace } from "vscode";
 import TelemetryReporter from "vscode-extension-telemetry";
 
@@ -19,8 +20,13 @@ interface IPackageInfo {
     aiKey: string;
 }
 
+function readJson(path: string) {
+    const json = readFileSync(path, "utf8");
+    return JSON.parse(json);
+}
+
 function getPackageInfo(context: ExtensionContext): IPackageInfo {
-    const extensionPackage = require(context.asAbsolutePath("./package.json"));
+    const extensionPackage = readJson(context.asAbsolutePath("./package.json"));
     return { name: extensionPackage.name, version: extensionPackage.version, aiKey: extensionPackage.aiKey };
 }
 

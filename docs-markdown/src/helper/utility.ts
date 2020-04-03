@@ -1,7 +1,7 @@
+import * as recursive from "recursive-readdir";
 import { QuickPickItem, QuickPickOptions, Range, Selection, TextDocument, TextDocumentChangeEvent, TextEditor, window, workspace } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheckWithoutNotification, matchAll, postWarning } from "./common";
+import { ignoreFiles, insertContentToEditor, isMarkdownFileCheckWithoutNotification, matchAll, postWarning } from "./common";
 import { getLanguageIdentifierQuickPickItems, IHighlightLanguage, languages } from "./highlight-langs";
-
 /**
  * Checks the user input for table creation.
  * Format - C:R.
@@ -87,7 +87,6 @@ export function tableBuilder(col: number, row: number) {
  */
 
 export async function search(editor: TextEditor, selection: Selection, folderPath: string, fullPath?: string, crossReference?: string) {
-    const dir = require("node-dir");
     const path = require("path");
     let language: string | null = "";
     let possibleLanguage: IHighlightLanguage | null = null;
@@ -104,7 +103,7 @@ export async function search(editor: TextEditor, selection: Selection, folderPat
         }
 
         // searches for all files at the given directory path.
-        const files = await dir.promiseFiles(fullPath);
+        const files = await recursive(fullPath, ignoreFiles);
         const fileOptions: QuickPickItem[] = [];
 
         for (const file in files) {

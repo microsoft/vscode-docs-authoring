@@ -23,7 +23,7 @@ function moveCursor(editor: TextEditor, y: number, x: number) {
     chai.spy.restore(spy);
 }
 
-const testFile = "../../../../../src/test/data/repo/articles/bookmark.md";
+const testFile = "../../../../../src/test/data/repo/articles/moniker.md";
 const sleepTime = 100;
 const monikerOptions = [
     "range equals",
@@ -66,19 +66,17 @@ suite("Moniker Controller", () => {
         expect(spy).to.have.been.called();
     });
     test("isContentOnCurrentLine", async () => {
-
         const spy = chai.spy.on(window, "showErrorMessage");
         insertMoniker();
         await sleep(sleepTime);
         expect(spy).to.have.been.called();
-
     });
     // YAML Header test
     test("insertYamlMoniker - equal - output", async () => {
-
         const editor = window.activeTextEditor;
         moveCursor(editor!, yamlLine, 0);
         insertBlankLine(editor!, yamlLine);
+        common.insertContentToEditor(editor!, "", "", false, editor!.document.lineAt(10).range);
         moveCursor(editor!, yamlLine, 0); // move cursor back
         await sleep(sleepTime);
 
@@ -170,7 +168,6 @@ suite("Moniker Controller", () => {
         stub.restore();
 
         expect(output).to.equal("::: moniker range=\"\"::: moniker-end");
-
     });
 
     test("insertMarkdownMoniker - equal - cursorPosition", async () => {

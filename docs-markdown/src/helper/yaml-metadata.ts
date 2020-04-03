@@ -1,19 +1,18 @@
 "use strict";
 
-import * as fs from "fs";
+import { existsSync, readFileSync } from "fs";
 import * as path from "path";
-import * as Collections from "typescript-collections";
+import { PriorityQueue, Stack } from "typescript-collections";
 import { Range, TextEditor } from "vscode";
-import YAML = require("yamljs");
 import * as yamlMetadata from "../helper/yaml-metadata";
 import * as common from "./common";
 import * as utilityHelper from "./utility";
-
+// tslint:disable-next-line: no-var-requires
+const jsyaml = require("js-yaml");
 /* tslint:disable:no-var-requires max-classes-per-file */
 
 const lodash = require("lodash.merge");
 const matcher = require("matcher");
-const fsExistsSync = require("fs-exists-sync");
 
 export enum MetadataSourceContentType { MarkdownFile, DocFxFile, GlobalMetadataFx, FileMetadataFx, YamlContent }
 
@@ -115,12 +114,12 @@ export class MarkdownFileMetadataContent extends MetadataContentBase {
         if (results !== null) {
             const result = results[1];
             const trimmed = common.rtrim(result.trim(), "---");
-            const parsed = YAML.parse(trimmed);
+            const parsed = jsyaml.load(trimmed);
             if (parsed === null) {
                 // fix if yaml header is empty or contains only comments
                 return "";
             }
-            return YAML.stringify(parsed);
+            return JSON.stringify(parsed);
         }
         return "";
     }
@@ -182,7 +181,7 @@ export class GlobalFxMetadataContent extends MetadataContentBase {
         }
 
         const parsed = JSON.parse(utilityHelper.stripBOMFromString(this.OriginalData.toString()) || "{}");
-        return YAML.stringify(parsed);
+        return JSON.stringify(parsed);
     }
 }
 
@@ -219,7 +218,7 @@ export class FileFxMetadataContent extends MetadataContentBase {
             }
         }
 
-        return YAML.stringify(returned);
+        return JSON.stringify(returned);
     }
 
     private matchFilePattern(referenceFile: string, filePattern: string): boolean {
@@ -235,8 +234,8 @@ export class FileFxMetadataContent extends MetadataContentBase {
  */
 export function findDocFxMetadataForDir(dirname: string, referenceTopicFileName: string): DocFxMetadataContent | undefined {
     const searchedMetadata = path.join(dirname, GetDocFxMetadataName());
-    if (fsExistsSync(searchedMetadata)) {
-        return new DocFxMetadataContent(fs.readFileSync(searchedMetadata, "utf8"), searchedMetadata, referenceTopicFileName);
+    if (existsSync(searchedMetadata)) {
+        return new DocFxMetadataContent(readFileSync(searchedMetadata, "utf8"), searchedMetadata, referenceTopicFileName);
     }
     return;
 }
@@ -273,10 +272,10 @@ function mergeYamlMetadata(higherPriorityMetadata: MetadataContentBase, lowerPri
             mergedContent = contentHi;
         }
     } else {
-        const yamlFrontHi = YAML.parse(contentHi);
-        const yamlFrontLo = YAML.parse(contentLo);
+        const yamlFrontHi = jsyaml.load(contentHi);
+        const yamlFrontLo = jsyaml.load(contentLo);
         const mergedContentAny = lodash(yamlFrontLo, yamlFrontHi);
-        mergedContent = YAML.stringify(mergedContentAny);
+        mergedContent = JSON.stringify(mergedContentAny);
         if (mergedContent.trim() === "{}") {
             mergedContent = "";
         }
@@ -289,12 +288,12 @@ function mergeYamlMetadata(higherPriorityMetadata: MetadataContentBase, lowerPri
  * Merges all metadata in the passed priority queue into the one. This merge does expansion if DocFxMetadataContent representing docfx.json is specified
  * Highest priority item in the queue will be merged as highest priority metadata.
  */
-export function mergeMetadata(priorityQueue: Collections.PriorityQueue<MetadataContentBase>): MetadataContentBase {
+export function mergeMetadata(priorityQueue: PriorityQueue<MetadataContentBase>): MetadataContentBase {
     if (priorityQueue === undefined) {
         throw new RangeError("priorityStack must be defined.");
     }
 
-    const stack = new Collections.Stack<MetadataContentBase>();
+    const stack = new Stack<MetadataContentBase>();
     if (priorityQueue.isEmpty()) {
         throw new RangeError("priorityQueue can't be empty.");
     }
@@ -332,7 +331,7 @@ export function mergeMetadata(priorityQueue: Collections.PriorityQueue<MetadataC
  * Bottom item has highest priotity.
  * Does not expand docfx.json content representation!
  */
-function mergeMetadataFromTop(stack: Collections.Stack<MetadataContentBase>): MetadataContentBase {
+function mergeMetadataFromTop(stack: Stack<MetadataContentBase>): MetadataContentBase {
     let currentMergedItem = stack.pop()!;
     while (!stack.isEmpty()) {
         currentMergedItem = mergeYamlMetadata(stack.pop()!, currentMergedItem);

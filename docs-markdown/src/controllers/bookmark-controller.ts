@@ -1,11 +1,11 @@
 "use strict";
 
-import { readFileSync } from "fs";
-import { files } from "node-dir";
+import { existsSync, readFileSync } from "fs";
 import { basename, dirname, extname, join, relative, resolve } from "path";
+import * as recursive from "recursive-readdir";
 import { QuickPickItem, window, workspace } from "vscode";
 import { addbookmarkIdentifier, bookmarkBuilder } from "../helper/bookmark-builder";
-import { insertContentToEditor, noActiveEditorMessage } from "../helper/common";
+import { ignoreFiles, insertContentToEditor, noActiveEditorMessage } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommand: string = "insertBookmark";
@@ -26,7 +26,7 @@ export function insertBookmarkCommands() {
 /**
  * Creates a bookmark to another file at the cursor position
  */
-export function insertBookmarkExternal() {
+export async function insertBookmarkExternal() {
     commandOption = "external";
     let folderPath: string = "";
     let fullPath: string = "";
@@ -41,9 +41,8 @@ export function insertBookmarkExternal() {
 
     // Check to see if the active file has been saved.  If it has not been saved, warn the user.
     // The user will still be allowed to add a link but it the relative path will not be resolved.
-    const fileExists = require("file-exists");
 
-    if (!fileExists(activeFileName)) {
+    if (!existsSync(activeFileName)) {
         window.showWarningMessage(`${activeFilePath} is not saved.  Cannot accurately resolve path to create link.`);
         return;
     }
@@ -52,61 +51,54 @@ export function insertBookmarkExternal() {
     }
 
     // recursively get all the files from the root folder
-    files(folderPath, (err: any, mdFiles: any) => {
-        if (err) {
-            window.showErrorMessage(err);
-            throw err;
+    const files = await recursive(folderPath, ignoreFiles);
+
+    const items: QuickPickItem[] = [];
+    files.sort();
+    files.filter((file: any) => markdownExtensionFilter.indexOf(extname(file.toLowerCase())) !== -1).forEach((file: any) => {
+        items.push({ label: basename(file), description: dirname(file) });
+    });
+
+    // show the quick pick menu
+    const qpSelection = await window.showQuickPick(items);
+    let result = "";
+    let bookmark = "";
+
+    if (!qpSelection) {
+        return;
+    }
+
+    if (qpSelection.description) {
+        fullPath = join(qpSelection.description, qpSelection.label);
+    }
+
+    const content = readFileSync(fullPath, "utf8");
+    const headings = content.match(headingTextRegex);
+
+    if (!headings) {
+        window.showErrorMessage("No headings found in file, cannot insert bookmark!");
+        return;
+    }
+
+    const adjustedHeadingsItems: QuickPickItem[] = [];
+    const adjustedHeadings = addbookmarkIdentifier(headings);
+    adjustedHeadings.forEach((adjustedHeading: string) => {
+        adjustedHeadingsItems.push({ label: adjustedHeading, detail: " " });
+    });
+
+    window.showQuickPick(adjustedHeadingsItems).then((headingSelection) => {
+        if (!headingSelection) {
+            return;
         }
-
-        const items: QuickPickItem[] = [];
-        mdFiles.sort();
-        mdFiles.filter((file: any) => markdownExtensionFilter.indexOf(extname(file.toLowerCase())) !== -1).forEach((file: any) => {
-            items.push({ label: basename(file), description: dirname(file) });
-        });
-
-        // show the quick pick menu
-        const selectionPick = window.showQuickPick(items);
-        selectionPick.then((qpSelection) => {
-            let result = "";
-            let bookmark = "";
-
-            if (!qpSelection) {
-                return;
-            }
-
+        if (resolve(activeFilePath) === resolve(qpSelection.label.split("\\").join("\\\\")) && basename(activeFileName) === qpSelection.label) {
+            bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, "");
+        } else {
             if (qpSelection.description) {
-                fullPath = join(qpSelection.description, qpSelection.label);
+                result = relative(activeFilePath, join(qpSelection.description, qpSelection.label).split("\\").join("\\\\"));
             }
-
-            const content = readFileSync(fullPath, "utf8");
-            const headings = content.match(headingTextRegex);
-
-            if (!headings) {
-                window.showErrorMessage("No headings found in file, cannot insert bookmark!");
-                return;
-            }
-
-            const adjustedHeadingsItems: QuickPickItem[] = [];
-            const adjustedHeadings = addbookmarkIdentifier(headings);
-            adjustedHeadings.forEach((adjustedHeading: string) => {
-                adjustedHeadingsItems.push({ label: adjustedHeading, detail: " " });
-            });
-
-            window.showQuickPick(adjustedHeadingsItems).then((headingSelection) => {
-                if (!headingSelection) {
-                    return;
-                }
-                if (resolve(activeFilePath) === resolve(qpSelection.label.split("\\").join("\\\\")) && basename(activeFileName) === qpSelection.label) {
-                    bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, "");
-                } else {
-                    if (qpSelection.description) {
-                        result = relative(activeFilePath, join(qpSelection.description, qpSelection.label).split("\\").join("\\\\"));
-                    }
-                    bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, result);
-                }
-                insertContentToEditor(editor, "InsertBookmarkExternal", bookmark, true, editor.selection);
-            });
-        });
+            bookmark = bookmarkBuilder(editor.document.getText(editor.selection), headingSelection.label, result);
+        }
+        insertContentToEditor(editor, "InsertBookmarkExternal", bookmark, true, editor.selection);
     });
     sendTelemetryData(telemetryCommand, commandOption);
 }
