@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.45 (April 2nd, 2020)
+
+- Bundling with webpack
+
 ## 0.3.44 (March 23rd, 2020)
 
 - Bug fix for webview on change event firing when no webview exists

@@ -3,13 +3,12 @@ import * as moment from "moment";
 import * as os from "os";
 import { basename, dirname, join, relative } from "path";
 import {
-    EventEmitter,
     TextDocumentContentProvider,
     Uri,
     window,
     workspace,
 } from "vscode";
-import { getFirstParagraph, getPath, parseMarkdownMetadata, parseYamlMetadata } from "./seoHelpers";
+import { getPath, parseMarkdownMetadata, parseYamlMetadata } from "./seoHelpers";
 
 const metadataRegex = new RegExp(`^(---)([^]+?)(---)$`, "m");
 

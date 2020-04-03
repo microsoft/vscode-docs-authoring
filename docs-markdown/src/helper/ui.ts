@@ -1,61 +1,46 @@
 "use-strict";
 
-import * as vscode from "vscode";
-import * as common from "../helper/common";
-import * as log from "./log";
+import { StatusBarAlignment, StatusBarItem, window, workspace } from "vscode";
+import { checkExtension } from "../helper/common";
+import { output } from "../helper/output";
 
 export class UiHelper {
 
     public LoadToolbar() {
 
         // toolbar only renders if markdown.showToolbar is true in user settings
-        if (vscode.workspace.getConfiguration("markdown").showToolbar) {
+        if (workspace.getConfiguration("markdown").showToolbar) {
 
             try {
                 this.uiMessage();
-                log.debug("Loaded UI Message Text");
-                if (common.checkExtension("docsmsft.docs-article-templates")) {
+                if (checkExtension("docsmsft.docs-article-templates")) {
                     this.uiTemplate();
-                    log.debug("Loaded UI Apply Template");
                     this.uiCleanup();
-                    log.debug("Loaded UI Apply Cleanup");
                 }
                 this.uiBold();
-                log.debug("Loaded UI Format Bold");
                 this.uiItalic();
-                log.debug("Loaded UI Format Italic");
                 this.uiCode();
-                log.debug("Loaded UI Format Code");
                 this.uiAlert();
-                log.debug("Loaded UI Insert Alert");
                 this.uiNumberedList();
-                log.debug("Loaded UI Insert Numbered List");
                 this.uiBulletedList();
-                log.debug("Loaded UI Insert Bulleted List");
                 this.uiNewTable();
-                log.debug("Loaded UI New Table");
                 this.uiLink();
-                log.debug("Loaded UI Insert Link");
                 this.uiImage();
-                log.debug("Loaded UI Insert Image");
                 this.uiInclude();
-                log.debug("Loaded UI Insert Include");
                 this.uiSnippet();
-                log.debug("Loaded UI Insert Snippet");
                 // this returns false until an activation event is initiated.
-                if (!common.checkExtension("docsmsft.docs-preview")) {
+                if (!checkExtension("docsmsft.docs-preview")) {
                     this.uiPreview();
-                    log.debug("Loaded UI Insert Preview");
                 }
             } catch (error) {
-                log.error("Failed to load UI: " + error);
+                output.appendLine("Failed to load UI: " + error);
             }
         }
     }
 
     private uiMessage() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "Docs Markdown";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Show quick pick (Alt + M / Option + M)";
@@ -64,8 +49,8 @@ export class UiHelper {
     }
 
     private uiLink() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "$(link)";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Insert Link";
@@ -74,8 +59,8 @@ export class UiHelper {
     }
 
     private uiImage() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "$(file-media)";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Insert Image";
@@ -84,8 +69,8 @@ export class UiHelper {
     }
 
     private uiInclude() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "$(clippy)";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Insert Include";
@@ -94,8 +79,8 @@ export class UiHelper {
     }
 
     private uiSnippet() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "$(file-code)";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Insert Snippet";
@@ -104,8 +89,8 @@ export class UiHelper {
     }
 
     private uiBold() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "B";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Bold";
@@ -114,8 +99,8 @@ export class UiHelper {
     }
 
     private uiItalic() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "i";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Italic";
@@ -124,8 +109,8 @@ export class UiHelper {
     }
 
     private uiCode() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "$(code)";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Code";
@@ -134,8 +119,8 @@ export class UiHelper {
     }
 
     private uiAlert() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "$(alert)";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Alert";
@@ -144,8 +129,8 @@ export class UiHelper {
     }
 
     private uiNewTable() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "$(diff-added)";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Insert Table";
@@ -154,8 +139,8 @@ export class UiHelper {
     }
 
     private uiNumberedList() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "$(list-ordered)";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Numbered List";
@@ -164,8 +149,8 @@ export class UiHelper {
     }
 
     private uiBulletedList() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "$(list-unordered)";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Bulleted List";
@@ -174,8 +159,8 @@ export class UiHelper {
     }
 
     private uiPreview() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "$(browser)";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Preview";
@@ -184,8 +169,8 @@ export class UiHelper {
     }
 
     private uiTemplate() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "$(file-text)";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Template";
@@ -194,8 +179,8 @@ export class UiHelper {
     }
 
     private uiCleanup() {
-        let statusBarItem: vscode.StatusBarItem;
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        let statusBarItem: StatusBarItem;
+        statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         statusBarItem.text = "$(tasklist)";
         statusBarItem.color = "white";
         statusBarItem.tooltip = "Cleanup...";

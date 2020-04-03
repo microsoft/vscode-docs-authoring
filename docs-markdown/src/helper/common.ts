@@ -1,18 +1,19 @@
 "use-strict";
 
-import * as fs from "fs";
 import * as glob from "glob";
 import * as os from "os";
-import * as path from "path";
 import * as vscode from "vscode";
 
-import * as log from "./log";
+import { existsSync } from "fs";
+import { extname, join, resolve } from "path";
 import { output } from "./output";
+
+export const ignoreFiles = [".git", ".github", ".vscode", ".vs", "node_module"];
 
 export function tryFindFile(rootPath: string, fileName: string) {
     try {
-        const fullPath = path.resolve(rootPath, fileName);
-        const exists = fs.existsSync(fullPath);
+        const fullPath = resolve(rootPath, fileName);
+        const exists = existsSync(fullPath);
         if (exists) {
             return fullPath;
         } else {
@@ -21,7 +22,7 @@ export function tryFindFile(rootPath: string, fileName: string) {
             });
 
             if (files && files.length === 1) {
-                return path.join(rootPath, files[0]);
+                return join(rootPath, files[0]);
             }
         }
     } catch (error) {
@@ -48,7 +49,6 @@ export function getOSPlatform(this: any) {
  * @param {string} message - the message to post to the editor as an warning.
  */
 export function postWarning(message: string) {
-    log.debug(message);
     vscode.window.showWarningMessage(message);
 }
 
@@ -57,7 +57,6 @@ export function postWarning(message: string) {
  * @param {string} message - the message to post to the editor as an information.
  */
 export function postInformation(message: string) {
-    log.debug(message);
     vscode.window.showInformationMessage(message);
 }
 
@@ -66,7 +65,6 @@ export function postInformation(message: string) {
  * @param {string} message - the message to post to the editor as an information.
  */
 export function postError(message: string) {
-    log.debug(message);
     vscode.window.showErrorMessage(message);
 }
 
@@ -79,20 +77,20 @@ export function postError(message: string) {
  */
 export function isValidEditor(editor: vscode.TextEditor, testSelection: boolean, senderName: string) {
     if (editor === undefined) {
-        log.error("Please open a document to apply " + senderName + " to.");
+        output.appendLine("Please open a document to apply " + senderName + " to.");
         return false;
     }
 
     if (testSelection && editor.selection.isEmpty) {
         if (senderName === "format bold" || senderName === "format italic" || senderName === "format code") {
-            log.debug("VS Code active editor has valid configuration to apply " + senderName + " to.");
+            output.appendLine("VS Code active editor has valid configuration to apply " + senderName + " to.");
             return true;
         }
-        log.error("No text selected, cannot apply " + senderName + ".");
+        output.appendLine("No text selected, cannot apply " + senderName + ".");
         return false;
     }
 
-    log.debug("VS Code active editor has valid configuration to apply " + senderName + " to.");
+    output.appendLine("VS Code active editor has valid configuration to apply " + senderName + " to.");
     return true;
 }
 
@@ -170,7 +168,6 @@ export function hasValidWorkSpaceRootPath(senderName: string) {
  */
 
 export function insertContentToEditor(editor: vscode.TextEditor, senderName: string, content: string, overwrite: boolean = false, selection: vscode.Range = null!) {
-    log.debug("Adding content to the active editor: " + content);
 
     if (selection == null) {
         selection = editor.selection;
@@ -181,7 +178,6 @@ export function insertContentToEditor(editor: vscode.TextEditor, senderName: str
             editor.edit((update) => {
                 update.replace(selection, content);
             });
-            log.debug(senderName + " applied content overwritten current selection: " + content);
         } else {
             // Gets the cursor position
             const position = editor.selection.active;
@@ -189,10 +185,9 @@ export function insertContentToEditor(editor: vscode.TextEditor, senderName: str
             editor.edit((selected) => {
                 selected.insert(position, content);
             });
-            log.debug(senderName + " applied at current cursor: " + content);
         }
     } catch (error) {
-        log.error("Could not write content to active editor window: " + error);
+        output.appendLine("Could not write content to active editor window: " + error);
     }
 }
 
@@ -207,9 +202,8 @@ export function removeContentFromEditor(editor: vscode.TextEditor, senderName: s
         editor.edit((update) => {
             update.delete(editor.selection);
         });
-        log.debug(senderName + " removed the content: " + content);
     } catch (error) {
-        log.error("Could not remove content from active editor window:" + error);
+        output.appendLine("Could not remove content from active editor window:" + error);
     }
 }
 
@@ -350,7 +344,7 @@ export function showStatusMessage(message: string) {
 }
 
 export function detectFileExtension(filePath: string) {
-    const fileExtension = path.extname(filePath);
+    const fileExtension = extname(filePath);
     return fileExtension;
 }
 
@@ -405,7 +399,7 @@ export function extractDocumentLink(
 
             const documentLink = new vscode.DocumentLink(
                 new vscode.Range(linkStart, linkEnd),
-                vscode.Uri.file(path.resolve(filePath, link)));
+                vscode.Uri.file(resolve(filePath, link)));
             return documentLink;
         }
 

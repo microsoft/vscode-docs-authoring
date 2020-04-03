@@ -1,5 +1,5 @@
-import { workspace, window, Uri, commands } from "vscode";
 import { resolve } from "path";
+import { commands, Uri, window, workspace } from "vscode";
 
 export function sleep(ms: number): Promise<void> {
     return new Promise((r) => {
@@ -16,9 +16,9 @@ export async function loadDocumentAndGetItReady(filePath: string) {
 export async function openTestRepository() {
     const filePath = resolve(__dirname, "../../../../src/test/data/repo");
     const repoUri = Uri.file(filePath);
-    await commands.executeCommand('vscode.openFolder', repoUri);
+    await commands.executeCommand("vscode.openFolder", repoUri);
 }
 
 export async function createDocumentAndGetItReady() {
-    await commands.executeCommand('workbench.action.files.newUntitledFile');
+    await commands.executeCommand("workbench.action.files.newUntitledFile");
 }

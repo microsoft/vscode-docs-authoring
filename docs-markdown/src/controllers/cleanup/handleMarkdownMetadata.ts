@@ -13,7 +13,7 @@ export function handleMarkdownMetadata(data: string, metadata: string) {
     try {
         const yamlContent = jsyaml.load(metadata);
         if (yamlContent) {
-            if (handleSingleItemArray(yamlContent["author"])) {
+            if (handleSingleItemArray(yamlContent.author)) {
                 data = singleValueMetadata(data, "author");
             }
             if (handleSingleItemArray(yamlContent["ms.author"])) {
