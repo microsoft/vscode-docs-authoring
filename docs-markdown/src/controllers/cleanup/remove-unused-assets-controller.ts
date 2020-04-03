@@ -31,11 +31,12 @@ export async function removeUnusedImagesAndIncludes(progress: any, workspacePath
         if (file.endsWith(".md")
             || file.endsWith(".openpublishing.redirection.json")
             || file.endsWith("toc.yml")) {
-            promises.push(new Promise<any>((resolve, reject) => {
+            promises.push(new Promise<any>((res, reject) => {
                 readFile(file, "utf8", (err, data) => {
                     // read through data and get images and includes,
                     // cross them with our list of images and includes
                     let match: any;
+                    // tslint:disable-next-line: no-conditional-assignment
                     while (match = INCLUDE_RE.exec(data)) {
                         unusedFiles = unusedFiles.filter((ff) => {
                             const ffPath = decodeURI((match[1] || match[2] || match[3] || match[4] || match[5] || match[6] || match[7]).toLowerCase());
@@ -43,7 +44,7 @@ export async function removeUnusedImagesAndIncludes(progress: any, workspacePath
                         });
                     }
                     showProgress(index, files, progress, message);
-                    resolve();
+                    res();
                 });
             }).catch((error) => {
                 postError(error);

@@ -148,11 +148,11 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                         }));
                     }
                 });
-                promises.push(new Promise((r, reject) => {
-                    generateMasterRedirectionFile(workspacePath, r);
+                promises.push(new Promise((res) => {
+                    generateMasterRedirectionFile(workspacePath, res);
                 }));
-                promises.push(new Promise(async (resolve, reject) => {
-                    removeUnusedImagesAndIncludes(progress, workspacePath, resolve);
+                promises.push(new Promise(async (res) => {
+                    removeUnusedImagesAndIncludes(progress, workspacePath, res);
                 }));
                 Promise.all(promises).then(() => {
                     progress.report({ increment: 100, message: "Everything completed." });

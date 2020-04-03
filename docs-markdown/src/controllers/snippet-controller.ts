@@ -6,6 +6,7 @@ import { QuickPickItem, window, workspace } from "vscode";
 import { hasValidWorkSpaceRootPath, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 import { search } from "../helper/utility";
+// tslint:disable: no-var-requires
 const fs = require("fs").promises;
 const util = require("util");
 const readFile = util.promisify(fs.readFile);

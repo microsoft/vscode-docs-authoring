@@ -464,8 +464,8 @@ export async function applyCleanup() {
                             message = "Removal of unused images and includes started.";
                             progress.report({ increment: 1, message });
                             statusMessage = "Cleanup: Removing unused images and includes. This could take several minutes.";
-                            promises.push(new Promise((resolve) => {
-                                removeUnusedImagesAndIncludes(progress, workspacePath, resolve);
+                            promises.push(new Promise((res) => {
+                                removeUnusedImagesAndIncludes(progress, workspacePath, res);
                             }));
                             message = "Removal of unused images and includes complete.";
                             commandOption = "unused-images-and-includes";
