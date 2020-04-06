@@ -1,8 +1,8 @@
 "use strict";
 
+import { readFileSync } from "fs";
 import { Disposable, ExtensionContext } from "vscode";
 import TelemetryReporter from "vscode-extension-telemetry";
-import { readFileSync } from "fs";
 export let reporter: TelemetryReporter;
 
 export class Reporter extends Disposable {

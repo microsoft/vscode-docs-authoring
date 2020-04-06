@@ -1,3 +1,5 @@
+/* tslint:disable: one-variable-per-declaration prefer-const variable-name */
+
 export function video_plugin(md, name, options) {
     options = options || {};
     let min_markers = 1,
@@ -89,5 +91,5 @@ export const videoOptions = {
         } else {
             return "";
         }
-    }
-}
+    },
+};

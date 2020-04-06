@@ -1,8 +1,9 @@
 import { readFileSync } from "fs";
-import { resolve, basename } from "path";
+import { basename, resolve } from "path";
+import { window, workspace } from "vscode";
 import { output } from "../extension";
-import { workspace, window } from "vscode";
 
+/* tslint:disable: no-conditional-assignment */
 const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
 const FRONTMATTER_RE = /^---[\s\S]+?---/gmi;
 const ROOTPATH_RE = /.*~/gmi;

@@ -1,3 +1,5 @@
+/* tslint:disable: one-variable-per-declaration prefer-const variable-name */
+
 export function container_plugin(md, name, options) {
     options = options || {};
     let min_markers = 3,
@@ -51,7 +53,7 @@ export function container_plugin(md, name, options) {
                 break;
             }
 
-            if (auto_closed) break;
+            if (auto_closed) { break; }
 
             start = pos + 2;
             max = state.eMarks[nextLine];
@@ -66,7 +68,7 @@ export function container_plugin(md, name, options) {
                 break;
             }
 
-            if (auto_closed) break;
+            if (auto_closed) { break; }
 
             nextLine++;
         }

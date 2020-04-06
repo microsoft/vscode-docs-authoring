@@ -1,3 +1,5 @@
+/* tslint:disable: one-variable-per-declaration prefer-const variable-name */
+
 export function div_plugin(md, name, options) {
     options = options || {};
     let min_markers = 1,
@@ -122,7 +124,7 @@ export function div_plugin(md, name, options) {
 }
 
 const regex = /!div\sclass\s*=\s*"([a-zA-Z0-9~@#\^\$&\*\(\)-_\+=\[\]\{\}\|\\,\.\?\s]*)"]/gi;
-//const regex = /div/g;
+// const regex = /div/g;
 export const divOptions = {
     marker: "[",
     validate(params) {
