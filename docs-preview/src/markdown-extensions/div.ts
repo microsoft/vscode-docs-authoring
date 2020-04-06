@@ -28,8 +28,6 @@ export function div_plugin(md, name, options) {
                 break;
             }
         }
-        // marker_count = Math.floor((pos - start) / marker_len);
-        // if (marker_count < min_markers) { return false; }
 
         pos -= (pos - start) % marker_len;
 
@@ -55,13 +53,6 @@ export function div_plugin(md, name, options) {
 
             start = state.bMarks[nextLine] + state.tShift[nextLine];
             max = state.eMarks[nextLine];
-
-            // if (start < max && state.sCount[nextLine] < state.blkIndent) {
-            //     // non-empty line with negative indent should stop the list:
-            //     // - ```
-            //     //  test
-            //     break;
-            // }
 
             if (marker_char !== state.src.charCodeAt(start)) { continue; }
 
@@ -124,7 +115,6 @@ export function div_plugin(md, name, options) {
 }
 
 const regex = /!div\sclass\s*=\s*"([a-zA-Z0-9~@#\^\$&\*\(\)-_\+=\[\]\{\}\|\\,\.\?\s]*)"]/gi;
-// const regex = /div/g;
 export const divOptions = {
     marker: "[",
     validate(params) {

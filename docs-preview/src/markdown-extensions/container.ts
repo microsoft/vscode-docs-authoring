@@ -28,8 +28,6 @@ export function container_plugin(md, name, options) {
                 break;
             }
         }
-        // marker_count = Math.floor((pos - start) / marker_len);
-        // if (marker_count < min_markers) { return false; }
 
         pos -= (pos - start) % marker_len;
 

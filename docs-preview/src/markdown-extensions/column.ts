@@ -8,7 +8,6 @@ export const columnOptions = {
     render(tokens, idx) {
         const RE = /column((\s+)span="([1-9]+)?")?:::/g;
         const start = RE.exec(tokens[idx].info.trim());
-        // const start = tokens[idx].info.trim().match(RE);
         if (start) {
             if (start[3]) {
                 return `<div class='column span${start[3]}'>`;
@@ -44,7 +43,6 @@ export function column_end(md, options) {
     const CODEBLOCK_RE = /[ ]{5}/g;
     const COLUMN_END_RE = /(:::column-end:::)/g;
     const removeCodeblockSpaces = (src: string) => {
-        // let captureGroup;
         const matches = src.match(COLUMN_RE);
         if (matches) {
             matches.map((element) => {
@@ -54,10 +52,7 @@ export function column_end(md, options) {
                 src = src.slice(0, position) + codeBlockOutput + src.slice(position + element.length, src.length);
             });
         }
-        // while ((captureGroup = COLUMN_RE.exec(src))) {
-        //   const output = captureGroup[0].replace(CODEBLOCK_RE, "");
-        //   src = src.slice(0, captureGroup.index) + output + src.slice(captureGroup.index + captureGroup[0].length, src.length);
-        // }
+
         return src;
     };
 
