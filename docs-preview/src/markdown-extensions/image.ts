@@ -6,21 +6,21 @@ export const imageOptions = {
     marker: ":",
     validate(params) {
         return params.trim().match(IMAGE_OPEN_RE)
-            || params.trim().match(/image-end:::/g)
+            || params.trim().match(/image-end:::/g);
     },
     render(tokens, idx) {
         const start = IMAGE_OPEN_RE.exec(tokens[idx].info.trim());
-        const SOURCE_RE = /source\s*=\s*"([a-zA-Z0-9_.\/ -]+)"/gi
-        const LIGHTBOX_RE = /lightbox\s*=\s*"([a-zA-Z0-9_.\/ -]+)"/gi
-        const BORDER_RE = /border\s*=\s*"([a-zA-Z0-9_.\/ -]+)"/gi
+        const SOURCE_RE = /source\s*=\s*"([a-zA-Z0-9_.\/ -]+)"/gi;
+        const LIGHTBOX_RE = /lightbox\s*=\s*"([a-zA-Z0-9_.\/ -]+)"/gi;
+        const BORDER_RE = /border\s*=\s*"([a-zA-Z0-9_.\/ -]+)"/gi;
         if (start) {
             const source = SOURCE_RE.exec(start[0])[1];
             const lightboxMatch = LIGHTBOX_RE.exec(start[0]);
             const borderMatch = BORDER_RE.exec(start[0]);
 
-            var html = `<img src=${source}>`;
+            let html = `<img src=${source}>`;
             if (!borderMatch || "true" === borderMatch[1].toLowerCase()) {
-                html = `<div class="mx-imgBorder"><p>${html}</p></div>`
+                html = `<div class="mx-imgBorder"><p>${html}</p></div>`;
             }
             if (lightboxMatch) {
                 html = `<a href="${lightboxMatch[1]}#lightbox" data-linktype="relative - path">${html}</a>`;

@@ -1,3 +1,5 @@
+/* tslint:disable: one-variable-per-declaration prefer-const variable-name */
+
 export function video_plugin(md, name, options) {
     options = options || {};
     let min_markers = 1,
@@ -26,8 +28,6 @@ export function video_plugin(md, name, options) {
                 break;
             }
         }
-        // marker_count = Math.floor((pos - start) / marker_len);
-        // if (marker_count < min_markers) { return false; }
 
         pos -= (pos - start) % marker_len;
 
@@ -81,7 +81,6 @@ export const videoOptions = {
         return params.trim().match(regex);
     },
     render(tokens, idx) {
-        // const matches = tokens[idx].info.trim().match(regex);
         const VIDEO_RE = /^\[\!VIDEO\s+(.+)\]$/gmi;
         const videoMatches = VIDEO_RE.exec(tokens[idx].info.trim());
         if (videoMatches !== null) {
@@ -89,5 +88,5 @@ export const videoOptions = {
         } else {
             return "";
         }
-    }
-}
+    },
+};
