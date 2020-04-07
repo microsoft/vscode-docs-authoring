@@ -1,9 +1,11 @@
 import Axios from "axios";
 import { open, readFileSync } from "fs";
 import { Base64 } from "js-base64";
-import { resolve, parse } from "path";
+import { parse, resolve } from "path";
 import { Position, window, workspace } from "vscode";
 import { output as outputChannel } from "../extension";
+
+/* tslint:disable: no-var-requires no-conditional-assignment */
 
 // async fs does not have import module available
 const fs = require("fs");
@@ -38,46 +40,6 @@ export function codeSnippets(md, options) {
   md.core.ruler.before("normalize", "codesnippet", importCodeSnippet);
 }
 
-const dict = [
-  { actionscript: [".as"] },
-  { arduino: [".ino"] },
-  { assembly: ["nasm", ".asm"] },
-  { batchfile: [".bat", ".cmd"] },
-  { cpp: ["c", "c++", "objective-c", "obj-c", "objc", "objectivec", ".c", ".cpp", ".h", ".hpp", ".cc"] },
-  { csharp: ["cs", ".cs"] },
-  { cuda: [".cu", ".cuh"] },
-  { d: ["dlang", ".d"] },
-  { erlang: [".erl"] },
-  { fsharp: ["fs", ".fs", ".fsi", ".fsx"] },
-  { go: ["golang", ".go"] },
-  { haskell: [".hs"] },
-  { html: [".html", ".jsp", ".asp", ".aspx", ".ascx"] },
-  { cshtml: [".cshtml", "aspx-cs", "aspx-csharp"] },
-  { vbhtml: [".vbhtml", "aspx-vb"] },
-  { java: [".java"] },
-  { javascript: ["js", "node", ".js"] },
-  { lisp: [".lisp", ".lsp"] },
-  { lua: [".lua"] },
-  { matlab: [".matlab"] },
-  { pascal: [".pas"] },
-  { perl: [".pl"] },
-  { php: [".php"] },
-  { powershell: ["posh", ".ps1"] },
-  { processing: [".pde"] },
-  { python: [".py"] },
-  { r: [".r"] },
-  { ruby: ["ru", ".ru", ".ruby"] },
-  { rust: [".rs"] },
-  { scala: [".scala"] },
-  { shell: ["sh", "bash", ".sh", ".bash"] },
-  { smalltalk: [".st"] },
-  { sql: [".sql"] },
-  { swift: [".swift"] },
-  { typescript: ["ts", ".ts"] },
-  { xaml: [".xaml"] },
-  { xml: ["xsl", "xslt", "xsd", "wsdl", ".xml", ".csdl", ".edmx", ".xsl", ".xslt", ".xsd", ".wsdl"] },
-  { vb: ["vbnet", "vbscript", ".vb", ".bas", ".vbs", ".vba"] }
-];
 let codeSnippetContent = "";
 const fileMap = new Map();
 const TRIPLE_COLON_CODE_RE = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+))?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/g;
@@ -186,7 +148,7 @@ function updateEditorToRefreshChanges() {
 function getLanguage(match, path) {
   let language = checkLanguageMatch(match);
   if (!language) {
-    language = inferLanguage(path)
+    language = inferLanguage(path);
   }
   return language;
 }
@@ -218,7 +180,6 @@ function buildRepoPath(repos, path) {
 async function getOpenPublishingFile(repoRoot) {
   const openPublishingFilePath = resolve(repoRoot, ".openpublishing.publish.config.json");
   const openPublishingFile = await readFile(openPublishingFilePath, "utf8");
-  // filePath = filePath.replace(ROOTPATH_RE, repoRoot);
   const openPublishingJson = JSON.parse(openPublishingFile);
   return openPublishingJson.dependent_repositories;
 }
@@ -270,8 +231,8 @@ function inferLanguage(filePath: string) {
     { typescript: ["ts", ".ts"] },
     { xaml: [".xaml"] },
     { xml: ["xsl", "xslt", "xsd", "wsdl", ".xml", ".csdl", ".edmx", ".xsl", ".xslt", ".xsd", ".wsdl"] },
-    { vb: ["vbnet", "vbscript", ".vb", ".bas", ".vbs", ".vba"] }
-  ]
+    { vb: ["vbnet", "vbscript", ".vb", ".bas", ".vbs", ".vba"] },
+  ];
   const target = parse(filePath);
   const ext: string = target.ext;
   let language: string = "";
@@ -371,7 +332,7 @@ function dedent(lineArr) {
             }
           } else {
             // check if all spaces
-            const allSpaces = lineArr[key].substring(0, indent)
+            const allSpaces = lineArr[key].substring(0, indent);
             if (allSpaces.match(/^ *$/) !== null) {
               lineArr[key] = lineArr[key].substring(indent);
               break;
