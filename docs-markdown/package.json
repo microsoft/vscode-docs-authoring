@@ -237,11 +237,6 @@
         "command": "cleanupFile",
         "title": "Cleanup file",
         "category": "Docs"
-      },
-      {
-        "command": "updateImplicitMetadataValues",
-        "title": "Update Implicit Metadata Values",
-        "category": "Docs"
       }
     ],
     "menus": {

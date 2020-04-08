@@ -13,7 +13,8 @@
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "markdown",
+    "yaml"
   ],
   "main": "./dist/extension",
   "contributes": {
