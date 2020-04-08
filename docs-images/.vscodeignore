@@ -1,0 +1,11 @@
+.vscode
+.vscode-test/
+node_modules
+out/
+src/
+.gitignore
+tsconfig.json
+webpack.config.js
+images/docs-images-configuration.png
+images/image-compressed.png
+images/right-click-image-compression.png

@@ -13,7 +13,8 @@
 *.userprefs
 
 # Extension output and files
-out
+out/
+dist/**
 node_modules
 *.vsix
 /package-lock.json
