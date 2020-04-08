@@ -4,7 +4,7 @@ import { getDocfxMetadata, tryGetFileMetadataTitleSuffix, tryGetGlobalMetadataTi
 import { repoMapping } from "./repoMapping";
 export function getFirstParagraph(markdown) {
     const metadataRegex = new RegExp(`^(---)([^]+?)(---)$`, "m");
-    markdown = markdown.replace(metadataRegex, "")
+    markdown = markdown.replace(metadataRegex, "");
     const frstParagraphRegex = new RegExp(`^(?!#).+`, "m");
     const firstParagraphMatch = markdown.match(frstParagraphRegex);
     if (firstParagraphMatch) {
@@ -74,7 +74,7 @@ export function parseYamlMetadata(metadata, breadCrumb, basePath, filePath) {
         } else {
             details.title = getTitle(yamlContent, details.title, basePath, filePath);
         }
-        details.title = checkIfContainsMicrosoftDocs(details.title)
+        details.title = checkIfContainsMicrosoftDocs(details.title);
         details.title = shortenWithElipsesAtWordEnd(details.title, 63);
         details.description = shortenWithElipsesAtWordEnd(details.description, 305);
     }
@@ -130,7 +130,7 @@ export function getPath(basePath: any, filePath: any) {
             breadCrumb += ` › en-us › ${directory.name} `;
         }
     }
-    let repoArr = filePath.split("/")
+    let repoArr = filePath.split("/");
     if (filePath.startsWith("docs")) {
         repoArr = repoArr.slice(0, -1);
     } else {
