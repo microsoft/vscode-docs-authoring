@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "fs";
-import { postWarning, tryFindFile } from "../helper/common";
+import { tryFindFile } from "../helper/common";
 import { IDocFxMetadata } from "./docFxTypes";
 // tslint:disable: no-var-requires
 const util = require("util");
