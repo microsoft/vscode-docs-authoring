@@ -1,5 +1,4 @@
 import * as jsyaml from "js-yaml";
-import { resolve } from "path";
 import { postWarning } from "../helper/common";
 import { getDocfxMetadata, tryGetFileMetadataTitleSuffix, tryGetGlobalMetadataTitleSuffix } from "./docFxHelpers";
 import { repoMapping } from "./repoMapping";
