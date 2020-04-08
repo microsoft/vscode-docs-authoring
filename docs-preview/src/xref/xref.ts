@@ -1,6 +1,8 @@
 import Axios from "axios";
-import { window, Position, Range } from "vscode";
+import { Position, Range, window } from "vscode";
 import { output } from "../extension";
+
+/* tslint:disable: no-conditional-assignment */
 
 const apiUrl = "https://xref.docs.microsoft.com/query?uid=";
 // Sadly because of the bug with global regexes, I need two versions. One with global, one without. - Adam
@@ -11,9 +13,8 @@ const XREF_MD_LINK_RE = /\(xref:(.*?)(\?(displayProperty=(fullName|nameWithType)
 let xrefContent = "";
 
 export function xref(md) {
-  const xref = (state) => {
+  const xrefReference = (state) => {
     try {
-      // var xrefMatches = state.src.match(XREF_RE);
       updateXrefContent(md, state.src);
       state.src = xrefContent;
     } catch (error) {
@@ -21,10 +22,10 @@ export function xref(md) {
     }
   };
 
-  md.core.ruler.before("normalize", "xref", xref);
+  md.core.ruler.before("normalize", "xref", xrefReference);
 }
 
-let xrefMap = new Map();
+const xrefMap = new Map();
 async function updateXrefContent(md: any, src: string) {
   xrefContent = src;
   let mdSrc = "";
@@ -78,13 +79,13 @@ async function updateXrefContent(md: any, src: string) {
     const uid = uidWithParams.split("?")[0];
     try {
       await Axios.get(apiUrl + uid)
-        .then(response => {
+        .then((response) => {
           if (response) {
             if (response.data[0]) {
-              let xref = response.data[0];
-              mdSrc = `(${xref.href})`;
+              const xrefResponse = response.data[0];
+              mdSrc = `(${xrefResponse.href})`;
             } else {
-              mdSrc = `(${uid})`
+              mdSrc = `(${uid})`;
             }
             src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
             xrefMap.set(captureGroup[0], mdSrc);
@@ -99,24 +100,22 @@ async function updateXrefContent(md: any, src: string) {
     const uid = uidWithParams.split("?")[0];
     try {
       await Axios.get(apiUrl + uid)
-        .then(response => {
+        .then((response) => {
           if (response) {
             if (response.data[0]) {
-              let xref = response.data[0];
-              let displayProperty = captureGroup[3];
+              const xrefResponse = response.data[0];
+              const displayProperty = captureGroup[3];
               if (displayProperty) {
-                if (displayProperty == "fullName") {
-                  mdSrc = `[${xref.fullName}](${xref.href})`;
-                }
-                else if (displayProperty == "nameWithType") {
-                  mdSrc = `[${xref.nameWithType}](${xref.href})`
+                if (displayProperty === "fullName") {
+                  mdSrc = `[${xrefResponse.fullName}](${xrefResponse.href})`;
+                } else if (displayProperty === "nameWithType") {
+                  mdSrc = `[${xrefResponse.nameWithType}](${xrefResponse.href})`;
                 }
               } else {
-                //displayProperty=none;
-                mdSrc = `[${xref.name}](${xref.href})`;
+                mdSrc = `[${xrefResponse.name}](${xrefResponse.href})`;
               }
             } else {
-              mdSrc = `[${uid}](${uid})`
+              mdSrc = `[${uid}](${uid})`;
             }
             src = src.slice(0, captureGroup.index) + mdSrc + src.slice(captureGroup.index + captureGroup[0].length, src.length);
             xrefMap.set(captureGroup[0], mdSrc);
@@ -141,6 +140,6 @@ function updateEditorToRefreshChanges() {
     editor.edit((update) => {
       const range = editor.document.getWordRangeAtPosition(position, /[ ]+/g);
       update.delete(range);
-    })
+    });
   });
 }
