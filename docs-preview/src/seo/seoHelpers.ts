@@ -1,10 +1,11 @@
 import * as jsyaml from "js-yaml";
 import { resolve } from "path";
+import { postWarning } from "../helper/common";
 import { getDocfxMetadata, tryGetFileMetadataTitleSuffix, tryGetGlobalMetadataTitleSuffix } from "./docFxHelpers";
 import { repoMapping } from "./repoMapping";
 export function getFirstParagraph(markdown) {
     const metadataRegex = new RegExp(`^(---)([^]+?)(---)$`, "m");
-    markdown = markdown.replace(metadataRegex, "")
+    markdown = markdown.replace(metadataRegex, "");
     const frstParagraphRegex = new RegExp(`^(?!#).+`, "m");
     const firstParagraphMatch = markdown.match(frstParagraphRegex);
     if (firstParagraphMatch) {
@@ -13,15 +14,19 @@ export function getFirstParagraph(markdown) {
     return markdown;
 }
 
-export function parseMarkdownMetadata(metadata, markdown, basePath, filePath) {
+export async function parseMarkdownMetadata(metadata, markdown, basePath, filePath) {
     const details = { title: "", description: "", date: "" };
-    const yamlContent = jsyaml.load(metadata);
-    if (yamlContent) {
-        details.title = getTitle(yamlContent, details.title, basePath, filePath);
-        details.title = checkIfContainsMicrosoftDocs(details.title);
-        details.title = shortenWithElipsesAtWordEnd(details.title, 63);
-        details.description = getMarkdownDescription(details, yamlContent, markdown);
-        details.date = yamlContent["ms.date"];
+    try {
+        const yamlContent = jsyaml.load(metadata);
+        if (yamlContent) {
+            details.title = await getTitle(yamlContent, details.title, basePath, filePath);
+            details.title = checkIfContainsMicrosoftDocs(details.title);
+            details.title = shortenWithElipsesAtWordEnd(details.title, 63);
+            details.description = getMarkdownDescription(details, yamlContent, markdown);
+            details.date = yamlContent["ms.date"];
+        }
+    } catch (error) {
+        postWarning(`Unable to parse yaml header. There is a problem with your yaml front matter. ${error}`);
     }
     return details;
 }
@@ -42,12 +47,12 @@ function getMarkdownDescription(details: { title: string; description: string; d
     return shortenWithElipsesAtWordEnd(details.description, 305);
 }
 
-function getTitle(yamlContent: any, title: string, basePath: any, filePath: any) {
+async function getTitle(yamlContent: any, title: string, basePath: any, filePath: any) {
     if (yamlContent.titleSuffix) {
         title = `${yamlContent.title} - ${yamlContent.titleSuffix}`;
     } else {
         const docfxMetadata = getDocfxMetadata(basePath);
-        let titleSuffix = tryGetFileMetadataTitleSuffix(docfxMetadata, resolve(basePath, filePath));
+        let titleSuffix = await tryGetFileMetadataTitleSuffix(docfxMetadata, basePath, filePath);
         if (titleSuffix) {
             title = `${yamlContent.title} - ${titleSuffix}`;
         } else {
@@ -62,21 +67,25 @@ function getTitle(yamlContent: any, title: string, basePath: any, filePath: any)
     return title;
 }
 
-export function parseYamlMetadata(metadata, breadCrumb, basePath, filePath) {
+export async function parseYamlMetadata(metadata, breadCrumb, basePath, filePath) {
     const details = { title: "", description: "" };
-    const yamlContent = jsyaml.load(metadata);
-    if (yamlContent && yamlContent.metadata) {
-        details.title = getMainContentIfExists(yamlContent.metadata.title, yamlContent.title);
-        details.description = getMainContentIfExists(yamlContent.metadata.description, yamlContent.summary);
-        if (breadCrumb.includes("› Docs › Learn › Browse")) {
-            details.title = `${details.title} - Learn`;
-            details.description = getYamlDescription(yamlContent);
-        } else {
-            details.title = getTitle(yamlContent, details.title, basePath, filePath);
+    try {
+        const yamlContent = jsyaml.load(metadata);
+        if (yamlContent && yamlContent.metadata) {
+            details.title = getMainContentIfExists(yamlContent.metadata.title, yamlContent.title);
+            details.description = getMainContentIfExists(yamlContent.metadata.description, yamlContent.summary);
+            if (breadCrumb.includes("› Docs › Learn › Browse")) {
+                details.title = `${details.title} - Learn`;
+                details.description = getYamlDescription(yamlContent);
+            } else {
+                details.title = await getTitle(yamlContent, details.title, basePath, filePath);
+            }
+            details.title = checkIfContainsMicrosoftDocs(details.title);
+            details.title = shortenWithElipsesAtWordEnd(details.title, 63);
+            details.description = shortenWithElipsesAtWordEnd(details.description, 305);
         }
-        details.title = checkIfContainsMicrosoftDocs(details.title)
-        details.title = shortenWithElipsesAtWordEnd(details.title, 63);
-        details.description = shortenWithElipsesAtWordEnd(details.description, 305);
+    } catch (error) {
+        postWarning(`Unable to parse yaml header. There is a problem your yaml file. ${error}`);
     }
     return details;
 }
@@ -130,7 +139,7 @@ export function getPath(basePath: any, filePath: any) {
             breadCrumb += ` › en-us › ${directory.name} `;
         }
     }
-    let repoArr = filePath.split("/")
+    let repoArr = filePath.split("/");
     if (filePath.startsWith("docs")) {
         repoArr = repoArr.slice(0, -1);
     } else {

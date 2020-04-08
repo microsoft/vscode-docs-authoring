@@ -1,7 +1,8 @@
 import { existsSync, readFileSync } from "fs";
-import { sep } from "path";
-import { tryFindFile } from "../helper/common";
-import { IDocFxMetadata, MetadataType } from "./docFxTypes";
+import { postWarning, tryFindFile } from "../helper/common";
+import { IDocFxMetadata } from "./docFxTypes";
+const util = require("util");
+const glob = util.promisify(require("glob"));
 
 export function getDocfxMetadata(basePath) {
     const docFxJson = tryFindFile(basePath, "docfx.json");
@@ -14,10 +15,10 @@ export function getDocfxMetadata(basePath) {
     }
 }
 
-export function tryGetFileMetadataTitleSuffix(docfxMetadata: IDocFxMetadata, filePath) {
+export async function tryGetFileMetadataTitleSuffix(docfxMetadata: IDocFxMetadata, basePath, filePath) {
     if (docfxMetadata.build.fileMetadata
         && docfxMetadata.build.fileMetadata.titleSuffix) {
-        const value = getReplacementValue(docfxMetadata.build.fileMetadata.titleSuffix, filePath);
+        const value = await getReplacementValue(docfxMetadata.build.fileMetadata.titleSuffix, basePath, filePath);
         if (value) {
             return value;
         }
@@ -33,32 +34,22 @@ export function tryGetGlobalMetadataTitleSuffix(docfxMetadata: IDocFxMetadata) {
     return "";
 }
 
-function getReplacementValue(globs: { [glob: string]: string }, fsPath: string): string | undefined {
-    if (globs && fsPath) {
-        let segments = fsPath.split(sep);
+async function getReplacementValue(globs: { [glob: string]: string }, basePath: string, fsPath: string): Promise<string | undefined> {
+    let titleSuffix = "";
+    if (globs) {
         const globKeys = Object.keys(globs).map((key) => ({ key, segments: key.split("/") }));
-        const firstSegment = globKeys[0].segments[0];
-        segments = segments.slice(segments.indexOf(firstSegment));
-        const length = segments.length;
         for (let i = 0; i < globKeys.length; ++i) {
             const globKey = globKeys[i];
-            if (length <= globKey.segments.length) {
-                let equals = false;
-                for (let f = 0; f < segments.length - 1; ++f) {
-                    const left = segments[f];
-                    const right = globKey.segments[f];
-                    if (right.startsWith("*")) {
-                        break;
-                    }
-                    equals = left.toLowerCase() === right.toLowerCase();
-                }
-
-                if (equals) {
-                    return globs[globKey.key];
+            const files = await glob(globKey.key, { cwd: basePath });
+            for (let index = 0; index < files.length; index++) {
+                if (files[index] === fsPath) {
+                    titleSuffix = globs[globKey.key];
+                    i = globKeys.length;
+                    break;
                 }
             }
         }
     }
 
-    return undefined;
+    return titleSuffix;
 }
