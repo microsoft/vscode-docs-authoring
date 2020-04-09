@@ -73,6 +73,7 @@ export const languages: HighlightLanguages =
         { language: "HTML", aliases: ["html", "xhtml"], extensions: [".html", ".xhtml"] },
         { language: "HTTP", aliases: ["http", "https"] },
         { language: "Ini", aliases: ["ini"], extensions: [".ini"] },
+        { language: "Inkling", aliases: ["inkling"], extensions: [".ink"] },
         { language: "JSON", aliases: ["json"], extensions: [".json"] },
         { language: "Java", aliases: ["java", "jsp"], extensions: [".java", ".jsp"] },
         { language: "JavaScript", aliases: ["javascript", "js", "jsx"], extensions: [".js", ".jsx"] },
