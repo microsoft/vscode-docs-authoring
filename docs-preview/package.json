@@ -102,10 +102,6 @@
         {
           "when": "resourceLangId == markdown || resourceLangId == yaml",
           "command": "docs.seoPreview"
-        },
-        {
-          "when": "resourceLangId == markdown || resourceLangId == yaml",
-          "command": "docs.seoPreviewToSide"
         }
       ]
     }
