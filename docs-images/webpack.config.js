@@ -3,7 +3,6 @@
 'use strict';
 
 const TerserPlugin = require('terser-webpack-plugin');
-
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
@@ -21,11 +20,17 @@ const config = {
     },
     devtool: 'source-map',
     externals: {
-        vscode: 'commonjs vscode' // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+        vscode: 'commonjs vscode', // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+        "imagemin": "commonjs imagemin",
+        "imagemin-gifsicle": "commonjs imagemin-gifsicle",
+        "imagemin-jpegtran": "commonjs imagemin-jpegtran",
+        "imagemin-optipng": "commonjs imagemin-optipng",
+        "imagemin-svgo": "commonjs imagemin-svgo",
+        "imagemin-webp": "commonjs imagemin-webp",
     },
     resolve: {
         // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
-        extensions: ['.ts', '.js', ',json']
+        extensions: ['.ts', '.js', ',json'],
     },
     optimization: {
         usedExports: true,
