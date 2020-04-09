@@ -3,7 +3,7 @@
   "displayName": "docs-images",
   "description": "Docs Images Extension",
   "icon": "images/docs-logo-ms.png",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-images",
   "bugs": {
@@ -30,7 +30,7 @@
     "onCommand:docs.compressImage",
     "onCommand:docs.compressImagesInFolder"
   ],
-  "main": "./out/src/extension",
+  "main": "./dist/extension",
   "contributes": {
     "commands": [
       {
@@ -99,7 +99,9 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "tsc -p ./",
+    "vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
     "compile": "tsc -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "pretest": "npm run compile",
@@ -117,21 +119,26 @@
     "glob": "^7.1.6"
   },
   "devDependencies": {
-    "@types/jimp": "^0.2.28",
+    "@types/glob": "^7.1.1",
     "@types/image-size": "^0.8.0",
+    "@types/imagemin-gifsicle": "5.2.0",
     "@types/imagemin-jpegtran": "5.0.0",
     "@types/imagemin-optipng": "5.2.0",
-    "@types/imagemin-gifsicle": "5.2.0",
     "@types/imagemin-svgo": "7.0.0",
     "@types/imagemin-webp": "5.1.0",
-    "@types/node": "^10.12.21",
+    "@types/jimp": "^0.2.28",
     "@types/mocha": "^5.2.7",
-    "@types/glob": "^5.0.35",
+    "@types/node": "^10.12.21",
     "mocha": "6.2.2",
+    "terser-webpack-plugin": "^2.3.5",
+    "ts-loader": "^6.2.2",
+    "tslint": "^5.12.1",
     "typescript": "^3.3.1",
     "vscode": "^1.1.28",
     "vscode-test": "^1.3.0",
-    "tslint": "^5.12.1"
+    "webpack": "^4.42.1",
+    "webpack-bundle-analyzer": "^3.6.1",
+    "webpack-cli": "^3.3.11"
   },
   "license": "MIT"
 }
