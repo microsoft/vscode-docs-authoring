@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.46 (April 10th, 2020)
+
+- Fix complex image preview bug (long description)
+
 ## 0.3.45 (April 2nd, 2020)
 
 - Bundling with webpack

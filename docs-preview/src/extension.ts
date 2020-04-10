@@ -79,6 +79,7 @@ export async function activate(context: ExtensionContext) {
                 .use(container_plugin, "column", columnOptions)
                 .use(container_plugin, "column-end", columnEndOptions)
                 .use(div_plugin, "div", divOptions)
+                .use(image_end)
                 .use(container_plugin, "image", imageOptions)
                 .use(video_plugin, "video", videoOptions);
         },
