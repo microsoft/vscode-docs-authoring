@@ -37,15 +37,17 @@ export const imageOptions = {
 
 // removes image-end and long description for rendering purposes
 export function image_end(md) {
-    const IMAGE_ALL_GLOBAL_RE = /(:::image\s+(((source|type|alt-text|lightbox|border|loc-scope)="((?!content|icon)[a-zA-Z0-9_.\/ -]+))"(\s*)?)+:::)((\s*\w*?)+?\s*:::image-end:::)/mig;
-    const IMAGE_ALL_RE = /(:::image\s+(((source|type|alt-text|lightbox|border|loc-scope)="((?!content|icon)[a-zA-Z0-9_.\/ -]+))"(\s*)?)+:::)((\s*\w*?)+?\s*:::image-end:::)/mi;
+    const IMAGE_ALL_GLOBAL_RE = /(:::image\s+(((source|type|alt-text|lightbox|border|loc-scope)="((?!content|icon)[a-zA-Z0-9_.\/ -]+))"(\s*)?)+:::)([^]+?:::image-end:::)/mig;
+    const IMAGE_ALL_RE = /(:::image\s+(((source|type|alt-text|lightbox|border|loc-scope)="((?!content|icon)[a-zA-Z0-9_.\/ -]+))"(\s*)?)+:::)([^]+?:::image-end:::)/mi;
     const replaceImageEnd = (src: string) => {
         const matches = src.match(IMAGE_ALL_GLOBAL_RE);
-        matches.forEach((match) => {
-            const found = match.match(IMAGE_ALL_RE);
-            const regex = new RegExp(found[7]);
-            src = src.replace(regex, "");
-        });
+        if (matches) {
+            matches.forEach((match) => {
+                const found = match.match(IMAGE_ALL_RE);
+                const regex = new RegExp(found[7]);
+                src = src.replace(regex, "");
+            });
+        }
         return src;
     };
 
