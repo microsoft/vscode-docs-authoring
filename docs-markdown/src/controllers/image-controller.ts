@@ -63,10 +63,6 @@ export function pickImageType() {
                 applyImage();
                 commandOption = "image";
                 break;
-            case "image":
-                applyImage();
-                commandOption = "image (docs markdown)";
-                break;
             case "icon image":
                 applyIcon();
                 commandOption = "icon";
@@ -388,7 +384,6 @@ export async function applyLocScope() {
         noActiveEditorMessage();
         return;
     }
-
     // if user has not selected any text, then continue
     const RE_LOC_SCOPE = /:::image\s+((source|type|alt-text|lightbox|border)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
     const position = new Position(editor.selection.active.line, editor.selection.active.character);
