@@ -12,19 +12,17 @@ chai.use(spies);
 const sinon = require("sinon");
 const expect = chai.expect;
 
-function insertBlankLine(editor: TextEditor, line: number) {
-    const spy = chai.spy.on(common, "insertContentToEditor");
-    spy(editor, "test", "\r\n");
-    chai.spy.restore(spy);
+//new line after current cursor position
+function insertBlankLine(editor: TextEditor) {
+    common.insertContentToEditor(editor, "test", "\r\n");
+
 }
 function moveCursor(editor: TextEditor, y: number, x: number) {
-    const spy = chai.spy.on(common, "setCursorPosition");
-    spy(editor, y, x);
-    chai.spy.restore(spy);
+    common.setCursorPosition(editor, y, x);
 }
 
 const testFile = "../../../../../src/test/data/repo/articles/moniker.md";
-const sleepTime = 100;
+const sleepTime = 50;
 const monikerOptions = [
     "range equals",
     "range greater than or equal",
@@ -75,7 +73,7 @@ suite("Moniker Controller", () => {
     test("insertYamlMoniker - equal - output", async () => {
         const editor = window.activeTextEditor;
         moveCursor(editor!, yamlLine, 0);
-        insertBlankLine(editor!, yamlLine);
+        insertBlankLine(editor!);
         common.insertContentToEditor(editor!, "", "", false, editor!.document.lineAt(10).range);
         moveCursor(editor!, yamlLine, 0); // move cursor back
         await sleep(sleepTime);
@@ -101,7 +99,7 @@ suite("Moniker Controller", () => {
     test("insertYamlMoniker - greater/equal - output", async () => {
         const editor = window.activeTextEditor;
         moveCursor(editor!, yamlLine, 0);
-        insertBlankLine(editor!, 10);
+        insertBlankLine(editor!);
         moveCursor(editor!, yamlLine, 0);
 
         await sleep(sleepTime);
@@ -127,7 +125,7 @@ suite("Moniker Controller", () => {
     test("insertYamlMoniker - less/equal - output", async () => {
         const editor = window.activeTextEditor;
         moveCursor(editor!, yamlLine, 0);
-        insertBlankLine(editor!, yamlLine);
+        insertBlankLine(editor!);
         moveCursor(editor!, yamlLine, 0);
         await sleep(sleepTime);
 
@@ -180,7 +178,7 @@ suite("Moniker Controller", () => {
     test("insertMarkdownMoniker - greater/equal - output", async () => {
         const editor = window.activeTextEditor;
         moveCursor(editor!, markLine + 3, 0);
-        insertBlankLine(editor!, markLine + 3);
+        insertBlankLine(editor!);
         moveCursor(editor!, markLine + 3, 0);
         await sleep(sleepTime);
 
@@ -209,7 +207,7 @@ suite("Moniker Controller", () => {
     test("insertMarkdownMoniker - less/equal - output", async () => {
         const editor = window.activeTextEditor;
         moveCursor(editor!, markLine + 6, 0);
-        insertBlankLine(editor!, markLine + 3);
+        insertBlankLine(editor!);
         moveCursor(editor!, markLine + 6, 0);
         await sleep(sleepTime);
 
