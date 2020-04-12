@@ -1,5 +1,7 @@
 # Change Log
 
+- Added Unit Test Coverage: include-controller.ts
+
 ## 0.2.63 (April 2nd, 2020)
 
 - Bundling with webpack
