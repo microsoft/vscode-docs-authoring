@@ -351,7 +351,7 @@ export async function findAndReplaceTargetExpressions(event: TextDocumentChangeE
     if (!!event && event.document) {
         const editor = window.activeTextEditor;
         if (editor && isMarkdownFileCheckWithoutNotification(editor) &&
-            event.document.fileName === event.document.fileName) {
+            event.document.fileName === editor.document.fileName) {
             const document = event.document;
             const content = document.getText();
             if (!!content) {
