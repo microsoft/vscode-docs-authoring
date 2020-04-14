@@ -4,7 +4,7 @@
   "description": "Docs Markdown Extension",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.63",
+  "version": "0.2.64",
   "publisher": "docsmsft",
   "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
   "bugs": {
@@ -487,7 +487,7 @@
       "properties": {
         "markdown.replaceSmartQuotes": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "markdownDescription": "When `true`, automatically replace smart quotes (`“, ”, ‘, and ’`) with standard quotes (`\" and '`) in markdown files. This feature extends to other characters as well, i.e.; (`©, ™, ®, •`, subscript and superscript characters). This is useful when pasting text from Word documents."
         },
         "markdown.docsetName": {
