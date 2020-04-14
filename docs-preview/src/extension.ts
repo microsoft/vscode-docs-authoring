@@ -51,7 +51,7 @@ export async function activate(context: ExtensionContext) {
         }
     }));
 
-    const disposableSEOPreview = commands.registerCommand("docs.seoPreview", seoPreview(ViewColumn.One));
+    const disposableSEOPreview = commands.registerCommand("docs.seoPreview", seoPreview(ViewColumn.Two));
     context.subscriptions.push(
         disposableSidePreview,
         disposableStandalonePreview,
