@@ -1,5 +1,4 @@
 "use strict";
-
 import * as chai from "chai";
 import * as spies from "chai-spies";
 import { resolve, posix } from "path";
@@ -12,7 +11,6 @@ import * as telemetry from "../../../helper/telemetry";
 chai.use(spies);
 const expect = chai.expect;
 const sinon = require("sinon");
-
 const root = workspace.workspaceFolders![0].uri;
 const testFile = "../../../../../src/test/data/repo/articles/includes.md";
 const sleepTime = 50;
@@ -22,30 +20,23 @@ const qpSelectionItems = [
     { description: root.fsPath + "\\includes", label: "3.md" },
 ];
 
-//new line after current cursor position
+//new line in current cursor position
 function insertBlankLine(editor: TextEditor) {
     common.insertContentToEditor(editor, "test", "\r\n");
-
 }
-
 function moveCursor(editor: TextEditor, y: number, x: number) {
     common.setCursorPosition(editor, y, x);
 }
-
-// create incluldes folder
+//create incluldes folder
 async function createIncludes() {
-
     const folder = root.with({ path: posix.join(root.path, 'includes') });
     await workspace.fs.createDirectory(folder);
-
 }
-
 // delete includes folder and everything inside the folder
 async function deleteIncludes() {
     const folder = root.with({ path: posix.join(root.path, 'includes') });
     await workspace.fs.delete(folder, { recursive: true, useTrash: false });
 }
-
 async function addMarkdownFile(fileCount: number) {
     let filePath;
     while (fileCount > 0) {
@@ -54,9 +45,7 @@ async function addMarkdownFile(fileCount: number) {
         await workspace.fs.writeFile(fileUri, Buffer.from('# This is a include page ' + fileCount));
         fileCount--;
     }
-
 }
-
 suite("Include Controller", () => {
     // Reset and tear down the spies
     teardown(() => {
@@ -91,7 +80,6 @@ suite("Include Controller", () => {
         stub.restore();
         expect(spy).to.have.been.called();
     });
-
     test("hasValidWorkSpaceRootPath", async () => {
         const spy = chai.spy.on(common, "hasValidWorkSpaceRootPath");
         await sleep(sleepTime);
@@ -104,15 +92,12 @@ suite("Include Controller", () => {
         stub.restore();
         expect(spy).to.have.been.called();
     });
-
     test("Window NT - includeOneFileEmptyLine", async () => {
-
         createIncludes();
         addMarkdownFile(3);
         const editor = window.activeTextEditor;
         moveCursor(editor!, 10, 0);
         insertBlankLine(editor!);
-
         moveCursor(editor!, 10, 0); // move cursor back
         await sleep(sleepTime);
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
@@ -125,16 +110,10 @@ suite("Include Controller", () => {
         stub.restore();
         expect(output).to.equal("[!INCLUDE [1](../includes/1.md)]");
     });
-
-
-
     test("Window NT - includeOneFileInline", async () => {
-
         const editor = window.activeTextEditor;
         moveCursor(editor!, 15, 8);
-
         await sleep(sleepTime);
-
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve(qpSelectionItems[0]) as Thenable<any>;
         };
@@ -146,16 +125,11 @@ suite("Include Controller", () => {
         expect(output).to.equal("Markdown[!INCLUDE [1](../includes/1.md)] is a lightweight markup language with plain text formatting syntax." +
             " Docs supports the CommonMark standard for Markdown, plus some custom Markdown extensions designed to provide richer content on docs.microsoft.com." +
             " This article provides an alphabetical reference for using Markdown for docs.microsoft.com.");
-
     });
-
-
     test("Window NT - includeMultipleFiles", async () => {
-
         const editor = window.activeTextEditor;
         moveCursor(editor!, 12, 0);
         await sleep(sleepTime);
-
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve(qpSelectionItems[0]) as Thenable<any>;
         };
@@ -176,9 +150,6 @@ suite("Include Controller", () => {
         const output = editor?.document.lineAt(12).text;
         deleteIncludes();
         expect(output).to.equal("[!INCLUDE [1](../includes/1.md)][!INCLUDE [2](../includes/2.md)][!INCLUDE [3](../includes/3.md)]");
-
     });
-
-
 });
 
