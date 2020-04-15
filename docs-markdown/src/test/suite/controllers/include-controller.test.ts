@@ -1,16 +1,17 @@
-"use strict";
 import * as chai from "chai";
 import * as spies from "chai-spies";
-import { resolve, posix } from "path";
+import { posix, resolve } from "path";
 import { commands, TextEditor, window, workspace } from "vscode";
 import { insertInclude, insertIncludeCommand } from "../../../controllers/include-controller";
 import * as common from "../../../helper/common";
-import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
 import * as telemetry from "../../../helper/telemetry";
+import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
 
 chai.use(spies);
-const expect = chai.expect;
+// tslint:disable-next-line: no-var-requires
 const sinon = require("sinon");
+const expect = chai.expect;
+
 const root = workspace.workspaceFolders![0].uri;
 const testFile = "../../../../../src/test/data/repo/articles/includes.md";
 const sleepTime = 50;
@@ -20,29 +21,29 @@ const qpSelectionItems = [
     { description: root.fsPath + "\\includes", label: "3.md" },
 ];
 
-//new line in current cursor position
+// new line in current cursor position
 function insertBlankLine(editor: TextEditor) {
     common.insertContentToEditor(editor, "test", "\r\n");
 }
 function moveCursor(editor: TextEditor, y: number, x: number) {
     common.setCursorPosition(editor, y, x);
 }
-//create incluldes folder
+// create incluldes folder
 async function createIncludes() {
-    const folder = root.with({ path: posix.join(root.path, 'includes') });
+    const folder = root.with({ path: posix.join(root.path, "includes") });
     await workspace.fs.createDirectory(folder);
 }
 // delete includes folder and everything inside the folder
 async function deleteIncludes() {
-    const folder = root.with({ path: posix.join(root.path, 'includes') });
+    const folder = root.with({ path: posix.join(root.path, "includes") });
     await workspace.fs.delete(folder, { recursive: true, useTrash: false });
 }
 async function addMarkdownFile(fileCount: number) {
     let filePath;
     while (fileCount > 0) {
-        filePath = 'includes/' + fileCount + '.md';
+        filePath = "includes/" + fileCount + ".md";
         const fileUri = root.with({ path: posix.join(root.path, filePath) });
-        await workspace.fs.writeFile(fileUri, Buffer.from('# This is a include page ' + fileCount));
+        await workspace.fs.writeFile(fileUri, Buffer.from("# This is a include page " + fileCount));
         fileCount--;
     }
 }
@@ -152,4 +153,3 @@ suite("Include Controller", () => {
         expect(output).to.equal("[!INCLUDE [1](../includes/1.md)][!INCLUDE [2](../includes/2.md)][!INCLUDE [3](../includes/3.md)]");
     });
 });
-

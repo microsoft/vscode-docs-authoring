@@ -12,7 +12,7 @@ chai.use(spies);
 const sinon = require("sinon");
 const expect = chai.expect;
 
-//new line after current cursor position
+// new line in current cursor position
 function insertBlankLine(editor: TextEditor) {
     common.insertContentToEditor(editor, "test", "\r\n");
 
