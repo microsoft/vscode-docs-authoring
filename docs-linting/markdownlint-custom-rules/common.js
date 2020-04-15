@@ -82,7 +82,7 @@ module.exports.syntaxXref = /(<|\()xref:(.*?)(\?)?(displayProperty=(fullName|nam
 module.exports.notEscapedCharacters = /(<|\()xref:(.*[\*\#\`].*)(>|\))/g;
 
 // Row
-module.exports.startRow = /^(.:*)(.+row)/gm;
+module.exports.startRow = /^(:{3})row/gm;
 module.exports.syntaxRow = /^:{3}(row|row-end):{3}$/gm;
 
 // Column
