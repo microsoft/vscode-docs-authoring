@@ -86,11 +86,7 @@
       },
       {
         "command": "docs.seoPreview",
-        "title": "Docs: Search results Preview in current tab"
-      },
-      {
-        "command": "docs.seoPreviewToSide",
-        "title": "Docs: Search results Preview"
+        "title": "Docs: Search Results Preview"
       }
     ],
     "menus": {
@@ -106,10 +102,6 @@
         {
           "when": "resourceLangId == markdown || resourceLangId == yaml",
           "command": "docs.seoPreview"
-        },
-        {
-          "when": "resourceLangId == markdown || resourceLangId == yaml",
-          "command": "docs.seoPreviewToSide"
         }
       ]
     }

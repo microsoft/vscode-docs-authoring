@@ -22,11 +22,11 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
         const workspaceRoot = workspace.rootPath;
 
         return workspace.openTextDocument(this.sourceUri)
-            .then((document) => {
+            .then(async (document) => {
                 const content = document.getText();
 
                 if (!workspaceRoot) {
-                    return this.buildHtmlFromContent(content, basename(document.fileName), dirname(document.fileName));
+                    return await this.buildHtmlFromContent(content, basename(document.fileName), dirname(document.fileName));
                 }
 
                 const basePath = dirname(document.fileName);
@@ -36,12 +36,12 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                     docsetRoot = docsetRoot.replace(/\\/g, "/");
                     filePath = filePath.replace(/\\/g, "/");
                 }
-                return this.buildHtmlFromContent(content, filePath, docsetRoot);
+                return await this.buildHtmlFromContent(content, filePath, docsetRoot);
             });
     }
 
-    private buildHtmlFromContent(content: string, filePath: string, basePath: string): string {
-        const body = this.parseFileIntoSEOHtml(content, filePath, basePath);
+    private async buildHtmlFromContent(content: string, filePath: string, basePath: string): Promise<string> {
+        const body = await this.parseFileIntoSEOHtml(content, filePath, basePath);
 
         return `<!DOCTYPE html>
         <html>
@@ -55,19 +55,19 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
         </html>`;
     }
 
-    private parseFileIntoSEOHtml(content, filePath, basePath) {
+    private async parseFileIntoSEOHtml(content, filePath, basePath) {
         const breadCrumbPath = getPath(basePath, filePath);
         if (filePath.endsWith(".md")) {
-            return this.markdownMetadataIntoSEOHtml(content, breadCrumbPath, basePath, filePath);
+            return await this.markdownMetadataIntoSEOHtml(content, breadCrumbPath, basePath, filePath);
         } else if (filePath.endsWith(".yml") || filePath.endsWith(".yaml")) {
-            return this.ymlMetadataIntoSEOHtml(content, breadCrumbPath, basePath, filePath);
+            return await this.ymlMetadataIntoSEOHtml(content, breadCrumbPath, basePath, filePath);
         } else {
             return "<div>Unable to read file metadata</div>";
         }
     }
 
-    private ymlMetadataIntoSEOHtml(content: string, breadCrumbPath: string, basePath, filePath) {
-        const { title, description } = parseYamlMetadata(content, breadCrumbPath, basePath, filePath);
+    private async ymlMetadataIntoSEOHtml(content: string, breadCrumbPath: string, basePath, filePath) {
+        const { title, description } = await parseYamlMetadata(content, breadCrumbPath, basePath, filePath);
         return `<div class="search-result">
                     <div class="header">
                         <div class="breadcrumbs">${breadCrumbPath}<span class="down-arrow"></span></div>
@@ -77,14 +77,14 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                         <p class="description">
                             ${description}
                         </p>
-                    </div>;
+                    </div>
                 </div>`;
     }
 
-    private markdownMetadataIntoSEOHtml(markdown: string, breadCrumbPath: string, basePath, filePath) {
+    private async markdownMetadataIntoSEOHtml(markdown: string, breadCrumbPath: string, basePath, filePath) {
         const metadataMatch = markdown.match(metadataRegex);
         if (metadataMatch) {
-            const { title, description, date } = parseMarkdownMetadata(metadataMatch[2], markdown, basePath, filePath);
+            const { title, description, date } = await parseMarkdownMetadata(metadataMatch[2], markdown, basePath, filePath);
             return `<div class="search-result">
                         <div class="header">
                             <div class="breadcrumbs">${breadCrumbPath}<span class="down-arrow"></span></div>
@@ -94,7 +94,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                             <p class="description">${this.setDateHtml(date)}
                                 ${description}
                             </p>
-                        </div>;
+                        </div>
                     </div>`;
         } else {
             return "<div>Unable to read file metadata</div>";
