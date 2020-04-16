@@ -51,13 +51,11 @@ export async function activate(context: ExtensionContext) {
         }
     }));
 
-    const disposableSEOPreview = commands.registerCommand("docs.seoPreview", seoPreview(ViewColumn.One));
-    const disposableSideSEOPreview = commands.registerCommand("docs.seoPreviewToSide", seoPreview(ViewColumn.Two));
+    const disposableSEOPreview = commands.registerCommand("docs.seoPreview", seoPreview(ViewColumn.Two));
     context.subscriptions.push(
         disposableSidePreview,
         disposableStandalonePreview,
-        disposableSEOPreview,
-        disposableSideSEOPreview);
+        disposableSEOPreview);
 
     let filePath = "";
     const editor = window.activeTextEditor;
