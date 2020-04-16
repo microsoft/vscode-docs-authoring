@@ -284,7 +284,7 @@ export async function applyIcon() {
                         .replace(/\\/g, "/");
 
                     // output image content type
-                    image = `:::image type="icon" source="${sourcePath}":::`;
+                    image = `:::image type="icon" source="${sourcePath}" border="false":::`;
                     insertContentToEditor(editor, applyImage.name, image, true);
                 }
             });
