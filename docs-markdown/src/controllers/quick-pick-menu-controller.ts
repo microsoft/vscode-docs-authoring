@@ -14,7 +14,7 @@ import { pickLinkType } from "./link-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
 import { insertLink, insertVideo } from "./media-controller";
 import { noLocText } from "./no-loc-controller";
-import { previewTopic } from "./preview-controller";
+import { previewTopic, seoPreview } from "./preview-controller";
 import { insertRowsAndColumns } from "./row-columns-controller";
 import { insertSnippet } from "./snippet-controller";
 import { insertTable } from "./table-controller";
@@ -40,6 +40,10 @@ export function markdownQuickPick() {
         markdownItems.push({
             description: "",
             label: "$(browser) Preview",
+        });
+        markdownItems.push({
+            description: "",
+            label: "$(search) Search Results Preview",
         });
     }
 
@@ -214,6 +218,9 @@ export function markdownQuickPick() {
                 break;
             case "preview":
                 previewTopic();
+                break;
+            case "search results preview":
+                seoPreview();
                 break;
             case "template":
                 applyTemplate();
