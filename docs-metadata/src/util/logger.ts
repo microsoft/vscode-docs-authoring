@@ -3,81 +3,81 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import { lazy } from './lazy';
+import * as vscode from "vscode";
+import { lazy } from "./lazy";
 
 export enum Trace {
-	Off,
-	Verbose
+    Off,
+    Verbose,
 }
 
+// tslint:disable-next-line: no-namespace
 export namespace Trace {
-	export function fromString(value: string): Trace {
-		value = value.toLowerCase();
-		switch (value) {
-			case 'off':
-				return Trace.Off;
-			case 'verbose':
-				return Trace.Verbose;
-			default:
-				return Trace.Off;
-		}
-	}
+    export function fromString(value: string): Trace {
+        value = value.toLowerCase();
+        switch (value) {
+            case "off":
+                return Trace.Off;
+            case "verbose":
+                return Trace.Verbose;
+            default:
+                return Trace.Off;
+        }
+    }
 }
-
 
 function isString(value: any): value is string {
-	return Object.prototype.toString.call(value) === '[object String]';
+    return Object.prototype.toString.call(value) === "[object String]";
 }
 
 export class Logger {
-	private trace?: Trace;
+    private static data2String(data: any): string {
+        if (data instanceof Error) {
+            if (isString(data.stack)) {
+                return data.stack;
+            }
+            return (data as Error).message;
+        }
+        if (isString(data)) {
+            return data;
+        }
+        return JSON.stringify(data, undefined, 2);
+    }
 
-	private readonly outputChannel = lazy(() => vscode.window.createOutputChannel('reStructuredText'));
+    private trace?: Trace;
 
-	constructor() {
-		this.updateConfiguration();
-	}
+    private readonly outputChannel = lazy(() => vscode.window.createOutputChannel("reStructuredText"));
 
-	public log(message: string, data?: any): void {
-		if (this.trace === Trace.Verbose) {
-			this.appendLine(`[Log - ${(new Date().toLocaleTimeString())}] ${message}`);
-			if (data) {
-				this.appendLine(Logger.data2String(data));
-			}
-		}
-	}
+    constructor() {
+        this.updateConfiguration();
+    }
 
-	public updateConfiguration() {
-		this.trace = this.readTrace();
-	}
+    public log(message: string, data?: any): void {
+        if (this.trace === Trace.Verbose) {
+            this.appendLine(`[Log - ${(new Date().toLocaleTimeString())}] ${message}`);
+            if (data) {
+                this.appendLine(Logger.data2String(data));
+            }
+        }
+    }
 
-	public appendLine(value: string = '') {
-		return this.outputChannel.value.appendLine(value);
-	}
+    public updateConfiguration() {
+        this.trace = this.readTrace();
+    }
 
-	public append(value: string) {
-		return this.outputChannel.value.append(value);
-	}
+    public appendLine(value: string = "") {
+        return this.outputChannel.value.appendLine(value);
+    }
 
-	public show() {
-		this.outputChannel.value.show();
-	}
+    public append(value: string) {
+        return this.outputChannel.value.append(value);
+    }
 
-	private readTrace(): Trace {
-		return Trace.fromString(vscode.workspace.getConfiguration().get<string>('restructuredtext.trace', 'off'));
-	}
+    public show() {
+        this.outputChannel.value.show();
+    }
 
-	private static data2String(data: any): string {
-		if (data instanceof Error) {
-			if (isString(data.stack)) {
-				return data.stack;
-			}
-			return (data as Error).message;
-		}
-		if (isString(data)) {
-			return data;
-		}
-		return JSON.stringify(data, undefined, 2);
-	}
+    private readTrace(): Trace {
+        return Trace.fromString(vscode.workspace.getConfiguration().get<string>("restructuredtext.trace", "off"));
+    }
 }
