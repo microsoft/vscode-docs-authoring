@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as crypto from 'crypto';
-import * as fs from 'fs';
-import * as os from 'os';
-import * as util from './common';
+import * as crypto from "crypto";
+import * as fs from "fs";
+import * as os from "os";
+import * as util from "./common";
 
-const unknown = 'unknown';
+const unknown = "unknown";
 
 /**
  * There is no standard way on Linux to find the distribution name and version.
@@ -22,11 +22,12 @@ export class LinuxDistribution {
         public version: string,
         public idLike?: string[]) { }
 
+    // tslint:disable member-ordering max-classes-per-file
     public static GetCurrent(): Promise<LinuxDistribution> {
         // Try /etc/os-release and fallback to /usr/lib/os-release per the synopsis
         // at https://www.freedesktop.org/software/systemd/man/os-release.html.
-        return LinuxDistribution.FromFilePath('/etc/os-release')
-            .catch(() => LinuxDistribution.FromFilePath('/usr/lib/os-release'))
+        return LinuxDistribution.FromFilePath("/etc/os-release")
+            .catch(() => LinuxDistribution.FromFilePath("/usr/lib/os-release"))
             .catch(() => Promise.resolve(new LinuxDistribution(unknown, unknown)));
     }
 
@@ -41,22 +42,21 @@ export class LinuxDistribution {
      */
     public toTelemetryString(): string {
         const allowedList = [
-            'antergos', 'arch', 'centos', 'debian', 'deepin', 'elementary', 'fedora',
-            'galliumos', 'gentoo', 'kali', 'linuxmint', 'manjoro', 'neon', 'opensuse',
-            'parrot', 'rhel', 'ubuntu', 'zorin'
+            "antergos", "arch", "centos", "debian", "deepin", "elementary", "fedora",
+            "galliumos", "gentoo", "kali", "linuxmint", "manjoro", "neon", "opensuse",
+            "parrot", "rhel", "ubuntu", "zorin",
         ];
 
         if (this.name === unknown || allowedList.indexOf(this.name) >= 0) {
             return this.toString();
-        }
-        else {
+        } else {
             // Having a hash of the name will be helpful to identify spikes in the 'other'
             // bucket when a new distro becomes popular and needs to be added to the
             // allowed list above.
-            const hash = crypto.createHash('sha256');
+            const hash = crypto.createHash("sha256");
             hash.update(this.name);
 
-            const hashedName = hash.digest('hex');
+            const hashedName = hash.digest("hex");
 
             return `other (${hashedName})`;
         }
@@ -64,11 +64,10 @@ export class LinuxDistribution {
 
     private static FromFilePath(filePath: string): Promise<LinuxDistribution> {
         return new Promise<LinuxDistribution>((resolve, reject) => {
-            fs.readFile(filePath, 'utf8', (error, data) => {
+            fs.readFile(filePath, "utf8", (error, data) => {
                 if (error) {
                     reject(error);
-                }
-                else {
+                } else {
                     resolve(LinuxDistribution.FromReleaseInfo(data));
                 }
             });
@@ -78,15 +77,15 @@ export class LinuxDistribution {
     public static FromReleaseInfo(releaseInfo: string, eol: string = os.EOL): LinuxDistribution {
         let name = unknown;
         let version = unknown;
-        let idLike : string[] = null;
+        let idLike: string[] = null;
 
         const lines = releaseInfo.split(eol);
         for (let line of lines) {
             line = line.trim();
 
-            let equalsIndex = line.indexOf('=');
+            const equalsIndex = line.indexOf("=");
             if (equalsIndex >= 0) {
-                let key = line.substring(0, equalsIndex);
+                const key = line.substring(0, equalsIndex);
                 let value = line.substring(equalsIndex + 1);
 
                 // Strip double quotes if necessary
@@ -94,13 +93,11 @@ export class LinuxDistribution {
                     value = value.substring(1, value.length - 1);
                 }
 
-                if (key === 'ID') {
+                if (key === "ID") {
                     name = value;
-                }
-                else if (key === 'VERSION_ID') {
+                } else if (key === "VERSION_ID") {
                     version = value;
-                }
-                else if (key === 'ID_LIKE') {
+                } else if (key === "ID_LIKE") {
                     idLike = value.split(" ");
                 }
 
@@ -118,20 +115,19 @@ export class PlatformInformation {
     public constructor(
         public platform: string,
         public architecture: string,
-        public distribution: LinuxDistribution = null)
-    {
+        public distribution: LinuxDistribution = null) {
     }
 
     public isWindows(): boolean {
-        return this.platform === 'win32';
+        return this.platform === "win32";
     }
 
     public isMacOS(): boolean {
-        return this.platform === 'darwin';
+        return this.platform === "darwin";
     }
 
     public isLinux(): boolean {
-        return this.platform === 'linux';
+        return this.platform === "linux";
     }
 
     public toString(): string {
@@ -139,7 +135,7 @@ export class PlatformInformation {
 
         if (this.architecture) {
             if (result) {
-                result += ', ';
+                result += ", ";
             }
 
             result += this.architecture;
@@ -147,7 +143,7 @@ export class PlatformInformation {
 
         if (this.distribution) {
             if (result) {
-                result += ', ';
+                result += ", ";
             }
 
             result += this.distribution.toString();
@@ -157,22 +153,22 @@ export class PlatformInformation {
     }
 
     public static GetCurrent(): Promise<PlatformInformation> {
-        let platform = os.platform();
+        const platform = os.platform();
         let architecturePromise: Promise<string>;
         let distributionPromise: Promise<LinuxDistribution>;
 
         switch (platform) {
-            case 'win32':
+            case "win32":
                 architecturePromise = PlatformInformation.GetWindowsArchitecture();
                 distributionPromise = Promise.resolve(null);
                 break;
 
-            case 'darwin':
+            case "darwin":
                 architecturePromise = PlatformInformation.GetUnixArchitecture();
                 distributionPromise = Promise.resolve(null);
                 break;
 
-            case 'linux':
+            case "linux":
                 architecturePromise = PlatformInformation.GetUnixArchitecture();
                 distributionPromise = LinuxDistribution.GetCurrent();
                 break;
@@ -189,18 +185,17 @@ export class PlatformInformation {
 
     private static GetWindowsArchitecture(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
-            if (process.env.PROCESSOR_ARCHITECTURE === 'x86' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
-                resolve('x86');
-            }
-            else {
-                resolve('x86_64');
+            if (process.env.PROCESSOR_ARCHITECTURE === "x86" && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
+                resolve("x86");
+            } else {
+                resolve("x86_64");
             }
         });
     }
 
     private static GetUnixArchitecture(): Promise<string> {
-        return util.execChildProcess('uname -m')
-            .then(architecture => {
+        return util.execChildProcess("uname -m")
+            .then((architecture) => {
                 if (architecture) {
                     return architecture.trim();
                 }
