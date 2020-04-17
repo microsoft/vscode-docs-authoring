@@ -53,9 +53,15 @@
 		"test": "npm run compile && node ./node_modules/vscode/bin/test",
 		"lint": "tslint -c tslint.json 'src/**/*.ts'"
 	},
+	"husky": {
+		"hooks": {
+			"pre-push": "npm run compile && npm run lint"
+		}
+	},
 	"devDependencies": {
 		"@types/mocha": "^2.2.42",
 		"@types/node": "^10.12.21",
+		"husky": "^4.2.5",
 		"mocha": "^7.1.1",
 		"tslint": "^5.20.1",
 		"typescript": "^3.3.1",
