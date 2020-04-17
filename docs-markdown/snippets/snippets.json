@@ -23,7 +23,7 @@
   "icon": {
     "prefix": "image",
     "body": [
-      ":::image type=\"icon\" source=\"\":::"
+      ":::image type=\"icon\" source=\"\" border=\"false\" :::"
     ],
     "description": "Icon"
   },
