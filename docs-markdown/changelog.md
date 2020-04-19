@@ -1,5 +1,6 @@
 # Change Log
 
+- Added Moniker to quick-pick-menu-controller.ts
 - Added Unit Test Coverage: include-controller.ts
 
 ## 0.2.63 (April 2nd, 2020)
