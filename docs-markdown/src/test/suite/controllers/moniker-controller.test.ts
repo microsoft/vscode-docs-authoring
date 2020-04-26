@@ -1,7 +1,7 @@
 import * as chai from "chai";
 import * as spies from "chai-spies";
 import { resolve } from "path";
-import { commands, TextEditor, window } from "vscode";
+import { commands, window } from "vscode";
 import { insertMoniker, insertMonikerCommand } from "../../../controllers/moniker-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
@@ -11,15 +11,6 @@ chai.use(spies);
 // tslint:disable-next-line: no-var-requires
 const sinon = require("sinon");
 const expect = chai.expect;
-
-// new line in current cursor position
-function insertBlankLine(editor: TextEditor) {
-    common.insertContentToEditor(editor, "test", "\r\n");
-
-}
-function moveCursor(editor: TextEditor, y: number, x: number) {
-    common.setCursorPosition(editor, y, x);
-}
 
 const testFile = "../../../../../src/test/data/repo/articles/moniker.md";
 const sleepTime = 50;
@@ -72,10 +63,10 @@ suite("Moniker Controller", () => {
     // YAML Header test
     test("insertYamlMoniker - equal - output", async () => {
         const editor = window.activeTextEditor;
-        moveCursor(editor!, yamlLine, 0);
-        insertBlankLine(editor!);
+        common.setCursorPosition(editor!, yamlLine, 0);
+        common.insertContentToEditor(editor!, "test", "\r\n");
         common.insertContentToEditor(editor!, "", "", false, editor!.document.lineAt(10).range);
-        moveCursor(editor!, yamlLine, 0); // move cursor back
+        common.setCursorPosition(editor!, yamlLine, 0);// move cursor back
         await sleep(sleepTime);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
@@ -98,9 +89,9 @@ suite("Moniker Controller", () => {
 
     test("insertYamlMoniker - greater/equal - output", async () => {
         const editor = window.activeTextEditor;
-        moveCursor(editor!, yamlLine, 0);
-        insertBlankLine(editor!);
-        moveCursor(editor!, yamlLine, 0);
+        common.setCursorPosition(editor!, yamlLine, 0);
+        common.insertContentToEditor(editor!, "test", "\r\n");
+        common.setCursorPosition(editor!, yamlLine, 0);
 
         await sleep(sleepTime);
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
@@ -124,9 +115,9 @@ suite("Moniker Controller", () => {
 
     test("insertYamlMoniker - less/equal - output", async () => {
         const editor = window.activeTextEditor;
-        moveCursor(editor!, yamlLine, 0);
-        insertBlankLine(editor!);
-        moveCursor(editor!, yamlLine, 0);
+        common.setCursorPosition(editor!, yamlLine, 0);
+        common.insertContentToEditor(editor!, "test", "\r\n");
+        common.setCursorPosition(editor!, yamlLine, 0);
         await sleep(sleepTime);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
@@ -151,7 +142,7 @@ suite("Moniker Controller", () => {
     // Markdown body test
     test("insertMarkdownMoniker - equal - output", async () => {
         const editor = window.activeTextEditor;
-        moveCursor(editor!, markLine, 0);
+        common.setCursorPosition(editor!, markLine, 0);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve(monikerOptions[0]) as Thenable<any>;
@@ -177,9 +168,9 @@ suite("Moniker Controller", () => {
 
     test("insertMarkdownMoniker - greater/equal - output", async () => {
         const editor = window.activeTextEditor;
-        moveCursor(editor!, markLine + 3, 0);
-        insertBlankLine(editor!);
-        moveCursor(editor!, markLine + 3, 0);
+        common.setCursorPosition(editor!, markLine + 3, 0);
+        common.insertContentToEditor(editor!, "test", "\r\n");
+        common.setCursorPosition(editor!, markLine + 3, 0);
         await sleep(sleepTime);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
@@ -206,9 +197,9 @@ suite("Moniker Controller", () => {
 
     test("insertMarkdownMoniker - less/equal - output", async () => {
         const editor = window.activeTextEditor;
-        moveCursor(editor!, markLine + 6, 0);
-        insertBlankLine(editor!);
-        moveCursor(editor!, markLine + 6, 0);
+        common.setCursorPosition(editor!, markLine + 6, 0);
+        common.insertContentToEditor(editor!, "test", "\r\n");
+        common.setCursorPosition(editor!, markLine + 6, 0);
         await sleep(sleepTime);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
