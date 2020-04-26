@@ -66,7 +66,7 @@ suite("Moniker Controller", () => {
         common.setCursorPosition(editor!, yamlLine, 0);
         common.insertContentToEditor(editor!, "test", "\r\n");
         common.insertContentToEditor(editor!, "", "", false, editor!.document.lineAt(10).range);
-        common.setCursorPosition(editor!, yamlLine, 0);// move cursor back
+        common.setCursorPosition(editor!, yamlLine, 0); // move cursor back
         await sleep(sleepTime);
 
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
