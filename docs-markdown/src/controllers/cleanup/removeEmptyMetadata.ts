@@ -1,4 +1,4 @@
-import { reporter } from "../../helper/telemetry";
+import { sendTelemetryData } from "../../helper/telemetry";
 import { readWriteFileWithProgress } from "./utilities";
 
 const telemetryCommand: string = "applyCleanup";
@@ -7,7 +7,7 @@ const telemetryCommand: string = "applyCleanup";
  */
 export function removeEmptyMetadata(progress: any, file: string, files: string[] | null, index: number | null, cleanupType: string) {
     const message = "Removal of metadata values";
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
+    sendTelemetryData("command", telemetryCommand);
     if (file.endsWith(".md")) {
         return readWriteFileWithProgress(progress,
             file,
@@ -37,8 +37,10 @@ export function removeEmptyMetadata(progress: any, file: string, files: string[]
 }
 
 export function deleteEmptyMetadata(data: any) {
-    const metadataRegex: any = new RegExp(/^(\w+\.*\w+?:)(\s*|\s""|\s'')[\n|\r](?=(.|\n|\r)*---\s$)/gmi);
-    data = data.replace(metadataRegex, "");
+    const metadataListRegex: any = new RegExp(/^(\s+\-)(\s*|\s""|\s'')[\n|\r](?=(.|\n|\r)*---\s$)/gmi);
+    data = data.replace(metadataListRegex, "");
+    const metadataRegex: any = new RegExp(/^(\w+\.*\w+?:)(\s*|\s""|\s'')(?!\n*\s+\-\ (\s*|\s""|\s''))[\n|\r](?=(.|\n|\r)*---\s$)/gmi);
+    data = data.replace(metadataRegex, "")
     return data;
 }
 
