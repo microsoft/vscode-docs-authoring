@@ -43,6 +43,9 @@ export function handleMarkdownMetadata(data: string, metadata: string) {
             if (handleSingleItemArray(yamlContent["ms.title"])) {
                 data = singleValueMetadata(data, "ms.title");
             }
+            if (handleSingleItemArray(yamlContent["ms.custom"])) {
+                data = singleValueMetadata(data, "ms.custom");
+            }
         }
     } catch (error) {
         postError(error);

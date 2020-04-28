@@ -1,4 +1,4 @@
-import { reporter } from "../../helper/telemetry";
+import { sendTelemetryData } from "../../helper/telemetry";
 import { handleMarkdownMetadata } from "./handleMarkdownMetadata";
 import { handleYamlMetadata } from "./handleYamlMetadata";
 import { readWriteFileWithProgress } from "./utilities";
@@ -11,7 +11,7 @@ const telemetryCommand: string = "applyCleanup";
  * then converts the array to single item.
  */
 export function handleSingleValuedMetadata(progress: any, file: string, files: string[] | null, index: number | null) {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
+    sendTelemetryData("command", telemetryCommand);
     const message = "Single-Valued metadata";
     if (file.endsWith(".yml") || file.endsWith(".md")) {
         return readWriteFileWithProgress(progress,

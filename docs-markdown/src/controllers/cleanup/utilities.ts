@@ -8,12 +8,18 @@ const recursive = require("recursive-readdir");
 let percentComplete = 1;
 /**
  * Checks if array has only one item. if so, then return that item.
- * @param content takes in string data as content and retuns
+ * @param content takes in string data as content and returns
  * first item in array if the array only has one item in array.
  */
 export function handleSingleItemArray(content: string | undefined) {
-    if (content && Array.isArray(content) && content.length === 1) {
-        return content[0];
+    if (content && content.length === 1) {
+        if (content[0] === "") {
+            // It does not matter what we return
+            return " ";
+        }
+        else {
+            return content[0];
+        }
     }
 }
 
