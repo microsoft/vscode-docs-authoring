@@ -1,12 +1,12 @@
-import * as common from "../../../helper/common";
-import * as telemetry from "../../../helper/telemetry";
-import { formatBold, boldFormattingCommand, bold } from "../../../controllers/bold-controller";
-import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
 import * as assert from "assert";
 import * as chai from "chai";
 import * as spies from "chai-spies";
 import { resolve } from "path";
 import { commands } from "vscode";
+import { bold, boldFormattingCommand, formatBold } from "../../../controllers/bold-controller";
+import * as common from "../../../helper/common";
+import * as telemetry from "../../../helper/telemetry";
+import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
 
 chai.use(spies);
 
@@ -69,9 +69,9 @@ suite("Bold Controller", () => {
 
         await commands.executeCommand("cursorMove", {
             by: "character",
-            to: "right",
             select: true,
-            value: 8
+            to: "right",
+            value: 8,
         });
 
         await commands.executeCommand("editor.action.insertCursorBelow");
@@ -81,7 +81,7 @@ suite("Bold Controller", () => {
         stub.restore();
     });
     test("bold()", async () => {
-        var result = bold("good");
+        const result = bold("good");
         assert.equal(result, "**good**");
     });
 });
