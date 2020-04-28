@@ -2,14 +2,11 @@ import * as assert from "assert";
 import * as chai from "chai";
 import * as spies from "chai-spies";
 import { resolve } from "path";
-import { commands, window } from "vscode";
-import { insertAlert, insertAlertCommand } from "../../../controllers/alert-controller";
+import { commands } from "vscode";
 import * as common from "../../../helper/common";
 import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
 import { formatBold, boldFormattingCommand, bold } from "../../../controllers/bold-controller";
-import { reporter } from "../../../helper/telemetry";
 import * as telemetry from "../../../helper/telemetry";
-import { AssertionError } from "assert";
 
 chai.use(spies);
 
