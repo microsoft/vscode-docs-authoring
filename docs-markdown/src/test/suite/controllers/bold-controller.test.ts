@@ -70,8 +70,8 @@ suite("Bold Controller", () => {
         await commands.executeCommand("cursorMove", {
             by: "character",
             to: "right",
-            select: true
-            value: 8,
+            select: true,
+            value: 8
         });
 
         await commands.executeCommand("editor.action.insertCursorBelow");
