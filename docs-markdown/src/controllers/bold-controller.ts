@@ -19,7 +19,9 @@ export function boldFormattingCommand() {
  * Replaces current selection with MD bold formated selection
  */
 export function formatBold() {
-    if (reporter) reporter.sendTelemetryEvent(`${telemetryCommand}`);
+    if (reporter) {
+        reporter.sendTelemetryEvent(`${telemetryCommand}`);
+    }
     const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();

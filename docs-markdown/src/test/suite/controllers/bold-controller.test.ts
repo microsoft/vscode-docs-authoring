@@ -1,12 +1,12 @@
+import * as common from "../../../helper/common";
+import * as telemetry from "../../../helper/telemetry";
+import { formatBold, boldFormattingCommand, bold } from "../../../controllers/bold-controller";
+import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
 import * as assert from "assert";
 import * as chai from "chai";
 import * as spies from "chai-spies";
 import { resolve } from "path";
 import { commands } from "vscode";
-import * as common from "../../../helper/common";
-import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
-import { formatBold, boldFormattingCommand, bold } from "../../../controllers/bold-controller";
-import * as telemetry from "../../../helper/telemetry";
 
 chai.use(spies);
 
@@ -62,16 +62,16 @@ suite("Bold Controller", () => {
         await loadDocumentAndGetItReady(filePath);
 
         await commands.executeCommand("cursorMove", {
-            to: 'down',
-            by: 'line',
+            by: "line",
+            to: "down",
             value: 14,
         });
 
         await commands.executeCommand("cursorMove", {
-            to: 'right',
-            by: 'character',
-            value: 8,
+            by: "character",
+            to: "right",
             select: true
+            value: 8,
         });
 
         await commands.executeCommand("editor.action.insertCursorBelow");
