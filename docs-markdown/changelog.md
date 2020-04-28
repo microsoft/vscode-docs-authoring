@@ -1,6 +1,9 @@
 # Change Log
 
 - Added Unit Test Coverage: include-controller.ts
+- Added Unit Test Coverage: removeEmptyMetadata.ts
+- Added Unit Test Coverage: handleSingleValueMetadata.ts
+- Added support for empty metadata list values in removeEmptyMetadata and handleSingleValueMetadata
 
 ## 0.2.63 (April 2nd, 2020)
 
