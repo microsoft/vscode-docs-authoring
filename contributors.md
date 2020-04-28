@@ -1,13 +1,15 @@
 # Contributing to Docs Authoring Pack 
 
-Interested in making a code contribution and not sure where to begin? Check out our help wanted issues. If you want to make an enhancement, create an issue with the proposed change for review. 
+Interested in making a code contribution and not sure where to begin? Check out our help wanted issues. If you want to make an enhancement, create an issue with the proposed change for review. [Here is a list](https://github.com/microsoft/vscode-docs-authoring/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) of things we would love help with.
 
 ## Pull Requests 
 
 When you are ready to submit your contribution, review this checklist before submitting your PR: 
 
 [ ] Verify all tests pass by running: `npm run test` 
+
 [ ] Verify all code is linted by running: `npm run lint` 
+
 [ ] Ensure that new tests are added for the proposed enhancement or bug fix. 
 
 When creating your pull request, please include: 
