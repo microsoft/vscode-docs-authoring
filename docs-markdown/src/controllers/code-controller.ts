@@ -101,8 +101,10 @@ export async function showSupportedLanguages(content: string, selectedContent: a
     }
 
     const language = languages.find((lang) => lang.language === qpSelection.label);
-    const alias = language!.aliases[0];
-    await applyCodeFormatting(content, selectedContent, alias);
+    if (language !== undefined) {
+        const alias = language.aliases[0];
+        await applyCodeFormatting(content, selectedContent, alias);
+    }
 }
 
 export async function applyCodeFormatting(content: string, selectedContent: any, codeLang: string) {
