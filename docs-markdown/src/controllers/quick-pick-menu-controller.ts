@@ -13,6 +13,7 @@ import { formatItalic } from "./italic-controller";
 import { pickLinkType } from "./link-controller";
 import { insertBulletedList, insertNumberedList } from "./list-controller";
 import { insertLink, insertVideo } from "./media-controller";
+import { insertMoniker } from "./moniker-controller";
 import { noLocText } from "./no-loc-controller";
 import { previewTopic, seoPreview } from "./preview-controller";
 import { insertRowsAndColumns } from "./row-columns-controller";
@@ -107,6 +108,10 @@ export function markdownQuickPick() {
         {
             description: "",
             label: "$(tasklist) Cleanup...",
+        },
+        {
+            description: "",
+            label: "$(project) Moniker",
         },
     );
 
@@ -245,6 +250,9 @@ export function markdownQuickPick() {
                 break;
             case "columns":
                 insertRowsAndColumns();
+                break;
+            case "moniker":
+                insertMoniker();
                 break;
             default:
                 const { msTimeValue } = generateTimestamp();
