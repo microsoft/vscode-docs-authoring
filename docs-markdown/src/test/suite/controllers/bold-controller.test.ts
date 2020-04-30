@@ -1,7 +1,7 @@
 import * as chai from "chai";
 import * as spies from "chai-spies";
 import { resolve } from "path";
-import { commands, window } from "vscode";
+import { commands, window, Selection } from "vscode";
 import { formatBold, boldFormattingCommand } from "../../../controllers/bold-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
@@ -63,7 +63,7 @@ suite("Bold Controller", () => {
         expect(spy).to.have.been.called();
         stub.restore();
     });
-    test("Bold Format Multiple Selection", async () => {
+    test("Bold Format Word Selection", async () => {
         const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
         await loadDocumentAndGetItReady(filePath);
         const editor = window.activeTextEditor;
@@ -75,5 +75,26 @@ suite("Bold Controller", () => {
         stub.restore();
 
         expect(line).to.equal("**Body**");
+    });
+    test("Bold Format Multiple Selection", async () => {
+        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
+        await loadDocumentAndGetItReady(filePath);
+        const editor = window.activeTextEditor;
+        const cursorPosition = editor!.selection.active;
+        const fromPositionOne = cursorPosition.with(48, 0);
+        const toPositionOne = cursorPosition.with(48, 5);
+        const fromPositionTwo = cursorPosition.with(48, 13);
+        const toPositionTwo = cursorPosition.with(48, 17);
+        editor!.selections = [
+            new Selection(fromPositionOne, toPositionOne),
+            new Selection(fromPositionTwo, toPositionTwo)
+        ]
+        const stub = sinon.stub(telemetry, "sendTelemetryData");
+        formatBold();
+        await sleep(100);
+        const line = editor?.document.lineAt(48).text;
+        stub.restore();
+
+        expect(line).to.equal("**These** alerts **look** like this on docs.microsoft.com:");
     });
 });
