@@ -14,8 +14,7 @@ let percentComplete = 1;
 export function handleSingleItemArray(content: string | undefined) {
     if (content && content.length === 1) {
         if (content[0] === "") {
-            // It does not matter what we return
-            return " ";
+            return true;
         }
         else {
             return content[0];
