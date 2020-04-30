@@ -27,6 +27,7 @@ The following commands are available in Markdown files:
 |Command            |Description         |
 |-------------------|--------------------|
 |Preview (`Alt+DP`) |Preview the active topic in a side-by-side window using the Docs Preview extension, if it is installed.|
+|Search Results Preview|Approximates how your article will look when returned in Google search results.|
 |Bold (`Alt+DB`)    |Format text **bold**.|
 |Italic (`Alt+DI`)  |Format text *italic*.|
 |Code               |If one line or less is selected, formats text as `inline code`.<br><br>If multiple lines are selected, formats them as a fenced code block, and prompts you to select a programming language supported by Docs.<br>|
