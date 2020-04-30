@@ -20,7 +20,7 @@ export function getUnusedImagesAndIncludesCommand() {
 /**
  * Removes all unused images and includes.
  */
-const INCLUDE_RE = /\[!include \[.*\]\((.*)\)\]|<img[^>]+src="([^">]+)"|\((.*?.(?:png|jpg|jpeg|svg|tiff|gif))\s*(?:".*")*\)|source\s*=\s*"(.*?)"|lightbox\s*=\s*"(.*?)"|"\s*source_path\s*"\s*:\s*"(.*?)"|href\s*:\s*(.*)"/gmi;
+const INCLUDE_RE = /\[!include\s?\[.*\]\((.*)\)\]|<img[^>]+src="([^">]+)"|\((.*?.(?:png|jpg|jpeg|svg|tiff|gif))\s*(?:".*")*\)|source\s*=\s*"(.*?)"|lightbox\s*=\s*"(.*?)"|"\s*source_path\s*"\s*:\s*"(.*?)"|href\s*:\s*(.*)"/gmi;
 const message = "Removing unused images and includes. This could take several minutes.";
 export async function removeUnusedImagesAndIncludes(progress: any, workspacePath: string, resolve: any): Promise<any> {
     let unusedFiles = await getImageAndIncludesFiles(workspacePath);
