@@ -40,7 +40,7 @@ export function deleteEmptyMetadata(data: any) {
     const metadataListRegex: any = new RegExp(/^(\s+\-)(\s*|\s""|\s'')[\n|\r](?=(.|\n|\r)*---\s$)/gmi);
     data = data.replace(metadataListRegex, "");
     const metadataRegex: any = new RegExp(/^(\w+\.*\w+?:)(\s*|\s""|\s'')(?!\n*\s+\-\ (\s*|\s""|\s''))[\n|\r](?=(.|\n|\r)*---\s$)/gmi);
-    data = data.replace(metadataRegex, "")
+    data = data.replace(metadataRegex, "");
     return data;
 }
 
