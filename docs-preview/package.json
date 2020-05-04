@@ -126,7 +126,6 @@
     "@types/chai-spies": "^1.0.1",
     "@types/mocha": "^7.0.1",
     "@types/node": "^6.0.40",
-    "@types/vscode": "^1.44.0",
     "chai": "^4.2.0",
     "chai-spies": "^1.0.0",
     "husky": "^4.2.5",
