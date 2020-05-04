@@ -1,6 +1,6 @@
 import { output } from "../extension";
 
-const IMAGE_OPEN_RE = /image\s+(((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+))"\s*)+:::/gm;
+const IMAGE_OPEN_RE = /image\s+(((source|type|alt-text|lightbox|border|loc-scope)="(.*?))"\s*)+:::/gm;
 
 export const imageOptions = {
     marker: ":",
@@ -10,9 +10,9 @@ export const imageOptions = {
     },
     render(tokens, idx) {
         const start = IMAGE_OPEN_RE.exec(tokens[idx].info.trim());
-        const SOURCE_RE = /source\s*=\s*"([a-zA-Z0-9_.\/ -]+)"/gi;
-        const LIGHTBOX_RE = /lightbox\s*=\s*"([a-zA-Z0-9_.\/ -]+)"/gi;
-        const BORDER_RE = /border\s*=\s*"([a-zA-Z0-9_.\/ -]+)"/gi;
+        const SOURCE_RE = /source\s*=\s*"(.*?)"/gi;
+        const LIGHTBOX_RE = /lightbox\s*=\s*"(.*?)"/gi;
+        const BORDER_RE = /border\s*=\s*"(.*?)"/gi;
         if (start) {
             const source = SOURCE_RE.exec(start[0])[1];
             const lightboxMatch = LIGHTBOX_RE.exec(start[0]);
@@ -37,8 +37,8 @@ export const imageOptions = {
 
 // removes image-end and long description for rendering purposes
 export function image_end(md) {
-    const IMAGE_ALL_GLOBAL_RE = /(:::image\s+(((source|type|alt-text|lightbox|border|loc-scope)="((?!content|icon)[a-zA-Z0-9_.\/ -]+))"(\s*)?)+:::)([^]+?:::image-end:::)/mig;
-    const IMAGE_ALL_RE = /(:::image\s+(((source|type|alt-text|lightbox|border|loc-scope)="((?!content|icon)[a-zA-Z0-9_.\/ -]+))"(\s*)?)+:::)([^]+?:::image-end:::)/mi;
+    const IMAGE_ALL_GLOBAL_RE = /(:::image\s+(((source|type|alt-text|lightbox|border|loc-scope)="((?!content|icon).*?))"(\s*)?)+:::)([^]+?:::image-end:::)/mig;
+    const IMAGE_ALL_RE = /(:::image\s+(((source|type|alt-text|lightbox|border|loc-scope)="((?!content|icon).*?))"(\s*)?)+:::)([^]+?:::image-end:::)/mi;
     const replaceImageEnd = (src: string) => {
         const matches = src.match(IMAGE_ALL_GLOBAL_RE);
         if (matches) {
