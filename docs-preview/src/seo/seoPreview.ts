@@ -8,7 +8,7 @@ import {
     window,
     workspace,
 } from "vscode";
-import { getPath, parseMarkdownMetadata, parseYamlMetadata } from "./seoHelpers";
+import { getBreadCrumbPath, parseMarkdownMetadata, parseYamlMetadata } from "./seoHelpers";
 
 const metadataRegex = new RegExp(`^(---)([^]+?)(---)$`, "m");
 
@@ -56,7 +56,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
     }
 
     private async parseFileIntoSEOHtml(content, filePath, basePath) {
-        const breadCrumbPath = getPath(basePath, filePath);
+        const breadCrumbPath = getBreadCrumbPath(basePath, filePath);
         if (filePath.endsWith(".md")) {
             return await this.markdownMetadataIntoSEOHtml(content, breadCrumbPath, basePath, filePath);
         } else if (filePath.endsWith(".yml") || filePath.endsWith(".yaml")) {

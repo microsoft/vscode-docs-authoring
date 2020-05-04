@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.48 (April 30th, 2020)
+
+- Added breadcrumb functionality to Search Results Preview
+
 ## 0.3.46 (April 10th, 2020)
 
 - Fix complex image preview bug (long description)
