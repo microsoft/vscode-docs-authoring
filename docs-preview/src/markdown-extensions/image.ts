@@ -13,21 +13,37 @@ export const imageOptions = {
         const SOURCE_RE = /source\s*=\s*"(.*?)"/gi;
         const LIGHTBOX_RE = /lightbox\s*=\s*"(.*?)"/gi;
         const BORDER_RE = /border\s*=\s*"(.*?)"/gi;
+        const TYPE_RE = /type\s*=\s*"(.*?)"/gi;
         if (start) {
-            const source = SOURCE_RE.exec(start[0])[1];
-            const lightboxMatch = LIGHTBOX_RE.exec(start[0]);
-            const borderMatch = BORDER_RE.exec(start[0]);
+            const sourceMatch = SOURCE_RE.exec(start[0]);
+            if (sourceMatch && sourceMatch.length > 0) {
+                const source = sourceMatch[1];
+                const lightboxMatch = LIGHTBOX_RE.exec(start[0]);
+                const borderMatch = BORDER_RE.exec(start[0]);
+                const typeMatch = TYPE_RE.exec(start[0]);
 
-            let html = `<img src=${source}>`;
-            if (!borderMatch || "true" === borderMatch[1].toLowerCase()) {
-                html = `<div class="mx-imgBorder"><p>${html}</p></div>`;
-            }
-            if (lightboxMatch) {
-                html = `<a href="${lightboxMatch[1]}#lightbox" data-linktype="relative - path">${html}</a>`;
-            }
+                let html = `<div class="mx-imgBorder"><p><img src="${source}"></p></div>`;
+                if (borderMatch && borderMatch.length > 0 && "false" === borderMatch[1].toLowerCase()) {
+                    html = `<img src="${source}">`;
+                }
 
-            // opening tag
-            return html;
+                if (typeMatch && typeMatch.length > 0 && typeMatch[1].toLowerCase() === "icon") {
+                    if (borderMatch && borderMatch.length > 0 && "true" === borderMatch[1].toLowerCase()) {
+                        html = `<div class="mx-imgBorder"><p><img src="${source}"></p></div>`;
+                    } else {
+                        html = `<img src="${source}">`;
+                    }
+                }
+
+                if (lightboxMatch && lightboxMatch.length > 0) {
+                    html = `<a href="${lightboxMatch[1]}#lightbox" data-linktype="relative-path">${html}</a>`;
+                }
+
+                // opening tag
+                return html;
+            } else {
+                return tokens[idx].info.trim();
+            }
         } else {
             // closing tag
             return "";
