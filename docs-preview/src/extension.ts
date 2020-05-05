@@ -86,7 +86,7 @@ export async function activate(context: ExtensionContext) {
     function seoPreview(column): (...args: any[]) => any {
         return async () => {
             // Create and show a new webview
-            panel = window.createWebviewPanel("seoPreview", "SEO Preview", { preserveFocus: true, viewColumn: column }, {});
+            panel = window.createWebviewPanel("seoPreview", "Search Results Preview", { preserveFocus: true, viewColumn: column }, {});
             panel.webview.html = await provider.provideTextDocumentContent();
         };
     }
