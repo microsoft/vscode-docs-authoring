@@ -23,6 +23,7 @@ export interface IDocFxMetadata {
         };
         globalMetadata?: {
             "titleSuffix": string,
+            "breadcrumb_path": string,
         }
     };
 }
