@@ -9,7 +9,12 @@
         "no-unused-expression": true,
         "no-duplicate-imports": true,
         "ordered-imports": true,
-        "prefer-for-of": false
+        "prefer-for-of": false,
+        "indent": [
+            true,
+            "spaces",
+            4
+        ]
     },
     "rulesDirectory": []
 }
