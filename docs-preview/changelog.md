@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.49 (May 5th, 2020)
+
+- Fixed issues with triple colon image extension preview working with different locales and commas in alt-text.
+
 ## 0.3.48 (April 30th, 2020)
 
 - Added breadcrumb functionality to Search Results Preview
