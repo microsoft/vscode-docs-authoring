@@ -1,6 +1,8 @@
 import { resolve } from "path";
 import { commands, Uri, window, workspace } from "vscode";
 
+export const sleepTime = 90;
+
 export function sleep(ms: number): Promise<void> {
     return new Promise((r) => {
         setTimeout(r, ms);

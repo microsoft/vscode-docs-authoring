@@ -5,7 +5,7 @@ import { commands, TextEditor, window, workspace } from "vscode";
 import { insertInclude, insertIncludeCommand } from "../../../controllers/include-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
-import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
+import { loadDocumentAndGetItReady, sleep, sleepTime } from "../../test.common/common";
 
 chai.use(spies);
 // tslint:disable-next-line: no-var-requires
@@ -14,7 +14,6 @@ const expect = chai.expect;
 
 const root = workspace.workspaceFolders![0].uri;
 const testFile = "../../../../../src/test/data/repo/articles/includes.md";
-const sleepTime = 50;
 const qpSelectionItems = [
     { description: root.fsPath + "\\includes", label: "1.md" },
     { description: root.fsPath + "\\includes", label: "2.md" },
@@ -71,7 +70,6 @@ suite("Include Controller", () => {
         const filePath = resolve(__dirname, testFile);
         await loadDocumentAndGetItReady(filePath);
         const spy = chai.spy.on(common, "isMarkdownFileCheck");
-        await sleep(sleepTime);
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve("") as Thenable<any>;
         };
@@ -83,13 +81,12 @@ suite("Include Controller", () => {
     });
     test("hasValidWorkSpaceRootPath", async () => {
         const spy = chai.spy.on(common, "hasValidWorkSpaceRootPath");
-        await sleep(sleepTime);
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve("") as Thenable<any>;
         };
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertInclude();
-        await sleep(50);
+        await sleep(sleepTime);
         stub.restore();
         expect(spy).to.have.been.called();
     });
@@ -97,9 +94,9 @@ suite("Include Controller", () => {
         createIncludes();
         addMarkdownFile(3);
         const editor = window.activeTextEditor;
-        moveCursor(editor!, 10, 0);
+        moveCursor(editor!, 12, 0);
         insertBlankLine(editor!);
-        moveCursor(editor!, 10, 0); // move cursor back
+        moveCursor(editor!, 12, 0); // move cursor back
         await sleep(sleepTime);
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve(qpSelectionItems[0]) as Thenable<any>;
@@ -107,7 +104,7 @@ suite("Include Controller", () => {
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         insertInclude();
         await sleep(sleepTime);
-        const output = editor?.document.lineAt(10).text;
+        const output = editor?.document.lineAt(12).text;
         stub.restore();
         expect(output).to.equal("[!INCLUDE [1](../includes/1.md)]");
     });
@@ -129,7 +126,7 @@ suite("Include Controller", () => {
     });
     test("Window NT - includeMultipleFiles", async () => {
         const editor = window.activeTextEditor;
-        moveCursor(editor!, 12, 0);
+        moveCursor(editor!, 16, 0);
         await sleep(sleepTime);
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve(qpSelectionItems[0]) as Thenable<any>;
@@ -148,7 +145,7 @@ suite("Include Controller", () => {
         insertInclude();
         await sleep(sleepTime);
         stub.restore();
-        const output = editor?.document.lineAt(12).text;
+        const output = editor?.document.lineAt(16).text;
         deleteIncludes();
         expect(output).to.equal("[!INCLUDE [1](../includes/1.md)][!INCLUDE [2](../includes/2.md)][!INCLUDE [3](../includes/3.md)]");
     });
