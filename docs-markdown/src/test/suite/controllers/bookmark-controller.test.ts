@@ -5,7 +5,7 @@ import { commands, window } from "vscode";
 import { insertBookmarkCommands, insertBookmarkExternal, insertBookmarkInternal } from "../../../controllers/bookmark-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
-import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
+import { loadDocumentAndGetItReady, sleep, sleepTime } from "../../test.common/common";
 
 chai.use(spies);
 
@@ -52,7 +52,7 @@ suite("Bookmark Controller", () => {
 
         const spy = chai.spy.on(common, "insertContentToEditor");
         insertBookmarkExternal();
-        await sleep(300);
+        await sleep(sleepTime);
         expect(spy).to.have.been.called();
         stub.restore();
     });
@@ -74,7 +74,7 @@ suite("Bookmark Controller", () => {
 
         const spy = chai.spy.on(common, "insertContentToEditor");
         insertBookmarkInternal();
-        await sleep(300);
+        await sleep(sleepTime);
         expect(spy).to.have.been.called();
         stub.restore();
     });

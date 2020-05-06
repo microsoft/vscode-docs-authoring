@@ -42,7 +42,7 @@ export function run(): Promise<void> {
 		reporterOptions: {
 			mochaFile: "../../out/coverage/test-results.xml",
 		},
-		timeout: 5000,
+		timeout: 10000,
 		ui: "tdd",
 	});
 

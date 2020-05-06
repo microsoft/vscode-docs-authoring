@@ -5,7 +5,7 @@ import { commands, window } from "vscode";
 import { insertMoniker, insertMonikerCommand } from "../../../controllers/moniker-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
-import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
+import { loadDocumentAndGetItReady, sleep, sleepTime } from "../../test.common/common";
 
 chai.use(spies);
 // tslint:disable-next-line: no-var-requires
@@ -13,7 +13,6 @@ const sinon = require("sinon");
 const expect = chai.expect;
 
 const testFile = "../../../../../src/test/data/repo/articles/moniker.md";
-const sleepTime = 50;
 const monikerOptions = [
     "range equals",
     "range greater than or equal",
