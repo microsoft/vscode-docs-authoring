@@ -5,7 +5,7 @@ import { commands, window } from "vscode";
 import { insertAlert, insertAlertCommand } from "../../../controllers/alert-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
-import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
+import { loadDocumentAndGetItReady, sleep, sleepTime } from "../../test.common/common";
 
 chai.use(spies);
 
@@ -40,7 +40,7 @@ suite("Alert Controller", () => {
 
         const spy = chai.spy.on(common, "isMarkdownFileCheck");
         insertAlert();
-        await sleep(300);
+        await sleep(sleepTime);
         expect(spy).to.have.been.called();
     });
     test("insertContentToEditor - Note", async () => {
@@ -53,7 +53,7 @@ suite("Alert Controller", () => {
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         const spy = chai.spy.on(common, "insertContentToEditor");
         insertAlert();
-        await sleep(500);
+        await sleep(sleepTime);
         expect(spy).to.have.been.called();
         stub.restore();
     });
