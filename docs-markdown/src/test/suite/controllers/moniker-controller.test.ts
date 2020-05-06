@@ -60,7 +60,8 @@ suite("Moniker Controller", () => {
         expect(spy).to.have.been.called();
     });
     // YAML Header test
-    test("insertYamlMoniker - equal - output", async () => {
+    test("insertYamlMoniker - equal - output", async function () {
+        this.retries(3);
         const editor = window.activeTextEditor;
         common.setCursorPosition(editor!, yamlLine, 0);
         common.insertContentToEditor(editor!, "test", "\r\n");
@@ -80,7 +81,8 @@ suite("Moniker Controller", () => {
         expect(output).to.equal("monikerRange: ''");
     });
 
-    test("insertYamlMoniker - equal - cursorPosition", async () => {
+    test("insertYamlMoniker - equal - cursorPosition", async function () {
+        this.retries(3);
         const editor = window.activeTextEditor;
         const cursorPosition = [editor?.selection.active.line, editor?.selection.active.character];
         expect(cursorPosition).to.deep.equal([yamlLine, yamlCharacter]);

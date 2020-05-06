@@ -124,7 +124,8 @@ suite("Include Controller", () => {
             " Docs supports the CommonMark standard for Markdown, plus some custom Markdown extensions designed to provide richer content on docs.microsoft.com." +
             " This article provides an alphabetical reference for using Markdown for docs.microsoft.com.");
     });
-    test("Window NT - includeMultipleFiles", async () => {
+    test("Window NT - includeMultipleFiles", async function () {
+        this.retries(3);
         const editor = window.activeTextEditor;
         moveCursor(editor!, 16, 0);
         await sleep(sleepTime);

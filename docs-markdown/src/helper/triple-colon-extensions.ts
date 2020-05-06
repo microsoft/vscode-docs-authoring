@@ -51,7 +51,7 @@ const tripleColonExtensions: TripleColonExtensions = [
     },
 ];
 
-function getTripleColonCompletionItems(range: Range | undefined, isCancellationRequested: boolean) {
+export function getTripleColonCompletionItems(range: Range | undefined, isCancellationRequested: boolean) {
     if (range) {
         const completionItems: CompletionItem[] = [];
         tripleColonExtensions.forEach((tripleColonExtension) => {
