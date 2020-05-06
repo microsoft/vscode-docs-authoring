@@ -32,12 +32,7 @@ suite("Triple Colon Extension Provider", () => {
             triggerKind: 1,
         };
         const completionItems = tripleColonCompletionItemsProvider.provideCompletionItems(editor.document, position, source.token, context) as CompletionItem[];
-        // {
-        //     content: `image type="content" source="{source}" alt-text="{alt-text}":::`,
-        //     extension: "Image :::image:::",
-        // },
         const kind: CompletionItemKind = 11;
-        // const kind: CompletionItemKind = { detail: `Output:\r\nimage type="content" source="{source}" alt-text="{alt-text}":::` };
         const label = "Image :::image:::";
         const completionItem = new CompletionItem(label, kind);
         completionItem.detail = "Output:\r\n:::image type=\"content\" source=\"{source}\" alt-text=\"{alt-text}\":::";
