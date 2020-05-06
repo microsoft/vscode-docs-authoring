@@ -5,14 +5,13 @@ import { commands, window } from "vscode";
 import { codeFormattingCommand, formatCode } from "../../../controllers/code-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
-import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
+import { loadDocumentAndGetItReady, sleep, sleepTime } from "../../test.common/common";
 
 chai.use(spies);
 const expect = chai.expect;
 // tslint:disable-next-line: no-var-requires
 const sinon = require("sinon");
 const testFile = "../../../../../src/test/data/repo/articles/code.md";
-const sleepTime = 30;
 
 // create x number of cursors below current cursor position , then select lines associated with each cursor
 async function multiCursorSelectLine(x: number) {
@@ -70,7 +69,6 @@ suite("Code Controller", () => {
     });
     // single line selection test
     test("selectionIsSingleLine - singleCursorSelection", async () => {
-        await sleep(sleepTime);
         const editor = window.activeTextEditor;
         common.setCursorPosition(editor!, 1, 0);
         await commands.executeCommand("cursorEndSelect");
@@ -83,7 +81,6 @@ suite("Code Controller", () => {
 
     });
     test("selectionIsSingleLine - singleCursorSelection - isInlineCode", async () => {
-        await sleep(sleepTime);
         const editor = window.activeTextEditor;
         common.setCursorPosition(editor!, 12, 12);
         await commands.executeCommand("cursorEndSelect");
