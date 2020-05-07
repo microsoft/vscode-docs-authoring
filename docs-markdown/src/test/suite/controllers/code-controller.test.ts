@@ -44,9 +44,9 @@ suite("Code Controller", () => {
         ];
         expect(codeFormattingCommand()).to.deep.equal(controllerCommands);
     });
-    test("noActiveEditorMessage", () => {
+    test("noActiveEditorMessage", async () => {
         const spy = chai.spy.on(common, "noActiveEditorMessage");
-        formatCode();
+        await formatCode();
         expect(spy).to.have.been.called();
     });
     test("isValidEditor", async () => {
@@ -54,7 +54,7 @@ suite("Code Controller", () => {
         await loadDocumentAndGetItReady(filePath);
         const spy = chai.spy.on(common, "isValidEditor");
         const stub = sinon.stub(telemetry, "sendTelemetryData");
-        formatCode();
+        await formatCode();
         stub.restore();
         await sleep(sleepTime);
         expect(spy).to.have.been.called();
@@ -62,7 +62,7 @@ suite("Code Controller", () => {
     test("isMarkdownFileCheck", async () => {
         const spy = chai.spy.on(common, "isMarkdownFileCheck");
         const stub = sinon.stub(telemetry, "sendTelemetryData");
-        formatCode();
+        await formatCode();
         stub.restore();
         await sleep(sleepTime);
         expect(spy).to.have.been.called();
@@ -73,7 +73,7 @@ suite("Code Controller", () => {
         common.setCursorPosition(editor!, 1, 0);
         await commands.executeCommand("cursorEndSelect");
         const stub = sinon.stub(telemetry, "sendTelemetryData");
-        formatCode();
+        await formatCode();
         stub.restore();
         await sleep(sleepTime);
         const output = editor?.document.lineAt(1).text;
@@ -85,7 +85,7 @@ suite("Code Controller", () => {
         common.setCursorPosition(editor!, 12, 12);
         await commands.executeCommand("cursorEndSelect");
         const stub = sinon.stub(telemetry, "sendTelemetryData");
-        formatCode();
+        await formatCode();
         stub.restore();
         await sleep(sleepTime);
         const output = editor?.document.lineAt(12).text;
@@ -97,7 +97,7 @@ suite("Code Controller", () => {
         common.setCursorPosition(editor!, 4, 0);
         await multiCursorSelectLine(2);
         const stub = sinon.stub(telemetry, "sendTelemetryData");
-        formatCode();
+        await formatCode();
         stub.restore();
         await sleep(sleepTime);
         const output1 = editor!.document.lineAt(4).text;
@@ -113,7 +113,7 @@ suite("Code Controller", () => {
         common.setCursorPosition(editor!, 16, 0);
         await cursorDownSelect(2);
         const stub = sinon.stub(telemetry, "sendTelemetryData");
-        formatCode();
+        await formatCode();
         stub.restore();
         await sleep(sleepTime);
         const output = editor?.document.lineAt(17).text;
@@ -128,7 +128,7 @@ suite("Code Controller", () => {
             return Promise.resolve(undefined) as Thenable<any>;
         };
         const stub = sinon.stub(telemetry, "sendTelemetryData");
-        formatCode();
+        await formatCode();
         stub.restore();
         await sleep(sleepTime);
         expect(spy).to.have.been.called();
@@ -141,7 +141,7 @@ suite("Code Controller", () => {
             return Promise.resolve({ label: "Python" }) as Thenable<any>;
         };
         const stub = sinon.stub(telemetry, "sendTelemetryData");
-        formatCode();
+        await formatCode();
         await sleep(sleepTime);
         const output = editor!.document.lineAt(21).text + editor!.document.lineAt(22).text + editor!.document.lineAt(23).text + editor!.document.lineAt(24).text;
         expect(output).to.equal("```pythonx = \"Python2\"y = \"Python3\"```");
