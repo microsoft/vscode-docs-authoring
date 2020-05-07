@@ -12,7 +12,7 @@ export function insertMonikerCommand() {
     return commands;
 }
 
-export function insertMoniker() {
+export async function insertMoniker() {
 
     const editor = window.activeTextEditor;
     let sign: string = "";
@@ -38,36 +38,35 @@ export function insertMoniker() {
         "range less than or equal",
     ];
 
-    window.showQuickPick(monikerOptions).then((qpSelection) => {
-        if (!qpSelection) {
-            return;
-        }
-        if (qpSelection === monikerOptions[0]) {
-            sign = "";
+    const qpSelection = await window.showQuickPick(monikerOptions);
+    if (!qpSelection) {
+        return;
+    }
+    if (qpSelection === monikerOptions[0]) {
+        sign = "";
 
-        }
-        if (qpSelection === monikerOptions[1]) {
-            sign = ">=";
-        }
-        if (qpSelection === monikerOptions[2]) {
-            sign = "<=";
-        }
+    }
+    if (qpSelection === monikerOptions[1]) {
+        sign = ">=";
+    }
+    if (qpSelection === monikerOptions[2]) {
+        sign = "<=";
+    }
 
-        // if markdown, is the user's cursor in the yaml header?
-        if (isCursorInsideYamlHeader(editor)) {
-            insertYamlMoniker(editor, sign);
-        } else {
-            insertMarkdownMoniker(editor, sign);
-        }
-    });
+    // if markdown, is the user's cursor in the yaml header?
+    if (isCursorInsideYamlHeader(editor)) {
+        await insertYamlMoniker(editor, sign);
+    } else {
+        await insertMarkdownMoniker(editor, sign);
+    }
 }
 
 // cursor is in the YAML metadata block
-function insertYamlMoniker(editor: TextEditor, sign: string) {
+async function insertYamlMoniker(editor: TextEditor, sign: string) {
     const telemetryCommand: string = "insertMoniker";
     const insertText = `monikerRange: '${sign}'`;
     const cursorIndex = insertText.indexOf("'") + sign.length + 1;
-    insertContentToEditor(editor, insertYamlMoniker.name, insertText, false);
+    await insertContentToEditor(editor, insertYamlMoniker.name, insertText, false);
     setCursorPosition(editor, editor.selection.active.line, cursorIndex);
 
     const cursorPosition = "yaml-header";
@@ -75,10 +74,10 @@ function insertYamlMoniker(editor: TextEditor, sign: string) {
 }
 
 // cursor is in the Markdown body of the file
-function insertMarkdownMoniker(editor: TextEditor, sign: string) {
+async function insertMarkdownMoniker(editor: TextEditor, sign: string) {
     const telemetryCommand: string = "insertMoniker";
     const insertText = `::: moniker range="${sign}"\n\n::: moniker-end`;
-    insertContentToEditor(editor, insertMarkdownMoniker.name, insertText, false);
+    await insertContentToEditor(editor, insertMarkdownMoniker.name, insertText, false);
     const cursorIndex = insertText.indexOf(`"`) + sign.length + 1;
     setCursorPosition(editor, editor.selection.active.line, cursorIndex);
     const cursorPosition = "markdown-body";
