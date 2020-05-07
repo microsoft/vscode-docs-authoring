@@ -25,7 +25,7 @@ const tripleColonExtensions: TripleColonExtensions = [
     {
         content: `moniker range="{range}"
 
-        :::moniker-end`,
+:::moniker-end`,
         extension: "Moniker :::moniker:::",
     },
     {
