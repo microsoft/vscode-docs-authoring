@@ -38,10 +38,6 @@ export function run(): Promise<void> {
 	// Create the mocha test
 	const mocha = new Mocha({
 		color: true,
-		reporter: "mocha-junit-reporter",
-		reporterOptions: {
-			mochaFile: "../../out/coverage/test-results.xml",
-		},
 		timeout: 15000,
 		ui: "tdd",
 	});
@@ -62,7 +58,6 @@ export function run(): Promise<void> {
 					if (failures > 0) {
 						e(new Error(`${failures} tests failed.`));
 					} else {
-						nyc = setupNyc();
 						if (nyc) {
 							nyc.writeCoverageFile();
 							nyc.report();
