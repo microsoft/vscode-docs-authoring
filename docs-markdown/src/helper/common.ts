@@ -167,7 +167,7 @@ export function hasValidWorkSpaceRootPath(senderName: string) {
  * If provided will insert or update at the given range.
  */
 
-export function insertContentToEditor(editor: vscode.TextEditor, senderName: string, content: string, overwrite: boolean = false, selection: vscode.Range = null!) {
+export async function insertContentToEditor(editor: vscode.TextEditor, senderName: string, content: string, overwrite: boolean = false, selection: vscode.Range = null!) {
 
     if (selection == null) {
         selection = editor.selection;
@@ -175,14 +175,14 @@ export function insertContentToEditor(editor: vscode.TextEditor, senderName: str
 
     try {
         if (overwrite) {
-            editor.edit((update) => {
+            await editor.edit((update) => {
                 update.replace(selection, content);
             });
         } else {
             // Gets the cursor position
             const position = editor.selection.active;
 
-            editor.edit((selected) => {
+            await editor.edit((selected) => {
                 selected.insert(position, content);
             });
         }
