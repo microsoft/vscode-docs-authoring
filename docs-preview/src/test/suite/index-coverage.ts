@@ -32,7 +32,7 @@ function setupNyc() {
 
 export function run(): Promise<void> {
 
-    const nyc = setupNyc();
+    let nyc = setupNyc();
 
     // Create the mocha test
     const mocha = new Mocha({
@@ -61,6 +61,11 @@ export function run(): Promise<void> {
                     if (failures > 0) {
                         e(new Error(`${failures} tests failed.`));
                     } else {
+                        nyc = setupNyc();
+                        if (nyc) {
+                            nyc.writeCoverageFile();
+                            nyc.report();
+                        }
                         c();
                     }
                 });
@@ -68,11 +73,6 @@ export function run(): Promise<void> {
                 // tslint:disable-next-line: no-console
                 console.error(err);
                 e(err);
-            } finally {
-                if (nyc) {
-                    nyc.writeCoverageFile();
-                    nyc.report();
-                }
             }
         });
     });

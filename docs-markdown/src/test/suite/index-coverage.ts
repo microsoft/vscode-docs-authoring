@@ -6,9 +6,11 @@ function setupNyc() {
 	const NYC = require("nyc");
 	// create an nyc instance, config here is the same as your package.json
 	const nyc = new NYC({
+		all: true,
 		cache: false,
 		cwd: path.join(__dirname, "..", "..", ".."),
 		exclude: [
+			"**/*.d.ts",
 			"**/**.test.js",
 		],
 		extension: [
@@ -22,6 +24,7 @@ function setupNyc() {
 		reporter: ["text", "html", "cobertura"],
 		require: [
 			"ts-node/register",
+			"source-map-support/register",
 		],
 		sourceMap: true,
 	});
@@ -31,9 +34,7 @@ function setupNyc() {
 }
 
 export function run(): Promise<void> {
-
-	const nyc = setupNyc();
-
+	let nyc = setupNyc();
 	// Create the mocha test
 	const mocha = new Mocha({
 		color: true,
@@ -61,6 +62,11 @@ export function run(): Promise<void> {
 					if (failures > 0) {
 						e(new Error(`${failures} tests failed.`));
 					} else {
+						nyc = setupNyc();
+						if (nyc) {
+							nyc.writeCoverageFile();
+							nyc.report();
+						}
 						c();
 					}
 				});
@@ -68,11 +74,6 @@ export function run(): Promise<void> {
 				// tslint:disable-next-line: no-console
 				console.error(err);
 				e(err);
-			} finally {
-				if (nyc) {
-					nyc.writeCoverageFile();
-					nyc.report();
-				}
 			}
 		});
 	});
