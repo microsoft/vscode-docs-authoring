@@ -34,7 +34,9 @@ function setupNyc() {
 }
 
 export function run(): Promise<void> {
-	let nyc = setupNyc();
+	// tslint:disable-next-line
+	let nyc = setupNyc(); // const causes coverage report report
+
 	// Create the mocha test
 	const mocha = new Mocha({
 		color: true,
