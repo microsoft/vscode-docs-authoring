@@ -15,7 +15,7 @@ import * as common from "./common";
  * @param {vscode.Range} range - provide range of insert or update.
  */
 
-export function insertUnselectedText(editor: vscode.TextEditor, senderName: string, formattedText: string, range: vscode.Range) {
+export async function insertUnselectedText(editor: vscode.TextEditor, senderName: string, formattedText: string, range: vscode.Range) {
     if (formattedText === "****" || formattedText === "**" || formattedText === "``") {
         common.insertContentToEditor(editor, senderName, formattedText, true);
 
@@ -25,6 +25,6 @@ export function insertUnselectedText(editor: vscode.TextEditor, senderName: stri
         // Makes the cursor position in between syntaxs
         common.setCursorPosition(editor, position.line, positionCharacter);
     } else {
-        common.insertContentToEditor(editor, senderName, formattedText, true, range);
+        await common.insertContentToEditor(editor, senderName, formattedText, true, range);
     }
 }

@@ -19,7 +19,7 @@ export function codeFormattingCommand() {
 /**
  * Replaces current single or multiline selection with MD code formated selection
  */
-export function formatCode() {
+export async function formatCode() {
     const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
@@ -40,12 +40,12 @@ export function formatCode() {
         // Single line selections will not include a code language.
         if (!selection.isSingleLine) {
             if (!isMultiLineCode(selectedText)) {
-                showSupportedLanguages(selectedText, selection);
+                await showSupportedLanguages(selectedText, selection);
             } else {
-                applyCodeFormatting(selectedText, selection, "");
+                await applyCodeFormatting(selectedText, selection, "");
             }
         } else {
-            applyCodeFormatting(selectedText, selection, "");
+            await applyCodeFormatting(selectedText, selection, "");
         }
     }
     sendTelemetryData(telemetryCommand, "");
@@ -128,7 +128,7 @@ export async function applyCodeFormatting(content: string, selectedContent: any,
 
             const formattedText = format(selectedText, "", selectedContent.isSingleLine, range);
 
-            insertUnselectedText(editor, formatCode.name, formattedText, range);
+            await insertUnselectedText(editor, formatCode.name, formattedText, range);
         }
 
         // if only a selection is made with a single cursor
@@ -136,7 +136,7 @@ export async function applyCodeFormatting(content: string, selectedContent: any,
             // calls formatter and returns selectedText as MD Code
             const formattedText = format(selectedText, codeLang, selectedContent.isSingleLine, emptyRange);
 
-            insertContentToEditor(editor, formatCode.name, formattedText, true);
+            await insertContentToEditor(editor, formatCode.name, formattedText, true);
         }
 
         // if multiple cursors were used to make selections
