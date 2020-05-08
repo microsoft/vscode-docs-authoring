@@ -13,7 +13,7 @@ export class DocsSchemaHolder {
         const schemaConfig = loadJson(schemaConfigFile);
         this.configFilePath = schemaConfigFile;
         const rawDefinitions = schemaConfig.definitions;
-        for(let yamlMime of Object.keys(rawDefinitions)){
+        for(const yamlMime of Object.keys(rawDefinitions)){
             this.saveSchemaConfigWithYamlMimeKeys(yamlMime, rawDefinitions[yamlMime]);
         }
     }
