@@ -21,7 +21,7 @@ async function main() {
 		await runTests({
 			extensionDevelopmentPath,
 			extensionTestsPath,
-			launchArgs: [repoPath],
+			launchArgs: [repoPath, "--disable-extensions"],
 		});
 
 	} catch (err) {
