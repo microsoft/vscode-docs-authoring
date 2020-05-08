@@ -8,3 +8,4 @@ dist/
 *.vsix
 install.Lock
 media/wrapper.js
+.vscode-test/
