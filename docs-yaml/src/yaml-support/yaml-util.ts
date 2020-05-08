@@ -20,8 +20,8 @@ export function loadJson(mappingFile: string): any {
  * @returns the yamlMime if no error occurs, otherwise undefined is returned
  */
 export function getYamlMime(yamlDocument: string): string {
-    var regex = /^### YamlMime:([A-Z]\w+)/g;
-    var m = regex.exec(yamlDocument);
+    const regex = /^### YamlMime:([A-Z]\w+)/g;
+    const m = regex.exec(yamlDocument);
     if (m !== null) {
         return m[1];
     }

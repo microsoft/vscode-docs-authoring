@@ -40,7 +40,7 @@ async function addTocSchemaToConfigAtScope(key: string, value: string, scope: Co
         newValue = Object.assign({}, valueAtScope);
     }
     Object.keys(newValue).forEach(configKey => {
-        var configValue = newValue[configKey];
+        const configValue = newValue[configKey];
         if (value === configValue) {
             delete newValue[configKey];
         }
@@ -58,7 +58,7 @@ async function removeTocSchemaFromConfigAtScope(value: string, scope: Configurat
         newValue = Object.assign({}, valueAtScope);
     }
     Object.keys(newValue).forEach(configKey => {
-        var configValue = newValue[configKey];
+        const configValue = newValue[configKey];
         if (value === configValue) {
             delete newValue[configKey];
         }
@@ -74,4 +74,5 @@ export async function loadSchemaConfig() {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
+    output.appendLine("Deactivating");
 }
