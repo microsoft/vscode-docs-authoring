@@ -38,7 +38,7 @@ function requestYamlSchemaUriCallback(resource: string): string {
 
 // Get schema uri of this textDocument
 function getSchemaUri(textDocument: TextDocument) {
-    let yamlMime = getYamlMime(textDocument.getText());
+    const yamlMime = getYamlMime(textDocument.getText());
     return docsSchemaHolder.lookup(yamlMime);
 }
 
@@ -62,7 +62,7 @@ async function activateYamlExtension(): Promise<{ registerContributor: YamlSchem
 
 function mimeTelemetry() {
     const activeTextDocument = window.activeTextEditor.document.getText();
-    let yamlMime = getYamlMime(activeTextDocument);
+    const yamlMime = getYamlMime(activeTextDocument);
     const commandOption = yamlMime;
     sendTelemetryData("mimeType", commandOption);
 }
