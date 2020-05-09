@@ -32,6 +32,7 @@ import { checkExtension, extractDocumentLink, generateTimestamp, matchAll, noAct
 import { insertLanguageCommands, markdownCodeActionProvider, markdownCompletionItemsProvider } from "./helper/highlight-langs";
 import { output } from "./helper/output";
 import { Reporter } from "./helper/telemetry";
+import { tripleColonCompletionItemsProvider } from "./helper/triple-colon-extensions";
 import { UiHelper } from "./helper/ui";
 import { findAndReplaceTargetExpressions } from "./helper/utility";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
@@ -99,6 +100,7 @@ export function activate(context: ExtensionContext) {
         },
     });
 
+    languages.registerCompletionItemProvider("markdown", tripleColonCompletionItemsProvider, ":");
     languages.registerCompletionItemProvider("markdown", markdownCompletionItemsProvider, "`");
     languages.registerCodeActionsProvider("markdown", markdownCodeActionProvider);
 
