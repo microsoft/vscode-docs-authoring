@@ -31,9 +31,7 @@ function setupNyc() {
 }
 
 export function run(): Promise<void> {
-
     const nyc = setupNyc();
-
     // Create the mocha test
     const mocha = new Mocha({
         color: true,
@@ -41,7 +39,7 @@ export function run(): Promise<void> {
         reporterOptions: {
             mochaFile: "../../out/coverage/test-results.xml",
         },
-        timeout: 5000,
+        timeout: 15000,
         ui: "tdd",
     });
 
@@ -62,17 +60,16 @@ export function run(): Promise<void> {
                         e(new Error(`${failures} tests failed.`));
                     } else {
                         c();
+                        if (nyc) {
+                            nyc.writeCoverageFile();
+                            nyc.report();
+                        }
                     }
                 });
             } catch (err) {
                 // tslint:disable-next-line: no-console
                 console.error(err);
                 e(err);
-            } finally {
-                if (nyc) {
-                    nyc.writeCoverageFile();
-                    nyc.report();
-                }
             }
         });
     });
