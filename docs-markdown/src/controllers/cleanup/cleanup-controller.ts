@@ -238,7 +238,7 @@ export async function applyCleanupFolder(uri: Uri) {
                     commandOption = "everything";
                     break;
                 case "empty metadata":
-                    const options: QuickPickOptions = { placeHolder: "Cleanup..." };
+                    const options: QuickPickOptions = { placeHolder: "Empty metadata" };
                     const qpItems: QuickPickItem[] = [];
                     qpItems.push({
                         description: "",
