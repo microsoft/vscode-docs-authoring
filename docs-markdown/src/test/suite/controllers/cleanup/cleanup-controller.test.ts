@@ -61,9 +61,29 @@ suite("Cleanup Controller", () => {
         stub.restore();
         expect(spy).to.have.been.called();
     });
-    test("cleanup repo - recurseCallback", async () => {
+    test("cleanup repo - recurseCallback - single-valued metadata", async () => {
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve({ label: "single-valued metadata", detail: "" }) as Thenable<any>;
+        };
+        const spy = chai.spy.on(utilities, "recurseCallback");
+        const stub = sinon.stub(telemetry, "sendTelemetryData");
+        await applyCleanup();
+        stub.restore();
+        expect(spy).to.have.been.called();
+    });
+    test("cleanup repo - recurseCallback - microsoft links", async () => {
+        window.showQuickPick = (items: string[] | Thenable<string[]>) => {
+            return Promise.resolve({ label: "microsoft links", detail: "" }) as Thenable<any>;
+        };
+        const spy = chai.spy.on(utilities, "recurseCallback");
+        const stub = sinon.stub(telemetry, "sendTelemetryData");
+        await applyCleanup();
+        stub.restore();
+        expect(spy).to.have.been.called();
+    });
+    test("cleanup repo - recurseCallback - capitalization of metadata values", async () => {
+        window.showQuickPick = (items: string[] | Thenable<string[]>) => {
+            return Promise.resolve({ label: "capitalization of metadata values", detail: "" }) as Thenable<any>;
         };
         const spy = chai.spy.on(utilities, "recurseCallback");
         const stub = sinon.stub(telemetry, "sendTelemetryData");
