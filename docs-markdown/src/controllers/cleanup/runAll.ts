@@ -1,6 +1,5 @@
 import { readFile, writeFile } from "graceful-fs";
 import { ignoreFiles, postError, showStatusMessage } from "../../helper/common";
-import { reporter } from "../../helper/telemetry";
 import { generateMasterRedirectionFile } from "../redirects/generateRedirectionFile";
 import { lowerCaseData } from "./capitalizationOfMetadata";
 import { handleMarkdownMetadata } from "./handleMarkdownMetadata";
@@ -11,7 +10,6 @@ import { readWriteFileWithProgress, showProgress } from "./utilities";
 // tslint:disable no-var-requires
 const jsdiff = require("diff");
 const recursive = require("recursive-readdir");
-const telemetryCommand: string = "applyCleanup";
 
 /**
  * Run all Cleanup... scripts.
@@ -22,7 +20,6 @@ const telemetryCommand: string = "applyCleanup";
  */
 export function runAll(progress: any, file: string, files: string[] | null, index: number | null) {
     const message = "Everything";
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     if (file.endsWith(".yml") || file.endsWith(".md")) {
         return readWriteFileWithProgress(progress,
             file,
