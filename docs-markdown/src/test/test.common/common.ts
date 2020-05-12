@@ -3,6 +3,7 @@ import { commands, Uri, window, workspace } from "vscode";
 
 export const sleepTime = 50;
 export const extendedSleepTime = 300;
+export const longSleepTime = 30000;
 
 export function sleep(ms: number): Promise<void> {
     return new Promise((r) => {
