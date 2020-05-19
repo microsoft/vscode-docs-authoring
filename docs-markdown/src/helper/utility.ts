@@ -441,7 +441,7 @@ export function findReplacements(document: TextDocument, content: string, value:
 
                 replacements.push({
                     selection, value:
-                        value ? value : document.getText(selection)
+                        value ? value : document.getText(selection),
                 });
             }
         }
@@ -469,7 +469,7 @@ export function findReplacement(document: TextDocument, content: string, value: 
 
             return {
                 selection,
-                value: value ? value : document.getText(selection)
+                value: value ? value : document.getText(selection),
             };
         }
     }
