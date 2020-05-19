@@ -4,7 +4,7 @@
   "description": "Docs article templates",
   "icon": "images/docs-logo-ms.png",
   "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "publisher": "docsmsft",
   "engines": {
     "vscode": "^1.23.0"
@@ -13,8 +13,8 @@
     "Other"
   ],
   "activationEvents": [
-    "markdown",
-    "yaml"
+    "onLanguage:markdown",
+    "onLanguage:yaml"
   ],
   "main": "./dist/extension",
   "contributes": {
