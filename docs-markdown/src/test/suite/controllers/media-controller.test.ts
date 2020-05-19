@@ -1,12 +1,9 @@
 
 import * as assert from "assert";
-import Axios from "axios";
 import * as chai from "chai";
 import * as spies from "chai-spies";
-import * as os from "os";
 import { resolve } from "path";
-import { commands, QuickPickItem, window } from "vscode";
-import { applyComplex, applyIcon, applyImage, applyLightbox, applyLocScope, insertImageCommand, pickImageType } from "../../../controllers/image-controller";
+import { commands, window } from "vscode";
 import { insertLink, insertLinksAndMediaCommands, insertURL, insertVideo, selectLinkType, selectLinkTypeToolbar, selectMediaType } from "../../../controllers/media-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
