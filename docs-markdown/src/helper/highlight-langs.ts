@@ -95,7 +95,7 @@ export const languages: HighlightLanguages =
         { language: "Python", aliases: ["python", "py", "gyp"], extensions: [".py"] },
         { language: "Q#", aliases: ["qsharp"] },
         { language: "R", aliases: ["r"], extensions: [".r"] },
-        { language: "Razor CSHTML", aliases: ["cshtml", "razor", "razor-cshtml"], extensions: [".cshtml", ".razor"] },
+        { language: "Razor CSHTML", aliases: ["razor", "cshtml", "razor-cshtml"], extensions: [".cshtml", ".razor"] },
         { language: "REST API", aliases: ["rest"] },
         { language: "Ruby", aliases: ["ruby", "rb", "gemspec", "podspec", "thor", "irb"], extensions: [".rb"] },
         { language: "SQL", aliases: ["sql"], extensions: [".sql"] },
