@@ -1,5 +1,8 @@
 # Change Log
 
+- Fixed broken include-controller tests when running on \*nix systems
+- Updated stub of "sendTelemetryEvent" in cleanup-controller which was throwing an error.
+
 ## 0.2.68 (May 8th, 2020)
 
 - Added Completion Provider for Triple Colon Extensions
