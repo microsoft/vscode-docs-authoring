@@ -254,7 +254,7 @@ export function externalLinkBuilder(link: string, title: string = "") {
 }
 
 export function videoLinkBuilder(link: string) {
-    const videoLink = `> [!VIDEO ${link}]`;
+    const videoLink = `:::video source="${link}":::`;
     return videoLink;
 }
 
