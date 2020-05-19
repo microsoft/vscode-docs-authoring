@@ -214,6 +214,11 @@
         "category": "Docs"
       },
       {
+        "command": "collapseRelativeLinks",
+        "title": "Collapse relative links",
+        "category": "Docs"
+      },
+      {
         "command": "sortSelectionAscending",
         "title": "Sort selection ascending (A to Z)",
         "category": "Docs"
@@ -257,6 +262,11 @@
         {
           "when": "editorTextFocus && resourceLangId == markdown || resourceLangId == yaml",
           "command": "updateImplicitMetadataValues",
+          "group": "1_modification"
+        },
+        {
+          "when": "editorTextFocus && resourceLangId == markdown",
+          "command": "collapseRelativeLinks",
           "group": "1_modification"
         },
         {
