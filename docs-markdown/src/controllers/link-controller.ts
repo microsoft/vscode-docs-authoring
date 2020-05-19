@@ -7,7 +7,10 @@ import { applyReplacements, findReplacements, IRegExpWithGroup, Replacements } f
 import { Insert, insertURL, MediaType, selectLinkType } from "./media-controller";
 import { applyXref } from "./xref-controller";
 
-const linkRegex: IRegExpWithGroup = { expression: /\]\((?<path>[^http?].+?)\)/gm, group: "path" };
+const linkRegex: IRegExpWithGroup = {
+    expression: /\]\((?<path>[^http?].+?)(?<query>\?.+?)?(?<hash>#.+?)?\)/gm,
+    groups: ["path", "query", "hash"],
+};
 const telemetryCommand: string = "insertLink";
 let commandOption: string;
 

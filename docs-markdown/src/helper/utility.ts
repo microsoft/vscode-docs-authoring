@@ -391,7 +391,7 @@ export async function findAndReplaceTargetExpressions(event: TextDocumentChangeE
 
 export interface IRegExpWithGroup {
     expression: RegExp;
-    group: string;
+    groups: string[];
 }
 
 export type RegExpOrRegExpWithGroup = RegExp | IRegExpWithGroup;
@@ -418,20 +418,20 @@ export function findReplacements(document: TextDocument, content: string, value:
         return undefined;
     }
 
-    const group = !isRegExp(expression) ? expression.group : null;
+    const groups = !isRegExp(expression) ? expression.groups : null;
     const replacements: Replacements = [];
     for (let i = 0; i < results.length; i++) {
         const result = results[i];
         if (result !== null && result.length) {
-            const match = (group && result.groups)
-                ? result.groups[group]
+            const match = (groups && result.groups)
+                ? result.groups[groups[0]]
                 : result[0];
             if (match) {
                 let index = result.index !== undefined ? result.index : -1;
                 if (index === -1) {
                     continue;
                 }
-                if (group) {
+                if (groups) {
                     index += result[0].indexOf(match);
                 }
 
@@ -439,7 +439,10 @@ export function findReplacements(document: TextDocument, content: string, value:
                 const endPosition = document.positionAt(index + match.length);
                 const selection = new Selection(startPosition, endPosition);
 
-                replacements.push({ selection, value: value ? value : document.getText(selection) });
+                replacements.push({
+                    selection, value:
+                        value ? value : document.getText(selection)
+                });
             }
         }
     }
@@ -451,20 +454,23 @@ export function findReplacement(document: TextDocument, content: string, value: 
     const exp = isRegExp(expression) ? expression : expression.expression;
     const result = exp ? exp.exec(content) : null;
     if (result !== null && result.length) {
-        const group = !isRegExp(expression) ? expression.group : null;
-        const match = (group && result.groups)
-            ? result.groups[group]
+        const groups = !isRegExp(expression) ? expression.groups : null;
+        const match = (groups && result.groups)
+            ? result.groups[groups[0]]
             : result[0];
         if (match) {
             let index = result.index;
-            if (group) {
+            if (groups) {
                 index += result[0].indexOf(match);
             }
             const startPosition = document.positionAt(index);
             const endPosition = document.positionAt(index + match.length);
             const selection = new Selection(startPosition, endPosition);
 
-            return { selection, value: value ? value : document.getText(selection) };
+            return {
+                selection,
+                value: value ? value : document.getText(selection)
+            };
         }
     }
 
