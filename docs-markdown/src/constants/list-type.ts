@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
 export enum ListType {
-    Numbered,
-    Alphabet,
-    Bulleted,
-    Other,
+	Numbered,
+	Alphabet,
+	Bulleted,
+	Other
 }
