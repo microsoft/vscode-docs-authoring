@@ -1,5 +1,5 @@
 import { existsSync } from "fs";
-import { dirname, join, normalize, relative } from "path";
+import { dirname, join, relative } from "path";
 import { commands, QuickPickItem, QuickPickOptions, window } from "vscode";
 import { checkExtension, noActiveEditorMessage } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
