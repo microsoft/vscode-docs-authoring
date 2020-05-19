@@ -1,82 +1,77 @@
-import * as chai from "chai";
-import * as spies from "chai-spies";
-import { resolve } from "path";
-import { commands, window } from "vscode";
-import { formatItalic, italicFormattingCommand } from "../../../controllers/italic-controller";
-import * as common from "../../../helper/common";
-import * as telemetry from "../../../helper/telemetry";
-import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
+import { commands, QuickPickItem, QuickPickOptions, window } from "vscode";
+import { checkExtension } from "../helper/common";
+import { sendTelemetryData } from "../helper/telemetry";
+import { Insert, insertURL, MediaType, selectLinkType } from "./media-controller";
+import { applyXref } from "./xref-controller";
 
-chai.use(spies);
+const telemetryCommand: string = "insertLink";
+let commandOption: string;
 
-// tslint:disable-next-line: no-var-requires
-const sinon = require("sinon");
-const expect = chai.expect;
+export function insertLinkCommand() {
+    return [
+        { command: pickLinkType.name, callback: pickLinkType },
+        { command: insertURL.name, callback: insertURL },
+    ];
+}
 
-suite("Italic Controller", () => {
-    // Reset and tear down the spies
-    teardown(() => {
-        chai.spy.restore(common);
+export function pickLinkType() {
+    const opts: QuickPickOptions = { placeHolder: "Select an Link type" };
+    const items: QuickPickItem[] = [];
+    items.push({
+        description: "",
+        label: "$(file-symlink-directory) Link to file in repo",
     });
-    suiteTeardown(async () => {
-        await commands.executeCommand("workbench.action.closeAllEditors");
+    items.push({
+        description: "",
+        label: "$(globe) Link to web page",
     });
-    test("italicFormattingCommand", () => {
-        const controllerCommands = [
-            { command: formatItalic.name, callback: formatItalic },
-        ];
-        expect(italicFormattingCommand()).to.deep.equal(controllerCommands);
+    items.push({
+        description: "",
+        label: "$(link) Link to heading",
     });
-    test("noActiveEditorMessage", () => {
-        const spy = chai.spy.on(common, "noActiveEditorMessage");
-        formatItalic();
-        expect(spy).to.have.been.called();
+    items.push({
+        description: "",
+        label: "$(x) Link to Xref",
     });
-    test("isMarkdownFileCheck", async () => {
-        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
-        await loadDocumentAndGetItReady(filePath);
-        const stub = sinon.stub(telemetry, "sendTelemetryData");
-        const spy = chai.spy.on(common, "isMarkdownFileCheck");
-        formatItalic();
-        await sleep(100);
-        expect(spy).to.have.been.called();
-        stub.restore();
-    });
-    test("Italic Format Empty Selection", async () => {
-        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
-        await loadDocumentAndGetItReady(filePath);
 
-        const stub = sinon.stub(telemetry, "sendTelemetryData");
-        const spy = chai.spy.on(common, "insertContentToEditor");
-        formatItalic();
-        await sleep(300);
-        expect(spy).to.have.been.called();
-        stub.restore();
-    });
-    test("Italic Format Single Selection", async () => {
-        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
-        await loadDocumentAndGetItReady(filePath);
-        const editor = window.activeTextEditor;
-        common.setSelectorPosition(editor!, 15, 0, 15, 1);
+    if (checkExtension("blackmist.LinkCheckMD")) {
+        items.push({
+            description: "",
+            label: "$(check) Generate a link report",
+        });
+    }
 
-        const stub = sinon.stub(telemetry, "sendTelemetryData");
-        const spy = chai.spy.on(common, "insertContentToEditor");
-        formatItalic();
-        await sleep(300);
-        expect(spy).to.have.been.called();
-        stub.restore();
+    window.showQuickPick(items, opts).then((selection) => {
+        if (!selection) {
+            return;
+        }
+        const selectionWithoutIcon = selection.label.toLowerCase().split(")")[1].trim();
+        switch (selectionWithoutIcon) {
+            case "link to file in repo":
+                Insert(MediaType.Link);
+                commandOption = "link to file in repo";
+                break;
+            case "link to web page":
+                insertURL();
+                commandOption = "link to web page";
+                break;
+            case "link to heading":
+                selectLinkType();
+                commandOption = "link to heading";
+                break;
+            case "link to xref":
+                applyXref();
+                commandOption = "link to Xref";
+                break;
+            case "generate a link report":
+                runLinkChecker();
+                commandOption = "generate a link report";
+                break;
+        }
+        sendTelemetryData(telemetryCommand, commandOption);
     });
-    test("Italic Format Multiple Selection", async () => {
-        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
-        await loadDocumentAndGetItReady(filePath);
-        const editor = window.activeTextEditor;
-        common.setSelectorPosition(editor!, 159, 0, 159, 4);
-        const stub = sinon.stub(telemetry, "sendTelemetryData");
-        formatItalic();
-        await sleep(100);
-        const line = editor?.document.lineAt(159).text;
-        stub.restore();
+}
 
-        expect(line).to.equal("*Body*");
-    });
-});
+export function runLinkChecker() {
+    commands.executeCommand("extension.generateLinkReport");
+}
