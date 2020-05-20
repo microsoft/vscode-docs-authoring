@@ -32,7 +32,7 @@ suite("Image Controller", () => {
     suiteSetup(() => {
         sinon.stub(telemetry, "sendTelemetryData");
     });
-    test("insertaImageCommand", () => {
+    test("insertImageCommand", () => {
         const controllerCommands = [
             { command: pickImageType.name, callback: pickImageType },
             { command: applyImage.name, callback: applyImage },
