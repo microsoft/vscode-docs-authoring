@@ -394,7 +394,7 @@ export async function applyLocScope() {
         return;
     }
     // if user has not selected any text, then continue
-    const RE_LOC_SCOPE = /:::image\s+((source|type|alt-text|lightbox|border)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+    const RE_LOC_SCOPE = /:::image\s+((source|type|alt-text|lightbox|border|link)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
     const position = new Position(editor.selection.active.line, editor.selection.active.character);
     // get the current editor position and check if user is inside :::image::: tags
     const wordRange = editor.document.getWordRangeAtPosition(position, RE_LOC_SCOPE);
@@ -424,7 +424,7 @@ export async function applyLocScope() {
             });
         }
     } else {
-        const RE_LOC_SCOPE_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+        const RE_LOC_SCOPE_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope|link)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
         const locScopeAlreadyExists = editor.document.getWordRangeAtPosition(position, RE_LOC_SCOPE_EXISTS);
         if (locScopeAlreadyExists) {
             window.showErrorMessage("loc-scope attribute already exists on :::image::: tag.");
@@ -445,7 +445,7 @@ export async function applyLightbox() {
     }
 
     // if user has not selected any text, then continue
-    const RE_LIGHTBOX = /:::image\s+((source|type|alt-text|loc-scope|border)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+    const RE_LIGHTBOX = /:::image\s+((source|type|alt-text|loc-scope|border|link)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
     const position = new Position(editor.selection.active.line, editor.selection.active.character);
     // get the current editor position and check if user is inside :::image::: tags
     const wordRange = editor.document.getWordRangeAtPosition(position, RE_LIGHTBOX);
@@ -483,7 +483,7 @@ export async function applyLightbox() {
             }
         });
     } else {
-        const RE_LIGHTBOX_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+        const RE_LIGHTBOX_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope|link)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
         const lightboxAlreadyExists = editor.document.getWordRangeAtPosition(position, RE_LIGHTBOX_EXISTS);
         if (lightboxAlreadyExists) {
             window.showErrorMessage("lightbox attribute already exists on :::image::: tag.");
@@ -522,7 +522,7 @@ export async function applyLink() {
     }
 
     // if user has not selected any text, then continue
-    const RE_LINK = /:::image\s+((source|type|alt-text)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+    const RE_LINK = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
     const position = new Position(editor.selection.active.line, editor.selection.active.character);
     // get the current editor position and check if user is inside :::image::: tags
     const wordRange = editor.document.getWordRangeAtPosition(position, RE_LINK);
@@ -538,7 +538,16 @@ export async function applyLink() {
                     selected.insert(new Position(wordRange.end.line, wordRange.end.character - 3), ` link="${imageLink}"`);
                 });
             }
-            return;
         });
+    } else {
+        const RE_LINK_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope|link)="([a-zA-Z0-9_.\/ -:{1}]+)"\s*)+:::/gm;
+        const linkAlreadyExists = editor.document.getWordRangeAtPosition(position, RE_LINK_EXISTS);
+        if (linkAlreadyExists) {
+            window.showErrorMessage("link attribute already exists on :::image::: tag.");
+            return;
+        }
+
+        window.showErrorMessage("invalid cursor position. You must be inside :::image::: tags.");
     }
+    return;
 }
