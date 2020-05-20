@@ -2,7 +2,9 @@ import * as chai from "chai";
 import { resolve } from "path";
 import { commands, window } from "vscode";
 import {
+    collapseRelativeLinks,
     collapseRelativeLinksForEditor,
+    collapseRelativeLinksInFolder,
     linkControllerCommands,
 } from "../../../controllers/link-controller";
 import * as common from "../../../helper/common";
@@ -17,8 +19,8 @@ suite("Link Controller", () => {
     suiteTeardown(async () => await commands.executeCommand("workbench.action.closeAllEditors"));
     test("italicFormattingCommand", () => {
         const controllerCommands = [
-            { callback: linkControllerCommands[0].callback, command: "collapseRelativeLinks" },
-            { callback: linkControllerCommands[1].callback, command: "collapseRelativeLinksInFolder" },
+            { callback: collapseRelativeLinks, command: "collapseRelativeLinks" },
+            { callback: collapseRelativeLinksInFolder, command: "collapseRelativeLinksInFolder" },
         ];
         expect(linkControllerCommands).to.deep.equal(controllerCommands);
     });
