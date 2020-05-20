@@ -62,7 +62,7 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
                     postError(err);
                     chainReject();
                 }
-                const promises: Array<Promise<any>> = [];
+                const promises: Promise<any>[] = [];
                 files.map(async (file, index) => {
 
                     if (file.endsWith(".yml") || file.endsWith("docfx.json")) {

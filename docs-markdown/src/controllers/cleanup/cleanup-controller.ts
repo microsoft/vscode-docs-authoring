@@ -54,7 +54,7 @@ export async function applyCleanupFile(uri: Uri) {
         });
         let message = "Cleanup";
         let statusMessage = "";
-        const promises: Array<Promise<any>> = [];
+        const promises: Promise<any>[] = [];
         progress.report({ increment: 1, message });
         return new Promise(async (resolve, reject) => {
             switch (selection.label.toLowerCase()) {
@@ -178,7 +178,7 @@ export async function applyCleanupFolder(uri: Uri) {
             let message = "";
             let statusMessage = "";
             const files = await recursive(uri.fsPath, ignoreFiles);
-            const promises: Array<Promise<any>> = [];
+            const promises: Promise<any>[] = [];
             // check for dirty files
             files.map((file) => {
                 const fileName = basename(file);
@@ -357,7 +357,7 @@ export async function applyCleanup() {
                     }
                     let message = "";
                     let statusMessage = "";
-                    const promises: Array<Promise<any>> = [];
+                    const promises: Promise<any>[] = [];
                     switch (selection.label.toLowerCase()) {
                         case "single-valued metadata":
                             showStatusMessage("Cleanup: Single-Valued metadata started.");
@@ -447,7 +447,7 @@ export async function applyCleanup() {
                                             postError(err);
                                             chainReject();
                                         }
-                                        const filePromises: Array<Promise<any>> = [];
+                                        const filePromises: Promise<any>[] = [];
                                         switch (selected.label.toLowerCase()) {
                                             case "remove metadata attributes with empty values":
                                                 files.map((file, index) => {

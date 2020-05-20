@@ -26,7 +26,7 @@ export async function removeUnusedImagesAndIncludes(progress: any, workspacePath
     let unusedFiles = await getImageAndIncludesFiles(workspacePath);
     const files = await recursive(workspacePath,
         ignoreFiles);
-    const promises: Array<Promise<{} | void>> = [];
+    const promises: Promise<{} | void>[] = [];
     files.map((file: string, index: number) => {
         if (file.endsWith(".md")
             || file.endsWith(".openpublishing.redirection.json")
@@ -76,8 +76,8 @@ export async function removeUnusedImagesAndIncludes(progress: any, workspacePath
     });
 }
 
-export async function getImageAndIncludesFiles(workspacePath: string): Promise<Array<{ label: any; description: any; }>> {
-    const items: Array<{ label: any; description: any; }> = [];
+export async function getImageAndIncludesFiles(workspacePath: string): Promise<{ label: any; description: any; }[]> {
+    const items: { label: any; description: any; }[] = [];
 
     // recursively get all the files from the root folder
     const fileFilter = imageExtensions.concat(markdownExtensionFilter);

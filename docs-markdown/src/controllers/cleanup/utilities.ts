@@ -105,7 +105,7 @@ export function recurseCallback(workspacePath: string, progress: any, callback: 
                 postError(err);
                 chainReject();
             }
-            const filePromises: Array<Promise<any>> = [];
+            const filePromises: Promise<any>[] = [];
             files.map((file, index) => {
                 filePromises.push(callback(progress, file, files, index));
             });
