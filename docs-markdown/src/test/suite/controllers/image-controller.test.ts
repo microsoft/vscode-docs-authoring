@@ -6,7 +6,7 @@ import * as spies from "chai-spies";
 import * as os from "os";
 import { resolve } from "path";
 import { commands, QuickPickItem, window } from "vscode";
-import { applyComplex, applyIcon, applyImage, applyLightbox, applyLocScope, insertImageCommand, pickImageType, applyLink } from "../../../controllers/image-controller";
+import { applyComplex, applyIcon, applyImage, applyLightbox, applyLink, applyLocScope, insertImageCommand, pickImageType } from "../../../controllers/image-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
 import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
