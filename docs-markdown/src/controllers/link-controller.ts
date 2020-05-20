@@ -1,6 +1,6 @@
 import { existsSync } from "fs";
 import { dirname, join, relative } from "path";
-import { commands, ProgressLocation, QuickPickItem, QuickPickOptions, RelativePattern, Uri, window, workspace, TextEditor } from "vscode";
+import { commands, ProgressLocation, QuickPickItem, QuickPickOptions, RelativePattern, TextEditor, Uri, window, workspace } from "vscode";
 import { checkExtension, noActiveEditorMessage } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 import { applyReplacements, findReplacements, IRegExpWithGroup, Replacements } from "../helper/utility";
