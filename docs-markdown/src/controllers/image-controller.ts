@@ -3,8 +3,8 @@ import Axios from "axios";
 import { existsSync } from "fs";
 import { basename, dirname, extname, join, relative } from "path";
 import * as recursive from "recursive-readdir";
-import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, workspace } from "vscode";
-import { hasValidWorkSpaceRootPath, ignoreFiles, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, setCursorPosition } from "../helper/common";
+import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, workspace, InputBoxOptions } from "vscode";
+import { hasValidWorkSpaceRootPath, ignoreFiles, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, setCursorPosition, postWarning } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommandMedia: string = "insertMedia";
@@ -54,6 +54,10 @@ export function pickImageType() {
         description: "",
         label: "Add lightbox to image",
     });
+    items.push({
+        description: "",
+        label: "Add link to image",
+    });
     window.showQuickPick(items, opts).then((selection) => {
         if (!selection) {
             return;
@@ -78,6 +82,10 @@ export function pickImageType() {
             case "add lightbox to image":
                 applyLightbox();
                 commandOption = "lightbox";
+                break;
+            case "add link to image":
+                applyLink();
+                commandOption = "link";
                 break;
         }
         sendTelemetryData(telemetryCommand, commandOption);
@@ -502,4 +510,34 @@ export function imageCompletionProvider() {
     completionItems.push(new CompletionItem(`:::image type="icon" source="" alt-text="" loc-scope="":::`));
     completionItems.push(new CompletionItem(`:::image type="complex" source="" alt-text="" loc-scope="":::`));
     return completionItems;
+}
+
+export async function applyLink() {
+    // get editor, its needed to apply the output to editor window.
+    const editor = window.activeTextEditor;
+    if (!editor) {
+        noActiveEditorMessage();
+        return;
+    }
+
+    // if user has not selected any text, then continue
+    const RE_LINK = /:::image\s+((source|type|alt-text)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+    const position = new Position(editor.selection.active.line, editor.selection.active.character);
+    // get the current editor position and check if user is inside :::image::: tags
+    const wordRange = editor.document.getWordRangeAtPosition(position, RE_LINK);
+    if (wordRange) {
+        const options: InputBoxOptions = {
+            placeHolder: "Enter URL",
+        };
+        window.showInputBox(options).then((imageLink) => {
+            if (imageLink === undefined) {
+                postWarning("No URL given, abandoning command.");
+            } else {
+                editor.edit((selected) => {
+                    selected.insert(new Position(wordRange.end.line, wordRange.end.character - 3), ` link="${imageLink}"`);
+                });
+            }
+            return;
+        });
+    }
 }
