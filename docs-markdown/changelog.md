@@ -278,4 +278,3 @@ First release with the following functionality:
 - Includes
 - Snippets
 - Preview
-  ""''&copy;&trade;&reg;\*
