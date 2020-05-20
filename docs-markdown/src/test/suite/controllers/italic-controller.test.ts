@@ -1,7 +1,7 @@
 import * as chai from "chai";
 import * as spies from "chai-spies";
 import { resolve } from "path";
-import { commands, window, Selection } from "vscode";
+import { commands, Selection, window } from "vscode";
 import { formatItalic, italicFormattingCommand } from "../../../controllers/italic-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
@@ -90,8 +90,8 @@ suite("Italic Controller", () => {
         const toPositionTwo = cursorPosition.with(48, 17);
         editor!.selections = [
             new Selection(fromPositionOne, toPositionOne),
-            new Selection(fromPositionTwo, toPositionTwo)
-        ]
+            new Selection(fromPositionTwo, toPositionTwo),
+        ];
         const stub = sinon.stub(telemetry, "sendTelemetryData");
         formatItalic();
         await sleep(100);
