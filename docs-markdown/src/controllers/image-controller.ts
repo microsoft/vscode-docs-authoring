@@ -529,6 +529,8 @@ export async function applyLink() {
     if (wordRange) {
         const options: InputBoxOptions = {
             placeHolder: "Enter URL",
+            validateInput: (urlInput) => urlInput.startsWith("http://") || urlInput.startsWith("https://") ? "" :
+                "http:// or https:// is required for URLs. Link will not be added if prefix is not present.",
         };
         window.showInputBox(options).then((imageLink) => {
             if (imageLink === undefined) {
