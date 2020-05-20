@@ -1,11 +1,23 @@
 import { existsSync } from "fs";
 import { dirname, join, relative } from "path";
-import { commands, QuickPickItem, QuickPickOptions, window } from "vscode";
+import { commands, ProgressLocation, QuickPickItem, QuickPickOptions, RelativePattern, TextEditor, Uri, window, workspace } from "vscode";
 import { checkExtension, noActiveEditorMessage } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 import { applyReplacements, findReplacements, IRegExpWithGroup, Replacements } from "../helper/utility";
+import { ICommand } from "../ICommand";
 import { Insert, insertURL, MediaType, selectLinkType } from "./media-controller";
 import { applyXref } from "./xref-controller";
+
+export const linkControllerCommands: ICommand[] = [
+    {
+        callback: collapseRelativeLinks,
+        command: collapseRelativeLinks.name,
+    },
+    {
+        callback: collapseRelativeLinksInFolder,
+        command: collapseRelativeLinksInFolder.name,
+    },
+];
 
 const linkRegex: IRegExpWithGroup = {
     expression: /\]\((?<path>[^http?|~].+?)(?<query>\?.+?)?(?<hash>#.+?)?\)/gm,
@@ -14,8 +26,35 @@ const linkRegex: IRegExpWithGroup = {
 const telemetryCommand: string = "insertLink";
 let commandOption: string;
 
+export async function collapseRelativeLinksInFolder(uri: Uri) {
+    await window.withProgress({
+        location: ProgressLocation.Window,
+    }, async (progress) => {
+        const filePaths =
+            await workspace.findFiles(
+                new RelativePattern(uri.path, "**/*.md"));
+
+        const length = filePaths.length;
+        progress.report({ increment: 1, message: `Collapsing links in ${length} files.` });
+        for (let i = 0; i < length; i++) {
+            const file = filePaths[i];
+            const document = await workspace.openTextDocument(file);
+            const editor = await window.showTextDocument(document, undefined, false);
+            const replaced = await collapseRelativeLinksForEditor(editor);
+            if (replaced > 0) {
+                progress.report({ increment: 1, message: `Collapsed ${replaced} links in ${file}.` });
+            }
+        }
+
+        progress.report({ increment: 100, message: `Collapsed links in ${length} files.` });
+    });
+}
+
 export async function collapseRelativeLinks() {
-    const editor = window.activeTextEditor;
+    await collapseRelativeLinksForEditor(window.activeTextEditor);
+}
+
+export async function collapseRelativeLinksForEditor(editor: TextEditor): Promise<number> {
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -46,6 +85,7 @@ export async function collapseRelativeLinks() {
     }
 
     await applyReplacements(replacements, editor);
+    return replacements.length;
 }
 
 export function pickLinkType() {
