@@ -26,7 +26,7 @@ const linkRegex: IRegExpWithGroup = {
 const telemetryCommand: string = "insertLink";
 let commandOption: string;
 
-async function collapseRelativeLinksInFolder(uri: Uri) {
+export async function collapseRelativeLinksInFolder(uri: Uri) {
     await window.withProgress({
         location: ProgressLocation.Window,
     }, async (progress) => {
@@ -40,19 +40,21 @@ async function collapseRelativeLinksInFolder(uri: Uri) {
             const file = filePaths[i];
             const document = await workspace.openTextDocument(file);
             const editor = await window.showTextDocument(document, undefined, false);
-            await collapseRelativeLinksForEditor(editor);
-            progress.report({ increment: 1 });
+            const replaced = await collapseRelativeLinksForEditor(editor);
+            if (replaced > 0) {
+                progress.report({ increment: 1, message: `Collapsed ${replaced} links in ${file}.` });
+            }
         }
 
         progress.report({ increment: 100, message: `Collapsed links in ${length} files.` });
     });
 }
 
-async function collapseRelativeLinks() {
+export async function collapseRelativeLinks() {
     await collapseRelativeLinksForEditor(window.activeTextEditor);
 }
 
-async function collapseRelativeLinksForEditor(editor: TextEditor) {
+export async function collapseRelativeLinksForEditor(editor: TextEditor): Promise<number> {
     if (!editor) {
         noActiveEditorMessage();
         return;
@@ -83,6 +85,7 @@ async function collapseRelativeLinksForEditor(editor: TextEditor) {
     }
 
     await applyReplacements(replacements, editor);
+    return replacements.length;
 }
 
 export function pickLinkType() {
