@@ -3,8 +3,8 @@ import Axios from "axios";
 import { existsSync } from "fs";
 import { basename, dirname, extname, join, relative } from "path";
 import * as recursive from "recursive-readdir";
-import { CompletionItem, Position, QuickPickItem, QuickPickOptions, window, workspace, InputBoxOptions } from "vscode";
-import { hasValidWorkSpaceRootPath, ignoreFiles, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, setCursorPosition, postWarning } from "../helper/common";
+import { CompletionItem, InputBoxOptions, Position, QuickPickItem, QuickPickOptions, window, workspace } from "vscode";
+import { hasValidWorkSpaceRootPath, ignoreFiles, insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, setCursorPosition } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 
 const telemetryCommandMedia: string = "insertMedia";
