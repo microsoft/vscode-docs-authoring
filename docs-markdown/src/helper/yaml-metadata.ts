@@ -198,9 +198,9 @@ export class DocFxMetadataContent extends MetadataContentBase {
 		} catch (err) {
 			throw new Error(
 				"Yaml headers could not be parsed from file '" +
-				this.FileName +
-				"'. Original error :" +
-				err.toString()
+					this.FileName +
+					"'. Original error :" +
+					err.toString()
 			);
 		}
 	}

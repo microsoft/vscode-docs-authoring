@@ -159,8 +159,8 @@ export function hasValidWorkSpaceRootPath(senderName: string) {
 	if (folderPath == null) {
 		postWarning(
 			'The ' +
-			senderName +
-			' command requires an active workspace. Please open VS Code from the root of your clone to continue.'
+				senderName +
+				' command requires an active workspace. Please open VS Code from the root of your clone to continue.'
 		);
 		return false;
 	}

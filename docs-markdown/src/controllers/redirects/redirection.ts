@@ -31,9 +31,9 @@ export class RedirectionFile implements MasterRedirection {
 		} else {
 			throw new Error(
 				'Failed to resolve relative path to repo root folder for file ' +
-				filePath +
-				'. Original error: ' +
-				Error.toString()
+					filePath +
+					'. Original error: ' +
+					Error.toString()
 			);
 		}
 	}

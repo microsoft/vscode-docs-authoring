@@ -206,7 +206,7 @@ export function getLanguageIdentifierQuickPickItems() {
 			const item: QuickPickItem = {
 				description: `Use the "${lang.language.trim()}" language identifer (alias: ${
 					lang.aliases[0]
-					}).`,
+				}).`,
 				label: lang.language
 			};
 			items.push(item);

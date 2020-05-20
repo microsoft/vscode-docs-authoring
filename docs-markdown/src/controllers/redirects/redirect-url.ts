@@ -10,7 +10,7 @@ export class RedirectUrl {
 		private readonly config: MarkdownConfig,
 		public readonly originalValue: string,
 		public readonly url: URL
-	) { }
+	) {}
 	public static parse(config: MarkdownConfig, value: string): RedirectUrl | null {
 		try {
 			const input = value.startsWith('/') ? `${docsMicrosoftCom}${value}` : value;
