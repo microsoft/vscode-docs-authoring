@@ -23,6 +23,7 @@ export function insertImageCommand() {
         { command: applyComplex.name, callback: applyComplex },
         { command: applyLocScope.name, callback: applyLocScope },
         { command: applyLightbox.name, callback: applyLightbox },
+        { command: applyLink.name, callback: applyLink },
     ];
     return commands;
 }
