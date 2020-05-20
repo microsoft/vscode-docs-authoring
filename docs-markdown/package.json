@@ -219,6 +219,11 @@
         "category": "Docs"
       },
       {
+        "command": "collapseRelativeLinksInFolder",
+        "title": "Collapse relative links in folder",
+        "category": "Docs"
+      },
+      {
         "command": "sortSelectionAscending",
         "title": "Sort selection ascending (A to Z)",
         "category": "Docs"
@@ -291,6 +296,11 @@
         }
       ],
       "explorer/context": [
+        {
+          "command": "collapseRelativeLinksInFolder",
+          "group": "1_modification",
+          "when": "explorerResourceIsFolder"
+        },
         {
           "command": "cleanupInFolder",
           "group": "1_modification",

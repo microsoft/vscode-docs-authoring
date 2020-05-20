@@ -14,7 +14,7 @@ import { codeFormattingCommand } from "./controllers/code-controller";
 import { insertImageCommand } from "./controllers/image-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
 import { italicFormattingCommand } from "./controllers/italic-controller";
-import { collapseRelativeLinks } from "./controllers/link-controller";
+import { linkControllerCommands } from "./controllers/link-controller";
 import { insertListsCommands } from "./controllers/list-controller";
 import { insertLinksAndMediaCommands } from "./controllers/media-controller";
 import { insertMetadataCommands } from "./controllers/metadata-controller";
@@ -63,12 +63,7 @@ export function activate(context: ExtensionContext) {
     installedExtensionsCheck();
 
     // Creates an array of commands from each command file.
-    const authoringCommands: Commands = [
-        {
-            callback: collapseRelativeLinks,
-            command: collapseRelativeLinks.name,
-        },
-    ];
+    const authoringCommands: Commands = [...linkControllerCommands];
     insertAlertCommand().forEach((cmd) => authoringCommands.push(cmd));
     insertMonikerCommand().forEach((cmd) => authoringCommands.push(cmd));
     insertIncludeCommand().forEach((cmd) => authoringCommands.push(cmd));
