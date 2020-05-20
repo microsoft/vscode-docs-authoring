@@ -528,13 +528,11 @@ export async function applyLink() {
     const wordRange = editor.document.getWordRangeAtPosition(position, RE_LINK);
     if (wordRange) {
         const options: InputBoxOptions = {
-            placeHolder: "Enter URL",
-            validateInput: (urlInput) => urlInput.startsWith("http://") || urlInput.startsWith("https://") ? "" :
-                "http:// or https:// is required for URLs. Link will not be added if prefix is not present.",
+            placeHolder: "Enter link (URL or relative path)",
         };
         window.showInputBox(options).then((imageLink) => {
             if (imageLink === undefined) {
-                postWarning("No URL given, abandoning command.");
+                postWarning("No link provided, abandoning command.");
             } else {
                 editor.edit((selected) => {
                     selected.insert(new Position(wordRange.end.line, wordRange.end.character - 3), ` link="${imageLink}"`);
