@@ -16,14 +16,17 @@ const expect = chai.expect;
 
 suite("Bookmark Controller", () => {
     // Reset and tear down the spies
+    suiteSetup(async () => {
+        sinon.stub(telemetry, "sendTelemetryData");
+    });
     teardown(() => {
         chai.spy.restore(common);
         chai.spy.restore(window);
     });
     suiteTeardown(async () => {
         await commands.executeCommand("workbench.action.closeAllEditors");
+        sinon.restore();
     });
-
     test("insertBookmarkCommands", () => {
         const controllerCommands = [
             { command: insertBookmarkExternal.name, callback: insertBookmarkExternal },
@@ -48,13 +51,10 @@ suite("Bookmark Controller", () => {
             return Promise.resolve(qpSelectionItems[counter++]) as Thenable<any>;
         };
 
-        const stub = sinon.stub(telemetry, "sendTelemetryData");
-
         const spy = chai.spy.on(common, "insertContentToEditor");
         insertBookmarkExternal();
         await sleep(sleepTime);
         expect(spy).to.have.been.called();
-        stub.restore();
     });
     test("insertBookmarkInternal::no headings", async () => {
         const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/bookmark.md");
@@ -69,14 +69,10 @@ suite("Bookmark Controller", () => {
         window.showQuickPick = (items: string[] | Thenable<string[]>) => {
             return Promise.resolve({ label: "### Third Level Heading\r\n", detail: " " }) as Thenable<any>;
         };
-
-        const stub = sinon.stub(telemetry, "sendTelemetryData");
-
         const spy = chai.spy.on(common, "insertContentToEditor");
         insertBookmarkInternal();
         await sleep(sleepTime);
         expect(spy).to.have.been.called();
-        stub.restore();
     });
 
 });
