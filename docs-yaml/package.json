@@ -47,7 +47,7 @@
 		"prettier-check": "prettier --check \"**/*.{ts,js,json,yml}\" --loglevel debug",
 		"postinstall": "node ./node_modules/vscode/bin/install",
 		"test": "npm run compile && node ./node_modules/vscode/bin/test",
-		"lint": "eslint . --ext .ts --debug"
+		"lint": "eslint . --ext .ts"
 	},
 	"husky": {
 		"hooks": {
