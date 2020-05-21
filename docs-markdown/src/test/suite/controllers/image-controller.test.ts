@@ -6,7 +6,7 @@ import * as spies from "chai-spies";
 import * as os from "os";
 import { resolve } from "path";
 import { commands, QuickPickItem, window } from "vscode";
-import { applyComplex, applyIcon, applyImage, applyLightbox, applyLocScope, insertImageCommand, pickImageType } from "../../../controllers/image-controller";
+import { applyComplex, applyIcon, applyImage, applyLightbox, applyLink, applyLocScope, insertImageCommand, pickImageType } from "../../../controllers/image-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
 import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
@@ -32,7 +32,7 @@ suite("Image Controller", () => {
     suiteSetup(() => {
         sinon.stub(telemetry, "sendTelemetryData");
     });
-    test("insertAlertCommand", () => {
+    test("insertImageCommand", () => {
         const controllerCommands = [
             { command: pickImageType.name, callback: pickImageType },
             { command: applyImage.name, callback: applyImage },
@@ -40,6 +40,7 @@ suite("Image Controller", () => {
             { command: applyComplex.name, callback: applyComplex },
             { command: applyLocScope.name, callback: applyLocScope },
             { command: applyLightbox.name, callback: applyLightbox },
+            { command: applyLink.name, callback: applyLink },
         ];
         expect(insertImageCommand()).to.deep.equal(controllerCommands);
     });
@@ -170,5 +171,33 @@ suite("Image Controller", () => {
         const actualText = editor?.document.getText();
         assert.equal(expectedText, actualText);
         stubShowQuickPick.restore();
+    });
+    test("applyLink", async () => {
+        const data = ["foo"];
+        const resolved = new Promise((r) => r({ data }));
+        const stubAxios = sinon.stub(Axios, "get").returns(resolved);
+
+        const stubShowQuickPick = sinon.stub(window, "showQuickPick");
+        const item1: QuickPickItem = {
+            label: "add link to image",
+        };
+        const item2: QuickPickItem = {
+            label: "https://microsoft.com",
+        };
+        stubShowQuickPick.onCall(0).resolves(item1);
+        stubShowQuickPick.onCall(1).resolves(item2);
+
+        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/image-controller6.md");
+        await loadDocumentAndGetItReady(filePath);
+        let editor = window.activeTextEditor;
+        common.setCursorPosition(editor!, 0, 4);
+        pickImageType();
+        await sleep(400);
+        const expectedText = ":::image type=\"content\" source=\"../images/test.png\" alt-text=\"foo\" link=\"https://microsoft.com\":::" + os.EOL;
+        editor = window.activeTextEditor;
+        const actualText = editor?.document.getText();
+        assert.equal(expectedText, actualText);
+        stubShowQuickPick.restore();
+        stubAxios.restore();
     });
 });
