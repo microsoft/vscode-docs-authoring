@@ -23,6 +23,7 @@
     "markdown"
   ],
   "activationEvents": [
+    "onLanguage:json",
     "onLanguage:markdown",
     "onLanguage:yaml"
   ],
