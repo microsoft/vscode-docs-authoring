@@ -19,7 +19,6 @@ export class RedirectUrl {
         return this.url.host.toLocaleLowerCase() !== DocsMicrosoftCom;
     }
 
-    // tslint:disable-next-line: variable-name
     private _filePath: string = "";
     get filePath(): string {
         if (!!this._filePath) {

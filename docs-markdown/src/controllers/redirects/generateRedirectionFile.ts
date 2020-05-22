@@ -103,15 +103,15 @@ export async function generateMasterRedirectionFile(rootPath?: string, done?: an
                     const existingSourcePath: string[] = [];
 
                     masterRedirection.redirections.forEach((item) => {
-                        if (!item.sourcePath) {
+                        if (!item.source_path) {
                             showStatusMessage("An array is missing the sourcePath value. Please check .openpublishing.redirection.json.");
                             return;
                         }
-                        existingSourcePath.push(item.sourcePath.toLowerCase());
+                        existingSourcePath.push(item.source_path.toLowerCase());
                     });
 
                     redirectionFiles.forEach((item) => {
-                        if (existingSourcePath.indexOf(item.sourcePath.toLowerCase()) >= 0) {
+                        if (existingSourcePath.indexOf(item.source_path.toLowerCase()) >= 0) {
                             item.isAlreadyInMasterRedirectionFile = true;
                         } else {
                             if (masterRedirection != null) {
@@ -127,7 +127,7 @@ export async function generateMasterRedirectionFile(rootPath?: string, done?: an
                 }
                 if (masterRedirection.redirections.length > 0) {
                     masterRedirection.redirections.sort((a, b) => {
-                        return naturalLanguageCompare(a.sourcePath, b.sourcePath);
+                        return naturalLanguageCompare(a.source_path, b.source_path);
                     });
 
                     fs.writeFileSync(
@@ -161,7 +161,7 @@ export async function generateMasterRedirectionFile(rootPath?: string, done?: an
 
                     redirectionFiles.forEach((item) => {
                         const source = fs.createReadStream(item.fileFullPath);
-                        const dest = fs.createWriteStream(join(deletedRedirectsPath, basename(item.sourcePath)));
+                        const dest = fs.createWriteStream(join(deletedRedirectsPath, basename(item.source_path)));
 
                         source.pipe(dest);
                         source.on("close", () => {
