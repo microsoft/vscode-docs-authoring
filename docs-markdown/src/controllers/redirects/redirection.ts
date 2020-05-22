@@ -8,6 +8,7 @@ export class RedirectionFile implements IMasterRedirection {
     public resource: any;
 
     // Members mapping to JSON elements in master redirection file
+    // tslint:disable: variable-name
     public source_path: string;
     public redirect_url: string;
     public redirect_document_id: boolean = false;
