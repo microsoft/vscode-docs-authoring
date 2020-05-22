@@ -132,7 +132,7 @@ export async function generateMasterRedirectionFile(rootPath?: string, done?: an
 
                     fs.writeFileSync(
                         masterRedirectionFilePath,
-                        JSON.stringify(masterRedirection, ["redirections", "sourcePath", "redirect_url", "redirect_document_id"], 4));
+                        JSON.stringify(masterRedirection, ["redirections", "source_path", "redirect_url", "redirect_document_id"], 4));
 
                     const currentYear = date.getFullYear();
                     const currentMonth = (date.getMonth() + 1);
