@@ -1,14 +1,10 @@
-import { reporter } from "../../helper/telemetry";
 import { readWriteFileWithProgress } from "./utilities";
-
-const telemetryCommand: string = "applyCleanup";
 
 /**
  * Converts http:// to https:// for all microsoft links.
  */
 export function microsoftLinks(progress: any, file: string, files: string[] | null, index: number | null) {
     const message = "Microsoft Links";
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     if (file.endsWith(".md")) {
         return readWriteFileWithProgress(progress,
             file,
