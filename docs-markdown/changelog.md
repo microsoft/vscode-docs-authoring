@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.70 (May 22nd, 2020)
+## 0.2.70 (May 25th, 2020)
 
 - Added support for clickable images
 - Fixed master redirect command
