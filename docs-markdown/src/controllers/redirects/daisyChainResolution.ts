@@ -11,8 +11,8 @@ export async function applyRedirectDaisyChainResolution() {
     const { config, editor, options, redirects } = redirectsAndConfigOptions;
     const redirectsLookup = new Map<string, { redirect: RedirectUrl | null, redirection: IMasterRedirection }>();
     redirects.redirections.forEach((r) => {
-        redirectsLookup.set(r.sourcePath, {
-            redirect: RedirectUrl.parse(options, r.redirectUrl),
+        redirectsLookup.set(r.source_path, {
+            redirect: RedirectUrl.parse(options, r.redirect_url),
             redirection: r,
         });
     });
@@ -56,18 +56,18 @@ export async function applyRedirectDaisyChainResolution() {
             targetRedirect = findRedirect(daisyChainPath);
         }
 
-        if (targetRedirectUrl && targetRedirectUrl !== source.redirection.redirectUrl) {
+        if (targetRedirectUrl && targetRedirectUrl !== source.redirection.redirect_url) {
             daisyChainsResolved++;
             const newRedirectUrl =
                 isExternalUrl
                     ? targetRedirectUrl
                     : source.redirect!.adaptHashAndQueryString(targetRedirectUrl);
-            source.redirection.redirectUrl = newRedirectUrl;
+            source.redirection.redirect_url = newRedirectUrl;
 
-            if (source.redirection.redirectDocumentId) {
+            if (source.redirection.redirect_document_id) {
                 if (isExternalUrl ||
                     !newRedirectUrl.startsWith(`/${options.docsetName}/`)) {
-                    source.redirection.redirectDocumentId = false;
+                    source.redirection.redirect_document_id = false;
                 }
             }
         }
