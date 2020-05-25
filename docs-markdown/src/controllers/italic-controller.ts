@@ -66,7 +66,7 @@ export function formatItalic() {
             insertContentToEditor(editor, formatItalic.name, formattedText, true);
         }
 
-        // if mulitple cursors were used to make selections
+        // if multiple cursors were used to make selections
         if (selections.length > 1) {
             editor.edit((edit: TextEditorEdit): void => {
                 selections.forEach((selection: Selection) => {
@@ -102,7 +102,7 @@ export function italicize(content: string, range?: Range) {
         return selectedText.substring(1, selectedText.length - 1);
     }
 
-    // Set sytax for italic formatting and replace original string with formatted string
+    // Set syntax for italic formatting and replace original string with formatted string
     const styleItalic = "*" + selectedText + "*";
     return styleItalic;
 }

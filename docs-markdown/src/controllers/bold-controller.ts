@@ -1,7 +1,7 @@
 "use strict";
 
 import { Range, Selection, TextEditorEdit, window } from "vscode";
-import { insertContentToEditor, isMarkdownFileCheck, noActiveEditorMessage, postWarning, showStatusMessage } from "../helper/common";
+import { insertContentToEditor, isMarkdownFileCheck, isValidEditor, noActiveEditorMessage, postWarning, showStatusMessage } from "../helper/common";
 import { insertUnselectedText } from "../helper/format-logic-manager";
 import { isBold, isBoldAndItalic } from "../helper/format-styles";
 import { sendTelemetryData } from "../helper/telemetry";
@@ -19,12 +19,15 @@ export function boldFormattingCommand() {
  * Replaces current selection with MD bold formatted selection
  */
 export function formatBold() {
-    sendTelemetryData("command", telemetryCommand);
     const editor = window.activeTextEditor;
     if (!editor) {
         noActiveEditorMessage();
         return;
     } else {
+        if (!isValidEditor(editor, true, "format bold")) {
+            return;
+        }
+
         if (!isMarkdownFileCheck(editor, false)) {
             return;
         }
@@ -58,7 +61,7 @@ export function formatBold() {
             insertContentToEditor(editor, formatBold.name, formattedText, true);
         }
 
-        // if mulitple cursors were used to make selections
+        // if multiple cursors were used to make selections
         if (selections.length > 1) {
             editor.edit((edit: TextEditorEdit): void => {
                 selections.forEach((selection: Selection) => {
@@ -94,7 +97,7 @@ export function bold(content: string, range?: Range) {
         return selectedText.substring(2, selectedText.length - 2);
     }
 
-    // Set sytax for bold formatting and replace original string with formatted string
+    // Set syntax for bold formatting and replace original string with formatted string
     const styleBold = `**${selectedText}**`;
     return styleBold;
 }

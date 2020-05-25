@@ -5,7 +5,7 @@ import { commands, window, Selection } from "vscode";
 import { formatBold, boldFormattingCommand } from "../../../controllers/bold-controller";
 import * as common from "../../../helper/common";
 import * as telemetry from "../../../helper/telemetry";
-import { loadDocumentAndGetItReady, sleep } from "../../test.common/common";
+import { loadDocumentAndGetItReady, sleep, sleepTime } from "../../test.common/common";
 
 chai.use(spies);
 
@@ -17,6 +17,7 @@ suite("Bold Controller", () => {
     // Reset and tear down the spies
     teardown(() => {
         chai.spy.restore(common);
+        chai.spy.restore(window);
     });
     suiteTeardown(async () => {
         await commands.executeCommand("workbench.action.closeAllEditors");
@@ -27,58 +28,62 @@ suite("Bold Controller", () => {
         ];
         expect(boldFormattingCommand()).to.deep.equal(controllerCommands);
     });
-    test("noActiveEditorMessage", () => {
+    test("noActiveEditorMessage", async () => {
         const spy = chai.spy.on(common, "noActiveEditorMessage");
-        formatBold();
+        await formatBold();
+        expect(spy).to.have.been.called();
+    });
+    test("isValidEditor", async () => {
+        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
+        await loadDocumentAndGetItReady(filePath);
+        const spy = chai.spy.on(common, "isValidEditor");
+        const stub = sinon.stub(telemetry, "sendTelemetryData");
+        await formatBold();
+        stub.restore();
+        await sleep(sleepTime);
         expect(spy).to.have.been.called();
     });
     test("isMarkdownFileCheck", async () => {
-        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
-        await loadDocumentAndGetItReady(filePath);
-        const stub = sinon.stub(telemetry, "sendTelemetryData");
         const spy = chai.spy.on(common, "isMarkdownFileCheck");
-        formatBold();
-        expect(spy).to.have.been.called();
+        const stub = sinon.stub(telemetry, "sendTelemetryData");
+        await formatBold();
         stub.restore();
+        await sleep(sleepTime);
+        expect(spy).to.have.been.called();
     });
     test("Bold Format Empty Selection", async () => {
-        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
-        await loadDocumentAndGetItReady(filePath);
-
+        const editor = window.activeTextEditor;
+        common.setSelectorPosition(editor!, 12, 0, 12, 0);
         const stub = sinon.stub(telemetry, "sendTelemetryData");
-        const spy = chai.spy.on(common, "insertContentToEditor");
-        formatBold();
-        expect(spy).to.have.been.called();
+        await formatBold();
         stub.restore();
+        await sleep(sleepTime);
+        const output = editor?.document.lineAt(12).text;
+        expect(output).to.equal("****");
     });
     test("Bold Format Single Selection", async () => {
-        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
-        await loadDocumentAndGetItReady(filePath);
         const editor = window.activeTextEditor;
-        common.setSelectorPosition(editor!, 15, 0, 15, 1);
-
+        common.setSelectorPosition(editor!, 159, 0, 159, 1);
         const stub = sinon.stub(telemetry, "sendTelemetryData");
-        const spy = chai.spy.on(common, "insertContentToEditor");
-        formatBold();
-        expect(spy).to.have.been.called();
+        await formatBold();
         stub.restore();
+        await sleep(sleepTime);
+        const output = editor?.document.lineAt(159).text;
+        expect(output).to.equal("**B**ody");
     });
     test("Bold Format Word Selection", async () => {
-        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
-        await loadDocumentAndGetItReady(filePath);
         const editor = window.activeTextEditor;
-        common.setSelectorPosition(editor!, 159, 0, 159, 4);
+        common.setSelectorPosition(editor!, 163, 0, 163, 4);
         const stub = sinon.stub(telemetry, "sendTelemetryData");
-        formatBold();
-        await sleep(100);
-        const line = editor?.document.lineAt(159).text;
+        await formatBold();
+        stub.restore();
+        await sleep(sleepTime);
+        const line = editor?.document.lineAt(163).text;
         stub.restore();
 
         expect(line).to.equal("**Body**");
     });
     test("Bold Format Multiple Selection", async () => {
-        const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/docs-markdown.md");
-        await loadDocumentAndGetItReady(filePath);
         const editor = window.activeTextEditor;
         const cursorPosition = editor!.selection.active;
         const fromPositionOne = cursorPosition.with(48, 0);
@@ -88,10 +93,11 @@ suite("Bold Controller", () => {
         editor!.selections = [
             new Selection(fromPositionOne, toPositionOne),
             new Selection(fromPositionTwo, toPositionTwo)
-        ]
+        ];
         const stub = sinon.stub(telemetry, "sendTelemetryData");
-        formatBold();
-        await sleep(100);
+        await formatBold();
+        stub.restore();
+        await sleep(sleepTime);
         const line = editor?.document.lineAt(48).text;
         stub.restore();
 
