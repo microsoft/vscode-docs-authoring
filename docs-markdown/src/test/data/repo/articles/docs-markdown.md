@@ -181,7 +181,6 @@ The basic syntax to include an image is:
 ```markdown
 ![[alt text]](<folderPath>)
 
-Example:
 ![alt text for image](../images/Introduction.png)
 ```
 

@@ -28,4 +28,8 @@ suite("Image Extension", () => {
         const result = md.render(`:::image type="content" source="../links/media/LSIs.png" lightbox="../links/media/LSIs.png" alt-text="lsi":::`);
         expect(result).to.equal(`<a href="../links/media/LSIs.png#lightbox" data-linktype="relative-path"><div class="mx-imgBorder"><p><img src="../links/media/LSIs.png"></p></div></a>`);
     });
+    test("Image type content - link", async () => {
+        const result = md.render(`:::image type="content" source="../links/media/LSIs.png" alt-text="lsi" link="https://microsoft.com":::`);
+        expect(result).to.equal(`<a href="https://microsoft.com" data-linktype="relative-path"><div class="mx-imgBorder"><p><img src="../links/media/LSIs.png"></p></div></a>`);
+    });
 });

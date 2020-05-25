@@ -1,13 +1,10 @@
 import { postError } from "../../helper/common";
-import { reporter } from "../../helper/telemetry";
 import { readWriteFileWithProgress } from "./utilities";
 
-const telemetryCommand: string = "applyCleanup";
 /**
  * Lower cases all metadata found in .md files
  */
 export function capitalizationOfMetadata(progress: any, file: string, files: string[] | null, index: number | null) {
-    reporter.sendTelemetryEvent("command", { command: telemetryCommand });
     const message = "Capitalization of metadata values";
     if (file.endsWith(".md")) {
         return readWriteFileWithProgress(progress,

@@ -10,7 +10,8 @@
         "no-duplicate-imports": true,
         "ordered-imports": true,
         "prefer-for-of": false,
-        "indent": false
+        "indent": false,
+        "array-type": false
     },
     "rulesDirectory": []
 }

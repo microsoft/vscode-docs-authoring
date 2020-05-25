@@ -1,6 +1,6 @@
 import { output } from "../extension";
 
-const IMAGE_OPEN_RE = /image\s+(((source|type|alt-text|lightbox|border|loc-scope)="(.*?))"\s*)+:::/gm;
+const IMAGE_OPEN_RE = /image\s+(((source|type|alt-text|lightbox|border|loc-scope|link)="(.*?))"\s*)+:::/gm;
 
 export const imageOptions = {
     marker: ":",
@@ -14,6 +14,7 @@ export const imageOptions = {
         const LIGHTBOX_RE = /lightbox\s*=\s*"(.*?)"/gi;
         const BORDER_RE = /border\s*=\s*"(.*?)"/gi;
         const TYPE_RE = /type\s*=\s*"(.*?)"/gi;
+        const LINK_RE = /link\s*=\s*"(.*?)"/gi;
         if (start) {
             const sourceMatch = SOURCE_RE.exec(start[0]);
             if (sourceMatch && sourceMatch.length > 0) {
@@ -21,6 +22,7 @@ export const imageOptions = {
                 const lightboxMatch = LIGHTBOX_RE.exec(start[0]);
                 const borderMatch = BORDER_RE.exec(start[0]);
                 const typeMatch = TYPE_RE.exec(start[0]);
+                const linkMatch = LINK_RE.exec(start[0]);
 
                 let html = `<div class="mx-imgBorder"><p><img src="${source}"></p></div>`;
                 if (borderMatch && borderMatch.length > 0 && "false" === borderMatch[1].toLowerCase()) {
@@ -39,6 +41,10 @@ export const imageOptions = {
                     html = `<a href="${lightboxMatch[1]}#lightbox" data-linktype="relative-path">${html}</a>`;
                 }
 
+                if (linkMatch) {
+                    html = `<a href="${linkMatch[1]}" data-linktype="relative-path">${html}</a>`;
+                }
+
                 // opening tag
                 return html;
             } else {
@@ -53,8 +59,8 @@ export const imageOptions = {
 
 // removes image-end and long description for rendering purposes
 export function image_end(md) {
-    const IMAGE_ALL_GLOBAL_RE = /(:::image\s+(((source|type|alt-text|lightbox|border|loc-scope)="((?!content|icon).*?))"(\s*)?)+:::)([^]+?:::image-end:::)/mig;
-    const IMAGE_ALL_RE = /(:::image\s+(((source|type|alt-text|lightbox|border|loc-scope)="((?!content|icon).*?))"(\s*)?)+:::)([^]+?:::image-end:::)/mi;
+    const IMAGE_ALL_GLOBAL_RE = /(:::image\s+(((source|type|alt-text|lightbox|border|loc-scope|link)="((?!content|icon).*?))"(\s*)?)+:::)([^]+?:::image-end:::)/mig;
+    const IMAGE_ALL_RE = /(:::image\s+(((source|type|alt-text|lightbox|border|loc-scope|link)="((?!content|icon).*?))"(\s*)?)+:::)([^]+?:::image-end:::)/mi;
     const replaceImageEnd = (src: string) => {
         const matches = src.match(IMAGE_ALL_GLOBAL_RE);
         if (matches) {

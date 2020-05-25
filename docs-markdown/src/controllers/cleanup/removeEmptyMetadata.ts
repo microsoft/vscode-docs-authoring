@@ -1,13 +1,10 @@
-import { sendTelemetryData } from "../../helper/telemetry";
 import { readWriteFileWithProgress } from "./utilities";
 
-const telemetryCommand: string = "applyCleanup";
 /**
  * Cleanup empty, na and commented out metadata attributes found in .md files
  */
 export function removeEmptyMetadata(progress: any, file: string, files: string[] | null, index: number | null, cleanupType: string) {
     const message = "Removal of metadata values";
-    sendTelemetryData("command", telemetryCommand);
     if (file.endsWith(".md")) {
         return readWriteFileWithProgress(progress,
             file,
