@@ -1,4 +1,5 @@
 import { readFile, writeFile } from "graceful-fs";
+import { QuickPickItem, QuickPickOptions } from "vscode";
 import { ignoreFiles, postError } from "../../helper/common";
 // tslint:disable no-var-requires
 const jsdiff = require("diff");
@@ -104,7 +105,7 @@ export function recurseCallback(workspacePath: string, progress: any, callback: 
                 postError(err);
                 chainReject();
             }
-            const filePromises: Array<Promise<any>> = [];
+            const filePromises: Promise<any>[] = [];
             files.map((file, index) => {
                 filePromises.push(callback(progress, file, files, index));
             });
@@ -112,4 +113,26 @@ export function recurseCallback(workspacePath: string, progress: any, callback: 
                 chainResolve();
             });
         }));
+}
+
+export function getCleanUpQuickPick() {
+    const opts: QuickPickOptions = { placeHolder: "Cleanup..." };
+    const items: QuickPickItem[] = [];
+    items.push({
+        description: "",
+        label: "Single-valued metadata",
+    });
+    items.push({
+        description: "",
+        label: "Microsoft links",
+    });
+    items.push({
+        description: "",
+        label: "Capitalization of metadata values",
+    });
+    items.push({
+        description: "",
+        label: "Empty metadata",
+    });
+    return { items, opts };
 }

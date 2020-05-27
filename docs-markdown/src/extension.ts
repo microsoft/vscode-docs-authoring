@@ -14,6 +14,7 @@ import { codeFormattingCommand } from "./controllers/code-controller";
 import { insertImageCommand } from "./controllers/image-controller";
 import { insertIncludeCommand } from "./controllers/include-controller";
 import { italicFormattingCommand } from "./controllers/italic-controller";
+import { linkControllerCommands } from "./controllers/link-controller";
 import { insertListsCommands } from "./controllers/list-controller";
 import { insertLinksAndMediaCommands } from "./controllers/media-controller";
 import { insertMetadataCommands } from "./controllers/metadata-controller";
@@ -36,8 +37,10 @@ import { tripleColonCompletionItemsProvider } from "./helper/triple-colon-extens
 import { UiHelper } from "./helper/ui";
 import { findAndReplaceTargetExpressions } from "./helper/utility";
 import { isCursorInsideYamlHeader } from "./helper/yaml-metadata";
+import { ICommand } from "./ICommand";
 
 export let extensionPath: string;
+type Commands = ICommand[];
 
 /**
  * Provides the commands to the extension. This method is called when extension is activated.
@@ -60,29 +63,30 @@ export function activate(context: ExtensionContext) {
     installedExtensionsCheck();
 
     // Creates an array of commands from each command file.
-    const AuthoringCommands: any = [];
-    insertAlertCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    insertMonikerCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    insertIncludeCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    insertLinksAndMediaCommands().forEach((cmd) => AuthoringCommands.push(cmd));
-    insertListsCommands().forEach((cmd) => AuthoringCommands.push(cmd));
-    insertSnippetCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    insertTableCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    boldFormattingCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    codeFormattingCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    italicFormattingCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    quickPickMenuCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    previewTopicCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    getMasterRedirectionCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    applyCleanupCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    applyXrefCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    yamlCommands().forEach((cmd) => AuthoringCommands.push(cmd));
-    noLocTextCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    insertRowsAndColumnsCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    insertImageCommand().forEach((cmd) => AuthoringCommands.push(cmd));
-    insertMetadataCommands().forEach((cmd) => AuthoringCommands.push(cmd));
-    insertSortSelectionCommands().forEach((cmd) => AuthoringCommands.push(cmd));
-    insertLanguageCommands().forEach((cmd) => AuthoringCommands.push(cmd));
+    const authoringCommands: Commands = [...linkControllerCommands];
+    insertAlertCommand().forEach((cmd) => authoringCommands.push(cmd));
+    insertMonikerCommand().forEach((cmd) => authoringCommands.push(cmd));
+    insertIncludeCommand().forEach((cmd) => authoringCommands.push(cmd));
+    insertLinksAndMediaCommands().forEach((cmd) => authoringCommands.push(cmd));
+    insertListsCommands().forEach((cmd) => authoringCommands.push(cmd));
+    insertSnippetCommand().forEach((cmd) => authoringCommands.push(cmd));
+    insertTableCommand().forEach((cmd) => authoringCommands.push(cmd));
+    boldFormattingCommand().forEach((cmd) => authoringCommands.push(cmd));
+    codeFormattingCommand().forEach((cmd) => authoringCommands.push(cmd));
+    italicFormattingCommand().forEach((cmd) => authoringCommands.push(cmd));
+    quickPickMenuCommand().forEach((cmd) => authoringCommands.push(cmd));
+    previewTopicCommand().forEach((cmd) => authoringCommands.push(cmd));
+    getMasterRedirectionCommand().forEach((cmd) => authoringCommands.push(cmd));
+    applyCleanupCommand().forEach((cmd) => authoringCommands.push(cmd));
+    applyXrefCommand().forEach((cmd) => authoringCommands.push(cmd));
+    yamlCommands().forEach((cmd) => authoringCommands.push(cmd));
+    noLocTextCommand().forEach((cmd) => authoringCommands.push(cmd));
+    insertRowsAndColumnsCommand().forEach((cmd) => authoringCommands.push(cmd));
+    insertImageCommand().forEach((cmd) => authoringCommands.push(cmd));
+    insertMetadataCommands().forEach((cmd) => authoringCommands.push(cmd));
+    insertSortSelectionCommands().forEach((cmd) => authoringCommands.push(cmd));
+    insertLanguageCommands().forEach((cmd) => authoringCommands.push(cmd));
+
     // Autocomplete
     context.subscriptions.push(setupAutoComplete());
     languages.registerDocumentLinkProvider({ language: "markdown" }, {
@@ -112,15 +116,10 @@ export function activate(context: ExtensionContext) {
 
     // Attempts the registration of commands with VS Code and then add them to the extension context.
     try {
-        commands.registerCommand("cleanupFile", async (uri: Uri) => {
-            await applyCleanupFile(uri);
-        });
-        commands.registerCommand("cleanupInFolder", async (uri: Uri) => {
-            await applyCleanupFolder(uri);
-        });
-        AuthoringCommands.map((cmd: any) => {
-            const commandName = cmd.command;
-            const command = commands.registerCommand(commandName, cmd.callback);
+        commands.registerCommand("cleanupFile", async (uri: Uri) => await applyCleanupFile(uri));
+        commands.registerCommand("cleanupInFolder", async (uri: Uri) => await applyCleanupFolder(uri));
+        authoringCommands.map((cmd: ICommand) => {
+            const command = commands.registerCommand(cmd.command, cmd.callback);
             context.subscriptions.push(command);
         });
     } catch (error) {

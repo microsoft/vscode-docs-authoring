@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.50 (May 22nd, 2020)
+
+- Added clickable triple colon image support for preview.
+
 ## 0.3.49 (May 5th, 2020)
 
 - Fixed issues with triple colon image extension preview working with different locales and commas in alt-text.
@@ -107,4 +111,4 @@
 
 ## 0.3.17 (April 16th, 2019)
 
-- Update preview command to use VS Code rendering environment.  Docs-preview functionality is actively under development to support vscode.previewHtml command deprecation.
+- Update preview command to use VS Code rendering environment. Docs-preview functionality is actively under development to support vscode.previewHtml command deprecation.
