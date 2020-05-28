@@ -12,7 +12,7 @@ export async function applyRedirectDaisyChainResolution() {
 	const { config, editor, options, redirects } = redirectsAndConfigOptions;
 	const redirectsLookup = new Map<
 		string,
-		{ redirect: RedirectUrl | null; redirection: IMasterRedirection }
+		{ redirect: RedirectUrl | null; redirection: MasterRedirection }
 	>();
 	redirects.redirections.forEach(r => {
 		redirectsLookup.set(r.source_path, {

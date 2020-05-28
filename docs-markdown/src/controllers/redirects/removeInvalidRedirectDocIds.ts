@@ -14,7 +14,7 @@ export async function detectInvalidDocumentIdRedirects() {
 	const { config, editor, folder, options, redirects } = redirectsAndConfigOptions;
 	const redirectsLookup = new Map<
 		string,
-		{ redirect: RedirectUrl | null; redirection: IMasterRedirection }
+		{ redirect: RedirectUrl | null; redirection: MasterRedirection }
 	>();
 	redirects.redirections.forEach(r => {
 		if (!r.redirect_document_id) {
