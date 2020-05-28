@@ -10,9 +10,9 @@ export interface IMasterRedirections {
 }
 
 export interface IMasterRedirection {
-    sourcePath: string;
-    redirectUrl: string;
-    redirectDocumentId?: boolean;
+    source_path: string;
+    redirect_url: string;
+    redirect_document_id?: boolean;
 }
 
 export class MasterRedirection implements IMasterRedirections {
