@@ -4,7 +4,7 @@
 	"description": "Docs Markdown Extension",
 	"icon": "images/docs-logo-ms.png",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-	"version": "0.2.68",
+	"version": "0.2.70",
 	"publisher": "docsmsft",
 	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
 	"bugs": {
@@ -23,6 +23,7 @@
 		"markdown"
 	],
 	"activationEvents": [
+		"onLanguage:json",
 		"onLanguage:markdown",
 		"onLanguage:yaml"
 	],
@@ -214,6 +215,16 @@
 				"category": "Docs"
 			},
 			{
+				"command": "collapseRelativeLinks",
+				"title": "Collapse relative links",
+				"category": "Docs"
+			},
+			{
+				"command": "collapseRelativeLinksInFolder",
+				"title": "Collapse relative links in folder",
+				"category": "Docs"
+			},
+			{
 				"command": "sortSelectionAscending",
 				"title": "Sort selection ascending (A to Z)",
 				"category": "Docs"
@@ -260,6 +271,11 @@
 					"group": "1_modification"
 				},
 				{
+					"when": "editorTextFocus && resourceLangId == markdown",
+					"command": "collapseRelativeLinks",
+					"group": "1_modification"
+				},
+				{
 					"when": "editorHasSelection",
 					"command": "sortSelectionAscending",
 					"group": "1_modification"
@@ -281,6 +297,11 @@
 				}
 			],
 			"explorer/context": [
+				{
+					"command": "collapseRelativeLinksInFolder",
+					"group": "1_modification",
+					"when": "explorerResourceIsFolder"
+				},
 				{
 					"command": "cleanupInFolder",
 					"group": "1_modification",
@@ -704,7 +725,7 @@
 		"prettier-check": "prettier --check \"**/*.{ts,js,json,yml}\" --loglevel debug",
 		"pretest": "npm run compile",
 		"test": "node ./out/src/test/runTest.js",
-		"lint": "eslint . --ext .ts"
+		"lint": "eslint . --ext .ts --fix"
 	},
 	"husky": {
 		"hooks": {

@@ -442,45 +442,63 @@ export async function findAndReplaceTargetExpressions(event: TextDocumentChangeE
 	return event;
 }
 
-// eslint-disable-next-line @typescript-eslint/interface-name-prefix
-export interface IReplacement {
+export interface RegExpWithGroup {
+	expression: RegExp;
+	groups: string[];
+}
+
+export type RegExpOrRegExpWithGroup = RegExp | RegExpWithGroup;
+
+function isRegExp(expression: RegExpOrRegExpWithGroup): expression is RegExp {
+	return (expression as RegExp).source !== undefined;
+}
+
+export interface Replacement {
 	selection: Selection;
 	value: string;
 }
 
-export type Replacements = IReplacement[];
+export type Replacements = Replacement[];
 
 export function findReplacements(
 	document: TextDocument,
 	content: string,
 	value: string,
-	expression?: RegExp
+	expression?: RegExpOrRegExpWithGroup
 ): Replacements | undefined {
 	if (!expression) {
 		return undefined;
 	}
 
-	const results = matchAll(expression, content);
+	const exp = isRegExp(expression) ? expression : expression.expression;
+	const results = matchAll(exp, content);
 	if (!results || !results.length) {
 		return undefined;
 	}
 
+	const groups = !isRegExp(expression) ? expression.groups : null;
 	const replacements: Replacements = [];
 	for (let i = 0; i < results.length; i++) {
 		const result = results[i];
 		if (result !== null && result.length) {
-			const match = result[0];
+			const match = groups && result.groups ? result.groups[groups[0]] : result[0];
 			if (match) {
-				const index = result.index !== undefined ? result.index : -1;
+				let index = result.index !== undefined ? result.index : -1;
 				if (index === -1) {
 					continue;
+				}
+				if (groups) {
+					index += result[0].indexOf(match);
 				}
 
 				const startPosition = document.positionAt(index);
 				const endPosition = document.positionAt(index + match.length);
 				const selection = new Selection(startPosition, endPosition);
 
-				replacements.push({ selection, value });
+				replacements.push({
+					selection,
+					value: value ? value : document.getText(selection)
+				});
 			}
 		}
 	}
@@ -492,18 +510,26 @@ export function findReplacement(
 	document: TextDocument,
 	content: string,
 	value: string,
-	expression?: RegExp
-): IReplacement | undefined {
-	const result = expression ? expression.exec(content) : null;
+	expression?: RegExpOrRegExpWithGroup
+): Replacement | undefined {
+	const exp = isRegExp(expression) ? expression : expression.expression;
+	const result = exp ? exp.exec(content) : null;
 	if (result !== null && result.length) {
-		const match = result[0];
+		const groups = !isRegExp(expression) ? expression.groups : null;
+		const match = groups && result.groups ? result.groups[groups[0]] : result[0];
 		if (match) {
-			const index = result.index;
+			let index = result.index;
+			if (groups) {
+				index += result[0].indexOf(match);
+			}
 			const startPosition = document.positionAt(index);
 			const endPosition = document.positionAt(index + match.length);
 			const selection = new Selection(startPosition, endPosition);
 
-			return { selection, value };
+			return {
+				selection,
+				value: value ? value : document.getText(selection)
+			};
 		}
 	}
 
@@ -511,7 +537,7 @@ export function findReplacement(
 }
 
 export async function applyReplacements(replacements: Replacements, editor: TextEditor) {
-	if (replacements) {
+	if (replacements && replacements.length) {
 		await editor.edit(builder => {
 			replacements.forEach(replacement =>
 				builder.replace(replacement.selection, replacement.value)

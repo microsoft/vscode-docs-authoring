@@ -119,7 +119,7 @@ export const languages: HighlightLanguages = [
 	{ language: 'R', aliases: ['r'], extensions: ['.r'] },
 	{
 		language: 'Razor CSHTML',
-		aliases: ['cshtml', 'razor', 'razor-cshtml'],
+		aliases: ['razor', 'cshtml', 'razor-cshtml'],
 		extensions: ['.cshtml', '.razor']
 	},
 	{ language: 'REST API', aliases: ['rest'] },

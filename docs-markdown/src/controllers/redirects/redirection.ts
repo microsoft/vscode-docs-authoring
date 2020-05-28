@@ -13,6 +13,12 @@ export class RedirectionFile implements MasterRedirection {
 	public redirectDocumentId: boolean = false;
 	public redirections: any;
 
+	// Members mapping to JSON elements in master redirection file
+	// tslint:disable: variable-name
+	public source_path: string;
+	public redirect_url: string;
+	public redirect_document_id: boolean = false;
+
 	constructor(
 		filePath: string,
 		redirectUrl: string,
@@ -20,9 +26,9 @@ export class RedirectionFile implements MasterRedirection {
 		folder: WorkspaceFolder | undefined
 	) {
 		this.fileFullPath = filePath;
-		this.sourcePath = this.getRelativePathToRoot(filePath, folder);
-		this.redirectUrl = redirectUrl;
-		this.redirectDocumentId = redirectDocumentId;
+		this.source_path = this.getRelativePathToRoot(filePath, folder);
+		this.redirect_url = redirectUrl;
+		this.redirect_document_id = redirectDocumentId;
 	}
 
 	public getRelativePathToRoot(filePath: any, folder: WorkspaceFolder | undefined): string {

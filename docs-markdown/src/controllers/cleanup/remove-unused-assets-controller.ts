@@ -41,6 +41,7 @@ export async function removeUnusedImagesAndIncludes(
 						// read through data and get images and includes,
 						// cross them with our list of images and includes
 						let match: any;
+						// tslint:disable-next-line: no-conditional-assignment
 						while ((match = INCLUDE_RE.exec(data))) {
 							unusedFiles = unusedFiles.filter(ff => {
 								const ffPath = decodeURI(

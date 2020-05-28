@@ -14,7 +14,7 @@ export async function removeDefaultValuesInRedirects() {
 
 	let removedDefaults = 0;
 	redirects.redirections.forEach(redirect => {
-		if (redirect.redirectDocumentId === false) {
+		if (redirect.redirect_document_id === false) {
 			removedDefaults++;
 		}
 	});

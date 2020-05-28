@@ -112,6 +112,12 @@ Cleanup scripts available:
 - Master redirection file: Adds redirect_url entries to the master redirect file and removes redirected Markdown files from the repo.
 - Everything: Runs all the available cleanup scripts.
 
+### Collapse relative links
+
+Added "Collapse relative links" context-menu item for markdown files. Within a markdown file, right-click to open the context menu. Select "Collapse relative links" to resolve relative links that are unnecessarily verbose. For example, if *doc-1.md* in the *articles* directory has a relative link such as `[Link](../../articles/sub/doc-2.md)`, it could be simplified to `[Link](sub/doc-2.md)`.
+
+Additionally, an explorer context-menu item has been added to expose this functionality for an entire directory structure. Righ-click on a folder, and select "Collapse relative links in folder" to ensure that all markdown files have their relative links collapsed.
+
 ### Reformat Markdown tables
 
 In a Markdown (*\*.md*) file, when you select a complete table - two table formatting context menu items are now available. Right-click on the selected Markdown table to open the context menu. You will see something similar to the following menu items:

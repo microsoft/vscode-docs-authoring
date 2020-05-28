@@ -4,6 +4,7 @@ import { basename, dirname, extname, join, relative } from 'path';
 import * as recursive from 'recursive-readdir';
 import {
 	CompletionItem,
+	InputBoxOptions,
 	Position,
 	QuickPickItem,
 	QuickPickOptions,
@@ -17,6 +18,7 @@ import {
 	isMarkdownFileCheck,
 	isValidEditor,
 	noActiveEditorMessage,
+	postWarning,
 	setCursorPosition
 } from '../helper/common';
 import { sendTelemetryData } from '../helper/telemetry';
@@ -36,7 +38,8 @@ export function insertImageCommand() {
 		{ command: applyIcon.name, callback: applyIcon },
 		{ command: applyComplex.name, callback: applyComplex },
 		{ command: applyLocScope.name, callback: applyLocScope },
-		{ command: applyLightbox.name, callback: applyLightbox }
+		{ command: applyLightbox.name, callback: applyLightbox },
+		{ command: applyLink.name, callback: applyLink }
 	];
 	return commands;
 }
@@ -68,6 +71,10 @@ export function pickImageType() {
 		description: '',
 		label: 'Add lightbox to image'
 	});
+	items.push({
+		description: '',
+		label: 'Add link to image'
+	});
 	window.showQuickPick(items, opts).then(selection => {
 		if (!selection) {
 			return;
@@ -76,10 +83,6 @@ export function pickImageType() {
 			case 'image':
 				applyImage();
 				commandOption = 'image';
-				break;
-			case 'image':
-				applyImage();
-				commandOption = 'image (docs markdown)';
 				break;
 			case 'icon image':
 				applyIcon();
@@ -96,6 +99,10 @@ export function pickImageType() {
 			case 'add lightbox to image':
 				applyLightbox();
 				commandOption = 'lightbox';
+				break;
+			case 'add link to image':
+				applyLink();
+				commandOption = 'link';
 				break;
 		}
 		sendTelemetryData(telemetryCommand, commandOption);
@@ -427,9 +434,8 @@ export async function applyLocScope() {
 		noActiveEditorMessage();
 		return;
 	}
-
 	// if user has not selected any text, then continue
-	const RE_LOC_SCOPE = /:::image\s+((source|type|alt-text|lightbox|border)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+	const RE_LOC_SCOPE = /:::image\s+((source|type|alt-text|lightbox|border|link)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
 	const position = new Position(editor.selection.active.line, editor.selection.active.character);
 	// get the current editor position and check if user is inside :::image::: tags
 	const wordRange = editor.document.getWordRangeAtPosition(position, RE_LOC_SCOPE);
@@ -466,7 +472,7 @@ export async function applyLocScope() {
 			});
 		}
 	} else {
-		const RE_LOC_SCOPE_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+		const RE_LOC_SCOPE_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope|link)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
 		const locScopeAlreadyExists = editor.document.getWordRangeAtPosition(
 			position,
 			RE_LOC_SCOPE_EXISTS
@@ -490,7 +496,7 @@ export async function applyLightbox() {
 	}
 
 	// if user has not selected any text, then continue
-	const RE_LIGHTBOX = /:::image\s+((source|type|alt-text|loc-scope|border)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+	const RE_LIGHTBOX = /:::image\s+((source|type|alt-text|loc-scope|border|link)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
 	const position = new Position(editor.selection.active.line, editor.selection.active.character);
 	// get the current editor position and check if user is inside :::image::: tags
 	const wordRange = editor.document.getWordRangeAtPosition(position, RE_LIGHTBOX);
@@ -534,7 +540,7 @@ export async function applyLightbox() {
 			}
 		});
 	} else {
-		const RE_LIGHTBOX_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+		const RE_LIGHTBOX_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope|link)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
 		const lightboxAlreadyExists = editor.document.getWordRangeAtPosition(
 			position,
 			RE_LIGHTBOX_EXISTS
@@ -571,4 +577,46 @@ export function imageCompletionProvider() {
 		new CompletionItem(`:::image type="complex" source="" alt-text="" loc-scope="":::`)
 	);
 	return completionItems;
+}
+
+export async function applyLink() {
+	// get editor, its needed to apply the output to editor window.
+	const editor = window.activeTextEditor;
+	if (!editor) {
+		noActiveEditorMessage();
+		return;
+	}
+
+	// if user has not selected any text, then continue
+	const RE_LINK = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+)"\s*)+:::/gm;
+	const position = new Position(editor.selection.active.line, editor.selection.active.character);
+	// get the current editor position and check if user is inside :::image::: tags
+	const wordRange = editor.document.getWordRangeAtPosition(position, RE_LINK);
+	if (wordRange) {
+		const options: InputBoxOptions = {
+			placeHolder: 'Enter link (URL or relative path)'
+		};
+		window.showInputBox(options).then(imageLink => {
+			if (imageLink === undefined) {
+				postWarning('No link provided, abandoning command.');
+			} else {
+				editor.edit(selected => {
+					selected.insert(
+						new Position(wordRange.end.line, wordRange.end.character - 3),
+						` link="${imageLink}"`
+					);
+				});
+			}
+		});
+	} else {
+		const RE_LINK_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope|link)="([a-zA-Z0-9_.\/ -:]+)"\s*)+:::/gm;
+		const linkAlreadyExists = editor.document.getWordRangeAtPosition(position, RE_LINK_EXISTS);
+		if (linkAlreadyExists) {
+			window.showErrorMessage('link attribute already exists on :::image::: tag.');
+			return;
+		}
+
+		window.showErrorMessage('invalid cursor position. You must be inside :::image::: tags.');
+	}
+	return;
 }

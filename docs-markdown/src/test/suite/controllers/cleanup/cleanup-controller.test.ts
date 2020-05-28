@@ -34,14 +34,18 @@ const filePath = resolve(
 const folderPath = resolve(__dirname, '../../../../../../src/test/data/repo/articles');
 
 suite('Cleanup Controller', () => {
+	suiteSetup(async () => {
+		sinon.stub(telemetry, 'sendTelemetryData');
+	});
 	// Reset and tear down the spies
 	teardown(() => {
 		chai.spy.restore(common);
 	});
 	suiteTeardown(async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
+		sinon.restore();
 	});
-	test('cleanup repo - insertAlertCommand', () => {
+	test('cleanup repo - applyCleanupCommand', () => {
 		const controllerCommands = [{ command: applyCleanup.name, callback: applyCleanup }];
 		expect(applyCleanupCommand()).to.deep.equal(controllerCommands);
 	});
@@ -64,10 +68,8 @@ suite('Cleanup Controller', () => {
 			return Promise.resolve({ label: 'master redirection file', detail: '' }) as Thenable<any>;
 		};
 		const spy = chai.spy.on(masterRedirection, 'generateMasterRedirectionFile');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanup();
 		await sleep(sleepTime);
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup repo - recurseCallback - single-valued metadata', async () => {
@@ -75,9 +77,7 @@ suite('Cleanup Controller', () => {
 			return Promise.resolve({ label: 'single-valued metadata', detail: '' }) as Thenable<any>;
 		};
 		const spy = chai.spy.on(utilities, 'recurseCallback');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanup();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup repo - recurseCallback - microsoft links', async () => {
@@ -85,9 +85,7 @@ suite('Cleanup Controller', () => {
 			return Promise.resolve({ label: 'microsoft links', detail: '' }) as Thenable<any>;
 		};
 		const spy = chai.spy.on(utilities, 'recurseCallback');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanup();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup repo - recurseCallback - capitalization of metadata values', async () => {
@@ -98,9 +96,7 @@ suite('Cleanup Controller', () => {
 			}) as Thenable<any>;
 		};
 		const spy = chai.spy.on(utilities, 'recurseCallback');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanup();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup repo - empty metadata - empty values', async () => {
@@ -110,11 +106,9 @@ suite('Cleanup Controller', () => {
 			.onSecondCall()
 			.resolves({ label: 'remove metadata attributes with empty values', detail: '' });
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanup();
 		await sleep(extendedSleepTime);
 		mockShowQuickPick.restore();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup repo - empty metadata - n/a', async () => {
@@ -124,11 +118,9 @@ suite('Cleanup Controller', () => {
 			.onSecondCall()
 			.resolves({ label: `remove metadata attributes with "na" or "n/a"`, detail: '' });
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanup();
 		await sleep(extendedSleepTime);
 		mockShowQuickPick.restore();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup repo - empty metadata - commented', async () => {
@@ -138,11 +130,9 @@ suite('Cleanup Controller', () => {
 			.onSecondCall()
 			.resolves({ label: 'remove commented out metadata attributes', detail: '' });
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanup();
 		await sleep(extendedSleepTime);
 		mockShowQuickPick.restore();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup repo - empty metadata - all', async () => {
@@ -150,11 +140,9 @@ suite('Cleanup Controller', () => {
 		mockShowQuickPick.onFirstCall().resolves({ label: 'empty metadata', detail: '' });
 		mockShowQuickPick.onSecondCall().resolves({ label: 'remove all', detail: '' });
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanup();
 		await sleep(extendedSleepTime);
 		mockShowQuickPick.restore();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup file - getCleanUpQuickPick', async () => {
@@ -167,9 +155,7 @@ suite('Cleanup Controller', () => {
 			return Promise.resolve({ label: 'single-valued metadata', detail: '' }) as Thenable<any>;
 		};
 		const spy = chai.spy.on(singleValuedMetadata, 'handleSingleValuedMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFile(Uri.file(filePath));
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup file - microsoft links', async () => {
@@ -177,9 +163,7 @@ suite('Cleanup Controller', () => {
 			return Promise.resolve({ label: 'microsoft links', detail: '' }) as Thenable<any>;
 		};
 		const spy = chai.spy.on(microsoftLinks, 'microsoftLinks');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFile(Uri.file(filePath));
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup file - capitalization of metadata values', async () => {
@@ -190,9 +174,7 @@ suite('Cleanup Controller', () => {
 			}) as Thenable<any>;
 		};
 		const spy = chai.spy.on(capitalizationOfMetadata, 'capitalizationOfMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFile(Uri.file(filePath));
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup file - empty metadata - empty values', async () => {
@@ -202,10 +184,8 @@ suite('Cleanup Controller', () => {
 			.onSecondCall()
 			.resolves({ label: 'remove metadata attributes with empty values', detail: '' });
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFile(Uri.file(filePath));
 		mockShowQuickPick.restore();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup file - empty metadata - n/a', async () => {
@@ -215,10 +195,8 @@ suite('Cleanup Controller', () => {
 			.onSecondCall()
 			.resolves({ label: `remove metadata attributes with "na" or "n/a"`, detail: '' });
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFile(Uri.file(filePath));
 		mockShowQuickPick.restore();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup file - empty metadata - commented', async () => {
@@ -228,10 +206,8 @@ suite('Cleanup Controller', () => {
 			.onSecondCall()
 			.resolves({ label: 'remove commented out metadata attributes', detail: '' });
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFile(Uri.file(filePath));
 		mockShowQuickPick.restore();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup file - empty metadata - all', async () => {
@@ -239,10 +215,8 @@ suite('Cleanup Controller', () => {
 		mockShowQuickPick.onFirstCall().resolves({ label: 'empty metadata', detail: '' });
 		mockShowQuickPick.onSecondCall().resolves({ label: 'remove all', detail: '' });
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFile(Uri.file(filePath));
 		mockShowQuickPick.restore();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup folder - getCleanUpQuickPick', async () => {
@@ -255,10 +229,8 @@ suite('Cleanup Controller', () => {
 			return Promise.resolve({ label: 'single-valued metadata', detail: '' }) as Thenable<any>;
 		};
 		const spy = chai.spy.on(singleValuedMetadata, 'handleSingleValuedMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFolder(Uri.file(folderPath));
 		await sleep(extendedSleepTime);
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup folder - microsoft links', async () => {
@@ -266,10 +238,8 @@ suite('Cleanup Controller', () => {
 			return Promise.resolve({ label: 'microsoft links', detail: '' }) as Thenable<any>;
 		};
 		const spy = chai.spy.on(microsoftLinks, 'microsoftLinks');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFolder(Uri.file(folderPath));
 		await sleep(extendedSleepTime);
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup folder - capitalization of metadata values', async () => {
@@ -280,10 +250,8 @@ suite('Cleanup Controller', () => {
 			}) as Thenable<any>;
 		};
 		const spy = chai.spy.on(capitalizationOfMetadata, 'capitalizationOfMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFolder(Uri.file(folderPath));
 		await sleep(extendedSleepTime);
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup folder - empty metadata - empty values', async () => {
@@ -293,11 +261,9 @@ suite('Cleanup Controller', () => {
 			.onSecondCall()
 			.resolves({ label: 'remove metadata attributes with empty values', detail: '' });
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFolder(Uri.file(folderPath));
 		await sleep(extendedSleepTime);
 		mockShowQuickPick.restore();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup folder - empty metadata - n/a', async () => {
@@ -307,11 +273,9 @@ suite('Cleanup Controller', () => {
 			.onSecondCall()
 			.resolves({ label: `remove metadata attributes with "na" or "n/a"`, detail: '' });
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFolder(Uri.file(folderPath));
 		await sleep(extendedSleepTime);
 		mockShowQuickPick.restore();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup folder - empty metadata - commented', async () => {
@@ -321,11 +285,9 @@ suite('Cleanup Controller', () => {
 			.onSecondCall()
 			.resolves({ label: 'remove commented out metadata attributes', detail: '' });
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFolder(Uri.file(folderPath));
 		await sleep(extendedSleepTime);
 		mockShowQuickPick.restore();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup folder - empty metadata - all', async () => {
@@ -333,11 +295,9 @@ suite('Cleanup Controller', () => {
 		mockShowQuickPick.onFirstCall().resolves({ label: 'empty metadata', detail: '' });
 		mockShowQuickPick.onSecondCall().resolves({ label: 'remove all', detail: '' });
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await applyCleanupFolder(Uri.file(folderPath));
 		await sleep(extendedSleepTime);
 		mockShowQuickPick.restore();
-		stub.restore();
 		expect(spy).to.have.been.called();
 	});
 });

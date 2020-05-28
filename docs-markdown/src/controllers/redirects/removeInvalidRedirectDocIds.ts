@@ -14,14 +14,14 @@ export async function detectInvalidDocumentIdRedirects() {
 	const { config, editor, folder, options, redirects } = redirectsAndConfigOptions;
 	const redirectsLookup = new Map<
 		string,
-		{ redirect: RedirectUrl | null; redirection: MasterRedirection }
+		{ redirect: RedirectUrl | null; redirection: IMasterRedirection }
 	>();
 	redirects.redirections.forEach(r => {
-		if (!r.redirectDocumentId) {
+		if (!r.redirect_document_id) {
 			return;
 		}
-		redirectsLookup.set(r.sourcePath, {
-			redirect: RedirectUrl.parse(options, r.redirectUrl),
+		redirectsLookup.set(r.source_path, {
+			redirect: RedirectUrl.parse(options, r.redirect_url),
 			redirection: r
 		});
 	});
@@ -64,15 +64,15 @@ export async function detectInvalidDocumentIdRedirects() {
 						return;
 					}
 
-					if (!!redirect.redirectDocumentId) {
+					if (!!redirect.redirect_document_id) {
 						if (url.isExternalUrl) {
-							redirect.redirectDocumentId = false;
+							redirect.redirect_document_id = false;
 							fixes++;
 							return;
 						}
 
-						if (!redirect.redirectUrl.startsWith(`/${options.docsetName}/`)) {
-							redirect.redirectDocumentId = false;
+						if (!redirect.redirect_url.startsWith(`/${options.docsetName}/`)) {
+							redirect.redirect_document_id = false;
 							fixes++;
 							return;
 						}
@@ -83,7 +83,7 @@ export async function detectInvalidDocumentIdRedirects() {
 							url.filePath.replace('.md', '/index.yml')
 						];
 						if (!files.some((path: string) => fileExists(path))) {
-							redirect.redirectDocumentId = false;
+							redirect.redirect_document_id = false;
 							fixes++;
 							return;
 						}
