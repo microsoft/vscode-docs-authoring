@@ -1,31 +1,32 @@
-"use-strict";
+'use-strict';
 
-import * as vscode from "vscode";
-import { output } from "../extension";
+import * as vscode from 'vscode';
+
+export const output = vscode.window.createOutputChannel('docs-linting');
 
 /**
  * Create timestamp
  */
 export function generateTimestamp() {
-    const date = new Date(Date.now());
-    return {
-        msDateValue: date.toLocaleDateString("en-us"),
-        msTimeValue: date.toLocaleTimeString([], { hour12: false }),
-    };
+	const date = new Date(Date.now());
+	return {
+		msDateValue: date.toLocaleDateString('en-us'),
+		msTimeValue: date.toLocaleTimeString([], { hour12: false })
+	};
 }
 
 /**
  * Check for active extensions
  */
 export function checkExtension(extensionName: string, notInstalledMessage?: string) {
-    const extensionValue = vscode.extensions.getExtension(extensionName);
-    if (!extensionValue) {
-        if (notInstalledMessage) {
-            output.appendLine(notInstalledMessage);
-        }
-        return false;
-    }
-    return extensionValue.isActive;
+	const extensionValue = vscode.extensions.getExtension(extensionName);
+	if (!extensionValue) {
+		if (notInstalledMessage) {
+			output.appendLine(notInstalledMessage);
+		}
+		return false;
+	}
+	return extensionValue.isActive;
 }
 
 /**
@@ -33,8 +34,8 @@ export function checkExtension(extensionName: string, notInstalledMessage?: stri
  * @param message
  */
 export function showStatusMessage(message: string) {
-    const { msTimeValue } = generateTimestamp();
-    output.appendLine(`[${msTimeValue}] - ${message}`);
+	const { msTimeValue } = generateTimestamp();
+	output.appendLine(`[${msTimeValue}] - ${message}`);
 }
 
 /**
@@ -42,5 +43,5 @@ export function showStatusMessage(message: string) {
  * @param {string} message - the message to post to the editor as an error.
  */
 export async function showWarningMessage(message: string) {
-    vscode.window.showWarningMessage(message);
+	vscode.window.showWarningMessage(message);
 }

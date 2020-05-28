@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.2.70 (May 25th, 2020)
+
+- Added support for clickable images
+- Fixed master redirect command
+
+## 0.2.69 (May 20th, 2020)
+
+- Added collapseRelativeLinks to link-controller
 - Fixed broken include-controller tests when running on \*nix systems
 - Updated stub of "sendTelemetryEvent" in cleanup-controller which was throwing an error.
 
@@ -275,4 +283,3 @@ First release with the following functionality:
 - Includes
 - Snippets
 - Preview
-""''&copy;&trade;&reg;*

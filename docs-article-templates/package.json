@@ -1,101 +1,118 @@
 {
-  "name": "docs-article-templates",
-  "displayName": "docs-article-templates",
-  "description": "Docs article templates",
-  "icon": "images/docs-logo-ms.png",
-  "aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-  "version": "0.2.9",
-  "publisher": "docsmsft",
-  "engines": {
-    "vscode": "^1.23.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-    "onLanguage:markdown",
-    "onLanguage:yaml"
-  ],
-  "main": "./dist/extension",
-  "contributes": {
-    "commands": [
-      {
-        "command": "applyTemplate",
-        "title": "Template",
-        "category": "Docs",
-        "icon": "node_modules/octicons/build/svg/file.svg"
-      }
-    ],
-    "configuration": {
-      "type": "object",
-      "title": "Docs Article Templates Extension Configuration",
-      "properties": {
-        "docs.templates.alias": {
-          "type": "string",
-          "default": "",
-          "description": "Microsoft alias"
-        },
-        "docs.templates.githubid": {
-          "type": "string",
-          "default": "",
-          "description": "GitHub ID"
-        },
-        "docs.templates.learn_repo_id": {
-          "type": "string",
-          "default": "",
-          "description": "Default Learn repo"
-        }
-      }
-    },
-    "menus": {
-      "commandPalette": [
-        {
-          "command": "applyTemplate",
-          "group": "Docs"
-        }
-      ]
-    }
-  },
-  "scripts": {
-    "vscode:prepublish": "webpack --mode production",
-    "webpack": "webpack --mode development",
-    "webpack-dev": "webpack --mode development --watch",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test",
-    "lint": "tslint -c tslint.json 'src/**/*.ts'"
-  },
-  "dependencies": {
-    "axios": "^0.19.0",
-    "download-git-repo": "^1.0.2",
-    "front-matter": "^3.0.1",
-    "js-yaml": "^3.13.1",
-    "node-dir": "^0.1.17",
-    "octicons": "^4.4.0",
-    "vscode-extension-telemetry": "^0.1.1"
-  },
-  "devDependencies": {
-    "@types/mocha": "^2.2.42",
-    "@types/node": "^7.0.43",
-    "@types/node-dir": "0.0.32",
-    "mocha": "^7.1.1",
-    "tslint": "^5.20.1",
-    "terser-webpack-plugin": "^2.3.5",
-    "ts-loader": "^6.2.2",
-    "typescript": "^2.6.1",
-    "vscode": "^1.1.33",
-    "webpack": "^4.42.1",
-    "webpack-bundle-analyzer": "^3.6.1",
-    "webpack-cli": "^3.3.11"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Microsoft/vscode-docs-authoring.git"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
-  },
-  "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-article-templates"
+	"name": "docs-article-templates",
+	"displayName": "docs-article-templates",
+	"description": "Docs article templates",
+	"icon": "images/docs-logo-ms.png",
+	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
+	"version": "0.2.9",
+	"publisher": "docsmsft",
+	"engines": {
+		"vscode": "^1.23.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onLanguage:markdown",
+		"onLanguage:yaml"
+	],
+	"main": "./dist/extension",
+	"contributes": {
+		"commands": [
+			{
+				"command": "applyTemplate",
+				"title": "Template",
+				"category": "Docs",
+				"icon": "node_modules/octicons/build/svg/file.svg"
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "Docs Article Templates Extension Configuration",
+			"properties": {
+				"docs.templates.alias": {
+					"type": "string",
+					"default": "",
+					"description": "Microsoft alias"
+				},
+				"docs.templates.githubid": {
+					"type": "string",
+					"default": "",
+					"description": "GitHub ID"
+				},
+				"docs.templates.learn_repo_id": {
+					"type": "string",
+					"default": "",
+					"description": "Default Learn repo"
+				}
+			}
+		},
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "applyTemplate",
+					"group": "Docs"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "webpack --mode production",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"prettier": "prettier --write \"**/*.{ts,js,json,yml}\"",
+		"prettier-check": "prettier --check \"**/*.{ts,js,json,yml}\" --loglevel debug",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "npm run compile && node ./node_modules/vscode/bin/test",
+		"lint": "eslint . --ext .ts"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
+			"pre-push": "npm run compile && npm run lint"
+		}
+	},
+	"dependencies": {
+		"axios": "^0.19.0",
+		"download-git-repo": "^1.0.2",
+		"front-matter": "^3.0.1",
+		"js-yaml": "^3.13.1",
+		"node-dir": "^0.1.17",
+		"octicons": "^4.4.0",
+		"vscode-extension-telemetry": "^0.1.1"
+	},
+	"devDependencies": {
+		"@types/mocha": "^2.2.42",
+		"@types/node": "^7.0.43",
+		"@types/node-dir": "0.0.32",
+		"@typescript-eslint/eslint-plugin": "^2.34.0",
+		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",
+		"@typescript-eslint/parser": "^2.34.0",
+		"eslint": "^7.0.0",
+		"eslint-import-resolver-webpack": "^0.12.1",
+		"eslint-plugin-import": "^2.20.2",
+		"husky": "^4.2.5",
+		"mocha": "^7.1.1",
+		"prettier": "^2.0.5",
+		"pretty-quick": "^2.0.1",
+		"tslint": "^5.20.1",
+		"terser-webpack-plugin": "^2.3.5",
+		"ts-loader": "^6.2.2",
+		"typescript": "^3.9.3",
+		"vscode": "^1.1.33",
+		"webpack": "^4.42.1",
+		"webpack-bundle-analyzer": "^3.6.1",
+		"webpack-cli": "^3.3.11"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Microsoft/vscode-docs-authoring.git"
+	},
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
+	},
+	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-article-templates"
 }

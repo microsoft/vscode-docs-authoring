@@ -1,9 +1,9 @@
-// @ts-check
+/* eslint-disable @typescript-eslint/no-var-requires */
 
-"use strict";
+'use strict';
 
 // schema urls
 module.exports.IMAGE_SCHEMA =
-  "https://static.docs.com/ui/latest/schemas/extensions/Image.schema.json";
+	'https://static.docs.com/ui/latest/schemas/extensions/Image.schema.json';
 module.exports.VIDEO_SCHEMA =
-  "https://static.docs.com/ui/latest/schemas/extensions/Video.schema.json";
+	'https://static.docs.com/ui/latest/schemas/extensions/Video.schema.json';

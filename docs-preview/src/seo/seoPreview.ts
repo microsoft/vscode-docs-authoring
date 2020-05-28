@@ -1,49 +1,51 @@
-import { existsSync } from "fs";
-import * as moment from "moment";
-import * as os from "os";
-import { basename, dirname, join, relative } from "path";
-import {
-    TextDocumentContentProvider,
-    Uri,
-    window,
-    workspace,
-} from "vscode";
-import { getBreadCrumbPath, parseMarkdownMetadata, parseYamlMetadata } from "./seoHelpers";
+import { existsSync } from 'fs';
+import * as moment from 'moment';
+import * as os from 'os';
+import { basename, dirname, join, relative } from 'path';
+import { TextDocumentContentProvider, Uri, window, workspace } from 'vscode';
+import { getBreadCrumbPath, parseMarkdownMetadata, parseYamlMetadata } from './seoHelpers';
 
-const metadataRegex = new RegExp(`^(---)([^]+?)(---)$`, "m");
+const metadataRegex = new RegExp(`^(---)([^]+?)(---)$`, 'm');
 
 export class DocumentContentProvider implements TextDocumentContentProvider {
-    public static readonly scheme = "seoPreview";
-    private sourceUri: Uri;
-    public provideTextDocumentContent(): Thenable<string> {
-        const editor = window.activeTextEditor;
-        this.sourceUri = editor.document.uri;
+	public static readonly scheme = 'seoPreview';
+	private sourceUri: Uri;
+	public provideTextDocumentContent(): Thenable<string> {
+		const editor = window.activeTextEditor;
+		this.sourceUri = editor.document.uri;
 
-        const workspaceRoot = workspace.rootPath;
+		const workspaceRoot = workspace.rootPath;
 
-        return workspace.openTextDocument(this.sourceUri)
-            .then(async (document) => {
-                const content = document.getText();
+		return workspace.openTextDocument(this.sourceUri).then(async document => {
+			const content = document.getText();
 
-                if (!workspaceRoot) {
-                    return await this.buildHtmlFromContent(content, basename(document.fileName), dirname(document.fileName));
-                }
+			if (!workspaceRoot) {
+				return await this.buildHtmlFromContent(
+					content,
+					basename(document.fileName),
+					dirname(document.fileName)
+				);
+			}
 
-                const basePath = dirname(document.fileName);
-                let docsetRoot = this.getDocsetRoot(basePath) || workspaceRoot;
-                let filePath = relative(docsetRoot, document.fileName);
-                if (os.type() === "Windows_NT") {
-                    docsetRoot = docsetRoot.replace(/\\/g, "/");
-                    filePath = filePath.replace(/\\/g, "/");
-                }
-                return await this.buildHtmlFromContent(content, filePath, docsetRoot);
-            });
-    }
+			const basePath = dirname(document.fileName);
+			let docsetRoot = this.getDocsetRoot(basePath) || workspaceRoot;
+			let filePath = relative(docsetRoot, document.fileName);
+			if (os.type() === 'Windows_NT') {
+				docsetRoot = docsetRoot.replace(/\\/g, '/');
+				filePath = filePath.replace(/\\/g, '/');
+			}
+			return await this.buildHtmlFromContent(content, filePath, docsetRoot);
+		});
+	}
 
-    private async buildHtmlFromContent(content: string, filePath: string, basePath: string): Promise<string> {
-        const body = await this.parseFileIntoSEOHtml(content, filePath, basePath);
+	private async buildHtmlFromContent(
+		content: string,
+		filePath: string,
+		basePath: string
+	): Promise<string> {
+		const body = await this.parseFileIntoSEOHtml(content, filePath, basePath);
 
-        return `<!DOCTYPE html>
+		return `<!DOCTYPE html>
         <html>
         <head>
             <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
@@ -53,22 +55,32 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
             ${body}
         </body>
         </html>`;
-    }
+	}
 
-    private async parseFileIntoSEOHtml(content, filePath, basePath) {
-        const breadCrumbPath = getBreadCrumbPath(basePath, filePath);
-        if (filePath.endsWith(".md")) {
-            return await this.markdownMetadataIntoSEOHtml(content, breadCrumbPath, basePath, filePath);
-        } else if (filePath.endsWith(".yml") || filePath.endsWith(".yaml")) {
-            return await this.ymlMetadataIntoSEOHtml(content, breadCrumbPath, basePath, filePath);
-        } else {
-            return "<div>Unable to read file metadata</div>";
-        }
-    }
+	private async parseFileIntoSEOHtml(content, filePath, basePath) {
+		const breadCrumbPath = getBreadCrumbPath(basePath, filePath);
+		if (filePath.endsWith('.md')) {
+			return await this.markdownMetadataIntoSEOHtml(content, breadCrumbPath, basePath, filePath);
+		} else if (filePath.endsWith('.yml') || filePath.endsWith('.yaml')) {
+			return await this.ymlMetadataIntoSEOHtml(content, breadCrumbPath, basePath, filePath);
+		} else {
+			return '<div>Unable to read file metadata</div>';
+		}
+	}
 
-    private async ymlMetadataIntoSEOHtml(content: string, breadCrumbPath: string, basePath, filePath) {
-        const { title, description } = await parseYamlMetadata(content, breadCrumbPath, basePath, filePath);
-        return `<div class="search-result">
+	private async ymlMetadataIntoSEOHtml(
+		content: string,
+		breadCrumbPath: string,
+		basePath,
+		filePath
+	) {
+		const { title, description } = await parseYamlMetadata(
+			content,
+			breadCrumbPath,
+			basePath,
+			filePath
+		);
+		return `<div class="search-result">
                     <div class="header">
                         <div class="breadcrumbs">${breadCrumbPath}<span class="down-arrow"></span></div>
                         <div><a href="#" class="title"><h3>${title}</h3></a></div>
@@ -79,13 +91,23 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                         </p>
                     </div>
                 </div>`;
-    }
+	}
 
-    private async markdownMetadataIntoSEOHtml(markdown: string, breadCrumbPath: string, basePath, filePath) {
-        const metadataMatch = markdown.match(metadataRegex);
-        if (metadataMatch) {
-            const { title, description, date } = await parseMarkdownMetadata(metadataMatch[2], markdown, basePath, filePath);
-            return `<div class="search-result">
+	private async markdownMetadataIntoSEOHtml(
+		markdown: string,
+		breadCrumbPath: string,
+		basePath,
+		filePath
+	) {
+		const metadataMatch = markdown.match(metadataRegex);
+		if (metadataMatch) {
+			const { title, description, date } = await parseMarkdownMetadata(
+				metadataMatch[2],
+				markdown,
+				basePath,
+				filePath
+			);
+			return `<div class="search-result">
                         <div class="header">
                             <div class="breadcrumbs">${breadCrumbPath}<span class="down-arrow"></span></div>
                             <div><a href="#" class="title"><h3>${title}</h3></a></div>
@@ -96,35 +118,35 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                             </p>
                         </div>
                     </div>`;
-        } else {
-            return "<div>Unable to read file metadata</div>";
-        }
-    }
+		} else {
+			return '<div>Unable to read file metadata</div>';
+		}
+	}
 
-    private setDateHtml(date: string) {
-        if (date) {
-            date = moment(new Date(date)).format("ll");
-            return `<span class="date">${date} - </span>`;
-        } else {
-            return "";
-        }
-    }
+	private setDateHtml(date: string) {
+		if (date) {
+			date = moment(new Date(date)).format('ll');
+			return `<span class="date">${date} - </span>`;
+		} else {
+			return '';
+		}
+	}
 
-    private getDocsetRoot(dir: string): string {
-        if (dir && dirname(dir) !== dir) {
-            const config = join(dir, "docfx.json");
-            if (existsSync(config)) {
-                return dir;
-            }
+	private getDocsetRoot(dir: string): string {
+		if (dir && dirname(dir) !== dir) {
+			const config = join(dir, 'docfx.json');
+			if (existsSync(config)) {
+				return dir;
+			}
 
-            return this.getDocsetRoot(dirname(dir));
-        }
+			return this.getDocsetRoot(dirname(dir));
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    private getStyles(): string {
-        return `<style>
+	private getStyles(): string {
+		return `<style>
 			body {
                 margin-top: 20px;
                 background-color: #fff;
@@ -179,5 +201,5 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
                 left: 6px;
             }
 		</style>`;
-    }
+	}
 }

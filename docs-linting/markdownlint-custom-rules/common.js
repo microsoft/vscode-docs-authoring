@@ -1,6 +1,4 @@
-// @ts-check
-
-"use strict";
+'use strict';
 
 // Triple colon
 module.exports.singleColon = /^:/gm;
@@ -33,7 +31,7 @@ module.exports.rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
 module.exports.openNoLoc = /(:*)no-loc/gim;
 module.exports.openNoDashNoLoc = /(:*)noloc/gim;
 module.exports.missingTextAttributeNoLoc = /([a-z-]*(?==))/gim;
-module.exports.allowedNoLocAttributes = ["text"];
+module.exports.allowedNoLocAttributes = ['text'];
 module.exports.noLocTextMatch = /text\s*=\s*(")?(.*?)(")?/;
 module.exports.syntaxNoLocLooseMatch = /:::(.\s*)?(no-loc|noloc)(\s)?((\w+)=)?(")?(.*?)(")?:::/gim;
 module.exports.syntaxNoLocCaseSensitive = /(:::)no-loc\stext=(")?(.*?)(")?(:::)/gm;
@@ -44,7 +42,7 @@ module.exports.syntaxNoLoc = /:::no-loc\stext="(.*?)":::/gm;
 //image
 module.exports.syntaxImageLooseMatch = /((:+)(.\s*)(image.*(complex))(.\s*)(.*)(.:*)\s*(.*)\s*(.:*)([a-z]*-[a-z]*)(.:*))|((:+)(.\s*)(image)(.\s*)(.*)(.:*))/gim;
 module.exports.syntaxImageAttributes = /(:image)|([a-z-]*(?==))/gim;
-module.exports.allowedImageTypes = ["content", "complex", "icon"];
+module.exports.allowedImageTypes = ['content', 'complex', 'icon'];
 module.exports.imageTypeMatch = /type\s*=\s*"([a-z]*)"/m;
 module.exports.imageLongDescriptionMatch = /(:::)(.*)(:::)(((\s)*(.*))+)(:::)(.*)(:::)/im;
 module.exports.imageComplexEndTagMatch = /:::(\s*)?image-end:::/gim;
@@ -53,7 +51,7 @@ module.exports.imageLightboxMatch = /lightbox\s*=\s*"(.*?)"/m;
 module.exports.imageSourceMatch = /source\s*=\s*"(.*?)"/m;
 module.exports.imageAltTextMatch = /alt-text\s*=\s*"(.*?)"/m;
 module.exports.imageLocScopeMatch = /loc-scope\s*=\s*"(.*?)"/m;
-module.exports.imageAltTextTypes = ["content", "complex"];
+module.exports.imageAltTextTypes = ['content', 'complex'];
 
 // Alert
 module.exports.alertOpener = /^>\s+\[!/gm; // regex to find "> [!"
@@ -81,7 +79,7 @@ module.exports.xrefHasDisplayProperty = /displayProperty=/g;
 module.exports.xrefDisplayPropertyValues = /displayProperty=(fullName|nameWithType)/g;
 module.exports.xrefHasTwoProperties = /&/g;
 module.exports.syntaxXref = /(<|\()xref:(.*?)(\?)?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?))?(>|\))/g;
-module.exports.notEscapedCharacters = /(<|\()xref:(.*[\*\#\`].*)(>|\))/g;
+module.exports.notEscapedCharacters = /(<|\()xref:(.*[*#`].*)(>|\))/g;
 
 // Row
 module.exports.startRow = /^(:{3})row/gm;
@@ -98,13 +96,13 @@ module.exports.syntaxCodeLooseMatch = /(:+)(\s+)?code.*?(:+)/g;
 module.exports.syntaxCodeExactMatch = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+))?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/i;
 module.exports.syntaxCodeAttributes = /([a-z]*(?==))/g;
 module.exports.allowedCodeAttributes = [
-  ":code",
-  "language",
-  "source",
-  "range",
-  "id",
-  "interactive",
-  "highlight",
+	':code',
+	'language',
+	'source',
+	'range',
+	'id',
+	'interactive',
+	'highlight'
 ];
 module.exports.codeOpen = /:::code/i;
 module.exports.codeSourceMatch = /source="(.*?)"/;
@@ -114,11 +112,11 @@ module.exports.codeIdMatch = /id="(.*?)"/;
 module.exports.allowedRangeValues = /[0-9\- ,]+/;
 module.exports.codeInteractiveMatch = /interactive="(.*?)"/;
 module.exports.allowedInteractiveValues = [
-  "try-dotnet",
-  "try-dotnet-method",
-  "try-dotnet-class",
-  "cloudshell-powershell",
-  "cloudshell-bash",
+	'try-dotnet',
+	'try-dotnet-method',
+	'try-dotnet-class',
+	'cloudshell-powershell',
+	'cloudshell-bash'
 ];
 
 //video
@@ -127,4 +125,4 @@ module.exports.videoOpen = /:::video/gim;
 module.exports.videoSourceMatch = /source\s*=\s*"(.*?)"/m;
 module.exports.videoTitleMatch = /title\s*=\s*"(.*?)"/m;
 module.exports.videoMaxWidthMatch = /max-width\s*=\s*"(.*?)"/m;
-module.exports.allowedVideoAttributes = ["source", "title", "max-width"];
+module.exports.allowedVideoAttributes = ['source', 'title', 'max-width'];
