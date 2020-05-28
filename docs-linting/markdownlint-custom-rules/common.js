@@ -6,11 +6,13 @@
 module.exports.singleColon = /^:/gm;
 module.exports.tripleColonSyntax = /^:::\s?/gm;
 module.exports.validTripleColon = /^:::\s+/gm;
-module.exports.openAndClosingValidTripleColon = /^:::(.*):::/gmi;
+module.exports.openAndClosingValidTripleColon = /^:::(.*):::/gim;
+module.exports.AttributeMatchGlobal = /(\S+)=["]?((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/g;
+module.exports.AttributeMatch = /(\S+)=["]?((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/;
 
 // Markdown extensions (add valid/supported extensions to list)
 module.exports.openExtension = /^:(.*?)(zone|moniker|no-loc)/gm;
-module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc|image|code)(.:*)/g;
+module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc|image|code|video)(.:*)/g;
 module.exports.unsupportedExtensionRegex = /^:::\s+(.*)/gm;
 
 // Zones
@@ -28,25 +30,25 @@ module.exports.syntaxMoniker = /^:::\s+moniker\s+range/gm;
 module.exports.rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
 
 //no-loc
-module.exports.openNoLoc = /(:*)no-loc/gmi;
-module.exports.openNoDashNoLoc = /(:*)noloc/gmi;
-module.exports.missingTextAttributeNoLoc = /([a-z-]*(?==))/gmi;
+module.exports.openNoLoc = /(:*)no-loc/gim;
+module.exports.openNoDashNoLoc = /(:*)noloc/gim;
+module.exports.missingTextAttributeNoLoc = /([a-z-]*(?==))/gim;
 module.exports.allowedNoLocAttributes = ["text"];
 module.exports.noLocTextMatch = /text\s*=\s*(")?(.*?)(")?/;
-module.exports.syntaxNoLocLooseMatch = /:::(.\s*)?(no-loc|noloc)(\s)?((\w+)=)?(")?(.*?)(")?:::/gmi
-module.exports.syntaxNoLocCaseSensitive = /(:::)no-loc\stext=(")?(.*?)(")?(:::)/gm
-module.exports.syntaxNoQuotesNoLoc = /:::no-loc\stext=(.*?):::/gmi
-module.exports.syntaxSingleQuotesNoLoc = /:::no-loc\stext='(.*?)':::/gmi
+module.exports.syntaxNoLocLooseMatch = /:::(.\s*)?(no-loc|noloc)(\s)?((\w+)=)?(")?(.*?)(")?:::/gim;
+module.exports.syntaxNoLocCaseSensitive = /(:::)no-loc\stext=(")?(.*?)(")?(:::)/gm;
+module.exports.syntaxNoQuotesNoLoc = /:::no-loc\stext=(.*?):::/gim;
+module.exports.syntaxSingleQuotesNoLoc = /:::no-loc\stext='(.*?)':::/gim;
 module.exports.syntaxNoLoc = /:::no-loc\stext="(.*?)":::/gm;
 
 //image
-module.exports.syntaxImageLooseMatch = /((:+)(.\s*)(image.*(complex))(.\s*)(.*)(.:*)\s*(.*)\s*(.:*)([a-z]*-[a-z]*)(.:*))|((:+)(.\s*)(image)(.\s*)(.*)(.:*))/gmi;
-module.exports.syntaxImageAttributes = /(:image)|([a-z-]*(?==))/gmi;
+module.exports.syntaxImageLooseMatch = /((:+)(.\s*)(image.*(complex))(.\s*)(.*)(.:*)\s*(.*)\s*(.:*)([a-z]*-[a-z]*)(.:*))|((:+)(.\s*)(image)(.\s*)(.*)(.:*))/gim;
+module.exports.syntaxImageAttributes = /(:image)|([a-z-]*(?==))/gim;
 module.exports.allowedImageTypes = ["content", "complex", "icon"];
 module.exports.imageTypeMatch = /type\s*=\s*"([a-z]*)"/m;
-module.exports.imageLongDescriptionMatch = /(:::)(.*)(:::)(((\s)*(.*))+)(:::)(.*)(:::)/mi;
-module.exports.imageComplexEndTagMatch = /:::(\s*)?image-end:::/gmi;
-module.exports.imageOpen = /:::image/gmi;
+module.exports.imageLongDescriptionMatch = /(:::)(.*)(:::)(((\s)*(.*))+)(:::)(.*)(:::)/im;
+module.exports.imageComplexEndTagMatch = /:::(\s*)?image-end:::/gim;
+module.exports.imageOpen = /:::image/gim;
 module.exports.imageLightboxMatch = /lightbox\s*=\s*"(.*?)"/m;
 module.exports.imageSourceMatch = /source\s*=\s*"(.*?)"/m;
 module.exports.imageAltTextMatch = /alt-text\s*=\s*"(.*?)"/m;
@@ -61,7 +63,7 @@ module.exports.alertType = /^>\s+\[!(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]/gm; /
 module.exports.bracketExclam = /^\[!/gm; //identify syntax beginning with "[!" at the start of a line
 module.exports.alertTypeNoOpen = /^\[!(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]/gm; //identify attempted alerts not preceded by "> "
 // module.exports.inlineAlert = ... Need regex to catch non-whitespace characters on same line as alert identifier
-// /^>\s+\[!(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]\s*\S+/gm is close but doesn't notice line break so we get 
+// /^>\s+\[!(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]\s*\S+/gm is close but doesn't notice line break so we get
 // false hits.
 // ^>\s+\[!(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\][ \t]*[a-zA-Z0-9]/gm is closer but needs to also support non-letters and numbers
 module.exports.alertNoExclam = /\[(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]/gm; //identify alerts missing !
@@ -70,9 +72,9 @@ module.exports.alertNoExclam = /\[(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]/gm; //i
 module.exports.linkPattern = /(http:\/\/(|www\.))(visualstudio\.com|msdn\.com|microsoft\.com|office\.com|azure\.com|aka\.ms).*/;
 
 //xref
-module.exports.openXref = /(<|\()xref(:)?.*?(>|\))/gmi;
-module.exports.xrefHasSpace = /(<|\()xref:[ ]+((>|\)))?/gmi;
-module.exports.xrefShouldIncludeColon = /(<|\()xref(?!:)(.*?)?(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(?<!.md)(>|\))/gmi;
+module.exports.openXref = /(<|\()xref(:)?.*?(>|\))/gim;
+module.exports.xrefHasSpace = /(<|\()xref:[ ]+((>|\)))?/gim;
+module.exports.xrefShouldIncludeColon = /(<|\()xref(?!:)(.*?)?(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(?<!.md)(>|\))/gim;
 module.exports.missingUidAttributeXref = /(<|\()xref:(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(>|\))/g;
 module.exports.xrefHasPropertyQuestionMark = /(<|\()xref:(.*?)(\?)((>|\)))?/g;
 module.exports.xrefHasDisplayProperty = /displayProperty=/g;
@@ -95,7 +97,15 @@ module.exports.columnSpan = /^\s+:{3}(column\s+span="(.*?)"):/gm;
 module.exports.syntaxCodeLooseMatch = /(:+)(\s+)?code.*?(:+)/g;
 module.exports.syntaxCodeExactMatch = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+))?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/i;
 module.exports.syntaxCodeAttributes = /([a-z]*(?==))/g;
-module.exports.allowedCodeAttributes = [":code", "language", "source", "range", "id", "interactive", "highlight"];
+module.exports.allowedCodeAttributes = [
+  ":code",
+  "language",
+  "source",
+  "range",
+  "id",
+  "interactive",
+  "highlight",
+];
 module.exports.codeOpen = /:::code/i;
 module.exports.codeSourceMatch = /source="(.*?)"/;
 module.exports.codeLanguageMatch = /language="(.*?)"/;
@@ -103,6 +113,18 @@ module.exports.codeRangeMatch = /range="(.*?)"/;
 module.exports.codeIdMatch = /id="(.*?)"/;
 module.exports.allowedRangeValues = /[0-9\- ,]+/;
 module.exports.codeInteractiveMatch = /interactive="(.*?)"/;
-module.exports.allowedInteractiveValues = ["try-dotnet", "try-dotnet-method", "try-dotnet-class", "cloudshell-powershell", "cloudshell-bash"]
+module.exports.allowedInteractiveValues = [
+  "try-dotnet",
+  "try-dotnet-method",
+  "try-dotnet-class",
+  "cloudshell-powershell",
+  "cloudshell-bash",
+];
 
-
+//video
+module.exports.syntaxVideoLooseMatch = /(:+)\s*video\s*(((.*)?="(.*?)")?(.:+)?)?/gim;
+module.exports.videoOpen = /:::video/gim;
+module.exports.videoSourceMatch = /source\s*=\s*"(.*?)"/m;
+module.exports.videoTitleMatch = /title\s*=\s*"(.*?)"/m;
+module.exports.videoMaxWidthMatch = /max-width\s*=\s*"(.*?)"/m;
+module.exports.allowedVideoAttributes = ["source", "title", "max-width"];
