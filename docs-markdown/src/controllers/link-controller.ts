@@ -20,7 +20,7 @@ export const linkControllerCommands: ICommand[] = [
 ];
 
 const linkRegex: IRegExpWithGroup = {
-    expression: /\]\((?<path>[^http?|~].+?)(?<query>\?.+?)?(?<hash>#.+?)?\)/gm,
+    expression: /\]\((?<path>\..\/[^http?|~].+?)(?<query>\?.+?)?(?<hash>#.+?)?\)/gm,
     groups: ["path", "query", "hash"],
 };
 const telemetryCommand: string = "insertLink";
