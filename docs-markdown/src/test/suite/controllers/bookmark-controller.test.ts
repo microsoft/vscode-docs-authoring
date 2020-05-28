@@ -55,7 +55,7 @@ suite('Bookmark Controller', () => {
 		};
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
-		insertBookmarkExternal();
+		await insertBookmarkExternal();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 	});
@@ -63,7 +63,7 @@ suite('Bookmark Controller', () => {
 		const filePath = resolve(__dirname, '../../../../../src/test/data/repo/articles/bookmark.md');
 		await loadDocumentAndGetItReady(filePath);
 		const spy = chai.spy.on(window, 'showErrorMessage');
-		insertBookmarkInternal();
+		await insertBookmarkInternal();
 		expect(spy).to.have.been.called();
 	});
 	test('insertBookmarkInternal::insertContentToEditor', async () => {
@@ -78,7 +78,7 @@ suite('Bookmark Controller', () => {
 			>;
 		};
 		const spy = chai.spy.on(common, 'insertContentToEditor');
-		insertBookmarkInternal();
+		await insertBookmarkInternal();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 	});

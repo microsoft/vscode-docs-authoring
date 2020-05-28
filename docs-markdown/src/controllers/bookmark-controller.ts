@@ -90,41 +90,40 @@ export async function insertBookmarkExternal() {
 		adjustedHeadingsItems.push({ label: adjustedHeading, detail: ' ' });
 	});
 
-	window.showQuickPick(adjustedHeadingsItems).then(headingSelection => {
-		if (!headingSelection) {
-			return;
-		}
-		if (
-			resolve(activeFilePath) === resolve(qpSelection.label.split('\\').join('\\\\')) &&
-			basename(activeFileName) === qpSelection.label
-		) {
-			bookmark = bookmarkBuilder(
-				editor.document.getText(editor.selection),
-				headingSelection.label,
-				''
-			);
-		} else {
-			if (qpSelection.description) {
-				result = relative(
-					activeFilePath,
-					join(qpSelection.description, qpSelection.label).split('\\').join('\\\\')
-				);
-			}
-			bookmark = bookmarkBuilder(
-				editor.document.getText(editor.selection),
-				headingSelection.label,
-				result
+	const headingSelection = await window.showQuickPick(adjustedHeadingsItems);
+	if (!headingSelection) {
+		return;
+	}
+	if (
+		resolve(activeFilePath) === resolve(qpSelection.label.split('\\').join('\\\\')) &&
+		basename(activeFileName) === qpSelection.label
+	) {
+		bookmark = bookmarkBuilder(
+			editor.document.getText(editor.selection),
+			headingSelection.label,
+			''
+		);
+	} else {
+		if (qpSelection.description) {
+			result = relative(
+				activeFilePath,
+				join(qpSelection.description, qpSelection.label).split('\\').join('\\\\')
 			);
 		}
-		insertContentToEditor(editor, 'InsertBookmarkExternal', bookmark, true, editor.selection);
-	});
+		bookmark = bookmarkBuilder(
+			editor.document.getText(editor.selection),
+			headingSelection.label,
+			result
+		);
+	}
+	await insertContentToEditor(editor, 'InsertBookmarkExternal', bookmark, true, editor.selection);
 	sendTelemetryData(telemetryCommand, commandOption);
 }
 
 /**
  * Creates a bookmark at the current cursor position
  */
-export function insertBookmarkInternal() {
+export async function insertBookmarkInternal() {
 	commandOption = 'internal';
 	const editor = window.activeTextEditor;
 	if (!editor) {
@@ -145,16 +144,15 @@ export function insertBookmarkInternal() {
 		adjustedHeadingsItems.push({ label: heading, detail: ' ' });
 	});
 
-	window.showQuickPick(adjustedHeadingsItems).then(headingSelection => {
-		if (!headingSelection) {
-			return;
-		}
-		const bookmark = bookmarkBuilder(
-			editor.document.getText(editor.selection),
-			headingSelection.label,
-			''
-		);
-		insertContentToEditor(editor, 'InsertBookmarkInternal', bookmark, true, editor.selection);
-	});
+	const headingSelection = await window.showQuickPick(adjustedHeadingsItems);
+	if (!headingSelection) {
+		return;
+	}
+	const bookmark = bookmarkBuilder(
+		editor.document.getText(editor.selection),
+		headingSelection.label,
+		''
+	);
+	await insertContentToEditor(editor, 'InsertBookmarkInternal', bookmark, true, editor.selection);
 	sendTelemetryData(telemetryCommand, commandOption);
 }
