@@ -70,7 +70,7 @@ module.exports = {
                 if (!sourceMatch || sourceMatch[1] === "") {
                   onError({
                     lineNumber: text.lineNumber,
-                    detail: detailStrings.imageSourceRequired,
+                    detail: detailStrings.videoSourceRequired,
                     context: text.line,
                   });
                 }
