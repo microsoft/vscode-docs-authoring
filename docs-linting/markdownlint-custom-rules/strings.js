@@ -63,7 +63,7 @@ module.exports.codeNonAllowedAttribute = `"___" is not an allowed attribute. All
 module.exports.codeSourceRequired = `"source" is required.`;
 module.exports.codeLanguageRequired = `"language" is required.`;
 module.exports.codeRangeOrId = `You cannot have both "range" and "id" properties. Choose one or the other.`;
-module.exports.allowedRangeValues = `Allowed range values must match the regex [0-9\- ,]+.`;
+module.exports.allowedRangeValues = `Allowed range values must match the regex [0-9- ,]+.`;
 module.exports.allowedInteractiveValues = `"___" is not an allowed value for interactive. Allowed values include: "try-dotnet", "try-dotnet-method", "try-dotnet-class", "cloudshell-powershell", "cloudshell-bash"`;
 
 // logging

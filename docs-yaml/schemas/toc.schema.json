@@ -85,15 +85,14 @@
 				}
 			},
 			"type": "object",
-			"required": [ "name" ],
+			"required": ["name"],
 			"additionalProperties": true
 		},
 		"tocItemsWithMetadata": {
 			"properties": {
 				"metadata": {
 					"description": "The metadata of the TOC.",
-					"properties": {
-					},
+					"properties": {},
 					"type": "object"
 				},
 				"items": {
@@ -106,7 +105,7 @@
 				}
 			},
 			"type": "object",
-			"required": [ "items" ],
+			"required": ["items"],
 			"additionalProperties": false,
 			"metadata": "/metadata"
 		}
