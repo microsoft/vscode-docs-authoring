@@ -34,7 +34,7 @@ suite("Cleanup Controller", () => {
         await commands.executeCommand("workbench.action.closeAllEditors");
         sinon.restore();
     });
-    test("cleanup repo - insertAlertCommand", () => {
+    test("cleanup repo - applyCleanupCommand", () => {
         const controllerCommands = [
             { command: applyCleanup.name, callback: applyCleanup },
         ];

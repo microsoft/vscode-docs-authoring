@@ -1,7 +1,7 @@
 import { existsSync } from "fs";
-import { dirname, join, relative } from "path";
+import { basename, dirname, join, relative } from "path";
 import { commands, ProgressLocation, QuickPickItem, QuickPickOptions, RelativePattern, TextEditor, Uri, window, workspace } from "vscode";
-import { checkExtension, noActiveEditorMessage } from "../helper/common";
+import { checkExtension, noActiveEditorMessage, postInformation } from "../helper/common";
 import { sendTelemetryData } from "../helper/telemetry";
 import { applyReplacements, findReplacements, IRegExpWithGroup, Replacements } from "../helper/utility";
 import { ICommand } from "../ICommand";
@@ -20,7 +20,7 @@ export const linkControllerCommands: ICommand[] = [
 ];
 
 const linkRegex: IRegExpWithGroup = {
-    expression: /\]\((?<path>[^http?|~].+?)(?<query>\?.+?)?(?<hash>#.+?)?\)/gm,
+    expression: /\]\((?<path>\..\/[^http?|~].+?)(?<query>\?.+?)?(?<hash>#.+?)?\)/gm,
     groups: ["path", "query", "hash"],
 };
 const telemetryCommand: string = "insertLink";
@@ -28,22 +28,37 @@ let commandOption: string;
 
 export async function collapseRelativeLinksInFolder(uri: Uri) {
     await window.withProgress({
-        location: ProgressLocation.Window,
-    }, async (progress) => {
+        cancellable: true,
+        location: ProgressLocation.Notification,
+        title: "Collapsing links in folder",
+    }, async (progress, token) => {
+        token.onCancellationRequested(() => {
+            postInformation("Collapsing links operation canceled by user.");
+        });
+
         const filePaths =
             await workspace.findFiles(
                 new RelativePattern(uri.path, "**/*.md"));
 
         const length = filePaths.length;
-        progress.report({ increment: 1, message: `Collapsing links in ${length} files.` });
+        let message = `scanning ${length} markdown files.${length > 100 ? " This might take a while, please be patient." : ""}`;
+        progress.report({ increment: 0, message });
+        const increment = 100 / length;
+        let filesUpdated = 0;
         for (let i = 0; i < length; i++) {
+            if (token.isCancellationRequested) {
+                break;
+            }
             const file = filePaths[i];
             const document = await workspace.openTextDocument(file);
-            const editor = await window.showTextDocument(document, undefined, false);
-            const replaced = await collapseRelativeLinksForEditor(editor);
-            if (replaced > 0) {
-                progress.report({ increment: 1, message: `Collapsed ${replaced} links in ${file}.` });
+            const editor = await window.showTextDocument(document);
+            const collapsedLinkCount = await collapseRelativeLinksForEditor(editor);
+            if (collapsedLinkCount > 0) {
+                filesUpdated++;
+                message = `collapsed ${collapsedLinkCount} links in ${basename(file.fsPath)}`;
             }
+
+            progress.report({ increment, message });
         }
 
         progress.report({ increment: 100, message: `Collapsed links in ${length} files.` });
@@ -74,7 +89,7 @@ export async function collapseRelativeLinksForEditor(editor: TextEditor): Promis
             const absolutePath = join(directory, replacement.value);
             if (replacement && existsSync(absolutePath)) {
                 const relativePath = relative(directory, absolutePath).replace(/\\/g, "/");
-                if (relativePath !== replacement.value) {
+                if (relativePath !== replacement.value && `./${relativePath}` !== replacement.value) {
                     replacements.push({
                         selection: replacement.selection,
                         value: relativePath,
