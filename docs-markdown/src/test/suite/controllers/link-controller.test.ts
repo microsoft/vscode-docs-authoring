@@ -33,6 +33,6 @@ suite("Link Controller", () => {
         const filePath = resolve(__dirname, "../../../../../src/test/data/repo/articles/link-controller.md");
         await loadDocumentAndGetItReady(filePath);
         const replacements = await collapseRelativeLinksForEditor(window.activeTextEditor);
-        expect(replacements).to.equal(4);
+        expect(replacements).to.equal(3);
     });
 });
