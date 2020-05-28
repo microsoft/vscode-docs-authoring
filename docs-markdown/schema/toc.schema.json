@@ -6,9 +6,7 @@
 	"id": "https://github.com/dotnet/docfx/test/schemas/toc.schema.json",
 	"type": "object",
 	"additionalProperties": false,
-	"required": [
-		"items"
-	],
+	"required": ["items"],
 	"properties": {
 		"items": {
 			"type": "array",
@@ -46,9 +44,7 @@
 			"properties": {
 				"displayName": {
 					"type": "string",
-					"tags": [
-						"localizable"
-					]
+					"tags": ["localizable"]
 				},
 				"expanded": {
 					"type": "boolean"
@@ -67,9 +63,7 @@
 				},
 				"name": {
 					"type": "string",
-					"tags": [
-						"localizable"
-					]
+					"tags": ["localizable"]
 				},
 				"preserveContext": {
 					"type": "boolean"
@@ -88,9 +82,7 @@
 				}
 			},
 			"additionalProperties": false,
-			"required": [
-				"name"
-			],
+			"required": ["name"],
 			"type": "object"
 		}
 	}

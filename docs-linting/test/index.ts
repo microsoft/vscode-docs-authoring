@@ -10,28 +10,26 @@
 // to report the results back to the caller. When the tests are finished, return
 // a possible error to the callback or null if none.
 
-// tslint:disable-next-line:no-var-requires
-let testRunner = require("vscode/lib/testrunner");
+import testRunner = require('vscode/lib/testrunner');
 
 // You can directly control Mocha options by uncommenting the following lines
 // See https://github.com/mochajs/mocha/wiki/Using-mocha-programmatically#set-options for more info
-let opts = {
-    reporterOptions: {
-        mochaFile: './test-results-mocha.xml'
-    },
-    ui: "bdd", 		// the BDD UI is being used in extension.test.ts (describe, it, should)
-    useColors: true, // colored output from test results,
+const opts = {
+	reporterOptions: {
+		mochaFile: './test-results-mocha.xml'
+	},
+	ui: 'bdd', // the BDD UI is being used in extension.test.ts (describe, it, should)
+	useColors: true // colored output from test results,
 };
 
 if (process.env.SYSTEM_TEAMPROJECTID) {
-    Object.defineProperties(opts, {
-        reporter: {
-            value: 'mocha-junit-reporter',
-            writable: true
-        }
-    });
+	Object.defineProperties(opts, {
+		reporter: {
+			value: 'mocha-junit-reporter',
+			writable: true
+		}
+	});
 }
-
 
 testRunner.configure(opts);
 
