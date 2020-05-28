@@ -4,30 +4,30 @@
 
 const common = require("./common");
 const detailStrings = require("./strings");
-const schemas = require("./schemas");
-const vscode = require("vscode");
-const { default: axios } = require("axios");
+// const schemas = require("./schemas");
+// const vscode = require("vscode");
+// const { default: axios } = require("axios");
 
 // schema linting
-let allowedVideoAttributes;
-let videoDataResponse;
+// let allowedVideoAttributes;
+// let videoDataResponse;
 
-function loadVideoSchema() {
-  axios
-    .get(schemas.VIDEO_SCHEMA)
-    .then(function (response) {
-      videoDataResponse = response.data;
-      allowedVideoAttributes = Object.keys(videoDataResponse.properties);
-    })
-    .catch(function (error) {
-      const errorMessage = detailStrings.failedResponse
-        .replace("NAME", "video")
-        .replace("URL", schemas.VIDEO_SCHEMA);
-      vscode.window.showErrorMessage(errorMessage);
-    });
-}
+// function loadVideoSchema() {
+//   axios
+//     .get(schemas.VIDEO_SCHEMA)
+//     .then(function (response) {
+//       videoDataResponse = response.data;
+//       allowedVideoAttributes = Object.keys(videoDataResponse.properties);
+//     })
+//     .catch(function (error) {
+//       const errorMessage = detailStrings.failedResponse
+//         .replace("NAME", "video")
+//         .replace("URL", schemas.VIDEO_SCHEMA);
+//       vscode.window.showErrorMessage(errorMessage);
+//     });
+// }
 
-loadVideoSchema();
+// loadVideoSchema();
 
 module.exports = {
   names: ["DOCSMD013", "docsmd.video"],
