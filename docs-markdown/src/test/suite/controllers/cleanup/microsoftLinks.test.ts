@@ -1,13 +1,12 @@
-
-import * as chai from "chai";
-import { handleLinksWithRegex } from "../../../../controllers/cleanup/microsoftLinks";
+import * as chai from 'chai';
+import { handleLinksWithRegex } from '../../../../controllers/cleanup/microsoftLinks';
 
 const expect = chai.expect;
 
-suite("Microsoft Links", () => {
-    // Reset and tear down the spies
-    test("handleLinksWithRegex", async () => {
-        const data = `http://aka.ms
+suite('Microsoft Links', () => {
+	// Reset and tear down the spies
+	test('handleLinksWithRegex', async () => {
+		const data = `http://aka.ms
 http://microsoft.com
 http://go.microsoft.com
 http://visualstudio.com
@@ -24,8 +23,8 @@ http://docs.microsoft.com/en-us/
 http://azure.microsoft.com/en-us/
 http://msdn.microsoft.com/en-us/
 http://technet.microsoft.com/en-us/`;
-        const output = handleLinksWithRegex(data);
-        expect(output).to.equal(`https://aka.ms
+		const output = handleLinksWithRegex(data);
+		expect(output).to.equal(`https://aka.ms
 https://microsoft.com
 https://go.microsoft.com
 https://visualstudio.com
@@ -41,7 +40,6 @@ https://download.microsoft.com
 https://docs.microsoft.com/
 https://azure.microsoft.com/
 https://msdn.microsoft.com/
-https://technet.microsoft.com/`,
-        );
-    });
+https://technet.microsoft.com/`);
+	});
 });

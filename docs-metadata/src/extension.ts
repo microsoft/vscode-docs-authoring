@@ -1,83 +1,57 @@
+import { commands, ExtensionContext, extensions, window } from 'vscode';
+import { showApplyMetadataMessage } from './controllers/apply-controller';
 import {
-    commands,
-    Extension,
-    ExtensionContext,
-    extensions,
-    window,
-} from "vscode";
-import { showApplyMetadataMessage } from "./controllers/apply-controller";
-import {
-    getMutFileName,
-    showArgsQuickInput,
-    showExtractConfirmationMessage,
-    showExtractionCancellationMessage,
-    showFolderSelectionDialog,
-} from "./controllers/extract-controller";
-import * as util from "./util/common";
-import { ExtensionDownloader } from "./util/ExtensionDownloader";
-import { Logger } from "./util/logger";
+	getMutFileName,
+	showArgsQuickInput,
+	showExtractConfirmationMessage,
+	showExtractionCancellationMessage,
+	showFolderSelectionDialog
+} from './controllers/extract-controller';
+import { Logger } from './util/logger';
+import { setExtensionPath, output } from './util/common';
+import { ensureRuntimeDependencies } from './util/ExtensionDownloader';
 
-let extensionPath = "";
-
-export const output = window.createOutputChannel("docs-metadata");
-
-export function getExtensionPath(): string {
-    return extensionPath;
-}
+let extensionPath = '';
 
 export async function activate(context: ExtensionContext) {
+	extensionPath = context.extensionPath;
+	const extensionId = 'docsmsft.docs-metadata';
+	const extension = extensions.getExtension(extensionId) || null;
+	setExtensionPath(context.extensionPath);
 
-    extensionPath = context.extensionPath;
-    const extensionId = "docsmsft.docs-metadata";
-    const extension = extensions.getExtension(extensionId) || null;
-    util.setExtensionPath(context.extensionPath);
+	const logger = new Logger();
 
-    const logger = new Logger();
+	const extractCommand = commands.registerCommand('docs.extract', async () => {
+		await ensureRuntimeDependencies(extension, logger);
 
-    const extractCommand = commands.registerCommand("docs.extract", async () => {
+		const folderPath = await showFolderSelectionDialog();
 
-        await ensureRuntimeDependencies(extension, logger);
+		// a blank folderPath signifies a cancel.
+		if (folderPath === '') {
+			showExtractionCancellationMessage();
+			return;
+		}
 
-        const folderPath = await showFolderSelectionDialog();
+		const args = await showArgsQuickInput();
 
-        // a blank folderPath signifies a cancel.
-        if (folderPath === "") {
-            showExtractionCancellationMessage();
-            return;
-        }
+		// undefined args represent a cancel.
+		if (args === undefined) {
+			showExtractionCancellationMessage();
+			return;
+		}
 
-        const args = await showArgsQuickInput();
+		showExtractConfirmationMessage(args, folderPath);
+	});
 
-        // undefined args represent a cancel.
-        if (args === undefined) {
-            showExtractionCancellationMessage();
-            return;
-        }
+	const applyCommand = commands.registerCommand('docs.apply', async () => {
+		showApplyMetadataMessage(getMutFileName());
+	});
 
-        showExtractConfirmationMessage(args, folderPath);
-
-    });
-
-    const applyCommand = commands.registerCommand("docs.apply", async () => {
-        showApplyMetadataMessage(getMutFileName());
-    });
-
-    context.subscriptions.push(extractCommand);
-    context.subscriptions.push(applyCommand);
-
-}
-
-export async function ensureRuntimeDependencies(extension: Extension<any>, logger: Logger): Promise<boolean> {
-    return util.installFileExists(util.InstallFileType.Lock)
-        .then((exists) => {
-            if (!exists) {
-                const downloader = new ExtensionDownloader(logger, extension.packageJSON);
-                return downloader.installRuntimeDependencies();
-            } else {
-                return true;
-            }
-        });
+	context.subscriptions.push(extractCommand);
+	context.subscriptions.push(applyCommand);
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() { output.appendLine("Deactivating extension."); }
+export function deactivate() {
+	output.appendLine('Deactivating extension.');
+}
