@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.71 (May 29th, 2020)
+
+- Improved support for collapse relative links in folder experience.
+
 ## 0.2.70 (May 25th, 2020)
 
 - Added support for clickable images
