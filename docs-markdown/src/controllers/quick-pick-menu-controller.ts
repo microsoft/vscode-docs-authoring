@@ -25,7 +25,7 @@ import {
 	insertExpandableParentNode,
 	insertTocEntry,
 	insertTocEntryWithOptions
-} from './yaml-controller';
+} from './yaml/yaml-controller';
 
 export function quickPickMenuCommand() {
 	const commands = [{ command: markdownQuickPick.name, callback: markdownQuickPick }];
