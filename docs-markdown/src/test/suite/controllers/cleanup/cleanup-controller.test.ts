@@ -1,7 +1,8 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
+import * as os from 'os';
 import { resolve } from 'path';
-import { commands, Uri, window } from 'vscode';
+import { commands, Position, Range, Selection, Uri, window } from 'vscode';
 import * as capitalizationOfMetadata from '../../../../controllers/cleanup/capitalizationOfMetadata';
 import {
 	applyCleanup,
@@ -25,6 +26,7 @@ import {
 chai.use(spies);
 
 import sinon = require('sinon');
+import { AssertionError } from 'assert';
 
 const expect = chai.expect;
 const filePath = resolve(
@@ -78,15 +80,30 @@ suite('Cleanup Controller', () => {
 		stubShowQuickPick.restore();
 		expect(spy).to.have.been.called();
 	});
-	test('cleanup repo - recurseCallback - single-valued metadata', async () => {
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
-		stubShowQuickPick.onCall(0).resolves({ label: 'single-valued metadata', detail: '' });
-		const spy = chai.spy.on(utilities, 'recurseCallback');
-		await applyCleanup();
-		expect(spy).to.have.been.called();
-		stubShowQuickPick.restore();
+	test('cleanup folder - single-valued metadata (recursive folders)', async () => {
+		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
+			return Promise.resolve({ label: 'single-valued metadata', detail: '' }) as Thenable<any>;
+		};
+		const markdown = resolve(
+			__dirname,
+			'../../../../../../src/test/data/repo/articles/test/cleanup-test.md'
+		);
+		await loadDocumentAndGetItReady(markdown);
+		const editor = window.activeTextEditor;
+		await applyCleanupFolder(
+			Uri.file(resolve(__dirname, '../../../../../../src/test/data/repo/articles/test'))
+		);
+		await sleep(400);
+		const actualText = window.activeTextEditor?.document.getText();
+		const expectedText = '---' + os.EOL + 'ms.author: "foo"' + os.EOL + '---' + os.EOL;
+		// cleanup the modified *.md to prevent false positives for future tests.
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const { exec } = require('child_process');
+		exec('cd ' + __dirname + ' && git checkout ' + markdown);
+		chai.assert.equal(expectedText, actualText);
 	});
 	test('cleanup repo - recurseCallback - microsoft links', async () => {
+		await loadDocumentAndGetItReady(filePath);
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
 		stubShowQuickPick.onCall(0).resolves({ label: 'microsoft links', detail: '' });
 		const spy = chai.spy.on(utilities, 'recurseCallback');
@@ -95,6 +112,7 @@ suite('Cleanup Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('cleanup repo - recurseCallback - capitalization of metadata values', async () => {
+		await loadDocumentAndGetItReady(filePath);
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
 		stubShowQuickPick
 			.onCall(0)
@@ -105,6 +123,7 @@ suite('Cleanup Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('cleanup repo - empty metadata - empty values', async () => {
+		await loadDocumentAndGetItReady(filePath);
 		const mockShowQuickPick = sinon.stub(window, 'showQuickPick');
 		mockShowQuickPick.onFirstCall().resolves({ label: 'empty metadata', detail: '' });
 		mockShowQuickPick
@@ -117,6 +136,7 @@ suite('Cleanup Controller', () => {
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup repo - empty metadata - n/a', async () => {
+		await loadDocumentAndGetItReady(filePath);
 		const mockShowQuickPick = sinon.stub(window, 'showQuickPick');
 		mockShowQuickPick.onFirstCall().resolves({ label: 'empty metadata', detail: '' });
 		mockShowQuickPick
@@ -129,6 +149,7 @@ suite('Cleanup Controller', () => {
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup repo - empty metadata - commented', async () => {
+		await loadDocumentAndGetItReady(filePath);
 		const mockShowQuickPick = sinon.stub(window, 'showQuickPick');
 		mockShowQuickPick.onFirstCall().resolves({ label: 'empty metadata', detail: '' });
 		mockShowQuickPick
@@ -141,6 +162,7 @@ suite('Cleanup Controller', () => {
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup repo - empty metadata - all', async () => {
+		await loadDocumentAndGetItReady(filePath);
 		const mockShowQuickPick = sinon.stub(window, 'showQuickPick');
 		mockShowQuickPick.onFirstCall().resolves({ label: 'empty metadata', detail: '' });
 		mockShowQuickPick.onSecondCall().resolves({ label: 'remove all', detail: '' });
@@ -308,5 +330,34 @@ suite('Cleanup Controller', () => {
 		await sleep(extendedSleepTime);
 		mockShowQuickPick.restore();
 		expect(spy).to.have.been.called();
+	});
+	test('dirty doc - skips cleanup', async () => {
+		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
+			return Promise.resolve({ label: 'single-valued metadata', detail: '' }) as Thenable<any>;
+		};
+		const markdown = resolve(
+			__dirname,
+			'../../../../../../src/test/data/repo/markdown-stubs/cleanup-test.md'
+		);
+		await loadDocumentAndGetItReady(markdown);
+		const editor = window.activeTextEditor;
+		const content = 'some_content';
+		await common.insertContentToEditor(
+			editor,
+			content,
+			true,
+			new Selection(new Position(5, 0), new Position(5, 6))
+		);
+		await applyCleanupFolder(
+			Uri.file(resolve(__dirname, '../../../../../../src/test/data/repo/markdown-stubs'))
+		);
+		await sleep(400);
+		const actualText = window.activeTextEditor?.document.getText();
+		const expectedText = '---' + os.EOL + 'ms.author: ["foo"]' + os.EOL + '---' + os.EOL + content;
+		// cleanup the modified *.md to prevent false positives for future tests.
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const { exec } = require('child_process');
+		exec('cd ' + __dirname + ' && git checkout ' + markdown);
+		chai.assert.equal(expectedText, actualText);
 	});
 });
