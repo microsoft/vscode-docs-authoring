@@ -32,8 +32,14 @@ suite('Bookmark Controller', () => {
 	});
 	test('insertBookmarkCommands', () => {
 		const controllerCommands = [
-			{ command: insertBookmarkExternal.name, callback: insertBookmarkExternal },
-			{ command: insertBookmarkInternal.name, callback: insertBookmarkInternal }
+			{
+				command: insertBookmarkExternal.name,
+				callback: insertBookmarkExternal
+			},
+			{
+				command: insertBookmarkInternal.name,
+				callback: insertBookmarkInternal
+			}
 		];
 		expect(insertBookmarkCommands()).to.deep.equal(controllerCommands);
 	});
@@ -73,12 +79,13 @@ suite('Bookmark Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({ label: '### Third Level Heading\r\n', detail: ' ' }) as Thenable<
-				any
-			>;
+			return Promise.resolve({
+				label: '### Third Level Heading\r\n',
+				detail: ' '
+			}) as Thenable<any>;
 		};
 		const spy = chai.spy.on(common, 'insertContentToEditor');
-		await insertBookmarkInternal();
+		insertBookmarkInternal();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 	});
