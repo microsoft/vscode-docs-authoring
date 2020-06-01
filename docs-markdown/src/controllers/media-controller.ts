@@ -327,7 +327,7 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
  * @param {MediaType} mediaType - the media type to insert.
  * @param {IOptions} [options] - optionally specifies the language identifier of the target file.
  */
-export function Insert(mediaType: MediaType, options?: any) {
+export async function Insert(mediaType: MediaType, options?: any) {
 	let actionType: string = Insert.name;
 
 	const editor = vscode.window.activeTextEditor;
@@ -380,14 +380,7 @@ export function Insert(mediaType: MediaType, options?: any) {
 			return;
 		}
 
-		// Determine if there is selected text.  If selected text, no action.
-		const languageId = !!options ? options.languageId : undefined;
-		if (selectedText === '' && languageId !== 'yaml') {
-			getFilesShowQuickPick(mediaType, '', options);
-		}
-		if (selectedText && languageId !== 'yaml') {
-			getFilesShowQuickPick(mediaType, selectedText, options);
-		}
+		getFilesShowQuickPick(mediaType, selectedText, options);
 	}
 }
 
