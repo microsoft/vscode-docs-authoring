@@ -60,6 +60,8 @@ suite("Bold Controller", () => {
       "../../../../../src/test/data/repo/articles/docs-markdown.md"
     );
     await loadDocumentAndGetItReady(filePath);
+    const editor = window.activeTextEditor;
+    common.setSelectorPosition(editor!, 12, 0, 12, 0);
 
     const spy = chai.spy.on(common, "insertContentToEditor");
     formatBold();
