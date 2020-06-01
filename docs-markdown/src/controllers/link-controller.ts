@@ -21,7 +21,7 @@ import {
 } from '../helper/utility';
 import { Command } from '../Command';
 import { Insert, insertURL, MediaType, selectLinkType } from './media-controller';
-import { applyXref } from './xref-controller';
+import { applyXref } from './xref/xref-controller';
 
 export const linkControllerCommands: Command[] = [
 	{
