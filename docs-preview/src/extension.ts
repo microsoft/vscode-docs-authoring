@@ -12,7 +12,7 @@ import { div_plugin, divOptions } from './markdown-extensions/div';
 import { image_end, imageOptions } from './markdown-extensions/image';
 import { include } from './markdown-extensions/includes';
 import { rowEndOptions, rowOptions } from './markdown-extensions/row';
-import { videoOptions } from './markdown-extensions/video';
+import { videoOptions, legacyVideoOptions } from './markdown-extensions/video';
 import { DocumentContentProvider } from './seo/seoPreview';
 import { xref } from './xref/xref';
 
@@ -87,7 +87,8 @@ export async function activate(context: ExtensionContext) {
 				.use(div_plugin, 'div', divOptions)
 				.use(container_plugin, 'image', imageOptions)
 				.use(image_end)
-				.use(container_plugin, 'video', videoOptions);
+				.use(container_plugin, 'video', videoOptions)
+				.use(container_plugin, 'legacyVideo', legacyVideoOptions);
 		}
 	};
 
