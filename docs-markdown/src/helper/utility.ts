@@ -297,7 +297,14 @@ export function externalLinkBuilder(link: string, title: string = '') {
 }
 
 export function videoLinkBuilder(link: string) {
-	const videoLink = `:::video source="${link}":::`;
+	const config = workspace.getConfiguration('markdown');
+	const previewTripleColonVideoSyntax = config.get<boolean>('previewFeatures');
+	let videoLink = '';
+	if (!previewTripleColonVideoSyntax) {
+		videoLink = `> [!VIDEO ${link}]`;
+	} else {
+		videoLink = `:::video source="${link}":::`;
+	}
 	return videoLink;
 }
 

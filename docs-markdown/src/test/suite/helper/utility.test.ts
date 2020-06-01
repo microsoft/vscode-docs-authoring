@@ -1,5 +1,7 @@
 import * as chai from 'chai';
 import * as utility from '../../../helper/utility';
+import sinon = require('sinon');
+import { workspace } from 'vscode';
 
 const expect = chai.expect;
 
@@ -13,6 +15,16 @@ suite('Utility helper class', () => {
 		expect(lang ? lang.language : '').to.be.equal('TypeScript');
 	});
 	test('videoLinkBuilder returns triple colon video', () => {
+		workspace.getConfiguration = () => {
+			return {
+				get: () => true,
+				has: () => true,
+				inspect: () => {
+					return { key: '' };
+				},
+				update: () => Promise.resolve()
+			};
+		};
 		const videoLink = utility.videoLinkBuilder(
 			'https://channel9.msdn.com/Series/Youve-Got-Key-Values-A-Redis-Jump-Start/03/player'
 		);
