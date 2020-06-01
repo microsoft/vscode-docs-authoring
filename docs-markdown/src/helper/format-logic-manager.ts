@@ -22,7 +22,7 @@ export async function insertUnselectedText(
 	range: vscode.Range
 ) {
 	if (formattedText === '****' || formattedText === '**' || formattedText === '``') {
-		common.insertContentToEditor(editor, senderName, formattedText, true);
+		common.insertContentToEditor(editor, formattedText, true);
 
 		// Gets the cursor position
 		const position = editor.selection.active;
@@ -31,6 +31,6 @@ export async function insertUnselectedText(
 		// Makes the cursor position in between syntaxs
 		common.setCursorPosition(editor, position.line, positionCharacter);
 	} else {
-		await common.insertContentToEditor(editor, senderName, formattedText, true, range);
+		await common.insertContentToEditor(editor, formattedText, true, range);
 	}
 }

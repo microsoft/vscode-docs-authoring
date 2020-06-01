@@ -87,7 +87,7 @@ export function insertList(editor: vscode.TextEditor, listType: ListType) {
 			endLine,
 			editor.document.lineAt(endLine).text.length
 		);
-		common.insertContentToEditor(editor, insertList.name, newNumberedLines.join('\n'), true, range);
+		common.insertContentToEditor(editor, newNumberedLines.join('\n'), true, range);
 		common.setCursorPosition(editor, cursorPosition.line, newNumberedLines[0].length);
 	}
 }
@@ -169,13 +169,7 @@ export function createNumberedListFromText(editor: vscode.TextEditor) {
 		new vscode.Position(startSelected.line, 0),
 		new vscode.Position(endLine, editor.document.lineAt(endLine).text.length)
 	);
-	common.insertContentToEditor(
-		editor,
-		createNumberedListFromText.name,
-		numberedListLines.join('\n'),
-		true,
-		range
-	);
+	common.insertContentToEditor(editor, numberedListLines.join('\n'), true, range);
 	editor.selection = newSelection;
 }
 
@@ -436,13 +430,7 @@ export function createBulletedListFromText(editor: vscode.TextEditor) {
 		new vscode.Position(startSelected.line, 0),
 		new vscode.Position(endLine, editor.document.lineAt(endLine).text.length)
 	);
-	common.insertContentToEditor(
-		editor,
-		createBulletedListFromText.name,
-		numberedListLines.join('\n'),
-		true,
-		range
-	);
+	common.insertContentToEditor(editor, numberedListLines.join('\n'), true, range);
 	editor.selection = newSelection;
 }
 
@@ -754,7 +742,7 @@ export function autolistAlpha(
 		editor.document.lineAt(endLine).text.length
 	);
 	const replacementText = alphabetLines.join('\n');
-	common.insertContentToEditor(editor, autolistAlpha.name, replacementText, true, range);
+	common.insertContentToEditor(editor, replacementText, true, range);
 
 	// set cursor position
 	common.setCursorPosition(
@@ -819,7 +807,7 @@ export function autolistNumbered(
 		endLine,
 		editor.document.lineAt(endLine).text.length
 	);
-	common.insertContentToEditor(editor, autolistAlpha.name, numberedLines.join('\n'), true, range);
+	common.insertContentToEditor(editor, numberedLines.join('\n'), true, range);
 
 	// set cursor position
 	common.setCursorPosition(
@@ -901,7 +889,7 @@ export function nestedNumberedList(
 			endOuterListedLine,
 			editor.document.lineAt(endOuterListedLine).text.length
 		);
-		common.insertContentToEditor(editor, nestedNumberedList.name, updatedListedText, true, range);
+		common.insertContentToEditor(editor, updatedListedText, true, range);
 		cursorIndex =
 			updatedInnerListed.length > 0 ? updatedInnerListed[0].indexOf('. ') + 2 : cursorIndex;
 	} else if (previousaphabet > 0 || nextalphabet > 0) {
@@ -941,7 +929,7 @@ export function nestedNumberedList(
 			endOuterListedLine,
 			editor.document.lineAt(endOuterListedLine).text.length
 		);
-		common.insertContentToEditor(editor, nestedNumberedList.name, updatedListedText, true, range);
+		common.insertContentToEditor(editor, updatedListedText, true, range);
 	} else {
 		const lineText = editor.document.lineAt(cursorPosition.line).text;
 		const lineCount = CountIndent(lineText);
@@ -1024,13 +1012,7 @@ export function nestedNumberedList(
 			endOuterListedLine,
 			editor.document.lineAt(endOuterListedLine).text.length
 		);
-		common.insertContentToEditor(
-			editor,
-			nestedNumberedList.name,
-			numberedListLines.join('\n'),
-			true,
-			range
-		);
+		common.insertContentToEditor(editor, numberedListLines.join('\n'), true, range);
 	}
 	// set cursor position
 	common.setCursorPosition(editor, cursorPosition.line, cursorIndex > 0 ? cursorIndex : 0);
@@ -1159,13 +1141,7 @@ export function removeNestedListSingleLine(editor: vscode.TextEditor) {
 				endLine,
 				editor.document.lineAt(endLine).text.length
 			);
-			common.insertContentToEditor(
-				editor,
-				removeNestedListSingleLine.name,
-				newNumberedLines.join('\n'),
-				true,
-				range
-			);
+			common.insertContentToEditor(editor, newNumberedLines.join('\n'), true, range);
 			common.setSelectorPosition(editor, cursorPosition.line, 0, cursorPosition.line, 0);
 		}
 	} else if (getAlphabetLineWithRegex(alphabetRegex, text) > 0) {
@@ -1283,13 +1259,7 @@ export function removeNestedListMultipleLine(editor: vscode.TextEditor) {
 		endLine,
 		editor.document.lineAt(endLine).text.length
 	);
-	common.insertContentToEditor(
-		editor,
-		removeNestedListMultipleLine.name,
-		numberedListLines.join('\n'),
-		true,
-		range
-	);
+	common.insertContentToEditor(editor, numberedListLines.join('\n'), true, range);
 	common.setCursorPosition(editor, startSelected.line, startSelected.character);
 }
 

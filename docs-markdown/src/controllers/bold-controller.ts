@@ -67,7 +67,7 @@ export function formatBold() {
 			);
 			// calls formatter and returns selectedText as MD Bold
 			const formattedText = bold(selectedText);
-			insertContentToEditor(editor, formatBold.name, formattedText, true);
+			insertContentToEditor(editor, formattedText, true);
 		}
 
 		// if mulitple cursors were used to make selections

@@ -137,7 +137,7 @@ export async function applyXref() {
 	} else {
 		return;
 	}
-	insertContentToEditor(editor, applyXref.name, xref, true);
+	insertContentToEditor(editor, xref, true);
 	// Gets the cursor position
 	const position = editor.selection.active;
 	const positionCharacter =

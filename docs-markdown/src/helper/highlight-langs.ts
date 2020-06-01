@@ -190,7 +190,7 @@ export async function insertLanguageIdentifier(range: Range) {
 			const language = languages.find(lang => lang.language === item.label);
 			if (language) {
 				const alias = language.aliases[0];
-				insertContentToEditor(editor, 'insertLanguageIdentifier', alias, true, selection);
+				insertContentToEditor(editor, alias, true, selection);
 			}
 		}
 	} else {

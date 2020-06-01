@@ -90,7 +90,7 @@ export function createRow(columnNumber: number) {
 		if (rowStartLineNumber && rowEndLineNumber) {
 			if (rowStartLineNumber < startPosition && rowEndLineNumber < startPosition) {
 				const newRow = buildRow(columnNumber);
-				insertContentToEditor(editor, createRow.name, newRow);
+				insertContentToEditor(editor, newRow);
 				const newPosition = new Position(startPosition + 2, 8);
 				const newSelection = new Selection(newPosition, newPosition);
 				editor.selection = newSelection;
@@ -100,7 +100,7 @@ export function createRow(columnNumber: number) {
 		// create row
 		if (!rowStartLineNumber) {
 			const newRow = buildRow(columnNumber);
-			insertContentToEditor(editor, createRow.name, newRow);
+			insertContentToEditor(editor, newRow);
 			const newPosition = new Position(startPosition + 2, 8);
 			const newSelection = new Selection(newPosition, newPosition);
 			editor.selection = newSelection;
@@ -204,13 +204,13 @@ export function insertColumn(span?: boolean) {
 		let newPosition;
 		let newSelection;
 		if (span && cursorPosition === 0) {
-			insertContentToEditor(editor, createRow.name, columnSpan);
+			insertContentToEditor(editor, columnSpan);
 			newPosition = new Position(editor.selection.active.line, 20);
 			newSelection = new Selection(newPosition, newPosition);
 			editor.selection = newSelection;
 		}
 		if (!span && cursorPosition === 0) {
-			insertContentToEditor(editor, createRow.name, columnAdd);
+			insertContentToEditor(editor, columnAdd);
 			newPosition = new Position(editor.selection.active.line, 7);
 			newSelection = new Selection(newPosition, newPosition);
 			editor.selection = newSelection;
