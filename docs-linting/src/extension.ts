@@ -9,7 +9,8 @@
 import { ExtensionContext } from 'vscode';
 import {
 	addFrontMatterTitle,
-	checkMarkdownlintCustomProperty
+	checkMarkdownlintCustomProperty,
+	removeBlankLineInsideBlockQuote
 } from './controllers/lint-config-controller';
 import { generateTimestamp, output } from './helper/common';
 
@@ -33,6 +34,9 @@ export function activate(context: ExtensionContext) {
 
 	// Update markdownlint.config to fix MD025 issue
 	addFrontMatterTitle();
+
+	// Update markdownlint.config to remove MD028 rule
+	removeBlankLineInsideBlockQuote();
 }
 
 // this method is called when your extension is deactivated

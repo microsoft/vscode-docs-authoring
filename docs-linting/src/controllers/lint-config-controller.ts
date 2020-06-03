@@ -6,6 +6,31 @@ import { showStatusMessage, output, generateTimestamp } from '../helper/common';
 // store users markdownlint settings on activation
 const markdownlintProperty = 'markdownlint.config';
 
+export function removeBlankLineInsideBlockQuote() {
+	const markdownlintData: any = workspace.getConfiguration().inspect(markdownlintProperty);
+	// preserve existing markdownlint.config settings if they exist
+	if (markdownlintData.globalValue) {
+		const existingUserSettings = markdownlintData.globalValue;
+		Object.assign(existingUserSettings, { MD028: false });
+		workspace
+			.getConfiguration()
+			.update(markdownlintProperty, existingUserSettings, ConfigurationTarget.Global);
+		showStatusMessage(`disabled MD028 rule in Markdownlint config setting.`);
+	}
+	// add md028 property and front_matter_title property directly (no existing settings)
+	if (!markdownlintData.globalValue) {
+		const blankLineInsideBlockQuoterParameter = { MD028: false };
+		workspace
+			.getConfiguration()
+			.update(
+				markdownlintProperty,
+				blankLineInsideBlockQuoterParameter,
+				ConfigurationTarget.Global
+			);
+		showStatusMessage(`disabled MD028 rule in Markdownlint config setting.`);
+	}
+}
+
 export function addFrontMatterTitle() {
 	const markdownlintData: any = workspace.getConfiguration().inspect(markdownlintProperty);
 	const addFrontMatterTitleSetting = workspace.getConfiguration('markdown').addFrontMatterTitle;
