@@ -5,6 +5,8 @@ module.exports.singleColon = /^:/gm;
 module.exports.tripleColonSyntax = /^:::\s?/gm;
 module.exports.validTripleColon = /^:::\s+/gm;
 module.exports.openAndClosingValidTripleColon = /^:::(.*):::/gim;
+module.exports.AttributeMatchGlobal = /(\S+)=["]?((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/g;
+module.exports.AttributeMatch = /(\S+)=["]?((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/;
 
 // Markdown extensions (add valid/supported extensions to list)
 module.exports.openExtension = /^:(.*?)(zone|moniker|no-loc)/gm;
@@ -21,9 +23,12 @@ module.exports.endZone = /^:::\s+zone-end/gm;
 module.exports.zonePivot = /^:::\s+zone\s+pivot/gm;
 
 // Moniker
-module.exports.openMoniker = /^:::\s+moniker/gm;
-module.exports.syntaxMoniker = /^:::\s+moniker\s+range/gm;
-module.exports.rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
+module.exports.looseMoniker = /:::\s*moniker(?!-end)(\s*.*="(.*?)")?([^]+?:::\s*moniker-end)?/gim;
+module.exports.rangeMonikerWithArgs = /^:::\s*moniker\s+range="(<=|>=)?/gim;
+module.exports.rangeMoniker = /range="(.*)?"/gim;
+module.exports.endMoniker = /^:::\s*moniker-end/gim;
+module.exports.openMoniker = /^:::\s*moniker/gim;
+module.exports.allowedMonikerAttributes = ['range'];
 
 //no-loc
 module.exports.openNoLoc = /(:*)no-loc/gim;

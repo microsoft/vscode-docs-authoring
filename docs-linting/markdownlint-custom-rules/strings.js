@@ -5,8 +5,11 @@ module.exports.syntaxUnsupportedExtension = `Bad syntax for markdown extension. 
 module.exports.tripleColonsIncorrect = `Bad syntax for markdown extension. Begins and end with ":::".`;
 
 // moniker
-module.exports.monikerRange = `Bad syntax for range argument. Use =, <=, or >=, and put value in quotes.`;
-module.exports.monikerSyntax = `Bad syntax for moniker. Only "moniker range" is supported.`;
+module.exports.monikerRangeArgs = `Bad syntax for range argument. Use =, <=, or >=, and put value in quotes.`;
+module.exports.monikerRange = `Bad syntax for moniker. Range is a required attribute and must not be empty.`;
+module.exports.monikerEnd = `Bad syntax for moniker. Moniker end attribute is required ::: moniker-end`;
+module.exports.monikerNonAllowedAttribute = `Bad syntax for moniker. "___" is not an allowed attribute.`;
+module.exports.monikerCaseSensitive = `Bad syntax for moniker. ""moniker" and "range" must be lower-case.`;
 
 // no-loc
 module.exports.noLocSyntax = `Bad syntax for non-localization.`;
