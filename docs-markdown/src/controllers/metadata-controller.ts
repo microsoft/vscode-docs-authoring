@@ -5,7 +5,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { commands, TextEditor, window, workspace } from 'vscode';
-import { isMarkdownFileCheck, noActiveEditorMessage, tryFindFile, toShortDate, } from '../helper/common';
+import {
+	isMarkdownFileCheck,
+	noActiveEditorMessage,
+	tryFindFile,
+	toShortDate
+} from '../helper/common';
 import { sendTelemetryData } from '../helper/telemetry';
 import { applyReplacements, findReplacement, Replacements } from '../helper/utility';
 
