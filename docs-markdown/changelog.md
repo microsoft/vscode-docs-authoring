@@ -1,5 +1,10 @@
 # Change Log
 
+- Add unit tests for the metadata-controller
+- Add support to cleanup nested folders
+- Various eslint fixes
+- Various fixes for warnings in test cases
+
 ## 0.2.74 (June 11th, 2020)
 
 - Collapse relative link improvements
