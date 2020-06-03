@@ -54,7 +54,7 @@ suite('Include Controller', () => {
 	});
 	test('insertInclude - isMarkdownFileCheck', async () => {
 		const spy = chai.spy.on(common, 'isMarkdownFileCheck');
-		const stub = sinon.stub(glob, 'glob');
+		const stub = sinon.stub(glob, 'Glob');
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
 		stubShowQuickPick.onCall(0).resolves('');
 		await loadDocumentAndGetItReady(testFilePath);
