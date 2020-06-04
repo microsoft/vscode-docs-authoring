@@ -186,7 +186,6 @@ export function hasValidWorkSpaceRootPath(senderName: string) {
 
 export async function insertContentToEditor(
 	editor: vscode.TextEditor,
-	senderName: string,
 	content: string,
 	overwrite: boolean = false,
 	selection: vscode.Range = null!

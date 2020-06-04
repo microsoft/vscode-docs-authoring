@@ -67,7 +67,7 @@ async function insertYamlMoniker(editor: TextEditor, sign: string) {
 	const telemetryCommand: string = 'insertMoniker';
 	const insertText = `monikerRange: '${sign}'`;
 	const cursorIndex = insertText.indexOf("'") + sign.length + 1;
-	await insertContentToEditor(editor, insertYamlMoniker.name, insertText, false);
+	await insertContentToEditor(editor, insertText, false);
 	setCursorPosition(editor, editor.selection.active.line, cursorIndex);
 
 	const cursorPosition = 'yaml-header';
@@ -78,7 +78,7 @@ async function insertYamlMoniker(editor: TextEditor, sign: string) {
 async function insertMarkdownMoniker(editor: TextEditor, sign: string) {
 	const telemetryCommand: string = 'insertMoniker';
 	const insertText = `::: moniker range="${sign}"\n\n::: moniker-end`;
-	await insertContentToEditor(editor, insertMarkdownMoniker.name, insertText, false);
+	await insertContentToEditor(editor, insertText, false);
 	const cursorIndex = insertText.indexOf(`"`) + sign.length + 1;
 	setCursorPosition(editor, editor.selection.active.line, cursorIndex);
 	const cursorPosition = 'markdown-body';

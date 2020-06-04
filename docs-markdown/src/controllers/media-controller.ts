@@ -78,7 +78,7 @@ export function insertVideo() {
 					return;
 				}
 				const contentToInsert = videoLinkBuilder(val);
-				insertContentToEditor(editor, insertVideo.name, contentToInsert);
+				insertContentToEditor(editor, contentToInsert);
 			});
 	}
 	sendTelemetryData(telemetryCommandMedia, commandOption);
@@ -118,7 +118,7 @@ export function insertURL() {
 			// if user selected text, don't prompt for alt text
 			if (selectedText) {
 				contentToInsert = externalLinkBuilder(val, selectedText);
-				insertContentToEditor(editor, insertURL.name, contentToInsert, true);
+				insertContentToEditor(editor, contentToInsert, true);
 			}
 			// if no content is selected, prompt for alt text
 			// no alt text: use link
@@ -126,11 +126,11 @@ export function insertURL() {
 				vscode.window.showInputBox(linkTextOptions).then(altText => {
 					if (selection.isEmpty && !altText) {
 						contentToInsert = externalLinkBuilder(val);
-						insertContentToEditor(editor, insertURL.name, contentToInsert);
+						insertContentToEditor(editor, contentToInsert);
 					}
 					if (altText) {
 						contentToInsert = externalLinkBuilder(val, altText);
-						insertContentToEditor(editor, insertURL.name, contentToInsert, true);
+						insertContentToEditor(editor, contentToInsert, true);
 					}
 					setCursorPosition(
 						editor,
@@ -308,7 +308,7 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
 
 				if (!!result) {
 					// Insert content into topic
-					insertContentToEditor(editor, Insert.name, result, true);
+					insertContentToEditor(editor, result, true);
 					if (!isArt) {
 						setCursorPosition(
 							editor,
@@ -327,7 +327,7 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
  * @param {MediaType} mediaType - the media type to insert.
  * @param {IOptions} [options] - optionally specifies the language identifier of the target file.
  */
-export function Insert(mediaType: MediaType, options?: any) {
+export async function Insert(mediaType: MediaType, options?: any) {
 	let actionType: string = Insert.name;
 
 	const editor = vscode.window.activeTextEditor;
@@ -380,14 +380,7 @@ export function Insert(mediaType: MediaType, options?: any) {
 			return;
 		}
 
-		// Determine if there is selected text.  If selected text, no action.
-		const languageId = !!options ? options.languageId : undefined;
-		if (selectedText === '' && languageId !== 'yaml') {
-			getFilesShowQuickPick(mediaType, '', options);
-		}
-		if (selectedText && languageId !== 'yaml') {
-			getFilesShowQuickPick(mediaType, selectedText, options);
-		}
+		getFilesShowQuickPick(mediaType, selectedText, options);
 	}
 }
 

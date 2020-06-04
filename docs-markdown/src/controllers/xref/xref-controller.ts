@@ -44,7 +44,7 @@ export async function applyXref() {
 	} else {
 		xref = `[${selectedText}](xref:${xrefSelection.label})`;
 	}
-	await insertContentToEditor(editor, applyXref.name, xref, true);
+	await insertContentToEditor(editor, xref, true);
 	// Gets the cursor position
 	const position = editor.selection.active;
 	const positionCharacter =

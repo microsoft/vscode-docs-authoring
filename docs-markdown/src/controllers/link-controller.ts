@@ -93,7 +93,10 @@ export async function collapseRelativeLinks() {
 	await collapseRelativeLinksForEditor(editor.document, editor);
 }
 
-export async function collapseRelativeLinksForEditor(document : TextDocument, editor: TextEditor): Promise<number> {
+export async function collapseRelativeLinksForEditor(
+	document: TextDocument,
+	editor: TextEditor
+): Promise<number> {
 	const content = document.getText();
 	if (!content) {
 		return;
