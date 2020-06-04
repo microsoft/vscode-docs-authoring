@@ -669,7 +669,7 @@
 				"command": "insertNestedList",
 				"key": "tab",
 				"mac": "tab",
-				"when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible && !vim.active"
+				"when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible && !vim.active && !inSnippetMode"
 			},
 			{
 				"command": "formatBold",
