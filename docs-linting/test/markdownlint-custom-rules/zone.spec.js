@@ -27,7 +27,7 @@ test('Zone markdown lint', () => {
 			errorRange: null
 		},
 		{
-			lineNumber: 60,
+			lineNumber: 64,
 			ruleNames: ['DOCSMD005', 'docsmd.zone'],
 			ruleDescription: 'Zone linting.',
 			errorDetail: errorDetailStrings.zoneValue,

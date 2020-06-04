@@ -41,6 +41,14 @@ test('Moniker markdown lint', () => {
 			errorDetail: errorDetailStrings.monikerEnd,
 			errorContext: '::: moniker range="<="',
 			errorRange: null
+		},
+		{
+			lineNumber: 60,
+			ruleNames: ['DOCSMD006', 'docsmd.moniker'],
+			ruleDescription: 'Moniker linting.',
+			errorDetail: errorDetailStrings.monikerRange,
+			errorContext: '::: moniker robot="abc"',
+			errorRange: null
 		}
 	]);
 });

@@ -55,6 +55,10 @@
 
 ::: moniker range="<="
 
+## Bad syntax for moniker. Only "moniker range" is supported
+
+::: moniker robot="abc"
+
 ## Value of "zone target=" is other than "chromeless" or "docs"
 
 ::: zone target="volcano"
@@ -62,10 +66,6 @@
 ::: zone target="chromeless"
 
 ::: zone target="docs"
-
-## Bad syntax for moniker. Only "moniker range" is supported
-
-::: moniker robot
 
 ## Scenario 10 - [Docs Markdown] Unclosed zone. Add "::: zone-end" at end of zone
 
