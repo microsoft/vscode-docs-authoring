@@ -3,7 +3,7 @@ import Axios from 'axios';
 import { readFileSync } from 'fs';
 import { Base64 } from 'js-base64';
 import { parse, resolve } from 'path';
-import { Position, window, workspace } from 'vscode';
+import { workspace, commands } from 'vscode';
 import { output as outputChannel } from '../helper/common';
 
 // async fs does not have import module available
@@ -115,7 +115,7 @@ export function tripleColonCodeSnippets(md, options) {
 					codeSnippetContent = src;
 
 					if (shouldUpdate) {
-						updateEditorToRefreshChanges();
+						await commands.executeCommand('markdown.preview.refresh');
 					}
 				}
 			}
@@ -135,21 +135,6 @@ export function tripleColonCodeSnippets(md, options) {
 	md.core.ruler.before('normalize', 'codesnippet', importTripleColonCodeSnippets);
 }
 
-function updateEditorToRefreshChanges() {
-	const editor = window.activeTextEditor;
-	const lastLine = editor.document.lineAt(editor.document.lineCount - 1);
-	const position = new Position(editor.document.lineCount - 1, lastLine.range.end.character);
-	editor
-		.edit(update => {
-			update.insert(position, ' ');
-		})
-		.then(() => {
-			editor.edit(update => {
-				const range = editor.document.getWordRangeAtPosition(position, /[ ]+/g);
-				update.delete(range);
-			});
-		});
-}
 function getLanguage(match, path) {
 	let language = checkLanguageMatch(match);
 	if (!language) {
