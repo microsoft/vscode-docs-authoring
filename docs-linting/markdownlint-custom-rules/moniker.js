@@ -30,16 +30,13 @@ module.exports = {
 						monikerMatches.forEach(monikerMatch => {
 							const content = fullLooseMatches.filter(match => match.includes(monikerMatch))[0];
 							if (content) {
-								const notMonikerEndTagMatch = content.match(common.endMoniker);
-								if (!notMonikerEndTagMatch) {
-									const rangeMatch = common.rangeMoniker.exec(content);
-									if (!rangeMatch || rangeMatch[1] === '') {
-										onError({
-											lineNumber: text.lineNumber,
-											detail: detailStrings.monikerRange,
-											context: text.line
-										});
-									}
+								const rangeMatch = common.rangeMoniker.exec(content);
+								if (!rangeMatch || (rangeMatch && rangeMatch.length > 1 && rangeMatch[1] === '')) {
+									onError({
+										lineNumber: text.lineNumber,
+										detail: detailStrings.monikerRange,
+										context: text.line
+									});
 								}
 								const monikerMatches = content.match(common.openMoniker);
 								if (monikerMatches.length < 2 || !content.match(common.notMonikerEndTagMatch)) {
