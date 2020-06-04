@@ -48,7 +48,7 @@ export function insertAlert() {
 				formattedText = format(selectedText, alertTypes.indexOf(qpSelection));
 			}
 			if (editor) {
-				insertContentToEditor(editor, insertAlert.name, formattedText, true);
+				insertContentToEditor(editor, formattedText, true);
 				if (qpSelection.startsWith('Note')) {
 					commandOption = 'note';
 				}

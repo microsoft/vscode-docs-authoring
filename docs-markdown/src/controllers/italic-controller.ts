@@ -76,7 +76,7 @@ export function formatItalic() {
 
 			// calls formatter and returns selectedText as MD Italic
 			const formattedText = italicize(selectedText, range);
-			insertContentToEditor(editor, formatItalic.name, formattedText, true);
+			insertContentToEditor(editor, formattedText, true);
 		}
 
 		// if multiple cursors were used to make selections
