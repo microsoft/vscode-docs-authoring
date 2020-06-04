@@ -14,7 +14,7 @@ import { include } from './markdown-extensions/includes';
 import { rowEndOptions, rowOptions } from './markdown-extensions/row';
 import { videoOptions, legacyVideoOptions } from './markdown-extensions/video';
 import { DocumentContentProvider } from './seo/seoPreview';
-import { xref } from './xref/xref';
+import { xref } from './markdown-extensions/xref';
 
 export const output = window.createOutputChannel('docs-preview');
 export let extensionPath: string;

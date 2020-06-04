@@ -116,7 +116,7 @@ export async function insertBookmarkExternal() {
 			result
 		);
 	}
-	await insertContentToEditor(editor, 'InsertBookmarkExternal', bookmark, true, editor.selection);
+	await insertContentToEditor(editor, bookmark, true, editor.selection);
 	sendTelemetryData(telemetryCommand, commandOption);
 }
 
@@ -153,6 +153,6 @@ export async function insertBookmarkInternal() {
 		headingSelection.label,
 		''
 	);
-	await insertContentToEditor(editor, 'InsertBookmarkInternal', bookmark, true, editor.selection);
+	await insertContentToEditor(editor, bookmark, true, editor.selection);
 	sendTelemetryData(telemetryCommand, commandOption);
 }

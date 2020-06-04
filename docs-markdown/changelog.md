@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.71 (May 29th, 2020)
+
+- Improved support for collapse relative links in folder experience.
+
 ## 0.2.70 (May 25th, 2020)
 
 - Added support for clickable images
@@ -20,6 +24,7 @@
 - Added Unit Test Coverage: code-controller.ts
 - Added Moniker to quick-pick-menu-controller.ts
 - Added Unit Test Coverage: include-controller.ts
+- Added Unit Test Coverage: bold-controller.ts
 
 ## 0.2.63 (April 2nd, 2020)
 

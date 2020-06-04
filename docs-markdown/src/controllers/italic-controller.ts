@@ -76,10 +76,10 @@ export function formatItalic() {
 
 			// calls formatter and returns selectedText as MD Italic
 			const formattedText = italicize(selectedText, range);
-			insertContentToEditor(editor, formatItalic.name, formattedText, true);
+			insertContentToEditor(editor, formattedText, true);
 		}
 
-		// if mulitple cursors were used to make selections
+		// if multiple cursors were used to make selections
 		if (selections.length > 1) {
 			editor
 				.edit((edit: TextEditorEdit): void => {
@@ -117,7 +117,7 @@ export function italicize(content: string, range?: Range) {
 		return selectedText.substring(1, selectedText.length - 1);
 	}
 
-	// Set sytax for italic formatting and replace original string with formatted string
+	// Set syntax for italic formatting and replace original string with formatted string
 	const styleItalic = '*' + selectedText + '*';
 	return styleItalic;
 }

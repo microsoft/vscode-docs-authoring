@@ -47,8 +47,8 @@ import { insertRowsAndColumnsCommand } from './controllers/row-columns-controlle
 import { insertSnippetCommand } from './controllers/snippet-controller';
 import { insertSortSelectionCommands } from './controllers/sort-controller';
 import { insertTableCommand } from './controllers/table-controller';
-import { applyXrefCommand } from './controllers/xref-controller';
-import { yamlCommands } from './controllers/yaml-controller';
+import { applyXrefCommand } from './controllers/xref/xref-controller';
+import { yamlCommands } from './controllers/yaml/yaml-controller';
 import {
 	checkExtension,
 	extractDocumentLink,

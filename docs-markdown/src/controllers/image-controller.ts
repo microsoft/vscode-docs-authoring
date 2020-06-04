@@ -193,7 +193,7 @@ export async function applyImage() {
 					image = `:::image type="content" source="${sourcePath}" alt-text="${altText}":::`;
 				}
 				// output image content type
-				insertContentToEditor(editor, applyImage.name, image, true);
+				insertContentToEditor(editor, image, true);
 			}
 		});
 	}
@@ -318,7 +318,7 @@ export async function applyIcon() {
 
 					// output image content type
 					image = `:::image type="icon" source="${sourcePath}" border="false":::`;
-					insertContentToEditor(editor, applyImage.name, image, true);
+					insertContentToEditor(editor, image, true);
 				}
 			});
 		}
@@ -415,7 +415,7 @@ export async function applyComplex() {
 :::image-end:::`;
 				}
 
-				insertContentToEditor(editor, applyImage.name, image, true);
+				insertContentToEditor(editor, image, true);
 				// Set editor position to the middle of long description body
 				setCursorPosition(
 					editor,

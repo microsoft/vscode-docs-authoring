@@ -60,7 +60,7 @@ function insertYamlNoLocEntry(editor: TextEditor) {
 
 	if (isMarkdownFileCheck(editor, false)) {
 		const insertText = 'no-loc: []';
-		insertContentToEditor(editor, insertYamlNoLocEntry.name, insertText, false);
+		insertContentToEditor(editor, insertText, false);
 		const newPosition = new Position(editor.selection.active.line, insertText.indexOf(']'));
 		const newSelection = new Selection(newPosition, newPosition);
 		editor.selection = newSelection;
@@ -68,7 +68,7 @@ function insertYamlNoLocEntry(editor: TextEditor) {
 		const tabs = getTabInsertion(editor);
 
 		const insertText = `no-loc:\n${tabs}- `;
-		insertContentToEditor(editor, insertYamlNoLocEntry.name, insertText, false);
+		insertContentToEditor(editor, insertText, false);
 		const newPosition = new Position(
 			editor.selection.active.line + 1,
 			insertText.indexOf('- ') + 1
@@ -93,7 +93,7 @@ function insertMarkdownNoLocEntry(editor: TextEditor) {
 	const textSelection = editor.document.getText(editor.selection);
 	if (textSelection === '') {
 		const insertText = `:::no-loc text="":::`;
-		insertContentToEditor(editor, insertMarkdownNoLocEntry.name, insertText, false);
+		insertContentToEditor(editor, insertText, false);
 		const newPosition = new Position(
 			editor.selection.active.line,
 			editor.selection.active.character + insertText.indexOf(`"`) + 1
@@ -102,13 +102,7 @@ function insertMarkdownNoLocEntry(editor: TextEditor) {
 		editor.selection = newSelection;
 	} else {
 		const insertText = `:::no-loc text="${textSelection}":::`;
-		insertContentToEditor(
-			editor,
-			insertMarkdownNoLocEntry.name,
-			insertText,
-			true,
-			editor.selection
-		);
+		insertContentToEditor(editor, insertText, true, editor.selection);
 		const newPosition = new Position(
 			editor.selection.end.line,
 			editor.selection.end.character + insertText.indexOf(`"`) + 1
