@@ -14,7 +14,7 @@ import { include } from './markdown-extensions/includes';
 import { rowEndOptions, rowOptions } from './markdown-extensions/row';
 import { videoOptions } from './markdown-extensions/video';
 import { DocumentContentProvider } from './seo/seoPreview';
-import { xref } from './xref/xref';
+import { xref } from './markdown-extensions/xref';
 
 export let extensionPath: string;
 const telemetryCommand: string = 'preview';

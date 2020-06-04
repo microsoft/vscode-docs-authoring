@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import { Position, Range, window } from 'vscode';
+import { commands } from 'vscode';
 import { output } from '../helper/common';
 
 /* tslint:disable: no-conditional-assignment */
@@ -137,21 +137,5 @@ async function updateXrefContent(md: any, src: string) {
 	}
 
 	xrefContent = src;
-	updateEditorToRefreshChanges();
-}
-
-function updateEditorToRefreshChanges() {
-	const editor = window.activeTextEditor;
-	const lastLine = editor.document.lineAt(editor.document.lineCount - 1);
-	const position = new Position(editor.document.lineCount - 1, lastLine.range.end.character);
-	editor
-		.edit(update => {
-			update.insert(position, ' ');
-		})
-		.then(() => {
-			editor.edit(update => {
-				const range = editor.document.getWordRangeAtPosition(position, /[ ]+/g);
-				update.delete(range);
-			});
-		});
+	await commands.executeCommand('markdown.preview.refresh');
 }
