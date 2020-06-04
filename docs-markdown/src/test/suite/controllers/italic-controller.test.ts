@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { resolve } from 'path';
