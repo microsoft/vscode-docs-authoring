@@ -25,8 +25,9 @@ suite('Link Controller', () => {
 		expect(linkControllerCommands).to.deep.equal(controllerCommands);
 	});
 	test('noActiveEditorMessage', async () => {
+		await commands.executeCommand('workbench.action.closeAllEditors');
 		const spy = chai.spy.on(common, 'noActiveEditorMessage');
-		await collapseRelativeLinksForEditor(null);
+		await collapseRelativeLinks();
 		expect(spy).to.have.been.called();
 	});
 	test('Collapse relative links', async () => {
@@ -35,7 +36,8 @@ suite('Link Controller', () => {
 			'../../../../../src/test/data/repo/articles/link-controller.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		const replacements = await collapseRelativeLinksForEditor(window.activeTextEditor);
+		const editor = window.activeTextEditor;
+		const replacements = await collapseRelativeLinksForEditor(editor.document, editor);
 		expect(replacements).to.equal(3);
 	});
 });

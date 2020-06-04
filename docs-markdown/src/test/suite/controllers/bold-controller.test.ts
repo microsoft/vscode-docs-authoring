@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { resolve } from 'path';
 import { commands, window, Selection } from 'vscode';
-import { formatItalic, italicFormattingCommand } from '../../../controllers/italic-controller';
+import { formatBold, boldFormattingCommand } from '../../../controllers/bold-controller';
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
 import { loadDocumentAndGetItReady, sleep, sleepTime } from '../../test.common/common';
@@ -13,7 +13,7 @@ chai.use(spies);
 import sinon = require('sinon');
 const expect = chai.expect;
 
-suite('Italic Controller', () => {
+suite('Bold Controller', () => {
 	suiteSetup(async () => {
 		sinon.stub(telemetry, 'sendTelemetryData');
 	});
@@ -25,13 +25,13 @@ suite('Italic Controller', () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
 		sinon.restore();
 	});
-	test('ItalicFormattingCommand', () => {
-		const controllerCommands = [{ command: formatItalic.name, callback: formatItalic }];
-		expect(italicFormattingCommand()).to.deep.equal(controllerCommands);
+	test('boldFormattingCommand', () => {
+		const controllerCommands = [{ command: formatBold.name, callback: formatBold }];
+		expect(boldFormattingCommand()).to.deep.equal(controllerCommands);
 	});
 	test('noActiveEditorMessage', () => {
 		const spy = chai.spy.on(common, 'noActiveEditorMessage');
-		formatItalic();
+		formatBold();
 		expect(spy).to.have.been.called();
 	});
 	test('isMarkdownFileCheck', async () => {
@@ -41,26 +41,26 @@ suite('Italic Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const spy = chai.spy.on(common, 'isMarkdownFileCheck');
-		formatItalic();
+		formatBold();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 	});
-	test('Italic Format Empty Selection', async () => {
+	test('Bold Format Empty Selection', async () => {
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor!, 14, 0, 14, 0);
+		common.setSelectorPosition(editor!, 12, 0, 12, 0);
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
-		formatItalic();
+		formatBold();
 		await sleep(sleepTime);
 
 		expect(spy).to.have.been.called();
 	});
-	test('Italic Format Single Selection', async () => {
+	test('Bold Format Single Selection', async () => {
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -70,25 +70,25 @@ suite('Italic Controller', () => {
 		common.setSelectorPosition(editor!, 15, 0, 15, 1);
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
-		formatItalic();
+		formatBold();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 	});
-	test('Italic Format Word Selection', async () => {
+	test('Bold Format Word Selection', async () => {
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor!, 163, 0, 163, 4);
-		formatItalic();
+		common.setSelectorPosition(editor!, 159, 0, 159, 4);
+		formatBold();
 		await sleep(sleepTime);
-		const line = editor?.document.lineAt(163).text;
+		const line = editor?.document.lineAt(159).text;
 
-		expect(line).to.equal('*Body*');
+		expect(line).to.equal('**Body**');
 	});
-	test('Italic Format Multiple Selection', async () => {
+	test('Bold Format Multiple Selection', async () => {
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -96,18 +96,18 @@ suite('Italic Controller', () => {
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
 		const cursorPosition = editor!.selection.active;
-		const fromPositionOne = cursorPosition.with(45, 2);
-		const toPositionOne = cursorPosition.with(45, 11);
-		const fromPositionTwo = cursorPosition.with(45, 39);
-		const toPositionTwo = cursorPosition.with(45, 45);
+		const fromPositionOne = cursorPosition.with(48, 0);
+		const toPositionOne = cursorPosition.with(48, 5);
+		const fromPositionTwo = cursorPosition.with(48, 13);
+		const toPositionTwo = cursorPosition.with(48, 17);
 		editor!.selections = [
 			new Selection(fromPositionOne, toPositionOne),
 			new Selection(fromPositionTwo, toPositionTwo)
 		];
-		formatItalic();
+		formatBold();
 		await sleep(sleepTime);
-		const line = editor?.document.lineAt(45).text;
+		const line = editor?.document.lineAt(48).text;
 
-		expect(line).to.equal('> *Dangerous* certain consequences of an *action*.');
+		expect(line).to.equal('**These** alerts **look** like this on docs.microsoft.com:');
 	});
 });
