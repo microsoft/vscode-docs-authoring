@@ -81,7 +81,7 @@ export function insertTable() {
 				const col = Number.parseInt(size[0], undefined);
 				const row = Number.parseInt(size[1], undefined);
 				const str = tableBuilder(col, row);
-				insertContentToEditor(editor, insertTable.name, str);
+				insertContentToEditor(editor, str);
 				logTableMessage = col + ':' + row;
 			} else {
 				output.appendLine('Table insert failed.');

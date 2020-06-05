@@ -25,7 +25,7 @@ const qpSelectionItems = [
 
 // new line in current cursor position
 async function insertBlankLine(editor: TextEditor) {
-	await common.insertContentToEditor(editor, 'test', '\r\n');
+	await common.insertContentToEditor(editor, '\r\n');
 }
 function moveCursor(editor: TextEditor, y: number, x: number) {
 	common.setCursorPosition(editor, y, x);

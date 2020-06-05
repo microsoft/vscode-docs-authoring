@@ -12,5 +12,6 @@ module.exports = [
 	require('./column-extension-syntax'),
 	require('./colomn-span-attribute'),
 	require('./image'),
-	require('./codesnippet')
+	require('./codesnippet'),
+	require('./video')
 ];

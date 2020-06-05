@@ -26,7 +26,7 @@ export function container_plugin(md, name, options) {
 		// Check out the rest of the marker string
 		//
 		for (pos = start; pos <= max; pos++) {
-			if (':' !== state.src[pos]) {
+			if (marker_str !== state.src[pos]) {
 				break;
 			}
 		}
@@ -64,7 +64,7 @@ export function container_plugin(md, name, options) {
 			max = state.eMarks[nextLine];
 
 			for (let hpos = start; hpos <= max; hpos++) {
-				if (':' !== state.src[hpos]) {
+				if (marker_str !== state.src[hpos]) {
 					continue;
 				}
 

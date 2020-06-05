@@ -147,20 +147,15 @@ export function automaticList() {
 				} else {
 					insertText = '\n' + indent + '- ';
 				}
-				insertContentToEditor(editor, automaticList.name, insertText, false);
+				insertContentToEditor(editor, insertText, false);
 			} else {
 				// default case
 				const defaultText = '\n';
-				insertContentToEditor(editor, automaticList.name, defaultText, false);
+				insertContentToEditor(editor, defaultText, false);
 			}
 		} catch (Exception) {
 			const exceptionText = '\n';
-			insertContentToEditor(
-				editor,
-				automaticList.name + ': catch exception handling',
-				exceptionText,
-				false
-			);
+			insertContentToEditor(editor, exceptionText, false);
 		}
 	}
 }
@@ -205,7 +200,7 @@ export function insertNestedList() {
 				editor.document.lineAt(endSelected.line).text.length
 			);
 			const updateText = selectedLines.join('\n');
-			insertContentToEditor(editor, insertNestedList.name, updateText, true, range);
+			insertContentToEditor(editor, updateText, true, range);
 		} else if (!checkEmptyLine(editor)) {
 			const text = editor.document.getText(
 				new vscode.Range(
@@ -225,12 +220,12 @@ export function insertNestedList() {
 				});
 			} else if (getNumberedLineWithRegex(numberedRegex, text) > 0) {
 				nestedNumberedList(editor, cursorPosition, indentCount);
-				insertContentToEditor(editor, insertNestedList.name, tabPattern, false);
+				insertContentToEditor(editor, tabPattern, false);
 			} else {
-				insertContentToEditor(editor, insertNestedList.name, tabPattern, false);
+				insertContentToEditor(editor, tabPattern, false);
 			}
 		} else {
-			insertContentToEditor(editor, insertNestedList.name, tabPattern, false);
+			insertContentToEditor(editor, tabPattern, false);
 		}
 	}
 }

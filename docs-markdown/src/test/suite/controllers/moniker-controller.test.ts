@@ -62,8 +62,8 @@ suite('Moniker Controller', () => {
 	test('insertYamlMoniker - equal - output', async () => {
 		const editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, yamlLine, 0);
-		common.insertContentToEditor(editor!, 'test', '\r\n');
-		common.insertContentToEditor(editor!, '', '', false, editor!.document.lineAt(10).range);
+		common.insertContentToEditor(editor!, '\r\n');
+		common.insertContentToEditor(editor!, '', false, editor!.document.lineAt(10).range);
 		common.setCursorPosition(editor!, yamlLine, 0); // move cursor back
 		await sleep(sleepTime);
 
@@ -88,7 +88,7 @@ suite('Moniker Controller', () => {
 	test('insertYamlMoniker - greater/equal - output', async () => {
 		const editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, yamlLine, 0);
-		common.insertContentToEditor(editor!, 'test', '\r\n');
+		common.insertContentToEditor(editor!, '\r\n');
 		common.setCursorPosition(editor!, yamlLine, 0);
 
 		await sleep(sleepTime);
@@ -114,7 +114,7 @@ suite('Moniker Controller', () => {
 	test('insertYamlMoniker - less/equal - output', async () => {
 		const editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, yamlLine, 0);
-		common.insertContentToEditor(editor!, 'test', '\r\n');
+		common.insertContentToEditor(editor!, '\r\n');
 		common.setCursorPosition(editor!, yamlLine, 0);
 		await sleep(sleepTime);
 
@@ -167,7 +167,7 @@ suite('Moniker Controller', () => {
 	test('insertMarkdownMoniker - greater/equal - output', async () => {
 		const editor = window.activeTextEditor!;
 		common.setCursorPosition(editor, markLine + 3, 0);
-		common.insertContentToEditor(editor, 'test', '\r\n');
+		common.insertContentToEditor(editor, '\r\n');
 		common.setCursorPosition(editor, markLine + 3, 0);
 		await sleep(sleepTime);
 
@@ -196,7 +196,7 @@ suite('Moniker Controller', () => {
 	test('insertMarkdownMoniker - less/equal - output', async () => {
 		const editor = window.activeTextEditor!;
 		common.setCursorPosition(editor, markLine + 6, 0);
-		common.insertContentToEditor(editor!, 'test', '\r\n');
+		common.insertContentToEditor(editor!, '\r\n');
 		common.setCursorPosition(editor, markLine + 6, 0);
 		await sleep(sleepTime);
 

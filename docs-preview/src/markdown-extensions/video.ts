@@ -1,12 +1,27 @@
-const regex = /^\[\!VIDEO\s+(.+)\]$/gim;
+const regex = /video\s+source="(.*?)":::/gim;
 export const videoOptions = {
-	marker: '>',
+	marker: ':',
 	validate(params) {
 		return params.trim().match(regex);
 	},
 	render(tokens, idx) {
-		const VIDEO_RE = /^\[\!VIDEO\s+(.+)\]$/gim;
-		const videoMatches = VIDEO_RE.exec(tokens[idx].info.trim());
+		const videoMatches = regex.exec(tokens[idx].info.trim());
+		if (videoMatches !== null) {
+			return `<video width="640" height="320" controls><source src="${videoMatches[1]}"></video>`;
+		} else {
+			return '';
+		}
+	}
+};
+
+const legacyVideoRegex = /^\[\!VIDEO\s+(.*?)\]$/gim;
+export const legacyVideoOptions = {
+	marker: '>',
+	validate(params) {
+		return params.trim().match(legacyVideoRegex);
+	},
+	render(tokens, idx) {
+		const videoMatches = legacyVideoRegex.exec(tokens[idx].info.trim());
 		if (videoMatches !== null) {
 			return `<video width="640" height="320" controls><source src="${videoMatches[1]}"></video>`;
 		} else {

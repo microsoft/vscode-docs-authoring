@@ -22,7 +22,7 @@ import {
 } from '../helper/utility';
 import { Command } from '../Command';
 import { Insert, insertURL, MediaType, selectLinkType } from './media-controller';
-import { applyXref } from './xref-controller';
+import { applyXref } from './xref/xref-controller';
 
 export const linkControllerCommands: Command[] = [
 	{
@@ -93,7 +93,10 @@ export async function collapseRelativeLinks() {
 	await collapseRelativeLinksForEditor(editor.document, editor);
 }
 
-export async function collapseRelativeLinksForEditor(document : TextDocument, editor: TextEditor): Promise<number> {
+export async function collapseRelativeLinksForEditor(
+	document: TextDocument,
+	editor: TextEditor
+): Promise<number> {
 	const content = document.getText();
 	if (!content) {
 		return;

@@ -151,7 +151,7 @@ export async function applyCodeFormatting(content: string, selectedContent: any,
 				emptyRange
 			);
 
-			await insertContentToEditor(editor, formatCode.name, formattedText, true);
+			await insertContentToEditor(editor, formattedText, true);
 		}
 
 		// if multiple cursors were used to make selections
