@@ -5,6 +5,7 @@
 - Added support for triple colon video extension insertion.
 - Bug fix for Link in repo.
 - Updated collapse relative link feature.
+- User snippet tab stop bug fix: [Issue 140](https://github.com/microsoft/vscode-docs-authoring/issues/140)
 
 ## 0.2.71 (May 29th, 2020)
 
