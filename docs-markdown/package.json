@@ -666,6 +666,12 @@
 				"when": "editorTextFocus"
 			},
 			{
+				"command": "automaticList",
+				"key": "enter",
+				"mac": "enter",
+				"when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible && !vim.active && !inSnippetMode"
+			},
+			{
 				"command": "insertNestedList",
 				"key": "tab",
 				"mac": "tab",
