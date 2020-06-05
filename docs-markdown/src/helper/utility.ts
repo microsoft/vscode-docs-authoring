@@ -552,3 +552,50 @@ export async function applyReplacements(replacements: Replacements, editor: Text
 		});
 	}
 }
+
+export interface RangeValuePair {
+	index: number;
+	length: number;
+	value: string;
+}
+
+export function findMatchesInText(
+	content: string,
+	expression?: RegExpOrRegExpWithGroup
+): RangeValuePair[] | undefined {
+	if (!expression) {
+		return undefined;
+	}
+
+	const exp = isRegExp(expression) ? expression : expression.expression;
+	const results = matchAll(exp, content);
+	if (!results || !results.length) {
+		return undefined;
+	}
+
+	const groups = !isRegExp(expression) ? expression.groups : null;
+	const values: RangeValuePair[] = [];
+	for (let i = 0; i < results.length; i++) {
+		const result = results[i];
+		if (result !== null && result.length) {
+			const match = groups && result.groups ? result.groups[groups[0]] : result[0];
+			if (match) {
+				let index = result.index !== undefined ? result.index : -1;
+				if (index === -1) {
+					continue;
+				}
+				if (groups) {
+					index += result[0].indexOf(match);
+				}
+
+				values.push({
+					index,
+					length: match.length,
+					value: match
+				});
+			}
+		}
+	}
+
+	return values;
+}
