@@ -15,15 +15,39 @@ test('Moniker markdown lint', () => {
 			ruleNames: ['DOCSMD006', 'docsmd.moniker'],
 			ruleDescription: 'Moniker linting.',
 			errorDetail: errorDetailStrings.monikerRange,
-			errorContext: '::: moniker range:"chromeless"',
+			errorContext: ':::moniker',
 			errorRange: null
 		},
 		{
-			lineNumber: 49,
+			lineNumber: 46,
 			ruleNames: ['DOCSMD006', 'docsmd.moniker'],
 			ruleDescription: 'Moniker linting.',
-			errorDetail: errorDetailStrings.monikerSyntax,
-			errorContext: '::: moniker robot',
+			errorDetail: errorDetailStrings.monikerRange,
+			errorContext: '::: moniker range=""',
+			errorRange: null
+		},
+		{
+			lineNumber: 50,
+			ruleNames: ['DOCSMD006', 'docsmd.moniker'],
+			ruleDescription: 'Moniker linting.',
+			errorDetail: errorDetailStrings.monikerCaseSensitive,
+			errorContext: '::: moniker Range=">="',
+			errorRange: null
+		},
+		{
+			lineNumber: 56,
+			ruleNames: ['DOCSMD006', 'docsmd.moniker'],
+			ruleDescription: 'Moniker linting.',
+			errorDetail: errorDetailStrings.monikerEnd,
+			errorContext: '::: moniker range="<="',
+			errorRange: null
+		},
+		{
+			lineNumber: 60,
+			ruleNames: ['DOCSMD006', 'docsmd.moniker'],
+			ruleDescription: 'Moniker linting.',
+			errorDetail: errorDetailStrings.monikerRange,
+			errorContext: '::: moniker robot="abc"',
 			errorRange: null
 		}
 	]);
