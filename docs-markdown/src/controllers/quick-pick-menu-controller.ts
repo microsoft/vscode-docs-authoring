@@ -20,7 +20,7 @@ import { insertRowsAndColumns } from './row-columns-controller';
 import { insertSnippet } from './snippet-controller';
 import { insertTable } from './table-controller';
 import { applyTemplate } from './template-controller';
-import { applyXref } from './xref-controller';
+import { applyXref } from './xref/xref-controller';
 import {
 	insertExpandableParentNode,
 	insertTocEntry,

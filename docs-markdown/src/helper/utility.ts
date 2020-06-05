@@ -213,19 +213,19 @@ export async function search(
 				const id = await window.showInputBox({ prompt: 'Enter id to select' });
 				if (id) {
 					snippet = snippetBuilder(language, snippetLink, id, undefined);
-					insertContentToEditor(editor, search.name, snippet, true, selectionRange);
+					insertContentToEditor(editor, snippet, true, selectionRange);
 				}
 				break;
 			case 'range':
 				const range = await window.showInputBox({ prompt: 'Enter line selection range' });
 				if (range) {
 					snippet = snippetBuilder(language, snippetLink, undefined, range);
-					insertContentToEditor(editor, search.name, snippet, true, selectionRange);
+					insertContentToEditor(editor, snippet, true, selectionRange);
 				}
 				break;
 			default:
 				snippet = snippetBuilder(language, snippetLink);
-				insertContentToEditor(editor, search.name, snippet, true, selectionRange);
+				insertContentToEditor(editor, snippet, true, selectionRange);
 				break;
 		}
 	}
@@ -297,7 +297,14 @@ export function externalLinkBuilder(link: string, title: string = '') {
 }
 
 export function videoLinkBuilder(link: string) {
-	const videoLink = `> [!VIDEO ${link}]`;
+	const config = workspace.getConfiguration('markdown');
+	const previewTripleColonVideoSyntax = config.get<boolean>('previewFeatures');
+	let videoLink = '';
+	if (!previewTripleColonVideoSyntax) {
+		videoLink = `> [!VIDEO ${link}]`;
+	} else {
+		videoLink = `:::video source="${link}":::`;
+	}
 	return videoLink;
 }
 
