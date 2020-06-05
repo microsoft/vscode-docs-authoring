@@ -114,6 +114,7 @@ export async function collapseRelativeLinksForFile(
 		const rangeValuePairs = findMatchesInText(content, linkRegex);
 		const directory = dirname(filePath);
 		const replacements: { originalValue: string; newValue: string }[] = [];
+		// eslint-disable-next-line @typescript-eslint/prefer-for-of
 		for (let i = 0; i < rangeValuePairs.length; i++) {
 			const rangeValuePair = rangeValuePairs[i];
 			const absolutePath = join(directory, rangeValuePair.value);
@@ -163,6 +164,7 @@ export async function collapseRelativeLinksForEditor(
 	}
 
 	const replacements: Replacements = [];
+	// eslint-disable-next-line @typescript-eslint/prefer-for-of
 	for (let i = 0; i < tempReplacements.length; i++) {
 		const replacement = tempReplacements[i];
 		const absolutePath = join(directory, replacement.value);
