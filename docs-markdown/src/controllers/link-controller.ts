@@ -1,4 +1,4 @@
-import { existsSync } from 'fs';
+import { existsSync, promises } from 'graceful-fs';
 import { basename, dirname, join, relative } from 'path';
 import {
 	commands,
@@ -18,7 +18,8 @@ import {
 	applyReplacements,
 	findReplacements,
 	RegExpWithGroup,
-	Replacements
+	Replacements,
+	findMatchesInText
 } from '../helper/utility';
 import { Command } from '../Command';
 import { Insert, insertURL, MediaType, selectLinkType } from './media-controller';
@@ -57,9 +58,11 @@ export async function collapseRelativeLinksInFolder(uri: Uri) {
 			const filePaths = await workspace.findFiles(new RelativePattern(uri.path, '**/*.md'));
 
 			const length = filePaths.length;
+			const isLongRunningOperation = length > 20;
 			let message = `scanning ${length} markdown files.${
-				length > 100 ? ' This might take a while, please be patient.' : ''
+				isLongRunningOperation ? ' This might take a while, please be patient.' : ''
 			}`;
+
 			progress.report({ increment: 0, message });
 			const increment = 100 / length;
 			let filesUpdated = 0;
@@ -67,9 +70,18 @@ export async function collapseRelativeLinksInFolder(uri: Uri) {
 				if (token.isCancellationRequested) {
 					break;
 				}
+
 				const file = filePaths[i];
-				const document = await workspace.openTextDocument(file);
-				const collapsedLinkCount = await collapseRelativeLinksForEditor(document, null);
+				let collapsedLinkCount = 0;
+
+				// Only open the text document in the editor when 20 or less files are being worked on.
+				if (isLongRunningOperation) {
+					collapsedLinkCount = await collapseRelativeLinksForFile(file.fsPath);
+				} else {
+					const document = await workspace.openTextDocument(file);
+					collapsedLinkCount = await collapseRelativeLinksForEditor(document, null);
+				}
+
 				if (collapsedLinkCount > 0) {
 					filesUpdated++;
 					message = `collapsed ${collapsedLinkCount} links in ${basename(file.fsPath)}`;
@@ -91,6 +103,49 @@ export async function collapseRelativeLinks() {
 	}
 
 	await collapseRelativeLinksForEditor(editor.document, editor);
+}
+
+export async function collapseRelativeLinksForFile(
+	filePath: string,
+	saveOnReplace: boolean = true
+): Promise<number> {
+	if (existsSync(filePath)) {
+		let content = (await promises.readFile(filePath)).toString('utf8');
+		const rangeValuePairs = findMatchesInText(content, linkRegex);
+		const directory = dirname(filePath);
+		const replacements: { originalValue: string; newValue: string }[] = [];
+		// eslint-disable-next-line @typescript-eslint/prefer-for-of
+		for (let i = 0; i < rangeValuePairs.length; i++) {
+			const rangeValuePair = rangeValuePairs[i];
+			const absolutePath = join(directory, rangeValuePair.value);
+			if (rangeValuePair && existsSync(absolutePath)) {
+				const relativePath = relative(directory, absolutePath).replace(/\\/g, '/');
+				if (relativePath !== rangeValuePair.value && `./${relativePath}` !== rangeValuePair.value) {
+					replacements.push({
+						originalValue: rangeValuePair.value,
+						newValue: relativePath
+					});
+				}
+			}
+		}
+
+		if (replacements.length === 0) {
+			return 0;
+		}
+
+		replacements.forEach(replacement => {
+			content = content.replace(replacement.originalValue, replacement.newValue);
+		});
+
+		// Parameter should only ever be false when running a unit test.
+		if (saveOnReplace) {
+			await promises.writeFile(filePath, content, 'utf8');
+		}
+
+		return replacements.length;
+	}
+
+	return 0;
 }
 
 export async function collapseRelativeLinksForEditor(
