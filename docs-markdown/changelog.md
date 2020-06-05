@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.2.72 (June 4th, 2020)
+
+- Added support for triple colon video extension insertion.
+- Bug fix for Link in repo.
+- Updated collapse relative link feature.
+
 ## 0.2.71 (May 29th, 2020)
 
 - Improved support for collapse relative links in folder experience.
