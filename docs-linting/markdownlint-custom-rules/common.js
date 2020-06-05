@@ -5,10 +5,12 @@ module.exports.singleColon = /^:/gm;
 module.exports.tripleColonSyntax = /^:::\s?/gm;
 module.exports.validTripleColon = /^:::\s+/gm;
 module.exports.openAndClosingValidTripleColon = /^:::(.*):::/gim;
+module.exports.AttributeMatchGlobal = /(\S+)=["]?((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/g;
+module.exports.AttributeMatch = /(\S+)=["]?((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/;
 
 // Markdown extensions (add valid/supported extensions to list)
 module.exports.openExtension = /^:(.*?)(zone|moniker|no-loc)/gm;
-module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc|image|code)(.:*)/g;
+module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc|image|code|video)(.:*)/g;
 module.exports.unsupportedExtensionRegex = /^:::\s+(.*)/gm;
 
 // Zones
@@ -116,3 +118,11 @@ module.exports.allowedInteractiveValues = [
 	'cloudshell-powershell',
 	'cloudshell-bash'
 ];
+
+//video
+module.exports.syntaxVideoLooseMatch = /(:+)\s*video\s*(((.*)?="(.*?)")?(.:+)?)?/gim;
+module.exports.videoOpen = /:::video/gim;
+module.exports.videoSourceMatch = /source\s*=\s*"(.*?)"/m;
+module.exports.videoTitleMatch = /title\s*=\s*"(.*?)"/m;
+module.exports.videoMaxWidthMatch = /max-width\s*=\s*"(.*?)"/m;
+module.exports.allowedVideoAttributes = ['source', 'title', 'max-width'];

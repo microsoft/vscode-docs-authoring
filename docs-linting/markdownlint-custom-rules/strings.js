@@ -68,3 +68,14 @@ module.exports.allowedInteractiveValues = `"___" is not an allowed value for int
 
 // logging
 module.exports.failedResponse = `There was an error pulling NAME schema data from URL.`;
+
+// video
+module.exports.videoCaseSensitive = `Bad syntax for video. video attribute "___" must be lower-case.`;
+module.exports.videoNonAllowedAttribute = `Bad syntax for video. "___" is not an allowed attribute.`;
+module.exports.videoNonAllowedType = `Bad syntax for video. "___" is not an allowed type. Options are "content", "complex", "icon"`;
+module.exports.videoSourceRequired = `Bad syntax for video. "source" required.`;
+module.exports.videoTitleRequired = `Bad syntax for video. "title" required for "complex" and "content" video types.`;
+module.exports.videoSourceUrl =
+	'Video source, should be from https://channel9.msdn.com, https://www.youtube.com/embed, or https://www.microsoft.com/en-us/videoplayer/embed';
+module.exports.videoChannel9 =
+	"Your source from channel9.msdn.com does not end in '/player'. Please make sure you are correctly linking to the Channel 9 video player.";
