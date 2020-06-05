@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.3.51 (June 4th, 2020)
+
+- Added triple colon video extension support.
+- Bug fix for preview refresh on xref and codesnippet extensions.
+
 ## 0.3.50 (May 22nd, 2020)
 
 - Added clickable triple colon image support for preview.
