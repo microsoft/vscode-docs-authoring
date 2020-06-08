@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.73 (June 8th, 2020)
+
+- List bug fix: [Issue 409](https://github.com/microsoft/vscode-docs-authoring/issues/409)
+
 ## 0.2.72 (June 4th, 2020)
 
 - Added support for triple colon video extension insertion.
