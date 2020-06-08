@@ -123,8 +123,9 @@ export function markdownQuickPick() {
 	//    description: "Beta preview",
 	//    label: "$(tasklist) Cleanup...",
 	// }
-	const previewSetting = vscode.workspace.getConfiguration('markdown').previewFeatures;
-	if (previewSetting === true) {
+	const config = vscode.workspace.getConfiguration('markdown');
+	const previewFeatures = config.get<boolean>('previewFeatures');
+	if (previewFeatures === true) {
 		output.appendLine('Preview features will be enabled.');
 	}
 
