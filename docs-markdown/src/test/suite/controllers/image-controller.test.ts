@@ -4,8 +4,8 @@ import Axios from 'axios';
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import * as os from 'os';
-import { resolve } from 'path';
-import { commands, QuickPickItem, window } from 'vscode';
+import { resolve, relative } from 'path';
+import { commands, QuickPickItem, window, ExtensionContext } from 'vscode';
 import {
 	applyComplex,
 	applyIcon,
@@ -18,8 +18,10 @@ import {
 } from '../../../controllers/image-controller';
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
-import { loadDocumentAndGetItReady, sleep } from '../../test.common/common';
-
+import { loadDocumentAndGetItReady, sleep, extendedSleepTime } from '../../test.common/common';
+interface Subscription {
+	dispose(): any;
+}
 chai.use(spies);
 
 import sinon = require('sinon');
@@ -50,7 +52,7 @@ suite('Image Controller', () => {
 			{ command: applyLightbox.name, callback: applyLightbox },
 			{ command: applyLink.name, callback: applyLink }
 		];
-		expect(insertImageCommand()).to.deep.equal(controllerCommands);
+		expect(insertImageCommand).to.deep.equal(controllerCommands);
 	});
 	test('applyIcon', async () => {
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
@@ -61,6 +63,23 @@ suite('Image Controller', () => {
 			description: resolve(__dirname, '../../../../../src/test/data/repo/images/'),
 			label: 'test.png'
 		};
+		let subscriptions: Subscription[];
+		const context: ExtensionContext = {
+			globalState: {
+				get: key => {},
+				update: (key, value) => Promise.resolve()
+			},
+			subscriptions,
+			workspaceState: {
+				get: () => {},
+				update: (key, value) => Promise.resolve()
+			},
+			extensionPath: '',
+			asAbsolutePath: relative => '',
+			storagePath: '',
+			globalStoragePath: '',
+			logPath: ''
+		};
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
 
@@ -70,8 +89,8 @@ suite('Image Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 
-		pickImageType();
-		await sleep(400);
+		await pickImageType(context);
+		await sleep(extendedSleepTime);
 		const expectedText = ':::image type="icon" source="../images/test.png" border="false":::';
 		const editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
@@ -93,13 +112,30 @@ suite('Image Controller', () => {
 		const stubShowInputBox = sinon.stub(window, 'showInputBox');
 		stubShowInputBox.resolves('foo');
 
+		let subscriptions: Subscription[];
+		const context: ExtensionContext = {
+			globalState: {
+				get: key => {},
+				update: (key, value) => Promise.resolve()
+			},
+			subscriptions,
+			workspaceState: {
+				get: () => {},
+				update: (key, value) => Promise.resolve()
+			},
+			extensionPath: '',
+			asAbsolutePath: relative => '',
+			storagePath: '',
+			globalStoragePath: '',
+			logPath: ''
+		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller2.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		pickImageType();
-		await sleep(400);
+		await pickImageType(context);
+		await sleep(extendedSleepTime);
 		const expectedText = ':::image type="content" source="../images/test.png" alt-text="foo":::';
 		const editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
@@ -121,14 +157,30 @@ suite('Image Controller', () => {
 
 		const stubShowInputBox = sinon.stub(window, 'showInputBox');
 		stubShowInputBox.resolves('foo');
-
+		let subscriptions: Subscription[];
+		const context: ExtensionContext = {
+			globalState: {
+				get: key => {},
+				update: (key, value) => Promise.resolve()
+			},
+			subscriptions,
+			workspaceState: {
+				get: () => {},
+				update: (key, value) => Promise.resolve()
+			},
+			extensionPath: '',
+			asAbsolutePath: relative => '',
+			storagePath: '',
+			globalStoragePath: '',
+			logPath: ''
+		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller3.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		pickImageType();
-		await sleep(400);
+		await pickImageType(context);
+		await sleep(extendedSleepTime);
 		const expectedText =
 			':::image type="complex" source="../images/test.png" alt-text="foo":::' +
 			os.EOL +
@@ -154,7 +206,23 @@ suite('Image Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
-
+		let subscriptions: Subscription[];
+		const context: ExtensionContext = {
+			globalState: {
+				get: key => {},
+				update: (key, value) => Promise.resolve()
+			},
+			subscriptions,
+			workspaceState: {
+				get: () => {},
+				update: (key, value) => Promise.resolve()
+			},
+			extensionPath: '',
+			asAbsolutePath: relative => '',
+			storagePath: '',
+			globalStoragePath: '',
+			logPath: ''
+		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller4.md'
@@ -162,8 +230,8 @@ suite('Image Controller', () => {
 		await loadDocumentAndGetItReady(filePath);
 		let editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 0, 4);
-		pickImageType();
-		await sleep(400);
+		await pickImageType(context);
+		await sleep(extendedSleepTime);
 		const expectedText =
 			':::image type="content" source="../images/test.png" alt-text="foo" loc-scope="markdown":::' +
 			os.EOL;
@@ -184,7 +252,23 @@ suite('Image Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
-
+		let subscriptions: Subscription[];
+		const context: ExtensionContext = {
+			globalState: {
+				get: key => {},
+				update: (key, value) => Promise.resolve()
+			},
+			subscriptions,
+			workspaceState: {
+				get: () => {},
+				update: (key, value) => Promise.resolve()
+			},
+			extensionPath: '',
+			asAbsolutePath: relative => '',
+			storagePath: '',
+			globalStoragePath: '',
+			logPath: ''
+		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller5.md'
@@ -192,8 +276,8 @@ suite('Image Controller', () => {
 		await loadDocumentAndGetItReady(filePath);
 		let editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 0, 4);
-		pickImageType();
-		await sleep(400);
+		await pickImageType(context);
+		await sleep(extendedSleepTime);
 		const expectedText =
 			':::image type="content" source="../images/test.png" alt-text="foo" loc-scope="markdown" lightbox="../images/test.png":::' +
 			os.EOL;
@@ -216,7 +300,23 @@ suite('Image Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
-
+		let subscriptions: Subscription[];
+		const context: ExtensionContext = {
+			globalState: {
+				get: key => {},
+				update: (key, value) => Promise.resolve()
+			},
+			subscriptions,
+			workspaceState: {
+				get: () => {},
+				update: (key, value) => Promise.resolve()
+			},
+			extensionPath: '',
+			asAbsolutePath: relative => '',
+			storagePath: '',
+			globalStoragePath: '',
+			logPath: ''
+		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller6.md'
@@ -224,8 +324,8 @@ suite('Image Controller', () => {
 		await loadDocumentAndGetItReady(filePath);
 		let editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 0, 4);
-		pickImageType();
-		await sleep(400);
+		await pickImageType(context);
+		await sleep(extendedSleepTime);
 		const expectedText =
 			':::image type="content" source="../images/test.png" alt-text="foo" link="https://microsoft.com":::' +
 			os.EOL;

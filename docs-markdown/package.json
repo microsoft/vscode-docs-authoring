@@ -740,6 +740,7 @@
 		}
 	},
 	"dependencies": {
+		"adal-node": "^0.2.1",
 		"axios": "^0.19.2",
 		"child-process-promise": "^2.2.1",
 		"diff": "^4.0.2",
