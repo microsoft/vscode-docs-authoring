@@ -64,7 +64,7 @@ suite('Image Controller', () => {
 			label: 'test.png'
 		};
 		let subscriptions: Subscription[];
-		const context: ExtensionContext = {
+		const context = {
 			globalState: {
 				get: key => {},
 				update: (key, value) => Promise.resolve()
@@ -113,7 +113,7 @@ suite('Image Controller', () => {
 		stubShowInputBox.resolves('foo');
 
 		let subscriptions: Subscription[];
-		const context: ExtensionContext = {
+		const context = {
 			globalState: {
 				get: key => {},
 				update: (key, value) => Promise.resolve()
@@ -158,7 +158,7 @@ suite('Image Controller', () => {
 		const stubShowInputBox = sinon.stub(window, 'showInputBox');
 		stubShowInputBox.resolves('foo');
 		let subscriptions: Subscription[];
-		const context: ExtensionContext = {
+		const context = {
 			globalState: {
 				get: key => {},
 				update: (key, value) => Promise.resolve()
@@ -207,7 +207,7 @@ suite('Image Controller', () => {
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
 		let subscriptions: Subscription[];
-		const context: ExtensionContext = {
+		const context = {
 			globalState: {
 				get: key => {},
 				update: (key, value) => Promise.resolve()
@@ -253,7 +253,7 @@ suite('Image Controller', () => {
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
 		let subscriptions: Subscription[];
-		const context: ExtensionContext = {
+		const context = {
 			globalState: {
 				get: key => {},
 				update: (key, value) => Promise.resolve()
@@ -301,7 +301,7 @@ suite('Image Controller', () => {
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
 		let subscriptions: Subscription[];
-		const context: ExtensionContext = {
+		const context = {
 			globalState: {
 				get: key => {},
 				update: (key, value) => Promise.resolve()
