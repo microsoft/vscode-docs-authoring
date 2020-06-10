@@ -5,7 +5,7 @@ import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import * as os from 'os';
 import { resolve, relative } from 'path';
-import { commands, QuickPickItem, window, ExtensionContext } from 'vscode';
+import { commands, QuickPickItem, window, ExtensionContext, Uri } from 'vscode';
 import {
 	applyComplex,
 	applyIcon,
@@ -63,8 +63,12 @@ suite('Image Controller', () => {
 			description: resolve(__dirname, '../../../../../src/test/data/repo/images/'),
 			label: 'test.png'
 		};
+		const filePath = resolve(
+			__dirname,
+			'../../../../../src/test/data/repo/articles/image-controller4.md'
+		);
 		let subscriptions: Subscription[];
-		const context = {
+		const context: ExtensionContext = {
 			globalState: {
 				get: key => {},
 				update: (key, value) => Promise.resolve()
@@ -78,15 +82,13 @@ suite('Image Controller', () => {
 			asAbsolutePath: relative => '',
 			storagePath: '',
 			globalStoragePath: '',
-			logPath: ''
+			logPath: '',
+			extensionUri: Uri.parse(filePath)
 		};
+
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
 
-		const filePath = resolve(
-			__dirname,
-			'../../../../../src/test/data/repo/articles/image-controller1.md'
-		);
 		await loadDocumentAndGetItReady(filePath);
 
 		await pickImageType(context);
@@ -112,8 +114,12 @@ suite('Image Controller', () => {
 		const stubShowInputBox = sinon.stub(window, 'showInputBox');
 		stubShowInputBox.resolves('foo');
 
+		const filePath = resolve(
+			__dirname,
+			'../../../../../src/test/data/repo/articles/image-controller4.md'
+		);
 		let subscriptions: Subscription[];
-		const context = {
+		const context: ExtensionContext = {
 			globalState: {
 				get: key => {},
 				update: (key, value) => Promise.resolve()
@@ -127,12 +133,10 @@ suite('Image Controller', () => {
 			asAbsolutePath: relative => '',
 			storagePath: '',
 			globalStoragePath: '',
-			logPath: ''
+			logPath: '',
+			extensionUri: Uri.parse(filePath)
 		};
-		const filePath = resolve(
-			__dirname,
-			'../../../../../src/test/data/repo/articles/image-controller2.md'
-		);
+
 		await loadDocumentAndGetItReady(filePath);
 		await pickImageType(context);
 		await sleep(extendedSleepTime);
@@ -157,8 +161,12 @@ suite('Image Controller', () => {
 
 		const stubShowInputBox = sinon.stub(window, 'showInputBox');
 		stubShowInputBox.resolves('foo');
+		const filePath = resolve(
+			__dirname,
+			'../../../../../src/test/data/repo/articles/image-controller4.md'
+		);
 		let subscriptions: Subscription[];
-		const context = {
+		const context: ExtensionContext = {
 			globalState: {
 				get: key => {},
 				update: (key, value) => Promise.resolve()
@@ -172,12 +180,10 @@ suite('Image Controller', () => {
 			asAbsolutePath: relative => '',
 			storagePath: '',
 			globalStoragePath: '',
-			logPath: ''
+			logPath: '',
+			extensionUri: Uri.parse(filePath)
 		};
-		const filePath = resolve(
-			__dirname,
-			'../../../../../src/test/data/repo/articles/image-controller3.md'
-		);
+
 		await loadDocumentAndGetItReady(filePath);
 		await pickImageType(context);
 		await sleep(extendedSleepTime);
@@ -206,8 +212,12 @@ suite('Image Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
+		const filePath = resolve(
+			__dirname,
+			'../../../../../src/test/data/repo/articles/image-controller4.md'
+		);
 		let subscriptions: Subscription[];
-		const context = {
+		const context: ExtensionContext = {
 			globalState: {
 				get: key => {},
 				update: (key, value) => Promise.resolve()
@@ -221,12 +231,10 @@ suite('Image Controller', () => {
 			asAbsolutePath: relative => '',
 			storagePath: '',
 			globalStoragePath: '',
-			logPath: ''
+			logPath: '',
+			extensionUri: Uri.parse(filePath)
 		};
-		const filePath = resolve(
-			__dirname,
-			'../../../../../src/test/data/repo/articles/image-controller4.md'
-		);
+
 		await loadDocumentAndGetItReady(filePath);
 		let editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 0, 4);
@@ -252,8 +260,12 @@ suite('Image Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
+		const filePath = resolve(
+			__dirname,
+			'../../../../../src/test/data/repo/articles/image-controller4.md'
+		);
 		let subscriptions: Subscription[];
-		const context = {
+		const context: ExtensionContext = {
 			globalState: {
 				get: key => {},
 				update: (key, value) => Promise.resolve()
@@ -267,12 +279,10 @@ suite('Image Controller', () => {
 			asAbsolutePath: relative => '',
 			storagePath: '',
 			globalStoragePath: '',
-			logPath: ''
+			logPath: '',
+			extensionUri: Uri.parse(filePath)
 		};
-		const filePath = resolve(
-			__dirname,
-			'../../../../../src/test/data/repo/articles/image-controller5.md'
-		);
+
 		await loadDocumentAndGetItReady(filePath);
 		let editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 0, 4);
@@ -300,8 +310,12 @@ suite('Image Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
+		const filePath = resolve(
+			__dirname,
+			'../../../../../src/test/data/repo/articles/image-controller4.md'
+		);
 		let subscriptions: Subscription[];
-		const context = {
+		const context: ExtensionContext = {
 			globalState: {
 				get: key => {},
 				update: (key, value) => Promise.resolve()
@@ -315,12 +329,10 @@ suite('Image Controller', () => {
 			asAbsolutePath: relative => '',
 			storagePath: '',
 			globalStoragePath: '',
-			logPath: ''
+			logPath: '',
+			extensionUri: Uri.parse(filePath)
 		};
-		const filePath = resolve(
-			__dirname,
-			'../../../../../src/test/data/repo/articles/image-controller6.md'
-		);
+
 		await loadDocumentAndGetItReady(filePath);
 		let editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 0, 4);
