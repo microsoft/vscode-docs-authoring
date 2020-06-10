@@ -141,7 +141,6 @@ export class ImageCompressor {
 						return true;
 					} else {
 						this.updateStatus(Status.AttemptingResize, 'Timeout occurred, unable to resize image.');
-
 						return false;
 					}
 				}
