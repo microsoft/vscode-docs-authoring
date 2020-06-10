@@ -1,3 +1,4 @@
+import * as assert from 'assert';
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { resolve } from 'path';
@@ -9,6 +10,7 @@ import {
 	distributeTable
 } from '../../../controllers/table-controller';
 import * as common from '../../../helper/common';
+import * as telemetry from '../../../helper/telemetry';
 import { loadDocumentAndGetItReady, sleep, sleepTime } from '../../test.common/common';
 
 chai.use(spies);
@@ -53,14 +55,15 @@ suite('Table Controller', () => {
 	});
 	test('insertContentToEditor', async () => {
 		const stubShowInputBox = sinon.stub(window, 'showInputBox');
-		stubShowInputBox.onCall(0).resolves('1:1');
+		stubShowInputBox.resolves('1:1');
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/table-controller.md'
 		);
-		await loadDocumentAndGetItReady(filePath);
 		const spy = chai.spy.on(common, 'insertContentToEditor');
 		insertTable();
+		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
+		stubShowInputBox.restore();
 	});
 });
