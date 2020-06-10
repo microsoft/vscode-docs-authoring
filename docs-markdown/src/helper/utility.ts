@@ -68,7 +68,7 @@ export function validateTableRowAndColumnCount(size: number, colStr: string, row
  * @param {number} row - the number of rows in the table
  */
 export function tableBuilder(col: number, row: number) {
-	let str = '';
+	let str = '\n';
 
 	/// create header
 	// DCR update: 893410 [Add leading pipe]
