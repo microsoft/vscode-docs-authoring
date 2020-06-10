@@ -1,17 +1,9 @@
 /* eslint-disable no-console */
 
-import { window, ExtensionContext } from 'vscode';
+import { window, ExtensionContext, workspace } from 'vscode';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { AuthenticationContext } = require('adal-node');
-
-const appConfig = {
-	instance: 'https://login.microsoftonline.com',
-	tenant: '72f988bf-86f1-41af-91ab-2d7cd011db47',
-	clientId: '8c9f99a6-46e9-4da8-afdd-2abed9f07955',
-	clientSecret: 'Fw8~oB9-1B-xbh5F8zlR6L_2A.t.txYUYY',
-	resource: 'https://graph.microsoft.com'
-};
 
 export interface TokenResponse {
 	_authority: string;
@@ -24,9 +16,19 @@ export interface TokenResponse {
 	tokenType: string;
 }
 
+interface AppConfig {
+	instance: string;
+	tenant: string;
+	clientId: string;
+	clientSecret: string;
+	resource: string;
+}
+
 export class Auth {
 	context: ExtensionContext;
-	authorityUrl = `${appConfig.instance}/${appConfig.tenant}`;
+	config = workspace.getConfiguration('markdown');
+	appConfig = this.config.get<AppConfig>('appConfig');
+	authorityUrl = `${this.appConfig.instance}/${this.appConfig.tenant}`;
 	constructor(context) {
 		this.context = context;
 	}
@@ -37,9 +39,9 @@ export class Auth {
 			const authContext = new AuthenticationContext(this.authorityUrl);
 			return new Promise((resolve, reject) => {
 				authContext.acquireTokenWithClientCredentials(
-					appConfig.resource,
-					appConfig.clientId,
-					appConfig.clientSecret,
+					this.appConfig.resource,
+					this.appConfig.clientId,
+					this.appConfig.clientSecret,
 					async (err, tokenResponse: TokenResponse) => {
 						if (err) {
 							window.showErrorMessage(err);
