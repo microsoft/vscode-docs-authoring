@@ -65,7 +65,7 @@ suite('Image Controller', () => {
 		};
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/image-controller4.md'
+			'../../../../../src/test/data/repo/articles/image-controller1.md'
 		);
 		let subscriptions: Subscription[];
 		const context: ExtensionContext = {
@@ -116,7 +116,7 @@ suite('Image Controller', () => {
 
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/image-controller4.md'
+			'../../../../../src/test/data/repo/articles/image-controller2.md'
 		);
 		let subscriptions: Subscription[];
 		const context: ExtensionContext = {
@@ -163,7 +163,7 @@ suite('Image Controller', () => {
 		stubShowInputBox.resolves('foo');
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/image-controller4.md'
+			'../../../../../src/test/data/repo/articles/image-controller3.md'
 		);
 		let subscriptions: Subscription[];
 		const context: ExtensionContext = {
@@ -262,7 +262,7 @@ suite('Image Controller', () => {
 		stubShowQuickPick.onCall(1).resolves(item2);
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/image-controller4.md'
+			'../../../../../src/test/data/repo/articles/image-controller5.md'
 		);
 		let subscriptions: Subscription[];
 		const context: ExtensionContext = {
@@ -312,7 +312,7 @@ suite('Image Controller', () => {
 		stubShowQuickPick.onCall(1).resolves(item2);
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/image-controller4.md'
+			'../../../../../src/test/data/repo/articles/image-controller6.md'
 		);
 		let subscriptions: Subscription[];
 		const context: ExtensionContext = {
