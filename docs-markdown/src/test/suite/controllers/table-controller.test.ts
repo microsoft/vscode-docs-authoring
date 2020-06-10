@@ -66,4 +66,28 @@ suite('Table Controller', () => {
 		expect(spy).to.have.been.called();
 		stubShowInputBox.restore();
 	});
+	test('distributeTable', async () => {
+		const filePath = resolve(
+			__dirname,
+			'../../../../../src/test/data/repo/articles/table-controller2.md'
+		);
+		const editor = window.activeTextEditor;
+		common.setSelectorPosition(editor, 1, 0, 4, 0);
+		const spy = chai.spy(distributeTable);
+		distributeTable();
+		await sleep(sleepTime);
+		expect(spy).to.be.spy;
+	});
+	test('consolidateTable', async () => {
+		const filePath = resolve(
+			__dirname,
+			'../../../../../src/test/data/repo/articles/table-controller2.md'
+		);
+		const editor = window.activeTextEditor;
+		common.setSelectorPosition(editor, 1, 0, 4, 0);
+		const spy = chai.spy(consolidateTable);
+		consolidateTable();
+		await sleep(sleepTime);
+		expect(spy).to.be.spy;
+	});
 });
