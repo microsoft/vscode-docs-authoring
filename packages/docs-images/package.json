@@ -1,5 +1,5 @@
 {
-	"name": "docs-images",
+	"name": "@dap/docs-images",
 	"displayName": "docs-images",
 	"description": "Docs Images Extension",
 	"icon": "images/docs-logo-ms.png",

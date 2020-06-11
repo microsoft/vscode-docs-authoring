@@ -1,5 +1,5 @@
 {
-	"name": "docs-metadata",
+	"name": "@dap/docs-metadata",
 	"displayName": "docs-metadata",
 	"description": "Simplifies editing metadata within docs.",
 	"version": "1.0.4",

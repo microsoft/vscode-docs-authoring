@@ -1,5 +1,5 @@
 {
-	"name": "docs-preview",
+	"name": "@dap/docs-preview",
 	"displayName": "docs-preview",
 	"description": "Docs Markdown Preview Extension",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",

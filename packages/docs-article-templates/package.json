@@ -1,5 +1,5 @@
 {
-	"name": "docs-article-templates",
+	"name": "@dap/docs-article-templates",
 	"displayName": "docs-article-templates",
 	"description": "Docs article templates",
 	"icon": "images/docs-logo-ms.png",

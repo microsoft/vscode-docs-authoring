@@ -1,15 +1,11 @@
 {
 	"name": "@dap/docs-authoring-pack",
 	"private": true,
-	"workspaces": [
-		"docs-article-templates/*",
-		"docs-images/*",
-		"docs-linting/*",
-		"docs-markdown/*",
-		"docs-metadata/*",
-		"docs-preview/*",
-		"docs-yaml/*"
-	],
+	"workspaces": {
+		"packages": [
+			"packages/*"
+		]
+	},
 	"devDependencies": {
 		"husky": "^4.2.5",
 		"lerna": "^3.22.1",
@@ -17,20 +13,20 @@
 		"pretty-quick": "2.0.1"
 	},
 	"scripts": {
-		"compile-docs-article-templates": "npm workspace docs-article-templates compile",
-		"compile-docs-images": "npm workspace docs-images compile",
-		"compile-docs-linting": "npm workspace docs-linting compile",
-		"compile-docs-markdown": "npm workspace docs-markdown compile",
-		"compile-docs-metadata": "npm workspace docs-metadata compile",
-		"compile-docs-preview": "npm workspace docs-preview compile",
-		"compile-docs-yaml": "npm workspace docs-yaml compile",
-		"lint-docs-article-templates": "npm workspace docs-article-templates lint",
-		"lint-docs-images": "npm workspace docs-images lint",
-		"lint-docs-linting": "npm workspace docs-linting lint",
-		"lint-docs-markdown": "npm workspace docs-markdown lint",
-		"lint-docs-metadata": "npm workspace docs-metadata lint",
-		"lint-docs-preview": "npm workspace docs-preview lint",
-		"lint-docs-yaml": "npm workspace docs-yaml lint",
+		"compile-docs-article-templates": "npm workspace @dap/docs-article-templates compile",
+		"compile-docs-images": "npm workspace @dap/docs-images compile",
+		"compile-docs-linting": "npm workspace @dap/docs-linting compile",
+		"compile-docs-markdown": "npm workspace @dap/docs-markdown compile",
+		"compile-docs-metadata": "npm workspace @dap/docs-metadata compile",
+		"compile-docs-preview": "npm workspace @dap/docs-preview compile",
+		"compile-docs-yaml": "npm workspace @dap/docs-yaml compile",
+		"lint-docs-article-templates": "npm workspace @dap/docs-article-templates lint",
+		"lint-docs-images": "npm workspace @dap/docs-images lint",
+		"lint-docs-linting": "npm workspace @dap/docs-linting lint",
+		"lint-docs-markdown": "npm workspace @dap/docs-markdown lint",
+		"lint-docs-metadata": "npm workspace @dap/docs-metadata lint",
+		"lint-docs-preview": "npm workspace @dap/docs-preview lint",
+		"lint-docs-yaml": "npm workspace @dap/docs-yaml lint",
 		"compile": "npm run compile-docs-article-templates && npm run compile-docs-images && npm run compile-docs-compileing && npm run compile-docs-markdown && npm run compile-docs-metadata && npm run compile-docs-preview && npm run compile-docs-yaml",
 		"lint": "npm run lint-docs-article-templates && npm run lint-docs-images && npm run lint-docs-linting && npm run lint-docs-markdown && npm run lint-docs-metadata && npm run lint-docs-preview && npm run lint-docs-yaml",
 		"pre-push": "npm run lint && run compile"
