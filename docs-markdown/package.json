@@ -453,16 +453,6 @@
 					"when": "resourceLangId == markdown"
 				},
 				{
-					"command": "previewTopic",
-					"group": "Docs",
-					"when": "resourceLangId == markdown && vscode.extensions.getExtension('docsmsft.docs-preview').active"
-				},
-				{
-					"command": "applyTemplate",
-					"group": "Docs",
-					"when": "vscode.extensions.getExtension('docsmsft.docs-article-templates').active"
-				},
-				{
 					"command": "applyCleanup",
 					"group": "Docs",
 					"when": "resourceLangId == markdown"
