@@ -47,26 +47,32 @@ suite('Include Controller', () => {
 		const controllerCommands = [{ command: insertInclude.name, callback: insertInclude }];
 		expect(insertIncludeCommand()).to.deep.equal(controllerCommands);
 	});
-	test('noActiveEditorMessage', async () => {
+	test('insertInclude - noActiveEditorMessage', async () => {
 		const spy = chai.spy.on(common, 'noActiveEditorMessage');
 		await insertInclude();
 		expect(spy).to.have.been.called();
 	});
-	test('isMarkdownFileCheck', async () => {
+	test('insertInclude - isMarkdownFileCheck', async () => {
 		const spy = chai.spy.on(common, 'isMarkdownFileCheck');
 		const stub = sinon.stub(glob, 'glob');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves('');
 		await loadDocumentAndGetItReady(testFilePath);
 		await insertInclude();
 		expect(spy).to.have.been.called();
 		stub.restore();
+		stubShowQuickPick.restore();
 	});
-	test('hasValidWorkSpaceRootPath', async () => {
+	test('insertInclude - hasValidWorkSpaceRootPath', async () => {
 		const spy = chai.spy.on(common, 'hasValidWorkSpaceRootPath');
 		const stub = sinon.stub(glob, 'glob');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves('');
 		await loadDocumentAndGetItReady(testFilePath);
 		await insertInclude();
 		expect(spy).to.have.been.called();
 		stub.restore();
+		stubShowQuickPick.restore();
 	});
 	test('Window NT - insertInclude', async () => {
 		const stub = sinon.stub(os, 'type').callsFake(() => 'Windows_NT');
@@ -75,10 +81,8 @@ suite('Include Controller', () => {
 		let editor = window.activeTextEditor;
 		const originalText = editor?.document.getText();
 		const expectedText = '[!INCLUDE [1](1.md)]' + originalText;
-
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(qpSelectionItems[0]) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves(qpSelectionItems[0]);
 
 		await insertInclude();
 		await sleep(extendedSleepTime);
@@ -86,6 +90,7 @@ suite('Include Controller', () => {
 		const actualText = editor?.document.getText();
 		expect(actualText).to.equal(expectedText);
 		stub.restore();
+		stubShowQuickPick.restore();
 	});
 	test('Darwin - insertInclude', async () => {
 		const stub = sinon.stub(os, 'type').callsFake(() => 'Darwin');
@@ -94,17 +99,15 @@ suite('Include Controller', () => {
 		let editor = window.activeTextEditor;
 		const originalText = editor?.document.getText();
 		const expectedText = '[!INCLUDE [1](1.md)]' + originalText;
-
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(qpSelectionItems[0]) as Thenable<any>;
-		};
-
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves(qpSelectionItems[0]);
 		await insertInclude();
 		await sleep(extendedSleepTime);
 		editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
 		expect(actualText).to.equal(expectedText);
 		stub.restore();
+		stubShowQuickPick.restore();
 	});
 	test('Window NT - includeMultipleFiles', async () => {
 		const stub = sinon.stub(os, 'type').callsFake(() => 'Windows_NT');
@@ -115,21 +118,16 @@ suite('Include Controller', () => {
 		const expectedText =
 			'[!INCLUDE [1](1.md)][!INCLUDE [2](2.md)][!INCLUDE [3](3.md)]' + originalText;
 
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(qpSelectionItems[0]) as Thenable<any>;
-		};
-		await insertInclude();
-		await sleep(extendedSleepTime);
-
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(qpSelectionItems[1]) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves(qpSelectionItems[0]);
+		stubShowQuickPick.onCall(1).resolves(qpSelectionItems[1]);
+		stubShowQuickPick.onCall(2).resolves(qpSelectionItems[2]);
 
 		await insertInclude();
 		await sleep(extendedSleepTime);
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(qpSelectionItems[2]) as Thenable<any>;
-		};
+
+		await insertInclude();
+		await sleep(extendedSleepTime);
 
 		await insertInclude();
 		await sleep(extendedSleepTime);
@@ -137,5 +135,6 @@ suite('Include Controller', () => {
 		const actualText = editor?.document.getText();
 		expect(actualText).to.equal(expectedText);
 		stub.restore();
+		stubShowQuickPick.restore();
 	});
 });

@@ -53,17 +53,17 @@ suite('Bookmark Controller', () => {
 		await loadDocumentAndGetItReady(`${filePath}/articles/bookmark.md`);
 		const qpSelectionItems = [
 			{ label: 'README.md', description: filePath },
-			{ label: '## Getting Started\r\n', detail: ' ' }
+			{ label: '## Getting Started\r\n', description: ' ' }
 		];
 		let counter = 0;
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(qpSelectionItems[counter++]) as Thenable<any>;
-		};
-
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves(qpSelectionItems[counter++]);
+		stubShowQuickPick.onCall(1).resolves(qpSelectionItems[counter++]);
 		const spy = chai.spy.on(common, 'insertContentToEditor');
 		await insertBookmarkExternal();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('insertBookmarkInternal::no headings', async () => {
 		const filePath = resolve(__dirname, '../../../../../src/test/data/repo/articles/bookmark.md');
@@ -78,12 +78,11 @@ suite('Bookmark Controller', () => {
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({
-				label: '### Third Level Heading\r\n',
-				detail: ' '
-			}) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({
+			label: '### Third Level Heading\r\n',
+			detail: ' '
+		});
 		const spy = chai.spy.on(common, 'insertContentToEditor');
 		insertBookmarkInternal();
 		await sleep(sleepTime);
