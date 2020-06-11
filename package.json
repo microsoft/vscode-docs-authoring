@@ -1,0 +1,23 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": [
+    "docs-article-templates/*",
+    "docs-images/*",
+    "docs-linting/*",
+    "docs-markdown/*",
+    "docs-metadata/*",
+    "docs-preview/*",
+    "docs-yaml/*"
+  ],
+  "devDependencies": {
+    "husky": "^4.2.5",
+    "lerna": "^3.22.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lerna run --concurrency 1 --stream precommit --since HEAD --exclude-dependents",
+      "pre-push": "lerna run --concurrency 1 --stream prepush --since HEAD --exclude-dependents"
+    }
+  }
+}

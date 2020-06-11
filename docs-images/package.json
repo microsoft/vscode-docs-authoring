@@ -108,13 +108,9 @@
 		"prettier-check": "prettier --check \"**/*.{ts,js,json,yml}\" --loglevel debug",
 		"pretest": "npm run compile",
 		"test": "node ./out/test/runTest.js",
-		"lint": "eslint . --ext .ts"
-	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
-			"pre-push": "npm run compile && npm run lint"
-		}
+		"lint": "eslint . --ext .ts",
+		"precommit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
+		"prepush": "npm run compile && npm run lint"
 	},
 	"dependencies": {
 		"jimp": "0.9.3",
@@ -144,7 +140,6 @@
 		"eslint": "^7.0.0",
 		"eslint-import-resolver-webpack": "^0.12.1",
 		"eslint-plugin-import": "^2.20.2",
-		"husky": "^4.2.5",
 		"mocha": "6.2.2",
 		"prettier": "^2.0.5",
 		"pretty-quick": "^2.0.1",

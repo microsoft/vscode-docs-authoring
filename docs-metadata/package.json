@@ -54,13 +54,9 @@
 		"prettier": "prettier --write \"**/*.{ts,js,json,yml}\"",
 		"prettier-check": "prettier --check \"**/*.{ts,js,json,yml}\" --loglevel debug",
 		"test": "npm run compile && node ./node_modules/vscode/bin/test",
-		"lint": "eslint . --ext .ts"
-	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
-			"pre-push": "npm run compile && npm run lint"
-		}
+		"lint": "eslint . --ext .ts",
+		"precommit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
+		"prepush": "npm run compile && npm run lint"
 	},
 	"devDependencies": {
 		"@types/mocha": "^2.2.42",
@@ -72,7 +68,6 @@
 		"@typescript-eslint/parser": "^2.34.0",
 		"eslint": "^7.0.0",
 		"eslint-plugin-import": "^2.20.2",
-		"husky": "^4.2.5",
 		"mocha": "^7.1.1",
 		"prettier": "^2.0.5",
 		"pretty-quick": "^2.0.1",

@@ -1,0 +1,13 @@
+{
+  "packages": [
+    "docs-article-templates/*",
+    "docs-authoring-pack/*",
+    "docs-images/*",
+    "docs-linting/*",
+    "docs-markdown/*",
+    "docs-metadata/*",
+    "docs-preview/*",
+    "docs-yaml/*"
+  ],
+  "version": "0.0.0"
+}
