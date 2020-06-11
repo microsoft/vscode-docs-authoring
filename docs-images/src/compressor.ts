@@ -10,7 +10,8 @@ import { Result } from './result';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as size from 'image-size';
-import jimp = require('jimp/es');
+import FileType from 'file-type';
+import Jimp from 'jimp/es';
 import imagemin from 'imagemin';
 import imageminJpegtran from 'imagemin-jpegtran';
 import imageminPng from 'imagemin-optipng';
@@ -123,13 +124,9 @@ export class ImageCompressor {
 						`Attempting to resize large image: ${dimensions.width}x${dimensions.height}.`
 					);
 
-					const image = await this.timeoutAfterDelay(
-						() =>
-							typeof jimp.read == 'function' ? jimp.read(filePath) : jimp.default.read(filePath),
-						undefined
-					);
+					const image = await this.timeoutAfterDelay(() => Jimp.read(filePath), undefined);
 					if (image) {
-						const auto = jimp.AUTO || jimp.default.AUTO;
+						const auto = Jimp.AUTO;
 						await image.resize(maxWidth || auto, maxHeight || auto).writeAsync(filePath);
 
 						dimensions = size.imageSize(filePath);
@@ -173,6 +170,14 @@ export class ImageCompressor {
 		const result = await this.timeoutAfterDelay(async () => {
 			const plugins = [];
 			const fileExtension = this.getFileExtension(filePath);
+			const fileType = await FileType.fromFile(filePath);
+			if (fileType && fileExtension && fileType.ext !== fileExtension.substr(1)) {
+				this.writeMessage(
+					`The "${filePath}" file has an incorrect file extension. It is actually a mime type of ${fileType.mime}!`
+				);
+				return false;
+			}
+
 			switch ((fileExtension || '').toLowerCase()) {
 				case '.png':
 					this.writeMessage(`Using .png compression plugin for: "${filePath}"`);
@@ -189,7 +194,7 @@ export class ImageCompressor {
 					plugins.push(
 						imageminJpegtran({
 							// https://www.npmjs.com/package/imagemin-jpegtran#api
-							arithmetic: true
+							arithmetic: false
 						})
 					);
 					break;

@@ -125,6 +125,7 @@
 		"imagemin-gifsicle": "7.0.0",
 		"imagemin-svgo": "8.0.0",
 		"imagemin-webp": "6.0.0",
+		"file-type": "14.6.1",
 		"glob": "^7.1.6"
 	},
 	"devDependencies": {
