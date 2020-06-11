@@ -12,7 +12,12 @@ import {
 	window,
 	workspace
 } from 'vscode';
-import { checkExtension, noActiveEditorMessage, postInformation } from '../helper/common';
+import {
+	checkExtension,
+	noActiveEditorMessage,
+	postInformation,
+	postWarning
+} from '../helper/common';
 import { sendTelemetryData } from '../helper/telemetry';
 import {
 	applyReplacements,
@@ -24,6 +29,7 @@ import {
 import { Command } from '../Command';
 import { Insert, insertURL, MediaType, selectLinkType } from './media-controller';
 import { applyXref } from './xref/xref-controller';
+import { numberFormat } from '../constants/formatting';
 
 export const linkControllerCommands: Command[] = [
 	{
@@ -59,7 +65,7 @@ export async function collapseRelativeLinksInFolder(uri: Uri) {
 
 			const length = filePaths.length;
 			const isLongRunningOperation = length > 20;
-			let message = `scanning ${length} markdown files.${
+			let message = `scanning ${numberFormat.format(length)} markdown files.${
 				isLongRunningOperation ? ' This might take a while, please be patient.' : ''
 			}`;
 
@@ -90,7 +96,11 @@ export async function collapseRelativeLinksInFolder(uri: Uri) {
 				progress.report({ increment, message });
 			}
 
-			progress.report({ increment: 100, message: `Collapsed links in ${length} files.` });
+			message = `Collapsed links in ${numberFormat.format(
+				filesUpdated
+			)} of the ${numberFormat.format(length)} files scanned.`;
+			progress.report({ increment: 100, message });
+			postInformation(message);
 		}
 	);
 }
@@ -111,7 +121,15 @@ export async function collapseRelativeLinksForFile(
 ): Promise<number> {
 	if (existsSync(filePath)) {
 		let content = (await promises.readFile(filePath)).toString('utf8');
+		if (!content) {
+			return 0;
+		}
+
 		const rangeValuePairs = findMatchesInText(content, linkRegex);
+		if (!rangeValuePairs || !rangeValuePairs.length) {
+			return 0;
+		}
+
 		const directory = dirname(filePath);
 		const replacements: { originalValue: string; newValue: string }[] = [];
 		// eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -119,7 +137,7 @@ export async function collapseRelativeLinksForFile(
 			const rangeValuePair = rangeValuePairs[i];
 			const absolutePath = join(directory, rangeValuePair.value);
 			if (rangeValuePair && existsSync(absolutePath)) {
-				const relativePath = relative(directory, absolutePath).replace(/\\/g, '/');
+				const relativePath = tryGetRelativePath(directory, absolutePath);
 				if (relativePath !== rangeValuePair.value && `./${relativePath}` !== rangeValuePair.value) {
 					replacements.push({
 						originalValue: rangeValuePair.value,
@@ -169,7 +187,7 @@ export async function collapseRelativeLinksForEditor(
 		const replacement = tempReplacements[i];
 		const absolutePath = join(directory, replacement.value);
 		if (replacement && existsSync(absolutePath)) {
-			const relativePath = relative(directory, absolutePath).replace(/\\/g, '/');
+			const relativePath = tryGetRelativePath(directory, absolutePath);
 			if (relativePath !== replacement.value && `./${relativePath}` !== replacement.value) {
 				replacements.push({
 					selection: replacement.selection,
@@ -189,6 +207,16 @@ export async function collapseRelativeLinksForEditor(
 
 	await applyReplacements(replacements, editor);
 	return replacements.length;
+}
+
+function tryGetRelativePath(directory: string, absolutePath: string): string {
+	try {
+		const relativePath = relative(directory, absolutePath);
+		return !!relativePath ? relativePath.replace(/\\/g, '/') : null;
+	} catch (error) {
+		postWarning(error);
+		return null;
+	}
 }
 
 export function pickLinkType() {

@@ -1,5 +1,6 @@
 import { showStatusMessage } from '../../helper/common';
 import { initiateRedirectCommand, updateRedirects } from './utilities';
+import { numberFormat } from '../../constants/formatting';
 
 export async function removeDefaultValuesInRedirects() {
 	const { isEnvironmentReady, redirectsAndConfigOptions } = await initiateRedirectCommand();
@@ -21,7 +22,6 @@ export async function removeDefaultValuesInRedirects() {
 
 	if (removedDefaults > 0) {
 		await updateRedirects(editor, redirects, config);
-		const numberFormat = Intl.NumberFormat();
 		showStatusMessage(
 			`Removed ${numberFormat.format(removedDefaults)} redirect_document_id values.`
 		);
