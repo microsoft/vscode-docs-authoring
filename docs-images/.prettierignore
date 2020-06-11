@@ -1,6 +1,0 @@
-dist
-node_modules
-.vscode
-.vscode-test
-out
-src/test/data 
