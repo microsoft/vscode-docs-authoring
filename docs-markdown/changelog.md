@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.2.74 (June 11th, 2020)
+
+- Collapse relative link improvements
+- Remote-WSL bug fix: [Issue 605](https://github.com/microsoft/vscode-docs-authoring/issues/605)
+- Added Unit Test Coverage: table-controller.ts
+
 ## 0.2.73 (June 8th, 2020)
 
 - List bug fix: [Issue 409](https://github.com/microsoft/vscode-docs-authoring/issues/409)
