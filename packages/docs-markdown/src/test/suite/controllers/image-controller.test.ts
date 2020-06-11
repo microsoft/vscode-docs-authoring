@@ -89,7 +89,6 @@ suite('Image Controller', () => {
 		stubShowQuickPick.onCall(1).resolves(item2);
 		const stubShowInputBox = sinon.stub(window, 'showInputBox');
 		stubShowInputBox.resolves('foo');
-
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller2.md'
