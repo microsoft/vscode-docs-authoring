@@ -1,13 +1,4 @@
 {
-  "packages": [
-    "docs-article-templates/*",
-    "docs-authoring-pack/*",
-    "docs-images/*",
-    "docs-linting/*",
-    "docs-markdown/*",
-    "docs-metadata/*",
-    "docs-preview/*",
-    "docs-yaml/*"
-  ],
+  "useWorkspaces": true,
   "version": "0.0.0"
 }
