@@ -51,53 +51,58 @@ suite('Cleanup Controller', () => {
 	});
 	test('cleanup repo - getCleanUpQuickPick', async () => {
 		const spy = chai.spy.on(utilities, 'getCleanUpQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves('');
 		await applyCleanup();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('cleanup repo - noActiveEditorMessage', async () => {
 		const spy = chai.spy.on(common, 'noActiveEditorMessage');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves('selection');
 		await applyCleanup();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('cleanup repo - master redirection file', async () => {
 		await loadDocumentAndGetItReady(filePath);
 
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({ label: 'master redirection file', detail: '' }) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({ label: 'master redirection file', detail: '' });
 		const spy = chai.spy.on(masterRedirection, 'generateMasterRedirectionFile');
 		await applyCleanup();
 		await sleep(sleepTime);
+		stubShowQuickPick.restore();
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup repo - recurseCallback - single-valued metadata', async () => {
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({ label: 'single-valued metadata', detail: '' }) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({ label: 'single-valued metadata', detail: '' });
 		const spy = chai.spy.on(utilities, 'recurseCallback');
 		await applyCleanup();
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('cleanup repo - recurseCallback - microsoft links', async () => {
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({ label: 'microsoft links', detail: '' }) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({ label: 'microsoft links', detail: '' });
 		const spy = chai.spy.on(utilities, 'recurseCallback');
 		await applyCleanup();
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('cleanup repo - recurseCallback - capitalization of metadata values', async () => {
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({
-				label: 'capitalization of metadata values',
-				detail: ''
-			}) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick
+			.onCall(0)
+			.resolves({ label: 'capitalization of metadata values', detail: '' });
 		const spy = chai.spy.on(utilities, 'recurseCallback');
 		await applyCleanup();
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('cleanup repo - empty metadata - empty values', async () => {
 		const mockShowQuickPick = sinon.stub(window, 'showQuickPick');
@@ -147,35 +152,37 @@ suite('Cleanup Controller', () => {
 	});
 	test('cleanup file - getCleanUpQuickPick', async () => {
 		const spy = chai.spy.on(utilities, 'getCleanUpQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves('');
 		await applyCleanupFile(Uri.file(filePath));
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('cleanup file - single-valued metadata', async () => {
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({ label: 'single-valued metadata', detail: '' }) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({ label: 'single-valued metadata', detail: '' });
 		const spy = chai.spy.on(singleValuedMetadata, 'handleSingleValuedMetadata');
 		await applyCleanupFile(Uri.file(filePath));
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('cleanup file - microsoft links', async () => {
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({ label: 'microsoft links', detail: '' }) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({ label: 'microsoft links', detail: '' });
 		const spy = chai.spy.on(microsoftLinks, 'microsoftLinks');
 		await applyCleanupFile(Uri.file(filePath));
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('cleanup file - capitalization of metadata values', async () => {
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({
-				label: 'capitalization of metadata values',
-				detail: ''
-			}) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick
+			.onCall(0)
+			.resolves({ label: 'capitalization of metadata values', detail: '' });
 		const spy = chai.spy.on(capitalizationOfMetadata, 'capitalizationOfMetadata');
 		await applyCleanupFile(Uri.file(filePath));
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('cleanup file - empty metadata - empty values', async () => {
 		const mockShowQuickPick = sinon.stub(window, 'showQuickPick');
@@ -221,38 +228,40 @@ suite('Cleanup Controller', () => {
 	});
 	test('cleanup folder - getCleanUpQuickPick', async () => {
 		const spy = chai.spy.on(utilities, 'getCleanUpQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves('');
 		await applyCleanupFolder(Uri.file(folderPath));
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('cleanup folder - single-valued metadata', async () => {
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({ label: 'single-valued metadata', detail: '' }) as Thenable<any>;
-		};
+		const mockShowQuickPick = sinon.stub(window, 'showQuickPick');
+		mockShowQuickPick.onFirstCall().resolves({ label: 'single-valued metadata', detail: '' });
 		const spy = chai.spy.on(singleValuedMetadata, 'handleSingleValuedMetadata');
 		await applyCleanupFolder(Uri.file(folderPath));
 		await sleep(extendedSleepTime);
 		expect(spy).to.have.been.called();
+		mockShowQuickPick.restore();
 	});
 	test('cleanup folder - microsoft links', async () => {
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({ label: 'microsoft links', detail: '' }) as Thenable<any>;
-		};
+		const mockShowQuickPick = sinon.stub(window, 'showQuickPick');
+		mockShowQuickPick.onFirstCall().resolves({ label: 'microsoft links', detail: '' });
 		const spy = chai.spy.on(microsoftLinks, 'microsoftLinks');
 		await applyCleanupFolder(Uri.file(folderPath));
 		await sleep(extendedSleepTime);
 		expect(spy).to.have.been.called();
+		mockShowQuickPick.restore();
 	});
 	test('cleanup folder - capitalization of metadata values', async () => {
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({
-				label: 'capitalization of metadata values',
-				detail: ''
-			}) as Thenable<any>;
-		};
+		const mockShowQuickPick = sinon.stub(window, 'showQuickPick');
+		mockShowQuickPick
+			.onFirstCall()
+			.resolves({ label: 'capitalization of metadata values', detail: '' });
 		const spy = chai.spy.on(capitalizationOfMetadata, 'capitalizationOfMetadata');
 		await applyCleanupFolder(Uri.file(folderPath));
 		await sleep(extendedSleepTime);
 		expect(spy).to.have.been.called();
+		mockShowQuickPick.restore();
 	});
 	test('cleanup folder - empty metadata - empty values', async () => {
 		const mockShowQuickPick = sinon.stub(window, 'showQuickPick');

@@ -108,9 +108,12 @@ suite('Code Controller', () => {
 		common.setCursorPosition(editor!, 16, 0);
 		await cursorDownSelect(2);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves(undefined);
 		await formatCode();
 		stub.restore();
 		await sleep(sleepTime);
+		stubShowQuickPick.restore();
 		const output = editor?.document.lineAt(17).text;
 		expect(output).to.equal('let x = "JavaScript";');
 	});
@@ -119,12 +122,12 @@ suite('Code Controller', () => {
 		const spy = chai.spy.on(common, 'postWarning');
 		common.setCursorPosition(editor!, 20, 0);
 		await cursorDownSelect(2);
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(undefined) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves(undefined);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await formatCode();
 		stub.restore();
+		stubShowQuickPick.restore();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 	});
@@ -132,9 +135,8 @@ suite('Code Controller', () => {
 		const editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 20, 0);
 		await cursorDownSelect(2);
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({ label: 'Python' }) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({ label: 'Python' });
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await formatCode();
 		await sleep(sleepTime);
@@ -145,5 +147,6 @@ suite('Code Controller', () => {
 			editor!.document.lineAt(24).text;
 		expect(output).to.equal('```pythonx = "Python2"y = "Python3"```');
 		stub.restore();
+		stubShowQuickPick.restore();
 	});
 });
