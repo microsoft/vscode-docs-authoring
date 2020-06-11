@@ -66,16 +66,14 @@ suite('Moniker Controller', () => {
 		common.insertContentToEditor(editor!, '', false, editor!.document.lineAt(10).range);
 		common.setCursorPosition(editor!, yamlLine, 0); // move cursor back
 		await sleep(sleepTime);
-
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(monikerOptions[0]) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves(monikerOptions[0]);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await insertMoniker();
 		await sleep(extendedSleepTime);
 		const output = editor?.document.lineAt(yamlLine).text;
 		stub.restore();
-
+		stubShowQuickPick.restore();
 		expect(output).to.equal("monikerRange: ''");
 	});
 
@@ -92,15 +90,14 @@ suite('Moniker Controller', () => {
 		common.setCursorPosition(editor!, yamlLine, 0);
 
 		await sleep(sleepTime);
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(monikerOptions[1]) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves(monikerOptions[1]);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await insertMoniker();
 		await sleep(extendedSleepTime);
 		const output = editor?.document.lineAt(yamlLine).text;
 		stub.restore();
-
+		stubShowQuickPick.restore();
 		expect(output).to.equal("monikerRange: '>='");
 	});
 
@@ -117,16 +114,14 @@ suite('Moniker Controller', () => {
 		common.insertContentToEditor(editor!, '\r\n');
 		common.setCursorPosition(editor!, yamlLine, 0);
 		await sleep(sleepTime);
-
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(monikerOptions[2]) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves(monikerOptions[2]);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await insertMoniker();
 		await sleep(extendedSleepTime);
 		const output = editor?.document.lineAt(yamlLine).text;
 		stub.restore();
-
+		stubShowQuickPick.restore();
 		expect(output).to.equal("monikerRange: '<='");
 	});
 
@@ -141,10 +136,8 @@ suite('Moniker Controller', () => {
 	test('insertMarkdownMoniker - equal - output', async () => {
 		const editor = window.activeTextEditor!;
 		common.setCursorPosition(editor, markLine, 0);
-
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(monikerOptions[0]) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves(monikerOptions[0]);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await insertMoniker();
 		await sleep(extendedSleepTime);
@@ -153,7 +146,7 @@ suite('Moniker Controller', () => {
 		const line3 = editor.document.lineAt(markLine + 2).text;
 		const output = line1 + line2 + line3;
 		stub.restore();
-
+		stubShowQuickPick.restore();
 		expect(output).to.equal('::: moniker range=""::: moniker-end');
 	});
 
@@ -170,10 +163,8 @@ suite('Moniker Controller', () => {
 		common.insertContentToEditor(editor, '\r\n');
 		common.setCursorPosition(editor, markLine + 3, 0);
 		await sleep(sleepTime);
-
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(monikerOptions[1]) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves(monikerOptions[1]);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await insertMoniker();
 		await sleep(extendedSleepTime);
@@ -182,7 +173,7 @@ suite('Moniker Controller', () => {
 		const line3 = editor.document.lineAt(markLine + 5).text;
 		const output = line1 + line2 + line3;
 		stub.restore();
-
+		stubShowQuickPick.restore();
 		expect(output).to.equal('::: moniker range=">="::: moniker-end');
 	});
 
@@ -199,10 +190,9 @@ suite('Moniker Controller', () => {
 		common.insertContentToEditor(editor!, '\r\n');
 		common.setCursorPosition(editor, markLine + 6, 0);
 		await sleep(sleepTime);
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves(monikerOptions[2]);
 
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(monikerOptions[2]) as Thenable<any>;
-		};
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await insertMoniker();
 		await sleep(extendedSleepTime);
@@ -211,6 +201,7 @@ suite('Moniker Controller', () => {
 		const line3 = editor.document.lineAt(markLine + 8).text;
 		const output = line1 + line2 + line3;
 		stub.restore();
+		stubShowQuickPick.restore();
 
 		expect(output).to.equal('::: moniker range="<="::: moniker-end');
 	});

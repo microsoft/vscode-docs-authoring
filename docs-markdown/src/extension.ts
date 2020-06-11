@@ -44,7 +44,7 @@ import { previewTopicCommand } from './controllers/preview-controller';
 import { quickPickMenuCommand } from './controllers/quick-pick-menu-controller';
 import { getMasterRedirectionCommand } from './controllers/redirects/controller';
 import { insertRowsAndColumnsCommand } from './controllers/row-columns-controller';
-import { insertSnippetCommand } from './controllers/snippet-controller';
+import { insertSnippetCommand } from './controllers/snippet/snippet-controller';
 import { insertSortSelectionCommands } from './controllers/sort-controller';
 import { insertTableCommand } from './controllers/table-controller';
 import { applyXrefCommand } from './controllers/xref/xref-controller';

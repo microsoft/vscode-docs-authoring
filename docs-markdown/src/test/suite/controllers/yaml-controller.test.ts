@@ -25,17 +25,6 @@ const expect = chai.expect;
 suite('Yaml Controller', () => {
 	suiteSetup(async () => {
 		sinon.stub(telemetry, 'sendTelemetryData');
-		const testFile = '../../../../../src/test/data/repo/articles/docs-markdown.md';
-		const testFilePath = resolve(__dirname, testFile);
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({
-				label: `${basename(testFilePath)}`,
-				description: `${dirname(testFilePath)}`
-			}) as Thenable<any>;
-		};
-		window.showInputBox = (options: InputBoxOptions) => {
-			return Promise.resolve('Docs Markdown Reference') as Thenable<any>;
-		};
 	});
 	// Reset and tear down the spies
 	teardown(() => {
@@ -65,27 +54,75 @@ suite('Yaml Controller', () => {
 			'../../../../../src/test/data/repo/articles/yaml-controller.yml'
 		);
 		await loadDocumentAndGetItReady(filePath);
+		const testFile = '../../../../../src/test/data/repo/articles/docs-markdown.md';
+		const testFilePath = resolve(__dirname, testFile);
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({
+			label: `${basename(testFilePath)}`,
+			description: `${dirname(testFilePath)}`
+		});
+		const stubShowInputBox = sinon.stub(window, 'showInputBox');
+		stubShowInputBox.onCall(0).resolves('Docs Markdown Reference');
+
 		const spy = chai.spy.on(checkForPreviousEntry, 'checkForPreviousEntry');
 		await insertTocEntry();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
+		stubShowInputBox.restore();
 	});
 	test('yaml-controller - insertTocEntryWithOptions', async () => {
+		const testFile = '../../../../../src/test/data/repo/articles/docs-markdown.md';
+		const testFilePath = resolve(__dirname, testFile);
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({
+			label: `${basename(testFilePath)}`,
+			description: `${dirname(testFilePath)}`
+		});
+		const stubShowInputBox = sinon.stub(window, 'showInputBox');
+		stubShowInputBox.onCall(0).resolves('Docs Markdown Reference');
+
 		const spy = chai.spy.on(checkForPreviousEntry, 'checkForPreviousEntry');
 		await insertTocEntryWithOptions();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
+		stubShowInputBox.restore();
 	});
 	test('yaml-controller - insertTocEntryWithOptions', async () => {
+		const testFile = '../../../../../src/test/data/repo/articles/docs-markdown.md';
+		const testFilePath = resolve(__dirname, testFile);
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({
+			label: `${basename(testFilePath)}`,
+			description: `${dirname(testFilePath)}`
+		});
+		const stubShowInputBox = sinon.stub(window, 'showInputBox');
+		stubShowInputBox.onCall(0).resolves('Docs Markdown Reference');
+
 		const spy = chai.spy.on(createParentNode, 'createParentNode');
 		await insertExpandableParentNode();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
+		stubShowInputBox.restore();
 	});
 	test('yaml-controller - showQuickPick', async () => {
+		const testFile = '../../../../../src/test/data/repo/articles/docs-markdown.md';
+		const testFilePath = resolve(__dirname, testFile);
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({
+			label: `${basename(testFilePath)}`,
+			description: `${dirname(testFilePath)}`
+		});
+		const stubShowInputBox = sinon.stub(window, 'showInputBox');
+		stubShowInputBox.onCall(0).resolves('Docs Markdown Reference');
+
 		const spy = chai.spy.on(createEntry, 'createEntry');
 		await showTOCQuickPick(true);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
+		stubShowInputBox.restore();
 	});
 });
