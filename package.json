@@ -1,15 +1,6 @@
 {
   "name": "root",
   "private": true,
-  "workspaces": [
-    "docs-article-templates/*",
-    "docs-images/*",
-    "docs-linting/*",
-    "docs-markdown/*",
-    "docs-metadata/*",
-    "docs-preview/*",
-    "docs-yaml/*"
-  ],
   "devDependencies": {
     "husky": "^4.2.5",
     "lerna": "^3.22.1"
