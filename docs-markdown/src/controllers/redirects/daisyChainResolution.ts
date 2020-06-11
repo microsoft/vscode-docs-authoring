@@ -2,6 +2,7 @@
 import { showStatusMessage } from '../../helper/common';
 import { RedirectUrl } from './redirect-url';
 import { MasterRedirection, initiateRedirectCommand, updateRedirects } from './utilities';
+import { numberFormat } from '../../constants/formatting';
 
 export async function applyRedirectDaisyChainResolution() {
 	const { isEnvironmentReady, redirectsAndConfigOptions } = await initiateRedirectCommand();
@@ -74,7 +75,6 @@ export async function applyRedirectDaisyChainResolution() {
 
 	if (daisyChainsResolved > 0) {
 		await updateRedirects(editor, redirects, config);
-		const numberFormat = Intl.NumberFormat();
 		showStatusMessage(
 			`Resolved ${numberFormat.format(
 				daisyChainsResolved

@@ -4,6 +4,7 @@ import { ProgressLocation, window } from 'vscode';
 import { postError, showStatusMessage } from '../../helper/common';
 import { RedirectUrl } from './redirect-url';
 import { MasterRedirection, initiateRedirectCommand, updateRedirects } from './utilities';
+import { numberFormat } from '../../constants/formatting';
 
 export async function detectInvalidDocumentIdRedirects() {
 	const { isEnvironmentReady, redirectsAndConfigOptions } = await initiateRedirectCommand();
@@ -99,7 +100,6 @@ export async function detectInvalidDocumentIdRedirects() {
 
 	if (fixesApplied > 0) {
 		await updateRedirects(editor, redirects, config);
-		const numberFormat = Intl.NumberFormat();
 		showStatusMessage(
 			`Fixed ${numberFormat.format(fixesApplied)} invalid redirect_document_id values.`
 		);
