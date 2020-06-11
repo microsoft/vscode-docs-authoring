@@ -2,7 +2,7 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { resolve } from 'path';
-import { commands, QuickPickItem, window, workspace } from 'vscode';
+import { commands, QuickPickItem, window, workspace, ExtensionContext, Uri } from 'vscode';
 import * as boldController from './../../../controllers/bold-controller';
 import * as italicController from '../../../controllers/italic-controller';
 import * as codeController from '../../../controllers/code-controller';
@@ -14,7 +14,7 @@ import * as linkController from '../../../controllers/link-controller';
 import * as noLocController from '../../../controllers/no-loc-controller';
 import * as imageController from '../../../controllers/image-controller';
 import * as includeController from '../../../controllers/include-controller';
-import * as snippetController from '../../../controllers/snippet-controller';
+import * as snippetController from '../../../controllers/snippet/snippet-controller';
 import * as mediaController from '../../../controllers/media-controller';
 import * as cleanupController from '../../../controllers/cleanup/cleanup-controller';
 import * as monikerController from '../../../controllers/moniker-controller';
@@ -31,6 +31,44 @@ import {
 
 const expect = chai.expect;
 
+interface Subscription {
+	dispose(): any;
+}
+interface EnvironmentalMutator {
+	type: any;
+	value: any;
+}
+const uri = resolve(__dirname, '../../../../../src/test/data/repo/articles/image-controller2.md');
+let environmentalMutator: EnvironmentalMutator;
+let subscriptions: Subscription[];
+const context: ExtensionContext = {
+	globalState: {
+		get: key => {},
+		update: (key, value) => Promise.resolve()
+	},
+	subscriptions,
+	workspaceState: {
+		get: () => {},
+		update: (key, value) => Promise.resolve()
+	},
+	extensionPath: '',
+	asAbsolutePath: relative => '',
+	storagePath: '',
+	globalStoragePath: '',
+	logPath: '',
+	extensionUri: Uri.parse(uri),
+	environmentVariableCollection: {
+		persistent: false,
+		replace: (variable, value) => {},
+		append: (variable, value) => {},
+		prepend: (variable, value) => {},
+		get: variable => environmentalMutator,
+		forEach: () => {},
+		clear: () => {},
+		delete: () => {}
+	}
+};
+
 suite('Quick Pick Menu Controller', () => {
 	suiteTeardown(async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
@@ -38,7 +76,7 @@ suite('Quick Pick Menu Controller', () => {
 	});
 	test('quickPickMenuCommand', () => {
 		const controllerCommands = [{ command: markdownQuickPick.name, callback: markdownQuickPick }];
-		expect(quickPickMenuCommand()).to.deep.equal(controllerCommands);
+		expect(quickPickMenuCommand).to.deep.equal(controllerCommands);
 	});
 	test('markdownQuickPick - formatBold', async () => {
 		workspace.getConfiguration = () => {
@@ -63,7 +101,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(boldController, 'formatBold');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -91,7 +129,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(italicController, 'formatItalic');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -119,7 +157,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(codeController, 'formatCode');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -147,7 +185,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(alertController, 'insertAlert');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -176,7 +214,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(listController, 'insertNumberedList');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -204,7 +242,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(listController, 'insertBulletedList');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -232,7 +270,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(tableController, 'insertTable');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -260,7 +298,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(linkController, 'pickLinkType');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -288,7 +326,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(noLocController, 'noLocText');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -316,7 +354,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(imageController, 'pickImageType');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -344,7 +382,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(includeController, 'insertInclude');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -372,7 +410,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(snippetController, 'insertSnippet');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -400,7 +438,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(mediaController, 'insertVideo');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -428,7 +466,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(rowColumnsController, 'insertRowsAndColumns');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -456,7 +494,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(cleanupController, 'applyCleanup');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -484,7 +522,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(monikerController, 'insertMoniker');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -512,7 +550,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(yamlController, 'insertTocEntry');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -540,7 +578,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(yamlController, 'insertTocEntryWithOptions');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
@@ -568,7 +606,7 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(yamlController, 'insertExpandableParentNode');
-		markdownQuickPick();
+		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
