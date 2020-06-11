@@ -1,5 +1,7 @@
 # Change Log
 
+- Added Unit Test Coverage: row-columns-controller.ts
+
 ## 0.2.73 (June 8th, 2020)
 
 - List bug fix: [Issue 409](https://github.com/microsoft/vscode-docs-authoring/issues/409)
