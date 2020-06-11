@@ -656,12 +656,17 @@
 					"default": false,
 					"description": "When enabled, beta features will become available."
 				},
-				"markdown.appConfig": {
-					"instance": "https://login.microsoftonline.com",
-					"tenant": "[TENANT]",
-					"clientId": "[CLIENTID]",
-					"clientSecret": "[CLIENTSECRET]",
-					"resource": "https://graph.microsoft.com"
+				"markdown.tenant": {
+					"type": "string",
+					"default": "[TENANT]"
+				},
+				"markdown.clientId": {
+					"type": "string",
+					"default": "[CLIENTID]"
+				},
+				"markdown.clientSecret": {
+					"type": "string",
+					"default": "[CLIENTSECRET]"
 				}
 			}
 		},

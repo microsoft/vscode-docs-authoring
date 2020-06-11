@@ -16,19 +16,15 @@ export interface TokenResponse {
 	tokenType: string;
 }
 
-interface AppConfig {
-	instance: string;
-	tenant: string;
-	clientId: string;
-	clientSecret: string;
-	resource: string;
-}
-
 export class Auth {
 	context: ExtensionContext;
 	config = workspace.getConfiguration('markdown');
-	appConfig = this.config.get<AppConfig>('appConfig');
-	authorityUrl = `${this.appConfig.instance}/${this.appConfig.tenant}`;
+	instance = 'https://login.microsoftonline.com';
+	tenant = this.config.get<string>('tenant');
+	clientId = this.config.get<string>('clientId');
+	clientSecret = this.config.get<string>('clientSecret');
+	resource = 'https://graph.microsoft.com';
+	authorityUrl = `${this.instance}/${this.tenant}`;
 	constructor(context) {
 		this.context = context;
 	}
@@ -39,9 +35,9 @@ export class Auth {
 			const authContext = new AuthenticationContext(this.authorityUrl);
 			return new Promise((resolve, reject) => {
 				authContext.acquireTokenWithClientCredentials(
-					this.appConfig.resource,
-					this.appConfig.clientId,
-					this.appConfig.clientSecret,
+					this.resource,
+					this.clientId,
+					this.clientSecret,
 					async (err, tokenResponse: TokenResponse) => {
 						if (err) {
 							window.showErrorMessage(err);

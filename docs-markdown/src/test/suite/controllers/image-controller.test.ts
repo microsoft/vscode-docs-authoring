@@ -22,6 +22,40 @@ import { loadDocumentAndGetItReady, sleep, extendedSleepTime } from '../../test.
 interface Subscription {
 	dispose(): any;
 }
+interface EnvironmentalMutator {
+	type: any;
+	value: any;
+}
+const uri = resolve(__dirname, '../../../../../src/test/data/repo/articles/image-controller2.md');
+let environmentalMutator: EnvironmentalMutator;
+let subscriptions: Subscription[];
+const context: ExtensionContext = {
+	globalState: {
+		get: key => {},
+		update: (key, value) => Promise.resolve()
+	},
+	subscriptions,
+	workspaceState: {
+		get: () => {},
+		update: (key, value) => Promise.resolve()
+	},
+	extensionPath: '',
+	asAbsolutePath: relative => '',
+	storagePath: '',
+	globalStoragePath: '',
+	logPath: '',
+	extensionUri: Uri.parse(uri),
+	environmentVariableCollection: {
+		persistent: false,
+		replace: (variable, value) => {},
+		append: (variable, value) => {},
+		prepend: (variable, value) => {},
+		get: variable => environmentalMutator,
+		forEach: () => {},
+		clear: () => {},
+		delete: () => {}
+	}
+};
 chai.use(spies);
 
 import sinon = require('sinon');
@@ -67,25 +101,6 @@ suite('Image Controller', () => {
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller1.md'
 		);
-		let subscriptions: Subscription[];
-		const context: ExtensionContext = {
-			globalState: {
-				get: key => {},
-				update: (key, value) => Promise.resolve()
-			},
-			subscriptions,
-			workspaceState: {
-				get: () => {},
-				update: (key, value) => Promise.resolve()
-			},
-			extensionPath: '',
-			asAbsolutePath: relative => '',
-			storagePath: '',
-			globalStoragePath: '',
-			logPath: '',
-			extensionUri: Uri.parse(filePath)
-		};
-
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
 
@@ -118,24 +133,6 @@ suite('Image Controller', () => {
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller2.md'
 		);
-		let subscriptions: Subscription[];
-		const context: ExtensionContext = {
-			globalState: {
-				get: key => {},
-				update: (key, value) => Promise.resolve()
-			},
-			subscriptions,
-			workspaceState: {
-				get: () => {},
-				update: (key, value) => Promise.resolve()
-			},
-			extensionPath: '',
-			asAbsolutePath: relative => '',
-			storagePath: '',
-			globalStoragePath: '',
-			logPath: '',
-			extensionUri: Uri.parse(filePath)
-		};
 
 		await loadDocumentAndGetItReady(filePath);
 		await pickImageType(context);
@@ -165,24 +162,6 @@ suite('Image Controller', () => {
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller3.md'
 		);
-		let subscriptions: Subscription[];
-		const context: ExtensionContext = {
-			globalState: {
-				get: key => {},
-				update: (key, value) => Promise.resolve()
-			},
-			subscriptions,
-			workspaceState: {
-				get: () => {},
-				update: (key, value) => Promise.resolve()
-			},
-			extensionPath: '',
-			asAbsolutePath: relative => '',
-			storagePath: '',
-			globalStoragePath: '',
-			logPath: '',
-			extensionUri: Uri.parse(filePath)
-		};
 
 		await loadDocumentAndGetItReady(filePath);
 		await pickImageType(context);
@@ -216,24 +195,6 @@ suite('Image Controller', () => {
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller4.md'
 		);
-		let subscriptions: Subscription[];
-		const context: ExtensionContext = {
-			globalState: {
-				get: key => {},
-				update: (key, value) => Promise.resolve()
-			},
-			subscriptions,
-			workspaceState: {
-				get: () => {},
-				update: (key, value) => Promise.resolve()
-			},
-			extensionPath: '',
-			asAbsolutePath: relative => '',
-			storagePath: '',
-			globalStoragePath: '',
-			logPath: '',
-			extensionUri: Uri.parse(filePath)
-		};
 
 		await loadDocumentAndGetItReady(filePath);
 		let editor = window.activeTextEditor;
@@ -264,24 +225,6 @@ suite('Image Controller', () => {
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller5.md'
 		);
-		let subscriptions: Subscription[];
-		const context: ExtensionContext = {
-			globalState: {
-				get: key => {},
-				update: (key, value) => Promise.resolve()
-			},
-			subscriptions,
-			workspaceState: {
-				get: () => {},
-				update: (key, value) => Promise.resolve()
-			},
-			extensionPath: '',
-			asAbsolutePath: relative => '',
-			storagePath: '',
-			globalStoragePath: '',
-			logPath: '',
-			extensionUri: Uri.parse(filePath)
-		};
 
 		await loadDocumentAndGetItReady(filePath);
 		let editor = window.activeTextEditor;
@@ -314,24 +257,6 @@ suite('Image Controller', () => {
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller6.md'
 		);
-		let subscriptions: Subscription[];
-		const context: ExtensionContext = {
-			globalState: {
-				get: key => {},
-				update: (key, value) => Promise.resolve()
-			},
-			subscriptions,
-			workspaceState: {
-				get: () => {},
-				update: (key, value) => Promise.resolve()
-			},
-			extensionPath: '',
-			asAbsolutePath: relative => '',
-			storagePath: '',
-			globalStoragePath: '',
-			logPath: '',
-			extensionUri: Uri.parse(filePath)
-		};
 
 		await loadDocumentAndGetItReady(filePath);
 		let editor = window.activeTextEditor;
