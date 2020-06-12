@@ -728,7 +728,7 @@
 	"husky": {
 		"hooks": {
 			"pre-commit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
-			"pre-push": "cd ../.. && run compile && npm run lint"
+			"pre-push": "cd ../.. && npm run compile && npm run lint"
 		}
 	},
 	"dependencies": {

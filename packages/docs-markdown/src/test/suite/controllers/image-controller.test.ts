@@ -209,7 +209,6 @@ suite('Image Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
-
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller6.md'
