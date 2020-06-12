@@ -10,13 +10,14 @@ import { Result } from './result';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as size from 'image-size';
-import * as jimp from 'jimp';
-import * as imagemin from 'imagemin';
-import * as imageminJpeg from 'imagemin-jpegtran';
-import * as imageminPng from 'imagemin-optipng';
-import * as imageminGif from 'imagemin-gifsicle';
-import * as imageminSvg from 'imagemin-svgo';
-import * as imageminWebp from 'imagemin-webp';
+import FileType from 'file-type';
+import Jimp from 'jimp/es';
+import imagemin from 'imagemin';
+import imageminJpegtran from 'imagemin-jpegtran';
+import imageminPng from 'imagemin-optipng';
+import imageminGif from 'imagemin-gifsicle';
+import imageminSvg from 'imagemin-svgo';
+import imageminWebp from 'imagemin-webp';
 
 enum Status {
 	Idle,
@@ -109,7 +110,7 @@ export class ImageCompressor {
 		maxWidth: number = 0,
 		maxHeight: number = 0
 	) {
-		return await this.tryAction(async () => {
+		const result = await this.tryAction(async () => {
 			if (!!maxWidth || !!maxHeight) {
 				let dimensions = size.imageSize(filePath);
 				const workingMaxWidth = maxWidth > 0 ? maxWidth : dimensions.width ?? 0;
@@ -123,28 +124,60 @@ export class ImageCompressor {
 						`Attempting to resize large image: ${dimensions.width}x${dimensions.height}.`
 					);
 
-					const image = await jimp.read(filePath);
-					image.resize(maxWidth || jimp.AUTO, maxHeight || jimp.AUTO);
+					const image = await this.timeoutAfterDelay(() => Jimp.read(filePath), undefined);
+					if (image) {
+						const auto = Jimp.AUTO;
+						await image.resize(maxWidth || auto, maxHeight || auto).writeAsync(filePath);
 
-					await image.writeAsync(filePath);
-					dimensions = size.imageSize(filePath);
-					this.updateStatus(
-						Status.AttemptingResize,
-						`Successfully resized image to: ${dimensions.width}x${dimensions.height}.`
-					);
+						dimensions = size.imageSize(filePath);
+						this.updateStatus(
+							Status.AttemptingResize,
+							`Successfully resized image to: ${dimensions.width}x${dimensions.height}.`
+						);
 
-					return true;
+						return true;
+					} else {
+						this.updateStatus(Status.AttemptingResize, 'Timeout occurred, unable to resize image.');
+						return false;
+					}
 				}
 			}
 
 			return false;
 		}, Promise.resolve(false));
+
+		return result;
+	}
+
+	private async timeoutAfterDelay<T>(
+		getPromise: () => Promise<T>,
+		defaultValue: T,
+		delay: number = 5000
+	) {
+		const result = await this.tryAction(async () => {
+			const promises: Promise<T>[] = [
+				getPromise(),
+				new Promise(resolve => setTimeout(() => resolve(defaultValue), delay))
+			];
+			const winningPromise = await Promise.race(promises);
+			return winningPromise;
+		}, undefined);
+
+		return result;
 	}
 
 	private async tryApplyImageCompression(filePath: string) {
-		return await this.tryAction(async () => {
+		const result = await this.timeoutAfterDelay(async () => {
 			const plugins = [];
 			const fileExtension = this.getFileExtension(filePath);
+			const fileType = await FileType.fromFile(filePath);
+			if (fileType && fileExtension && fileType.ext !== fileExtension.substr(1)) {
+				this.writeMessage(
+					`The "${filePath}" file has an incorrect file extension. It is actually a mime type of ${fileType.mime}!`
+				);
+				return false;
+			}
+
 			switch ((fileExtension || '').toLowerCase()) {
 				case '.png':
 					this.writeMessage(`Using .png compression plugin for: "${filePath}"`);
@@ -159,9 +192,9 @@ export class ImageCompressor {
 				case '.jpeg':
 					this.writeMessage(`Using .jpg & .jpeg compression plugin for: "${filePath}"`);
 					plugins.push(
-						imageminJpeg({
+						imageminJpegtran({
 							// https://www.npmjs.com/package/imagemin-jpegtran#api
-							arithmetic: true
+							arithmetic: false
 						})
 					);
 					break;
@@ -218,7 +251,9 @@ export class ImageCompressor {
 			}
 
 			return wasCompressed;
-		}, Promise.resolve(false));
+		}, false);
+
+		return result;
 	}
 
 	private updateStatus(status: Status, message: string) {

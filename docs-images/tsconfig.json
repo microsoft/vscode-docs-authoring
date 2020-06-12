@@ -5,6 +5,8 @@
 		"outDir": "out",
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
 		"noUnusedLocals": true,
 		"noImplicitAny": true,
 		"noImplicitThis": true,

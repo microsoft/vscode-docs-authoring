@@ -17,7 +17,7 @@ import { insertMoniker } from './moniker-controller';
 import { noLocText } from './no-loc-controller';
 import { previewTopic, seoPreview } from './preview-controller';
 import { insertRowsAndColumns } from './row-columns-controller';
-import { insertSnippet } from './snippet-controller';
+import { insertSnippet } from './snippet/snippet-controller';
 import { insertTable } from './table-controller';
 import { applyTemplate } from './template-controller';
 import { applyXref } from './xref/xref-controller';
@@ -123,8 +123,9 @@ export function markdownQuickPick() {
 	//    description: "Beta preview",
 	//    label: "$(tasklist) Cleanup...",
 	// }
-	const previewSetting = vscode.workspace.getConfiguration('markdown').previewFeatures;
-	if (previewSetting === true) {
+	const config = vscode.workspace.getConfiguration('markdown');
+	const previewFeatures = config.get<boolean>('previewFeatures');
+	if (previewFeatures === true) {
 		output.appendLine('Preview features will be enabled.');
 	}
 
