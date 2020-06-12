@@ -213,19 +213,19 @@ export async function search(
 				const id = await window.showInputBox({ prompt: 'Enter id to select' });
 				if (id) {
 					snippet = snippetBuilder(language, snippetLink, id, undefined);
-					insertContentToEditor(editor, snippet, true, selectionRange);
+					await insertContentToEditor(editor, snippet, true, selectionRange);
 				}
 				break;
 			case 'range':
 				const range = await window.showInputBox({ prompt: 'Enter line selection range' });
 				if (range) {
 					snippet = snippetBuilder(language, snippetLink, undefined, range);
-					insertContentToEditor(editor, snippet, true, selectionRange);
+					await insertContentToEditor(editor, snippet, true, selectionRange);
 				}
 				break;
 			default:
 				snippet = snippetBuilder(language, snippetLink);
-				insertContentToEditor(editor, snippet, true, selectionRange);
+				await insertContentToEditor(editor, snippet, true, selectionRange);
 				break;
 		}
 	}
