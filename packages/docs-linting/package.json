@@ -1,5 +1,5 @@
 {
-	"name": "@dap/docs-linting",
+	"name": "docs-linting",
 	"displayName": "docs-linting",
 	"description": "Docs Linting Extension",
 	"icon": "images/docs-logo-ms.png",
@@ -35,14 +35,12 @@
 		"postinstall": "node ./node_modules/vscode/bin/install",
 		"test-core": "node ./node_modules/vscode/bin/test",
 		"test": "jest",
-		"lint": "eslint . --ext .ts markdownlint-custom-rules/**/*.js",
-		"precommit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
-		"prepush": "npm run compile && npm run lint"
+		"lint": "eslint . --ext .ts markdownlint-custom-rules/**/*.js"
 	},
 	"husky": {
 		"hooks": {
 			"pre-commit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
-			"pre-push": "cd ../.. && run compile && npm run lint"
+			"pre-push": "npm run compile && npm run lint"
 		}
 	},
 	"dependencies": {

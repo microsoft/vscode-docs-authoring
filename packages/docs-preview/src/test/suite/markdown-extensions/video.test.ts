@@ -4,7 +4,6 @@ import { videoOptions } from '../../../markdown-extensions/video';
 const expect = chai.expect;
 
 suite('Video Extension', () => {
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	const md = require('markdown-it')().use(container_plugin, 'video', videoOptions);
 	test('Video source', async () => {
 		const result = md.render(

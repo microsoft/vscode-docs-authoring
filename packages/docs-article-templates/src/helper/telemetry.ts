@@ -1,9 +1,8 @@
 'use strict';
 
 import { readFileSync } from 'fs';
-import { Disposable, ExtensionContext, Uri, window, workspace } from 'vscode';
+import { Disposable, ExtensionContext } from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
-
 export let reporter: TelemetryReporter;
 
 export class Reporter extends Disposable {
@@ -34,29 +33,4 @@ function getPackageInfo(context: ExtensionContext): PackageInfo {
 		version: extensionPackage.version,
 		aiKey: extensionPackage.aiKey
 	};
-}
-
-/**
- * Return repo name
- * @param Uri
- */
-export function getRepoName(workspacePath: Uri) {
-	// let repoName;
-	const repo = workspace.getWorkspaceFolder(workspacePath);
-	if (repo) {
-		const repoName = repo.name;
-		return repoName;
-	}
-}
-
-export function sendTelemetryData(telemetryCommand: string, commandOption: string) {
-	const editor = window.activeTextEditor;
-	if (editor) {
-		const workspaceUri = editor.document.uri;
-		const activeRepo = getRepoName(workspaceUri);
-		const telemetryProperties = activeRepo
-			? { command_option: commandOption, repo_name: activeRepo }
-			: { command_option: commandOption, repo_name: '' };
-		reporter.sendTelemetryEvent(telemetryCommand, telemetryProperties);
-	}
 }

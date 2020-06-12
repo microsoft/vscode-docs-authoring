@@ -18,8 +18,6 @@ dist
 node_modules
 *.vsix
 /package-lock.json
-.vscode-test/**
-coverage
 
 # Build results
 [Dd]ebug/
@@ -295,8 +293,3 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
-
-test-results-jest.xml
-test-results-mocha.xml
-
-.nyc_output/**/*

@@ -31,10 +31,12 @@ suite('Image Controller', () => {
 	teardown(() => {
 		chai.spy.restore(common);
 	});
+
 	suiteTeardown(async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
 		sinon.restore();
 	});
+
 	suiteSetup(() => {
 		sinon.stub(telemetry, 'sendTelemetryData');
 	});
@@ -67,6 +69,7 @@ suite('Image Controller', () => {
 			'../../../../../src/test/data/repo/articles/image-controller1.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
+
 		pickImageType();
 		await sleep(400);
 		const expectedText = ':::image type="icon" source="../images/test.png" border="false":::';
@@ -86,8 +89,10 @@ suite('Image Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
+
 		const stubShowInputBox = sinon.stub(window, 'showInputBox');
 		stubShowInputBox.resolves('foo');
+
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller2.md'
@@ -113,8 +118,10 @@ suite('Image Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
+
 		const stubShowInputBox = sinon.stub(window, 'showInputBox');
 		stubShowInputBox.resolves('foo');
+
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller3.md'
@@ -199,6 +206,7 @@ suite('Image Controller', () => {
 		const data = ['foo'];
 		const resolved = new Promise(r => r({ data }));
 		const stubAxios = sinon.stub(Axios, 'get').returns(resolved);
+
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
 		const item1: QuickPickItem = {
 			label: 'add link to image'
@@ -208,6 +216,7 @@ suite('Image Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item1);
 		stubShowQuickPick.onCall(1).resolves(item2);
+
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller6.md'

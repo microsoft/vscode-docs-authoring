@@ -1,11 +1,10 @@
 .vscode
-node_modules
+.vscode-test/
 out/
 src/
-tsconfig.json
-webpack.config.js
 .gitignore
-.vscode-test/
-images/extension-demo.gif
-images/install.gif
-images/preview.gif
+tsconfig.json
+node_modules
+webpack.config.js
+images/svg/file-dark.svg
+images/svg/file-light.svg
