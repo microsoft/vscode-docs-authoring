@@ -199,7 +199,6 @@ suite('Image Controller', () => {
 		const data = ['foo'];
 		const resolved = new Promise(r => r({ data }));
 		const stubAxios = sinon.stub(Axios, 'get').returns(resolved);
-
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
 		const item1: QuickPickItem = {
 			label: 'add link to image'
