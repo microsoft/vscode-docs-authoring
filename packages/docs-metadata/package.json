@@ -55,13 +55,12 @@
 		"prettier-check": "prettier --check \"**/*.{ts,js,json,yml}\" --loglevel debug",
 		"test": "npm run compile && node ./node_modules/vscode/bin/test",
 		"lint": "eslint . --ext .ts",
-		"precommit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
-		"prepush": "npm run compile && npm run lint"
+		"pre-push": "cd ../.. && yarn run compile && yarn run lint"
 	},
 	"husky": {
 		"hooks": {
 			"pre-commit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
-			"pre-push": "cd ../.. && run compile && npm run lint"
+			"pre-push": "yarn run pre-push"
 		}
 	},
 	"devDependencies": {
