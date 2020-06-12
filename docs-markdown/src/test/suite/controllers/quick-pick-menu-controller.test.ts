@@ -14,7 +14,7 @@ import * as linkController from '../../../controllers/link-controller';
 import * as noLocController from '../../../controllers/no-loc-controller';
 import * as imageController from '../../../controllers/image-controller';
 import * as includeController from '../../../controllers/include-controller';
-import * as snippetController from '../../../controllers/snippet-controller';
+import * as snippetController from '../../../controllers/snippet/snippet-controller';
 import * as mediaController from '../../../controllers/media-controller';
 import * as cleanupController from '../../../controllers/cleanup/cleanup-controller';
 import * as monikerController from '../../../controllers/moniker-controller';
