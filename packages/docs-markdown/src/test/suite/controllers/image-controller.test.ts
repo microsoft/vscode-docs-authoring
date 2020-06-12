@@ -67,7 +67,6 @@ suite('Image Controller', () => {
 			'../../../../../src/test/data/repo/articles/image-controller1.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-
 		pickImageType();
 		await sleep(400);
 		const expectedText = ':::image type="icon" source="../images/test.png" border="false":::';
