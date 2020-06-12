@@ -375,6 +375,7 @@ suite('Quick Pick Menu Controller', () => {
 		markdownQuickPick();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
+		chai.spy.restore();
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertVideo', async () => {
