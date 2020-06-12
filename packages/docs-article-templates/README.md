@@ -1,112 +1,245 @@
-[![Build status](https://ceapex.visualstudio.com/Engineering/_apis/build/status/Authoring/docs-article-templates%20CI)](https://ceapex.visualstudio.com/Engineering/_build/latest?definitionId=1348&branchName=develop)
-# Docs Article Templates Extension
+[![Build Status](https://ceapex.visualstudio.com/Engineering/_apis/build/status/Authoring/docs-markdown%20CI?branchName=master)](https://ceapex.visualstudio.com/Engineering/_build/latest?definitionId=1346&branchName=master)
 
-The Docs Article Templates extension lets writers in VS Code pull a Markdown template from a centralized store and apply it to a file. Templates can help ensure that required metadata is included in articles, that content standards are followed, and so on. Templates are managed as Markdown files in a public GitHub repository.
+# Docs Markdown Extension
 
-For the first release of the Docs Article Templates extension, only simple Markdown files are supported. All template content, including file metadata, must be in each file, and all templates will be available to all users of the extension. More advanced functionality, such as shared metadata files, conditional text fields, and repo-specific templates, are planned for later releases.
+Welcome to the Docs Markdown authoring extension! This extension provides Markdown authoring assistance for docs.microsoft.com (Docs) content, including basic Markdown support and support for custom Markdown syntax on Docs. We also now support some YAML authoring commands. Here's a quick demo - the rest of the readme provides details about using the extension. You can also get more details about all of the Docs Authoring Pack features here: [Docs Authoring Pack Overview](https://docs.microsoft.com/en-us/contribute/how-to-write-docs-auth-pack)
 
-## To apply a template in VS Code
+![demo](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/video/extension-demo.gif)
 
-1. Ensure the Docs Article Templates extension is installed and enabled.
-1. If you don't have the Docs Markdown extension installed, hit F1 to open the command palette, start typing "template" to filter, then click `Docs: Template`. If you do have Docs Markdown installed, you can use either the command palette or click `Alt+M` to bring up the Docs Markdown QuickPick menu, then select Template from the list.
-1. Select the desired template from the list that appears.
+## Prerequisites and assumptions
 
-![apply template](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/video/apply-template.gif)
+To accurately insert relative links, images, and other embedded content, you must have your VS Code workspace scoped to the root of your cloned Docs repo.
 
-## To create a Learn module in VS Code
+Some syntax supported by the extension, such as alerts and snippets, are custom Markdown for Docs, and will not render correctly unless published to Docs.
 
-1. In VSC open to the root working folder of your repository containing the achievements, path, and "product" folders.
-1. If you don't have the Docs Markdown extension installed, hit F1 to open the command palette, start typing "template" to filter, then click `Docs: Template`. If you do have Docs Markdown installed, you can use either the command palette or click `Alt+M` to bring up the Docs Markdown QuickPick menu, then select Template from the list.
-1. From the drop-down list of templates select `Learn module`.
-1. When prompted select the module's parent folder.
-1. In the "Enter module name" prompt enter your module's name. This is used to create the module, media, and include folders, the index.yml, and the module uid. Example: Module with the friendly name `What is m365` will automatically be formatted as `what-is-m365` by the template extension for the applicable fields.
-1. In the "Enter unit name" prompt enter the first unit name. This will be used to create the unit yml and content .md file with the same name, for example introduction.
-1. Answer `Yes` to the message dialog for your next unit name.
-1. Repeat steps 7 and 8 for each new unit yml you need to create. Once all units have been created,select `No` to exit.
+## How to use the extension
 
-## To add units to an existing Learn module in VS Code
+To access the Docs Markdown menu, type `ALT+M`. You can click or use up/down arrows to select the function you want, or type to start filtering, then hit `ENTER` when the function you want is highlighted in the menu.
 
-1. In VSC open to the root working folder of your repository containing the achievements, path, and "product" folders.
-1. Open a module topic (index.yml).
-1. If you don't have the Docs Markdown extension installed, hit F1 to open the command palette, start typing "template" to filter, then click `Docs: Template`. If you do have Docs Markdown installed, you can use either the command palette or click `Alt+M` to bring up the Docs Markdown QuickPick menu, then select Template from the list.
-1. From the drop-down list of templates select `Add unit to active module`.
-1. In the "Enter unit name" prompt enter the first unit name. This will be used to create the unit yml and content .md file with the same name, for example introduction.
-1. Answer `Yes` to the message dialog for your next unit name.
-1. Repeat steps 6 and 7 for each new unit yml you need to create. Once all units have been created,select `No` to exit.
+![docs markdown quick pick](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/docs-markdown-quick-pick.png)
 
-## To add your GitHub ID and/or Microsoft alias to your VS Code settings
+You can also now access the Docs commands from the VS Code command palette. Hit F1 to open the command palette and start typing to filter. All the Docs commands begin with "Docs":
 
-The Templates extension supports three dynamic metadata fields: `author`, `ms.author`, and `ms.date`. That means that if a template creator uses these fields in the metadata header of a Markdown template, they will be auto-populated in your file when you apply the template, as follows:
+![docs markdown command palette](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/docs-command-palette.png)
 
-|Field      |Value  |
-|-----------|-------|
-|`author`   |Your GitHub alias, if specified in your VS Code settings file. |
-|`ms.author`|Your Microsoft alias, if specified in your VS Code settings file. If you are not a Microsoft employee, leave this unspecified.         |         
-|`ms.date`  |The current date in the Docs-supported format, MM/DD/YYYY. Note that the date is not automatically updated if you subsequently update the file - you must update this manually to indicate the article freshness date.|         
+The following commands are available in Markdown files:
 
-To set `author` and/or `ms.author`:
+|Command            |Description         |
+|-------------------|--------------------|
+|Preview (`Alt+DP`) |Preview the active topic in a side-by-side window using the Docs Preview extension, if it is installed.|
+|Search Results Preview|Approximates how your article will look when returned in Google search results.|
+|Bold (`Alt+DB`)    |Format text **bold**.|
+|Italic (`Alt+DI`)  |Format text *italic*.|
+|Code               |If one line or less is selected, formats text as `inline code`.<br><br>If multiple lines are selected, formats them as a fenced code block, and prompts you to select a programming language supported by Docs.<br>|
+|Alert              |Insert a Note, Important, Warning, or Tip.<br><br>Select Alert from the menu, then select the alert type. If you have previously selected text, it will be surrounded with the selected alert syntax. If no text is selected, a new alert will be added with placeholder text.|
+|Numbered list      |Insert a new numbered list.<br><br> If multiple lines are selected, each will be a list item. To create a nested numbered list, tab from within the parent list.|
+|Bulleted list      |Insert a new bulleted list.|
+|Table              |Insert a Markdown table structure.<br><br>After you select the table command, specify the number of columns and rows in the format columns:rows, such as 3:4. Note that the maximum number of columns you can specify via this extension is 5, which is the recommended maximum for readability on docs.microsoft.com.|
+|Columns             |Insert a column-based layout structure, or add a column to an existing structure. Optionally add the `span` attribute to merge two to four columns together. |
+|Link                |Coose from the following options:<br> - Link to file in repo: Inserts a link to a file in the current repo.<br>- Link to web page: Inserts a link to a web page URI.<br>- Link to heading: Inserts a link to a heading in the current file or another file in the current repo.<br>- Link to XRef: Links to a .NET or UWP API reference article. First, you search for the API, such as `System.String.Length`. Then you choose a display property: none (just the API name will be displayed as link text, such as "Length"); `nameWithType` (the API name and its immediate parent will be displayed, such as "String.Length"); `fullName` (the full API name will be displayed, such as "System.String.Length"). To provide custom link text, select the text first, then use this function to insert the XREF link.<br>- Generate a Link Report: runs the [LinkCheckMD](https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD) extension to find broken links in the current article.|
+|Non-localizable text |Within the Markdown body of a file, format text as non-localizable (`:::no-loc text="string":::`). Within the YAML header of a Markdown file, add a metadata array to be populated with strings that should be non-localizable throughout the file ( `no-loc: []`).|
+|Image               |Insert a standard image, complex image, or icon. For standard and complex images, alternate text is required for accessibility. Either select the alt text before calling the Image command, or add it before you select the image source file. For complex images, type a detailed description between the `:::image:::` and `:::image-end:::` tags. You can optionally add the `loc-scope` attribute to standard and complex images to indicate that the scope of localization is different for the image than for the article or module that contains it. Icons should not have alt text and are not localized, so only the image source file should be specified.|
+|Include            |Find a file in the repo to embed in the current file.|
+|Snippet            |Find a code snippet in the repo to embed in the current file.|
+|Cleanup            |Run one of the Docs Cleanup scripts (see [Cleanup scripts](#cleanup-scripts) below).
+|Video              |Add an embedded video.|
+|Template           |Insert a Markdown authoring template, if the Docs Article Templates extension is installed.|
+
+The following commands are available in YAML files:
+
+|Command            |Description         |
+|-------------------|--------------------|
+|TOC entry          |Insert a basic TOC entry with the `name` and `href` attributes, and select the file link to. By default, the H1 of the selected file is used as the `name`.|
+|TOC entry with optional attributes |Insert a TOC entry with the following optional attributes as well as `name` and `href`.<br>- `displayName`: Add alternative search terms for TOC filtering.<br>- `uid`: Add an identifier for a Docs reference article, such as `System.String`.<br>- `expanded`: Indicate that the node should be expanded by default.|
+|Parent node         |Insert a content-less parent node with a stub child (`name` and `href` pair).|
+|Non-localizable text|Insert a `no-loc` YAML node. If you insert this node within a `metadata` node, every matching string within the YAML file will be non-localizable. If you insert it within any other node, every matchinig string within that node will be non-localizable.
+
+## How to assign keyboard shortcuts
+
+Default keyboard shortcuts are available for some commands, as noted in the table above. You can override them, or add shortcuts for other commands, using the VS Code keyboard shortcut mappings.
+
+1. Type `CTRL+K` then `CTRL+S` to open the Keyboard Shortcuts list.
+1. Search for the command, such as `formatBold`, for which you want to create a custom keybinding.
+1. Click the plus that appears near the command name when you mouse over the line.
+1. After a new input box is visible, type the keyboard shortcut you want to bind to that particular command. For example, to use the common shortcut for bold, type `ctrl+b`.
+1. It's a good idea to insert a `when` clause into your keybinding, so it won't be available in files other than Markdown. To do this, open keybindings.json and insert the following line below the command name (be sure to add a comma between lines):
+
+    `"when": "editorTextFocus && editorLangId == 'markdown'"`
+
+    Your completed custom keybinding should look like this in keybindings.json:
+
+    ```json
+    // Place your key bindings in this file to overwrite the defaults
+    [
+        {
+            "key": "ctrl+b",
+            "command": "formatBold",
+            "when": "editorTextFocus && editorLangId == 'markdown'"
+        }
+    ]
+    ```
+
+1. Save keybindings.json.
+
+See [Keybindings](https://code.visualstudio.com/docs/getstarted/keybindings) in the VS Code docs for more information.
+
+## How to show the docs-markdown toolbar
+
+Users of the pre-release version of the extension will notice that the authoring toolbar no longer appears at the bottom of the VS Code window when the Docs Markdown extension is installed. This is because the toolbar took up a lot of space on the VS Code status bar, and did not follow best practices for extension UX, so it is deprecated in the new extension. However, you can optionally show the toolbar by updating your VS Code settings.json file as follows:
 
 1. In VS Code, go to File -> Preferences -> Settings (`CTRL+Comma`).
 1. Select User Settings to change the settings for all VS Code workspaces, or  Workspace Settings to change them for just the current workspace.
-1. In the Default Settings pane on the left, find Docs Article Templates Extension Configuration, click the pencil icon next to the desired setting, then click `Replace in Settings`. 
+1. In the Default Settings pane on the left, find Docs Markdown Extension Configuration, and select the pencil icon next to the desired setting, and select `true`. VS Code will automatically add the value to the settings.json file and you will be prompted to reload the window for the changes to take effect.
+1. Now you will see the toolbar at the bottom of your VS Code window:
 
-   ![edit settings](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/video/edit-settings.gif) 
- 
-1. The User Settings pane will open side-by-side, with a new entry at the bottom.
-1. Add your GitHub ID or Microsoft email alias, as appropriate, and save the file.
-1. The updated settings might looks something like this:
+   ![toolbar](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/legacy-toolbar.png)
 
-   ![updated settings](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/updated-template-settings.png)
+## Context Menus
 
-1. You might need to close and restart VS Code for the changes to take effect.
-1. Now, when you apply a template that uses dynamic fields, your GitHub ID and/or Microsoft alias will be auto-populated in the metadata header.
+There are multiple context menu options that have been added to the right mouse click button when editing markdown documents. This includes update metadata, and reformat tables. Or you can right mouse click on a markdown file or folder for the cleanup scripts context menu option.
 
-## Custom Learn module and unit settings
+### Cleanup scripts
 
-Some Learn module and unit properties can be modified using VS Code settings.
+Cleanup functionality has been added to docs-markdown to move the experience of fixing validation closer to your development environment. Instead of having to wait until build time, you can proactively reduce the number of validation errors and warnings by running these cleanup scripts. Get started by hitting `F1` and typing `Docs: Cleanup` or hit `Alt+M` and navigate to `Cleanup...` in the quick pick menu. Or right click on a file or folder in the explorer panel to see the `clean up file` option in the context menu.
 
-|Field      |Value  |
-|-----------|-------|
-|`learn_repo_id`   |Default Learn repo.  If no value is present, repo root folder will be used.|
-|`learn_level`|Default Learn level. Represents the target level for the module i.e. `beginner`.|         
-|`learn_role`  |Default Learn role. Represents the target role for the module i.e. `developer`.|
-|`learn_product`  |Default Learn product. Represents the target product for the module i.e. `azure`.|
+![cleanup script context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/cleanup-script-context-menu.png)
 
-## To make a new template available in VS Code
+Cleanup scripts available:
 
-1. Draft your template as a Markdown file.
-2. Submit a pull request to the templates folder of the https://github.com/MicrosoftDocs/content-templates repo.
+- Single-valued metadata: Converts single value arrays of metadata into inline properties without array brackets.
+- Microsoft links: Converts `http://` to `https://` for microsoft docs, azure, technet, and msdn. Removes hardcoded locales (`en-us`) from url.
+- Capitalization of metadata values: Lowercases certain metadata properties.
+- Master redirection file: Adds redirect_url entries to the master redirect file and removes redirected Markdown files from the repo.
+- Everything: Runs all the available cleanup scripts.
 
-The docs.microsoft.com team will review your template and merge the PR if it meets docs.microsoft.com style guidelines. Once merged, the template will be available to all users of the Docs Article Templates extension.
+### Collapse relative links
 
-## Template metadata
+Added "Collapse relative links" context-menu item for markdown files. Within a markdown file, right-click to open the context menu. Select "Collapse relative links" to resolve relative links that are unnecessarily verbose. For example, if *doc-1.md* in the *articles* directory has a relative link such as `[Link](../../articles/sub/doc-2.md)`, it could be simplified to `[Link](sub/doc-2.md)`.
 
-Including metadata in your template can help contributors add the right metadata to each file. File-level metadata is specified in a YML header at the top of the Markdown file. You should only include file-level metadata in your template for values that are generally not set at the doc set or folder level; otherwise, users might inadvertently overwrite the correct global values. You can use comments (`#`) to describe the expected values, and dynamic fields to auto-populate certain values.
+Additionally, an explorer context-menu item has been added to expose this functionality for an entire directory structure. Righ-click on a folder, and select "Collapse relative links in folder" to ensure that all markdown files have their relative links collapsed.
 
-The following is a basic YML metadata header that you might use for a getting started article template:
+### Reformat Markdown tables
+
+In a Markdown (*\*.md*) file, when you select a complete table - two table formatting context menu items are now available. Right-click on the selected Markdown table to open the context menu. You will see something similar to the following menu items:
+
+![Reformat table context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/reformat-table-menu.png)
+
+This feature **does not** work with multiple table selections, but rather is intended for a single Markdown table. You must select the entire table, including headings for desired results.
+
+### Consolidate selected table
+
+Selecting the **Consolidate selected table** option will collapse the table headings and contents with only a single space on either side of each value.
+
+### Evenly distribute selected table
+
+Selecting the **Evenly distribute selected table** option will calculate the longest value in each column and evenly distribute all the other values accordingly with space.
+
+### Considerations
+
+The feature will not impact the rendering of the table, but it will help to improve the readability of the table - thus making more maintainable. The reformatting table feature will keep column alignment intact.
+
+Consider the following table:
+
+```markdown
+| Column1 | This is a long column name | Column3 |  |
+|--:|---------|:--:|:----|
+||         |  |         |
+|     |  |         |   a value      |
+||         |         |         |
+|     |         | This is a long value |       but why? |
+|     |         |         |         |
+|     |                                           |         | Here is something |
+|  |         |   |         |
+```
+
+After being "evenly distributed":
+
+```markdown
+| Column1 | This is a long column name | Column3              |                   |
+|--------:|----------------------------|:--------------------:|:------------------|
+|         |                            |                      |                   |
+|         |                            |                      | a value           |
+|         |                            |                      |                   |
+|         |                            | This is a long value | but why?          |
+|         |                            |                      |                   |
+|         |                            |                      | Here is something |
+|         |                            |                      |                   |
+```
+
+After being "consolidated":
+
+```markdown
+| Column1 | This is a long column name | Column3 |  |
+|-:|--|:-:|:-|
+|  |  |  |  |
+|  |  |  | a value |
+|  |  |  |  |
+|  |  | This is a long value | but why? |
+|  |  |  |  |
+|  |  |  | Here is something |
+|  |  |  |  |
+```
+
+### Update metadata
+
+In a Markdown (*\*.md*) file, there are two contextual menu items specific to metadata. When you right-click anywhere in the text editor, you will see something similar to the following menu items:
+
+![Update metadata context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/update-metadata-menu.png)
+
+### Update `ms.date` metadata value
+
+Selecting the **Update `ms.date` Metadata Value** option will set the current Markdown files `ms.date` value to today's date. If the document does not have an `ms.date` metadata field, no action is taken.
+
+### Update implicit metadata values
+
+Selecting the **Update implicit metadata values** option will find and replace all possible metadata values that could be implicitly specified. Metadata values are implicitly specified in the *docfx.json* file, under the `build/fileMetadata` node. Each key value pair in the `fileMetadata` node represents metadata defaults. For example, a Markdown file in the *top-level/sub-folder* directory that omits the `ms.author` metadata value could implicitly specify a default value to use in the `fileMetadata` node.
+
+```json
+{
+    "build": {
+        "fileMetadata": {
+            "ms.author": {
+                "top-level/sub-folder/**/**.md": "dapine"
+            }
+        }
+    }
+}
+```
+
+In this case, all Markdown files would implicitly take on the `ms.author: dapine` metadata value. The feature acts on these implicit settings found in the *docfx.json* file. If a Markdown file contains metadata with values that are explicitly set to something other than the implicit values, they are overridden.
+
+Consider the following Markdown file metadata, where this Markdown file resides in **top-level/sub-folder/includes/example.md**:
 
 ```markdown
 ---
-title:                     # the article title to show on the browser tab
-description:               # 115 - 145 character description to show in search results
-author: {github-id}        # the author's GitHub ID - will be auto-populated if set in settings.json
-ms.author: {ms-alias}      # the author's Microsoft alias (if applicable) - will be auto-populated if set in settings.json
-ms.date: {@date}           # the date - will be auto-populated when template is first applied
-ms.topic: getting-started  # the type of article
+ms.author: someone-else
 ---
-# Heading 1 <!-- the article title to show on the web page -->
+
+## Content
+```
+
+If the **Update implicit metadata values** option was executed on this file, with the assumed *docfx.json* content from above the metadata value would be updated to `ms.author: dapine`.
+
+```markdown
+---
+ms.author: dapine
+---
+
+# Content
 ```
 
 ## Known issues
 
-- Templates are stored in a public GitHub repo, so don't include any sensitive information in your templates!
-- In this beta release, all templates will be available to all users of the VS Code extension. Repo-specific templates, which take advantage of VS Code's GitHub integration to only show certain templates for certain repos, are not yet supported.
+- [YAML TOC entries] The Docs-YAML schema validation falsely shows a "Matches a schema that is not allowed" linting error on optional attributes such as `displayName`. These entries are in fact valid, and we'll be updating the schema linting in an upcoming release.
+- [YAML TOC entries] Depending on your settings related to spacing, sometimes attributes in nested TOC entries don't line up correctly. If you experience this issue, make sure all the attributes line up with the nested `name` attribute. A fix is in progress for this bug.
+- [YAML TOC entries] Erroneous invalid location error when trying to add new top level entry after nested entry. A fix is in progress for this bug.
+- [Docs Preview] Code blocks only preview in Dark theme, and some colorized text is unreadable in Light theme.
+- [External bookmarks] Linux: File list is displayed but no headings are shown to select.
+- [Includes] Linux: File list is displayed but no link is added after selection is made.
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to and actually do, grant us the rights to use your contribution. For details, visit our [Contributor License Agreement (CLA)](https://cla.microsoft.com).
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
 a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
@@ -118,4 +251,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## License
 
-[MIT](https://docsmsft.gallerycdn.vsassets.io/extensions/docsmsft/docs-markdown/0.2.2/1547755350969/Microsoft.VisualStudio.Services.Content.License)
+[MIT](LICENSE)
