@@ -8,8 +8,7 @@ import { sleep, sleepTime } from '../test.common/common';
 chai.use(spies);
 const expect = chai.expect;
 
-suite('Extension Test Suite', () => {
-	window.showInformationMessage('Start all tests.');
+suite('Extension tests', () => {
 	test('install/load', () => {
 		assert.ok(extensions.getExtension('docsmsft.docs-markdown'));
 	});
