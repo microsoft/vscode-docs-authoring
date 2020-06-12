@@ -58,6 +58,12 @@
 		"precommit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
 		"prepush": "npm run compile && npm run lint"
 	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
+			"pre-push": "cd ../.. && run compile && npm run lint"
+		}
+	},
 	"devDependencies": {
 		"@types/mocha": "^2.2.42",
 		"@types/node": "^10.12.21",
@@ -67,6 +73,7 @@
 		"@typescript-eslint/parser": "^2.34.0",
 		"eslint": "^7.0.0",
 		"eslint-plugin-import": "^2.20.2",
+		"husky": "^4.2.5",
 		"mocha": "^7.1.1",
 		"prettier": "^2.0.5",
 		"pretty-quick": "^2.0.1",
