@@ -1,5 +1,7 @@
 # Change Log
 
+- Add list-controller tests
+
 ## 0.2.74 (June 11th, 2020)
 
 - Collapse relative link improvements
