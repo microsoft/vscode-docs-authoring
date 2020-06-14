@@ -18,7 +18,7 @@ import { loadDocumentAndGetItReady, sleep } from '../../test.common/common';
 chai.use(spies);
 
 // tslint:disable-next-line: no-var-requires
-const sinon = require('sinon');
+import sinon = require('sinon');
 
 const expect = chai.expect;
 
@@ -58,7 +58,7 @@ suite('List Controller', () => {
 	});
 	test('checkEmptyLine', async () => {
 		const editor = window.activeTextEditor;
-		common.setCursorPosition(editor!, 28, 0);
+		common.setCursorPosition(editor, 28, 0);
 		await sleep(100);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		const spy = chai.spy.on(list, 'checkEmptyLine');
@@ -69,7 +69,7 @@ suite('List Controller', () => {
 	});
 	test('checkEmptySelection', async () => {
 		const editor = window.activeTextEditor;
-		common.setCursorPosition(editor!, 29, 3);
+		common.setCursorPosition(editor, 29, 3);
 		await sleep(100);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		const spy = chai.spy.on(list, 'checkEmptySelection');
@@ -80,7 +80,7 @@ suite('List Controller', () => {
 	});
 	test('insertList', async () => {
 		const editor = window.activeTextEditor;
-		common.setCursorPosition(editor!, 27, 0);
+		common.setCursorPosition(editor, 27, 0);
 		await sleep(100);
 		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
 			return Promise.resolve('Numbered list') as Thenable<any>;
@@ -94,7 +94,7 @@ suite('List Controller', () => {
 	});
 	test('createNumberedListFromText', async () => {
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor!, 14, 0, 16, 19);
+		common.setSelectorPosition(editor, 14, 0, 16, 19);
 		await sleep(100);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		const spy = chai.spy.on(list, 'createNumberedListFromText');
@@ -105,7 +105,7 @@ suite('List Controller', () => {
 	});
 	test('createBulletedListFromText', async () => {
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor!, 18, 0, 20, 19);
+		common.setSelectorPosition(editor, 18, 0, 20, 19);
 		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
 			return Promise.resolve('Bulleted list') as Thenable<any>;
 		};
@@ -125,7 +125,7 @@ suite('List Controller', () => {
 	test('insertContentToEditor - nested list', async () => {
 		const spy = chai.spy.on(common, 'insertContentToEditor');
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor!, 22, 0, 25, 21);
+		common.setSelectorPosition(editor, 22, 0, 25, 21);
 		insertNestedList();
 		await sleep(100);
 		expect(spy).to.have.been.called();
