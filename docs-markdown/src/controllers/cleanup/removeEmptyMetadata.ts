@@ -1,4 +1,5 @@
 import { readWriteFileWithProgress } from './utilities';
+import jsyaml = require('js-yaml');
 
 /**
  * Cleanup empty, na and commented out metadata attributes found in .md files
@@ -14,19 +15,21 @@ export function removeEmptyMetadata(
 	if (file.endsWith('.md')) {
 		return readWriteFileWithProgress(progress, file, message, files, index, (data: string) => {
 			if (data.startsWith('---')) {
+				const regex = new RegExp(`^(---)([^]+?)(---)$`, 'm');
+				const metadataMatch = data.match(regex);
 				if (cleanupType === 'empty') {
-					data = deleteEmptyMetadata(data);
+					data = deleteEmptyMetadata(data, metadataMatch[2]);
 				}
 				if (cleanupType === 'na') {
-					data = deleteNaMetadata(data);
+					data = deleteNaMetadata(data, metadataMatch[2]);
 				}
 				if (cleanupType === 'commented') {
-					data = deleteCommentedMetadata(data);
+					data = deleteCommentedMetadata(data, metadataMatch[2]);
 				}
 				if (cleanupType === 'all') {
-					data = deleteEmptyMetadata(data);
-					data = deleteNaMetadata(data);
-					data = deleteCommentedMetadata(data);
+					data = deleteEmptyMetadata(data, metadataMatch[2]);
+					data = deleteNaMetadata(data, metadataMatch[2]);
+					data = deleteCommentedMetadata(data, metadataMatch[2]);
 				}
 			}
 			return data;
@@ -36,26 +39,37 @@ export function removeEmptyMetadata(
 	}
 }
 
-export function deleteEmptyMetadata(data: any) {
-	const metadataListRegex: any = new RegExp(
-		/^(\s+\-)(\s*|\s""|\s'')[\n|\r](?=(.|\n|\r)*---\s$)/gim
-	);
-	data = data.replace(metadataListRegex, '');
-	const metadataRegex: any = new RegExp(
-		/^(\w+\.*\w+?:)(\s*|\s""|\s'')(?!\n*\s+\-\ (\s*|\s""|\s''))[\n|\r](?=(.|\n|\r)*---\s$)/gim
-	);
-	data = data.replace(metadataRegex, '');
-	return data;
+export function deleteEmptyMetadata(data: any, metadata: string) {
+	const yamlContent = jsyaml.load(metadata);
+	if (yamlContent) {
+		const metadataListRegex: any = new RegExp(
+			/^(\s+\-)(\s*|\s""|\s'')[\n|\r](?=(.|\n|\r)*---\s$)/gim
+		);
+		data = data.replace(metadataListRegex, '');
+		const metadataRegex: any = new RegExp(
+			/^(\w+\.*\w+?:)(\s*|\s""|\s'')(?!\n*\s+\-\ (\s*|\s""|\s''))[\n|\r](?=(.|\n|\r)*---\s$)/gim
+		);
+		data = data.replace(metadataRegex, '');
+		return data;
+	}
 }
 
-export function deleteNaMetadata(data: any) {
-	const metadataRegex: any = new RegExp(/^(\w+\.*\w+?:\s(na|n\/a))[\n|\r](?=(.|\n|\r)*---\s$)/gim);
-	data = data.replace(metadataRegex, '');
-	return data;
+export function deleteNaMetadata(data: any, metadata: string) {
+	const yamlContent = jsyaml.load(metadata);
+	if (yamlContent) {
+		const metadataRegex: any = new RegExp(
+			/^(\w+\.*\w+?:\s(na|n\/a))[\n|\r](?=(.|\n|\r)*---\s$)/gim
+		);
+		data = data.replace(metadataRegex, '');
+		return data;
+	}
 }
 
-export function deleteCommentedMetadata(data: any) {
-	const metadataRegex: any = new RegExp(/^(#\s?\w+\.*.*\w+?:).*[\n|\r](?=(.|\n|\r)*---\s$)/gim);
-	data = data.replace(metadataRegex, '');
-	return data;
+export function deleteCommentedMetadata(data: any, metadata: string) {
+	const yamlContent = jsyaml.load(metadata);
+	if (yamlContent) {
+		const metadataRegex: any = new RegExp(/^(#\s?\w+\.*.*\w+?:).*[\n|\r](?=(.|\n|\r)*---\s$)/gim);
+		data = data.replace(metadataRegex, '');
+		return data;
+	}
 }

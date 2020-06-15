@@ -10,15 +10,15 @@ let percentComplete = 1;
  * @param content takes in string data as content and returns
  * first item in array if the array only has one item in array.
  */
-export function handleSingleItemArray(content: string | undefined) {
-    if (content && content.length === 1) {
-        if (content[0] === "") {
-            return true;
-        }
-        else {
-            return content[0];
-        }
-    }
+export function isSingleItemArray(content: string | undefined) {
+	if (content && content.length === 1) {
+		if (content[0] === '') {
+			return true;
+		} else {
+			return content[0];
+		}
+	}
+}
 
 /**
  * Takes in data, metadata key, and value to replace,
