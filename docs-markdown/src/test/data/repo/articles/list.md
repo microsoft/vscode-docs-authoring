@@ -1,7 +1,7 @@
 ---
 # required metadata
 title: List
-description: The OPS platform guide to Markdown and DocFX Flavored Markdown (DFM) extensions.
+description: This article contains a series of unformated lists which are formated by the list controller tests. 
 author: meganbradley
 ms.author: mbradley
 ms.date: 07/23/2018
