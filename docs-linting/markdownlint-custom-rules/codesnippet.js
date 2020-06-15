@@ -4,6 +4,32 @@
 
 const common = require('./common');
 const detailStrings = require('./strings');
+const schemas = require('./schemas');
+const vscode = require('vscode');
+const { default: axios } = require('axios');
+
+// schema linting
+let allowedInterativeTypes;
+let allowedCodeSnippetAttributes;
+let codeSnippetDataResponse;
+
+function loadImageSchema() {
+	axios
+		.get(schemas.CODESNIPPET_SCHEMA)
+		.then(function (response) {
+			codeSnippetDataResponse = response.data;
+			allowedInterativeTypes = Object.values(codeSnippetDataResponse.properties.interactive.enum);
+			allowedCodeSnippetAttributes = Object.keys(codeSnippetDataResponse.properties);
+		})
+		.catch(function () {
+			const errorMessage = detailStrings.failedResponse
+				.replace('NAME', 'image')
+				.replace('URL', schemas.IMAGE_SCHEMA);
+			vscode.window.showErrorMessage(errorMessage);
+		});
+}
+
+loadImageSchema();
 
 module.exports = {
 	names: ['DOCSMD012', 'docsmd.codesnippet'],
@@ -54,16 +80,6 @@ module.exports = {
 									});
 								}
 
-								//do we have language?
-								// const languageMatch = content.match(common.codeLanguageMatch);
-								// if (!languageMatch || languageMatch[0] === "language=\"\"") {
-								//     onError({
-								//         lineNumber: text.lineNumber,
-								//         detail: detailStrings.codeLanguageRequired,
-								//         context: text.line
-								//     });
-								// }
-
 								//do we have both Id and Range?
 								const rangeMatch = content.match(common.codeRangeMatch);
 								const idMatch = content.match(common.codeIdMatch);
@@ -97,7 +113,10 @@ module.exports = {
 											});
 										}
 										//make sure each attribute is allowed...
-										if (common.allowedCodeAttributes.indexOf(attr) === -1) {
+										if (
+											allowedCodeSnippetAttributes &&
+											allowedCodeSnippetAttributes.indexOf(attr) === -1
+										) {
 											onError({
 												lineNumber: text.lineNumber,
 												detail: detailStrings.codeNonAllowedAttribute.replace('___', attr),
@@ -109,10 +128,8 @@ module.exports = {
 
 								const interactiveMatches = content.match(common.codeInteractiveMatch);
 								if (interactiveMatches) {
-									if (interactiveMatches.length > 0) {
-										const allowedValue = common.allowedInteractiveValues.includes(
-											interactiveMatches[1]
-										);
+									if (interactiveMatches.length > 0 && allowedInterativeTypes) {
+										const allowedValue = allowedInterativeTypes.includes(interactiveMatches[1]);
 										if (!allowedValue) {
 											onError({
 												lineNumber: text.lineNumber,
