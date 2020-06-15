@@ -1,4 +1,4 @@
-import { output } from "../extension";
+import { output } from '../helper/common';
 
 /**
  * Load json data from a json file.
@@ -6,12 +6,12 @@ import { output } from "../extension";
  * @returns the parsed data if no error occurs, otherwise undefined is returned
  */
 export function loadJson(mappingFile: string): any {
-    try {
-        return JSON.parse(mappingFile);
-    } catch (error) {
-        output.appendLine(error);
-    }
-    return undefined;
+	try {
+		return JSON.parse(mappingFile);
+	} catch (error) {
+		output.appendLine(error);
+	}
+	return undefined;
 }
 
 /**
@@ -20,10 +20,10 @@ export function loadJson(mappingFile: string): any {
  * @returns the yamlMime if no error occurs, otherwise undefined is returned
  */
 export function getYamlMime(yamlDocument: string): string {
-    const regex = /^### YamlMime:([A-Z]\w+)/g;
-    const m = regex.exec(yamlDocument);
-    if (m !== null) {
-        return m[1];
-    }
-    return undefined;
+	const regex = /^### YamlMime:([A-Z]\w+)/g;
+	const m = regex.exec(yamlDocument);
+	if (m !== null) {
+		return m[1];
+	}
+	return undefined;
 }

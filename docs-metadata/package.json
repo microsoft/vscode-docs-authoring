@@ -47,22 +47,35 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
+		"precompile": "rimraf ./install.Lock & rimraf ./.muttools/",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
+		"prettier": "prettier --write \"**/*.{ts,js,json,yml}\"",
+		"prettier-check": "prettier --check \"**/*.{ts,js,json,yml}\" --loglevel debug",
 		"test": "npm run compile && node ./node_modules/vscode/bin/test",
-		"lint": "tslint -c tslint.json 'src/**/*.ts'"
+		"lint": "eslint . --ext .ts"
 	},
 	"husky": {
 		"hooks": {
+			"pre-commit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
 			"pre-push": "npm run compile && npm run lint"
 		}
 	},
 	"devDependencies": {
 		"@types/mocha": "^2.2.42",
 		"@types/node": "^10.12.21",
+		"rimraf": "^3.0.2",
+		"tslint": "^5.12.1",
+		"@typescript-eslint/eslint-plugin": "^2.34.0",
+		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",
+		"@typescript-eslint/parser": "^2.34.0",
+		"eslint": "^7.0.0",
+		"eslint-plugin-import": "^2.20.2",
 		"husky": "^4.2.5",
 		"mocha": "^7.1.1",
+		"prettier": "^2.0.5",
+		"pretty-quick": "^2.0.1",
 		"tslint": "^5.20.1",
 		"typescript": "^3.3.1",
 		"vscode": "^1.1.28"
