@@ -60,16 +60,25 @@ suite('Metadata Controller', () => {
 		await loadDocumentAndGetItReady(filePath);
 
 		const expectedText =
-			'---' + os.EOL + 
-			'author: bar' + os.EOL +
-			'manager: bar' + os.EOL +
-			'titleSuffix: bar' + os.EOL +
-			'ms.author: bar' + os.EOL +
+			'---' +
+			os.EOL +
+			'author: bar' +
+			os.EOL +
+			'manager: bar' +
+			os.EOL +
+			'titleSuffix: bar' +
+			os.EOL +
+			'ms.author: bar' +
+			os.EOL +
 			'ms.date: ' +
-			common.toShortDate(new Date()) + os.EOL +
-			'ms.service: bar' + os.EOL +
-			'ms.subservice: bar' + os.EOL +
-			'---' + os.EOL;
+			common.toShortDate(new Date()) +
+			os.EOL +
+			'ms.service: bar' +
+			os.EOL +
+			'ms.subservice: bar' +
+			os.EOL +
+			'---' +
+			os.EOL;
 
 		await metadataController.updateImplicitMetadataValues();
 		const actualText = window.activeTextEditor?.document.getText();
@@ -104,11 +113,8 @@ suite('Metadata Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 
-		const expectedText = 
-		'---' + os.EOL + 
-		'ms.date: ' + 
-		common.toShortDate(new Date()) + os.EOL +
-		'---' + os.EOL;
+		const expectedText =
+			'---' + os.EOL + 'ms.date: ' + common.toShortDate(new Date()) + os.EOL + '---' + os.EOL;
 
 		await metadataController.updateMetadataDate();
 		await sleep(500);
