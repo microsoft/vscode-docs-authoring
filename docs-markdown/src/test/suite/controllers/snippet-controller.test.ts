@@ -17,6 +17,7 @@ import {
 } from '../../test.common/common';
 
 chai.use(spies);
+import path = require('path');
 
 import sinon = require('sinon');
 import {
@@ -109,9 +110,13 @@ suite('Snippet Controller', () => {
 			label: 'Full Search',
 			description: 'Look in all directories for snippet'
 		};
+		const testFile = 'ca1021-avoid-out-parameters_1.cs';
 		const selectedFileQuickPickItem: QuickPickItem = {
-			label: 'articles/snippet/CSharp',
-			description: 'ca1021-avoid-out-parameters_1.cs'
+			label: testFile,
+			description: path.resolve(
+				__dirname,
+				'../../../../../src/test/data/repo/articles/snippet/CSharp/' + testFile
+			)
 		};
 		const idOrRangeQuickPickItem: QuickPickItem = {
 			label: 'Id',

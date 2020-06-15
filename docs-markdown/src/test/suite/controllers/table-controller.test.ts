@@ -24,8 +24,12 @@ suite('Table Controller', () => {
 	teardown(() => {
 		chai.spy.restore(common);
 	});
+	suiteSetup(() => {
+		sinon.stub(telemetry, 'sendTelemetryData');
+	});
 	suiteTeardown(async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
+		sinon.restore();
 	});
 
 	test('insertTableCommand', () => {
