@@ -13,7 +13,7 @@ let allowedInterativeTypes;
 let allowedCodeSnippetAttributes;
 let codeSnippetDataResponse;
 
-function loadImageSchema() {
+function loadCodeSnippetSchema() {
 	axios
 		.get(schemas.CODESNIPPET_SCHEMA)
 		.then(function (response) {
@@ -23,13 +23,13 @@ function loadImageSchema() {
 		})
 		.catch(function () {
 			const errorMessage = detailStrings.failedResponse
-				.replace('NAME', 'image')
-				.replace('URL', schemas.IMAGE_SCHEMA);
+				.replace('NAME', 'codeSnippet')
+				.replace('URL', schemas.CODESNIPPET_SCHEMA);
 			vscode.window.showErrorMessage(errorMessage);
 		});
 }
 
-loadImageSchema();
+loadCodeSnippetSchema();
 
 module.exports = {
 	names: ['DOCSMD012', 'docsmd.codesnippet'],
