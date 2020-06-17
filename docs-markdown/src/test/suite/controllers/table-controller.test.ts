@@ -20,6 +20,9 @@ import sinon = require('sinon');
 const expect = chai.expect;
 
 suite('Table Controller', () => {
+	suiteSetup(async () => {
+		sinon.stub(telemetry, 'sendTelemetryData');
+	});
 	// Reset and tear down the spies
 	teardown(() => {
 		chai.spy.restore(common);

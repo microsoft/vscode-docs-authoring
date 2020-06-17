@@ -21,6 +21,7 @@ import * as cleanupController from '../../../controllers/cleanup/cleanup-control
 import * as monikerController from '../../../controllers/moniker-controller';
 import * as yamlController from '../../../controllers/yaml/yaml-controller';
 import { loadDocumentAndGetItReady, sleep, sleepTime } from '../../test.common/common';
+import * as telemetry from '../../../helper/telemetry';
 
 chai.use(spies);
 
@@ -155,7 +156,6 @@ suite('Quick Pick Menu Controller', () => {
 		markdownQuickPick();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
-		stubShowQuickPick.restore();
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertNumberedList', async () => {
