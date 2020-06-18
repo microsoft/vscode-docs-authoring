@@ -55,7 +55,7 @@ suite('Metadata Controller', () => {
 	});
 
 	test('update author implicit', async () => {
-		var stub = sinon.stub(commands, 'executeCommand'); // block the file save
+		const stub = sinon.stub(commands, 'executeCommand'); // block the file save
 
 		const filePath = resolve(
 			__dirname,
@@ -73,7 +73,7 @@ suite('Metadata Controller', () => {
 	});
 
 	test('update date implicit', async () => {
-		var stub = sinon.stub(commands, 'executeCommand'); // block the file save
+		const stub = sinon.stub(commands, 'executeCommand'); // block the file save
 
 		const filePath = resolve(
 			__dirname,
