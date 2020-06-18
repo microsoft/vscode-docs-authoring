@@ -20,6 +20,7 @@ import * as cleanupController from '../../../controllers/cleanup/cleanup-control
 import * as monikerController from '../../../controllers/moniker-controller';
 import * as yamlController from '../../../controllers/yaml/yaml-controller';
 import { loadDocumentAndGetItReady, sleep, sleepTime } from '../../test.common/common';
+import * as telemetry from '../../../helper/telemetry';
 
 chai.use(spies);
 
@@ -32,6 +33,9 @@ import {
 const expect = chai.expect;
 
 suite('Quick Pick Menu Controller', () => {
+	suiteSetup(() => {
+		sinon.stub(telemetry, 'sendTelemetryData');
+	});
 	suiteTeardown(async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
 		sinon.restore();
@@ -150,7 +154,6 @@ suite('Quick Pick Menu Controller', () => {
 		markdownQuickPick();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
-		stubShowQuickPick.restore();
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertNumberedList', async () => {
@@ -432,6 +435,7 @@ suite('Quick Pick Menu Controller', () => {
 		markdownQuickPick();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
+		chai.spy.restore(rowColumnsController, 'insertRowsAndColumns');
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - applyCleanup', async () => {
