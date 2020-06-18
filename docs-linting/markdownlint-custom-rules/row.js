@@ -29,8 +29,8 @@ function loadRowSchema() {
 loadRowSchema();
 
 module.exports = {
-	names: ['DOCSMD001', 'row'],
-	description: 'Bad row syntax.',
+	names: ['DOCSMD001', 'docsmd.row'],
+	description: 'row linting.',
 	tags: ['validation'],
 	function: function rule(params, onError) {
 		const doc = params.lines.join('\n');
@@ -51,7 +51,7 @@ module.exports = {
 					})
 					.forEach(function forChild(text) {
 						const textBlock = text.content;
-						//do we have an "column-end" tag?
+						//do we have an "row-end" tag?
 						const matchingStartTag = text.line.match(common.startRow);
 						const matchingEndTag = text.line.match(common.rowEndTagMatch);
 						if (matchingStartTag) {
@@ -72,7 +72,7 @@ module.exports = {
 								) {
 									onError({
 										lineNumber: startAndEndRow[index].lineNumber,
-										detail: detailStrings.rowSyntax,
+										detail: detailStrings.rowEndTagRequired,
 										context: startAndEndRow[index].line
 									});
 								}
@@ -101,44 +101,58 @@ module.exports = {
 									});
 								}
 
-								let rowAttributes = content.match(common.rowAttributeMatchGlobal);
-								if (rowAttributes && rowAttributes.length > 0) {
-									rowAttributes = rowAttributes[0];
-									const attributeMatches = rowAttributes.match(common.AttributeMatchGlobal);
-									if (attributeMatches && attributeMatches.length > 0) {
-										attributeMatches.forEach(attributeMatch => {
-											const match = common.AttributeMatch.exec(attributeMatch);
-											const attr = match[1];
-											if (allowedRowAttributes) {
-												const attributeInAllowedList = allowedRowAttributes.includes(
-													attr.toLowerCase()
-												);
-												if (
-													!attributeInAllowedList &&
-													text.line &&
-													!text.line.includes(':::row-end:::')
-												) {
-													onError({
-														lineNumber: text.lineNumber,
-														detail: detailStrings.rowNonAllowedAttribute.replace('___', attr),
-														context: text.line
-													});
-												} else {
-													const attributeNotMatchCasing = allowedRowAttributes.includes(attr);
-													if (
-														!attributeNotMatchCasing &&
-														text.line &&
-														!text.line.includes(':::row-end:::')
-													) {
+								const countVal = content.match(common.rowCountValue);
+								if (countVal && countVal.length > 1) {
+									const parsed = parseInt(countVal[1], 10);
+									if (isNaN(parsed) && !common.rowEnd.test(text.line)) {
+										onError({
+											lineNumber: text.lineNumber,
+											detail: detailStrings.rowCountMustBeNumber,
+											context: text.line
+										});
+									} else {
+										if ((parsed > 4 || parsed < 2) && !common.rowEnd.test(text.line)) {
+											onError({
+												lineNumber: text.lineNumber,
+												detail: detailStrings.rowCountValue,
+												context: text.line
+											});
+										}
+									}
+								}
+
+								if (text.line) {
+									let rowAttributes = content.match(common.rowAttributeMatchGlobal);
+									if (rowAttributes && rowAttributes.length > 0) {
+										rowAttributes = rowAttributes[0];
+										const attributeMatches = rowAttributes.match(common.AttributeMatchGlobal);
+										if (attributeMatches && attributeMatches.length > 0) {
+											attributeMatches.forEach(attributeMatch => {
+												const match = common.AttributeMatch.exec(attributeMatch);
+												const attr = match[1];
+												if (allowedRowAttributes) {
+													const attributeInAllowedList = allowedRowAttributes.includes(
+														attr.toLowerCase()
+													);
+													if (!attributeInAllowedList && !common.rowEnd.test(text.line)) {
 														onError({
 															lineNumber: text.lineNumber,
-															detail: detailStrings.rowCaseSensitive.replace('___', attr),
+															detail: detailStrings.rowNonAllowedAttribute.replace('___', attr),
 															context: text.line
 														});
+													} else {
+														const attributeNotMatchCasing = allowedRowAttributes.includes(attr);
+														if (!attributeNotMatchCasing && !common.rowEnd.test(text.line)) {
+															onError({
+																lineNumber: text.lineNumber,
+																detail: detailStrings.rowCaseSensitive.replace('___', attr),
+																context: text.line
+															});
+														}
 													}
 												}
-											}
-										});
+											});
+										}
 									}
 								}
 							}

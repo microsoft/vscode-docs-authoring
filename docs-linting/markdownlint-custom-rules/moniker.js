@@ -30,7 +30,7 @@ loadMonikerSchema();
 
 module.exports = {
 	names: ['DOCSMD006', 'docsmd.moniker'],
-	description: `Moniker linting.`,
+	description: `moniker linting.`,
 	tags: ['validation'],
 	function: function rule(params, onError) {
 		const doc = params.lines.join('\n');

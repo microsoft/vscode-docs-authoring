@@ -7,7 +7,6 @@ module.exports.tripleColonsIncorrect = `Bad syntax for markdown extension. Begin
 // moniker
 module.exports.monikerRangeArgs = `Bad syntax for range argument. Use =, <=, or >=, and put value in quotes.`;
 module.exports.monikerRange = `Bad syntax for moniker. "range" is a required attribute and must not be empty.`;
-module.exports.monikerEnd = `Bad syntax for moniker. Moniker end attribute is required ::: moniker-end`;
 module.exports.monikerNonAllowedAttribute = `Bad syntax for moniker. "___" is not an allowed attribute.`;
 module.exports.monikerCaseSensitive = `Bad syntax for moniker. "moniker" and "range" must be lower-case.`;
 module.exports.monikerEndTagRequired = `Bad syntax for moniker. Matching :::moniker-end is required.`;
@@ -43,6 +42,7 @@ module.exports.zoneSyntax = `zones should begin :::zone and end with :::zone-end
 module.exports.zoneEndTagRequired = `Bad syntax for zone. Matching :::zone-end is required.`;
 module.exports.zoneNonAllowedAttribute = `"___" is not an allowed attribute on :::zone tag.`;
 module.exports.zoneCaseSensitive = `zone attribute "___" must be lower-case.`;
+module.exports.zoneNonAllowedType = `Bad syntax for zone. "___" is not an allowed target type. Options are "chromeless", and "docs"`;
 
 // alert
 module.exports.alertType = `Bad alert type. Only NOTE, TIP, IMPORTANT, CAUTION, and WARNING are supported. Case-sensitive.`;
@@ -65,6 +65,8 @@ module.exports.contenSpanAttribute = `Only span is supported (ex. :::row span=""
 module.exports.rowEndTagRequired = `Bad syntax for row. Matching :::row-end::: is required.`;
 module.exports.rowNonAllowedAttribute = `"___" is not an allowed attribute on :::row::: tag.`;
 module.exports.rowCaseSensitive = `row attribute "___" must be lower-case.`;
+module.exports.rowCountMustBeNumber = `row "count" value must be a number (2-4).`;
+module.exports.rowCountValue = `row "count" value must be 2 thru 4.`;
 
 // column
 module.exports.columnSyntax = `Columns should begin :::column::: and end with :::column-end:::).`;
