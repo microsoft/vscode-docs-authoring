@@ -10,7 +10,7 @@ This extension uses the docs.microsoft.com CSS to provide more accurate preview 
 There are a few options for how to see Docs preview:
 
 1. Hit F1 to open the VS Code command palette.
-1. Start typing to filter the list of commands.
+1. Start typing to filter the list of commands
 1. Select `Docs: Preview`. The preview will open side-by-side.
 
 You can also use the default keyboard shortcut, `Alt+DP`.
