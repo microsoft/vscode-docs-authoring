@@ -42,9 +42,15 @@ suite('Metadata Controller', () => {
 		expect(insertMetadataCommands()).to.deep.equal(controllerCommands);
 	});
 
-	test('noActiveEditorMessage', async () => {
+	test('noActiveEditorMessage - updateImplicitMetadataValues', async () => {
 		const spy = chai.spy.on(common, 'noActiveEditorMessage');
 		await updateImplicitMetadataValues();
+		expect(spy).to.have.been.called();
+	});
+
+	test('noActiveEditorMessage - updateMetadataDate', async () => {
+		const spy = chai.spy.on(common, 'noActiveEditorMessage');
+		await updateMetadataDate();
 		expect(spy).to.have.been.called();
 	});
 
@@ -68,7 +74,7 @@ suite('Metadata Controller', () => {
 			'../../../../../src/test/data/repo/articles/metadata/metadata-controller-date.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		await updateImplicitMetadataValues();
+		await updateMetadataDate();
 
 		const expectedText = `---\r\nms.date: ${common.toShortDate(new Date())}\r\n---\r\n`;
 		const editor = window.activeTextEditor;
