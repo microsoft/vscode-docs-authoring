@@ -19,7 +19,7 @@ export class AllowList {
 				headers: { Authorization: `Bearer ${token.accessToken}` }
 			};
 			const response = await Axios.get(
-				'https://docs.microsoft.com/api/metadata/allowlists',
+				'https://docsvalidation.azurefd.net/validation/allowlists',
 				config
 			);
 			// get products from response
