@@ -4,7 +4,7 @@
 	"description": "Docs Markdown Extension",
 	"icon": "images/docs-logo-ms.png",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-	"version": "0.2.71",
+	"version": "0.2.74",
 	"publisher": "docsmsft",
 	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
 	"bugs": {
@@ -453,16 +453,6 @@
 					"when": "resourceLangId == markdown"
 				},
 				{
-					"command": "previewTopic",
-					"group": "Docs",
-					"when": "resourceLangId == markdown && vscode.extensions.getExtension('docsmsft.docs-preview').active"
-				},
-				{
-					"command": "applyTemplate",
-					"group": "Docs",
-					"when": "vscode.extensions.getExtension('docsmsft.docs-article-templates').active"
-				},
-				{
 					"command": "applyCleanup",
 					"group": "Docs",
 					"when": "resourceLangId == markdown"
@@ -666,10 +656,16 @@
 				"when": "editorTextFocus"
 			},
 			{
+				"command": "automaticList",
+				"key": "enter",
+				"mac": "enter",
+				"when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible && !vim.active && !inSnippetMode"
+			},
+			{
 				"command": "insertNestedList",
 				"key": "tab",
 				"mac": "tab",
-				"when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible && !vim.active"
+				"when": "editorTextFocus && editorLangId == markdown && !suggestWidgetVisible && !vim.active && !inSnippetMode"
 			},
 			{
 				"command": "formatBold",

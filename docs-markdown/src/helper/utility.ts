@@ -213,19 +213,19 @@ export async function search(
 				const id = await window.showInputBox({ prompt: 'Enter id to select' });
 				if (id) {
 					snippet = snippetBuilder(language, snippetLink, id, undefined);
-					insertContentToEditor(editor, snippet, true, selectionRange);
+					await insertContentToEditor(editor, snippet, true, selectionRange);
 				}
 				break;
 			case 'range':
 				const range = await window.showInputBox({ prompt: 'Enter line selection range' });
 				if (range) {
 					snippet = snippetBuilder(language, snippetLink, undefined, range);
-					insertContentToEditor(editor, snippet, true, selectionRange);
+					await insertContentToEditor(editor, snippet, true, selectionRange);
 				}
 				break;
 			default:
 				snippet = snippetBuilder(language, snippetLink);
-				insertContentToEditor(editor, snippet, true, selectionRange);
+				await insertContentToEditor(editor, snippet, true, selectionRange);
 				break;
 		}
 	}
@@ -297,7 +297,14 @@ export function externalLinkBuilder(link: string, title: string = '') {
 }
 
 export function videoLinkBuilder(link: string) {
-	const videoLink = `> [!VIDEO ${link}]`;
+	const config = workspace.getConfiguration('markdown');
+	const previewTripleColonVideoSyntax = config.get<boolean>('previewFeatures');
+	let videoLink = '';
+	if (!previewTripleColonVideoSyntax) {
+		videoLink = `> [!VIDEO ${link}]`;
+	} else {
+		videoLink = `:::video source="${link}":::`;
+	}
 	return videoLink;
 }
 
@@ -544,4 +551,51 @@ export async function applyReplacements(replacements: Replacements, editor: Text
 			);
 		});
 	}
+}
+
+export interface RangeValuePair {
+	index: number;
+	length: number;
+	value: string;
+}
+
+export function findMatchesInText(
+	content: string,
+	expression?: RegExpOrRegExpWithGroup
+): RangeValuePair[] | undefined {
+	if (!expression) {
+		return undefined;
+	}
+
+	const exp = isRegExp(expression) ? expression : expression.expression;
+	const results = matchAll(exp, content);
+	if (!results || !results.length) {
+		return undefined;
+	}
+
+	const groups = !isRegExp(expression) ? expression.groups : null;
+	const values: RangeValuePair[] = [];
+	for (let i = 0; i < results.length; i++) {
+		const result = results[i];
+		if (result !== null && result.length) {
+			const match = groups && result.groups ? result.groups[groups[0]] : result[0];
+			if (match) {
+				let index = result.index !== undefined ? result.index : -1;
+				if (index === -1) {
+					continue;
+				}
+				if (groups) {
+					index += result[0].indexOf(match);
+				}
+
+				values.push({
+					index,
+					length: match.length,
+					value: match
+				});
+			}
+		}
+	}
+
+	return values;
 }

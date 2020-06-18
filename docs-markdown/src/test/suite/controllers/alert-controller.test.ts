@@ -49,17 +49,16 @@ suite('Alert Controller', () => {
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve(
-				'Note – Information the user should notice even if skimming'
-			) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick
+			.onCall(0)
+			.resolves('Note – Information the user should notice even if skimming');
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		const spy = chai.spy.on(common, 'insertContentToEditor');
 		insertAlert();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 		stub.restore();
+		stubShowQuickPick.restore();
 	});
 });

@@ -5,10 +5,12 @@ module.exports.singleColon = /^:/gm;
 module.exports.tripleColonSyntax = /^:::\s?/gm;
 module.exports.validTripleColon = /^:::\s+/gm;
 module.exports.openAndClosingValidTripleColon = /^:::(.*):::/gim;
+module.exports.AttributeMatchGlobal = /(\S+)=["]?((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/gi;
+module.exports.AttributeMatch = /(\S+)=["]?((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/;
 
 // Markdown extensions (add valid/supported extensions to list)
 module.exports.openExtension = /^:(.*?)(zone|moniker|no-loc)/gm;
-module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc|image|code)(.:*)/g;
+module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc|image|code|video|notes)(.:*)?/g;
 module.exports.unsupportedExtensionRegex = /^:::\s+(.*)/gm;
 
 // Zones
@@ -21,9 +23,12 @@ module.exports.endZone = /^:::\s+zone-end/gm;
 module.exports.zonePivot = /^:::\s+zone\s+pivot/gm;
 
 // Moniker
-module.exports.openMoniker = /^:::\s+moniker/gm;
-module.exports.syntaxMoniker = /^:::\s+moniker\s+range/gm;
-module.exports.rangeMoniker = /^:::\s+moniker\s+range(=|<=|>=)"/gm;
+module.exports.looseMoniker = /:::\s*moniker(?!-end)(\s*.*="(.*?)")?([^]+?:::\s*moniker-end)?/gim;
+module.exports.rangeMonikerWithArgs = /^:::\s*moniker\s+range="(<=|>=)?/gim;
+module.exports.rangeMoniker = /range\s*=\s*"(.*?)"/im;
+module.exports.endMoniker = /^:::\s*moniker-end/gim;
+module.exports.openMoniker = /^:::\s*moniker/gim;
+module.exports.allowedMonikerAttributes = ['range'];
 
 //no-loc
 module.exports.openNoLoc = /(:*)no-loc/gim;
@@ -116,3 +121,11 @@ module.exports.allowedInteractiveValues = [
 	'cloudshell-powershell',
 	'cloudshell-bash'
 ];
+
+//video
+module.exports.syntaxVideoLooseMatch = /(:+)\s*video\s*(((.*)?="(.*?)")?(.:+)?)?/gim;
+module.exports.videoOpen = /:::video/gim;
+module.exports.videoSourceMatch = /source\s*=\s*"(.*?)"/m;
+module.exports.videoTitleMatch = /title\s*=\s*"(.*?)"/m;
+module.exports.videoMaxWidthMatch = /max-width\s*=\s*"(.*?)"/m;
+module.exports.allowedVideoAttributes = ['source', 'title', 'max-width'];

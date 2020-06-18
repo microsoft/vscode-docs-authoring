@@ -1,5 +1,22 @@
 # Change Log
 
+## 0.2.74 (June 11th, 2020)
+
+- Collapse relative link improvements
+- Remote-WSL bug fix: [Issue 605](https://github.com/microsoft/vscode-docs-authoring/issues/605)
+- Added Unit Test Coverage: table-controller.ts
+
+## 0.2.73 (June 8th, 2020)
+
+- List bug fix: [Issue 409](https://github.com/microsoft/vscode-docs-authoring/issues/409)
+
+## 0.2.72 (June 4th, 2020)
+
+- Added support for triple colon video extension insertion.
+- Bug fix for Link in repo.
+- Updated collapse relative link feature.
+- User snippet tab stop bug fix: [Issue 140](https://github.com/microsoft/vscode-docs-authoring/issues/140)
+
 ## 0.2.71 (May 29th, 2020)
 
 - Improved support for collapse relative links in folder experience.
