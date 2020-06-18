@@ -4,7 +4,7 @@
 This extension uses the docs.microsoft.com CSS to provide more accurate preview for Markdown published to Docs via the Open Publishing System (OPS). This includes all Markdown as supported by the CommonMark specification, as well as custom Markdown syntax for Docs, such as:
 
 - Alerts (note, tip, important, caution, and warning).
-- Embedded code snippets.
+- Embedded code snippets
 - Tabbed content.
 
 There are a few options for how to see Docs preview:
