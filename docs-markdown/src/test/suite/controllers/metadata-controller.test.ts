@@ -55,6 +55,8 @@ suite('Metadata Controller', () => {
 	});
 
 	test('update author implicit', async () => {
+		var stub = sinon.stub(commands, 'executeCommand'); // block the file save
+
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/metadata/metadata-controller-author.md'
@@ -66,9 +68,13 @@ suite('Metadata Controller', () => {
 		const editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
 		assert.equal(expectedText, actualText);
+
+		stub.restore();
 	});
 
 	test('update date implicit', async () => {
+		var stub = sinon.stub(commands, 'executeCommand'); // block the file save
+
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/metadata/metadata-controller-date.md'
@@ -80,5 +86,7 @@ suite('Metadata Controller', () => {
 		const editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
 		assert.equal(expectedText, actualText);
+
+		stub.restore();
 	});
 });
