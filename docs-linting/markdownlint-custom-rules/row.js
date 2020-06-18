@@ -36,6 +36,10 @@ module.exports = {
 		const doc = params.lines.join('\n');
 		const fullLooseMatches = doc.match(common.looseRow);
 		const startAndEndRow = [];
+		let maxLine = 0;
+		if (params.lines) {
+			maxLine = common.getMaxLineNotEmpty(params.lines);
+		}
 		params.tokens
 			.filter(function filterToken(token) {
 				return token.type === 'inline';
@@ -60,7 +64,7 @@ module.exports = {
 								line: text.line
 							});
 						}
-						if (params.line && text.lineNumber === params.lines.length) {
+						if (params.lines && text.lineNumber === maxLine) {
 							for (let index = 0; index < startAndEndRow.length; index++) {
 								if (
 									(startAndEndRow[index].start && index == startAndEndRow.length - 1) ||

@@ -36,6 +36,10 @@ module.exports = {
 		const doc = params.lines.join('\n');
 		const fullLooseMatches = doc.match(common.looseColumn);
 		const startAndEndColumn = [];
+		let maxLine = 0;
+		if (params.lines) {
+			maxLine = common.getMaxLineNotEmpty(params.lines);
+		}
 		params.tokens
 			.filter(function filterToken(token) {
 				return token.type === 'inline';
@@ -60,7 +64,7 @@ module.exports = {
 								line: text.line
 							});
 						}
-						if (params.line && text.lineNumber === params.lines.length - 1) {
+						if (params.lines && text.lineNumber === maxLine) {
 							for (let index = 0; index < startAndEndColumn.length; index++) {
 								if (
 									(startAndEndColumn[index].start && index == startAndEndColumn.length - 1) ||
@@ -115,23 +119,25 @@ module.exports = {
 										attributeMatches.forEach(attributeMatch => {
 											const match = common.AttributeMatch.exec(attributeMatch);
 											const attr = match[1];
-											const attributeInAllowedList = allowedColumnAttributes.includes(
-												attr.toLowerCase()
-											);
-											if (!attributeInAllowedList) {
-												onError({
-													lineNumber: text.lineNumber,
-													detail: detailStrings.columnNonAllowedAttribute.replace('___', attr),
-													context: text.line
-												});
-											} else {
-												const attributeNotMatchCasing = allowedColumnAttributes.includes(attr);
-												if (!attributeNotMatchCasing) {
+											if (allowedColumnAttributes) {
+												const attributeInAllowedList = allowedColumnAttributes.includes(
+													attr.toLowerCase()
+												);
+												if (!attributeInAllowedList) {
 													onError({
 														lineNumber: text.lineNumber,
-														detail: detailStrings.columnCaseSensitive.replace('___', attr),
+														detail: detailStrings.columnNonAllowedAttribute.replace('___', attr),
 														context: text.line
 													});
+												} else {
+													const attributeNotMatchCasing = allowedColumnAttributes.includes(attr);
+													if (!attributeNotMatchCasing) {
+														onError({
+															lineNumber: text.lineNumber,
+															detail: detailStrings.columnCaseSensitive.replace('___', attr),
+															context: text.line
+														});
+													}
 												}
 											}
 										});

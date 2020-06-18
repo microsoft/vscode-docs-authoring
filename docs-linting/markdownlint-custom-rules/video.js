@@ -95,23 +95,25 @@ module.exports = {
 									attributeMatches.forEach(attributeMatch => {
 										const match = common.AttributeMatch.exec(attributeMatch);
 										const attr = match[1];
-										const attributeInAllowedList = allowedVideoAttributes.includes(
-											attr.toLowerCase()
-										);
-										if (!attributeInAllowedList) {
-											onError({
-												lineNumber: text.lineNumber,
-												detail: detailStrings.videoNonAllowedAttribute.replace('___', attr),
-												context: text.line
-											});
-										} else {
-											const attributeNotMatchCasing = allowedVideoAttributes.includes(attr);
-											if (!attributeNotMatchCasing) {
+										if (allowedVideoAttributes) {
+											const attributeInAllowedList = allowedVideoAttributes.includes(
+												attr.toLowerCase()
+											);
+											if (!attributeInAllowedList) {
 												onError({
 													lineNumber: text.lineNumber,
-													detail: detailStrings.videoCaseSensitive.replace('___', attr),
+													detail: detailStrings.videoNonAllowedAttribute.replace('___', attr),
 													context: text.line
 												});
+											} else {
+												const attributeNotMatchCasing = allowedVideoAttributes.includes(attr);
+												if (!attributeNotMatchCasing) {
+													onError({
+														lineNumber: text.lineNumber,
+														detail: detailStrings.videoCaseSensitive.replace('___', attr),
+														context: text.line
+													});
+												}
 											}
 										}
 									});

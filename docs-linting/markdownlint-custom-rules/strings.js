@@ -10,6 +10,7 @@ module.exports.monikerRange = `Bad syntax for moniker. "range" is a required att
 module.exports.monikerEnd = `Bad syntax for moniker. Moniker end attribute is required ::: moniker-end`;
 module.exports.monikerNonAllowedAttribute = `Bad syntax for moniker. "___" is not an allowed attribute.`;
 module.exports.monikerCaseSensitive = `Bad syntax for moniker. "moniker" and "range" must be lower-case.`;
+module.exports.monikerEndTagRequired = `Bad syntax for moniker. Matching :::moniker-end is required.`;
 
 // no-loc
 module.exports.noLocSyntax = `Bad syntax for non-localization.`;
@@ -38,6 +39,10 @@ module.exports.imageIconRemoveAltText = `Bad syntax for image. "alt-text" not al
 module.exports.zoneSyntax = `Bad syntax for zone. Only "zone target", "zone pivot" and "zone-end" are supported.`;
 module.exports.zoneRender = `Bad syntax for render argument. Use "=" and put value in quotes.`;
 module.exports.zoneValue = `Bad value for zone target. Only "chromeless" and "docs" are supported.`;
+module.exports.zoneSyntax = `zones should begin :::zone and end with :::zone-end).`;
+module.exports.zoneEndTagRequired = `Bad syntax for zone. Matching :::zone-end is required.`;
+module.exports.zoneNonAllowedAttribute = `"___" is not an allowed attribute on :::zone tag.`;
+module.exports.zoneCaseSensitive = `zone attribute "___" must be lower-case.`;
 
 // alert
 module.exports.alertType = `Bad alert type. Only NOTE, TIP, IMPORTANT, CAUTION, and WARNING are supported. Case-sensitive.`;

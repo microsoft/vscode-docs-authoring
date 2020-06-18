@@ -21,6 +21,12 @@ module.exports.renderZone = /^:::\s+zone\s+target="/gm;
 module.exports.validZone = /^:::\s+zone\s+target="(chromeless|docs)"/gm;
 module.exports.endZone = /^:::\s+zone-end/gm;
 module.exports.zonePivot = /^:::\s+zone\s+pivot/gm;
+module.exports.looseZone = /(:+)\s*zone\s*((pivot|target)=".*?")?(:*)?([^]+?(:*)zone-end?)?/gi;
+module.exports.startZone = /:::zone(?!-end)/gm;
+module.exports.zoneEndTagMatch = /:::(\s*)?zone-end/gim;
+module.exports.syntaxZone = /:{3}(zone|zone-end|zone\s+(.*)"):{3}$/gm;
+module.exports.zoneWithAttribute = /:{3}(zone\s+(.*?))\S\s/gm;
+module.exports.zoneAttributeMatchGlobal = /:::zone(?!-).*?/gi;
 
 // Moniker
 module.exports.looseMoniker = /:::\s*moniker(?!-end)(\s*.*="(.*?)")?([^]+?:::\s*moniker-end)?/gim;
@@ -28,6 +34,8 @@ module.exports.rangeMonikerWithArgs = /^:::\s*moniker\s+range="(<=|>=)?/gim;
 module.exports.rangeMoniker = /range\s*=\s*"(.*?)"/im;
 module.exports.endMoniker = /^:::\s*moniker-end/gim;
 module.exports.openMoniker = /^:::\s*moniker/gim;
+module.exports.startMoniker = /:::moniker(?!-end)/gm;
+module.exports.monikerEndTagMatch = /:::(\s*)?moniker-end/gim;
 module.exports.allowedMonikerAttributes = ['range'];
 
 //no-loc
@@ -137,3 +145,16 @@ module.exports.videoSourceMatch = /source\s*=\s*"(.*?)"/m;
 module.exports.videoTitleMatch = /title\s*=\s*"(.*?)"/m;
 module.exports.videoMaxWidthMatch = /max-width\s*=\s*"(.*?)"/m;
 module.exports.allowedVideoAttributes = ['source', 'title', 'max-width'];
+
+module.exports.getMaxLineNotEmpty = function getMaxLineNotEmpty(lines) {
+	if (lines.length > 1) {
+		const lastElement = lines[lines.length - 1];
+		if (lastElement) {
+			return lines.length;
+		} else {
+			const arr = lines.slice(0, -1);
+			return getMaxLineNotEmpty(arr);
+		}
+	}
+	return 1;
+};
