@@ -5,7 +5,6 @@
 const common = require('./common');
 const detailStrings = require('./strings');
 const schemas = require('./schemas');
-const vscode = require('vscode');
 const { default: axios } = require('axios');
 
 // schema linting
@@ -25,7 +24,7 @@ function loadCodeSnippetSchema() {
 			const errorMessage = detailStrings.failedResponse
 				.replace('NAME', 'codeSnippet')
 				.replace('URL', schemas.CODESNIPPET_SCHEMA);
-			vscode.window.showErrorMessage(errorMessage);
+			common.output.apppendLine(errorMessage);
 		});
 }
 

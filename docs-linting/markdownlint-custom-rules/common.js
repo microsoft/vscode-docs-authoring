@@ -85,14 +85,22 @@ module.exports.syntaxXref = /(<|\()xref:(.*?)(\?)?(displayProperty=(fullName|nam
 module.exports.notEscapedCharacters = /(<|\()xref:(.*[*#`].*)(>|\))/g;
 
 // Row
-module.exports.startRow = /^(:{3})row/gm;
-module.exports.syntaxRow = /^:{3}(row|row-end):{3}$/gm;
+module.exports.looseRow = /(:+)\s*row\s*(span=".*?")?(:*)?([^]+?(:*)row-end?(:*))?/gi;
+module.exports.startRow = /:::row(?!-end)/gm;
+module.exports.rowEndTagMatch = /:::(\s*)?row-end:::/gim;
+module.exports.syntaxrow = /:{3}(row|row-end|row\s+(.*)"):{3}$/gm;
+module.exports.rowWithAttribute = /:{3}(row\s+(.*?)):/gm;
+module.exports.rowCount = /:{3}(row\s+count="(.*?)"):/gm;
+module.exports.rowAttributeMatchGlobal = /:::row(?!-).*?:::/gi;
 
 // Column
-module.exports.startColumn = /^\s+(:*)(.+column)/gm;
-module.exports.syntaxColumn = /^\s+:{3}(column|column-end|column\s+(.*)"):{3}$/gm;
-module.exports.columnWithAttribute = /^\s+:{3}(column\s+(.*?)):/gm;
-module.exports.columnSpan = /^\s+:{3}(column\s+span="(.*?)"):/gm;
+module.exports.looseColumn = /(:+)\s*column\s*(span=".*?")?(:*)?([^]+?(:*)column-end?(:*))?/gi;
+module.exports.startColumn = /:::column(?!-end)/gm;
+module.exports.columnEndTagMatch = /:::(\s*)?column-end:::/gim;
+module.exports.syntaxColumn = /\s+:{3}(column|column-end|column\s+(.*)"):{3}$/gm;
+module.exports.columnWithAttribute = /\s+:{3}(column\s+(.*?)):/gm;
+module.exports.columnSpan = /\s+:{3}(column\s+span="(.*?)"):/gm;
+module.exports.columnAttributeMatchGlobal = /:::column(?!-).*?:::/gi;
 
 //codesnippet
 module.exports.syntaxCodeLooseMatch = /(:+)(\s+)?code.*?(:+)/g;

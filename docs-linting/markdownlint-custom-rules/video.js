@@ -1,11 +1,8 @@
-// @ts-check
-
 'use strict';
 
 const common = require('./common');
 const detailStrings = require('./strings');
 const schemas = require('./schemas');
-const vscode = require('vscode');
 const { default: axios } = require('axios');
 
 // schema linting
@@ -23,7 +20,7 @@ function loadVideoSchema() {
 			const errorMessage = detailStrings.failedResponse
 				.replace('NAME', 'video')
 				.replace('URL', schemas.VIDEO_SCHEMA);
-			vscode.window.showErrorMessage(errorMessage);
+			common.output.apppendLine(errorMessage);
 		});
 }
 

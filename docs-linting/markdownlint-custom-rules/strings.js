@@ -55,10 +55,18 @@ module.exports.notEscapedCharacters = `Unescaped xref syntax. The following Char
 
 // row
 module.exports.rowSyntax = `Rows should begin :::row::: and end with :::row-end:::).`;
+module.exports.rowSyntax = `rows should begin :::row::: and end with :::row-end:::).`;
+module.exports.contenSpanAttribute = `Only span is supported (ex. :::row span="":::).`;
+module.exports.rowEndTagRequired = `Bad syntax for row. Matching :::row-end::: is required.`;
+module.exports.rowNonAllowedAttribute = `"___" is not an allowed attribute on :::row::: tag.`;
+module.exports.rowCaseSensitive = `row attribute "___" must be lower-case.`;
 
 // column
 module.exports.columnSyntax = `Columns should begin :::column::: and end with :::column-end:::).`;
 module.exports.contenSpanAttribute = `Only span is supported (ex. :::column span="":::).`;
+module.exports.columnEndTagRequired = `Bad syntax for column. Matching :::column-end::: is required.`;
+module.exports.columnNonAllowedAttribute = `"___" is not an allowed attribute.`;
+module.exports.columnCaseSensitive = `column attribute "___" must be lower-case.`;
 
 // codesnippet
 module.exports.codeCaseSensitive = `"code" and its attributes must be lower-case.`;
