@@ -5,7 +5,7 @@ This extension uses the docs.microsoft.com CSS to provide more accurate preview 
 
 - Alerts (note, tip, important, caution, and warning).
 - Embedded code snippets
-- Tabbed content.
+- Tabbed content
 
 There are a few options for how to see Docs preview:
 
