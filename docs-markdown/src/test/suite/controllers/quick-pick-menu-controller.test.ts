@@ -435,6 +435,7 @@ suite('Quick Pick Menu Controller', () => {
 		markdownQuickPick();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
+		chai.spy.restore(rowColumnsController, 'insertRowsAndColumns');
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - applyCleanup', async () => {
