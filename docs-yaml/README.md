@@ -9,7 +9,7 @@ There are two types of files that we run schema validation against:
 
 1. For YAMLMime-based YAML files, we use the the YAMLMime to identify the schema to validate against according to our [config](https://github.com/Microsoft/vscode-docs-authoring/blob/master/docs-yaml/config/schema_config.json). These schemas are stored in the [schemas repository](https://github.com/MicrosoftDocs/schemas). When schema files get updated, the extension will automatically pick up the latest version after a small latency (around 10 min). There is no need to reopen or reload the extension. **When a new schema is added to this repository, we will to update the [config](https://github.com/Microsoft/vscode-docs-authoring/blob/master/docs-yaml/config/schema_config.json) and release a new version of the extension.**
 
-2. For TOC files, there is no YAMLMime at the beginning of the file, so we use the filename to identify the schema. The file name is case-sensitive; `toc.yml` and `TOC.yml` will both be be validated against the TOC schema, but `toc.yaml` and other variations will not.
+2. For TOC files, there is no YAMLMime at the beginning of the file, so we use the filename to identify the schema. The file name is case-sensitive `toc.yml` and `TOC.yml` will both be be validated against the TOC schema, but `toc.yaml` and other variations will not.
 
 ## Features
 
