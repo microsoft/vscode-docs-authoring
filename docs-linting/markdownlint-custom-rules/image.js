@@ -5,7 +5,6 @@
 const common = require('./common');
 const detailStrings = require('./strings');
 const schemas = require('./schemas');
-const vscode = require('vscode');
 const { default: axios } = require('axios');
 
 // schema linting
@@ -25,7 +24,7 @@ function loadImageSchema() {
 			const errorMessage = detailStrings.failedResponse
 				.replace('NAME', 'image')
 				.replace('URL', schemas.IMAGE_SCHEMA);
-			vscode.window.showErrorMessage(errorMessage);
+			common.output.apppendLine(errorMessage);
 		});
 }
 
@@ -105,7 +104,11 @@ module.exports = {
 								}
 
 								//make sure each attribute is allowed...
-								if (allowedImageAttributes.indexOf(attr) === -1 && attr !== ':image') {
+								if (
+									allowedImageAttributes &&
+									allowedImageAttributes.indexOf(attr) === -1 &&
+									attr !== ':image'
+								) {
 									onError({
 										lineNumber: text.lineNumber,
 										detail: detailStrings.imageNonAllowedAttribute.replace('___', attr),
@@ -114,7 +117,11 @@ module.exports = {
 								}
 
 								//make sure the value of each attribute is strong type matched
-								if (attr !== ':image' && imageDataResponse.properties[attr].type === 'boolean') {
+								if (
+									imageDataResponse &&
+									attr !== ':image' &&
+									imageDataResponse.properties[attr].type === 'boolean'
+								) {
 									var attrValueRegEx = new RegExp(`${attr}\\s*=\\s*"([a-z]*)"`, 'm');
 									const attrValueMatch = attrValueRegEx.exec(content);
 									if (
@@ -136,7 +143,7 @@ module.exports = {
 							//check if the type is valid
 							const typeMatch = common.imageTypeMatch.exec(content);
 							if (typeMatch) {
-								if (allowedImageTypes.indexOf(typeMatch[1]) === -1) {
+								if (allowedImageTypes && allowedImageTypes.indexOf(typeMatch[1]) === -1) {
 									onError({
 										lineNumber: text.lineNumber,
 										detail: detailStrings.imageNonAllowedType.replace('___', typeMatch[1]),

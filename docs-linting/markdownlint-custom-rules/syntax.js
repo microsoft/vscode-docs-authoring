@@ -7,7 +7,7 @@ const detailStrings = require('./strings');
 
 module.exports = {
 	names: ['DOCSMD004', 'docsmd.syntax'],
-	description: 'Syntax linting.',
+	description: 'triple colon syntax linting.',
 	tags: ['validation'],
 	function: function rule(params, onError) {
 		params.tokens

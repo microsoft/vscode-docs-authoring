@@ -1,11 +1,8 @@
-// @ts-check
-
 'use strict';
 
 const common = require('./common');
 const detailStrings = require('./strings');
 const schemas = require('./schemas');
-const vscode = require('vscode');
 const { default: axios } = require('axios');
 
 // schema linting
@@ -23,7 +20,7 @@ function loadVideoSchema() {
 			const errorMessage = detailStrings.failedResponse
 				.replace('NAME', 'video')
 				.replace('URL', schemas.VIDEO_SCHEMA);
-			vscode.window.showErrorMessage(errorMessage);
+			common.output.apppendLine(errorMessage);
 		});
 }
 
@@ -98,23 +95,25 @@ module.exports = {
 									attributeMatches.forEach(attributeMatch => {
 										const match = common.AttributeMatch.exec(attributeMatch);
 										const attr = match[1];
-										const attributeInAllowedList = allowedVideoAttributes.includes(
-											attr.toLowerCase()
-										);
-										if (!attributeInAllowedList) {
-											onError({
-												lineNumber: text.lineNumber,
-												detail: detailStrings.videoNonAllowedAttribute.replace('___', attr),
-												context: text.line
-											});
-										} else {
-											const attributeNotMatchCasing = allowedVideoAttributes.includes(attr);
-											if (!attributeNotMatchCasing) {
+										if (allowedVideoAttributes) {
+											const attributeInAllowedList = allowedVideoAttributes.includes(
+												attr.toLowerCase()
+											);
+											if (!attributeInAllowedList) {
 												onError({
 													lineNumber: text.lineNumber,
-													detail: detailStrings.videoCaseSensitive.replace('___', attr),
+													detail: detailStrings.videoNonAllowedAttribute.replace('___', attr),
 													context: text.line
 												});
+											} else {
+												const attributeNotMatchCasing = allowedVideoAttributes.includes(attr);
+												if (!attributeNotMatchCasing) {
+													onError({
+														lineNumber: text.lineNumber,
+														detail: detailStrings.videoCaseSensitive.replace('___', attr),
+														context: text.line
+													});
+												}
 											}
 										}
 									});
