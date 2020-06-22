@@ -8,9 +8,8 @@ module.exports = [
 	require('./no-loc'),
 	require('./securelinks'),
 	require('./xref'),
-	require('./row-extension-syntax'),
-	require('./column-extension-syntax'),
-	require('./colomn-span-attribute'),
+	require('./row'),
+	require('./column'),
 	require('./image'),
 	require('./codesnippet'),
 	require('./video')
