@@ -10,7 +10,7 @@ Welcome to the Docs Markdown authoring extension! This extension provides Markdo
 
 To accurately insert relative links, images, and other embedded content, you must have your VS Code workspace scoped to the root of your cloned Docs repo.
 
-Some syntax supported by the extension, such as alerts and snippets, are custom Markdown for Docs, and will not render correctly unless published to Docs.
+Some syntax supported by the extension, such as alerts and snippets, are custom Markdown for Docs, and will not render correctly unless published to Docs
 
 ## How to use the extension
 
