@@ -6,7 +6,7 @@ The Docs Metadata Extension allows you to update metadata in the YAML headers of
 
 First, you need to extract the metadata of interest into tabular form.
 
-1. Hit F1 to open the VS Code command palette.
+1. Hit F1 to open the VS Code command palette
 1. Start typing to filter and select "Docs: Metadata Extract".
 1. In the window that opens, browse to the folder you want to extract for. This can be the repo root or any subfolder.
 1. Optionally, type the name of one metadata field to extract, such as `author`. If you don't specify a field, all metadata will be extracted.
