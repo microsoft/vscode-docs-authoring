@@ -10,7 +10,7 @@ To access the Docs Images menu, right click on a folder or individual image file
 
 ![docs image context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-images/images/right-click-image-compression.png)
 
-Once the Docs Image extension is run you can view the output console in docs-images output tab to view the compression and resizing details.
+Once the Docs Image extension is run you can view the output console in docs-images output tab to view the compression and resizing details
 
 ![docs image output](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-images/images/image-compressed.png)
 
