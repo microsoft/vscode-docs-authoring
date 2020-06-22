@@ -53,7 +53,7 @@ suite('Bold Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor!, 12, 0, 12, 0);
+		common.setSelectorPosition(editor, 12, 0, 12, 0);
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
 		formatBold();
@@ -68,7 +68,7 @@ suite('Bold Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor!, 15, 0, 15, 1);
+		common.setSelectorPosition(editor, 15, 0, 15, 1);
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
 		formatBold();
@@ -82,7 +82,7 @@ suite('Bold Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor!, 159, 0, 159, 4);
+		common.setSelectorPosition(editor, 159, 0, 159, 4);
 		formatBold();
 		await sleep(sleepTime);
 		const line = editor?.document.lineAt(159).text;
@@ -96,12 +96,12 @@ suite('Bold Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		const cursorPosition = editor!.selection.active;
+		const cursorPosition = editor?.selection.active;
 		const fromPositionOne = cursorPosition.with(48, 0);
 		const toPositionOne = cursorPosition.with(48, 5);
 		const fromPositionTwo = cursorPosition.with(48, 13);
 		const toPositionTwo = cursorPosition.with(48, 17);
-		editor!.selections = [
+		editor.selections = [
 			new Selection(fromPositionOne, toPositionOne),
 			new Selection(fromPositionTwo, toPositionTwo)
 		];
