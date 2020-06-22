@@ -10,7 +10,7 @@
 		"url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
 	},
 	"engines": {
-		"vscode": "^1.22.0"
+		"vscode": "^1.43.0"
 	},
 	"repository": {
 		"url": "https://github.com/Microsoft/vscode-docs-authoring.git"
@@ -107,7 +107,7 @@
 		"prettier": "prettier --write \"**/*.{ts,js,json,yml}\"",
 		"prettier-check": "prettier --check \"**/*.{ts,js,json,yml}\" --loglevel debug",
 		"pretest": "npm run compile",
-		"test": "node ./out/test/runTest.js",
+		"test": "node ./out/src/test/runTest.js",
 		"lint": "eslint . --ext .ts"
 	},
 	"husky": {
@@ -129,6 +129,8 @@
 		"glob": "^7.1.6"
 	},
 	"devDependencies": {
+		"@types/chai": "^4.2.11",
+		"@types/chai-spies": "^1.0.1",
 		"@types/glob": "^7.1.1",
 		"@types/image-size": "0.8.0",
 		"@types/imagemin-gifsicle": "5.2.0",
@@ -136,18 +138,23 @@
 		"@types/imagemin-optipng": "5.2.0",
 		"@types/imagemin-svgo": "7.0.0",
 		"@types/imagemin-webp": "5.1.0",
-		"@types/mocha": "^5.2.7",
+		"@types/mocha": "^7.0.1",
 		"@types/node": "^10.12.21",
 		"@typescript-eslint/eslint-plugin": "^2.34.0",
 		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",
 		"@typescript-eslint/parser": "^2.34.0",
+		"chai": "^4.2.0",
+		"chai-spies": "^1.0.0",
 		"eslint": "^7.0.0",
 		"eslint-import-resolver-webpack": "^0.12.1",
 		"eslint-plugin-import": "^2.20.2",
 		"husky": "^4.2.5",
-		"mocha": "6.2.2",
+		"mocha": "^7.1.1",
+		"nyc": "^15.0.0",
 		"prettier": "^2.0.5",
 		"pretty-quick": "^2.0.1",
+		"sinon": "^9.0.1",
+		"source-map-support": "^0.5.16",
 		"terser-webpack-plugin": "^2.3.5",
 		"ts-loader": "^6.2.2",
 		"tslint": "^5.12.1",
