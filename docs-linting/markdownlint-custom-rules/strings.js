@@ -7,9 +7,9 @@ module.exports.tripleColonsIncorrect = `Bad syntax for markdown extension. Begin
 // moniker
 module.exports.monikerRangeArgs = `Bad syntax for range argument. Use =, <=, or >=, and put value in quotes.`;
 module.exports.monikerRange = `Bad syntax for moniker. "range" is a required attribute and must not be empty.`;
-module.exports.monikerEnd = `Bad syntax for moniker. Moniker end attribute is required ::: moniker-end`;
 module.exports.monikerNonAllowedAttribute = `Bad syntax for moniker. "___" is not an allowed attribute.`;
 module.exports.monikerCaseSensitive = `Bad syntax for moniker. "moniker" and "range" must be lower-case.`;
+module.exports.monikerEndTagRequired = `Bad syntax for moniker. Matching :::moniker-end is required.`;
 
 // no-loc
 module.exports.noLocSyntax = `Bad syntax for non-localization.`;
@@ -38,6 +38,11 @@ module.exports.imageIconRemoveAltText = `Bad syntax for image. "alt-text" not al
 module.exports.zoneSyntax = `Bad syntax for zone. Only "zone target", "zone pivot" and "zone-end" are supported.`;
 module.exports.zoneRender = `Bad syntax for render argument. Use "=" and put value in quotes.`;
 module.exports.zoneValue = `Bad value for zone target. Only "chromeless" and "docs" are supported.`;
+module.exports.zoneSyntax = `zones should begin :::zone and end with :::zone-end).`;
+module.exports.zoneEndTagRequired = `Bad syntax for zone. Matching :::zone-end is required.`;
+module.exports.zoneNonAllowedAttribute = `"___" is not an allowed attribute on :::zone tag.`;
+module.exports.zoneCaseSensitive = `zone attribute "___" must be lower-case.`;
+module.exports.zoneNonAllowedType = `Bad syntax for zone. "___" is not an allowed target type. Options are "chromeless", and "docs"`;
 
 // alert
 module.exports.alertType = `Bad alert type. Only NOTE, TIP, IMPORTANT, CAUTION, and WARNING are supported. Case-sensitive.`;
@@ -55,10 +60,20 @@ module.exports.notEscapedCharacters = `Unescaped xref syntax. The following Char
 
 // row
 module.exports.rowSyntax = `Rows should begin :::row::: and end with :::row-end:::).`;
+module.exports.rowSyntax = `rows should begin :::row::: and end with :::row-end:::).`;
+module.exports.contenSpanAttribute = `Only span is supported (ex. :::row span="":::).`;
+module.exports.rowEndTagRequired = `Bad syntax for row. Matching :::row-end::: is required.`;
+module.exports.rowNonAllowedAttribute = `"___" is not an allowed attribute on :::row::: tag.`;
+module.exports.rowCaseSensitive = `row attribute "___" must be lower-case.`;
+module.exports.rowCountMustBeNumber = `row "count" value must be a number (2-4).`;
+module.exports.rowCountValue = `row "count" value must be 2 thru 4.`;
 
 // column
 module.exports.columnSyntax = `Columns should begin :::column::: and end with :::column-end:::).`;
 module.exports.contenSpanAttribute = `Only span is supported (ex. :::column span="":::).`;
+module.exports.columnEndTagRequired = `Bad syntax for column. Matching :::column-end::: is required.`;
+module.exports.columnNonAllowedAttribute = `"___" is not an allowed attribute.`;
+module.exports.columnCaseSensitive = `column attribute "___" must be lower-case.`;
 
 // codesnippet
 module.exports.codeCaseSensitive = `"code" and its attributes must be lower-case.`;
