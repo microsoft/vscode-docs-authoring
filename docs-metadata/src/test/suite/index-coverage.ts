@@ -17,7 +17,8 @@ function setupNyc() {
 		instrument: true,
 		reporter: ['text', 'html', 'cobertura'],
 		require: ['ts-node/register'],
-		sourceMap: true
+		sourceMap: true,
+		all: true
 	});
 	nyc.reset();
 	nyc.wrap();
