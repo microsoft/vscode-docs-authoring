@@ -1,6 +1,7 @@
 import { ExtensionContext, QuickPickItem } from 'vscode';
 import Axios from 'axios';
 import { TokenResponse } from './Auth';
+import { output } from './output';
 
 export class AllowList {
 	context;
@@ -18,36 +19,41 @@ export class AllowList {
 			const config = {
 				headers: { Authorization: `Bearer ${token.accessToken}` }
 			};
-			const response = await Axios.get(
-				'https://docsvalidation.azurefd.net/validation/allowlists',
-				config
-			);
-			// get products from response
-			const products: string[] = [];
-			Object.keys(response.data)
-				.filter(x => x.startsWith('list:product'))
-				.map((item: string) => {
-					const set = item.split(':');
-					if (set.length > 2) {
-						products.push(set[2]);
-						Object.keys(response.data[item].values).map((prod: string) =>
-							// push the response products into the list of quickpicks.
-							products.push(prod)
-						);
-					}
+			try {
+				const response = await Axios.get(
+					'https://docsvalidationppe.azurefd.net/validation/allowlists',
+					config
+				);
+				// get products from response
+				const products: string[] = [];
+				Object.keys(response.data)
+					.filter(x => x.startsWith('list:product'))
+					.map((item: string) => {
+						const set = item.split(':');
+						if (set.length > 2) {
+							products.push(set[2]);
+							Object.keys(response.data[item].values).map((prod: string) =>
+								// push the response products into the list of quickpicks.
+								products.push(prod)
+							);
+						}
+					});
+				products.sort().map(item => {
+					this.locScopeItems.push({
+						label: item
+					});
 				});
-			products.sort().map(item => {
 				this.locScopeItems.push({
-					label: item
+					label: 'other'
 				});
-			});
-			this.locScopeItems.push({
-				label: 'other'
-			});
-			this.locScopeItems.push({
-				label: 'third-party'
-			});
-			await this.saveAllowList(this.locScopeItems);
+				this.locScopeItems.push({
+					label: 'third-party'
+				});
+				await this.saveAllowList(this.locScopeItems);
+			} catch (error) {
+				output.appendLine(error);
+			}
+
 			return this.locScopeItems;
 		}
 	};

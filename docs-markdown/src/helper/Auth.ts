@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import { window, ExtensionContext, workspace } from 'vscode';
+import { output } from './output';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { AuthenticationContext } = require('adal-node');
@@ -30,8 +31,12 @@ export class Auth {
 	}
 	getToken = async (): Promise<TokenResponse> => {
 		const token: TokenResponse = this.context.globalState.get('token');
-		const expiresTime = new Date().getTime() / 1000;
-		if (!token || token.expiresIn < expiresTime) {
+		const expiresTime = Math.round(new Date().getTime() / 1000);
+		if (
+			!token ||
+			(token.expiresIn &&
+				Math.round((new Date().getTime() + token.expiresIn * 1000) / 1000) < expiresTime)
+		) {
 			const authContext = new AuthenticationContext(this.authorityUrl);
 			return new Promise((resolve, reject) => {
 				authContext.acquireTokenWithClientCredentials(
@@ -40,7 +45,7 @@ export class Auth {
 					this.clientSecret,
 					async (err, tokenResponse: TokenResponse) => {
 						if (err) {
-							window.showErrorMessage(err);
+							output.appendLine(err);
 							reject();
 						} else {
 							await this.saveToken(tokenResponse);
