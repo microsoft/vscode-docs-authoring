@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.0.5 (June 23rd, 2020)
+
+- Added schema linting for Zone, Moniker, Row, Column, and CodeSnippet
+
 ## 0.0.4 (June 4th, 2020)
 
 - Added more moniker linting
