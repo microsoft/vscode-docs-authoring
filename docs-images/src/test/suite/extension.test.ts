@@ -14,9 +14,9 @@ interface EnvironmentalMutator {
 	type: any;
 	value: any;
 }
-const uri = resolve(__dirname, '../../../../../src/test/data/repo/articles/docs-metadata.md');
+const uri = resolve(__dirname, '../../../../../src/test/data/repo/articles/docs-images.md');
 let environmentalMutator: EnvironmentalMutator;
-let subscriptions: Subscription[] = [
+const subscriptions: Subscription[] = [
 	{
 		dispose: () => {}
 	}
