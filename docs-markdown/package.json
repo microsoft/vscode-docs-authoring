@@ -748,7 +748,7 @@
 		"@types/glob": "^7.1.1",
 		"@types/graceful-fs": "^2.0.30",
 		"@types/lodash.merge": "^4.6.6",
-		"@types/mocha": "^7.0.1",
+		"@types/mocha": "^7.0.2",
 		"@types/node": "^12.12.32",
 		"@types/recursive-readdir": "^2.2.0",
 		"@types/vscode": "^1.43.0",
