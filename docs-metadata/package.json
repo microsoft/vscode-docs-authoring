@@ -50,7 +50,6 @@
 		"precompile": "rimraf ./install.Lock & rimraf ./.muttools/",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install",
 		"prettier": "prettier --write \"**/*.{ts,js,json,yml}\"",
 		"prettier-check": "prettier --check \"**/*.{ts,js,json,yml}\" --loglevel debug",
 		"pretest": "npm run compile",
@@ -68,7 +67,7 @@
 		"@types/chai-spies": "^1.0.1",
 		"@types/mocha": "^7.0.1",
 		"@types/node": "^10.12.21",
-		"rimraf": "^3.0.2",
+		"@types/vscode": "^1.46.0",
 		"@typescript-eslint/eslint-plugin": "^2.34.0",
 		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",
 		"@typescript-eslint/parser": "^2.34.0",
@@ -82,11 +81,12 @@
 		"nyc": "^15.0.0",
 		"prettier": "^2.0.5",
 		"pretty-quick": "^2.0.1",
+		"rimraf": "^3.0.2",
+		"sinon": "^9.0.2",
 		"ts-node": "^8.8.1",
 		"tslint": "^5.20.1",
 		"typescript": "^3.3.1",
-		"vscode-test": "^1.3.0",
-		"vscode": "^1.1.28"
+		"vscode-test": "^1.3.0"
 	},
 	"runtimeDependencies": [
 		{

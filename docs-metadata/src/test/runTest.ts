@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import * as path from 'path';
 
 import { runTests } from 'vscode-test';
@@ -24,8 +25,8 @@ async function main() {
 			launchArgs: [repoPath, '--disable-extensions']
 		});
 	} catch (err) {
-		// eslint-disable-next-line no-console
 		console.error('Failed to run tests');
+		console.error(err);
 		process.exit(1);
 	}
 }
