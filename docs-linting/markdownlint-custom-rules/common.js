@@ -15,12 +15,19 @@ module.exports.unsupportedExtensionRegex = /^:::\s+(.*)/gm;
 
 // Zones
 // to-do: update regex to support zone pivot once requirements are ready.
-module.exports.openZone = /^:::\s+zone/gm;
-module.exports.syntaxZone = /^:::\s+zone\s+target/gm;
-module.exports.renderZone = /^:::\s+zone\s+target="/gm;
-module.exports.validZone = /^:::\s+zone\s+target="(chromeless|docs)"/gm;
-module.exports.endZone = /^:::\s+zone-end/gm;
-module.exports.zonePivot = /^:::\s+zone\s+pivot/gm;
+module.exports.openZone = /^:::\s*zone/gm;
+module.exports.syntaxZone = /^:::\s*zone\s+target/gm;
+module.exports.renderZone = /^:::\s*zone\s+target="/gm;
+module.exports.validZone = /^:::\s*zone\s+target="(chromeless|docs)"/gm;
+module.exports.endZone = /^:::\s*zone-end/gm;
+module.exports.zonePivot = /^:::\s*zone\s+pivot/gm;
+module.exports.looseZone = /(:+)\s*zone(?!-end)\s*((.*?)=".*?")?([^]+?(:*?)\s*zone-end?)?/gi;
+module.exports.startZone = /:::\s*zone(?!-end)/gm;
+module.exports.zoneEndTagMatch = /:::(\s*)?zone-end/gim;
+module.exports.syntaxZone = /:{3}\s*(zone|zone-end|zone\s+(.*)"):{3}$/gm;
+module.exports.zoneWithAttribute = /:{3}\s*(zone\s+(.*?))\S\s/gm;
+module.exports.zoneAttributeMatchGlobal = /:::\s*zone(?!-).*?/gi;
+module.exports.zoneTargetMatch = /target\s*=\s*"(.*?)"/m;
 
 // Moniker
 module.exports.looseMoniker = /:::\s*moniker(?!-end)(\s*.*="(.*?)")?([^]+?:::\s*moniker-end)?/gim;
@@ -28,6 +35,8 @@ module.exports.rangeMonikerWithArgs = /^:::\s*moniker\s+range="(<=|>=)?/gim;
 module.exports.rangeMoniker = /range\s*=\s*"(.*?)"/im;
 module.exports.endMoniker = /^:::\s*moniker-end/gim;
 module.exports.openMoniker = /^:::\s*moniker/gim;
+module.exports.startMoniker = /:::\s*moniker(?!-end)/gm;
+module.exports.monikerEndTagMatch = /:::(\s*)?moniker-end/gim;
 module.exports.allowedMonikerAttributes = ['range'];
 
 //no-loc
@@ -85,14 +94,25 @@ module.exports.syntaxXref = /(<|\()xref:(.*?)(\?)?(displayProperty=(fullName|nam
 module.exports.notEscapedCharacters = /(<|\()xref:(.*[*#`].*)(>|\))/g;
 
 // Row
-module.exports.startRow = /^(:{3})row/gm;
-module.exports.syntaxRow = /^:{3}(row|row-end):{3}$/gm;
+module.exports.looseRow = /(:+)\s*row\s*(count=".*?")?(:*)?([^]+?(:*)row-end?(:*))?/gi;
+module.exports.startRow = /:::\s*row(?!-end)/gm;
+module.exports.rowEndTagMatch = /:::(\s*)?row-end\s*:::/gim;
+module.exports.rowEnd = /:::(\s*)?row-end\s*:::/;
+module.exports.syntaxrow = /:{3}\s*(row|row-end|row\s+(.*)"):{3}$/gm;
+module.exports.rowWithAttribute = /:{3}\s*(row\s+(.*?)):/gm;
+module.exports.rowCount = /:{3}\s*(row\s+count="(.*?)"):/gm;
+module.exports.rowAttributeMatchGlobal = /:::\s*row(?!-).*?:::/gi;
+module.exports.rowCountValue = /count\s*=\s*"(.*?)"/i;
 
 // Column
-module.exports.startColumn = /^\s+(:*)(.+column)/gm;
-module.exports.syntaxColumn = /^\s+:{3}(column|column-end|column\s+(.*)"):{3}$/gm;
-module.exports.columnWithAttribute = /^\s+:{3}(column\s+(.*?)):/gm;
-module.exports.columnSpan = /^\s+:{3}(column\s+span="(.*?)"):/gm;
+module.exports.looseColumn = /(:+)\s*column\s*(span=".*?")?(:*)?([^]+?(:*)column-end?(\s*)?(:*))?/gi;
+module.exports.startColumn = /:::\s*column(?!-end)/gm;
+module.exports.columnEndTagMatch = /\s*:::(\s*)?column-end(\s*)?:::/gim;
+module.exports.columnEnd = /\s*:::(\s*)?column-end(\s*)?:::/;
+module.exports.syntaxColumn = /:{3}\s*(column|column-end|column\s+(.*)"):{3}$/gm;
+module.exports.columnWithAttribute = /:{3}\s*(column\s+(.*?)):/gm;
+module.exports.columnSpan = /:{3}\s*(column\s+span="(.*?)"):/gm;
+module.exports.columnAttributeMatchGlobal = /:::\s*column(?!-).*?:::/gi;
 
 //codesnippet
 module.exports.syntaxCodeLooseMatch = /(:+)(\s+)?code.*?(:+)/g;
@@ -129,3 +149,16 @@ module.exports.videoSourceMatch = /source\s*=\s*"(.*?)"/m;
 module.exports.videoTitleMatch = /title\s*=\s*"(.*?)"/m;
 module.exports.videoMaxWidthMatch = /max-width\s*=\s*"(.*?)"/m;
 module.exports.allowedVideoAttributes = ['source', 'title', 'max-width'];
+
+module.exports.getMaxLineNotEmpty = function getMaxLineNotEmpty(lines) {
+	if (lines.length > 1) {
+		const lastElement = lines[lines.length - 1];
+		if (lastElement) {
+			return lines.length;
+		} else {
+			const arr = lines.slice(0, -1);
+			return getMaxLineNotEmpty(arr);
+		}
+	}
+	return 1;
+};

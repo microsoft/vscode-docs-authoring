@@ -53,7 +53,7 @@ suite('Italic Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor!, 14, 0, 14, 0);
+		common.setSelectorPosition(editor, 14, 0, 14, 0);
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
 		formatItalic();
@@ -68,7 +68,7 @@ suite('Italic Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor!, 15, 0, 15, 1);
+		common.setSelectorPosition(editor, 15, 0, 15, 1);
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
 		formatItalic();
@@ -82,7 +82,7 @@ suite('Italic Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor!, 163, 0, 163, 4);
+		common.setSelectorPosition(editor, 163, 0, 163, 4);
 		formatItalic();
 		await sleep(sleepTime);
 		const line = editor?.document.lineAt(163).text;
@@ -96,12 +96,12 @@ suite('Italic Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		const cursorPosition = editor!.selection.active;
+		const cursorPosition = editor?.selection.active;
 		const fromPositionOne = cursorPosition.with(45, 2);
 		const toPositionOne = cursorPosition.with(45, 11);
 		const fromPositionTwo = cursorPosition.with(45, 39);
 		const toPositionTwo = cursorPosition.with(45, 45);
-		editor!.selections = [
+		editor.selections = [
 			new Selection(fromPositionOne, toPositionOne),
 			new Selection(fromPositionTwo, toPositionTwo)
 		];

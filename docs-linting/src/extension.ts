@@ -28,7 +28,6 @@ export function activate(context: ExtensionContext) {
 	extensionPath = context.extensionPath;
 	const { msTimeValue } = generateTimestamp();
 	output.appendLine(`[${msTimeValue}] - Activating docs linting extension.`);
-
 	// Markdownlint custom rule check
 	checkMarkdownlintCustomProperty();
 
