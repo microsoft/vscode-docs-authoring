@@ -191,7 +191,7 @@ export function installedExtensionsCheck() {
 	});
 }
 
-function setupAutoComplete() {
+export function setupAutoComplete() {
 	let completionItemsMarkdownYamlHeader: CompletionItem[] = [];
 	completionItemsMarkdownYamlHeader = completionItemsMarkdownYamlHeader.concat(
 		noLocCompletionItemsMarkdownYamlHeader()

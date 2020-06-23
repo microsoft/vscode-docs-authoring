@@ -197,6 +197,7 @@
     },
     "fileMetadata": {
       "author": {
+        "articles/test/*.md": "bar",
         "articles/advisor/*.md": "saket-ms",
         "articles/connectors/*.md": "ecfan",
         "articles/batch/*.md": "ju-shim",
@@ -452,6 +453,7 @@
         "articles/firewall/**/*.md": "https://feedback.azure.com/forums/217313-networking?category_id=345022"
       },
       "manager": {
+        "articles/test/*.md": "bar",
         "articles/sql-database/**/*.md": "jroth",
         "articles/azure-functions/**/*.md": "gwallace",
         "articles/app-service/**/*.md": "gwallace",
@@ -467,6 +469,7 @@
         "articles/virtual-machine-scale-sets/**/*.md": "gwallace"
    },
       "ms.author": {
+        "articles/test/*.md": "bar",
         "articles/advisor/*.md": "sagupt",
         "articles/connectors/*.md": "estfan",
         "articles/logic-apps/*.md": "estfan",
@@ -538,6 +541,7 @@
         "articles/aks/**/*.md": "mlearned"
       },
       "ms.service": {
+        "articles/test/*.md": "bar",
         "articles/connectors/*.md": "logic-apps",
         "articles/logic-apps/*.md": "logic-apps",
         "articles/governance/*.md": "governance",
@@ -577,6 +581,7 @@
         "articles/aks/**/*.md": "container-service"
       },
       "ms.subservice": {
+        "articles/test/*.md": "bar",
         "articles/industry/agriculture/**/*.md": "agriculture",
         "articles/azure-monitor/app/**/*.md": "application-insights",
         "articles/azure-monitor/log-query/**/.md": "logs",
@@ -655,6 +660,7 @@
         "articles/virtual-machines/windows/**/*.md": ["Azure","Windows Virtual Machines"]
       },
       "titleSuffix": {
+        "articles/test/*.md": "bar",
         "articles/service-health/**/*.md": "Azure Service Health",
         "articles/service-health/*.yml": "Azure Service Health",
         "articles/advisor/**/*.md": "Azure Advisor",
