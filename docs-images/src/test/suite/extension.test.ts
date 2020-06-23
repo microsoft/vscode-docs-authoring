@@ -39,10 +39,10 @@ const context: ExtensionContext = {
 	extensionUri: Uri.parse(uri),
 	environmentVariableCollection: {
 		persistent: false,
-		replace: (variable, value) => {},
-		append: (variable, value) => {},
-		prepend: (variable, value) => {},
-		get: variable => environmentalMutator,
+		replace: (variable: any, value: any) => {},
+		append: (variable: any, value: any) => {},
+		prepend: (variable: any, value: any) => {},
+		get: (variable: any) => environmentalMutator,
 		forEach: () => {},
 		clear: () => {},
 		delete: () => {}
