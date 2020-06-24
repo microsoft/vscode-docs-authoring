@@ -24,7 +24,7 @@ export class Auth {
 	tenant = this.config.get<string>('tenant');
 	clientId = this.config.get<string>('clientId');
 	clientSecret = this.config.get<string>('clientSecret');
-	resource = 'https://graph.microsoft.com';
+	resource = this.config.get<string>('resource');
 	authorityUrl = `${this.instance}/${this.tenant}`;
 	constructor(context) {
 		this.context = context;
