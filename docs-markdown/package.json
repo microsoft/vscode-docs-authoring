@@ -661,6 +661,10 @@
 				"markdown.resource": {
 					"type": "string",
 					"default": "[RESOURCE]"
+				},
+				"markdown.allowlistUrl": {
+					"type": "string",
+					"default": "[ALLOWLISTURL]"
 				}
 			}
 		},

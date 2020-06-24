@@ -82,15 +82,13 @@ type Commands = Command[];
  *
  * param {vscode.ExtensionContext} the context the extension runs in, provided by vscode on activation of the extension.
  */
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
 	extensionPath = context.extensionPath;
 	context.subscriptions.push(new Reporter(context));
 	const { msTimeValue } = generateTimestamp();
 	output.appendLine(`[${msTimeValue}] - Activating docs markdown extension.`);
-	const auth = new Auth(context);
-	const promises = [auth.getToken()];
 	const allowList = new AllowList(context);
-	Promise.all(promises).then(() => allowList.getAllowList());
+	await allowList.getAllowList();
 	// Places "Docs Markdown Authoring" into the Toolbar
 	new UiHelper().LoadToolbar();
 
