@@ -56,28 +56,6 @@ suite('List Controller', () => {
 		expect(spy).to.have.been.called();
 		stub.restore();
 	});
-	test('checkEmptyLine', async () => {
-		const editor = window.activeTextEditor;
-		common.setCursorPosition(editor, 28, 0);
-		await sleep(100);
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
-		const spy = chai.spy.on(list, 'checkEmptyLine');
-		insertNumberedList();
-		await sleep(100);
-		expect(spy).to.have.been.called();
-		stub.restore();
-	});
-	test('checkEmptySelection', async () => {
-		const editor = window.activeTextEditor;
-		common.setCursorPosition(editor, 29, 3);
-		await sleep(100);
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
-		const spy = chai.spy.on(list, 'checkEmptySelection');
-		insertNumberedList();
-		await sleep(100);
-		expect(spy).to.have.been.called();
-		stub.restore();
-	});
 	test('insertList', async () => {
 		const editor = window.activeTextEditor;
 		common.setCursorPosition(editor, 27, 0);
