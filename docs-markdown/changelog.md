@@ -1,5 +1,7 @@
 # Change Log
 
+- Support updating empty metadata
+
 ## 0.2.74 (June 11th, 2020)
 
 - Collapse relative link improvements
