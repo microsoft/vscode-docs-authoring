@@ -39,17 +39,17 @@ suite('Preview Controller', () => {
 		expect(spy).to.have.been.called();
 		stub.restore();
 	});
-	test('showPreviewToSide', async () => {
+	test('showPreviewToSide - checkExtension', async () => {
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
-		const spy = chai.spy.on(vscode.commands, 'executeCommand');
+		const spy = chai.spy.on(common, 'checkExtension');
 		previewTopic();
 		await sleep(100);
 		expect(spy).to.have.been.called();
 		stub.restore();
 	});
-	test('seoPreview', async () => {
+	test('seoPreview - checkExtension', async () => {
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
-		const spy = chai.spy.on(vscode.commands, 'executeCommand');
+		const spy = chai.spy.on(common, 'checkExtension');
 		previewTopic();
 		await sleep(100);
 		expect(spy).to.have.been.called();
