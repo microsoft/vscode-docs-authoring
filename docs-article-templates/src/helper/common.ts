@@ -15,7 +15,6 @@ export const templateDirectory = join(docsAuthoringDirectory, 'Templates');
  * @param {string} message - the message to post to the editor as an warning.
  */
 export function postWarning(message: string) {
-	debug(message);
 	window.showWarningMessage(message);
 }
 
@@ -24,7 +23,6 @@ export function postWarning(message: string) {
  * @param {string} message - the message to post to the editor as an information.
  */
 export function postInformation(message: string) {
-	debug(message);
 	window.showInformationMessage(message);
 }
 
@@ -33,7 +31,6 @@ export function postInformation(message: string) {
  * @param {string} message - the message to post to the editor as an information.
  */
 export function postError(message: string) {
-	debug(message);
 	window.showErrorMessage(message);
 }
 
@@ -48,14 +45,6 @@ export function hasValidWorkSpaceRootPath(senderName: string) {
 	}
 
 	return true;
-}
-
-/**
- * Provides a common tool for logging. Currently prints to the console (when debugging), and nothing else.
- * @param {any} message - the object to be written to the log. This does not strictly require string type.
- */
-export function debug(message: any) {
-	process.stdout.write(message + '\n');
 }
 
 /**
@@ -108,5 +97,5 @@ export function sendTelemetryData(telemetryCommand: string, commandOption: strin
  */
 export function showStatusMessage(message: string) {
 	const { msTimeValue } = generateTimestamp();
-	output.appendLine(`[${msTimeValue}] - ` + message);
+	output.appendLine(`[${msTimeValue}] - ${message}`);
 }
