@@ -28,6 +28,7 @@ export function run(): Promise<void> {
 	const nyc = setupNyc();
 	// Create the mocha test
 	const mocha = new Mocha({
+		color: true,
 		reporter: 'mocha-junit-reporter',
 		reporterOptions: {
 			mochaFile: '../../out/coverage/test-results.xml'
