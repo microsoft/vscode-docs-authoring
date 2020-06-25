@@ -26,17 +26,19 @@ export function runAll(progress: any, file: string, files: string[] | null, inde
 			} else if (file.endsWith('.md')) {
 				data = handleLinksWithRegex(data);
 				if (data.startsWith('---')) {
-					data = lowerCaseData(data, 'ms.author');
-					data = lowerCaseData(data, 'author');
-					data = lowerCaseData(data, 'ms.prod');
-					data = lowerCaseData(data, 'ms.service');
-					data = lowerCaseData(data, 'ms.subservice');
-					data = lowerCaseData(data, 'ms.technology');
-					data = lowerCaseData(data, 'ms.topic');
+					let frontMatter = '';
 					const regex = new RegExp(`^(---)([^>]+?)(---)$`, 'm');
 					const metadataMatch = data.match(regex);
 					if (metadataMatch) {
-						data = handleMarkdownMetadata(data, metadataMatch[2]);
+						frontMatter = lowerCaseData(metadataMatch[2], 'ms.author');
+						frontMatter = lowerCaseData(metadataMatch[2], 'author');
+						frontMatter = lowerCaseData(metadataMatch[2], 'ms.prod');
+						frontMatter = lowerCaseData(metadataMatch[2], 'ms.service');
+						frontMatter = lowerCaseData(metadataMatch[2], 'ms.subservice');
+						frontMatter = lowerCaseData(metadataMatch[2], 'ms.technology');
+						frontMatter = lowerCaseData(metadataMatch[2], 'ms.topic');
+						frontMatter = handleMarkdownMetadata(metadataMatch[2]);
+						data = data.replace(regex, `---${frontMatter}---`);
 					}
 				}
 			}
@@ -106,17 +108,19 @@ export async function runAllWorkspace(workspacePath: string, progress: any, reso
 								const origin = data;
 								data = handleLinksWithRegex(data);
 								if (data.startsWith('---')) {
-									data = lowerCaseData(data, 'ms.author');
-									data = lowerCaseData(data, 'author');
-									data = lowerCaseData(data, 'ms.prod');
-									data = lowerCaseData(data, 'ms.service');
-									data = lowerCaseData(data, 'ms.subservice');
-									data = lowerCaseData(data, 'ms.technology');
-									data = lowerCaseData(data, 'ms.topic');
+									let frontMatter = '';
 									const regex = new RegExp(`^(---)([^>]+?)(---)$`, 'm');
 									const metadataMatch = data.match(regex);
 									if (metadataMatch) {
-										data = handleMarkdownMetadata(data, metadataMatch[2]);
+										frontMatter = lowerCaseData(metadataMatch[2], 'ms.author');
+										frontMatter = lowerCaseData(metadataMatch[2], 'author');
+										frontMatter = lowerCaseData(metadataMatch[2], 'ms.prod');
+										frontMatter = lowerCaseData(metadataMatch[2], 'ms.service');
+										frontMatter = lowerCaseData(metadataMatch[2], 'ms.subservice');
+										frontMatter = lowerCaseData(metadataMatch[2], 'ms.technology');
+										frontMatter = lowerCaseData(metadataMatch[2], 'ms.topic');
+										frontMatter = handleMarkdownMetadata(metadataMatch[2]);
+										data = data.replace(regex, `---${frontMatter}---`);
 									}
 								}
 								const diff = jsdiff

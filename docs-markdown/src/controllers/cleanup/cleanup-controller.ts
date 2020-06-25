@@ -195,10 +195,9 @@ export async function applyCleanupFolder(uri: Uri) {
 				const promises: Promise<any>[] = [];
 				// check for dirty files
 				files.map(file => {
-					const fileName = basename(file);
-					const modifiedUri = join(uri.path, fileName).replace(/\\/g, '/');
-					if (extname(modifiedUri) === '.md') {
-						workspace.openTextDocument(Uri.parse(modifiedUri)).then(doc => {
+					file = file.replace(/\\/g, '/');
+					if (extname(file) === '.md') {
+						workspace.openTextDocument(Uri.parse(file)).then(doc => {
 							if (doc.isDirty) {
 								showWarningMessage(
 									`Selected file ${file} is not saved and cannot be modified. Save file then run the command again.`

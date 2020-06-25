@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
+import * as telemetry from '../../../helper/telemetry';
 import { resolve } from 'path';
 import { commands, QuickPickItem, window, workspace, ExtensionContext, Uri } from 'vscode';
 import * as boldController from './../../../controllers/bold-controller';
@@ -20,7 +21,6 @@ import * as cleanupController from '../../../controllers/cleanup/cleanup-control
 import * as monikerController from '../../../controllers/moniker-controller';
 import * as yamlController from '../../../controllers/yaml/yaml-controller';
 import { loadDocumentAndGetItReady, sleep, sleepTime } from '../../test.common/common';
-import * as telemetry from '../../../helper/telemetry';
 
 chai.use(spies);
 
@@ -188,6 +188,7 @@ suite('Quick Pick Menu Controller', () => {
 			label: '$(alert) Alert'
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
+		stubShowQuickPick.onCall(1).resolves('some selection');
 		const spy = chai.spy.on(alertController, 'insertAlert');
 		markdownQuickPick(context);
 		await sleep(sleepTime);
@@ -295,11 +296,16 @@ suite('Quick Pick Menu Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
-		const item: QuickPickItem = {
+		const item1: QuickPickItem = {
 			description: '',
 			label: '$(link) Link'
 		};
-		stubShowQuickPick.onCall(0).resolves(item);
+		const item2: QuickPickItem = {
+			description: '',
+			label: '(foo)'
+		};
+		stubShowQuickPick.onCall(0).resolves(item1);
+		stubShowQuickPick.onCall(1).resolves(item2);
 		const spy = chai.spy.on(linkController, 'pickLinkType');
 		markdownQuickPick(context);
 		await sleep(sleepTime);
@@ -351,11 +357,16 @@ suite('Quick Pick Menu Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
-		const item: QuickPickItem = {
+		const item1: QuickPickItem = {
 			description: '',
 			label: '$(file-media) Image'
 		};
-		stubShowQuickPick.onCall(0).resolves(item);
+		const item2: QuickPickItem = {
+			description: resolve(__dirname, '../../../../../src/test/data/repo/images/'),
+			label: 'test.png'
+		};
+		stubShowQuickPick.onCall(0).resolves(item1);
+		stubShowQuickPick.onCall(1).resolves(item2);
 		const spy = chai.spy.on(imageController, 'pickImageType');
 		markdownQuickPick(context);
 		await sleep(sleepTime);
@@ -469,10 +480,12 @@ suite('Quick Pick Menu Controller', () => {
 			label: '$(ellipsis) Columns'
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
+		stubShowQuickPick.onCall(1).resolves('some selection');
 		const spy = chai.spy.on(rowColumnsController, 'insertRowsAndColumns');
 		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
+		chai.spy.restore(rowColumnsController, 'insertRowsAndColumns');
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - applyCleanup', async () => {
@@ -553,6 +566,7 @@ suite('Quick Pick Menu Controller', () => {
 			label: '$(note) TOC entry'
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
+		stubShowQuickPick.onCall(1).resolves('some selection');
 		const spy = chai.spy.on(yamlController, 'insertTocEntry');
 		markdownQuickPick(context);
 		await sleep(sleepTime);
