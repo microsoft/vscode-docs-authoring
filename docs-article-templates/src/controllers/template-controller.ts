@@ -1,11 +1,6 @@
 'use strict';
 
-import {
-	generateTimestamp,
-	templateDirectory,
-	docsAuthoringDirectory,
-	postWarning
-} from '../helper/common';
+import { templateDirectory, docsAuthoringDirectory, postWarning } from '../helper/common';
 import { logRepoData } from '../helper/github';
 import { showStatusMessage, sendTelemetryData } from '../helper/common';
 import { files } from 'node-dir';
