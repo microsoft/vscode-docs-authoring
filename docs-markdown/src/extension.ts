@@ -68,6 +68,8 @@ import { UiHelper } from './helper/ui';
 import { findAndReplaceTargetExpressions } from './helper/utility';
 import { isCursorInsideYamlHeader } from './helper/yaml-metadata';
 import { Command } from './Command';
+import { Auth } from './helper/Auth';
+import { AllowList } from './helper/AllowList';
 
 export let extensionPath: string;
 type Commands = Command[];
@@ -80,12 +82,13 @@ type Commands = Command[];
  *
  * param {vscode.ExtensionContext} the context the extension runs in, provided by vscode on activation of the extension.
  */
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
 	extensionPath = context.extensionPath;
 	context.subscriptions.push(new Reporter(context));
 	const { msTimeValue } = generateTimestamp();
 	output.appendLine(`[${msTimeValue}] - Activating docs markdown extension.`);
-
+	const allowList = new AllowList(context);
+	await allowList.getAllowList();
 	// Places "Docs Markdown Authoring" into the Toolbar
 	new UiHelper().LoadToolbar();
 
@@ -93,7 +96,11 @@ export function activate(context: ExtensionContext) {
 	installedExtensionsCheck();
 
 	// Creates an array of commands from each command file.
-	const authoringCommands: Commands = [...linkControllerCommands];
+	const authoringCommands: Commands = [
+		...linkControllerCommands,
+		...insertImageCommand,
+		...quickPickMenuCommand
+	];
 	insertAlertCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertMonikerCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertIncludeCommand().forEach(cmd => authoringCommands.push(cmd));
@@ -104,7 +111,6 @@ export function activate(context: ExtensionContext) {
 	boldFormattingCommand().forEach(cmd => authoringCommands.push(cmd));
 	codeFormattingCommand().forEach(cmd => authoringCommands.push(cmd));
 	italicFormattingCommand().forEach(cmd => authoringCommands.push(cmd));
-	quickPickMenuCommand().forEach(cmd => authoringCommands.push(cmd));
 	previewTopicCommand().forEach(cmd => authoringCommands.push(cmd));
 	getMasterRedirectionCommand().forEach(cmd => authoringCommands.push(cmd));
 	applyCleanupCommand().forEach(cmd => authoringCommands.push(cmd));
@@ -112,7 +118,6 @@ export function activate(context: ExtensionContext) {
 	yamlCommands().forEach(cmd => authoringCommands.push(cmd));
 	noLocTextCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertRowsAndColumnsCommand().forEach(cmd => authoringCommands.push(cmd));
-	insertImageCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertMetadataCommands().forEach(cmd => authoringCommands.push(cmd));
 	insertSortSelectionCommands().forEach(cmd => authoringCommands.push(cmd));
 	insertLanguageCommands().forEach(cmd => authoringCommands.push(cmd));
@@ -152,7 +157,7 @@ export function activate(context: ExtensionContext) {
 		commands.registerCommand('cleanupFile', async (uri: Uri) => await applyCleanupFile(uri));
 		commands.registerCommand('cleanupInFolder', async (uri: Uri) => await applyCleanupFolder(uri));
 		authoringCommands.map((cmd: Command) => {
-			const command = commands.registerCommand(cmd.command, cmd.callback);
+			const command = commands.registerCommand(cmd.command, () => cmd.callback(context));
 			context.subscriptions.push(command);
 		});
 	} catch (error) {
@@ -191,7 +196,7 @@ export function installedExtensionsCheck() {
 	});
 }
 
-function setupAutoComplete() {
+export function setupAutoComplete() {
 	let completionItemsMarkdownYamlHeader: CompletionItem[] = [];
 	completionItemsMarkdownYamlHeader = completionItemsMarkdownYamlHeader.concat(
 		noLocCompletionItemsMarkdownYamlHeader()

@@ -7,7 +7,7 @@ const detailStrings = require('./strings');
 
 module.exports = {
 	names: ['DOCSMD009', 'docsmd.no-loc'],
-	description: `Non-localization linting.`,
+	description: `no-loc linting.`,
 	tags: ['validation'],
 	function: function rule(params, onError) {
 		params.tokens

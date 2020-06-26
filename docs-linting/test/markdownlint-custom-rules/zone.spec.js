@@ -1,37 +1,20 @@
 const markdownlint = require('markdownlint');
 const zone = require('../../markdownlint-custom-rules/zone');
 const errorDetailStrings = require('../../markdownlint-custom-rules/strings');
-
+const zoneLinting = 'zone linting.';
 test('Zone markdown lint', () => {
-	const src = `${__dirname}/test-content/markdown-extensions.md`;
-	const results = markdownlint.sync({
+	const src = `${__dirname}/test-content/zone.md`;
+	let results = markdownlint.sync({
 		customRules: zone,
 		files: [src]
 	});
-
 	expect(results[src]).toEqual([
 		{
-			lineNumber: 23,
+			lineNumber: 7,
 			ruleNames: ['DOCSMD005', 'docsmd.zone'],
-			ruleDescription: 'Zone linting.',
-			errorDetail: errorDetailStrings.zoneSyntax,
-			errorContext: '::: zone pelican',
-			errorRange: null
-		},
-		{
-			lineNumber: 27,
-			ruleNames: ['DOCSMD005', 'docsmd.zone'],
-			ruleDescription: 'Zone linting.',
-			errorDetail: errorDetailStrings.zoneRender,
-			errorContext: '::: zone target:',
-			errorRange: null
-		},
-		{
-			lineNumber: 64,
-			ruleNames: ['DOCSMD005', 'docsmd.zone'],
-			ruleDescription: 'Zone linting.',
-			errorDetail: errorDetailStrings.zoneValue,
-			errorContext: '::: zone target="volcano"',
+			ruleDescription: zoneLinting,
+			errorDetail: errorDetailStrings.zoneEndTagRequired,
+			errorContext: '::: zone target="docs"',
 			errorRange: null
 		}
 	]);
