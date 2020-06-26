@@ -15,6 +15,7 @@ import { rowEndOptions, rowOptions } from './markdown-extensions/row';
 import { videoOptions, legacyVideoOptions } from './markdown-extensions/video';
 import { DocumentContentProvider } from './seo/seoPreview';
 import { xref } from './markdown-extensions/xref';
+import { rootDirectory } from './markdown-extensions/rootDirectory';
 
 export const output = window.createOutputChannel('docs-preview');
 export let extensionPath: string;
@@ -88,7 +89,8 @@ export async function activate(context: ExtensionContext) {
 				.use(container_plugin, 'image', imageOptions)
 				.use(image_end)
 				.use(container_plugin, 'video', videoOptions)
-				.use(container_plugin, 'legacyVideo', legacyVideoOptions);
+				.use(container_plugin, 'legacyVideo', legacyVideoOptions)
+				.use(rootDirectory);
 		}
 	};
 
