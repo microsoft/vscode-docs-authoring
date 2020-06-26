@@ -15,7 +15,7 @@ export class Reporter extends Disposable {
 	}
 }
 
-interface PackageInfo {
+export interface PackageInfo {
 	name: string;
 	version: string;
 	aiKey: string;
