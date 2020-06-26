@@ -10,7 +10,6 @@ import * as common from '../../../helper/common';
 import { sleep, sleepTime } from '../../test.common/common';
 
 chai.use(spies);
-// import sinon = require('sinon');
 const expect = chai.expect;
 
 suite('Template Controller', () => {
