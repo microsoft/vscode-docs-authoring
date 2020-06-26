@@ -645,6 +645,26 @@
 					"type": "boolean",
 					"default": false,
 					"description": "When enabled, beta features will become available."
+				},
+				"markdown.tenant": {
+					"type": "string",
+					"default": "[TENANT]"
+				},
+				"markdown.clientId": {
+					"type": "string",
+					"default": "[CLIENTID]"
+				},
+				"markdown.clientSecret": {
+					"type": "string",
+					"default": "[CLIENTSECRET]"
+				},
+				"markdown.resource": {
+					"type": "string",
+					"default": "[RESOURCE]"
+				},
+				"markdown.allowlistUrl": {
+					"type": "string",
+					"default": "[ALLOWLISTURL]"
 				}
 			}
 		},
@@ -730,6 +750,7 @@
 		}
 	},
 	"dependencies": {
+		"adal-node": "^0.2.1",
 		"axios": "^0.19.2",
 		"child-process-promise": "^2.2.1",
 		"diff": "^4.0.2",

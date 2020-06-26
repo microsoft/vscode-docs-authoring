@@ -26,13 +26,13 @@ import {
 	insertTocEntry,
 	insertTocEntryWithOptions
 } from './yaml/yaml-controller';
+import { ExtensionContext } from 'vscode';
+import { Command } from '../Command';
 
-export function quickPickMenuCommand() {
-	const commands = [{ command: markdownQuickPick.name, callback: markdownQuickPick }];
-	return commands;
-}
-
-export function markdownQuickPick() {
+export const quickPickMenuCommand: Command[] = [
+	{ command: markdownQuickPick.name, callback: markdownQuickPick }
+];
+export function markdownQuickPick(context: ExtensionContext) {
 	const opts: vscode.QuickPickOptions = { placeHolder: 'Which command would you like to run?' };
 	const markdownItems: vscode.QuickPickItem[] = [];
 	const yamlItems: vscode.QuickPickItem[] = [];
@@ -213,7 +213,7 @@ export function markdownQuickPick() {
 				noLocText();
 				break;
 			case 'image':
-				pickImageType();
+				pickImageType(context);
 				break;
 			case 'include':
 				insertInclude();
