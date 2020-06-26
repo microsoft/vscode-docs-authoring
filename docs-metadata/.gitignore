@@ -4,3 +4,4 @@ node_modules
 *.vsix
 /package-lock.json
 .muttools/*
+.vscode-test
