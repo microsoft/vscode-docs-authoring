@@ -5,7 +5,7 @@ import {
 	toHumanReadableString,
 	calculatePercentReduction,
 	resultToString
-} from '../../src/utilities';
+} from '../../utilities';
 
 suite('Utilities testing', () => {
 	test('getFileName function', () => {
