@@ -24,16 +24,4 @@ suite('Template Controller', () => {
 		const controllerCommands = [{ command: applyTemplate.name, callback: applyTemplate }];
 		expect(applyTemplateCommand()).to.deep.equal(controllerCommands);
 	});
-	test('applyTemplate', () => {
-		const spy = chai.spy(applyTemplate);
-		applyTemplate();
-		sleep(sleepTime);
-		expect(spy).to.be.have.been.called;
-	});
-	test('downloadRepo', () => {
-		const spy = chai.spy(downloadRepo);
-		downloadRepo();
-		sleep(sleepTime);
-		expect(spy).to.be.have.been.called;
-	});
 });
