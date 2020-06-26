@@ -62,7 +62,7 @@ suite('Bold Controller', () => {
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
 		await formatBold();
-		await sleep(sleepTime);
+		await sleep(extendedSleepTime);
 
 		expect(spy).to.have.been.called();
 	});
@@ -77,7 +77,7 @@ suite('Bold Controller', () => {
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
 		await formatBold();
-		await sleep(sleepTime);
+		await sleep(extendedSleepTime);
 		expect(spy).to.have.been.called();
 	});
 	test('Bold Format Word Selection', async () => {
@@ -89,7 +89,7 @@ suite('Bold Controller', () => {
 		const editor = window.activeTextEditor;
 		common.setSelectorPosition(editor, 159, 0, 159, 4);
 		await formatBold();
-		await sleep(sleepTime);
+		await sleep(extendedSleepTime);
 		const line = editor?.document.lineAt(159).text;
 
 		expect(line).to.equal('**Body**');
