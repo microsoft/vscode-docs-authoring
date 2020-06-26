@@ -16,12 +16,16 @@ import sinon = require('sinon');
 const expect = chai.expect;
 
 suite('Metadata Controller', () => {
+	suiteSetup(() => {
+		sinon.stub(telemetry, 'sendTelemetryData');
+	});
 	// Reset and tear down the spies
 	teardown(() => {
 		chai.spy.restore(common);
 	});
 	suiteTeardown(async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
+		sinon.restore();
 	});
 	test('insertMetadataCommands', () => {
 		const controllerCommands = [
@@ -52,7 +56,6 @@ suite('Metadata Controller', () => {
 		expect(spy).to.have.been.called();
 	});
 	test('updateImplicitMetadataValues()', async () => {
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/test/metadata.md'
@@ -83,7 +86,6 @@ suite('Metadata Controller', () => {
 		await metadataController.updateImplicitMetadataValues();
 		const actualText = window.activeTextEditor?.document.getText();
 
-		stub.restore();
 		// cleanup the modified metadata.md to prevent false positives for future tests.
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const { exec } = require('child_process');
@@ -106,7 +108,6 @@ suite('Metadata Controller', () => {
 		expect(spy).to.have.been.called();
 	});
 	test('updateMetadataDate()', async () => {
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/test/metadata1.md'
@@ -120,7 +121,6 @@ suite('Metadata Controller', () => {
 		await sleep(500);
 		const actualText = window.activeTextEditor?.document.getText();
 
-		stub.restore();
 		// cleanup the modified metadata.md to prevent false positives for future tests.
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const { exec } = require('child_process');

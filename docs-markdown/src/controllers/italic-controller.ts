@@ -23,7 +23,7 @@ export function italicFormattingCommand() {
 /**
  * Replaces current selection with MD italic formated selection
  */
-export function formatItalic() {
+export async function formatItalic() {
 	const editor = window.activeTextEditor;
 	if (!editor) {
 		noActiveEditorMessage();
@@ -76,12 +76,12 @@ export function formatItalic() {
 
 			// calls formatter and returns selectedText as MD Italic
 			const formattedText = italicize(selectedText, range);
-			insertContentToEditor(editor, formattedText, true);
+			await insertContentToEditor(editor, formattedText, true);
 		}
 
 		// if multiple cursors were used to make selections
 		if (selections.length > 1) {
-			editor
+			await editor
 				.edit((edit: TextEditorEdit): void => {
 					selections.forEach((selection: Selection) => {
 						for (let i = selection.start.line; i <= selection.end.line; i++) {

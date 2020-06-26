@@ -6,7 +6,12 @@ import { commands, window, Selection } from 'vscode';
 import { formatBold, boldFormattingCommand } from '../../../controllers/bold-controller';
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
-import { loadDocumentAndGetItReady, sleep, sleepTime } from '../../test.common/common';
+import {
+	loadDocumentAndGetItReady,
+	sleep,
+	sleepTime,
+	extendedSleepTime
+} from '../../test.common/common';
 
 chai.use(spies);
 
@@ -106,7 +111,7 @@ suite('Bold Controller', () => {
 			new Selection(fromPositionTwo, toPositionTwo)
 		];
 		await formatBold();
-		await sleep(sleepTime);
+		await sleep(extendedSleepTime);
 		const line = editor?.document.lineAt(48).text;
 
 		expect(line).to.equal('**These** alerts **look** like this on docs.microsoft.com:');

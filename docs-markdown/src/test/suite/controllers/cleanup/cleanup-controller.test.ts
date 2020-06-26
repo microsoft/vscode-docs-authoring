@@ -26,7 +26,6 @@ import {
 chai.use(spies);
 
 import sinon = require('sinon');
-import { AssertionError } from 'assert';
 
 const expect = chai.expect;
 const filePath = resolve(
@@ -88,7 +87,6 @@ suite('Cleanup Controller', () => {
 			'../../../../../../src/test/data/repo/articles/test/cleanup-test.md'
 		);
 		await loadDocumentAndGetItReady(markdown);
-		const editor = window.activeTextEditor;
 		await applyCleanupFolder(
 			Uri.file(resolve(__dirname, '../../../../../../src/test/data/repo/articles/test'))
 		);
