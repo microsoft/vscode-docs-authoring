@@ -444,7 +444,9 @@ export async function findAndReplaceTargetExpressions(event: TextDocumentChangeE
 					}
 				);
 
-				await applyReplacements(replacements, editor);
+				if (replacements.length > 0) {
+					await applyReplacements(replacements, editor);
+				}
 			}
 		}
 	}
@@ -527,7 +529,7 @@ export function findReplacement(
 	if (result !== null && result.length) {
 		const groups = !isRegExp(expression) ? expression.groups : null;
 		const match = groups && result.groups ? result.groups[groups[0]] : result[0];
-		if (match) {
+		if (match && match !== value) {
 			let index = result.index;
 			if (groups) {
 				index += result[0].indexOf(match);

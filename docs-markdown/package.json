@@ -665,6 +665,11 @@
 				"markdown.allowlistUrl": {
 					"type": "string",
 					"default": "[ALLOWLISTURL]"
+				},
+				"markdown.metadataNag": {
+					"type": "boolean",
+					"default": false,
+					"description": "On save prompt to update ms.date if it's not up-to-date"
 				}
 			}
 		},
