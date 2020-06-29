@@ -115,44 +115,6 @@ export function unsupportedFileMessage(languageId: string) {
 	postWarning(`Command is not support for "${languageId}". Abandoning command.`);
 }
 
-export function GetEditorText(editor: vscode.TextEditor, senderName: string): string {
-	let content = '';
-	const emptyString = '';
-	if (isValidEditor(editor, false, senderName)) {
-		if (content !== undefined && content.trim() !== '') {
-			content = editor.document.getText();
-			return content;
-		} else {
-			return emptyString;
-		}
-	}
-	return emptyString;
-}
-
-export function GetEditorFileName(editor: vscode.TextEditor, senderName: string): string {
-	const emptyString = '';
-	if (editor !== undefined && editor.document !== undefined) {
-		const fileName = editor.document.fileName;
-		return fileName;
-	} else {
-		return emptyString;
-	}
-}
-
-/** Tests to see if there is content on the page.
- * @param {vscode.TextEditor} editor - the current active editor
- */
-export function hasContentAlready(editor: any) {
-	let content = editor.document.getText();
-	content = content.trim();
-
-	if (content !== '') {
-		return false;
-	}
-
-	return true;
-}
-
 export function hasValidWorkSpaceRootPath(senderName: string) {
 	let folderPath: string = '';
 
@@ -213,26 +175,6 @@ export async function insertContentToEditor(
 }
 
 /**
- * Remove the selected content from the active editor in the vs code window.
- * @param {vscode.TextEditor} editor - the active editor in vs code.
- * @param {string} senderName - the name of the the function that called the removal
- * @param {string} content - the content that is being removed.
- */
-export function removeContentFromEditor(
-	editor: vscode.TextEditor,
-	senderName: string,
-	content: string
-) {
-	try {
-		editor.edit(update => {
-			update.delete(editor.selection);
-		});
-	} catch (error) {
-		output.appendLine('Could not remove content from active editor window:' + error);
-	}
-}
-
-/**
  * Set the cursor to a new position, based on X and Y coordinates.
  * @param {vscode.TextEditor} editor -
  * @param {number} yPosition -
@@ -257,50 +199,6 @@ export function setSelectorPosition(
 	const toPosition = cursorPosition.with(toLine, toCharacter);
 	const newSelection = new vscode.Selection(fromPosition, toPosition);
 	editor.selection = newSelection;
-}
-
-export function setNewPosition(
-	editor: vscode.TextEditor,
-	offset: number,
-	startLine: number,
-	endLine: number
-) {
-	const selection = editor.selection;
-	let newCursorPosition = selection.active.character + offset;
-	newCursorPosition = newCursorPosition < 0 ? 0 : newCursorPosition;
-
-	if (
-		selection.start.character === selection.end.character &&
-		selection.start.line === selection.end.line
-	) {
-		setCursorPosition(editor, selection.active.line, newCursorPosition);
-	} else {
-		let newStartCharacter = 0;
-		let newEndCharacter = 0;
-		if (selection.active.character === selection.start.character) {
-			newStartCharacter = selection.end.character + offset;
-			newEndCharacter = selection.start.character + offset;
-		} else {
-			newStartCharacter = selection.start.character + offset;
-			newEndCharacter = selection.end.character + offset;
-		}
-
-		newStartCharacter = newStartCharacter < 0 ? 0 : newStartCharacter;
-		newEndCharacter = newEndCharacter < 0 ? 0 : newEndCharacter;
-
-		let newStartLine = 0;
-		let newEndLine = 0;
-		if (selection.start.line === selection.end.line || startLine === endLine) {
-			newStartLine = newEndLine = selection.active.line;
-		} else if (selection.active.line === startLine) {
-			newStartLine = endLine;
-			newEndLine = startLine;
-		} else {
-			newStartLine = startLine;
-			newEndLine = endLine;
-		}
-		setSelectorPosition(editor, newStartLine, newStartCharacter, newEndLine, newEndCharacter);
-	}
 }
 
 /**
