@@ -1,9 +1,9 @@
-import { activate } from '../../extension';
+import { activate, deactivate } from '../../extension';
 import { resolve } from 'path';
-import { ExtensionContext, Uri, commands, Disposable } from 'vscode';
+import { ExtensionContext, Uri, commands } from 'vscode';
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
-import { Reporter, PackageInfo } from '../../helper/telemetry';
+import { sleep, sleepTime } from '../test.common/common';
 
 chai.use(spies);
 import sinon = require('sinon');
@@ -50,10 +50,15 @@ const context: ExtensionContext = {
 	}
 };
 suite('Extension Tests', function () {
-	// Defines a Mocha unit test
 	test('registerCommand is called', function () {
 		const spy = chai.spy.on(commands, 'registerCommand');
 		activate(context);
 		expect(spy).to.have.been.called();
+	});
+	test('deactivate', () => {
+		const spy = chai.spy(deactivate);
+		deactivate();
+		sleep(sleepTime);
+		expect(spy).to.be.have.been.called;
 	});
 });
