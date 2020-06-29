@@ -1,6 +1,9 @@
 # Change Log
 
+## 0.2.75 (June 26th, 2020)
+
 - Support updating empty metadata
+- Authentication for allowlist on image extension
 
 ## 0.2.74 (June 11th, 2020)
 
