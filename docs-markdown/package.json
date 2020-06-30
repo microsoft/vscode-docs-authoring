@@ -4,7 +4,7 @@
 	"description": "Docs Markdown Extension",
 	"icon": "images/docs-logo-ms.png",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-	"version": "0.2.74",
+	"version": "0.2.75",
 	"publisher": "docsmsft",
 	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
 	"bugs": {
@@ -645,6 +645,26 @@
 					"type": "boolean",
 					"default": false,
 					"description": "When enabled, beta features will become available."
+				},
+				"markdown.tenant": {
+					"type": "string",
+					"default": "[TENANT]"
+				},
+				"markdown.clientId": {
+					"type": "string",
+					"default": "[CLIENTID]"
+				},
+				"markdown.clientSecret": {
+					"type": "string",
+					"default": "[CLIENTSECRET]"
+				},
+				"markdown.resource": {
+					"type": "string",
+					"default": "[RESOURCE]"
+				},
+				"markdown.allowlistUrl": {
+					"type": "string",
+					"default": "[ALLOWLISTURL]"
 				}
 			}
 		},
@@ -730,6 +750,7 @@
 		}
 	},
 	"dependencies": {
+		"adal-node": "^0.2.1",
 		"axios": "^0.19.2",
 		"child-process-promise": "^2.2.1",
 		"diff": "^4.0.2",

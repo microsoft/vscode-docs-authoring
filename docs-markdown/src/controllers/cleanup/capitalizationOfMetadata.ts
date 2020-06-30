@@ -14,13 +14,19 @@ export function capitalizationOfMetadata(
 	if (file.endsWith('.md')) {
 		return readWriteFileWithProgress(progress, file, message, files, index, data => {
 			if (data.startsWith('---')) {
-				data = lowerCaseData(data, 'ms.author');
-				data = lowerCaseData(data, 'author');
-				data = lowerCaseData(data, 'ms.prod');
-				data = lowerCaseData(data, 'ms.service');
-				data = lowerCaseData(data, 'ms.subservice');
-				data = lowerCaseData(data, 'ms.technology');
-				data = lowerCaseData(data, 'ms.topic');
+				const regex = new RegExp(`^(---)([^]+?)(---)$`, 'm');
+				const metadataMatch = data.match(regex);
+				let frontMatter = '';
+				if (metadataMatch) {
+					frontMatter = lowerCaseData(metadataMatch[2], 'ms.author');
+					frontMatter = lowerCaseData(metadataMatch[2], 'author');
+					frontMatter = lowerCaseData(metadataMatch[2], 'ms.prod');
+					frontMatter = lowerCaseData(metadataMatch[2], 'ms.service');
+					frontMatter = lowerCaseData(metadataMatch[2], 'ms.subservice');
+					frontMatter = lowerCaseData(metadataMatch[2], 'ms.technology');
+					frontMatter = lowerCaseData(metadataMatch[2], 'ms.topic');
+					data = data.replace(regex, `---${frontMatter}---`);
+				}
 			}
 			return data;
 		});
