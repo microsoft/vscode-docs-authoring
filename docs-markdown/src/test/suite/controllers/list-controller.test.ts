@@ -31,9 +31,6 @@ suite('List Controller', () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
 		sinon.restore();
 	});
-	suiteTeardown(async () => {
-		await commands.executeCommand('workbench.action.closeAllEditors');
-	});
 	suiteSetup(() => {
 		sinon.stub(telemetry, 'sendTelemetryData');
 	});
