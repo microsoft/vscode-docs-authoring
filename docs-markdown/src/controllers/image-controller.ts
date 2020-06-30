@@ -1,4 +1,3 @@
-import Axios from 'axios';
 import { existsSync } from 'fs';
 import { basename, dirname, extname, join, relative } from 'path';
 import * as recursive from 'recursive-readdir';
@@ -9,8 +8,10 @@ import {
 	QuickPickItem,
 	QuickPickOptions,
 	window,
-	workspace
+	workspace,
+	ExtensionContext
 } from 'vscode';
+import { Command } from '../Command';
 import {
 	hasValidWorkSpaceRootPath,
 	ignoreFiles,
@@ -29,21 +30,18 @@ const imageExtensions = ['.jpeg', '.jpg', '.png', '.gif', '.bmp', '.svg'];
 
 const telemetryCommand: string = 'insertImage';
 let commandOption: string;
-const locScopeItems: QuickPickItem[] = [];
 
-export function insertImageCommand() {
-	const commands = [
-		{ command: pickImageType.name, callback: pickImageType },
-		{ command: applyImage.name, callback: applyImage },
-		{ command: applyIcon.name, callback: applyIcon },
-		{ command: applyComplex.name, callback: applyComplex },
-		{ command: applyLocScope.name, callback: applyLocScope },
-		{ command: applyLightbox.name, callback: applyLightbox },
-		{ command: applyLink.name, callback: applyLink }
-	];
-	return commands;
-}
-export function pickImageType() {
+export const insertImageCommand: Command[] = [
+	{ command: pickImageType.name, callback: pickImageType },
+	{ command: applyImage.name, callback: applyImage },
+	{ command: applyIcon.name, callback: applyIcon },
+	{ command: applyComplex.name, callback: applyComplex },
+	{ command: applyLocScope.name, callback: applyLocScope },
+	{ command: applyLightbox.name, callback: applyLightbox },
+	{ command: applyLink.name, callback: applyLink }
+];
+
+export async function pickImageType(context: ExtensionContext) {
 	const opts: QuickPickOptions = { placeHolder: 'Select an Image type' };
 	const items: QuickPickItem[] = [];
 	const config = workspace.getConfiguration('markdown');
@@ -75,41 +73,40 @@ export function pickImageType() {
 		description: '',
 		label: 'Add link to image'
 	});
-	window.showQuickPick(items, opts).then(selection => {
-		if (!selection) {
-			return;
-		}
-		switch (selection.label.toLowerCase()) {
-			case 'image':
-				applyImage();
-				commandOption = 'image';
-				break;
-			case 'icon image':
-				applyIcon();
-				commandOption = 'icon';
-				break;
-			case 'complex image':
-				applyComplex();
-				commandOption = 'complex';
-				break;
-			case 'add localization scope to image':
-				applyLocScope();
-				commandOption = 'loc-scope';
-				break;
-			case 'add lightbox to image':
-				applyLightbox();
-				commandOption = 'lightbox';
-				break;
-			case 'add link to image':
-				applyLink();
-				commandOption = 'link';
-				break;
-		}
-		sendTelemetryData(telemetryCommand, commandOption);
-	});
+	const selection = await window.showQuickPick(items, opts);
+	if (!selection) {
+		return;
+	}
+	switch (selection.label.toLowerCase()) {
+		case 'image':
+			await applyImage(context);
+			commandOption = 'image';
+			break;
+		case 'icon image':
+			await applyIcon();
+			commandOption = 'icon';
+			break;
+		case 'complex image':
+			await applyComplex(context);
+			commandOption = 'complex';
+			break;
+		case 'add localization scope to image':
+			await applyLocScope(context);
+			commandOption = 'loc-scope';
+			break;
+		case 'add lightbox to image':
+			await applyLightbox();
+			commandOption = 'lightbox';
+			break;
+		case 'add link to image':
+			await applyLink();
+			commandOption = 'link';
+			break;
+	}
+	sendTelemetryData(telemetryCommand, commandOption);
 }
 
-export async function applyImage() {
+export async function applyImage(context: ExtensionContext) {
 	// get editor, its needed to apply the output to editor window.
 	const editor = window.activeTextEditor;
 	let folderPath: string = '';
@@ -178,12 +175,9 @@ export async function applyImage() {
 				const config = workspace.getConfiguration('markdown');
 				const alwaysIncludeLocScope = config.get<boolean>('alwaysIncludeLocScope');
 				if (alwaysIncludeLocScope) {
-					const notCached = locScopeItems.length <= 0;
-					if (notCached) {
-						await getLocScopeProducts();
-					}
+					const allowlist: QuickPickItem[] = context.globalState.get('allowlist');
 					// show quickpick to user for products list.
-					const locScope = await window.showQuickPick(locScopeItems, {
+					const locScope = await window.showQuickPick(allowlist, {
 						placeHolder: 'Select from product list'
 					});
 					if (locScope) {
@@ -197,38 +191,6 @@ export async function applyImage() {
 			}
 		});
 	}
-}
-
-async function getLocScopeProducts() {
-	// if user is inside :::image::: tag, then ask them for quickpick of products based on allow list
-	// call allowlist with API Auth Token
-	// you will need auth token to call list
-	const response = await Axios.get('https://docs.microsoft.com/api/metadata/allowlists');
-	// get products from response
-	const products: string[] = [];
-	Object.keys(response.data)
-		.filter(x => x.startsWith('list:product'))
-		.map((item: string) => {
-			const set = item.split(':');
-			if (set.length > 2) {
-				products.push(set[2]);
-				Object.keys(response.data[item].values).map((prod: string) =>
-					// push the response products into the list of quickpicks.
-					products.push(prod)
-				);
-			}
-		});
-	products.sort().map(item => {
-		locScopeItems.push({
-			label: item
-		});
-	});
-	locScopeItems.push({
-		label: 'other'
-	});
-	locScopeItems.push({
-		label: 'third-party'
-	});
 }
 
 function checkEditor(editor: any) {
@@ -328,7 +290,7 @@ export async function applyIcon() {
 	}
 	return;
 }
-export async function applyComplex() {
+export async function applyComplex(context: ExtensionContext) {
 	// get editor, its needed to apply the output to editor window.
 	const editor = window.activeTextEditor;
 	let folderPath: string = '';
@@ -395,12 +357,9 @@ export async function applyComplex() {
 				const config = workspace.getConfiguration('markdown');
 				const alwaysIncludeLocScope = config.get<boolean>('alwaysIncludeLocScope');
 				if (alwaysIncludeLocScope) {
-					const notCached = locScopeItems.length <= 0;
-					if (notCached) {
-						await getLocScopeProducts();
-					}
+					const allowlist: QuickPickItem[] = context.globalState.get('allowlist');
 					// show quickpick to user for products list.
-					const locScope = await window.showQuickPick(locScopeItems, {
+					const locScope = await window.showQuickPick(allowlist, {
 						placeHolder: 'Select from product list'
 					});
 					if (locScope) {
@@ -427,7 +386,7 @@ export async function applyComplex() {
 	}
 }
 
-export async function applyLocScope() {
+export async function applyLocScope(context: ExtensionContext) {
 	// get editor, its needed to apply the output to editor window.
 	const editor = window.activeTextEditor;
 	if (!editor) {
@@ -451,12 +410,9 @@ export async function applyLocScope() {
 			}
 		}
 		// if user is inside :::image::: tag, then ask them for quickpick of products based on allow list
-		const notCached = locScopeItems.length <= 0;
-		if (notCached) {
-			await getLocScopeProducts();
-		}
+		const allowlist: QuickPickItem[] = context.globalState.get('allowlist');
 		// show quickpick to user for products list.
-		const product = await window.showQuickPick(locScopeItems, {
+		const product = await window.showQuickPick(allowlist, {
 			placeHolder: 'Select from product list'
 		});
 		if (!product) {
@@ -464,7 +420,7 @@ export async function applyLocScope() {
 			return;
 		} else {
 			// insert loc-sope into editor
-			editor.edit(selected => {
+			await editor.edit(selected => {
 				selected.insert(
 					new Position(wordRange.end.line, wordRange.end.character - 3),
 					` loc-scope="${product.label}"`
@@ -531,7 +487,7 @@ export async function applyLightbox() {
 					join(image.description, image.label).split('//').join('//')
 				).replace(/\\/g, '/');
 
-				editor.edit(selected => {
+				await editor.edit(selected => {
 					selected.insert(
 						new Position(wordRange.end.line, wordRange.end.character - 3),
 						` lightbox="${imagePath}"`
@@ -596,18 +552,17 @@ export async function applyLink() {
 		const options: InputBoxOptions = {
 			placeHolder: 'Enter link (URL or relative path)'
 		};
-		window.showInputBox(options).then(imageLink => {
-			if (imageLink === undefined) {
-				postWarning('No link provided, abandoning command.');
-			} else {
-				editor.edit(selected => {
-					selected.insert(
-						new Position(wordRange.end.line, wordRange.end.character - 3),
-						` link="${imageLink}"`
-					);
-				});
-			}
-		});
+		const imageLink = await window.showInputBox(options);
+		if (imageLink === undefined) {
+			postWarning('No link provided, abandoning command.');
+		} else {
+			await editor.edit(selected => {
+				selected.insert(
+					new Position(wordRange.end.line, wordRange.end.character - 3),
+					` link="${imageLink}"`
+				);
+			});
+		}
 	} else {
 		const RE_LINK_EXISTS = /:::image\s+((source|type|alt-text|lightbox|border|loc-scope|link)="([a-zA-Z0-9_.\/ -:]+)"\s*)+:::/gm;
 		const linkAlreadyExists = editor.document.getWordRangeAtPosition(position, RE_LINK_EXISTS);

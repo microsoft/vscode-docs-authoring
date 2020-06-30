@@ -23,7 +23,7 @@ export function boldFormattingCommand() {
 /**
  * Replaces current selection with MD bold formatted selection
  */
-export function formatBold() {
+export async function formatBold() {
 	const editor = window.activeTextEditor;
 	if (!editor) {
 		noActiveEditorMessage();
@@ -54,7 +54,7 @@ export function formatBold() {
 			);
 			// calls formatter and returns selectedText as MD bold
 			const formattedText = bold(selectedText);
-			insertUnselectedText(editor, formatBold.name, formattedText, range);
+			await insertUnselectedText(editor, formatBold.name, formattedText, range);
 		}
 
 		// if only a selection is made with a single cursor

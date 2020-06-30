@@ -22,8 +22,10 @@ export function handleSingleValuedMetadata(
 				if (data.startsWith('---')) {
 					const regex = new RegExp(`^(---)([^]+?)(---)$`, 'm');
 					const metadataMatch = data.match(regex);
+					let frontMatter = '';
 					if (metadataMatch) {
-						data = handleMarkdownMetadata(data, metadataMatch[2]);
+						frontMatter = handleMarkdownMetadata(metadataMatch[2]);
+						data = data.replace(regex, `---${frontMatter}---`);
 					}
 				}
 			}
