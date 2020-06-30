@@ -30,9 +30,9 @@ suite('Italic Controller', () => {
 		const controllerCommands = [{ command: formatItalic.name, callback: formatItalic }];
 		expect(italicFormattingCommand()).to.deep.equal(controllerCommands);
 	});
-	test('noActiveEditorMessage', () => {
+	test('noActiveEditorMessage', async () => {
 		const spy = chai.spy.on(common, 'noActiveEditorMessage');
-		formatItalic();
+		await formatItalic();
 		expect(spy).to.have.been.called();
 	});
 	test('isMarkdownFileCheck', async () => {
@@ -42,7 +42,7 @@ suite('Italic Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const spy = chai.spy.on(common, 'isMarkdownFileCheck');
-		formatItalic();
+		await formatItalic();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 	});
@@ -56,7 +56,7 @@ suite('Italic Controller', () => {
 		common.setSelectorPosition(editor, 14, 0, 14, 0);
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
-		formatItalic();
+		await formatItalic();
 		await sleep(sleepTime);
 
 		expect(spy).to.have.been.called();
@@ -71,7 +71,7 @@ suite('Italic Controller', () => {
 		common.setSelectorPosition(editor, 15, 0, 15, 1);
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
-		formatItalic();
+		await formatItalic();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 	});
@@ -83,7 +83,7 @@ suite('Italic Controller', () => {
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
 		common.setSelectorPosition(editor, 163, 0, 163, 4);
-		formatItalic();
+		await formatItalic();
 		await sleep(sleepTime);
 		const line = editor?.document.lineAt(163).text;
 
@@ -105,7 +105,7 @@ suite('Italic Controller', () => {
 			new Selection(fromPositionOne, toPositionOne),
 			new Selection(fromPositionTwo, toPositionTwo)
 		];
-		formatItalic();
+		await formatItalic();
 		await sleep(sleepTime);
 		const line = editor?.document.lineAt(45).text;
 

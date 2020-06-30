@@ -9,7 +9,8 @@ import {
 	TextDocumentChangeEvent,
 	TextEditor,
 	window,
-	workspace
+	workspace,
+	Position
 } from 'vscode';
 import {
 	ignoreFiles,
@@ -530,7 +531,7 @@ export function findReplacement(
 				index += result[0].indexOf(match);
 			}
 			const startPosition = document.positionAt(index);
-			const endPosition = document.positionAt(index + match.length);
+			const endPosition = new Position(startPosition.line, startPosition.character + match.length);
 			const selection = new Selection(startPosition, endPosition);
 
 			return {

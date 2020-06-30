@@ -26,7 +26,6 @@ import {
 chai.use(spies);
 
 import sinon = require('sinon');
-import { AssertionError } from 'assert';
 
 const expect = chai.expect;
 const filePath = resolve(
@@ -81,15 +80,13 @@ suite('Cleanup Controller', () => {
 		expect(spy).to.have.been.called();
 	});
 	test('cleanup folder - single-valued metadata (recursive folders)', async () => {
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({ label: 'single-valued metadata', detail: '' }) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({ label: 'single-valued metadata', detail: '' });
 		const markdown = resolve(
 			__dirname,
 			'../../../../../../src/test/data/repo/articles/test/cleanup-test.md'
 		);
 		await loadDocumentAndGetItReady(markdown);
-		const editor = window.activeTextEditor;
 		await applyCleanupFolder(
 			Uri.file(resolve(__dirname, '../../../../../../src/test/data/repo/articles/test'))
 		);
@@ -101,6 +98,7 @@ suite('Cleanup Controller', () => {
 		const { exec } = require('child_process');
 		exec('cd ' + __dirname + ' && git checkout ' + markdown);
 		chai.assert.equal(expectedText, actualText);
+		stubShowQuickPick.restore();
 	});
 	test('cleanup repo - recurseCallback - microsoft links', async () => {
 		await loadDocumentAndGetItReady(filePath);
@@ -332,9 +330,8 @@ suite('Cleanup Controller', () => {
 		expect(spy).to.have.been.called();
 	});
 	test('dirty doc - skips cleanup', async () => {
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve({ label: 'single-valued metadata', detail: '' }) as Thenable<any>;
-		};
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		stubShowQuickPick.onCall(0).resolves({ label: 'single-valued metadata', detail: '' });
 		const markdown = resolve(
 			__dirname,
 			'../../../../../../src/test/data/repo/markdown-stubs/cleanup-test.md'
@@ -359,5 +356,6 @@ suite('Cleanup Controller', () => {
 		const { exec } = require('child_process');
 		exec('cd ' + __dirname + ' && git checkout ' + markdown);
 		chai.assert.equal(expectedText, actualText);
+		stubShowQuickPick.restore();
 	});
 });

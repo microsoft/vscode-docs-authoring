@@ -37,13 +37,11 @@ export function applyTemplateCommand() {
 }
 
 export async function applyTemplate() {
-	// generate current date/time for timestamp, clean up template directory and download copy of the template repo.
-	generateTimestamp();
-	cleanupDownloadFiles(true);
-	downloadRepo();
+	// clean up template directory and download copy of the template repo.
+	cleanupDownloadFiles(true).then(() => downloadRepo());
 }
 
-export function displayTemplates() {
+export async function displayTemplates() {
 	showStatusMessage(displayTemplateList);
 
 	let templateName;
@@ -156,8 +154,7 @@ export async function downloadRepo() {
 			postWarning(err ? `Error: Cannot connect to ${templateRepo}` : 'Success');
 			showStatusMessage(err ? `Error: Cannot connect to ${templateRepo}` : 'Success');
 		} else {
-			displayTemplates();
-			logRepoData();
+			displayTemplates().then(() => logRepoData());
 		}
 	});
 }

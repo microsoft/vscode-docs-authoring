@@ -18,6 +18,8 @@ dist
 node_modules
 *.vsix
 /package-lock.json
+.vscode-test/**
+coverage
 
 # Build results
 [Dd]ebug/

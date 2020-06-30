@@ -22,7 +22,7 @@ export async function insertUnselectedText(
 	range: vscode.Range
 ) {
 	if (formattedText === '****' || formattedText === '**' || formattedText === '``') {
-		common.insertContentToEditor(editor, formattedText, true);
+		await common.insertContentToEditor(editor, formattedText, true);
 
 		// Gets the cursor position
 		const position = editor.selection.active;

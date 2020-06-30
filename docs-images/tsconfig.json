@@ -14,6 +14,6 @@
 		"sourceMap": true,
 		"rootDir": "."
 	},
-	"include": ["src/**/*", "test/**/*", ".eslintrc.js"],
-	"exclude": [".vscode-test"]
+	"include": ["src/**/*", ".eslintrc.js"],
+	"exclude": ["node_modules", ".vscode-test"]
 }
