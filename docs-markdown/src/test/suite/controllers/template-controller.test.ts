@@ -14,7 +14,7 @@ const expect = chai.expect;
 
 const testFile = '../../../../../src/test/data/repo/articles/template-controller.md';
 
-suite('template Controller', () => {
+suite('Template Controller', () => {
 	// Reset and tear down the spies
 	suiteSetup(async () => {
 		sinon.stub(telemetry, 'sendTelemetryData');
@@ -53,12 +53,11 @@ suite('template Controller', () => {
 	test('applyTemplate - executeCommand', async () => {
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
 		stubShowQuickPick.onCall(0).resolves('docs-article-metadata.md');
+		sinon.stub(common, 'checkExtension').returns(true);
 		const spy = chai.spy.on(commands, 'executeCommand');
-		if (common.checkExtension('docsmsft.docs-article-templates', '')) {
-			applyTemplate();
-			await sleep(sleepTime);
-			expect(spy).to.have.been.called();
-		}
+		applyTemplate();
+		await sleep(sleepTime);
+		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
 	});
 });
