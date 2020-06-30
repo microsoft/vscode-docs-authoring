@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { resolve } from 'path';
-import { commands, window } from 'vscode';
+import { commands, QuickPickItem, window } from 'vscode';
 import {
 	automaticList,
 	insertBulletedList,
@@ -29,8 +29,14 @@ suite('List Controller', () => {
 	});
 	suiteTeardown(async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
+		sinon.restore();
 	});
-
+	suiteTeardown(async () => {
+		await commands.executeCommand('workbench.action.closeAllEditors');
+	});
+	suiteSetup(() => {
+		sinon.stub(telemetry, 'sendTelemetryData');
+	});
 	test('insertListsCommands', () => {
 		const controllerCommands = [
 			{ command: automaticList.name, callback: automaticList },
@@ -49,50 +55,46 @@ suite('List Controller', () => {
 	test('isMarkdownFileCheck', async () => {
 		const filePath = resolve(__dirname, '../../../../../src/test/data/repo/articles/list.md');
 		await loadDocumentAndGetItReady(filePath);
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		const spy = chai.spy.on(common, 'isMarkdownFileCheck');
 		insertNumberedList();
 		await sleep(100);
 		expect(spy).to.have.been.called();
-		stub.restore();
 	});
 	test('insertList', async () => {
 		const editor = window.activeTextEditor;
 		common.setCursorPosition(editor, 27, 0);
 		await sleep(100);
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve('Numbered list') as Thenable<any>;
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const item: QuickPickItem = {
+			label: 'Numbered list'
 		};
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
+		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(list, 'insertList');
 		insertNumberedList();
 		await sleep(100);
 		expect(spy).to.have.been.called();
-		stub.restore();
 	});
 	test('createNumberedListFromText', async () => {
 		const editor = window.activeTextEditor;
 		common.setSelectorPosition(editor, 14, 0, 16, 19);
 		await sleep(100);
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		const spy = chai.spy.on(list, 'createNumberedListFromText');
 		insertNumberedList();
 		await sleep(100);
 		expect(spy).to.have.been.called();
-		stub.restore();
 	});
 	test('createBulletedListFromText', async () => {
 		const editor = window.activeTextEditor;
 		common.setSelectorPosition(editor, 18, 0, 20, 19);
-		window.showQuickPick = (items: string[] | Thenable<string[]>) => {
-			return Promise.resolve('Bulleted list') as Thenable<any>;
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const item: QuickPickItem = {
+			label: 'Bulleted list'
 		};
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
+		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(list, 'createBulletedListFromText');
 		insertBulletedList();
 		await sleep(100);
 		expect(spy).to.have.been.called();
-		stub.restore();
 	});
 	test('insertContentToEditor', async () => {
 		const spy = chai.spy.on(common, 'insertContentToEditor');
