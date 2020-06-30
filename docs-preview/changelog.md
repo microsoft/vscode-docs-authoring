@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.52 (June 26th, 2020)
+
+- Added clickable links with tilde(~) on preview.
+
 ## 0.3.51 (June 4th, 2020)
 
 - Added triple colon video extension support.

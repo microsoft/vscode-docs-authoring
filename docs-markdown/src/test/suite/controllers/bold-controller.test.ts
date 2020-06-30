@@ -6,7 +6,12 @@ import { commands, window, Selection } from 'vscode';
 import { formatBold, boldFormattingCommand } from '../../../controllers/bold-controller';
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
-import { loadDocumentAndGetItReady, sleep, sleepTime } from '../../test.common/common';
+import {
+	loadDocumentAndGetItReady,
+	sleep,
+	sleepTime,
+	extendedSleepTime
+} from '../../test.common/common';
 
 chai.use(spies);
 
@@ -30,9 +35,9 @@ suite('Bold Controller', () => {
 		const controllerCommands = [{ command: formatBold.name, callback: formatBold }];
 		expect(boldFormattingCommand()).to.deep.equal(controllerCommands);
 	});
-	test('noActiveEditorMessage', () => {
+	test('noActiveEditorMessage', async () => {
 		const spy = chai.spy.on(common, 'noActiveEditorMessage');
-		formatBold();
+		await formatBold();
 		expect(spy).to.have.been.called();
 	});
 	test('isMarkdownFileCheck', async () => {
@@ -42,7 +47,7 @@ suite('Bold Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const spy = chai.spy.on(common, 'isMarkdownFileCheck');
-		formatBold();
+		await formatBold();
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
 	});
@@ -56,8 +61,8 @@ suite('Bold Controller', () => {
 		common.setSelectorPosition(editor, 12, 0, 12, 0);
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
-		formatBold();
-		await sleep(sleepTime);
+		await formatBold();
+		await sleep(extendedSleepTime);
 
 		expect(spy).to.have.been.called();
 	});
@@ -71,8 +76,8 @@ suite('Bold Controller', () => {
 		common.setSelectorPosition(editor, 15, 0, 15, 1);
 
 		const spy = chai.spy.on(common, 'insertContentToEditor');
-		formatBold();
-		await sleep(sleepTime);
+		await formatBold();
+		await sleep(extendedSleepTime);
 		expect(spy).to.have.been.called();
 	});
 	test('Bold Format Word Selection', async () => {
@@ -83,8 +88,8 @@ suite('Bold Controller', () => {
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
 		common.setSelectorPosition(editor, 159, 0, 159, 4);
-		formatBold();
-		await sleep(sleepTime);
+		await formatBold();
+		await sleep(extendedSleepTime);
 		const line = editor?.document.lineAt(159).text;
 
 		expect(line).to.equal('**Body**');
@@ -105,8 +110,8 @@ suite('Bold Controller', () => {
 			new Selection(fromPositionOne, toPositionOne),
 			new Selection(fromPositionTwo, toPositionTwo)
 		];
-		formatBold();
-		await sleep(sleepTime);
+		await formatBold();
+		await sleep(extendedSleepTime);
 		const line = editor?.document.lineAt(48).text;
 
 		expect(line).to.equal('**These** alerts **look** like this on docs.microsoft.com:');

@@ -3,7 +3,7 @@ import { join } from 'path';
 import { showStatusMessage, templateDirectory, docsAuthoringDirectory } from './common';
 
 // the download process is on a repo-level so this function will be used to delete any files pulled down by the download process.
-export function cleanupDownloadFiles(templates?: boolean) {
+export async function cleanupDownloadFiles(templates?: boolean) {
 	let workingDirectory: string;
 
 	if (templates) {
