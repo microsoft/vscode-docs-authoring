@@ -22,22 +22,21 @@ suite('Utility helper class', () => {
 		expect(lang ? lang.language : '').to.be.equal('TypeScript');
 	});
 	test('videoLinkBuilder returns triple colon video', () => {
-		workspace.getConfiguration = () => {
-			return {
+		const stubWorkspaceConfiguration = sinon.stub(workspace, 'getConfiguration').returns({
 				get: () => true,
 				has: () => true,
 				inspect: () => {
 					return { key: '' };
 				},
 				update: () => Promise.resolve()
-			};
-		};
+			});
 		const videoLink = utility.videoLinkBuilder(
 			'https://channel9.msdn.com/Series/Youve-Got-Key-Values-A-Redis-Jump-Start/03/player'
 		);
 		expect(videoLink).to.be.equal(
 			`:::video source="https://channel9.msdn.com/Series/Youve-Got-Key-Values-A-Redis-Jump-Start/03/player":::`
 		);
+		stubWorkspaceConfiguration.restore();
 	});
 	test('inferLanguageFromFileExtension returns correct language when found', () => {
 		const lang = utility.inferLanguageFromFileExtension('.ts');

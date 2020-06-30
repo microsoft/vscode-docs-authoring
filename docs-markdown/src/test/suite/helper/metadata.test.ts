@@ -30,7 +30,6 @@ suite('Metadata Helper', () => {
 		chai.spy.restore(metadata);
 		sinon.restore();
 	});
-
 	test('noActiveEditorMessage', async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
 		const spy = chai.spy.on(common, 'noActiveEditorMessage');
