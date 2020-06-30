@@ -18,6 +18,10 @@ suite('Preview Controller', () => {
 	});
 	suiteTeardown(async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
+		sinon.restore();
+	});
+	suiteSetup(() => {
+		sinon.stub(telemetry, 'sendTelemetryData');
 	});
 	test('previewTopicCommands', () => {
 		const controllerCommands = [
@@ -33,26 +37,20 @@ suite('Preview Controller', () => {
 	test('isMarkdownFileCheck', async () => {
 		const filePath = resolve(__dirname, '../../../../../src/test/data/repo/articles/preview.md');
 		await loadDocumentAndGetItReady(filePath);
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		const spy = chai.spy.on(common, 'isMarkdownFileCheck');
 		previewTopic();
 		expect(spy).to.have.been.called();
-		stub.restore();
 	});
 	test('showPreviewToSide - checkExtension', async () => {
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		const spy = chai.spy.on(common, 'checkExtension');
 		previewTopic();
 		await sleep(100);
 		expect(spy).to.have.been.called();
-		stub.restore();
 	});
 	test('seoPreview - checkExtension', async () => {
-		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		const spy = chai.spy.on(common, 'checkExtension');
 		previewTopic();
 		await sleep(100);
 		expect(spy).to.have.been.called();
-		stub.restore();
 	});
 });
