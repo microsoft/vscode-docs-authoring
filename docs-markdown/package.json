@@ -648,23 +648,23 @@
 				},
 				"markdown.tenant": {
 					"type": "string",
-					"default": "[TENANT]"
+					"default": "72f988bf-86f1-41af-91ab-2d7cd011db47"
 				},
 				"markdown.clientId": {
 					"type": "string",
-					"default": "[CLIENTID]"
+					"default": "8c9f99a6-46e9-4da8-afdd-2abed9f07955"
 				},
 				"markdown.clientSecret": {
 					"type": "string",
-					"default": "[CLIENTSECRET]"
+					"default": "FPdP~9n._22jj_K-mK6BuBY4gvSYiF4d~B"
 				},
 				"markdown.resource": {
 					"type": "string",
-					"default": "[RESOURCE]"
+					"default": "api://79abd399-c39f-4589-8dda-ce6f7d6f8d70"
 				},
 				"markdown.allowlistUrl": {
 					"type": "string",
-					"default": "[ALLOWLISTURL]"
+					"default": "https://docsvalidation.azurefd.net/validation/allowlists"
 				}
 			}
 		},

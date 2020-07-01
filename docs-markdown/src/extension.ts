@@ -65,11 +65,16 @@ import { output } from './helper/output';
 import { Reporter } from './helper/telemetry';
 import { tripleColonCompletionItemsProvider } from './helper/triple-colon-extensions';
 import { UiHelper } from './helper/ui';
-import { findAndReplaceTargetExpressions } from './helper/utility';
+import { findAndReplaceTargetExpressions, checkVersion } from './helper/utility';
 import { isCursorInsideYamlHeader } from './helper/yaml-metadata';
 import { Command } from './Command';
-import { Auth } from './helper/Auth';
 import { AllowList } from './helper/AllowList';
+import {
+	msProdCompletionItemsProvider,
+	msServiceCompletionItemsProvider,
+	msTechnologyCompletionItemsProvider,
+	msSubServiceCompletionItemsProvider
+} from './helper/metadata-completion';
 
 export let extensionPath: string;
 type Commands = Command[];
@@ -88,7 +93,12 @@ export async function activate(context: ExtensionContext) {
 	const { msTimeValue } = generateTimestamp();
 	output.appendLine(`[${msTimeValue}] - Activating docs markdown extension.`);
 	const allowList = new AllowList(context);
-	await allowList.getAllowList();
+	const shouldUpdate = checkVersion(context);
+	if (shouldUpdate) {
+		await allowList.forceRefreshAllowList();
+	} else {
+		await allowList.getAllowList();
+	}
 	// Places "Docs Markdown Authoring" into the Toolbar
 	new UiHelper().LoadToolbar();
 
@@ -142,6 +152,22 @@ export async function activate(context: ExtensionContext) {
 		}
 	);
 
+	languages.registerCompletionItemProvider(
+		'markdown',
+		msSubServiceCompletionItemsProvider(context),
+		':'
+	);
+	languages.registerCompletionItemProvider(
+		'markdown',
+		msTechnologyCompletionItemsProvider(context),
+		':'
+	);
+	languages.registerCompletionItemProvider(
+		'markdown',
+		msServiceCompletionItemsProvider(context),
+		':'
+	);
+	languages.registerCompletionItemProvider('markdown', msProdCompletionItemsProvider(context), ':');
 	languages.registerCompletionItemProvider('markdown', tripleColonCompletionItemsProvider, ':');
 	languages.registerCompletionItemProvider('markdown', markdownCompletionItemsProvider, '`');
 	languages.registerCodeActionsProvider('markdown', markdownCodeActionProvider);
