@@ -49,7 +49,7 @@ suite('Preview Controller', () => {
 	});
 	test('seoPreview - checkExtension', async () => {
 		const spy = chai.spy.on(common, 'checkExtension');
-		previewTopic();
+		seoPreview();
 		await sleep(100);
 		expect(spy).to.have.been.called();
 	});
