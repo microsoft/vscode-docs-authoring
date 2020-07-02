@@ -23,13 +23,6 @@ const qpSelectionItems = [
 	{ description: root.fsPath + sep + 'includes', label: '3.md' }
 ];
 
-// new line in current cursor position
-async function insertBlankLine(editor: TextEditor) {
-	await common.insertContentToEditor(editor, '\r\n');
-}
-function moveCursor(editor: TextEditor, y: number, x: number) {
-	common.setCursorPosition(editor, y, x);
-}
 suite('Include Controller', () => {
 	suiteSetup(() => {
 		sinon.stub(telemetry, 'sendTelemetryData');
