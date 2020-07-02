@@ -70,6 +70,7 @@ suite('List Controller', () => {
 		insertNumberedList();
 		await sleep(100);
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('createNumberedListFromText', async () => {
 		const editor = window.activeTextEditor;
@@ -92,6 +93,7 @@ suite('List Controller', () => {
 		insertBulletedList();
 		await sleep(100);
 		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
 	});
 	test('insertContentToEditor', async () => {
 		const spy = chai.spy.on(common, 'insertContentToEditor');
