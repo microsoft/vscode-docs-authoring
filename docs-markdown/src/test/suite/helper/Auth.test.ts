@@ -28,8 +28,8 @@ suite('Auth', () => {
 		const auth = new Auth(context);
 		auth.getToken().then(token => {
 			expect(token).to.deep.equal(tokenResponse);
-			getConfigurationStub.restore();
-			authenticationContextStub.restore();
 		});
+		authenticationContextStub.restore();
+		getConfigurationStub.restore();
 	});
 });

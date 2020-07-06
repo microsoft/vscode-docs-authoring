@@ -39,8 +39,8 @@ suite('AllowList', () => {
 		const allowlist = new AllowList(context);
 		allowlist.getAllowList().then(() => {
 			expect(spy).to.have.been.called();
-			getConfigurationStub.restore();
-			authenticationContextStub.restore();
 		});
+		getConfigurationStub.restore();
+		authenticationContextStub.restore();
 	});
 });
