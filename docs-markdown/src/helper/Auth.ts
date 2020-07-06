@@ -49,7 +49,7 @@ export class Auth {
 							reject();
 						} else {
 							await this.saveToken(tokenResponse);
-							resolve(token);
+							return resolve(tokenResponse);
 						}
 					}
 				);

@@ -16,22 +16,18 @@ export class AllowList {
 		const auth = new Auth(this.context);
 		this.token = this.context.globalState.get('token');
 		const expiresTime = Math.round(new Date().getTime() / 1000);
-		let promises: Promise<any>[] = [];
 		if (!this.token) {
-			promises = [auth.getToken()];
+			this.token = await auth.getToken();
 		}
-		Promise.all(promises).then(async () => {
-			this.allowlist = this.context.globalState.get('allowlist');
-			this.token = this.context.globalState.get('token');
-			if (
-				!this.allowlist ||
-				(this.token &&
-					this.token.expiresIn &&
-					Math.round((new Date().getTime() + this.token.expiresIn * 1000) / 1000) < expiresTime)
-			) {
-				await this.refreshAllowList(this.token);
-			}
-		});
+		this.allowlist = this.context.globalState.get('allowlist');
+		if (
+			!this.allowlist ||
+			(this.token &&
+				this.token.expiresIn &&
+				Math.round((new Date().getTime() + this.token.expiresIn * 1000) / 1000) < expiresTime)
+		) {
+			await this.refreshAllowList(this.token);
+		}
 	};
 	forceRefreshAllowList = async () => {
 		const auth = new Auth(this.context);
