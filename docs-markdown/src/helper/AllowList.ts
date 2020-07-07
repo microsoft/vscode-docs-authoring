@@ -13,28 +13,24 @@ export class AllowList {
 		this.context = context;
 	}
 	getAllowList = async () => {
-		const auth = new Auth(this.context);
 		this.token = this.context.globalState.get('token');
-		const expiresTime = Math.round(new Date().getTime() / 1000);
-		if (!this.token) {
-			this.token = await auth.getToken();
-		}
-		this.allowlist = this.context.globalState.get('allowlist');
+		const currentDate = new Date();
 		if (
-			!this.allowlist ||
-			(this.token &&
-				this.token.expiresIn &&
-				Math.round((new Date().getTime() + this.token.expiresIn * 1000) / 1000) < expiresTime)
+			!this.token ||
+			(this.token && this.token.expiresOn && new Date(this.token.expiresOn) < currentDate)
 		) {
-			await this.refreshAllowList(this.token);
+			await this.forceRefreshAllowList();
+		} else {
+			this.allowlist = this.context.globalState.get('allowlist');
+			if (!this.allowlist) {
+				await this.refreshAllowList(this.token);
+			}
 		}
 	};
 	forceRefreshAllowList = async () => {
 		const auth = new Auth(this.context);
-		auth.getToken().then(async () => {
-			this.allowlist = this.context.globalState.get('allowlist');
-			this.token = this.context.globalState.get('token');
-			await this.refreshAllowList(this.token);
+		auth.getToken().then(async token => {
+			await this.refreshAllowList(token);
 		});
 	};
 	refreshAllowList = async (token: TokenResponse) => {

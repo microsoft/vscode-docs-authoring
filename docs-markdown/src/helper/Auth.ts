@@ -29,33 +29,24 @@ export class Auth {
 	constructor(context) {
 		this.context = context;
 	}
-	getToken = async (): Promise<TokenResponse> => {
-		const token: TokenResponse = this.context.globalState.get('token');
-		const expiresTime = Math.round(new Date().getTime() / 1000);
-		if (
-			!token ||
-			(token.expiresIn &&
-				Math.round((new Date().getTime() + token.expiresIn * 1000) / 1000) < expiresTime)
-		) {
-			const authContext = new AuthenticationContext(this.authorityUrl);
-			return new Promise((resolve, reject) => {
-				authContext.acquireTokenWithClientCredentials(
-					this.resource,
-					this.clientId,
-					this.clientSecret,
-					async (err, tokenResponse: TokenResponse) => {
-						if (err) {
-							output.appendLine(err);
-							reject();
-						} else {
-							await this.saveToken(tokenResponse);
-							return resolve(tokenResponse);
-						}
+	getToken = (): Promise<TokenResponse> => {
+		const authContext = new AuthenticationContext(this.authorityUrl);
+		return new Promise((resolve, reject) => {
+			authContext.acquireTokenWithClientCredentials(
+				this.resource,
+				this.clientId,
+				this.clientSecret,
+				async (err, tokenResponse: TokenResponse) => {
+					if (err) {
+						output.appendLine(err);
+						reject();
+					} else {
+						await this.saveToken(tokenResponse);
+						return resolve(tokenResponse);
 					}
-				);
-			});
-		}
-		return Promise.resolve(token);
+				}
+			);
+		});
 	};
 	saveToken = async (token: TokenResponse) => {
 		if (token) {
