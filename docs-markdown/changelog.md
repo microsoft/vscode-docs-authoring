@@ -1,5 +1,7 @@
 # Change Log
 
+- Add list-controller tests
+
 ## 0.2.75 (June 26th, 2020)
 
 - Support updating empty metadata
