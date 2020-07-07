@@ -24,6 +24,8 @@ import {
 	HighlightLanguage,
 	languages
 } from './highlight-langs';
+import { ExtensionContext, extensions } from 'vscode';
+
 /**
  * Checks the user input for table creation.
  * Format - C:R.
@@ -599,4 +601,15 @@ export function findMatchesInText(
 	}
 
 	return values;
+}
+
+export function checkVersion(context: ExtensionContext) {
+	const extensionVersion = extensions.getExtension('docsmsft.docs-markdown').packageJSON.version;
+	const version = context.globalState.get('version');
+	if (!version || version !== extensionVersion) {
+		context.globalState.update('version', extensionVersion);
+		return true;
+	} else {
+		return false;
+	}
 }
