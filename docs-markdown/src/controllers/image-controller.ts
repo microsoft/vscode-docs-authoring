@@ -175,7 +175,7 @@ export async function applyImage(context: ExtensionContext) {
 				const config = workspace.getConfiguration('markdown');
 				const alwaysIncludeLocScope = config.get<boolean>('alwaysIncludeLocScope');
 				if (alwaysIncludeLocScope) {
-					const allowlist: QuickPickItem[] = context.globalState.get('allowlist');
+					const allowlist: QuickPickItem[] = context.globalState.get('product');
 					// show quickpick to user for products list.
 					const locScope = await window.showQuickPick(allowlist, {
 						placeHolder: 'Select from product list'
@@ -357,7 +357,7 @@ export async function applyComplex(context: ExtensionContext) {
 				const config = workspace.getConfiguration('markdown');
 				const alwaysIncludeLocScope = config.get<boolean>('alwaysIncludeLocScope');
 				if (alwaysIncludeLocScope) {
-					const allowlist: QuickPickItem[] = context.globalState.get('allowlist');
+					const allowlist: QuickPickItem[] = context.globalState.get('product');
 					// show quickpick to user for products list.
 					const locScope = await window.showQuickPick(allowlist, {
 						placeHolder: 'Select from product list'
@@ -410,7 +410,7 @@ export async function applyLocScope(context: ExtensionContext) {
 			}
 		}
 		// if user is inside :::image::: tag, then ask them for quickpick of products based on allow list
-		const allowlist: QuickPickItem[] = context.globalState.get('allowlist');
+		const allowlist: QuickPickItem[] = context.globalState.get('product');
 		// show quickpick to user for products list.
 		const product = await window.showQuickPick(allowlist, {
 			placeHolder: 'Select from product list'
