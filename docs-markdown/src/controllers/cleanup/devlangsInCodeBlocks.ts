@@ -1,9 +1,9 @@
-import { escapeRegExp, splice } from '../../helper/common';
 import { reporter } from '../../helper/telemetry';
 import { readWriteFileWithProgress } from './utilities';
 
 const telemetryCommand: string = 'applyCleanup';
-let drink;
+export const regex = new RegExp(/(```([A-Za-z#]+))/g);
+export const devLangRegex = new RegExp(/```[A-Za-z#]+/i);
 
 /**
  * Lower cases all metadata found in .md files
@@ -27,19 +27,22 @@ export function cleanUpDevLangInCodeBlocks(
 }
 
 function findCodeBlocks(data: string) {
-	const regex = new RegExp(/```(.*)[\s\S]*?```/g);
 	data = convertDevlang(data, regex);
 	return data;
 }
 
-function convertDevlang(data: string, regex: RegExp) {
+export function convertDevlang(data: string, regex: RegExp) {
 	const matches = data.match(regex);
 	if (matches) {
-		matches.forEach(match => {
-			const devlLang = regex.exec(match);
-			if (devlLang[1]) {
-			}
+		// make all devlangs lowercase
+		data = data.replace(devLangRegex, function (match) {
+			return match.toLowerCase();
 		});
+		// convert non-supported values to supported ones
+		const csharpRegex = new RegExp(/```(c#|cs)\s/gi);
+		data = data.replace(csharpRegex, '```csharp');
+		const markdownRegex = new RegExp(/```markdown\s/gi);
+		data = data.replace(markdownRegex, '```md');
+		return data;
 	}
-	return data;
 }
