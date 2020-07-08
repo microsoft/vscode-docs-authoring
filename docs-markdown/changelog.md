@@ -1,6 +1,9 @@
 # Change Log
 
+## 0.2.76 (July 7th, 2020)
+
 - Add list-controller tests
+- Added auto-complete for ms.prod, ms.service, ms.subservice, and ms.technology.
 
 ## 0.2.75 (June 26th, 2020)
 
