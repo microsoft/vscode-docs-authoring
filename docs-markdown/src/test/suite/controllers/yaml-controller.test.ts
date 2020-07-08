@@ -145,7 +145,9 @@ suite('Yaml Controller', () => {
 		const filePath = resolve(__dirname, file);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setCursorPosition(editor, 7, 2);
+		common.setCursorPosition(editor, 7, 0);
+		await common.insertContentToEditor(editor, '    ', false);
+		await sleep(sleepTime);
 		await showTOCQuickPick(false);
 		await sleep(sleepTime);
 		const actualText = editor?.document.getText();
@@ -154,10 +156,10 @@ suite('Yaml Controller', () => {
 			'  href: docs-markdown1.md',
 			'- name: template-controller.md',
 			'  items:',
-			'  - name: Docs Markdown Reference2',
-			'    href: docs-markdown2.md',
-			'  - name: This is a bookmark page',
-			'    href: bookmark.md'
+			'    - name: Docs Markdown Reference2',
+			'      href: docs-markdown2.md',
+			'    - name: This is a bookmark page',
+			'      href: bookmark.md'
 		].join('\r\n');
 		expect(expectedText).to.be.equal(actualText);
 		stubShowQuickPick.restore();
@@ -177,7 +179,9 @@ suite('Yaml Controller', () => {
 		const filePath = resolve(__dirname, file);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setCursorPosition(editor, 7, 2);
+		common.setCursorPosition(editor, 7, 0);
+		await common.insertContentToEditor(editor, '    ', false);
+		await sleep(sleepTime);
 		await showTOCQuickPick(true);
 		await sleep(sleepTime);
 		const actualText = editor?.document.getText();
@@ -186,13 +190,13 @@ suite('Yaml Controller', () => {
 			'  href: docs-markdown1.md',
 			'- name: template-controller.md',
 			'  items:',
-			'  - name: Docs Markdown Reference2',
-			'    href: docs-markdown2.md',
-			'  - name: This is a bookmark page',
-			'    displayName: #optional string for searching TOC',
-			'    href: bookmark.md',
-			'    uid: #optional string',
-			'    expanded: #true or false, false is default'
+			'    - name: Docs Markdown Reference2',
+			'      href: docs-markdown2.md',
+			'    - name: This is a bookmark page',
+			'      displayName: #optional string for searching TOC',
+			'      href: bookmark.md',
+			'      uid: #optional string',
+			'      expanded: #true or false, false is default'
 		].join('\r\n');
 		expect(expectedText).to.be.equal(actualText);
 		stubShowQuickPick.restore();
@@ -287,8 +291,9 @@ suite('Yaml Controller', () => {
 		const filePath = resolve(__dirname, file);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setCursorPosition(editor, 7, 2);
-		await sleep(extendedSleepTime);
+		common.setCursorPosition(editor, 7, 0);
+		await common.insertContentToEditor(editor, '    ', false);
+		await sleep(sleepTime);
 		await createParentNode();
 		await sleep(sleepTime);
 		const actualText = editor?.document.getText();
@@ -297,12 +302,12 @@ suite('Yaml Controller', () => {
 			'  href: docs-markdown1.md',
 			'- name: template-controller.md',
 			'  items:',
-			'  - name: Docs Markdown Reference2',
-			'    href: docs-markdown2.md',
-			'  - name:',
-			'    items:',
+			'    - name: Docs Markdown Reference2',
+			'      href: docs-markdown2.md',
 			'    - name:',
-			'      href:'
+			'      items:',
+			'      - name:',
+			'        href:'
 		].join('\r\n');
 		expect(expectedText).to.be.equal(actualText);
 		stubShowQuickPick.restore();
