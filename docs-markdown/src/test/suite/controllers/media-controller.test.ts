@@ -3,15 +3,7 @@ import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { resolve } from 'path';
 import { commands, window, workspace } from 'vscode';
-import {
-	insertLink,
-	insertLinksAndMediaCommands,
-	insertURL,
-	insertVideo,
-	selectLinkType,
-	selectLinkTypeToolbar,
-	selectMediaType
-} from '../../../controllers/media-controller';
+import { insertLinksAndMediaCommands } from '../../../controllers/media/media-controller';
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
 import { loadDocumentAndGetItReady, sleep, sleepTime } from '../../test.common/common';
@@ -21,6 +13,12 @@ chai.use(spies);
 // tslint:disable-next-line: no-var-requires
 import sinon = require('sinon');
 import { has } from 'typescript-collections/dist/lib/util';
+import { insertVideo, insertURL, insertLink } from '../../../controllers/media/insert';
+import {
+	selectLinkType,
+	selectLinkTypeToolbar,
+	selectMediaType
+} from '../../../controllers/media/select';
 
 const expect = chai.expect;
 
