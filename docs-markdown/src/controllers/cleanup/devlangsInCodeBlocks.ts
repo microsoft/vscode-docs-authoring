@@ -3,7 +3,6 @@ import { readWriteFileWithProgress } from './utilities';
 
 const telemetryCommand: string = 'applyCleanup';
 export const regex = new RegExp(/^```([A-Za-z#]+)/gm);
-export const devLangRegex = new RegExp(/```[A-Za-z#]+/g);
 
 /**
  * Lower cases all metadata found in .md files
@@ -26,7 +25,7 @@ export function cleanUpDevLangInCodeBlocks(
 	}
 }
 
-function findCodeBlocks(data: string) {
+export function findCodeBlocks(data: string) {
 	data = convertDevlang(data, regex);
 	return data;
 }
@@ -34,9 +33,11 @@ function findCodeBlocks(data: string) {
 export function convertDevlang(data: string, regex: RegExp) {
 	const matches = data.match(regex);
 	if (matches) {
-		// make all devlangs lowercase
-		data = data.replace(devLangRegex, function (match) {
-			return match.toLowerCase();
+		matches.forEach(match => {
+			// lowercase all devlangs
+			data = data.replace(regex, function (match) {
+				return match.toLowerCase();
+			});
 		});
 		// convert non-supported values to supported ones
 		const csharpRegex = new RegExp(/```(c#|cs)\s/gi);
