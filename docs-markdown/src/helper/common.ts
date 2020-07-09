@@ -10,6 +10,8 @@ import { extname, join, resolve } from 'path';
 import { output } from './output';
 
 export const ignoreFiles = ['.git', '.github', '.vscode', '.vs', 'node_module'];
+export const imageExtensions = ['.jpeg', '.jpg', '.png', '.gif', '.bmp'];
+export const markdownExtensionFilter = ['.md'];
 
 export function tryFindFile(rootPath: string, fileName: string) {
 	try {

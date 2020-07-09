@@ -27,9 +27,11 @@ import {
 	findMatchesInText
 } from '../helper/utility';
 import { Command } from '../Command';
-import { Insert, insertURL, MediaType, selectLinkType } from './media-controller';
 import { applyXref } from './xref/xref-controller';
 import { numberFormat } from '../constants/formatting';
+import { Insert, insertURL } from './media/insert';
+import { MediaType } from './media/MediaType';
+import { selectLinkType } from './media/select';
 
 export const linkControllerCommands: Command[] = [
 	{

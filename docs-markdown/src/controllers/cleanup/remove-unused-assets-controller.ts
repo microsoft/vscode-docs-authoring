@@ -3,9 +3,14 @@
 import { existsSync, mkdirSync, readFile, rename } from 'graceful-fs';
 import { homedir } from 'os';
 import { basename, dirname, extname, join } from 'path';
-import { ignoreFiles, postError, showStatusMessage } from '../../helper/common';
+import {
+	ignoreFiles,
+	postError,
+	showStatusMessage,
+	imageExtensions,
+	markdownExtensionFilter
+} from '../../helper/common';
 import { output } from '../../helper/output';
-import { imageExtensions, markdownExtensionFilter } from '../media-controller';
 import { showProgress } from './utilities';
 import recursive = require('recursive-readdir');
 

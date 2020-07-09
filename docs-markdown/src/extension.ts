@@ -31,7 +31,7 @@ import { insertIncludeCommand } from './controllers/include-controller';
 import { italicFormattingCommand } from './controllers/italic-controller';
 import { linkControllerCommands } from './controllers/link-controller';
 import { insertListsCommands } from './controllers/list-controller';
-import { insertLinksAndMediaCommands } from './controllers/media-controller';
+import { insertLinksAndMediaCommands } from './controllers/media/media-controller';
 import { insertMetadataCommands } from './controllers/metadata-controller';
 import { insertMonikerCommand } from './controllers/moniker-controller';
 import {

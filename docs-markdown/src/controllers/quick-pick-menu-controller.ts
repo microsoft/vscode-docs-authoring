@@ -12,7 +12,6 @@ import { insertInclude } from './include-controller';
 import { formatItalic } from './italic-controller';
 import { pickLinkType } from './link-controller';
 import { insertBulletedList, insertNumberedList } from './list-controller';
-import { insertLink, insertVideo } from './media-controller';
 import { insertMoniker } from './moniker-controller';
 import { noLocText } from './no-loc-controller';
 import { previewTopic, seoPreview } from './preview-controller';
@@ -28,6 +27,7 @@ import {
 } from './yaml/yaml-controller';
 import { ExtensionContext } from 'vscode';
 import { Command } from '../Command';
+import { insertVideo, insertLink } from './media/insert';
 
 export const quickPickMenuCommand: Command[] = [
 	{ command: markdownQuickPick.name, callback: markdownQuickPick }
