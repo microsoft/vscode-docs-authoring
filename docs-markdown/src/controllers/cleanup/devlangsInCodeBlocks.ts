@@ -2,7 +2,7 @@ import { reporter } from '../../helper/telemetry';
 import { readWriteFileWithProgress } from './utilities';
 
 const telemetryCommand: string = 'applyCleanup';
-export const regex = new RegExp(/(```([A-Za-z#]+))/g);
+export const regex = new RegExp(/^```([A-Za-z#]+)/gm);
 export const devLangRegex = new RegExp(/```[A-Za-z#]+/i);
 
 /**
