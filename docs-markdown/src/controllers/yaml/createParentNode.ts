@@ -41,17 +41,17 @@ export async function createParentNode() {
 
 	if (cursorPosition === 0) {
 		const parentNodeLineStart = `- name:
-    items:
-    - name:
-      href:`;
+  items:
+  - name:
+    href:`;
 		await insertContentToEditor(editor, parentNodeLineStart);
 	}
 
 	if (nameIndex && cursorPosition > 0) {
 		const parentNodeLineStart = `- name:
-      ${attributeSpace.repeat(cursorPosition - 2)}items:
-      ${attributeSpace.repeat(cursorPosition - 2)}- name:
-      ${attributeSpace.repeat(cursorPosition)}href:`;
+    ${attributeSpace.repeat(cursorPosition - 2)}items:
+    ${attributeSpace.repeat(cursorPosition - 2)}- name:
+    ${attributeSpace.repeat(cursorPosition)}href:`;
 		await insertContentToEditor(editor, parentNodeLineStart);
 	}
 
