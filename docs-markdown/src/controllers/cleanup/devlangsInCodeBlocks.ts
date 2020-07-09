@@ -3,7 +3,7 @@ import { readWriteFileWithProgress } from './utilities';
 
 const telemetryCommand: string = 'applyCleanup';
 export const regex = new RegExp(/^```([A-Za-z#]+)/gm);
-export const devLangRegex = new RegExp(/```[A-Za-z#]+/i);
+export const devLangRegex = new RegExp(/```[A-Za-z#]+/g);
 
 /**
  * Lower cases all metadata found in .md files
