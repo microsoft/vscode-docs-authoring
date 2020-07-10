@@ -10,7 +10,7 @@ import { sleep, sleepTime } from '../../../test.common/common';
 const expect = chai.expect;
 
 suite('Convert devlangs', () => {
-	test('findCodeBlocks', async () => {
+	test('find triple tick code blocks', async () => {
 		const spy = chai.spy(findCodeBlocks);
 		findCodeBlocks('```json');
 		await sleep(sleepTime);
