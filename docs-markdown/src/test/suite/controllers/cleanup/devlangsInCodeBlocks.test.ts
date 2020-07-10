@@ -1,6 +1,7 @@
 import {
 	convertDevlang,
 	findCodeBlocks,
+	lowercaseDevlang,
 	regex
 } from '../../../../controllers/cleanup/devlangsInCodeBlocks';
 import * as chai from 'chai';
@@ -15,9 +16,21 @@ suite('Convert devlangs', () => {
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called;
 	});
-	test('lowerCaseDevlang', async () => {
+	test('devlang should be lowercase', async () => {
 		const data = '```JSON';
-		const output = convertDevlang(data, regex);
+		const output = lowercaseDevlang(data, regex);
 		expect(output).to.equal('```json');
+	});
+	test('cs devlang should be csharp', async () => {
+		const inputString = '```cs ```';
+		const outputString = '```csharp```';
+		const output = convertDevlang(inputString);
+		expect(output).to.equal(outputString);
+	});
+	test('markdown devlang should be md', async () => {
+		const inputString = '```markdown ```';
+		const outputString = '```md```';
+		const output = convertDevlang(inputString);
+		expect(output).to.equal(outputString);
 	});
 });

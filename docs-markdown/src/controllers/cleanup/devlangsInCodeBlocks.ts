@@ -26,11 +26,11 @@ export function cleanUpDevLangInCodeBlocks(
 }
 
 export function findCodeBlocks(data: string) {
-	data = convertDevlang(data, regex);
+	data = lowercaseDevlang(data, regex);
 	return data;
 }
 
-export function convertDevlang(data: string, regex: RegExp) {
+export function lowercaseDevlang(data: string, regex: RegExp) {
 	const matches = data.match(regex);
 	if (matches) {
 		matches.forEach(match => {
@@ -39,11 +39,18 @@ export function convertDevlang(data: string, regex: RegExp) {
 				return match.toLowerCase();
 			});
 		});
-		// convert non-supported values to supported ones
-		const csharpRegex = new RegExp(/```(c#|cs)\s/gi);
-		data = data.replace(csharpRegex, '```csharp');
-		const markdownRegex = new RegExp(/```markdown\s/gi);
-		data = data.replace(markdownRegex, '```md');
+		convertDevlang(data);
 		return data;
 	}
+}
+
+export function convertDevlang(data: string) {
+	// convert non-supported values to supported ones
+	const csharpRegex = new RegExp(/```(c#|cs)\s/gi);
+	data = data.replace(csharpRegex, '```csharp');
+	const markdownRegex = new RegExp(/```markdown\s/gi);
+	data = data.replace(markdownRegex, '```md');
+	// eslint-disable-next-line no-console
+	console.log(data);
+	return data;
 }
