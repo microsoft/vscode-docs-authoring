@@ -44,7 +44,7 @@ let environmentalMutator: EnvironmentalMutator;
 let subscriptions: Subscription[];
 const context: ExtensionContext = {
 	globalState: {
-		get: key => undefined,
+		get: key => {},
 		update: (key, value) => Promise.resolve()
 	},
 	subscriptions,
