@@ -149,6 +149,10 @@ export function getCleanUpQuickPick() {
 	});
 	items.push({
 		description: '',
+		label: 'Clean up devlang for code blocks'
+	});
+	items.push({
+		description: '',
 		label: 'Empty metadata'
 	});
 	return { items, opts };

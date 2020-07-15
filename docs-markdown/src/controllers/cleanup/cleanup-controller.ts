@@ -19,6 +19,7 @@ import { removeUnusedImagesAndIncludes } from './remove-unused-assets-controller
 import { removeEmptyMetadata } from './removeEmptyMetadata';
 import { runAll, runAllWorkspace } from './runAll';
 import { getCleanUpQuickPick, recurseCallback } from './utilities';
+import { cleanUpDevLangInCodeBlocks } from './devlangsInCodeBlocks';
 import recursive = require('recursive-readdir');
 
 const telemetryCommand: string = 'applyCleanup';
@@ -93,6 +94,15 @@ export async function applyCleanupFile(uri: Uri) {
 						promises.push(capitalizationOfMetadata(progress, file, null, null));
 						message = 'Capitalization of metadata values completed.';
 						commandOption = 'capitalization';
+						break;
+					case 'clean up devlang for code blocks':
+						showStatusMessage('Cleanup: Devlang for code blocks started.');
+						message = 'Devlang for code blocks started.';
+						progress.report({ increment: 1, message });
+						statusMessage = 'Cleanup: Devlang for code blocks completed.';
+						promises.push(cleanUpDevLangInCodeBlocks(progress, file, null, null));
+						message = 'Devlang for code blocks completed.';
+						commandOption = 'devlang';
 						break;
 					case 'everything':
 						showStatusMessage('Cleanup: Everything started.');
@@ -242,6 +252,17 @@ export async function applyCleanupFolder(uri: Uri) {
 						});
 						message = 'Capitalization of metadata values completed.';
 						commandOption = 'capitalization';
+						break;
+					case 'clean up devlang for code blocks':
+						showStatusMessage('Cleanup: Clean up devlang for code blocks started.');
+						message = 'Clean up devlang for code blocks.';
+						progress.report({ increment: 1, message });
+						statusMessage = 'Devlang for code blocks completed.';
+						files.map((file, index) => {
+							promises.push(cleanUpDevLangInCodeBlocks(progress, file, files, index));
+						});
+						message = 'Clean up devlang for code blocks completed.';
+						commandOption = 'devlang';
 						break;
 					case 'everything':
 						showStatusMessage('Cleanup: Everything started.');
@@ -430,6 +451,15 @@ export async function applyCleanup() {
 								);
 								message = 'Removal of unused images and includes complete.';
 								commandOption = 'unused-images-and-includes';
+								break;
+							case 'clean up devlang for code blocks':
+								showStatusMessage('Cleanup: Devlang for code blocks started.');
+								message = 'Clean up devlang for code blocks started.';
+								progress.report({ increment: 1, message });
+								statusMessage = 'Cleanup: Devlang for code blocks completed.';
+								promises.push(recurseCallback(workspacePath, progress, cleanUpDevLangInCodeBlocks));
+								message = 'Clean up devlang for code blocks completed.';
+								commandOption = 'devlang';
 								break;
 							case 'everything':
 								progress.report({ increment: 1, message });
