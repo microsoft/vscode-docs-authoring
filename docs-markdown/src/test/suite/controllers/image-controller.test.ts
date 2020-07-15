@@ -19,43 +19,8 @@ import {
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
 import { loadDocumentAndGetItReady, sleep, extendedSleepTime } from '../../test.common/common';
-interface Subscription {
-	dispose(): any;
-}
-interface EnvironmentalMutator {
-	type: any;
-	value: any;
-}
-const uri = resolve(__dirname, '../../../../../src/test/data/repo/articles/image-controller2.md');
-let environmentalMutator: EnvironmentalMutator;
-let subscriptions: Subscription[];
-const context: ExtensionContext = {
-	globalState: {
-		get: key => {},
-		update: (key, value) => Promise.resolve()
-	},
-	subscriptions,
-	workspaceState: {
-		get: () => {},
-		update: (key, value) => Promise.resolve()
-	},
-	extensionPath: '',
-	asAbsolutePath: relative => '',
-	storagePath: '',
-	globalStoragePath: '',
-	logPath: '',
-	extensionUri: Uri.parse(uri),
-	environmentVariableCollection: {
-		persistent: false,
-		replace: (variable, value) => {},
-		append: (variable, value) => {},
-		prepend: (variable, value) => {},
-		get: variable => environmentalMutator,
-		forEach: () => {},
-		clear: () => {},
-		delete: () => {}
-	}
-};
+import { context } from '../../test.common/common';
+
 chai.use(spies);
 
 import sinon = require('sinon');

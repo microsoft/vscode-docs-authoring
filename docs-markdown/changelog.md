@@ -1,6 +1,16 @@
 # Change Log
 - Add preview-controller tests.
 
+## 0.2.77 (July 13th, 2020)
+
+- TOC indentation bug fix
+- Added code block language standardization to cleanup functionality
+
+## 0.2.76 (July 7th, 2020)
+
+- Add list-controller tests
+- Added auto-complete for ms.prod, ms.service, ms.subservice, and ms.technology.
+
 ## 0.2.75 (June 26th, 2020)
 
 - Support updating empty metadata
