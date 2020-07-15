@@ -22,6 +22,8 @@ suite('Preview Controller', () => {
 	});
 	suiteSetup(() => {
 		sinon.stub(telemetry, 'sendTelemetryData');
+		const setOs = sinon.stub(common, 'getOSPlatform');
+		setOs.onCall(0).returns('linux');
 	});
 	test('previewTopicCommands', () => {
 		const controllerCommands = [
@@ -43,20 +45,14 @@ suite('Preview Controller', () => {
 	});
 	test('showPreviewToSide - checkExtension', async () => {
 		const spy = chai.spy.on(common, 'checkExtension');
-		const setOs = sinon.stub(common, 'getOSPlatform');
-		setOs.onCall(0).returns('linux');
 		previewTopic();
 		await sleep(100);
 		expect(spy).to.have.been.called();
-		setOs.restore();
 	});
 	test('seoPreview - checkExtension', async () => {
 		const spy = chai.spy.on(common, 'checkExtension');
-		const setOs = sinon.stub(common, 'getOSPlatform');
-		setOs.onCall(0).returns('linux');
 		seoPreview();
 		await sleep(100);
 		expect(spy).to.have.been.called();
-		setOs.restore();
 	});
 });
