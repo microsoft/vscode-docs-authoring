@@ -5,6 +5,7 @@
 
 - TOC indentation bug fix
 - Added code block language standardization to cleanup functionality
+- Added Unit Test Coverage: remove-unused-assets-controller.ts
 
 ## 0.2.76 (July 7th, 2020)
 
