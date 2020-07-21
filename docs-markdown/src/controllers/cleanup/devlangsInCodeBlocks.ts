@@ -18,6 +18,7 @@ export function cleanUpDevLangInCodeBlocks(
 	if (file.endsWith('.md')) {
 		return readWriteFileWithProgress(progress, file, message, files, index, (data: string) => {
 			data = findCodeBlocks(data);
+			data = convertDevlang(data);
 			return data;
 		});
 	} else {
@@ -39,9 +40,8 @@ export function lowercaseDevlang(data: string, regex: RegExp) {
 				return match.toLowerCase();
 			});
 		});
-		convertDevlang(data);
-		return data;
 	}
+	return data;
 }
 
 export function convertDevlang(data: string) {
@@ -50,7 +50,5 @@ export function convertDevlang(data: string) {
 	data = data.replace(csharpRegex, '```csharp');
 	const markdownRegex = new RegExp(/```markdown\s/gi);
 	data = data.replace(markdownRegex, '```md');
-	// eslint-disable-next-line no-console
-	console.log(data);
 	return data;
 }
