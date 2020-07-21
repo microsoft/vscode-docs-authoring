@@ -1,4 +1,5 @@
 # Change Log
+- Add preview-controller tests.
 
 ## 0.2.77 (July 13th, 2020)
 

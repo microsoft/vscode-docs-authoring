@@ -21,7 +21,6 @@ var alerts = [
 		icon: 'docon-status-warning-outline'
 	}
 ];
-
 alerts.map(aa => {
 	for (var i = 0; i < blockquoteTags.length; i++) {
 		let tag = blockquoteTags[i];
@@ -29,7 +28,7 @@ alerts.map(aa => {
 			tag.setAttribute('class', `${aa.name.toUpperCase()}`);
 			var alertType = blockquoteTags[i].innerHTML;
 			var addBreak = alertType.replace(
-				`[!${aa.name.toUpperCase()}]`,
+				new RegExp(`\\[\\!${aa.name}\\]`, 'i'),
 				`<strong><span class="docon ${aa.icon}"></span> ${aa.name}</strong><br/><hr/>`
 			);
 			blockquoteTags[i].innerHTML = addBreak;
