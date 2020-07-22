@@ -3,7 +3,15 @@ import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import * as telemetry from '../../../helper/telemetry';
 import { resolve } from 'path';
-import { commands, QuickPickItem, window, workspace, ExtensionContext, Uri } from 'vscode';
+import {
+	commands,
+	QuickPickItem,
+	window,
+	workspace,
+	ExtensionContext,
+	Uri,
+	ExtensionMode
+} from 'vscode';
 import * as boldController from './../../../controllers/bold-controller';
 import * as italicController from '../../../controllers/italic-controller';
 import * as codeController from '../../../controllers/code-controller';
@@ -67,7 +75,8 @@ const context: ExtensionContext = {
 		forEach: () => {},
 		clear: () => {},
 		delete: () => {}
-	}
+	},
+	extensionMode: ExtensionMode.Test
 };
 
 suite('Quick Pick Menu Controller', () => {
