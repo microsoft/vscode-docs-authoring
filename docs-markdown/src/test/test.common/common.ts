@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { commands, Uri, window, workspace, ExtensionContext } from 'vscode';
+import { commands, Uri, window, workspace, ExtensionContext, ExtensionMode } from 'vscode';
 import { TokenResponse } from '../../helper/Auth';
 
 export const sleepTime = 50;
@@ -75,5 +75,6 @@ export const context: ExtensionContext = {
 		forEach: () => {},
 		clear: () => {},
 		delete: () => {}
-	}
+	},
+	extensionMode: ExtensionMode.Test
 };
