@@ -198,38 +198,42 @@ function getRootBreadCrumbs(basePath, filePath) {
 	let matchPath = '';
 	const docFxMetadata = getDocfxMetadata(basePath);
 	let breadCrumbPath = docFxMetadata.build.globalMetadata.breadcrumb_path;
-	if (breadCrumbPath.startsWith('~')) {
-		breadCrumbPath = breadCrumbPath.replace('~', '');
-	}
-	if (breadCrumbPath.startsWith('/azure')) {
-		breadCrumbPath = breadCrumbPath.replace('/azure', '').replace('.json', '.yml');
-	}
-	breadCrumbPath = join(basePath, breadCrumbPath);
-	if (existsSync(breadCrumbPath)) {
-		const pathParts = filePath.split('/');
-		if (pathParts.length > 1) {
-			matchPath = pathParts.slice(1, -1).join('/');
+	if (breadCrumbPath) {
+		if (breadCrumbPath.startsWith('~')) {
+			breadCrumbPath = breadCrumbPath.replace('~', '');
 		}
-		const yamlTOC = readFileSync(breadCrumbPath, 'utf8');
-		const TOC = jsyaml.load(yamlTOC);
-		let breadCrumbs: { breadCrumb: string[]; found: boolean }[] = [{ breadCrumb, found: false }];
-		TOC.forEach(node => {
-			if (node.items && node.items.length > 0) {
-				node.items.forEach((item, index) => {
-					if (!breadCrumbs[index]) {
-						breadCrumbs.push({ breadCrumb: [], found: false });
-					}
-					breadCrumbs[index].breadCrumb.push(node.name);
-					if (item.tocHref.includes(filePath)) {
-						breadCrumbs[index].breadCrumb.push(node.name);
-						breadCrumbs[index].found = true;
-						return;
-					}
-					breadCrumbs = getRootNodes(item, matchPath, breadCrumbs, index);
-				});
+		if (breadCrumbPath.startsWith('/azure')) {
+			breadCrumbPath = breadCrumbPath.replace('/azure', '').replace('.json', '.yml');
+		}
+		breadCrumbPath = join(basePath, breadCrumbPath);
+		if (existsSync(breadCrumbPath)) {
+			const pathParts = filePath.split('/');
+			if (pathParts.length > 1) {
+				matchPath = pathParts.slice(1, -1).join('/');
 			}
-		});
-		breadCrumb = findBreadCrumb(breadCrumbs, breadCrumb);
+			const yamlTOC = readFileSync(breadCrumbPath, 'utf8');
+			const TOC = jsyaml.load(yamlTOC);
+			let breadCrumbs: { breadCrumb: string[]; found: boolean }[] = [{ breadCrumb, found: false }];
+			TOC.forEach(node => {
+				if (node.items && node.items.length > 0) {
+					node.items.forEach((item, index) => {
+						if (!breadCrumbs[index]) {
+							breadCrumbs.push({ breadCrumb: [], found: false });
+						}
+						breadCrumbs[index].breadCrumb.push(node.name);
+						if (item.tocHref.includes(filePath)) {
+							breadCrumbs[index].breadCrumb.push(node.name);
+							breadCrumbs[index].found = true;
+							return;
+						}
+						breadCrumbs = getRootNodes(item, matchPath, breadCrumbs, index);
+					});
+				}
+			});
+			breadCrumb = findBreadCrumb(breadCrumbs, breadCrumb);
+		}
+	} else {
+		breadCrumb.push(basePath.split('/').pop());
 	}
 	return breadCrumb;
 }
