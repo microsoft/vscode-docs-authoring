@@ -110,8 +110,8 @@ export async function activate(context: ExtensionContext) {
 	const authoringCommands: Commands = [
 		...linkControllerCommands,
 		...insertImageCommand,
-    ...quickPickMenuCommand,
-    ...notebookControllerCommands
+		...quickPickMenuCommand,
+		...notebookControllerCommands
 	];
 	insertAlertCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertMonikerCommand().forEach(cmd => authoringCommands.push(cmd));
