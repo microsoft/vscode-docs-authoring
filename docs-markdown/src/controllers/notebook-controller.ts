@@ -107,8 +107,6 @@ async function getRawNotebookJson(url: string): Promise<string> {
 }
 
 function wrapMarkdownInTemplate(content: string, url: string) {
-	// Advance all the headings by one, avoid multiple H1s
-	content = content.replace(/(^|\r|\n|\r\n)#/g, '\n##');
 
 	const path = toUrl(url);
 	const split = url.split('/');
