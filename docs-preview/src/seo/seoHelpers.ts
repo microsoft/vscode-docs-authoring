@@ -205,6 +205,8 @@ function getRootBreadCrumbs(basePath, filePath) {
 		if (breadCrumbPath.startsWith('/azure')) {
 			breadCrumbPath = breadCrumbPath.replace('/azure', '').replace('.json', '.yml');
 		}
+		breadCrumbPath = checkStartAndEndPaths(breadCrumbPath, basePath);
+		breadCrumbPath = checkPathEndingWithJson(breadCrumbPath);
 		breadCrumbPath = join(basePath, breadCrumbPath);
 		if (existsSync(breadCrumbPath)) {
 			const pathParts = filePath.split('/');
@@ -236,6 +238,26 @@ function getRootBreadCrumbs(basePath, filePath) {
 		breadCrumb.push(basePath.split('/').pop());
 	}
 	return breadCrumb;
+}
+function checkPathEndingWithJson(breadCrumbPath: string) {
+	if (breadCrumbPath.endsWith('json')) {
+		const bcArr = breadCrumbPath.split('.');
+		bcArr.pop();
+		bcArr.push('yml');
+		breadCrumbPath = bcArr.join('.');
+	}
+	return breadCrumbPath;
+}
+
+function checkStartAndEndPaths(breadCrumbPath: string, basePath: any) {
+	const bcArr = breadCrumbPath.split('/').filter(val => val);
+	const start = bcArr[0];
+	const end = basePath.split('/').pop();
+	if (start === end) {
+		bcArr.shift();
+		breadCrumbPath = bcArr.join('/');
+	}
+	return breadCrumbPath;
 }
 
 function getRootNodes(
@@ -271,7 +293,7 @@ function getBreadCrumbs(basePath, filePath) {
 		tocPath = join(pathWithoutFileName, '../', 'breadcrumb', 'toc.yml');
 	}
 	tocPath = join(basePath, tocPath);
-	if (existsSync(tocPath)) {
+	if (tocPath && existsSync(tocPath) && (tocPath.endsWith('.yml') || tocPath.endsWith('.md'))) {
 		const yamlTOC = readFileSync(tocPath, 'utf8');
 		const TOC = jsyaml.load(yamlTOC);
 		TOC.forEach(node => {
