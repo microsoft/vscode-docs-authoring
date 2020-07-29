@@ -39,7 +39,7 @@ export async function parseMarkdownMetadata(metadata, markdown, basePath, filePa
 	return details;
 }
 
-function checkIfContainsMicrosoftDocs(title) {
+export function checkIfContainsMicrosoftDocs(title) {
 	if (title.includes('| Microsoft Docs')) {
 		return title;
 	} else {
@@ -47,7 +47,7 @@ function checkIfContainsMicrosoftDocs(title) {
 	}
 }
 
-function getMarkdownDescription(
+export function getMarkdownDescription(
 	details: { title: string; description: string; date: string },
 	yamlContent: any,
 	markdown: any
@@ -59,7 +59,7 @@ function getMarkdownDescription(
 	return shortenWithElipsesAtWordEnd(details.description, 305);
 }
 
-async function getTitle(yamlContent: any, title: string, basePath: any, filePath: any) {
+export async function getTitle(yamlContent: any, title: string, basePath: any, filePath: any) {
 	if (yamlContent.titleSuffix) {
 		title = `${yamlContent.title} - ${yamlContent.titleSuffix}`;
 	} else {
@@ -105,7 +105,7 @@ export async function parseYamlMetadata(metadata, breadCrumb, basePath, filePath
 	return details;
 }
 
-function getYamlDescription(yamlContent) {
+export function getYamlDescription(yamlContent) {
 	let description = '';
 	if (yamlContent.title) {
 		description = yamlContent.title;
@@ -136,7 +136,7 @@ function endWithPeriod(content: string) {
 	return content;
 }
 
-function getMainContentIfExists(main: string, alt: string) {
+export function getMainContentIfExists(main: string, alt: string) {
 	if (main) {
 		return main;
 	} else {
@@ -239,7 +239,8 @@ function getRootBreadCrumbs(basePath, filePath) {
 	}
 	return breadCrumb;
 }
-function checkPathEndingWithJson(breadCrumbPath: string) {
+
+export function checkPathEndingWithJson(breadCrumbPath: string) {
 	if (breadCrumbPath.endsWith('json')) {
 		const bcArr = breadCrumbPath.split('.');
 		bcArr.pop();
@@ -249,7 +250,7 @@ function checkPathEndingWithJson(breadCrumbPath: string) {
 	return breadCrumbPath;
 }
 
-function checkStartAndEndPaths(breadCrumbPath: string, basePath: any) {
+export function checkStartAndEndPaths(breadCrumbPath: string, basePath: any) {
 	const bcArr = breadCrumbPath.split('/').filter(val => val);
 	const start = bcArr[0];
 	const end = basePath.split('/').pop();
