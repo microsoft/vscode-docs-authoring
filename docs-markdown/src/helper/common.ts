@@ -363,5 +363,20 @@ export function toShortDate(date: Date) {
 	const day = date.getDate().toString();
 	const dayStr = day.length > 1 ? day : `0${day}`;
 
-	return `${monthStr}/${dayStr}/${year}`;
+  return `${monthStr}/${dayStr}/${year}`;
+}
+
+export function findLineNumberOfPattern(editor: vscode.TextEditor, pattern: string) {
+	const article = editor.document;
+	let found = -1;
+
+	for (let line = 0; line < article.lineCount; line++) {
+		const text = article.lineAt(line).text;
+		const match = text.match(pattern);
+		if (match !== null && match.index !== undefined) {
+			found = line;
+			return found;
+		}
+	}
+	return found;
 }

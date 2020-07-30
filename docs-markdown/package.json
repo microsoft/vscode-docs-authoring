@@ -36,6 +36,16 @@
 				"category": "Docs"
 			},
 			{
+				"command": "insertNotebook",
+				"title": "Insert Jupyter notebook",
+				"category": "Docs"
+			},
+			{
+				"command": "updateNotebook",
+				"title": "Update Jupyter notebook",
+				"category": "Docs"
+			},
+			{
 				"command": "markdownQuickPick",
 				"title": "Docs: Markdown authoring menu"
 			},

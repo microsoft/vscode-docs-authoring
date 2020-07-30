@@ -77,6 +77,7 @@ import {
 	msSubServiceCompletionItemsProvider
 } from './helper/metadata-completion';
 import { nag } from './helper/metadata';
+import { notebookControllerCommands } from './controllers/notebook-controller';
 
 export let extensionPath: string;
 type Commands = Command[];
@@ -111,7 +112,8 @@ export async function activate(context: ExtensionContext) {
 	const authoringCommands: Commands = [
 		...linkControllerCommands,
 		...insertImageCommand,
-		...quickPickMenuCommand
+		...quickPickMenuCommand,
+		...notebookControllerCommands
 	];
 	insertAlertCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertMonikerCommand().forEach(cmd => authoringCommands.push(cmd));

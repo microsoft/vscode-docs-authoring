@@ -28,6 +28,7 @@ import {
 } from './yaml/yaml-controller';
 import { ExtensionContext } from 'vscode';
 import { Command } from '../Command';
+import { insertNotebook } from './notebook-controller';
 
 export const quickPickMenuCommand: Command[] = [
 	{ command: markdownQuickPick.name, callback: markdownQuickPick }
@@ -41,78 +42,82 @@ export function markdownQuickPick(context: ExtensionContext) {
 
 	if (checkExtension('docsmsft.docs-preview')) {
 		markdownItems.push({
-			description: '',
+			description: 'View preview',
 			label: '$(browser) Preview'
 		});
 		markdownItems.push({
-			description: '',
+			description: 'View search results preview',
 			label: '$(search) Search Results Preview'
 		});
 	}
 
 	markdownItems.push(
 		{
-			description: '',
+			description: 'Bold selected text',
 			label: '$(pencil) Bold'
 		},
 		{
-			description: '',
+			description: 'Italicize selected text',
 			label: '$(info) Italic'
 		},
 		{
-			description: '',
+			description: 'Mark selected text as code block',
 			label: '$(code) Code'
+		},
+		{
+			description: 'Insert a Jupyter notebook from GitHub',
+			label: '$(book) Jupyter Notebook'
 		},
 		{
 			description: 'Insert note, tip, important, caution, or warning',
 			label: '$(alert) Alert'
 		},
 		{
-			description: '',
+			description: 'Insert a numbered list',
 			label: '$(list-ordered) Numbered list'
 		},
 		{
-			description: '',
+			description: 'Insert a bulleted list',
 			label: '$(list-unordered) Bulleted list'
 		},
 		{
-			description: '',
+			description: 'Insert markdown table',
 			label: '$(diff-added) Table'
 		},
 		{
-			description: '',
+			description: 'Insert columns',
 			label: '$(ellipsis) Columns'
 		},
 		{
-			description: '',
+			description: 'Insert link',
 			label: '$(link) Link'
 		},
 		{
-			description: '',
+			description: 'Indicate selected text as non-localizable',
 			label: '$(lock) Non-localizable text'
 		},
 		{
-			description: '',
+			description: 'Insert image',
 			label: '$(file-media) Image'
 		},
 		{
-			description: '',
+			description: 'Insert include file',
 			label: '$(clippy) Include'
 		},
 		{
-			description: '',
+			description: 'Insert code snippet',
 			label: '$(file-code) Snippet'
 		},
 		{
-			description: '',
+			description: 'Insert video',
 			label: '$(device-camera-video) Video'
 		},
 		{
-			description: '',
+			description: 'Perform cleanup',
 			label: '$(tasklist) Cleanup...'
 		},
 		{
-			description: '',
+			description: 'Insert moniker',
 			label: '$(project) Moniker'
 		}
 	);
@@ -193,6 +198,9 @@ export function markdownQuickPick(context: ExtensionContext) {
 				break;
 			case 'code':
 				formatCode();
+				break;
+			case 'jupyter notebook':
+				insertNotebook();
 				break;
 			case 'alert':
 				insertAlert();
