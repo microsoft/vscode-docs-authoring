@@ -2,7 +2,7 @@
 
 ## 0.2.78 (July 30th, 2020)
 
-- Added Jupiter Notebook support.
+- Added Jupyter Notebook support.
 - Add preview-controller tests.
 - Fixed links with german characters.
 
