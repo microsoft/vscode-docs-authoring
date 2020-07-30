@@ -4,14 +4,14 @@
 	"description": "Docs Markdown Extension",
 	"icon": "images/docs-logo-ms.png",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-	"version": "0.2.76",
+	"version": "0.2.77",
 	"publisher": "docsmsft",
 	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
 	"bugs": {
 		"url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
 	},
 	"engines": {
-		"vscode": "^1.43.0"
+		"vscode": "^1.47.0"
 	},
 	"repository": {
 		"url": "https://github.com/Microsoft/vscode-docs-authoring.git"
@@ -33,6 +33,16 @@
 			{
 				"command": "insertMoniker",
 				"title": "Add moniker range",
+				"category": "Docs"
+			},
+			{
+				"command": "insertNotebook",
+				"title": "Insert Jupyter notebook",
+				"category": "Docs"
+			},
+			{
+				"command": "updateNotebook",
+				"title": "Update Jupyter notebook",
 				"category": "Docs"
 			},
 			{
@@ -772,7 +782,7 @@
 		"@types/mocha": "^7.0.2",
 		"@types/node": "^12.12.32",
 		"@types/recursive-readdir": "^2.2.0",
-		"@types/vscode": "^1.43.0",
+		"@types/vscode": "^1.47.0",
 		"@types/yamljs": "^0.2.30",
 		"@typescript-eslint/eslint-plugin": "^2.34.0",
 		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",
@@ -796,7 +806,7 @@
 		"ts-loader": "^6.2.2",
 		"ts-node": "^8.8.1",
 		"tslint": "^5.20.1",
-		"typescript": "^3.7.5",
+		"typescript": "^3.9.6",
 		"vscode-test": "^1.3.0",
 		"webpack": "^4.42.1",
 		"webpack-bundle-analyzer": "^3.6.1",

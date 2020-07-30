@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.53 (July 20th, 2020)
+
+- Alert bugfix: [Issue 672](https://github.com/microsoft/vscode-docs-authoring/issues/672)
+
 ## 0.3.52 (June 26th, 2020)
 
 - Added clickable links with tilde(~) on preview.

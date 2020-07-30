@@ -1,4 +1,11 @@
 # Change Log
+- Add preview-controller tests.
+
+## 0.2.77 (July 13th, 2020)
+
+- TOC indentation bug fix
+- Added code block language standardization to cleanup functionality
+- Added Unit Test Coverage: remove-unused-assets-controller.ts
 
 ## 0.2.76 (July 7th, 2020)
 

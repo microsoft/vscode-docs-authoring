@@ -177,12 +177,12 @@ export async function insertContentToEditor(
 /**
  * Set the cursor to a new position, based on X and Y coordinates.
  * @param {vscode.TextEditor} editor -
- * @param {number} yPosition -
- * @param {number} xPosition -
+ * @param {number} line -
+ * @param {number} character -
  */
-export function setCursorPosition(editor: vscode.TextEditor, yPosition: number, xPosition: number) {
+export function setCursorPosition(editor: vscode.TextEditor, line: number, character: number) {
 	const cursorPosition = editor.selection.active;
-	const newPosition = cursorPosition.with(yPosition, xPosition);
+	const newPosition = cursorPosition.with(line, character);
 	const newSelection = new vscode.Selection(newPosition, newPosition);
 	editor.selection = newSelection;
 }
@@ -363,5 +363,20 @@ export function toShortDate(date: Date) {
 	const day = date.getDate().toString();
 	const dayStr = day.length > 1 ? day : `0${day}`;
 
-	return `${monthStr}/${dayStr}/${year}`;
+  return `${monthStr}/${dayStr}/${year}`;
+}
+
+export function findLineNumberOfPattern(editor: vscode.TextEditor, pattern: string) {
+	const article = editor.document;
+	let found = -1;
+
+	for (let line = 0; line < article.lineCount; line++) {
+		const text = article.lineAt(line).text;
+		const match = text.match(pattern);
+		if (match !== null && match.index !== undefined) {
+			found = line;
+			return found;
+		}
+	}
+	return found;
 }

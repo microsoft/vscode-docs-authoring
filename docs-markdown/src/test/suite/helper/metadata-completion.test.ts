@@ -6,6 +6,7 @@ import {
 	CompletionContext,
 	CompletionItem,
 	CompletionItemKind,
+	ExtensionMode,
 	MarkdownString,
 	Position,
 	Range,
@@ -63,7 +64,8 @@ export const context: ExtensionContext = {
 		forEach: () => {},
 		clear: () => {},
 		delete: () => {}
-	}
+	},
+	extensionMode: ExtensionMode.Test
 };
 
 suite('Metadata Provider', () => {
