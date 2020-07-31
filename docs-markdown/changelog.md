@@ -16,6 +16,7 @@
 
 - Support updating empty metadata
 - Authentication for allowlist on image extension
+- Add feature to nag user to update ms.date when a markdown file is saved
 
 ## 0.2.74 (June 11th, 2020)
 
