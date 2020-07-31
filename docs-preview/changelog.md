@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.54 (July 30th, 2020)
+
+- Fixed SEO preview bug: [Issue 679](https://github.com/microsoft/vscode-docs-authoring/issues/679).
+
 ## 0.3.53 (July 20th, 2020)
 
 - Alert bugfix: [Issue 672](https://github.com/microsoft/vscode-docs-authoring/issues/672)

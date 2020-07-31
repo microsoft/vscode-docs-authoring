@@ -1,5 +1,10 @@
 # Change Log
+
+## 0.2.78 (July 30th, 2020)
+
+- Added Jupyter Notebook support.
 - Add preview-controller tests.
+- Fixed links with german characters.
 
 ## 0.2.77 (July 13th, 2020)
 
