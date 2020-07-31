@@ -68,7 +68,7 @@ export function bookmarkBuilder(selectedText: string, bookmarkText: string, path
 	bookmark = bookmarkText
 		.trim()
 		.replace(/\s\s+/g, ' ')
-		.replace(/\n|\r|[^A-Za-z0-9-_\s]/g, '')
+		.replace(/\n|\r|[^A-Za-z0-9-_\säöüÄÖÜß]/g, '')
 		.toLocaleLowerCase()
 		.split(' ')
 		.slice(1)

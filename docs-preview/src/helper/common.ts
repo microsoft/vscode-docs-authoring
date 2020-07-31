@@ -92,11 +92,10 @@ export function tryFindFile(rootPath: string, fileName: string) {
 		if (exists) {
 			return fullPath;
 		} else {
-			const files = glob.sync(`**/${fileName}`, {
+			const files = glob.sync(`**/**/${fileName}`, {
 				cwd: rootPath
 			});
-
-			if (files && files.length === 1) {
+			if (files) {
 				return path.join(rootPath, files[0]);
 			}
 		}

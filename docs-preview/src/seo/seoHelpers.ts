@@ -39,7 +39,7 @@ export async function parseMarkdownMetadata(metadata, markdown, basePath, filePa
 	return details;
 }
 
-function checkIfContainsMicrosoftDocs(title) {
+export function checkIfContainsMicrosoftDocs(title) {
 	if (title.includes('| Microsoft Docs')) {
 		return title;
 	} else {
@@ -47,7 +47,7 @@ function checkIfContainsMicrosoftDocs(title) {
 	}
 }
 
-function getMarkdownDescription(
+export function getMarkdownDescription(
 	details: { title: string; description: string; date: string },
 	yamlContent: any,
 	markdown: any
@@ -59,7 +59,7 @@ function getMarkdownDescription(
 	return shortenWithElipsesAtWordEnd(details.description, 305);
 }
 
-async function getTitle(yamlContent: any, title: string, basePath: any, filePath: any) {
+export async function getTitle(yamlContent: any, title: string, basePath: any, filePath: any) {
 	if (yamlContent.titleSuffix) {
 		title = `${yamlContent.title} - ${yamlContent.titleSuffix}`;
 	} else {
@@ -105,7 +105,7 @@ export async function parseYamlMetadata(metadata, breadCrumb, basePath, filePath
 	return details;
 }
 
-function getYamlDescription(yamlContent) {
+export function getYamlDescription(yamlContent) {
 	let description = '';
 	if (yamlContent.title) {
 		description = yamlContent.title;
@@ -136,7 +136,7 @@ function endWithPeriod(content: string) {
 	return content;
 }
 
-function getMainContentIfExists(main: string, alt: string) {
+export function getMainContentIfExists(main: string, alt: string) {
 	if (main) {
 		return main;
 	} else {
@@ -198,40 +198,67 @@ function getRootBreadCrumbs(basePath, filePath) {
 	let matchPath = '';
 	const docFxMetadata = getDocfxMetadata(basePath);
 	let breadCrumbPath = docFxMetadata.build.globalMetadata.breadcrumb_path;
-	if (breadCrumbPath.startsWith('~')) {
-		breadCrumbPath = breadCrumbPath.replace('~', '');
-	}
-	if (breadCrumbPath.startsWith('/azure')) {
-		breadCrumbPath = breadCrumbPath.replace('/azure', '').replace('.json', '.yml');
-	}
-	breadCrumbPath = join(basePath, breadCrumbPath);
-	if (existsSync(breadCrumbPath)) {
-		const pathParts = filePath.split('/');
-		if (pathParts.length > 1) {
-			matchPath = pathParts.slice(1, -1).join('/');
+	if (breadCrumbPath) {
+		if (breadCrumbPath.startsWith('~')) {
+			breadCrumbPath = breadCrumbPath.replace('~', '');
 		}
-		const yamlTOC = readFileSync(breadCrumbPath, 'utf8');
-		const TOC = jsyaml.load(yamlTOC);
-		let breadCrumbs: { breadCrumb: string[]; found: boolean }[] = [{ breadCrumb, found: false }];
-		TOC.forEach(node => {
-			if (node.items && node.items.length > 0) {
-				node.items.forEach((item, index) => {
-					if (!breadCrumbs[index]) {
-						breadCrumbs.push({ breadCrumb: [], found: false });
-					}
-					breadCrumbs[index].breadCrumb.push(node.name);
-					if (item.tocHref.includes(filePath)) {
-						breadCrumbs[index].breadCrumb.push(node.name);
-						breadCrumbs[index].found = true;
-						return;
-					}
-					breadCrumbs = getRootNodes(item, matchPath, breadCrumbs, index);
-				});
+		if (breadCrumbPath.startsWith('/azure')) {
+			breadCrumbPath = breadCrumbPath.replace('/azure', '').replace('.json', '.yml');
+		}
+		breadCrumbPath = checkStartAndEndPaths(breadCrumbPath, basePath);
+		breadCrumbPath = checkPathEndingWithJson(breadCrumbPath);
+		breadCrumbPath = join(basePath, breadCrumbPath);
+		if (existsSync(breadCrumbPath)) {
+			const pathParts = filePath.split('/');
+			if (pathParts.length > 1) {
+				matchPath = pathParts.slice(1, -1).join('/');
 			}
-		});
-		breadCrumb = findBreadCrumb(breadCrumbs, breadCrumb);
+			const yamlTOC = readFileSync(breadCrumbPath, 'utf8');
+			const TOC = jsyaml.load(yamlTOC);
+			let breadCrumbs: { breadCrumb: string[]; found: boolean }[] = [{ breadCrumb, found: false }];
+			TOC.forEach(node => {
+				if (node.items && node.items.length > 0) {
+					node.items.forEach((item, index) => {
+						if (!breadCrumbs[index]) {
+							breadCrumbs.push({ breadCrumb: [], found: false });
+						}
+						breadCrumbs[index].breadCrumb.push(node.name);
+						if (item.tocHref.includes(filePath)) {
+							breadCrumbs[index].breadCrumb.push(node.name);
+							breadCrumbs[index].found = true;
+							return;
+						}
+						breadCrumbs = getRootNodes(item, matchPath, breadCrumbs, index);
+					});
+				}
+			});
+			breadCrumb = findBreadCrumb(breadCrumbs, breadCrumb);
+		}
+	} else {
+		breadCrumb.push(basePath.split('/').pop());
 	}
 	return breadCrumb;
+}
+
+export function checkPathEndingWithJson(breadCrumbPath: string) {
+	if (breadCrumbPath.endsWith('json')) {
+		const bcArr = breadCrumbPath.split('.');
+		bcArr.pop();
+		bcArr.push('yml');
+		breadCrumbPath = bcArr.join('.');
+	}
+	return breadCrumbPath;
+}
+
+export function checkStartAndEndPaths(breadCrumbPath: string, basePath: any) {
+	const bcArr = breadCrumbPath.split('/').filter(val => val);
+	const start = bcArr[0];
+	const end = basePath.split('/').pop();
+	if (start === end) {
+		bcArr.shift();
+		breadCrumbPath = bcArr.join('/');
+	}
+	return breadCrumbPath;
 }
 
 function getRootNodes(
@@ -267,7 +294,7 @@ function getBreadCrumbs(basePath, filePath) {
 		tocPath = join(pathWithoutFileName, '../', 'breadcrumb', 'toc.yml');
 	}
 	tocPath = join(basePath, tocPath);
-	if (existsSync(tocPath)) {
+	if (tocPath && existsSync(tocPath) && (tocPath.endsWith('.yml') || tocPath.endsWith('.md'))) {
 		const yamlTOC = readFileSync(tocPath, 'utf8');
 		const TOC = jsyaml.load(yamlTOC);
 		TOC.forEach(node => {
