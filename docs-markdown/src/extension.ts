@@ -16,7 +16,8 @@ import {
 	TextDocument,
 	Uri,
 	window,
-	workspace
+	workspace,
+	TextDocumentWillSaveEvent
 } from 'vscode';
 import { insertAlertCommand } from './controllers/alert-controller';
 import { boldFormattingCommand } from './controllers/bold-controller';
@@ -75,6 +76,7 @@ import {
 	msTechnologyCompletionItemsProvider,
 	msSubServiceCompletionItemsProvider
 } from './helper/metadata-completion';
+import { nag } from './helper/metadata';
 import { notebookControllerCommands } from './controllers/notebook-controller';
 
 export let extensionPath: string;
@@ -176,6 +178,11 @@ export async function activate(context: ExtensionContext) {
 
 	// When the document changes, find and replace target expressions (for example, smart quotes).
 	workspace.onDidChangeTextDocument(findAndReplaceTargetExpressions);
+
+	workspace.onWillSaveTextDocument(willSaveTextDocument);
+	async function willSaveTextDocument(e: TextDocumentWillSaveEvent) {
+		e.waitUntil(nag());
+	}
 
 	// Telemetry
 	context.subscriptions.push(new Reporter(context));

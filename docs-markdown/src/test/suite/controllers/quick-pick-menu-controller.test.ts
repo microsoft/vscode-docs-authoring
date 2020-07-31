@@ -82,6 +82,14 @@ const context: ExtensionContext = {
 suite('Quick Pick Menu Controller', () => {
 	suiteSetup(() => {
 		sinon.stub(telemetry, 'sendTelemetryData');
+		sinon.stub(workspace, 'getConfiguration').returns({
+				get: () => true,
+				has: () => true,
+				inspect: () => {
+					return { key: '' };
+				},
+				update: () => Promise.resolve()
+		});
 	});
 	suiteTeardown(async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
@@ -92,16 +100,6 @@ suite('Quick Pick Menu Controller', () => {
 		expect(quickPickMenuCommand).to.deep.equal(controllerCommands);
 	});
 	test('markdownQuickPick - formatBold', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -120,16 +118,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - formatItalic', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -148,16 +136,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - formatCode', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -176,16 +154,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertAlert', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -205,16 +173,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertNumberedList', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -233,16 +191,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertBulletedList', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -261,16 +209,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertTable', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -289,16 +227,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - pickLinkType', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -322,16 +250,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - noLocText', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -350,16 +268,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - pickImageType', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -383,16 +291,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertInclude', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -411,16 +309,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertSnippet', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -440,16 +328,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertVideo', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -468,16 +346,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertRowsAndColumns', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -498,16 +366,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - applyCleanup', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -526,16 +384,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertMoniker', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
@@ -554,16 +402,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertTocEntry', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/yaml-controller.yml'
@@ -583,16 +421,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertTocEntryWithOptions', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/yaml-controller.yml'
@@ -611,16 +439,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('markdownQuickPick - insertExpandableParentNode', async () => {
-		workspace.getConfiguration = () => {
-			return {
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			};
-		};
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/yaml-controller.yml'
