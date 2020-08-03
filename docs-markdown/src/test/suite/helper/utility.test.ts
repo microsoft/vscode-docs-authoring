@@ -23,13 +23,13 @@ suite('Utility helper class', () => {
 	});
 	test('videoLinkBuilder returns triple colon video', () => {
 		const stubWorkspaceConfiguration = sinon.stub(workspace, 'getConfiguration').returns({
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			});
+			get: () => true,
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
+		});
 		const videoLink = utility.videoLinkBuilder(
 			'https://channel9.msdn.com/Series/Youve-Got-Key-Values-A-Redis-Jump-Start/03/player'
 		);

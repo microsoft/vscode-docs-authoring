@@ -83,12 +83,12 @@ suite('Quick Pick Menu Controller', () => {
 	suiteSetup(() => {
 		sinon.stub(telemetry, 'sendTelemetryData');
 		sinon.stub(workspace, 'getConfiguration').returns({
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
+			get: () => true,
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
 		});
 	});
 	suiteTeardown(async () => {
