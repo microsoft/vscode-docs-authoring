@@ -9,7 +9,7 @@ import { alias, gitHubID, missingValue } from '../helper/user-settings';
 import { cleanupDownloadFiles } from '../helper/cleanup';
 
 export function applyDocsTemplate(templatePath: string) {
-	const newFile = Uri.parse('untitled:' + 'New-Topic.md');
+	const newFile = Uri.parse('untitled:' + 'new-Topic.md');
 	workspace.openTextDocument(newFile).then((textDocument: TextDocument) => {
 		window.showTextDocument(textDocument, 1, false).then(
 			textEditor => {
