@@ -1,4 +1,4 @@
-import { output } from '../helper/common';
+import { output } from '../extension';
 
 const IMAGE_OPEN_RE = /image\s+(((source|type|alt-text|lightbox|border|loc-scope|link)="(.*?))"\s*)+:::/gm;
 
