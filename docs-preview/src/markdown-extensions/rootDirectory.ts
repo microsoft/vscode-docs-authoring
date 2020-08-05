@@ -1,5 +1,5 @@
 import { workspace } from 'vscode';
-import { output } from '../helper/common';
+import { output } from '../extension';
 import * as os from 'os';
 
 const LINK_RE = /(\[.*?\]\()(.*~.*?)(\))/g;
