@@ -34,16 +34,13 @@ export function tryFindFile(rootPath: string, fileName: string) {
 	return undefined;
 }
 
+let osPlatform: string | null = null;
+
 /**
  * Provide current os platform
  */
-export function getOSPlatform(this: any) {
-	if (this.osPlatform == null) {
-		this.osPlatform = os.platform();
-		this.osPlatform = this.osPlatform;
-	}
-	return this.osPlatform;
-}
+export const getOSPlatform = () =>
+	osPlatform === null ? (osPlatform = os.platform()) : osPlatform;
 
 /**
  * Create a posted warning message and applies the message to the log
@@ -363,7 +360,7 @@ export function toShortDate(date: Date) {
 	const day = date.getDate().toString();
 	const dayStr = day.length > 1 ? day : `0${day}`;
 
-  return `${monthStr}/${dayStr}/${year}`;
+	return `${monthStr}/${dayStr}/${year}`;
 }
 
 export function findLineNumberOfPattern(editor: vscode.TextEditor, pattern: string) {

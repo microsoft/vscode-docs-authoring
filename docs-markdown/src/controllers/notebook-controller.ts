@@ -1,16 +1,16 @@
-import * as os from 'os';
 import fetch from 'axios';
 import {
 	insertContentToEditor,
 	findLineNumberOfPattern,
-	noActiveEditorMessage
+	noActiveEditorMessage,
+	getOSPlatform
 } from '../helper/common';
-import { resolve, join } from 'path';
+import { resolve } from 'path';
 import { Selection, window, TextEditor } from 'vscode';
 import { spawn, execSync } from 'child_process';
-import { unlinkSync, writeFileSync } from 'fs';
 import { URL } from 'url';
 import { Command } from '../Command';
+import { output } from '../helper/output';
 
 export const notebookControllerCommands: Command[] = [
 	{ command: insertNotebook.name, callback: insertNotebook },
@@ -69,9 +69,9 @@ function getUrl(editor: TextEditor, start: number) {
 	return url;
 }
 
-function getConvertPromise(filePath: string) {
+function getConvertPromise(json: string) {
 	return new Promise<ConversionResult>((resolve, reject) => {
-		convertToMarkdown(filePath, (result: ConversionResult | null, errorOrNull: Error | null) => {
+		convertToMarkdown(json, (result: ConversionResult | null, errorOrNull: Error | null) => {
 			if (errorOrNull || result === null) {
 				reject(errorOrNull);
 			} else {
@@ -84,18 +84,16 @@ function getConvertPromise(filePath: string) {
 async function getNotebookAsMarkdown(url: string) {
 	const rawUrl = toRaw(url);
 	const ipynbJson = await getRawNotebookJson(rawUrl);
-	const filePath = 'temp.ipynb';
-	writeFileSync(filePath, ipynbJson);
-	const fullPath = resolve(filePath);
+
 	try {
-		const result = await getConvertPromise(fullPath);
+		const result = await getConvertPromise(ipynbJson);
 		if (result !== null) {
 			return wrapMarkdownInTemplate(result.markdown, rawUrl);
 		}
 
 		return null;
-	} finally {
-		unlinkSync(fullPath);
+	} catch (error) {
+		output.appendLine(error);
 	}
 }
 
@@ -107,7 +105,6 @@ async function getRawNotebookJson(url: string): Promise<string> {
 }
 
 function wrapMarkdownInTemplate(content: string, url: string) {
-
 	const path = toUrl(url);
 	const split = url.split('/');
 	const fileName = split[split.length - 1];
@@ -162,30 +159,25 @@ interface ConversionResult {
 }
 
 function convertToMarkdown(
-	ipynbPath: string,
+	ipynbJson: string,
 	callback: (result: ConversionResult | null, errorOrNull: Error | null) => void
 ) {
-	const args: string[] = [
-		'nbconvert',
-		'--to',
-		'markdown',
-		`"${ipynbPath}"`, // This needs to be wrapped in double quotes
-		'--stdout'
-	];
-
 	let result: ConversionResult | null = null;
-	const plat = os.platform();
-	const stdout = execSync(`${plat === 'win32' ? 'where' : 'which'} python`).toString();
-
-	let pythonPath = stdout.split('\r\n')[0].substr(0, stdout.length - 1);
-	pythonPath = pythonPath.replace('python.exe', '');
-
-	const jupyterPath = join(pythonPath, 'Scripts/jupyter');
+	const plat = getOSPlatform();
+	const stdout = execSync(`${plat === 'win32' ? 'where' : 'which'} jupyter`).toString();
+	const jupyterPath = stdout.split('\r\n')[0].substr(0, stdout.length - 1);
 	const path = resolve(jupyterPath);
+
+	output.appendLine(`[Platform=${plat}]: Found Jupyter=${path}`);
+	const args: string[] = ['nbconvert', '--to', 'markdown', '--stdin', '--stdout'];
+
 	const nbConvert = spawn(path, args, { windowsVerbatimArguments: true });
+	ipynbJson.split('\n').forEach(line => nbConvert.stdin.write(line));
+	nbConvert.stdin.end();
 
 	nbConvert.stdout.on('data', data => {
 		result = { markdown: data + '' };
+		output.appendLine(data.toString());
 	});
 
 	nbConvert.on('error', err => {
@@ -196,7 +188,7 @@ function convertToMarkdown(
 		if (code !== 0) {
 			callback(null, {
 				name: 'FileSystemError',
-				message: `Unable to convert '${ipynbPath}' to markdown - error code: ${code}`
+				message: `Unable to convert to markdown - error code: ${code}`
 			});
 		} else {
 			callback(result, null);

@@ -63,13 +63,13 @@ suite('Media Controller', () => {
 				'https://channel9.msdn.com/Series/Youve-Got-Key-Values-A-Redis-Jump-Start/03/player'
 			);
 		const stubWorkspaceConfiguration = sinon.stub(workspace, 'getConfiguration').returns({
-				get: () => false,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			});
+			get: () => false,
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
+		});
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/media-controller.md'
@@ -91,14 +91,14 @@ suite('Media Controller', () => {
 			.resolves(
 				'https://channel9.msdn.com/Series/Youve-Got-Key-Values-A-Redis-Jump-Start/03/player'
 			);
-			const stubWorkspaceConfiguration = sinon.stub(workspace, 'getConfiguration').returns({
-				get: () => true,
-				has: () => true,
-				inspect: () => {
-					return { key: '' };
-				},
-				update: () => Promise.resolve()
-			});
+		const stubWorkspaceConfiguration = sinon.stub(workspace, 'getConfiguration').returns({
+			get: () => true,
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
+		});
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/media-controller1.md'
