@@ -16,6 +16,7 @@ import { videoOptions, legacyVideoOptions } from './markdown-extensions/video';
 import { DocumentContentProvider } from './seo/seoPreview';
 import { xref } from './markdown-extensions/xref';
 import { rootDirectory } from './markdown-extensions/rootDirectory';
+import { announcementCommand } from './controllers/announcement-controller';
 
 export const output = window.createOutputChannel('docs-preview');
 export let extensionPath: string;
@@ -26,6 +27,17 @@ const reloadMessage =
 	'Your updated configuration has been recorded, but you must reload to see its effects.';
 
 export async function activate(context: ExtensionContext) {
+	extensionPath = context.extensionPath;
+
+	// Creates an array of commands from each command file.
+	const ControllerCommands: any = [];
+	announcementCommand().forEach(cmd => ControllerCommands.push(cmd));
+	ControllerCommands.map((cmd: any) => {
+		const commandName = cmd.command;
+		const command = commands.registerCommand(commandName, cmd.callback);
+		context.subscriptions.push(command);
+	});
+
 	let panel: WebviewPanel;
 	themeHandler(context);
 
