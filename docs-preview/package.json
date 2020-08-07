@@ -51,6 +51,12 @@
 					],
 					"default": "Light",
 					"description": "Preview will be displayed in light theme."
+				},
+				"preview.defaultEmailAddress": {
+					"type": "string",
+					"default": "",
+					"markdownDescription": "The default email address used by the mailer command.",
+					"scope": "window"
 				}
 			}
 		},
@@ -87,6 +93,11 @@
 			{
 				"command": "docs.seoPreview",
 				"title": "Docs: Search Results Preview"
+			},
+			{
+				"command": "getAnnouncementCredentials",
+				"title": "Send as email",
+				"category": "Docs"
 			}
 		],
 		"menus": {
@@ -102,6 +113,10 @@
 				{
 					"when": "resourceLangId == markdown || resourceLangId == yaml",
 					"command": "docs.seoPreview"
+				},
+				{
+					"command": "getAnnouncementCredentials",
+					"group": "Docs"
 				}
 			]
 		}
@@ -142,6 +157,8 @@
 		"markdown-it": "^8.4.2",
 		"mocha": "^7.1.1",
 		"mocha-junit-reporter": "^1.23.3",
+		"native-ext-loader": "^2.3.0",
+		"node-loader": "^1.0.1",
 		"nyc": "^15.0.0",
 		"prettier": "^2.0.5",
 		"pretty-quick": "^2.0.1",
@@ -162,8 +179,11 @@
 		"glob": "^7.1.6",
 		"js-base64": "^2.5.1",
 		"js-yaml": "^3.13.1",
+		"keytar": "^6.0.1",
+		"markdown-it-front-matter": "^0.2.1",
 		"markdown-it-include": "^1.1.0",
 		"moment": "^2.24.0",
+		"nodemailer": "^6.4.11",
 		"os": "^0.1.1",
 		"vscode-extension-telemetry": "^0.1.1"
 	}

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { ConfigurationTarget, Memento, window, workspace } from 'vscode';
+import { ConfigurationTarget, env, window, workspace } from 'vscode';
 import { output } from '../extension';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
@@ -7,8 +7,11 @@ import { div_plugin, divOptions } from '../markdown-extensions/div';
 import { imageOptions } from '../markdown-extensions/image';
 import { rowEndOptions, rowOptions } from '../markdown-extensions/row';
 import { videoOptions, legacyVideoOptions } from '../markdown-extensions/video';
+import { keytar } from '../helper/keytar';
 
 const defaultEmailAddressSetting: string = 'preview.defaultEmailAddress';
+const service = 'dap-mailer';
+
 let primaryEmailAddress: any;
 let emailRecipients: any;
 let emailSubject: string;
@@ -22,7 +25,7 @@ export function announcementCommand() {
 	return commands;
 }
 
-function getAnnouncementCredentials() {
+async function getAnnouncementCredentials() {
 	const defaultEmailAddress = workspace.getConfiguration().get(defaultEmailAddressSetting);
 	if (defaultEmailAddress) {
 		primaryEmailAddress = defaultEmailAddress;
@@ -47,11 +50,13 @@ function getAnnouncementCredentials() {
 }
 
 function getEmailToList() {
+	// get length of email address to set cursor position in input box
+	const emailLength = primaryEmailAddress.length;
 	// get additional email addresses
 	const getEmailAddress = window.showInputBox({
 		prompt: `Mail to: ${primaryEmailAddress}; (you can specify other recipients separated by semi-colons)`,
 		value: primaryEmailAddress,
-		valueSelection: [0, 0]
+		valueSelection: [emailLength, emailLength]
 	});
 	getEmailAddress.then(val => {
 		if (!val) {
@@ -63,19 +68,25 @@ function getEmailToList() {
 	});
 }
 
-function getPassword() {
-	const userPassword = window.showInputBox({
-		password: true,
-		prompt: 'Enter your password'
-	});
-	userPassword.then(val => {
-		if (!val) {
-			return;
-		} else {
-			password = val;
-			convertMarkdownToHtml();
-		}
-	});
+async function getPassword() {
+	password = await keytar.getPassword(service, primaryEmailAddress);
+	if (password) {
+		convertMarkdownToHtml();
+	} else {
+		const userPassword = window.showInputBox({
+			password: true,
+			prompt: 'Enter your password'
+		});
+		userPassword.then(async val => {
+			if (!val) {
+				return;
+			} else {
+				password = val;
+				await keytar.setPassword(service, primaryEmailAddress, password);
+				convertMarkdownToHtml();
+			}
+		});
+	}
 }
 
 function convertMarkdownToHtml() {
@@ -85,6 +96,9 @@ function convertMarkdownToHtml() {
 		filePath = editor.document.fileName;
 	}
 	const announcementContent = window.activeTextEditor?.document.getText();
+	const frontMatterRegex = /^(---)([^]+?)(---)$/gm;
+	// strip front matter
+	const updatedAnnouncementContent = announcementContent.replace(frontMatterRegex, '');
 	const titleRegex = /^(#{1})[\s](.*)[\r]?[\n]/gm;
 	const title = announcementContent.match(titleRegex);
 	emailSubject = title.toString().replace('# ', '');
@@ -104,7 +118,7 @@ function convertMarkdownToHtml() {
 			.use(require('markdown-it-front-matter'), function (fm) {
 				// remove yaml header from mail
 			});
-		emailBody = md.render(announcementContent); // store html as emailBody
+		emailBody = md.render(updatedAnnouncementContent); // store html as emailBody
 		output.appendLine(`Converted markdown to HTML\n${emailBody}`);
 		sendMail();
 	} catch (error) {
