@@ -4,7 +4,7 @@
 	"description": "Docs Markdown Extension",
 	"icon": "images/docs-logo-ms.png",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-	"version": "0.2.77",
+	"version": "0.2.78",
 	"publisher": "docsmsft",
 	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
 	"bugs": {
@@ -675,6 +675,11 @@
 				"markdown.allowlistUrl": {
 					"type": "string",
 					"default": "[ALLOWLISTURL]"
+				},
+				"markdown.metadataNag": {
+					"type": "boolean",
+					"default": false,
+					"description": "On save prompt to update ms.date if it's not up-to-date"
 				}
 			}
 		},

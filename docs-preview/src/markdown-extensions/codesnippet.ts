@@ -4,7 +4,7 @@ import { readFileSync } from 'fs';
 import { Base64 } from 'js-base64';
 import { parse, resolve } from 'path';
 import { workspace, commands } from 'vscode';
-import { output as outputChannel } from '../helper/common';
+import { output } from '../extension';
 
 // async fs does not have import module available
 const fs = require('fs');
@@ -36,7 +36,7 @@ export function codeSnippets(md, options) {
 		try {
 			state.src = replaceCodeSnippetWithContents(state.src, options.root);
 		} catch (error) {
-			outputChannel.appendLine(error);
+			output.appendLine(error);
 		}
 	};
 	md.core.ruler.before('normalize', 'codesnippet', importCodeSnippet);
@@ -57,7 +57,7 @@ export function tripleColonCodeSnippets(md, options) {
 			for (const match of matches) {
 				let file;
 				let shouldUpdate = false;
-				let output = '';
+				let snippetOutput = '';
 				const lineArr: string[] = [];
 				const position = src.indexOf(match);
 				const source = match.match(SOURCE_RE);
@@ -76,11 +76,11 @@ export function tripleColonCodeSnippets(md, options) {
 									await Axios.get(apiUrl).then(response => {
 										if (response) {
 											if (response.status === 403) {
-												outputChannel.appendLine(
+												output.appendLine(
 													'Github Rate Limit has been reached. 60 calls per hour are allowed.'
 												);
 											} else if (response.status === 404) {
-												outputChannel.appendLine('Resource not Found.');
+												output.appendLine('Resource not Found.');
 											} else if (response.status === 200) {
 												file = Base64.decode(response.data.content);
 												fileMap.set(path, file);
@@ -88,7 +88,7 @@ export function tripleColonCodeSnippets(md, options) {
 										}
 									});
 								} catch (error) {
-									outputChannel.appendLine(error);
+									output.appendLine(error);
 								}
 							}
 						} else {
@@ -103,14 +103,15 @@ export function tripleColonCodeSnippets(md, options) {
 					const range = match.match(RANGE_RE);
 					const idMatch = match.match(ID_RE);
 					if (idMatch) {
-						output = idToOutput(idMatch, lineArr, data, language);
+						snippetOutput = idToOutput(idMatch, lineArr, data, language);
 					} else if (range) {
-						output = rangeToOutput(lineArr, data, range);
+						snippetOutput = rangeToOutput(lineArr, data, range);
 					} else {
-						output = file;
+						snippetOutput = file;
 					}
-					output = `\`\`\`${language}\r\n${output}\r\n\`\`\``;
-					src = src.slice(0, position) + output + src.slice(position + match.length, src.length);
+					snippetOutput = `\`\`\`${language}\r\n${snippetOutput}\r\n\`\`\``;
+					src =
+						src.slice(0, position) + snippetOutput + src.slice(position + match.length, src.length);
 
 					codeSnippetContent = src;
 
@@ -129,7 +130,7 @@ export function tripleColonCodeSnippets(md, options) {
 			replaceTripleColonCodeSnippetWithContents(state.src, options.root);
 			state.src = codeSnippetContent;
 		} catch (error) {
-			outputChannel.appendLine(error);
+			output.appendLine(error);
 		}
 	};
 	md.core.ruler.before('normalize', 'codesnippet', importTripleColonCodeSnippets);

@@ -62,16 +62,14 @@ suite('Media Controller', () => {
 			.resolves(
 				'https://channel9.msdn.com/Series/Youve-Got-Key-Values-A-Redis-Jump-Start/03/player'
 			);
-		workspace.getConfiguration = () => {
-			return {
+		const stubWorkspaceConfiguration = sinon.stub(workspace, 'getConfiguration').returns({
 				get: () => false,
 				has: () => true,
 				inspect: () => {
 					return { key: '' };
 				},
 				update: () => Promise.resolve()
-			};
-		};
+			});
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/media-controller.md'
@@ -84,6 +82,7 @@ suite('Media Controller', () => {
 		const actualText = editor?.document.getText();
 		assert.equal(expectedText, actualText);
 		stubShowInputBox.restore();
+		stubWorkspaceConfiguration.restore();
 	});
 	test('insertVideo - preview flag', async () => {
 		const stubShowInputBox = sinon.stub(window, 'showInputBox');
@@ -92,16 +91,14 @@ suite('Media Controller', () => {
 			.resolves(
 				'https://channel9.msdn.com/Series/Youve-Got-Key-Values-A-Redis-Jump-Start/03/player'
 			);
-		workspace.getConfiguration = () => {
-			return {
+			const stubWorkspaceConfiguration = sinon.stub(workspace, 'getConfiguration').returns({
 				get: () => true,
 				has: () => true,
 				inspect: () => {
 					return { key: '' };
 				},
 				update: () => Promise.resolve()
-			};
-		};
+			});
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/media-controller1.md'
@@ -114,5 +111,6 @@ suite('Media Controller', () => {
 		const actualText = editor?.document.getText();
 		assert.equal(expectedText, actualText);
 		stubShowInputBox.restore();
+		stubWorkspaceConfiguration.restore();
 	});
 });
