@@ -1,6 +1,6 @@
 import Axios from 'axios';
 import { commands } from 'vscode';
-import { output } from '../extension';
+import { output } from '../helper/common';
 
 /* tslint:disable: no-conditional-assignment */
 

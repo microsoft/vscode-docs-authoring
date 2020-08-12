@@ -1,6 +1,6 @@
-import { output } from '../extension';
+import { output } from '../helper/common';
 
-const IMAGE_OPEN_RE = /image\s+(((source|type|alt-text|lightbox|border|loc-scope|link)="(.*?))"\s*)+:::/gm;
+const IMAGE_OPEN_RE = /:::image\s+(((source|type|alt-text|lightbox|border|loc-scope|link)="(.*?))"\s*)+:::/;
 
 export const imageOptions = {
 	marker: ':',

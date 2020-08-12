@@ -3,7 +3,7 @@
 import { appendFileSync, readFileSync, writeFileSync } from 'fs';
 import { basename, join } from 'path';
 import { commands, ExtensionContext, ViewColumn, WebviewPanel, window, workspace } from 'vscode';
-import { isMarkdownFile, isYamlFile, sendTelemetryData } from './helper/common';
+import { isMarkdownFile, isYamlFile, sendTelemetryData, output } from './helper/common';
 import { Reporter } from './helper/telemetry';
 import { codeSnippets, tripleColonCodeSnippets } from './markdown-extensions/codesnippet';
 import { column_end, columnEndOptions, columnOptions } from './markdown-extensions/column';
@@ -17,7 +17,6 @@ import { DocumentContentProvider } from './seo/seoPreview';
 import { xref } from './markdown-extensions/xref';
 import { rootDirectory } from './markdown-extensions/rootDirectory';
 
-export const output = window.createOutputChannel('docs-preview');
 export let extensionPath: string;
 const telemetryCommand: string = 'preview';
 
