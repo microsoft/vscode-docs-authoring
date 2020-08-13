@@ -5,7 +5,11 @@ import { basename, join } from 'path';
 import { commands, ExtensionContext, ViewColumn, WebviewPanel, window, workspace } from 'vscode';
 import { isMarkdownFile, isYamlFile, sendTelemetryData } from './helper/common';
 import { Reporter } from './helper/telemetry';
-import { codeSnippets, tripleColonCodeSnippets } from './markdown-extensions/codesnippet';
+import {
+	codeSnippets,
+	tripleColonCodeSnippets,
+	refreshPreviewCache
+} from './markdown-extensions/codesnippet';
 import { column_end, columnEndOptions, columnOptions } from './markdown-extensions/column';
 import { container_plugin } from './markdown-extensions/container';
 import { div_plugin, divOptions } from './markdown-extensions/div';
@@ -42,6 +46,11 @@ export async function activate(context: ExtensionContext) {
 		const commandOption = 'show-preview-tab';
 		sendTelemetryData(telemetryCommand, commandOption);
 	});
+	const disposableRefreshPreview = commands.registerCommand('docs.refreshPreview', () => {
+		refreshPreviewCache();
+		const commandOption = 'refreshPreview';
+		sendTelemetryData(telemetryCommand, commandOption);
+	});
 
 	const provider = new DocumentContentProvider();
 
@@ -59,10 +68,12 @@ export async function activate(context: ExtensionContext) {
 		'docs.seoPreview',
 		seoPreview(ViewColumn.Two)
 	);
+
 	context.subscriptions.push(
 		disposableSidePreview,
 		disposableStandalonePreview,
-		disposableSEOPreview
+		disposableSEOPreview,
+		disposableRefreshPreview
 	);
 
 	let filePath = '';

@@ -49,6 +49,12 @@ const SOURCE_RE = /source="(.*?)"/i;
 const LANGUAGE_RE = /language="(.*?)"/i;
 const RANGE_RE = /range="(.*?)"/i;
 const ID_RE = /id="(.*?)"/i;
+export function refreshPreviewCache() {
+	fileMap.forEach((value, key) => {
+		fileMap.delete(key);
+	});
+	commands.executeCommand('markdown.preview.refresh');
+}
 
 export function tripleColonCodeSnippets(md, options) {
 	const replaceTripleColonCodeSnippetWithContents = async (src: string, rootdir: string) => {
