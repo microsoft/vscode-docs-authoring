@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 'use strict';
 
 import { appendFileSync, readFileSync, writeFileSync } from 'fs';
