@@ -1,4 +1,14 @@
 import { output } from '../extension';
+import { basename } from 'path';
+import {
+	primaryEmailAddress,
+	emailRecipients,
+	emailSubject,
+	emailBody
+} from '../controllers/announcement-controller';
+import { workspace } from 'vscode';
+
+export let mailOptions;
 
 const IMAGE_OPEN_RE = /image\s+(((source|type|alt-text|lightbox|border|loc-scope|link)="(.*?))"\s*)+:::/gm;
 
@@ -17,13 +27,32 @@ export const imageOptions = {
 		if (start) {
 			const sourceMatch = SOURCE_RE.exec(start[0]);
 			if (sourceMatch && sourceMatch.length > 0) {
-				const source = sourceMatch[1];
+				let source = sourceMatch[1];
 				const lightboxMatch = LIGHTBOX_RE.exec(start[0]);
 				const borderMatch = BORDER_RE.exec(start[0]);
 				const typeMatch = TYPE_RE.exec(start[0]);
 				const linkMatch = LINK_RE.exec(start[0]);
 
-				let html = `<div class="mx-imgBorder"><p><img src="${source}"></p></div>`;
+				const repoRoot = workspace.workspaceFolders[0].uri.fsPath + '/';
+				source = source.replace('..\\', '').replace(/\.\.\//g, '');
+				const imagePath = repoRoot.concat(source).replace(/\\/g, '/');
+				const fileNameMailOption = basename(source);
+
+				mailOptions = {
+					from: primaryEmailAddress, // sender address (who sends)
+					to: emailRecipients, // list of receivers (who receives)
+					subject: emailSubject, // Subject line
+					attachments: [
+						{
+							fileName: fileNameMailOption,
+							path: imagePath,
+							cid: source
+						}
+					],
+					html: emailBody
+				};
+
+				let html = `<div class="mx-imgBorder"><p><img src="cid:${source}"></p></div>`;
 				if (borderMatch && borderMatch.length > 0 && 'false' === borderMatch[1].toLowerCase()) {
 					html = `<img src="${source}">`;
 				}

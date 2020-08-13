@@ -1,22 +1,24 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { ConfigurationTarget, env, window, workspace } from 'vscode';
+import { ConfigurationTarget, window, workspace } from 'vscode';
 import { output } from '../extension';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
 import { div_plugin, divOptions } from '../markdown-extensions/div';
-import { imageOptions } from '../markdown-extensions/image';
+import { imageOptions, mailOptions } from '../markdown-extensions/image';
 import { rowEndOptions, rowOptions } from '../markdown-extensions/row';
 import { videoOptions, legacyVideoOptions } from '../markdown-extensions/video';
 import { keytar } from '../helper/keytar';
 
+export let filePath = '';
+
 const defaultEmailAddressSetting: string = 'preview.defaultEmailAddress';
 const service = 'dap-mailer';
 
-let primaryEmailAddress: any;
-let emailRecipients: any;
-let emailSubject: string;
-let password: string;
-let emailBody: string;
+export let primaryEmailAddress: any;
+export let emailRecipients: any;
+export let emailSubject: string;
+export let password: string;
+export let emailBody: string;
 
 export function announcementCommand() {
 	const commands = [
@@ -90,11 +92,11 @@ async function getPassword() {
 }
 
 function convertMarkdownToHtml() {
-	let filePath = '';
 	const editor = window.activeTextEditor;
 	if (editor) {
 		filePath = editor.document.fileName;
 	}
+
 	const announcementContent = window.activeTextEditor?.document.getText();
 	const frontMatterRegex = /^(---)([^]+?)(---)$/gm;
 	// strip front matter
@@ -115,7 +117,7 @@ function convertMarkdownToHtml() {
 			.use(container_plugin, 'image', imageOptions)
 			.use(container_plugin, 'video', videoOptions)
 			.use(container_plugin, 'legacyVideo', legacyVideoOptions)
-			.use(require('markdown-it-front-matter'), function (fm) {
+			.use(require('markdown-it-front-matter'), function () {
 				// remove yaml header from mail
 			});
 		emailBody = md.render(updatedAnnouncementContent); // store html as emailBody
@@ -128,6 +130,7 @@ function convertMarkdownToHtml() {
 
 function sendMail() {
 	const nodemailer = require('nodemailer');
+
 	const transporter = nodemailer.createTransport({
 		host: 'smtp-mail.outlook.com', // hostname
 		secureConnection: false, // TLS requires secureConnection to be false
@@ -141,13 +144,30 @@ function sendMail() {
 		}
 	});
 
+	/* const handlebarsViewPath = join(extensionPath, 'templates', 'blog.handlebars');
+
+	transporter.use(
+		'compile',
+		hbs({
+			viewEngine: 'express-handlebars',
+			viewPath: handlebarsViewPath
+		})
+	); */
+
 	// setup e-mail data, even with unicode symbols
-	const mailOptions = {
+	/* const mailOptions = {
 		from: primaryEmailAddress, // sender address (who sends)
 		to: emailRecipients, // list of receivers (who receives)
 		subject: emailSubject, // Subject line
-		html: emailBody // html body
-	};
+		attachments: [
+			{
+				fileName: 'coming-soon.png',
+				path: 'C:\\GitHub\\docs-markdown-testing\\testing-docs\\authoring\\media\\coming-soon.png',
+				cid: '../../_site/testing-docs/authoring/links/media/coming-soon.png'
+			}
+		],
+		html: emailBody
+	}; */
 
 	// send mail with defined transport object
 	transporter.sendMail(mailOptions, function (error: any, info: any) {

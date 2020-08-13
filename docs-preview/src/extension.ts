@@ -20,6 +20,7 @@ import { announcementCommand } from './controllers/announcement-controller';
 
 export const output = window.createOutputChannel('docs-preview');
 export let extensionPath: string;
+export let context;
 const telemetryCommand: string = 'preview';
 
 const previewThemeSetting: string = 'preview.previewTheme';
