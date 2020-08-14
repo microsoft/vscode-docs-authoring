@@ -87,6 +87,10 @@
 			{
 				"command": "docs.seoPreview",
 				"title": "Docs: Search Results Preview"
+			},
+			{
+				"command": "docs.refreshPreview",
+				"title": "Docs: Clear Preview Cache"
 			}
 		],
 		"menus": {
@@ -98,6 +102,9 @@
 				{
 					"when": "resourceLangId == markdown",
 					"command": "docs.showPreview"
+				},
+				{
+					"command": "docs.refreshPreview"
 				},
 				{
 					"when": "resourceLangId == markdown || resourceLangId == yaml",
