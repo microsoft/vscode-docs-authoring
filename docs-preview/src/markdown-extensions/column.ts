@@ -1,4 +1,4 @@
-import { output } from '../extension';
+import { output } from '../helper/common';
 
 export const columnOptions = {
 	marker: ':',

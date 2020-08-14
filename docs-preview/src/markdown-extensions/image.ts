@@ -1,6 +1,6 @@
-import { output } from '../extension';
+import { output } from '../helper/common';
 
-const IMAGE_OPEN_RE = /image\s+(((source|type|alt-text|lightbox|border|loc-scope|link)="(.*?))"\s*)+:::/gm;
+const IMAGE_OPEN_RE = /:::image\s+(((source|type|alt-text|lightbox|border|loc-scope|link)="(.*?))"\s*)+:::/;
 
 export const imageOptions = {
 	marker: ':',
@@ -80,4 +80,52 @@ export function image_end(md) {
 		}
 	};
 	md.core.ruler.before('normalize', 'imageclose', importImageEnd);
+}
+
+/* tslint:disable: one-variable-per-declaration prefer-const variable-name */
+
+export function image_plugin(md, name, options) {
+	options = options || {};
+	const marker_str = options.marker;
+	const render = options.render;
+	const tripleColon = ':::';
+	function imageContainer(state, silent) {
+		let pos = state.pos;
+		if (state.src.charAt(pos) !== marker_str) {
+			return false;
+		}
+		pos++;
+		if (state.src.charAt(pos) !== marker_str) {
+			return false;
+		}
+		pos++;
+		if (state.src.charAt(pos) !== marker_str) {
+			return false;
+		}
+		pos++;
+		const markup = state.src.slice(state.pos, pos);
+
+		const endOfContainer = state.src.indexOf(tripleColon, pos);
+		if (endOfContainer !== -1) {
+			const params = state.src.slice(state.pos, endOfContainer + 3);
+
+			if (!silent) {
+				const token = state.push(`${name}_container`, 'img', 0);
+				token.info = params;
+			}
+			state.pos = endOfContainer + 3;
+			return true;
+		}
+
+		if (!silent) {
+			state.pending += markup;
+		}
+		state.pos = pos;
+		return true;
+	}
+
+	md.inline.ruler.push(`${name}_container`, imageContainer, {
+		alt: []
+	});
+	md.renderer.rules[`${name}_container`] = render;
 }
