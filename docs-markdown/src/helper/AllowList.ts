@@ -1,44 +1,24 @@
 import { ExtensionContext, QuickPickItem, workspace } from 'vscode';
 import Axios from 'axios';
-import { TokenResponse, Auth } from './Auth';
 import { output } from './output';
 
 export class AllowList {
 	context;
 	allowlist;
-	token: TokenResponse;
 	config = workspace.getConfiguration('markdown');
 	allowlistUrl = this.config.get<string>('allowlistUrl');
 	constructor(context: ExtensionContext) {
 		this.context = context;
 	}
 	getAllowList = async () => {
-		this.token = this.context.globalState.get('token');
-		const currentDate = new Date();
-		if (
-			!this.token ||
-			(this.token && this.token.expiresOn && new Date(this.token.expiresOn) < currentDate)
-		) {
-			await this.forceRefreshAllowList();
-		} else {
-			this.allowlist = this.context.globalState.get('allowlist');
-			if (!this.allowlist) {
-				await this.refreshAllowList(this.token);
-			}
+		this.allowlist = this.context.globalState.get('allowlist');
+		if (!this.allowlist) {
+			await this.refreshAllowList();
 		}
 	};
-	forceRefreshAllowList = async () => {
-		const auth = new Auth(this.context);
-		auth.getToken().then(async token => {
-			await this.refreshAllowList(token);
-		});
-	};
-	refreshAllowList = async (token: TokenResponse) => {
-		const config = {
-			headers: { Authorization: `Bearer ${token.accessToken}` }
-		};
+	refreshAllowList = async () => {
 		try {
-			const response = await Axios.get(this.allowlistUrl, config);
+			const response = await Axios.get(this.allowlistUrl);
 			await this.buildAllowList(response);
 		} catch (error) {
 			output.appendLine(error);
