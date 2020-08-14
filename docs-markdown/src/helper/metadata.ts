@@ -6,7 +6,8 @@ import { findReplacement } from './utility';
 const blacklist: string[] = [];
 
 export async function nag() {
-	if (workspace.getConfiguration('markdown').metadataNag === false) {
+	const config = workspace.getConfiguration('markdown');
+	if (!config.get<boolean>('metadataNag')) {
 		return;
 	}
 	const editor = window.activeTextEditor;
