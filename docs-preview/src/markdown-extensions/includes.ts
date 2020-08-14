@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { basename, resolve } from 'path';
 import { window, workspace } from 'vscode';
-import { output } from '../extension';
+import { output } from '../helper/common';
 
 /* tslint:disable: no-conditional-assignment */
 const INCLUDE_RE = /\[!include\s*\[\s*.+?\s*]\(\s*(.+?)\s*\)\s*]/i;
