@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.3.55 (August 14th, 2020)
+
+- Fixed Codesnippet styles preview bug: [Issue 702](https://github.com/microsoft/vscode-docs-authoring/issues/702)
+- Fixed Codesnippet caching preview bug: [Issue 703](https://github.com/microsoft/vscode-docs-authoring/issues/703)
+- Changed markdown-it plugin for images to use inline blocks.
+
 ## 0.3.54 (July 30th, 2020)
 
 - Fixed SEO preview bug: [Issue 679](https://github.com/microsoft/vscode-docs-authoring/issues/679).
