@@ -4,7 +4,7 @@ import { readFileSync } from 'fs';
 import { Base64 } from 'js-base64';
 import { parse, resolve } from 'path';
 import { workspace, commands } from 'vscode';
-import { output } from '../extension';
+import { output } from '../helper/common';
 
 // async fs does not have import module available
 const fs = require('fs');
@@ -49,6 +49,12 @@ const SOURCE_RE = /source="(.*?)"/i;
 const LANGUAGE_RE = /language="(.*?)"/i;
 const RANGE_RE = /range="(.*?)"/i;
 const ID_RE = /id="(.*?)"/i;
+export function refreshPreviewCache() {
+	fileMap.forEach((value, key) => {
+		fileMap.delete(key);
+	});
+	commands.executeCommand('markdown.preview.refresh');
+}
 
 export function tripleColonCodeSnippets(md, options) {
 	const replaceTripleColonCodeSnippetWithContents = async (src: string, rootdir: string) => {
