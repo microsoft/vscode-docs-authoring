@@ -1,5 +1,5 @@
 {
-	"name": "@dap/docs-markdown",
+	"name": "docs-markdown",
 	"displayName": "docs-markdown",
 	"description": "Docs Markdown Extension",
 	"icon": "images/docs-logo-ms.png",

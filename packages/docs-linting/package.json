@@ -1,5 +1,5 @@
 {
-	"name": "@dap/docs-linting",
+	"name": "docs-linting",
 	"displayName": "docs-linting",
 	"description": "Docs Linting Extension",
 	"icon": "images/docs-logo-ms.png",
