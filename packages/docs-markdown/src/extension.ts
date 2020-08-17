@@ -98,7 +98,7 @@ export async function activate(context: ExtensionContext) {
 	const allowList = new AllowList(context);
 	const shouldUpdate = checkVersion(context);
 	if (shouldUpdate) {
-		await allowList.forceRefreshAllowList();
+		await allowList.refreshAllowList();
 	} else {
 		await allowList.getAllowList();
 	}

@@ -11,16 +11,36 @@ suite('Auth', () => {
 	test('getToken returns TokenResponse', () => {
 		const getConfigurationStub = sinon.stub(workspace, 'getConfiguration');
 		getConfigurationStub.onCall(0).returns({
-			get: () => 'tenant'
+			get: () => 'tenant',
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
 		});
 		getConfigurationStub.onCall(1).returns({
-			get: () => 'clientId'
+			get: () => 'clientId',
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
 		});
 		getConfigurationStub.onCall(2).returns({
-			get: () => 'clientSecret'
+			get: () => 'clientSecret',
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
 		});
 		getConfigurationStub.onCall(3).returns({
-			get: () => 'resource'
+			get: () => 'resource',
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
 		});
 		const authenticationContextStub = sinon
 			.stub(AuthenticationContext.prototype, 'acquireTokenWithClientCredentials')

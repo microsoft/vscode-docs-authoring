@@ -66,7 +66,7 @@ suite('Moniker Controller', () => {
 		common.insertContentToEditor(editor!, '', false, editor!.document.lineAt(10).range);
 		common.setCursorPosition(editor!, yamlLine, 0); // move cursor back
 		await sleep(sleepTime);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves(monikerOptions[0]);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await insertMoniker();
@@ -90,7 +90,7 @@ suite('Moniker Controller', () => {
 		common.setCursorPosition(editor!, yamlLine, 0);
 
 		await sleep(sleepTime);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves(monikerOptions[1]);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await insertMoniker();
@@ -114,7 +114,7 @@ suite('Moniker Controller', () => {
 		common.insertContentToEditor(editor!, '\r\n');
 		common.setCursorPosition(editor!, yamlLine, 0);
 		await sleep(sleepTime);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves(monikerOptions[2]);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await insertMoniker();
@@ -136,7 +136,7 @@ suite('Moniker Controller', () => {
 	test('insertMarkdownMoniker - equal - output', async () => {
 		const editor = window.activeTextEditor!;
 		common.setCursorPosition(editor, markLine, 0);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves(monikerOptions[0]);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await insertMoniker();
@@ -163,7 +163,7 @@ suite('Moniker Controller', () => {
 		common.insertContentToEditor(editor, '\r\n');
 		common.setCursorPosition(editor, markLine + 3, 0);
 		await sleep(sleepTime);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves(monikerOptions[1]);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		await insertMoniker();
@@ -190,7 +190,7 @@ suite('Moniker Controller', () => {
 		common.insertContentToEditor(editor!, '\r\n');
 		common.setCursorPosition(editor, markLine + 6, 0);
 		await sleep(sleepTime);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves(monikerOptions[2]);
 
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');

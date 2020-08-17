@@ -55,7 +55,7 @@ suite('Row columns Controller', () => {
 		expect(spy).to.have.been.called();
 	});
 	test('insertRowsWithColumns', async () => {
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves('Two-column structure');
 		const spy = chai.spy.on(helper, 'createRow');
 		insertRowsAndColumns();
@@ -64,7 +64,7 @@ suite('Row columns Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('insertNewColumn', async () => {
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves('New column');
 		const spy = chai.spy.on(helper, 'addNewColumn');
 		insertRowsAndColumns();
@@ -73,7 +73,7 @@ suite('Row columns Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('insertNewColumnWithSpan', async () => {
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves('New column with span');
 		const spy = chai.spy.on(helper, 'addNewColumnWithSpan');
 		insertRowsAndColumns();

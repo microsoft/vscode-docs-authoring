@@ -33,7 +33,7 @@ suite('Template Controller', () => {
 	test('applyTemplate - generateTimestamp', async () => {
 		const filePath = resolve(__dirname, testFile);
 		await loadDocumentAndGetItReady(filePath);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves('docs-article-metadata.md');
 		const spy = chai.spy.on(common, 'generateTimestamp');
 		applyTemplate();
@@ -42,7 +42,7 @@ suite('Template Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('applyTemplate - checkExtension', async () => {
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves('docs-article-metadata.md');
 		const spy = chai.spy.on(common, 'checkExtension');
 		applyTemplate();
@@ -51,7 +51,7 @@ suite('Template Controller', () => {
 		stubShowQuickPick.restore();
 	});
 	test('applyTemplate - executeCommand', async () => {
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves('docs-article-metadata.md');
 		sinon.stub(common, 'checkExtension').returns(true);
 		const spy = chai.spy.on(commands, 'executeCommand');

@@ -52,7 +52,7 @@ suite('Cleanup Controller', () => {
 	});
 	test('cleanup repo - getCleanUpQuickPick', async () => {
 		const spy = chai.spy.on(utilities, 'getCleanUpQuickPick');
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves('');
 		await applyCleanup();
 		await sleep(sleepTime);
@@ -61,7 +61,7 @@ suite('Cleanup Controller', () => {
 	});
 	test('cleanup repo - noActiveEditorMessage', async () => {
 		const spy = chai.spy.on(common, 'noActiveEditorMessage');
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves('selection');
 		await applyCleanup();
 		await sleep(sleepTime);
@@ -172,7 +172,7 @@ suite('Cleanup Controller', () => {
 	});
 	test('cleanup file - getCleanUpQuickPick', async () => {
 		const spy = chai.spy.on(utilities, 'getCleanUpQuickPick');
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves('');
 		await applyCleanupFile(Uri.file(filePath));
 		expect(spy).to.have.been.called();
@@ -248,7 +248,7 @@ suite('Cleanup Controller', () => {
 	});
 	test('cleanup folder - getCleanUpQuickPick', async () => {
 		const spy = chai.spy.on(utilities, 'getCleanUpQuickPick');
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves('');
 		await applyCleanupFolder(Uri.file(folderPath));
 		expect(spy).to.have.been.called();

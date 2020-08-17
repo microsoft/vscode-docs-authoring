@@ -59,11 +59,9 @@ suite('Xref Controller', () => {
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const stubGetXrefDisplayProperty = sinon.stub(xrefHelper, 'getXrefDisplayProperty');
-		stubGetXrefDisplayProperty
-			.onCall(0)
-			.resolves(Promise.resolve({ description: 'None (default)', label: 'none' }));
+		stubGetXrefDisplayProperty.onCall(0).resolves({ description: 'None (default)', label: 'none' });
 		const stubGetXrefSelection = sinon.stub(xrefHelper, 'getXrefSelection');
-		stubGetXrefSelection.onCall(0).resolves(Promise.resolve({ label: 'System.String' }));
+		stubGetXrefSelection.onCall(0).resolves({ label: 'System.String' });
 		await applyXref();
 		await sleep(sleepTime);
 		const expectedText = '<xref:System.String>';

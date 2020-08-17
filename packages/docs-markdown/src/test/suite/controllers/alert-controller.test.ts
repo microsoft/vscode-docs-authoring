@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { resolve } from 'path';
-import { commands, window } from 'vscode';
+import { commands, window, QuickPickItem } from 'vscode';
 import { insertAlert, insertAlertCommand } from '../../../controllers/alert-controller';
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
@@ -49,7 +49,7 @@ suite('Alert Controller', () => {
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick
 			.onCall(0)
 			.resolves('Note – Information the user should notice even if skimming');

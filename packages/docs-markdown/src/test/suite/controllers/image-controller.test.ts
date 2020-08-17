@@ -32,6 +32,7 @@ suite('Image Controller', () => {
 	teardown(() => {
 		chai.spy.restore(common);
 	});
+
 	suiteTeardown(async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
 		sinon.restore();

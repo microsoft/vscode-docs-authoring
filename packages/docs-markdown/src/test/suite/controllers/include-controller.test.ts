@@ -48,7 +48,7 @@ suite('Include Controller', () => {
 	test('insertInclude - isMarkdownFileCheck', async () => {
 		const spy = chai.spy.on(common, 'isMarkdownFileCheck');
 		const stub = sinon.stub(glob, 'Glob');
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves('');
 		await loadDocumentAndGetItReady(testFilePath);
 		await insertInclude();
@@ -59,7 +59,7 @@ suite('Include Controller', () => {
 	test('insertInclude - hasValidWorkSpaceRootPath', async () => {
 		const spy = chai.spy.on(common, 'hasValidWorkSpaceRootPath');
 		const stub = sinon.stub(glob, 'glob');
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		stubShowQuickPick.onCall(0).resolves('');
 		await loadDocumentAndGetItReady(testFilePath);
 		await insertInclude();

@@ -159,7 +159,7 @@ suite('Quick Pick Menu Controller', () => {
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		const item: QuickPickItem = {
 			description: '',
 			label: '$(alert) Alert'
@@ -351,7 +351,7 @@ suite('Quick Pick Menu Controller', () => {
 			'../../../../../src/test/data/repo/articles/docs-markdown.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		const item: QuickPickItem = {
 			description: '',
 			label: '$(ellipsis) Columns'
@@ -407,7 +407,7 @@ suite('Quick Pick Menu Controller', () => {
 			'../../../../../src/test/data/repo/articles/yaml-controller.yml'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick' as any);
 		const item: QuickPickItem = {
 			description: '',
 			label: '$(note) TOC entry'
