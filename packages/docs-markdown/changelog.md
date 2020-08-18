@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.2.80 (August 18th, 2020)
+
+- Added :::code::: to triple colon auto-complete.
+
+## 0.2.79 (August 12th, 2020)
+
+- Add proxy server for allowlist.
+
 ## 0.2.78 (July 30th, 2020)
 
 - Added Jupyter Notebook support.

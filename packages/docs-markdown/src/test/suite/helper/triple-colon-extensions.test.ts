@@ -69,6 +69,6 @@ suite('Triple Colon Extension Provider', () => {
 			'image type="content" source="{source}" alt-text="{alt-text}":::'
 		);
 		completionItem.sortText = label;
-		expect(completionItems[1]).to.deep.equal(completionItem);
+		expect(completionItems[2]).to.deep.equal(completionItem);
 	});
 });
