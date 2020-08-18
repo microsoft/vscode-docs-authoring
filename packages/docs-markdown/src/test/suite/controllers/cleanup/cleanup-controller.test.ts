@@ -28,6 +28,7 @@ chai.use(spies);
 import sinon = require('sinon');
 
 const expect = chai.expect;
+
 const filePath = resolve(
 	__dirname,
 	'../../../../../../src/test/data/repo/articles/docs-markdown.md'
