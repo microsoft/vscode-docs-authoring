@@ -1,6 +1,12 @@
 import { output } from '../helper/common';
+import { basename } from 'path';
+import { workspace } from 'vscode';
 
 const IMAGE_OPEN_RE = /:::image\s+(((source|type|alt-text|lightbox|border|loc-scope|link)="(.*?))"\s*)+:::/;
+
+export let fileNameMailOption;
+export let imagePath;
+export let source;
 
 export const imageOptions = {
 	marker: ':',
@@ -17,20 +23,27 @@ export const imageOptions = {
 		if (start) {
 			const sourceMatch = SOURCE_RE.exec(start[0]);
 			if (sourceMatch && sourceMatch.length > 0) {
-				const source = sourceMatch[1];
+				source = sourceMatch[1];
 				const lightboxMatch = LIGHTBOX_RE.exec(start[0]);
 				const borderMatch = BORDER_RE.exec(start[0]);
 				const typeMatch = TYPE_RE.exec(start[0]);
 				const linkMatch = LINK_RE.exec(start[0]);
 
-				let html = `<div class="mx-imgBorder"><p><img src="${source}"></p></div>`;
+				// determine path to embed image for mailer
+				const repoRoot = workspace.workspaceFolders[0].uri.fsPath + '/';
+				source = source.replace('..\\', '').replace(/\.\.\//g, '');
+				imagePath = repoRoot.concat(source).replace(/\\/g, '/');
+				fileNameMailOption = basename(source);
+
+				// cid is the unique identifier for embedded images
+				let html = `<div class="mx-imgBorder"><p><img src="cid:${source}"></p></div>`;
 				if (borderMatch && borderMatch.length > 0 && 'false' === borderMatch[1].toLowerCase()) {
 					html = `<img src="${source}">`;
 				}
 
 				if (typeMatch && typeMatch.length > 0 && typeMatch[1].toLowerCase() === 'icon') {
 					if (borderMatch && borderMatch.length > 0 && 'true' === borderMatch[1].toLowerCase()) {
-						html = `<div class="mx-imgBorder"><p><img src="${source}"></p></div>`;
+						html = `<div class="mx-imgBorder"><p><img src="cid:${source}"></p></div>`;
 					} else {
 						html = `<img src="${source}">`;
 					}
