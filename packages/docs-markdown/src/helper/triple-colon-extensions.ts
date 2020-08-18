@@ -24,6 +24,10 @@ export type TripleColonExtensions = TripleColonExtension[];
 
 const tripleColonExtensions: TripleColonExtensions = [
 	{
+		content: `code language="{language}" source="{source}" range="{range}":::`,
+		extension: 'Code Snippet :::code:::'
+	},
+	{
 		content: `column:::
     {content}
 :::column-end:::`,
