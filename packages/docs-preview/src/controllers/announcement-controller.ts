@@ -163,6 +163,7 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 		// update header styles
 		// to-do: follow-up to see if we should just use standard heading tags and let users apply their own styles and figure out tables
 		emailBody = emailBody.replace(/<h2>(.*?)<\/h2>/g, styleH2).replace(/<h3>(.*?)<\/h3>/g, styleH3);
+		// if the article is a blog add the distribution group table
 		if (isBlog) {
 			emailBody = emailBody.concat(styleDistGroupTable);
 		}
