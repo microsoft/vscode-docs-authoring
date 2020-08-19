@@ -42,82 +42,82 @@ export function markdownQuickPick(context: ExtensionContext) {
 
 	if (checkExtension('docsmsft.docs-preview')) {
 		markdownItems.push({
-			description: 'View preview',
+			description: '',
 			label: '$(browser) Preview'
 		});
 		markdownItems.push({
-			description: 'View search results preview',
+			description: '',
 			label: '$(search) Search Results Preview'
 		});
 	}
 
 	markdownItems.push(
 		{
-			description: 'Bold selected text',
+			description: '',
 			label: '$(pencil) Bold'
 		},
 		{
-			description: 'Italicize selected text',
+			description: '',
 			label: '$(info) Italic'
 		},
 		{
-			description: 'Mark selected text as code block',
+			description: '',
 			label: '$(code) Code'
 		},
 		{
-			description: 'Insert a Jupyter notebook from GitHub',
+			description: '',
 			label: '$(book) Jupyter Notebook'
 		},
 		{
-			description: 'Insert note, tip, important, caution, or warning',
+			description: '',
 			label: '$(alert) Alert'
 		},
 		{
-			description: 'Insert a numbered list',
+			description: '',
 			label: '$(list-ordered) Numbered list'
 		},
 		{
-			description: 'Insert a bulleted list',
+			description: '',
 			label: '$(list-unordered) Bulleted list'
 		},
 		{
-			description: 'Insert markdown table',
+			description: '',
 			label: '$(diff-added) Table'
 		},
 		{
-			description: 'Insert columns',
+			description: '',
 			label: '$(ellipsis) Columns'
 		},
 		{
-			description: 'Insert link',
+			description: '',
 			label: '$(link) Link'
 		},
 		{
-			description: 'Indicate selected text as non-localizable',
+			description: '',
 			label: '$(lock) Non-localizable text'
 		},
 		{
-			description: 'Insert image',
+			description: '',
 			label: '$(file-media) Image'
 		},
 		{
-			description: 'Insert include file',
+			description: '',
 			label: '$(clippy) Include'
 		},
 		{
-			description: 'Insert code snippet',
+			description: '',
 			label: '$(file-code) Snippet'
 		},
 		{
-			description: 'Insert video',
+			description: '',
 			label: '$(device-camera-video) Video'
 		},
 		{
-			description: 'Perform cleanup',
+			description: '',
 			label: '$(tasklist) Cleanup...'
 		},
 		{
-			description: 'Insert moniker',
+			description: '',
 			label: '$(project) Moniker'
 		}
 	);
