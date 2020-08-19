@@ -10,7 +10,7 @@ import { output } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
 import { div_plugin, divOptions } from '../markdown-extensions/div';
-import { imageOptions, fileNameMailOption, imagePath, source } from '../markdown-extensions/image';
+import { imageOptions } from '../markdown-extensions/image';
 import { rowEndOptions, rowOptions } from '../markdown-extensions/row';
 import { videoOptions, legacyVideoOptions } from '../markdown-extensions/video';
 import { keytar } from '../helper/keytar';
@@ -19,6 +19,7 @@ import { styleH2, styleH3, styleDistGroupTable } from '../constants/mailerStyles
 const defaultEmailAddressSetting: string = 'preview.defaultEmailAddress';
 const service = 'dap-mailer';
 let session: any;
+let mailOptions: any;
 
 export let primaryEmailAddress: any;
 export let emailRecipients: any;
@@ -78,7 +79,7 @@ async function promptForPrimaryEmailAddress() {
 	}
 }
 
-function getEmailToList(authorized?: boolean) {
+function getEmailToList(signedIn?: boolean) {
 	// get length of email address to set cursor position in input box
 	const emailLength = primaryEmailAddress.length;
 	// get additional email addresses
@@ -93,8 +94,8 @@ function getEmailToList(authorized?: boolean) {
 		} else {
 			emailRecipients = val;
 		}
-		if (authorized) {
-			sendMailWithToken();
+		if (signedIn) {
+			convertMarkdownToHtml(true);
 		} else {
 			getPassword();
 		}
@@ -125,7 +126,7 @@ async function getPassword() {
 }
 
 // use markdown-it to generate html
-function convertMarkdownToHtml() {
+function convertMarkdownToHtml(signedIn?: boolean) {
 	const frontMatterRegex = /^(---)([^]+?)(---)$/gm;
 	const titleRegex = /^(#{1})[\s](.*)[\r]?[\n]/gm;
 	const h1Regex = /^#\s+/;
@@ -158,12 +159,22 @@ function convertMarkdownToHtml() {
 		emailBody = md.render(updatedAnnouncementContent);
 		// update header styles
 		// to-do: follow-up to see if we should just use standard heading tags and let users apply their own styles and figure out tables
-		emailBody = emailBody
-			.replace(/<h2>(.*?)<\/h2>/g, styleH2)
-			.replace(/<h3>(.*?)<\/h3>/g, styleH3)
-			.replace('stayConnectedTable', styleDistGroupTable);
+		emailBody = emailBody.replace(/<h2>(.*?)<\/h2>/g, styleH2).replace(/<h3>(.*?)<\/h3>/g, styleH3);
 		output.appendLine(`Converted markdown to HTML`);
-		sendMailWithPassword();
+		// add mail options
+		// attachments used for embedding images
+		// to-do: add support for multiple images
+		mailOptions = {
+			from: primaryEmailAddress, // sender address (who sends)
+			to: emailRecipients, // list of receivers (who receives)
+			subject: emailSubject, // Subject line
+			html: emailBody
+		};
+		if (signedIn) {
+			sendMailWithToken();
+		} else {
+			sendMailWithPassword();
+		}
 	} catch (error) {
 		output.appendLine(error);
 	}
@@ -184,22 +195,6 @@ function sendMailWithPassword() {
 		}
 	});
 
-	// attachments used for embedding images
-	// to-do: add support for multiple images
-	const mailOptions = {
-		from: primaryEmailAddress, // sender address (who sends)
-		to: emailRecipients, // list of receivers (who receives)
-		subject: emailSubject, // Subject line
-		attachments: [
-			{
-				fileName: fileNameMailOption,
-				path: imagePath,
-				cid: source
-			}
-		],
-		html: emailBody
-	};
-
 	// send mail with defined transport object
 	transporter.sendMail(mailOptions, function (error: any, info: any) {
 		if (error) {
@@ -211,23 +206,13 @@ function sendMailWithPassword() {
 
 function sendMailWithToken() {
 	const nodemailer = require('nodemailer');
-	const mailOptions = {
-		from: primaryEmailAddress, // sender address (who sends)
-		to: emailRecipients, // list of receivers (who receives)
-		subject: emailSubject, // Subject line
-		attachments: [
-			{
-				fileName: fileNameMailOption,
-				path: imagePath,
-				cid: source
-			}
-		],
-		html: emailBody
-	};
 	const transporter = nodemailer.createTransport({
 		host: 'smtp-mail.outlook.com',
-		port: 465,
-		secure: true,
+		secureConnection: false, // TLS requires secureConnection to be false
+		port: 587, // port for secure SMTP
+		tls: {
+			ciphers: 'SSLv3'
+		},
 		auth: {
 			type: 'OAuth2',
 			user: primaryEmailAddress,
