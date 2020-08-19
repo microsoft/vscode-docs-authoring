@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import {
-	authentication,
-	AuthenticationSession,
-	ConfigurationTarget,
-	window,
-	workspace
-} from 'vscode';
+import { authentication, ConfigurationTarget, window, workspace } from 'vscode';
 import { output } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
@@ -14,19 +8,20 @@ import { imageOptions } from '../markdown-extensions/image';
 import { rowEndOptions, rowOptions } from '../markdown-extensions/row';
 import { videoOptions, legacyVideoOptions } from '../markdown-extensions/video';
 import { keytar } from '../helper/keytar';
-import { styleH2, styleH3, styleDistGroupTable } from '../constants/mailerStyles';
+import { styleH2, styleH3 } from '../constants/mailerStyles';
 
 const defaultEmailAddressSetting: string = 'preview.defaultEmailAddress';
 const service = 'dap-mailer';
+const nodemailer = require('nodemailer');
 let session: any;
 let mailOptions: any;
 
-export let primaryEmailAddress: any;
-export let emailRecipients: any;
-export let emailSubject: string;
-export let password: string;
-export let emailBody: string;
-export let authToken: string;
+let primaryEmailAddress: any;
+let emailRecipients: any;
+let emailSubject: string;
+let password: string;
+let emailBody: string;
+let authToken: string;
 
 export function announcementCommand() {
 	const commands = [{ command: getUserInfo.name, callback: getUserInfo }];
@@ -62,7 +57,8 @@ async function promptForPrimaryEmailAddress() {
 		getEmailToList();
 	} else {
 		const getEmailAddress = window.showInputBox({
-			prompt: 'Enter your Microsoft email address i.e. someone@microsoft.com'
+			prompt:
+				'Enter your Microsoft or Outlook email address i.e. someone@microsoft.com/someone@outlook.com'
 		});
 		getEmailAddress.then(val => {
 			if (!val) {
@@ -154,16 +150,14 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 			.use(container_plugin, 'video', videoOptions)
 			.use(container_plugin, 'legacyVideo', legacyVideoOptions)
 			.use(require('markdown-it-front-matter'), function () {
-				// remove yaml header from html
+				// removes yaml header from html
 			});
 		emailBody = md.render(updatedAnnouncementContent);
 		// update header styles
 		// to-do: follow-up to see if we should just use standard heading tags and let users apply their own styles and figure out tables
 		emailBody = emailBody.replace(/<h2>(.*?)<\/h2>/g, styleH2).replace(/<h3>(.*?)<\/h3>/g, styleH3);
 		output.appendLine(`Converted markdown to HTML`);
-		// add mail options
-		// attachments used for embedding images
-		// to-do: add support for multiple images
+		// to-do: add embedded image code back in
 		mailOptions = {
 			from: primaryEmailAddress, // sender address (who sends)
 			to: emailRecipients, // list of receivers (who receives)
@@ -181,7 +175,6 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 }
 
 function sendMailWithPassword() {
-	const nodemailer = require('nodemailer');
 	const transporter = nodemailer.createTransport({
 		host: 'smtp-mail.outlook.com', // hostname
 		secureConnection: false, // TLS requires secureConnection to be false
@@ -205,7 +198,6 @@ function sendMailWithPassword() {
 }
 
 function sendMailWithToken() {
-	const nodemailer = require('nodemailer');
 	const transporter = nodemailer.createTransport({
 		host: 'smtp-mail.outlook.com',
 		secureConnection: false, // TLS requires secureConnection to be false
