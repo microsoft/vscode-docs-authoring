@@ -8,7 +8,7 @@ import { imageOptions } from '../markdown-extensions/image';
 import { rowEndOptions, rowOptions } from '../markdown-extensions/row';
 import { videoOptions, legacyVideoOptions } from '../markdown-extensions/video';
 import { keytar } from '../helper/keytar';
-import { styleH2, styleH3, styleDistGroupTable } from '../constants/mailerStyles';
+import { styleH2, styleH3, styleDistGroupTable, titleImage } from '../constants/mailerStyles';
 
 const defaultEmailAddressSetting: string = 'preview.defaultEmailAddress';
 const service = 'dap-mailer';
@@ -163,9 +163,10 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 		// update header styles
 		// to-do: follow-up to see if we should just use standard heading tags and let users apply their own styles and figure out tables
 		emailBody = emailBody.replace(/<h2>(.*?)<\/h2>/g, styleH2).replace(/<h3>(.*?)<\/h3>/g, styleH3);
-		// if the article is a blog add the distribution group table
+
+		// if the article is a blog add the distribution group table and title image
 		if (isBlog) {
-			emailBody = emailBody.concat(styleDistGroupTable);
+			emailBody = titleImage.concat(emailBody).concat(styleDistGroupTable);
 		}
 		output.appendLine(`Converted markdown to HTML`);
 		// to-do: add embedded image code back in
