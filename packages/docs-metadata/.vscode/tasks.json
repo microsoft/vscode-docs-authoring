@@ -1,28 +1,20 @@
+// See https://go.microsoft.com/fwlink/?LinkId=733558
+// for the documentation about the tasks.json format
 {
-	"version": "0.1.0",
-	"name": "npmTask",
-	"suppressTaskName": true,
-	"command": "npm",
-	"isShellCommand": true,
-	"args": ["run"],
+	"version": "2.0.0",
 	"tasks": [
 		{
-			"command": "npm",
-			"isShellCommand": true,
-			"showOutput": "silent",
-			"args": ["run", "compile", "--loglevel", "silent"],
-			"isWatching": true,
-			"problemMatcher": "$tsc-watch"
-		},
-		{
-			//Test Task
-			"taskName": "mocha",
-			// Don't run on Shift+Ctrl+B
-			"isBuildCommand": false,
-			// Run on Shift+Ctrl+T
-			"isTestCommand": true,
-			"showOutput": "always",
-			"args": ["compile"]
+			"type": "npm",
+			"script": "watch",
+			"problemMatcher": "$tsc-watch",
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
 		}
 	]
 }

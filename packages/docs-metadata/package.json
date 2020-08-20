@@ -2,7 +2,7 @@
 	"name": "docs-metadata",
 	"displayName": "docs-metadata",
 	"description": "Simplifies editing metadata within docs.",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"publisher": "docsmsft",
 	"icon": "images/docs-logo-ms.png",
 	"engines": {
@@ -15,7 +15,7 @@
 		"onCommand:docs.extract",
 		"onCommand:docs.apply"
 	],
-	"main": "./out/extension.js",
+	"main": "./out/src/extension.js",
 	"bugs": {
 		"url": "https://github.com/vscode-docs-authoring/docs-metadata/issues"
 	},
@@ -47,7 +47,6 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"precompile": "rimraf ./install.Lock & rimraf ./.muttools/",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"prettier": "prettier --write \"**/*.{ts,js,json,yml}\"",
