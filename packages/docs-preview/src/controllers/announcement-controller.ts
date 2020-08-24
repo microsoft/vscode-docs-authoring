@@ -30,10 +30,9 @@ export function announcementCommand() {
 
 // check for signed-in user session. if user is not signed in, follow standard user flow
 async function getUserInfo() {
-	session = await authentication.getSession('microsoft', [
-		'https://management.core.windows.net/.default',
-		'offline_access'
-	]);
+	session = await authentication.getSession('microsoft', ['Mail.Send', 'Mail.ReadWrite'], {
+		createIfNone: true
+	});
 	if (session) {
 		output.appendLine(`Singed in as ${session.account.label}`);
 		getAuthenticatedUserInfo();
