@@ -4,7 +4,7 @@ import { TokenResponse } from '../../helper/Auth';
 
 export const sleepTime = 50;
 export const extendedSleepTime = 300;
-export const longSleepTime = 30000;
+export const longSleepTime = 3000;
 
 export function sleep(ms: number): Promise<void> {
 	return new Promise(r => {
