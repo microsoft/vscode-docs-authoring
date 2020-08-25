@@ -4,11 +4,13 @@ import { output } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
 import { div_plugin, divOptions } from '../markdown-extensions/div';
-import { imageOptions } from '../markdown-extensions/image';
+import { imageOptions, image_plugin, image_end } from '../markdown-extensions/image';
 import { rowEndOptions, rowOptions } from '../markdown-extensions/row';
 import { videoOptions, legacyVideoOptions } from '../markdown-extensions/video';
 import { keytar } from '../helper/keytar';
 import { styleH2, styleH3, styleDistGroupTable, titleImage } from '../constants/mailerStyles';
+import { rootDirectory } from '../markdown-extensions/rootDirectory';
+import { resolve } from 'url';
 
 const defaultEmailAddressSetting: string = 'preview.defaultEmailAddress';
 const service = 'dap-mailer';
@@ -127,9 +129,14 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 	const titleRegex = /^(#{1})[\s](.*)[\r]?[\n]/gm;
 	const h1Regex = /^#\s+/;
 	const msCustomRegex = /ms\.custom:\s?internal-blog/gm;
+	const imageRegex = /src="(.*?)"/gi;
 	const editor = window.activeTextEditor;
+	let imageName: any;
+	let imagePath: string;
+	let imageCid: string;
+	let filePath: any;
 	if (editor) {
-		const filePath = editor.document.fileName;
+		filePath = editor.document.uri.fsPath;
 	}
 
 	const announcementContent = window.activeTextEditor?.document.getText();
@@ -153,27 +160,43 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 			.use(container_plugin, 'column', columnOptions)
 			.use(container_plugin, 'column-end', columnEndOptions)
 			.use(div_plugin, 'div', divOptions)
-			.use(container_plugin, 'image', imageOptions)
+			.use(image_plugin, 'image', imageOptions)
+			.use(image_end)
 			.use(container_plugin, 'video', videoOptions)
 			.use(container_plugin, 'legacyVideo', legacyVideoOptions)
+			.use(rootDirectory)
 			.use(require('markdown-it-front-matter'), function () {
 				// removes yaml header from html
 			});
 		emailBody = md.render(updatedAnnouncementContent);
+
 		// update header styles
 		// to-do: follow-up to see if we should just use standard heading tags and let users apply their own styles and figure out tables
 		emailBody = emailBody.replace(/<h2>(.*?)<\/h2>/g, styleH2).replace(/<h3>(.*?)<\/h3>/g, styleH3);
+
+		// embed images
+		imageName = imageRegex.exec(emailBody);
+		imageName = imageName[1];
+		imagePath = resolve(filePath, imageName);
+		imageCid = imageName;
+		emailBody = emailBody.replace(`<img src="${imageName}">`, `<img src="cid:${imageName}">`);
 
 		// if the article is a blog add the distribution group table and title image
 		if (isBlog) {
 			emailBody = titleImage.concat(emailBody).concat(styleDistGroupTable);
 		}
 		output.appendLine(`Converted markdown to HTML`);
-		// to-do: add embedded image code back in
 		mailOptions = {
 			from: primaryEmailAddress, // sender address (who sends)
 			to: emailRecipients, // list of receivers (who receives)
-			subject: emailSubject, // Subject line
+			subject: emailSubject, //, // Subject line
+			attachments: [
+				{
+					fileName: imageName,
+					path: imagePath,
+					cid: imageCid
+				}
+			],
 			html: emailBody
 		};
 		if (signedIn) {
