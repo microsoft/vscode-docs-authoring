@@ -173,29 +173,31 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 		// to-do: follow-up to see if we should just use standard heading tags and let users apply their own styles and figure out tables
 		emailBody = emailBody.replace(/<h2>(.*?)<\/h2>/g, styleH2).replace(/<h3>(.*?)<\/h3>/g, styleH3);
 
+		let attachments = [];
 		// embed images
-		imageName = imageRegex.exec(emailBody);
-		imageName = imageName[1];
-		imagePath = resolve(filePath, imageName);
-		imageCid = imageName;
-		emailBody = emailBody.replace(`<img src="${imageName}">`, `<img src="cid:${imageName}">`);
+		while ((imageName = imageRegex.exec(emailBody)) !== null) {
+			imageName = imageName[1];
+			imagePath = resolve(filePath, imageName);
+			imageCid = imageName;
+			emailBody = emailBody.replace(`<img src="${imageName}">`, `<img src="cid:${imageName}">`);
+			attachments.push({
+				fileName: imageName,
+				path: imagePath,
+				cid: imageCid
+			});
+		}
 
 		// if the article is a blog add the distribution group table and title image
 		if (isBlog) {
 			emailBody = titleImage.concat(emailBody).concat(styleDistGroupTable);
 		}
 		output.appendLine(`Converted markdown to HTML`);
+
 		mailOptions = {
 			from: primaryEmailAddress, // sender address (who sends)
 			to: emailRecipients, // list of receivers (who receives)
 			subject: emailSubject, //, // Subject line
-			attachments: [
-				{
-					fileName: imageName,
-					path: imagePath,
-					cid: imageCid
-				}
-			],
+			attachments,
 			html: emailBody
 		};
 		if (signedIn) {
