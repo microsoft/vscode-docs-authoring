@@ -8079,6 +8079,11 @@ markdown-it-include@^1.1.0:
   resolved "https://registry.yarnpkg.com/markdown-it-include/-/markdown-it-include-1.1.1.tgz#7015209f7b64365d32bb6ccc25366bc15d3eadc9"
   integrity sha512-jDWIHhOtiQkFIc6BqXqXK1r4LfCxKFOWtsdvwZjLw5zZaWk64n71lE5HWHtzyVvfDudYWxR+tH0hO10B2I1e3w==
 
+markdown-it-style@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/markdown-it-style/-/markdown-it-style-1.0.0.tgz#e78222b8e659bcc07dd1b4735850638b424fa85d"
+  integrity sha1-54IiuOZZvMB90bRzWFBji0JPqF0=
+
 markdown-it@8.4.2, markdown-it@^8.4.2:
   version "8.4.2"
   resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-8.4.2.tgz#386f98998dc15a37722aa7722084f4020bdd9b54"

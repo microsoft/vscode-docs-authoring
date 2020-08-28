@@ -189,6 +189,7 @@
 		"keytar": "^6.0.1",
 		"markdown-it-front-matter": "^0.2.1",
 		"markdown-it-include": "^1.1.0",
+		"markdown-it-style": "^1.0.0",
 		"moment": "^2.24.0",
 		"nodemailer": "^6.4.11",
 		"os": "^0.1.1",

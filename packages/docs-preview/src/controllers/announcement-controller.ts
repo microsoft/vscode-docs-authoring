@@ -8,7 +8,6 @@ import { imageOptions, image_plugin, image_end } from '../markdown-extensions/im
 import { rowEndOptions, rowOptions } from '../markdown-extensions/row';
 import { videoOptions, legacyVideoOptions } from '../markdown-extensions/video';
 import { keytar } from '../helper/keytar';
-import { styleH2, styleH3 } from '../constants/mailerStyles';
 import { rootDirectory } from '../markdown-extensions/rootDirectory';
 import { resolve } from 'url';
 import { join } from 'path';
@@ -16,10 +15,10 @@ import { join } from 'path';
 const defaultEmailAddressSetting: string = 'preview.defaultEmailAddress';
 const service = 'dap-mailer';
 const nodemailer = require('nodemailer');
+
 let session: any;
 let mailOptions: any;
 let extensionPath: any;
-
 let primaryEmailAddress: any;
 let emailRecipients: any;
 let emailSubject: string;
@@ -176,15 +175,12 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 			.use(rootDirectory)
 			.use(require('markdown-it-front-matter'), function () {
 				// removes yaml header from html
+			})
+			.use(require('markdown-it-style'), {
+				h2: 'font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4',
+				h3: 'font-size:12.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4'
 			});
 		emailBody = md.render(updatedAnnouncementContent);
-
-		// update header styles
-		// to-do: follow-up to see if we should just use standard heading tags and let users apply their own styles and figure out tables
-		emailBody = emailBody
-			.replace(/<h2>(.*?)<\/h2>/g, styleH2)
-			.replace(/<h3>(.*?)<\/h3>/g, styleH3)
-			.replace(/<h1>(.*?)<\/h1>/, '');
 
 		// embed images
 		let attachments = [];
@@ -207,7 +203,8 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 			const bannerImage = join(extensionPath, 'images/banner-image.png');
 			const titleImage = `
 			<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" width="1179" style="width:884.35pt;background:#2E4B70;border-collapse:collapse"><tr style="height:9.6pt"><td width="628" valign="top" style="width:470.8pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" style="vertical-align:baseline"><img border="0" width="661" height="120" style="width:6.8854in;height:1.25in" id="Picture_x0020_2" src="${bannerLabel}"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4">&nbsp;</span><o:p></o:p></p></td><td width="551" rowspan="2" valign="bottom" style="width:413.55pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" align="right" style="text-align:right;vertical-align:baseline"><span style="color:black"><img border="0" width="580" height="287" style="width:6.0416in;height:2.9895in" id="Picture_x0020_1" src="${bannerImage}"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4">&nbsp;</span><o:p></o:p></p></td></tr><tr style="height:9.6pt"><td width="628" valign="top" style="width:470.8pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" style="vertical-align:baseline"><b><span style="font-size:18.0pt;font-family:&quot;Segoe UI Semibold&quot;,sans-serif;color:white">${emailSubject}</span></b><o:p></o:p></p></td></tr></table>`;
-			emailBody = titleImage.concat(emailBody); //.concat(styleDistGroupTable);
+			emailBody = emailBody.replace(/<h1>(.*?)<\/h1>/, '');
+			emailBody = titleImage.concat(emailBody);
 		}
 		output.appendLine(`Converted markdown to HTML`);
 
