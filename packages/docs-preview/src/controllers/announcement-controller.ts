@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { authentication, ConfigurationTarget, window, workspace } from 'vscode';
-import { output } from '../helper/common';
+import { authentication, ConfigurationTarget, extensions, window, workspace } from 'vscode';
+import { output, postWarning } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
 import { div_plugin, divOptions } from '../markdown-extensions/div';
@@ -8,15 +8,17 @@ import { imageOptions, image_plugin, image_end } from '../markdown-extensions/im
 import { rowEndOptions, rowOptions } from '../markdown-extensions/row';
 import { videoOptions, legacyVideoOptions } from '../markdown-extensions/video';
 import { keytar } from '../helper/keytar';
-import { styleH2, styleH3, styleDistGroupTable, titleImage } from '../constants/mailerStyles';
+import { styleH2, styleH3 } from '../constants/mailerStyles';
 import { rootDirectory } from '../markdown-extensions/rootDirectory';
 import { resolve } from 'url';
+import { join } from 'path';
 
 const defaultEmailAddressSetting: string = 'preview.defaultEmailAddress';
 const service = 'dap-mailer';
 const nodemailer = require('nodemailer');
 let session: any;
 let mailOptions: any;
+let extensionPath: any;
 
 let primaryEmailAddress: any;
 let emailRecipients: any;
@@ -32,9 +34,17 @@ export function announcementCommand() {
 
 // check for signed-in user session. if user is not signed in, follow standard user flow
 async function getUserInfo() {
-	session = await authentication.getSession('microsoft', ['Mail.Send', 'Mail.ReadWrite'], {
-		createIfNone: true
-	});
+	try {
+		session = await authentication.getSession('microsoft', ['Mail.Send', 'Mail.ReadWrite'], {
+			createIfNone: true
+		});
+	} catch (error) {
+		postWarning(error);
+		output.appendLine(
+			`User chose not to sign in or there was an authentication error. Check output window for additional details.`
+		);
+	}
+
 	if (session) {
 		output.appendLine(`Singed in as ${session.account.label}`);
 		getAuthenticatedUserInfo();
@@ -171,10 +181,13 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 
 		// update header styles
 		// to-do: follow-up to see if we should just use standard heading tags and let users apply their own styles and figure out tables
-		emailBody = emailBody.replace(/<h2>(.*?)<\/h2>/g, styleH2).replace(/<h3>(.*?)<\/h3>/g, styleH3);
+		emailBody = emailBody
+			.replace(/<h2>(.*?)<\/h2>/g, styleH2)
+			.replace(/<h3>(.*?)<\/h3>/g, styleH3)
+			.replace(/<h1>(.*?)<\/h1>/, '');
 
-		let attachments = [];
 		// embed images
+		let attachments = [];
 		while ((imageName = imageRegex.exec(emailBody)) !== null) {
 			imageName = imageName[1];
 			imagePath = resolve(filePath, imageName);
@@ -189,7 +202,12 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 
 		// if the article is a blog add the distribution group table and title image
 		if (isBlog) {
-			emailBody = titleImage.concat(emailBody).concat(styleDistGroupTable);
+			extensionPath = extensions.getExtension('docsmsft.docs-preview').extensionPath;
+			const bannerLabel = join(extensionPath, 'images/banner-label.png');
+			const bannerImage = join(extensionPath, 'images/banner-image.png');
+			const titleImage = `
+			<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" width="1179" style="width:884.35pt;background:#2E4B70;border-collapse:collapse"><tr style="height:9.6pt"><td width="628" valign="top" style="width:470.8pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" style="vertical-align:baseline"><img border="0" width="661" height="120" style="width:6.8854in;height:1.25in" id="Picture_x0020_2" src="${bannerLabel}"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4">&nbsp;</span><o:p></o:p></p></td><td width="551" rowspan="2" valign="bottom" style="width:413.55pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" align="right" style="text-align:right;vertical-align:baseline"><span style="color:black"><img border="0" width="580" height="287" style="width:6.0416in;height:2.9895in" id="Picture_x0020_1" src="${bannerImage}"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4">&nbsp;</span><o:p></o:p></p></td></tr><tr style="height:9.6pt"><td width="628" valign="top" style="width:470.8pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" style="vertical-align:baseline"><b><span style="font-size:18.0pt;font-family:&quot;Segoe UI Semibold&quot;,sans-serif;color:white">${emailSubject}</span></b><o:p></o:p></p></td></tr></table>`;
+			emailBody = titleImage.concat(emailBody); //.concat(styleDistGroupTable);
 		}
 		output.appendLine(`Converted markdown to HTML`);
 
