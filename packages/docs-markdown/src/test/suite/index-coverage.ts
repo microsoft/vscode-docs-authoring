@@ -53,11 +53,11 @@ export function run(): Promise<void> {
 					if (failures > 0) {
 						e(new Error(`${failures} tests failed.`));
 					} else {
-						c();
 						if (nyc) {
 							nyc.writeCoverageFile();
 							nyc.report();
 						}
+						setTimeout(c, 5000);
 					}
 				});
 			} catch (err) {

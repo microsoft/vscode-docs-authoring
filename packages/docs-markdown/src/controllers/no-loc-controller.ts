@@ -30,7 +30,7 @@ export function noLocCompletionItemsYaml() {
 /**
  * Inserts non-localizable text
  */
-export function noLocText() {
+export async function noLocText() {
 	const editor = window.activeTextEditor;
 	if (!editor) {
 		noActiveEditorMessage();
@@ -41,16 +41,16 @@ export function noLocText() {
 	if (isMarkdownFileCheck(editor, false)) {
 		// if markdown, is the user's cursor in the yaml header?
 		if (isCursorInsideYamlHeader(editor)) {
-			insertYamlNoLocEntry(editor);
+			await insertYamlNoLocEntry(editor);
 		} else {
-			insertMarkdownNoLocEntry(editor);
+			await insertMarkdownNoLocEntry(editor);
 		}
 	} else {
-		insertYamlNoLocEntry(editor);
+		await insertYamlNoLocEntry(editor);
 	}
 }
 
-function insertYamlNoLocEntry(editor: TextEditor) {
+async function insertYamlNoLocEntry(editor: TextEditor) {
 	commandOption = 'yaml-entry';
 	sendTelemetryData(telemetryCommand, commandOption);
 	if (isContentOnCurrentLine(editor)) {
@@ -60,7 +60,7 @@ function insertYamlNoLocEntry(editor: TextEditor) {
 
 	if (isMarkdownFileCheck(editor, false)) {
 		const insertText = 'no-loc: []';
-		insertContentToEditor(editor, insertText, false);
+		await insertContentToEditor(editor, insertText, false);
 		const newPosition = new Position(editor.selection.active.line, insertText.indexOf(']'));
 		const newSelection = new Selection(newPosition, newPosition);
 		editor.selection = newSelection;
@@ -68,7 +68,7 @@ function insertYamlNoLocEntry(editor: TextEditor) {
 		const tabs = getTabInsertion(editor);
 
 		const insertText = `no-loc:\n${tabs}- `;
-		insertContentToEditor(editor, insertText, false);
+		await insertContentToEditor(editor, insertText, false);
 		const newPosition = new Position(
 			editor.selection.active.line + 1,
 			insertText.indexOf('- ') + 1
@@ -87,13 +87,13 @@ function getTabInsertion(editor: TextEditor): string {
 	return tabs;
 }
 
-function insertMarkdownNoLocEntry(editor: TextEditor) {
+async function insertMarkdownNoLocEntry(editor: TextEditor) {
 	commandOption = 'markdown-entry';
 	sendTelemetryData(telemetryCommand, commandOption);
 	const textSelection = editor.document.getText(editor.selection);
 	if (textSelection === '') {
 		const insertText = `:::no-loc text="":::`;
-		insertContentToEditor(editor, insertText, false);
+		await insertContentToEditor(editor, insertText, false);
 		const newPosition = new Position(
 			editor.selection.active.line,
 			editor.selection.active.character + insertText.indexOf(`"`) + 1
@@ -102,7 +102,7 @@ function insertMarkdownNoLocEntry(editor: TextEditor) {
 		editor.selection = newSelection;
 	} else {
 		const insertText = `:::no-loc text="${textSelection}":::`;
-		insertContentToEditor(editor, insertText, true, editor.selection);
+		await insertContentToEditor(editor, insertText, true, editor.selection);
 		const newPosition = new Position(
 			editor.selection.end.line,
 			editor.selection.end.character + insertText.indexOf(`"`) + 1
