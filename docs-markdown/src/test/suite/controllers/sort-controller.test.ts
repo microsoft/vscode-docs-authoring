@@ -43,8 +43,8 @@ suite("Sort Controller", () => {
     expect(spy).to.have.been.called();
   });
   // Not sure if this is required feature for a controller -- but isMarkdown not checked in sort-controller.
-  // Also, if I "await sleep(100)" rather than just "sleep(100)"" in this test,
-  // then the other 2 tests fail, not sure why doesn't happen in others.
+  // Also, if I "await sleep(100)" rather than just "sleep(100)" in this test and it fails,
+  // then the other 2 tests fail, not sure why or if it doesn't happen in others.
   /** 
   test("isMarkdownFileCheck", async () => {
     const filePath = resolve(
