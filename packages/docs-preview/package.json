@@ -102,6 +102,11 @@
 				"command": "getUserInfo",
 				"title": "Send as email",
 				"category": "Docs"
+			},
+			{
+				"command": "deleteEmailPassword",
+				"title": "Delete email password",
+				"category": "Docs"
 			}
 		],
 		"menus": {
@@ -123,6 +128,10 @@
 				},
 				{
 					"command": "getUserInfo",
+					"group": "Docs"
+				},
+				{
+					"command": "deleteEmailPassword",
 					"group": "Docs"
 				}
 			]
@@ -157,6 +166,8 @@
 		"@typescript-eslint/eslint-plugin": "^2.34.0",
 		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",
 		"@typescript-eslint/parser": "^2.34.0",
+		"@microsoft/microsoft-graph-client": "^2.0.0",
+		"isomorphic-fetch": "^2.2.1",
 		"chai": "^4.2.0",
 		"chai-spies": "^1.0.0",
 		"eslint": "^7.0.0",

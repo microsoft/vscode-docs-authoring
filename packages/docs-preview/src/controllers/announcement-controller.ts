@@ -10,7 +10,9 @@ import { videoOptions, legacyVideoOptions } from '../markdown-extensions/video';
 import { keytar } from '../helper/keytar';
 import { rootDirectory } from '../markdown-extensions/rootDirectory';
 import { resolve } from 'url';
-import { join } from 'path';
+import { join, basename } from 'path';
+import { Client } from '@microsoft/microsoft-graph-client';
+import 'isomorphic-fetch';
 
 const defaultEmailAddressSetting: string = 'preview.defaultEmailAddress';
 const service = 'dap-mailer';
@@ -25,18 +27,25 @@ let emailSubject: string;
 let password: string;
 let emailBody: string;
 let authToken: string;
+// if user chooses not to authenitcate or is non-ms, do not prompt to sign in again during the active session
+let authenticated: boolean = true;
 
 export function announcementCommand() {
-	const commands = [{ command: getUserInfo.name, callback: getUserInfo }];
+	const commands = [
+		{ command: getUserInfo.name, callback: getUserInfo },
+		{ command: deleteEmailPassword.name, callback: deleteEmailPassword }
+	];
 	return commands;
 }
 
 // check for signed-in user session. if user is not signed in, follow standard user flow
 async function getUserInfo() {
 	try {
-		session = await authentication.getSession('microsoft', ['Mail.Send', 'Mail.ReadWrite'], {
-			createIfNone: true
-		});
+		if (authenticated) {
+			session = await authentication.getSession('microsoft', ['Mail.Send', 'Mail.ReadWrite'], {
+				createIfNone: true
+			});
+		}
 	} catch (error) {
 		postWarning(error);
 		output.appendLine(
@@ -48,6 +57,7 @@ async function getUserInfo() {
 		output.appendLine(`Singed in as ${session.account.label}`);
 		getAuthenticatedUserInfo();
 	} else {
+		authenticated = false;
 		output.appendLine(`User is not signed in`);
 		promptForPrimaryEmailAddress();
 	}
@@ -177,8 +187,9 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 				// removes yaml header from html
 			})
 			.use(require('markdown-it-style'), {
-				h2: 'font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4',
-				h3: 'font-size:12.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4'
+				h2: 'font-size:14.0pt;font-family:"Segoe UI";font-weight:normal;color:#0078D4',
+				h3: 'font-size:12.0pt;font-family:"Segoe UI";font-weight:normal;color:#0078D4',
+				p: 'font-size:12.0pt;font-family:"Segoe UI"'
 			});
 		emailBody = md.render(updatedAnnouncementContent);
 
@@ -195,16 +206,34 @@ function convertMarkdownToHtml(signedIn?: boolean) {
 				cid: imageCid
 			});
 		}
-
+		console.log(attachments);
 		// if the article is a blog add the distribution group table and title image
 		if (isBlog) {
 			extensionPath = extensions.getExtension('docsmsft.docs-preview').extensionPath;
-			const bannerLabel = join(extensionPath, 'images/banner-label.png');
-			const bannerImage = join(extensionPath, 'images/banner-image.png');
+			const bannerLabel = join(extensionPath, 'images/banner-label.png').replace(/\\/g, '/');
+			//const bannerLabel =
+			//	'https://github.com/microsoft/vscode-docs-authoring/blob/279970-markdown-as-mail-email-password/packages/docs-preview/images/banner-label.png?raw=true';
+			const bannerImage = join(extensionPath, 'images/banner-image.png').replace(/\\/g, '/');
+			//const bannerImage =
+			//	'https://github.com/microsoft/vscode-docs-authoring/blob/279970-markdown-as-mail-email-password/packages/docs-preview/images/banner-image.png?raw=true';
 			const titleImage = `
-			<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" width="1179" style="width:884.35pt;background:#2E4B70;border-collapse:collapse"><tr style="height:9.6pt"><td width="628" valign="top" style="width:470.8pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" style="vertical-align:baseline"><img border="0" width="661" height="120" style="width:6.8854in;height:1.25in" id="Picture_x0020_2" src="${bannerLabel}"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4">&nbsp;</span><o:p></o:p></p></td><td width="551" rowspan="2" valign="bottom" style="width:413.55pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" align="right" style="text-align:right;vertical-align:baseline"><span style="color:black"><img border="0" width="580" height="287" style="width:6.0416in;height:2.9895in" id="Picture_x0020_1" src="${bannerImage}"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4">&nbsp;</span><o:p></o:p></p></td></tr><tr style="height:9.6pt"><td width="628" valign="top" style="width:470.8pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" style="vertical-align:baseline"><b><span style="font-size:18.0pt;font-family:&quot;Segoe UI Semibold&quot;,sans-serif;color:white">${emailSubject}</span></b><o:p></o:p></p></td></tr></table>`;
+			<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" width="1179" style="width:884.35pt;background:#2E4B70;border-collapse:collapse"><tr style="height:9.6pt"><td width="628" valign="top" style="width:470.8pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" style="vertical-align:baseline"><img border="0" width="661" height="120" style="width:6.8854in;height:1.25in" src="${bannerLabel}"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4">&nbsp;</span><o:p></o:p></p></td><td width="551" rowspan="2" valign="bottom" style="width:413.55pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" align="right" style="text-align:right;vertical-align:baseline"><span style="color:black"><img border="0" width="580" height="287" style="width:6.0416in;height:2.9895in" src="${bannerImage}"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4">&nbsp;</span><o:p></o:p></p></td></tr><tr style="height:9.6pt"><td width="628" valign="top" style="width:470.8pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" style="vertical-align:baseline"><b><span style="font-size:18.0pt;font-family:&quot;Segoe UI Semibold&quot;,sans-serif;color:white">${emailSubject}</span></b><o:p></o:p></p></td></tr></table>`;
 			emailBody = emailBody.replace(/<h1>(.*?)<\/h1>/, '');
 			emailBody = titleImage.concat(emailBody);
+			// add banner as embed image
+			const bannerFileName = basename(bannerLabel);
+			attachments.push({
+				fileName: bannerFileName,
+				path: bannerLabel,
+				cid: bannerFileName
+			});
+			const bannerImageFileName = basename(bannerImage);
+			attachments.push({
+				fileName: bannerImageFileName,
+				path: bannerImage,
+				cid: bannerImageFileName
+			});
+			console.log(attachments);
 		}
 		output.appendLine(`Converted markdown to HTML`);
 
@@ -248,26 +277,41 @@ function sendMailWithPassword() {
 	});
 }
 
-function sendMailWithToken() {
-	const transporter = nodemailer.createTransport({
-		host: 'smtp-mail.outlook.com',
-		secureConnection: false, // TLS requires secureConnection to be false
-		port: 587, // port for secure SMTP
-		tls: {
-			ciphers: 'SSLv3'
-		},
-		auth: {
-			type: 'OAuth2',
-			user: primaryEmailAddress,
-			accessToken: authToken
+async function sendMailWithToken() {
+	// Create a Graph client
+	var client = Client.init({
+		authProvider: done => {
+			// Just return the token
+			done(null, authToken);
 		}
 	});
+	const mail = {
+		subject: 'Microsoft Graph JavaScript Sample',
+		toRecipients: [
+			{
+				emailAddress: {
+					address: 'jamarw@microsoft.com'
+				}
+			}
+		],
+		body: {
+			content:
+				'<h1>MicrosoftGraph JavaScript Sample</h1>Check out https://github.com/microsoftgraph/msgraph-sdk-javascript',
+			contentType: 'html'
+		}
+	};
+	try {
+		let response = await client.api('/me/sendMail').post({ message: mail });
+		console.log(response);
+	} catch (error) {
+		throw error;
+	}
+}
 
-	// send mail with defined transport object
-	transporter.sendMail(mailOptions, function (error: any, info: any) {
-		if (error) {
-			return output.appendLine(error);
-		}
-		output.appendLine(`Message sent: ${info.response}`);
-	});
+export async function deleteEmailPassword() {
+	const defaultEmailAddress = workspace.getConfiguration().get(defaultEmailAddressSetting);
+	if (defaultEmailAddress) {
+		primaryEmailAddress = defaultEmailAddress;
+		await keytar.deletePassword(service, primaryEmailAddress);
+	}
 }
