@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { authentication, extensions, window } from 'vscode';
-import { output } from '../helper/common';
+import { output, postError, postInformation } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
 import { div_plugin, divOptions } from '../markdown-extensions/div';
@@ -13,9 +13,9 @@ import { basename, extname, join } from 'path';
 import { Client } from '@microsoft/microsoft-graph-client';
 import 'isomorphic-fetch';
 
+let articleName: string;
 let authToken: string;
 let emailBody: string;
-let emailRecipients: any;
 let emailSubject: string;
 let primaryEmailAddress: any;
 let session: any;
@@ -32,33 +32,10 @@ async function signInPrompt() {
 	});
 
 	if (session) {
-		output.appendLine(`Singed in as ${session.account.label}`);
 		authToken = session.accessToken;
 		primaryEmailAddress = session.account.label;
-		getEmailToList();
-	} else {
-		output.appendLine(`User is not signed in`);
-		return;
+		convertMarkdownToHtml();
 	}
-}
-
-function getEmailToList() {
-	// get length of email address to set cursor position in input box
-	const emailLength = primaryEmailAddress.length;
-	// get additional email addresses
-	const getEmailAddress = window.showInputBox({
-		prompt: `Mail to: ${primaryEmailAddress}; (you can specify other recipients separated by semi-colons)`,
-		value: primaryEmailAddress,
-		valueSelection: [emailLength, emailLength]
-	});
-	getEmailAddress.then(val => {
-		if (!val) {
-			return;
-		} else {
-			emailRecipients = val;
-			convertMarkdownToHtml();
-		}
-	});
 }
 
 // use markdown-it to generate html
@@ -77,21 +54,24 @@ export function convertMarkdownToHtml() {
 		filePath = editor.document.uri.fsPath;
 	}
 
-	const announcementContent = window.activeTextEditor?.document.getText();
-	const metatadata = announcementContent.match(frontMatterRegex).toString();
-	let isBlog: boolean = false;
-	if (metatadata.match(msCustomRegex)) {
-		isBlog = true;
-		output.appendLine(`Blog article`);
-	}
-	// strip front matter to get correct title
-	const updatedAnnouncementContent = announcementContent.replace(frontMatterRegex, '');
-	const title = updatedAnnouncementContent.match(titleRegex);
-	emailSubject = title.toString().replace(h1Regex, '');
-
-	const MarkdownIt = require('markdown-it');
-	const md = new MarkdownIt();
 	try {
+		articleName = window.activeTextEditor?.document.fileName;
+		articleName = basename(articleName);
+		const announcementContent = window.activeTextEditor?.document.getText();
+		const metatadata = announcementContent.match(frontMatterRegex).toString();
+		let isBlog: boolean = false;
+		if (metatadata.match(msCustomRegex)) {
+			isBlog = true;
+			output.appendLine(`Blog article`);
+		}
+		// strip front matter to get correct title
+		const updatedAnnouncementContent = announcementContent.replace(frontMatterRegex, '');
+		const title = updatedAnnouncementContent.match(titleRegex);
+		emailSubject = title.toString().replace(h1Regex, '');
+
+		const MarkdownIt = require('markdown-it');
+		const md = new MarkdownIt();
+
 		md.use(column_end)
 			.use(container_plugin, 'row', rowOptions)
 			.use(container_plugin, 'row-end', rowEndOptions)
@@ -112,6 +92,8 @@ export function convertMarkdownToHtml() {
 				p: 'font-size:12.0pt;font-family:"Segoe UI"'
 			});
 		emailBody = md.render(updatedAnnouncementContent);
+		emailBody = emailBody.replace(/<h1>(.*?)<\/h1>/, '');
+		output.appendLine(`Successfully coverted markdown to html.`);
 
 		// embed images
 		const fs = require('fs');
@@ -147,7 +129,6 @@ export function convertMarkdownToHtml() {
 			const titleImage = `
 			<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" width="1179" style="width:884.35pt;background:#2E4B70;border-collapse:collapse"><tr style="height:9.6pt"><td width="628" valign="top" style="width:470.8pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" style="vertical-align:baseline"><img border="0" width="661" height="120" style="width:6.8854in;height:1.25in" src="cid:${bannerFileName}"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4">&nbsp;</span><o:p></o:p></p></td><td width="551" rowspan="2" valign="bottom" style="width:413.55pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" align="right" style="text-align:right;vertical-align:baseline"><span style="color:black"><img border="0" width="580" height="287" style="width:6.0416in;height:2.9895in" src="cid:${bannerImageName}"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4">&nbsp;</span><o:p></o:p></p></td></tr><tr style="height:9.6pt"><td width="628" valign="top" style="width:470.8pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" style="vertical-align:baseline"><b><span style="font-size:18.0pt;font-family:&quot;Segoe UI Semibold&quot;,sans-serif;color:white">${emailSubject}</span></b><o:p></o:p></p></td></tr></table>`;
 
-			emailBody = emailBody.replace(/<h1>(.*?)<\/h1>/, '');
 			emailBody = titleImage.concat(emailBody);
 
 			imageAsBase64 = fs.readFileSync(bannerLabelPath, 'base64');
@@ -172,6 +153,7 @@ export function convertMarkdownToHtml() {
 		sendMail();
 	} catch (error) {
 		output.appendLine(error);
+		postError(error);
 	}
 }
 
@@ -202,10 +184,12 @@ async function sendMail() {
 		}
 	};
 	try {
-		let response = await client.api('/me/sendMail').post(sendMail);
-		output.appendLine(response);
+		await client.api('/me/sendMail').post(sendMail);
+		output.appendLine(`${articleName} converted to HTML and sent to ${primaryEmailAddress}`);
+		postInformation(`${articleName} converted to HTML and sent to ${primaryEmailAddress}`);
 	} catch (error) {
 		output.appendLine(error);
+		postError(error);
 		throw error;
 	}
 }
