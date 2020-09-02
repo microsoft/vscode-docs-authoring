@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { authentication, window } from 'vscode';
+import { authentication, extensions, window } from 'vscode';
 import { output } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
@@ -9,7 +9,7 @@ import { rowEndOptions, rowOptions } from '../markdown-extensions/row';
 import { videoOptions, legacyVideoOptions } from '../markdown-extensions/video';
 import { rootDirectory } from '../markdown-extensions/rootDirectory';
 import { resolve } from 'url';
-import { extname } from 'path';
+import { basename, extname, join } from 'path';
 import { Client } from '@microsoft/microsoft-graph-client';
 import 'isomorphic-fetch';
 
@@ -134,6 +134,41 @@ export function convertMarkdownToHtml() {
 				isInline: true
 			});
 		}
+		// if the article is a blog add the banner
+		if (isBlog) {
+			let extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
+
+			const bannerLabelPath = join(extensionPath, 'images/banner-label.png').replace(/\\/g, '/');
+			const bannerFileName = basename(bannerLabelPath);
+
+			const bannerImagePath = join(extensionPath, 'images/banner-image.png').replace(/\\/g, '/');
+			const bannerImageName = basename(bannerImagePath);
+
+			const titleImage = `
+			<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" width="1179" style="width:884.35pt;background:#2E4B70;border-collapse:collapse"><tr style="height:9.6pt"><td width="628" valign="top" style="width:470.8pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" style="vertical-align:baseline"><img border="0" width="661" height="120" style="width:6.8854in;height:1.25in" src="cid:${bannerFileName}"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4">&nbsp;</span><o:p></o:p></p></td><td width="551" rowspan="2" valign="bottom" style="width:413.55pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" align="right" style="text-align:right;vertical-align:baseline"><span style="color:black"><img border="0" width="580" height="287" style="width:6.0416in;height:2.9895in" src="cid:${bannerImageName}"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4">&nbsp;</span><o:p></o:p></p></td></tr><tr style="height:9.6pt"><td width="628" valign="top" style="width:470.8pt;border:none;padding:0in 0in 0in 0in;height:9.6pt"><p class="MsoNormal" style="vertical-align:baseline"><b><span style="font-size:18.0pt;font-family:&quot;Segoe UI Semibold&quot;,sans-serif;color:white">${emailSubject}</span></b><o:p></o:p></p></td></tr></table>`;
+
+			emailBody = emailBody.replace(/<h1>(.*?)<\/h1>/, '');
+			emailBody = titleImage.concat(emailBody);
+
+			imageAsBase64 = fs.readFileSync(bannerLabelPath, 'base64');
+			attachments.push({
+				'@odata.type': '#microsoft.graph.fileAttachment',
+				name: bannerFileName,
+				contentType: `image/${imageExtension}`,
+				contentBytes: imageAsBase64,
+				contentId: bannerFileName,
+				isInline: true
+			});
+			imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
+			attachments.push({
+				'@odata.type': '#microsoft.graph.fileAttachment',
+				name: bannerImageName,
+				contentType: `image/${imageExtension}`,
+				contentBytes: imageAsBase64,
+				contentId: bannerImageName,
+				isInline: true
+			});
+		}
 		sendMail();
 	} catch (error) {
 		output.appendLine(error);
@@ -168,9 +203,9 @@ async function sendMail() {
 	};
 	try {
 		let response = await client.api('/me/sendMail').post(sendMail);
-		console.log(response);
+		output.appendLine(response);
 	} catch (error) {
-		console.log(error);
+		output.appendLine(error);
 		throw error;
 	}
 }
