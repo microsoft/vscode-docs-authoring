@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { authentication, ConfigurationTarget, extensions, window, workspace, Uri } from 'vscode';
-import { output, postWarning } from '../helper/common';
+import { authentication, window } from 'vscode';
+import { output } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
 import { div_plugin, divOptions } from '../markdown-extensions/div';
@@ -9,18 +9,17 @@ import { rowEndOptions, rowOptions } from '../markdown-extensions/row';
 import { videoOptions, legacyVideoOptions } from '../markdown-extensions/video';
 import { rootDirectory } from '../markdown-extensions/rootDirectory';
 import { resolve } from 'url';
-import { join, basename } from 'path';
+import { extname } from 'path';
 import { Client } from '@microsoft/microsoft-graph-client';
 import 'isomorphic-fetch';
 
 let authToken: string;
-let bloop: string;
-let embeddedImage642: string;
 let emailBody: string;
 let emailRecipients: any;
 let emailSubject: string;
 let primaryEmailAddress: any;
 let session: any;
+let attachments = [];
 
 export function mailerCommand() {
 	const commands = [{ command: signInPrompt.name, callback: signInPrompt }];
@@ -63,7 +62,7 @@ function getEmailToList() {
 }
 
 // use markdown-it to generate html
-export function convertMarkdownToHtml(signedIn?: boolean) {
+export function convertMarkdownToHtml() {
 	const frontMatterRegex = /^(---)([^]+?)(---)$/gm;
 	const titleRegex = /^(#{1})[\s](.*)[\r]?[\n]/gm;
 	const h1Regex = /^#\s+/;
@@ -113,6 +112,28 @@ export function convertMarkdownToHtml(signedIn?: boolean) {
 				p: 'font-size:12.0pt;font-family:"Segoe UI"'
 			});
 		emailBody = md.render(updatedAnnouncementContent);
+
+		// embed images
+		const fs = require('fs');
+		let imageAsBase64: string;
+		let imageExtension: string;
+		while ((imageName = imageRegex.exec(emailBody)) !== null) {
+			imageName = imageName[1];
+			imagePath = resolve(filePath, imageName);
+			imageExtension = extname(imagePath).replace('.', '');
+			imageCid = imageName;
+			imageAsBase64 = fs.readFileSync(imagePath, 'base64');
+			emailBody = emailBody.replace(`<img src="${imageName}">`, `<img src="cid:${imageName}">`);
+
+			attachments.push({
+				'@odata.type': '#microsoft.graph.fileAttachment',
+				name: imageName,
+				contentType: `image/${imageExtension}`,
+				contentBytes: imageAsBase64,
+				contentId: imageCid,
+				isInline: true
+			});
+		}
 		sendMail();
 	} catch (error) {
 		output.appendLine(error);
@@ -141,7 +162,8 @@ async function sendMail() {
 						address: primaryEmailAddress
 					}
 				}
-			]
+			],
+			attachments
 		}
 	};
 	try {

@@ -39,7 +39,6 @@ export async function activate(context: ExtensionContext) {
 	});
 
 	let panel: WebviewPanel;
-	themeHandler(context);
 
 	workspace.onDidChangeConfiguration((e: any) => promptForReload(e, reloadMessage));
 
@@ -125,44 +124,6 @@ export async function activate(context: ExtensionContext) {
 			panel.webview.html = await provider.provideTextDocumentContent();
 		};
 	}
-}
-
-function themeHandler(context: ExtensionContext) {
-	let bodyAttribute: string = '';
-	extensionPath = context.extensionPath;
-	const wrapperPath = join(extensionPath, 'media', 'wrapper.js');
-	const wrapperJsData = readFileSync(wrapperPath, 'utf8');
-	const selectedPreviewTheme = workspace.getConfiguration().get(previewThemeSetting);
-	switch (selectedPreviewTheme) {
-		case 'Light':
-			if (wrapperJsData.includes('theme-light')) {
-				output.appendLine(`Current theme: Light.`);
-			} else {
-				const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, '');
-				writeFileSync(wrapperPath, updatedWrapperJsData, 'utf8');
-				bodyAttribute = `body.setAttribute("class", "theme-light");`;
-			}
-			break;
-		case 'Dark':
-			if (wrapperJsData.includes('theme-dark')) {
-				output.appendLine(`Current theme: Dark.`);
-			} else {
-				const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, '');
-				writeFileSync(wrapperPath, updatedWrapperJsData, 'utf8');
-				bodyAttribute = `body.setAttribute("class", "theme-dark");`;
-			}
-			break;
-		case 'High Contrast':
-			if (wrapperJsData.includes('theme-high-contrast')) {
-				output.appendLine(`Current theme: High Contrast.`);
-			} else {
-				const updatedWrapperJsData = wrapperJsData.replace(/body.setAttribute.*;/gm, '');
-				writeFileSync(wrapperPath, updatedWrapperJsData, 'utf8');
-				bodyAttribute = `body.setAttribute("class", "theme-high-contrast");`;
-			}
-			break;
-	}
-	appendFileSync(wrapperPath, bodyAttribute, 'utf8');
 }
 
 // this method is called when your extension is deactivated

@@ -6,7 +6,7 @@ import * as path from 'path';
 import { TextDocument, Uri, window, workspace, Position, commands } from 'vscode';
 import { reporter } from './telemetry';
 
-export const output = window.createOutputChannel('docs-preview');
+export const output = window.createOutputChannel('docs-markdown-to-mail');
 
 /**
  * Create a posted warning message and applies the message to the log
