@@ -1,0 +1,15 @@
+.vscode
+.vscode-test/
+node_modules
+out/
+src/
+.gitignore
+tsconfig.json
+.markdocs/**
+install.Lock
+install.Begin
+webpack.config.js
+images/howto.gif
+images/playvideo.png
+images/preview-setting.gif
+images/logo.png
