@@ -42,24 +42,6 @@ suite("Sort Controller", () => {
     sortSelectionAscending();
     expect(spy).to.have.been.called();
   });
-  // Not sure if this is required feature for a controller -- but isMarkdown not checked in sort-controller.
-  // Also, if I "await sleep(100)" rather than just "sleep(100)" in this test and it fails,
-  // then the other 2 tests fail, not sure why or if it doesn't happen in others.
-  /** 
-  test("isMarkdownFileCheck", async () => {
-    const filePath = resolve(
-      __dirname,
-      "../../../../../src/test/data/repo/articles/docs-markdown.md"
-    );
-    await loadDocumentAndGetItReady(filePath);
-    const stub = sinon.stub(telemetry, "sendTelemetryData");
-    const spy = chai.spy.on(common, "isMarkdownFileCheck");
-    sortSelectionAscending();
-    sleep(100);
-    stub.restore();
-    expect(spy).to.have.been.called();
-  }); 
-  */
   test("Sort Selection Ascending", async () => {
     const filePath = resolve(
       __dirname,
