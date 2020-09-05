@@ -1,0 +1,11 @@
+node_modules/
+out/
+dist/
+.markdocs/
+**/bin/
+**/obj/
+**/.vs/
+*.vsix
+install.Lock
+media/wrapper.js
+.vscode-test/

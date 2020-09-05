@@ -1,0 +1,27 @@
+{
+	"rows": {
+		"prefix": "row",
+		"body": [":::row:::\n\n:::row-end:::"],
+		"description": "row"
+	},
+	"columns": {
+		"prefix": "column",
+		"body": ["    :::column:::\n\n    :::column-end:::"],
+		"description": "column"
+	},
+	"content": {
+		"prefix": "image",
+		"body": [":::image type=\"content\" source=\"\" alt-text=\"\":::"],
+		"description": "Standard image"
+	},
+	"icon": {
+		"prefix": "image",
+		"body": [":::image type=\"icon\" source=\"\" border=\"false\" :::"],
+		"description": "Icon"
+	},
+	"complex": {
+		"prefix": "image",
+		"body": [":::image type=\"complex\" source=\"\" alt-text=\"\":::\n\n:::image-end:::"],
+		"description": "Complex image"
+	}
+}

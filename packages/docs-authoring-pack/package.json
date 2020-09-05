@@ -1,0 +1,49 @@
+{
+  "name": "docs-authoring-pack",
+  "displayName": "Docs Authoring Pack",
+  "description": "Collection of extensions to assist with content development for docs.microsoft.com",
+  "icon": "images/docs-logo-ms.png",
+  "version": "0.1.9",
+  "publisher": "docsmsft",
+  "engines": {
+    "vscode": "^1.20.0"
+  },
+  "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-authoring-pack",
+  "bugs": {
+    "url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
+  },
+  "repository": {
+    "url": "https://github.com/Microsoft/vscode-docs-authoring.git"
+  },
+  "categories": [
+    "Extension Packs"
+  ],
+  "keywords": [
+    "markdown"
+  ],
+  "extensionPack": [
+    "DavidAnson.vscode-markdownlint",
+    "docsmsft.docs-images",
+    "docsmsft.docs-preview",
+    "docsmsft.docs-markdown",
+    "docsmsft.docs-linting",
+    "docsmsft.docs-article-templates",
+    "streetsidesoftware.code-spell-checker",
+    "docsmsft.docs-yaml",
+    "docsmsft.docs-metadata",
+    "blackmist.LinkCheckMD"
+  ],
+  "extensionDependencies": [
+    "DavidAnson.vscode-markdownlint",
+    "docsmsft.docs-images",
+    "docsmsft.docs-preview",
+    "docsmsft.docs-markdown",
+    "docsmsft.docs-linting",
+    "docsmsft.docs-article-templates",
+    "streetsidesoftware.code-spell-checker",
+    "docsmsft.docs-yaml",
+    "docsmsft.docs-metadata",
+    "blackmist.LinkCheckMD"
+  ],
+  "license": "MIT"
+}
