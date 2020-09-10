@@ -266,5 +266,5 @@ export function setupAutoComplete() {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-	output.appendLine('Deactivating extension.');
+	output.appendLine('Deactivating extension now.');
 }
