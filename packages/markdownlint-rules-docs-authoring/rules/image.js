@@ -91,52 +91,54 @@ module.exports = {
 
 							//case sensitivity and attributes check
 							let attrMatches = content.match(common.syntaxImageAttributes);
-							attrMatches = attrMatches.filter(attr => attr != '');
-							attrMatches.forEach(attr => {
-								if (attr !== attr.toLowerCase()) {
-									onError({
-										lineNumber: text.lineNumber,
-										detail: detailStrings.imageCaseSensitive,
-										context: text.line
-									});
-								}
-
-								//make sure each attribute is allowed...
-								if (
-									allowedImageAttributes &&
-									allowedImageAttributes.indexOf(attr) === -1 &&
-									attr !== ':image'
-								) {
-									onError({
-										lineNumber: text.lineNumber,
-										detail: detailStrings.imageNonAllowedAttribute.replace('___', attr),
-										context: text.line
-									});
-								}
-
-								//make sure the value of each attribute is strong type matched
-								if (
-									imageDataResponse &&
-									attr !== ':image' &&
-									imageDataResponse.properties[attr].type === 'boolean'
-								) {
-									var attrValueRegEx = new RegExp(`${attr}\\s*=\\s*"([a-z]*)"`, 'm');
-									const attrValueMatch = attrValueRegEx.exec(content);
-									if (
-										'true' != attrValueMatch[1].toLowerCase() &&
-										'false' != attrValueMatch[1].toLowerCase()
-									) {
+							if (attrMatches) {
+								attrMatches = attrMatches.filter(attr => attr != '');
+								attrMatches.forEach(attr => {
+									if (attr !== attr.toLowerCase()) {
 										onError({
 											lineNumber: text.lineNumber,
-											detail: detailStrings.imageAttributeWrongStrongTypeBoolean.replace(
-												'___',
-												attr
-											),
+											detail: detailStrings.imageCaseSensitive,
 											context: text.line
 										});
 									}
-								}
-							});
+
+									//make sure each attribute is allowed...
+									if (
+										allowedImageAttributes &&
+										allowedImageAttributes.indexOf(attr) === -1 &&
+										attr !== ':image'
+									) {
+										onError({
+											lineNumber: text.lineNumber,
+											detail: detailStrings.imageNonAllowedAttribute.replace('___', attr),
+											context: text.line
+										});
+									}
+
+									//make sure the value of each attribute is strong type matched
+									if (
+										imageDataResponse &&
+										attr !== ':image' &&
+										imageDataResponse.properties[attr].type === 'boolean'
+									) {
+										var attrValueRegEx = new RegExp(`${attr}\\s*=\\s*"([a-z]*)"`, 'm');
+										const attrValueMatch = attrValueRegEx.exec(content);
+										if (
+											'true' != attrValueMatch[1].toLowerCase() &&
+											'false' != attrValueMatch[1].toLowerCase()
+										) {
+											onError({
+												lineNumber: text.lineNumber,
+												detail: detailStrings.imageAttributeWrongStrongTypeBoolean.replace(
+													'___',
+													attr
+												),
+												context: text.line
+											});
+										}
+									}
+								});
+							}
 
 							//check if the type is valid
 							const typeMatch = common.imageTypeMatch.exec(content);
