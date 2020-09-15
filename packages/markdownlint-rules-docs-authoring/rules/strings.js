@@ -56,7 +56,9 @@ module.exports.usesCorrectXrefDisplayProperties = `Bad displayProperty value. Di
 module.exports.xrefShouldIncludeColon = `Bad xref syntax. xref should include a colon "<xref:System.Format.String%2A>".`;
 module.exports.xrefHasSpace = `Bad xref syntax. xref should not include a space before the xref uid "<xref:System.Format.String%2A>".`;
 module.exports.xrefHasDisplayPropertyQuestionMark = `Bad xref syntax. xref should also contain displayProperty=fullName or nameWithType "<xref:System.Format.String%2A?displayProperty=fullName>". Or remove the display property completely "<xref:System.Format.String%2A>".`;
-module.exports.notEscapedCharacters = `Unescaped xref syntax. The following Characters should be escaped *(%2A) #(%23) \`(%60).`;
+module.exports.notEscapedAsterisks = `Unescaped xref syntax. The * character should be escaped as (%2A).`;
+module.exports.notEscapedHash = `Unescaped xref syntax. The # character should be escaped as (%23).`;
+module.exports.notEscapedBacktick = `Unescaped xref syntax. The \` character should be escaped as (%60).`;
 
 // row
 module.exports.rowSyntax = `Rows should begin :::row::: and end with :::row-end:::).`;

@@ -66,10 +66,26 @@ module.exports = {
 								}
 							}
 
-							if (content.match(common.notEscapedCharacters)) {
+							if (content.match(common.notEscapedAsterisks)) {
 								onError({
 									lineNumber: text.lineNumber,
-									detail: detailStrings.notEscapedCharacters,
+									detail: detailStrings.notEscapedAsterisks,
+									context: text.line
+								});
+							}
+
+							if (content.match(common.notEscapedHash)) {
+								onError({
+									lineNumber: text.lineNumber,
+									detail: detailStrings.notEscapedHash,
+									context: text.line
+								});
+							}
+
+							if (content.match(common.notEscapedBacktick)) {
+								onError({
+									lineNumber: text.lineNumber,
+									detail: detailStrings.notEscapedBacktick,
 									context: text.line
 								});
 							}
