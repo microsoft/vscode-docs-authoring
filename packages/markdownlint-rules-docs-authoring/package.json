@@ -29,13 +29,13 @@
 		}
 	},
 	"dependencies": {
-		"axios": "^0.19.2",
-		"markdownlint": "^0.20.4"
+		"axios": "^0.19.2"
 	},
 	"devDependencies": {
 		"eslint": "^7.9.0",
 		"husky": "^4.3.0",
 		"jest": "^26.4.2",
+		"markdownlint": "^0.20.4",
 		"prettier": "^2.1.1"
 	},
 	"jest": {
