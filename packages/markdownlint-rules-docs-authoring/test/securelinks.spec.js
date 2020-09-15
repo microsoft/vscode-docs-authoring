@@ -15,6 +15,7 @@ test('Secure Links markdown lint', () => {
 			errorRange: [25, 37],
 			lineNumber: 5,
 			ruleDescription: 'All links to Microsoft properties should be secure',
+			ruleInformation: null,
 			ruleNames: ['DOCSMD008', 'docsmd.securelinks']
 		},
 		{
@@ -23,6 +24,7 @@ test('Secure Links markdown lint', () => {
 			errorRange: [23, 36],
 			lineNumber: 17,
 			ruleDescription: 'All links to Microsoft properties should be secure',
+			ruleInformation: null,
 			ruleNames: ['DOCSMD008', 'docsmd.securelinks']
 		},
 		{
@@ -31,6 +33,7 @@ test('Secure Links markdown lint', () => {
 			errorRange: [23, 19],
 			lineNumber: 25,
 			ruleDescription: 'All links to Microsoft properties should be secure',
+			ruleInformation: null,
 			ruleNames: ['DOCSMD008', 'docsmd.securelinks']
 		}
 	]);

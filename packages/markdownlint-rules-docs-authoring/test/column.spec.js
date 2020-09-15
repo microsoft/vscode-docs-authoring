@@ -13,6 +13,7 @@ test('Column markdown lint', () => {
 			lineNumber: 7,
 			ruleNames: ['DOCSMD003', 'docsmd.column'],
 			ruleDescription: 'column linting.',
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.contenSpanAttribute,
 			errorContext: ':::column robot="abc":::',
 			errorRange: null
@@ -21,6 +22,7 @@ test('Column markdown lint', () => {
 			lineNumber: 13,
 			ruleNames: ['DOCSMD003', 'docsmd.column'],
 			ruleDescription: 'column linting.',
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.contenSpanAttribute,
 			errorContext: ':::column Span="abc":::',
 			errorRange: null
@@ -29,6 +31,7 @@ test('Column markdown lint', () => {
 			lineNumber: 25,
 			ruleNames: ['DOCSMD003', 'docsmd.column'],
 			ruleDescription: 'column linting.',
+			ruleInformation: null,
 			errorContext: ':::column:::',
 			errorDetail: errorDetailStrings.columnEndTagRequired,
 			errorRange: null

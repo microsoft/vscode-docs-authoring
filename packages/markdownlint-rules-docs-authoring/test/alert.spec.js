@@ -14,6 +14,7 @@ test('Alert markdown lint', () => {
 			lineNumber: 7,
 			ruleNames: ['DOCSMD007', 'docsmd.alert'],
 			ruleDescription: 'Alert linting.',
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.alertType,
 			errorContext: '> [!DANGER]',
 			errorRange: null
@@ -22,6 +23,7 @@ test('Alert markdown lint', () => {
 			lineNumber: 11,
 			ruleNames: ['DOCSMD007', 'docsmd.alert'],
 			ruleDescription: 'Alert linting.',
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.alertType,
 			errorContext: '> [!NOT]',
 			errorRange: null
@@ -30,6 +32,7 @@ test('Alert markdown lint', () => {
 			lineNumber: 15,
 			ruleNames: ['DOCSMD007', 'docsmd.alert'],
 			ruleDescription: 'Alert linting.',
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.alertType,
 			errorContext: '> [!tip]',
 			errorRange: null
@@ -38,6 +41,7 @@ test('Alert markdown lint', () => {
 			lineNumber: 19,
 			ruleNames: ['DOCSMD007', 'docsmd.alert'],
 			ruleDescription: 'Alert linting.',
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.alertNoOpen,
 			errorContext: '[!NOTE]',
 			errorRange: null
@@ -46,6 +50,7 @@ test('Alert markdown lint', () => {
 			lineNumber: 21,
 			ruleNames: ['DOCSMD007', 'docsmd.alert'],
 			ruleDescription: 'Alert linting.',
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.alertNoOpen,
 			errorContext: '[!CAUTION]',
 			errorRange: null
@@ -54,6 +59,7 @@ test('Alert markdown lint', () => {
 			lineNumber: 38,
 			ruleNames: ['DOCSMD007', 'docsmd.alert'],
 			ruleDescription: 'Alert linting.',
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.alertNoExclam,
 			errorContext: '> [NOTE]',
 			errorRange: null

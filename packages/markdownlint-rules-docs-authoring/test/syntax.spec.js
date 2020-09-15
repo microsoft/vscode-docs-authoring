@@ -14,6 +14,7 @@ test('Syntax markdown lint', () => {
 			lineNumber: 3,
 			ruleNames: ['DOCSMD004', 'docsmd.syntax'],
 			ruleDescription: 'triple colon syntax linting.',
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.syntaxUnsupportedExtension,
 			errorContext: '::: keyboard',
 			errorRange: null

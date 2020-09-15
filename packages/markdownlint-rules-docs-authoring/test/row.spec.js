@@ -13,6 +13,7 @@ test('row markdown lint', () => {
 			lineNumber: 3,
 			ruleNames: ['DOCSMD001', 'docsmd.row'],
 			ruleDescription: rowLinting,
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.rowCountValue,
 			errorContext: ':::row count="5":::',
 			errorRange: null
@@ -21,6 +22,7 @@ test('row markdown lint', () => {
 			lineNumber: 12,
 			ruleNames: ['DOCSMD001', 'docsmd.row'],
 			ruleDescription: rowLinting,
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.rowCountMustBeNumber,
 			errorContext: ':::row count="abc":::',
 			errorRange: null

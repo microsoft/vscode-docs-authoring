@@ -13,6 +13,7 @@ test('Moniker markdown lint', () => {
 			lineNumber: 3,
 			ruleNames: ['DOCSMD006', 'docsmd.moniker'],
 			ruleDescription: monikerLinting,
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.monikerRange,
 			errorContext: ':::moniker',
 			errorRange: null
@@ -21,6 +22,7 @@ test('Moniker markdown lint', () => {
 			lineNumber: 18,
 			ruleNames: ['DOCSMD006', 'docsmd.moniker'],
 			ruleDescription: monikerLinting,
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.monikerRange,
 			errorContext: '::: moniker range=""',
 			errorRange: null
@@ -29,6 +31,7 @@ test('Moniker markdown lint', () => {
 			lineNumber: 28,
 			ruleNames: ['DOCSMD006', 'docsmd.moniker'],
 			ruleDescription: monikerLinting,
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.monikerEndTagRequired,
 			errorContext: '::: moniker range="<="',
 			errorRange: null
@@ -37,6 +40,7 @@ test('Moniker markdown lint', () => {
 			lineNumber: 32,
 			ruleNames: ['DOCSMD006', 'docsmd.moniker'],
 			ruleDescription: monikerLinting,
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.monikerEndTagRequired,
 			errorContext: '::: moniker robot="abc"',
 			errorRange: null

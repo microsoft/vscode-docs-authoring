@@ -13,6 +13,7 @@ test('Zone markdown lint', () => {
 			lineNumber: 7,
 			ruleNames: ['DOCSMD005', 'docsmd.zone'],
 			ruleDescription: zoneLinting,
+			ruleInformation: null,
 			errorDetail: errorDetailStrings.zoneEndTagRequired,
 			errorContext: '::: zone target="docs"',
 			errorRange: null
