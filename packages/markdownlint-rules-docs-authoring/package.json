@@ -1,10 +1,10 @@
 {
-	"name": "docs-linting",
-	"description": "Custom Markdown",
+	"name": "markdownlint-rules-docs-authoring",
+	"description": "Custom Markdownlint rules for docs.microsoft.com content",
 	"icon": "images/docs-logo-ms.png",
-	"version": "0.0.5",
+	"version": "0.0.1",
 	"publisher": "docsmsft",
-	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-linting",
+	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/markdownlint-rules-docs-authoring",
 	"bugs": {
 		"url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
 	},
