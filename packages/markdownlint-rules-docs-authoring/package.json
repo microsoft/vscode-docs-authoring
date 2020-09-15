@@ -60,7 +60,7 @@
 		],
 		"collectCoverage": true,
 		"collectCoverageFrom": [
-			"src/**/*"
+			"rules/**/*"
 		]
 	},
 	"jest-junit": {
