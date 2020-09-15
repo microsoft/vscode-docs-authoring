@@ -12,6 +12,6 @@
 		"sourceMap": true,
 		"rootDir": "."
 	},
-	"include": ["src/**/*", "test/**/*", ".eslintrc.js", "markdownlint-custom-rules/**/*"],
+	"include": ["src/**/*", "test/**/*", ".eslintrc.js"],
 	"exclude": [".vscode-test", "node_modules"]
 }

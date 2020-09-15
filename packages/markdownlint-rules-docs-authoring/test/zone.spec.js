@@ -1,6 +1,6 @@
 const markdownlint = require('markdownlint');
-const zone = require('../../markdownlint-custom-rules/zone');
-const errorDetailStrings = require('../../markdownlint-custom-rules/strings');
+const zone = require('../rules/zone');
+const errorDetailStrings = require('../rules/strings');
 const zoneLinting = 'zone linting.';
 test('Zone markdown lint', () => {
 	const src = `${__dirname}/test-content/zone.md`;

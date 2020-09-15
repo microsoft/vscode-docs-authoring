@@ -1,6 +1,6 @@
 const markdownlint = require('markdownlint');
-const syntax = require('../../markdownlint-custom-rules/syntax');
-const errorDetailStrings = require('../../markdownlint-custom-rules/strings');
+const syntax = require('../rules/syntax');
+const errorDetailStrings = require('../rules/strings');
 
 test('Syntax markdown lint', () => {
 	const src = `${__dirname}/test-content/syntax.md`;

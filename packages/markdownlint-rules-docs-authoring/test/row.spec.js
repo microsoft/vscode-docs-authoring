@@ -1,6 +1,6 @@
 const markdownlint = require('markdownlint');
-const row = require('../../markdownlint-custom-rules/row');
-const errorDetailStrings = require('../../markdownlint-custom-rules/strings');
+const row = require('../rules/row');
+const errorDetailStrings = require('../rules/strings');
 const rowLinting = 'row linting.';
 test('row markdown lint', () => {
 	const src = `${__dirname}/test-content/row.md`;

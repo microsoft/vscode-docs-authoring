@@ -1,6 +1,5 @@
 const markdownlint = require('markdownlint');
-const securelinks = require('../../markdownlint-custom-rules/securelinks');
-const errorDetailStrings = require('../../markdownlint-custom-rules/strings');
+const securelinks = require('../rules/securelinks');
 
 test('Secure Links markdown lint', () => {
 	const src = `${__dirname}/test-content/securelinks.md`;

@@ -1,6 +1,6 @@
 const markdownlint = require('markdownlint');
-const moniker = require('../../markdownlint-custom-rules/moniker');
-const errorDetailStrings = require('../../markdownlint-custom-rules/strings');
+const moniker = require('../rules/moniker');
+const errorDetailStrings = require('../rules/strings');
 const monikerLinting = 'moniker linting.';
 test('Moniker markdown lint', () => {
 	const src = `${__dirname}/test-content/moniker.md`;

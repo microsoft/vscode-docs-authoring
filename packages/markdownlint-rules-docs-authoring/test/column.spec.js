@@ -1,6 +1,6 @@
 const markdownlint = require('markdownlint');
-const column = require('../../markdownlint-custom-rules/column');
-const errorDetailStrings = require('../../markdownlint-custom-rules/strings');
+const column = require('../rules/column');
+const errorDetailStrings = require('../rules/strings');
 
 test('Column markdown lint', () => {
 	const src = `${__dirname}/test-content/column.md`;

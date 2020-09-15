@@ -1,6 +1,6 @@
 const markdownlint = require('markdownlint');
-const alert = require('../../markdownlint-custom-rules/alert');
-const errorDetailStrings = require('../../markdownlint-custom-rules/strings');
+const alert = require('../rules/alert');
+const errorDetailStrings = require('../rules/strings');
 
 test('Alert markdown lint', () => {
 	const src = `${__dirname}/test-content/alerts.md`;
