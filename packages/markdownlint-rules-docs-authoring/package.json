@@ -18,7 +18,7 @@
 		"prettier": "prettier --write \"**/*.{js,json,yml}\"",
 		"prettier-check": "prettier --check \"**/*.{js,json,yml}\" --loglevel debug",
 		"test": "jest",
-		"lint": "eslint . --ext rules/**/*.js",
+		"lint": "eslint .",
 		"precommit": "pretty-quick --staged --pattern \"**/*.{js,json,yml}\"",
 		"pre-push": "cd ../.. && yarn run compile && yarn run lint"
 	},
