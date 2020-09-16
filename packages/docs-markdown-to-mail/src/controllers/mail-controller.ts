@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { authentication, extensions, window } from 'vscode';
+import { authentication, extensions, window, workspace } from 'vscode';
 import { output, postError, postInformation } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
@@ -64,13 +64,33 @@ export function convertMarkdownToHtml() {
 		output.appendLine(`Blog article`);
 	}
 	// strip front matter to get correct title
-	const updatedAnnouncementContent = announcementContent.replace(frontMatterRegex, '');
+	let updatedAnnouncementContent = announcementContent.replace(frontMatterRegex, '');
 	const title = updatedAnnouncementContent.match(titleRegex);
 	if (!title) {
 		postError(`Article does not contain a H1 (title). Abandoning command.`);
 		return;
 	}
 	emailSubject = title.toString().replace(h1Regex, '');
+
+	// resolve relative article links
+	const relativeLinkRegex = /\[.*]\((.*\.md)\)/gm;
+	let repoRoot = workspace.workspaceFolders[0].uri.fsPath;
+	let relativeArticleName: any;
+	let relativeArticlePath: string;
+	let reviewLink: string;
+
+	while ((relativeArticleName = relativeLinkRegex.exec(updatedAnnouncementContent)) !== null) {
+		relativeArticleName = relativeArticleName[1];
+		relativeArticlePath = resolve(filePath, relativeArticleName);
+		// remove repo from path and add docs review url
+		repoRoot = repoRoot.replace(/\\/g, '/');
+		relativeArticlePath = relativeArticlePath.replace(`${repoRoot}/`, '').replace('.md', '');
+		reviewLink = `https://review.docs.microsoft.com/en-us/${relativeArticlePath}?branch=master`;
+		updatedAnnouncementContent = updatedAnnouncementContent.replace(
+			relativeArticleName,
+			reviewLink
+		);
+	}
 
 	const MarkdownIt = require('markdown-it');
 	const md = new MarkdownIt();
@@ -125,6 +145,7 @@ export function convertMarkdownToHtml() {
 			isInline: true
 		});
 	}
+
 	// if the article is a blog add the banner
 	if (isBlog) {
 		let extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
