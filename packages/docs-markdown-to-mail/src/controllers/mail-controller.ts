@@ -237,12 +237,12 @@ p {
   font-family:"Segoe UI";
 }
 table {
-	width:50%;
+	width:100%;
 }
 tr {
-	height:50px
+	height:50px;
 }
 td {
-	vertical-align:bottom
+	width:25%;
 }
 `;
