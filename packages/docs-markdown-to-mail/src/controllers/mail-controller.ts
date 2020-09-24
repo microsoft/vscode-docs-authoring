@@ -20,6 +20,8 @@ let emailSubject: string;
 let primaryEmailAddress: any;
 let session: any;
 let attachments = [];
+let extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
+const alertCSS = join(extensionPath, 'media', 'alert-styles.css');
 
 export function mailerCommand() {
 	const commands = [{ command: signInPrompt.name, callback: signInPrompt }];
@@ -108,11 +110,6 @@ export function convertMarkdownToHtml() {
 		.use(rootDirectory)
 		.use(require('markdown-it-front-matter'), function () {
 			// removes yaml header from html
-		})
-		.use(require('markdown-it-style'), {
-			h2: 'font-size:14.0pt;font-family:"Segoe UI";font-weight:normal;color:#0078D4',
-			h3: 'font-size:12.0pt;font-family:"Segoe UI";font-weight:normal;color:#0078D4',
-			p: 'font-size:12.0pt;font-family:"Segoe UI"'
 		});
 	try {
 		emailBody = md.render(updatedAnnouncementContent);
@@ -148,8 +145,6 @@ export function convertMarkdownToHtml() {
 
 	// if the article is a blog add the banner
 	if (isBlog) {
-		let extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
-
 		const bannerLabelPath = join(extensionPath, 'images/banner-label.png').replace(/\\/g, '/');
 		const bannerFileName = basename(bannerLabelPath);
 
@@ -197,7 +192,7 @@ async function sendMail() {
 			subject: emailSubject,
 			body: {
 				contentType: 'html',
-				content: emailBody
+				content: `${styles}${emailBody}`
 			},
 			toRecipients: [
 				{
@@ -219,3 +214,35 @@ async function sendMail() {
 		throw error;
 	}
 }
+
+const styles = `<link rel="stylesheet" href="${alertCSS}">
+<style>
+h2 {
+  font-size:14.0pt;
+  font-family:"Segoe UI";
+  font-weight:normal;
+  color:#0078D4;
+}
+h3 {
+  font-size:12.0pt;
+  font-family:"Segoe UI";
+  font-weight:normal;
+  color:#0078D4;
+}
+hr {
+  display: none;
+}
+p {
+  font-size:12.0pt;
+  font-family:"Segoe UI";
+}
+table {
+	width:50%;
+}
+tr {
+	height:50px
+}
+td {
+	vertical-align:bottom
+}
+`;
