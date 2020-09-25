@@ -13,7 +13,7 @@ export const columnOptions = {
 				return `<div class='column span${start[3]}'>`;
 			} else {
 				// opening tag
-				return "<div class='column'>";
+				return '<td>';
 			}
 		} else {
 			return '';
@@ -31,7 +31,7 @@ export const columnEndOptions = {
 		const end = RE.exec(tokens[idx].info.trim());
 		if (end) {
 			// closing tag
-			return '</div>';
+			return '</td>';
 		} else {
 			return '';
 		}
