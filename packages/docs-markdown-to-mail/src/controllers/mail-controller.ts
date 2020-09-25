@@ -21,6 +21,7 @@ let primaryEmailAddress: any;
 let session: any;
 let attachments = [];
 let extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
+const alertCSS = join(extensionPath, 'media', 'alert-styles.css');
 
 export function mailerCommand() {
 	const commands = [{ command: signInPrompt.name, callback: signInPrompt }];
@@ -230,7 +231,7 @@ async function sendMail() {
 	}
 }
 
-const styles = `<link rel="stylesheet" href="${extensionPath}\\media\\alert-styles.css">
+const styles = `<link rel="stylesheet" href="${alertCSS}">
 <style>
 h2 {
   font-size:14.0pt;
@@ -250,5 +251,14 @@ hr {
 p {
   font-size:12.0pt;
   font-family:"Segoe UI"
+}
+table {
+	width:100%;
+}
+tr {
+	height:50px;
+}
+td {
+	width:25%;
 }
 `;
