@@ -158,6 +158,7 @@ export const languages: HighlightLanguages = [
 			'.wsdl'
 		]
 	},
+	{ language: 'X++', aliases: ['xpp'], extensions: ['.xpp'] },
 	{ language: 'YAML', aliases: ['yml', 'yaml'], extensions: ['yml', 'yaml'] }
 ];
 
