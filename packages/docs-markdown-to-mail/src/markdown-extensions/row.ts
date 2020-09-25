@@ -6,7 +6,8 @@ export const rowOptions = {
 	render(tokens, idx) {
 		if (tokens[idx].info.trim().match(/row:::/g)) {
 			// opening tag
-			return "<div class='row'>";
+			return `<table>
+			<tr>`;
 		} else {
 			return '';
 		}
@@ -21,7 +22,8 @@ export const rowEndOptions = {
 	render(tokens, idx) {
 		if (tokens[idx].info.trim().match(/row-end:::/g)) {
 			// closing tag
-			return '</div>';
+			return `</tr>
+			</table>`;
 		} else {
 			return '';
 		}

@@ -237,20 +237,20 @@ h2 {
   font-size:14.0pt;
   font-family:"Segoe UI";
   font-weight:normal;
-  color:#0078D4
+  color:#0078D4;
 }
 h3 {
   font-size:12.0pt;
   font-family:"Segoe UI";
   font-weight:normal;
-  color:#0078D4
+  color:#0078D4;
 }
 hr {
   display: none;
 }
 p {
   font-size:12.0pt;
-  font-family:"Segoe UI"
+  font-family:"Segoe UI";
 }
 table {
 	width:100%;
