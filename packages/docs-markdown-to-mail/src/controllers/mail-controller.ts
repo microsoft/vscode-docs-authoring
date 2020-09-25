@@ -156,7 +156,7 @@ export function convertMarkdownToHtml() {
 		alertId = alertType.charAt(0).toUpperCase() + alertType.slice(1);
 		emailBody = emailBody
 			.replace('<blockquote>', `<blockquote class="${alertType.toUpperCase()}">`)
-			.replace(alertText, `<p class="code-line"><strong> ${alertId}</strong><br></p>`);
+			.replace(alertText, `<p class="code-line"><strong> ${alertId}</strong><br></p><p>`);
 	}
 
 	// if the article is a blog add the banner
