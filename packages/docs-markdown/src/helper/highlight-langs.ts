@@ -46,6 +46,7 @@ export type HighlightLanguages = HighlightLanguage[];
  */
 export const languages: HighlightLanguages = [
 	{ language: '.NET Core CLI', aliases: ['dotnetcli'] },
+	{ language: 'AL', aliases: ['al'] },
 	{ language: 'Apache', aliases: ['apache', 'apacheconf'] },
 	{ language: 'ARM assembler', aliases: ['armasm', 'arm'] },
 	{ language: 'ASPX', aliases: ['aspx'] },
