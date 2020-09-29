@@ -4,7 +4,7 @@
 	"description": "Docs Markdown Extension",
 	"icon": "images/docs-logo-ms.png",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-	"version": "0.2.80",
+	"version": "0.2.81",
 	"publisher": "docsmsft",
 	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
 	"bugs": {
@@ -182,6 +182,11 @@
 			{
 				"command": "previewTopic",
 				"title": "Preview",
+				"category": "Docs"
+			},
+			{
+				"command": "validateRepository",
+				"title": "Validate",
 				"category": "Docs"
 			},
 			{
@@ -715,6 +720,12 @@
 				"key": "Alt+D P",
 				"mac": "Alt+D P",
 				"when": "editorTextFocus && editorLangId == 'markdown' && !vim.active"
+			},
+			{
+				"command": "validateRepository",
+				"key": "Alt+D V",
+				"mac": "Alt+D V",
+				"when": "editorTextFocus && workspaceContains:.openpublishing.publish.config.json && !vim.active"
 			}
 		],
 		"yamlValidation": [

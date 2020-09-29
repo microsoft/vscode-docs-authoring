@@ -78,6 +78,7 @@ import {
 } from './helper/metadata-completion';
 import { nag } from './helper/metadata';
 import { notebookControllerCommands } from './controllers/notebook-controller';
+import { validateRepositoryCommand } from './controllers/validation-controller';
 
 export let extensionPath: string;
 type Commands = Command[];
@@ -126,6 +127,7 @@ export async function activate(context: ExtensionContext) {
 	codeFormattingCommand().forEach(cmd => authoringCommands.push(cmd));
 	italicFormattingCommand().forEach(cmd => authoringCommands.push(cmd));
 	previewTopicCommand().forEach(cmd => authoringCommands.push(cmd));
+	validateRepositoryCommand().forEach(cmd => authoringCommands.push(cmd));
 	getMasterRedirectionCommand().forEach(cmd => authoringCommands.push(cmd));
 	applyCleanupCommand().forEach(cmd => authoringCommands.push(cmd));
 	applyXrefCommand().forEach(cmd => authoringCommands.push(cmd));
