@@ -76,7 +76,10 @@ const context: ExtensionContext = {
 		clear: () => {},
 		delete: () => {}
 	},
-	extensionMode: ExtensionMode.Test
+	extensionMode: ExtensionMode.Test,
+	storageUri: undefined,
+	globalStorageUri: undefined,
+	logUri: undefined
 };
 
 suite('Quick Pick Menu Controller', () => {
