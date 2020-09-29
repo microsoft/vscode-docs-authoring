@@ -3,10 +3,13 @@
 ## 0.2.81 (September 29th, 2020)
 
 - Validation extension integration.
+- Updated devlangs to include X++.
+- Removed quick pick command descriptions.
+- Added no-loc unit tests.
 
 ## 0.2.80 (August 18th, 2020)
 
-- Added :::code::: to triple colon auto-complete.
+- Added `:::code:::` to triple colon auto-complete.
 
 ## 0.2.79 (August 12th, 2020)
 
