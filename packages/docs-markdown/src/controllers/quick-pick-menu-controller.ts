@@ -1,7 +1,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { checkExtension, generateTimestamp } from '../helper/common';
+import { checkExtension, checkExtensionInstalled, generateTimestamp } from '../helper/common';
 import { output } from '../helper/output';
 import { insertAlert } from './alert-controller';
 import { formatBold } from './bold-controller';
@@ -29,6 +29,7 @@ import {
 import { ExtensionContext } from 'vscode';
 import { Command } from '../Command';
 import { insertNotebook } from './notebook-controller';
+import { validateRepository } from './validation-controller';
 
 export const quickPickMenuCommand: Command[] = [
 	{ command: markdownQuickPick.name, callback: markdownQuickPick }
@@ -48,6 +49,17 @@ export function markdownQuickPick(context: ExtensionContext) {
 		markdownItems.push({
 			description: '',
 			label: '$(search) Search Results Preview'
+		});
+	}
+
+	if (checkExtensionInstalled('docsmsft.docs-build')) {
+		markdownItems.push({
+			description: '',
+			label: '$(check) Validate repository'
+		});
+		yamlItems.push({
+			description: '',
+			label: '$(check) Validate repository'
 		});
 	}
 
@@ -234,6 +246,9 @@ export function markdownQuickPick(context: ExtensionContext) {
 				break;
 			case 'preview':
 				previewTopic();
+				break;
+			case 'validate repository':
+				validateRepository();
 				break;
 			case 'search results preview':
 				seoPreview();

@@ -259,17 +259,33 @@ export function generateTimestamp() {
 }
 
 /**
+ * Check for install extensions
+ */
+export function checkExtensionInstalled(extensionName: string, notInstalledMessage?: string) {
+	const extension = getInstalledExtension(extensionName, notInstalledMessage);
+	return !!extension;
+}
+
+/**
  * Check for active extensions
  */
 export function checkExtension(extensionName: string, notInstalledMessage?: string) {
+	const extension = getInstalledExtension(extensionName, notInstalledMessage);
+	return !!extension && extension.isActive;
+}
+
+function getInstalledExtension(
+	extensionName: string,
+	notInstalledMessage?: string
+): vscode.Extension<any> {
 	const extensionValue = vscode.extensions.getExtension(extensionName);
 	if (!extensionValue) {
 		if (notInstalledMessage) {
 			output.appendLine(notInstalledMessage);
 		}
-		return false;
+		return undefined;
 	}
-	return extensionValue.isActive;
+	return extensionValue;
 }
 
 /**

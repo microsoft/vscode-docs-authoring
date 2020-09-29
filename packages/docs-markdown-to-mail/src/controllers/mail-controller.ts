@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { authentication, extensions, window } from 'vscode';
+import { authentication, extensions, window, workspace } from 'vscode';
 import { output, postError, postInformation } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
@@ -20,6 +20,8 @@ let emailSubject: string;
 let primaryEmailAddress: any;
 let session: any;
 let attachments = [];
+let extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
+const alertCSS = join(extensionPath, 'media', 'alert-styles.css');
 
 export function mailerCommand() {
 	const commands = [{ command: signInPrompt.name, callback: signInPrompt }];
@@ -64,13 +66,33 @@ export function convertMarkdownToHtml() {
 		output.appendLine(`Blog article`);
 	}
 	// strip front matter to get correct title
-	const updatedAnnouncementContent = announcementContent.replace(frontMatterRegex, '');
+	let updatedAnnouncementContent = announcementContent.replace(frontMatterRegex, '');
 	const title = updatedAnnouncementContent.match(titleRegex);
 	if (!title) {
 		postError(`Article does not contain a H1 (title). Abandoning command.`);
 		return;
 	}
 	emailSubject = title.toString().replace(h1Regex, '');
+
+	// resolve relative article links
+	const relativeLinkRegex = /\[.*]\((.*\.md)\)/gm;
+	let repoRoot = workspace.workspaceFolders[0].uri.fsPath;
+	let relativeArticleName: any;
+	let relativeArticlePath: string;
+	let reviewLink: string;
+
+	while ((relativeArticleName = relativeLinkRegex.exec(updatedAnnouncementContent)) !== null) {
+		relativeArticleName = relativeArticleName[1];
+		relativeArticlePath = resolve(filePath, relativeArticleName);
+		// remove repo from path and add docs review url
+		repoRoot = repoRoot.replace(/\\/g, '/');
+		relativeArticlePath = relativeArticlePath.replace(`${repoRoot}/`, '').replace('.md', '');
+		reviewLink = `https://review.docs.microsoft.com/en-us/${relativeArticlePath}?branch=master`;
+		updatedAnnouncementContent = updatedAnnouncementContent.replace(
+			relativeArticleName,
+			reviewLink
+		);
+	}
 
 	const MarkdownIt = require('markdown-it');
 	const md = new MarkdownIt();
@@ -88,11 +110,6 @@ export function convertMarkdownToHtml() {
 		.use(rootDirectory)
 		.use(require('markdown-it-front-matter'), function () {
 			// removes yaml header from html
-		})
-		.use(require('markdown-it-style'), {
-			h2: 'font-size:14.0pt;font-family:"Segoe UI";font-weight:normal;color:#0078D4',
-			h3: 'font-size:12.0pt;font-family:"Segoe UI";font-weight:normal;color:#0078D4',
-			p: 'font-size:12.0pt;font-family:"Segoe UI"'
 		});
 	try {
 		emailBody = md.render(updatedAnnouncementContent);
@@ -125,10 +142,9 @@ export function convertMarkdownToHtml() {
 			isInline: true
 		});
 	}
+
 	// if the article is a blog add the banner
 	if (isBlog) {
-		let extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
-
 		const bannerLabelPath = join(extensionPath, 'images/banner-label.png').replace(/\\/g, '/');
 		const bannerFileName = basename(bannerLabelPath);
 
@@ -176,7 +192,7 @@ async function sendMail() {
 			subject: emailSubject,
 			body: {
 				contentType: 'html',
-				content: emailBody
+				content: `${styles}${emailBody}`
 			},
 			toRecipients: [
 				{
@@ -198,3 +214,35 @@ async function sendMail() {
 		throw error;
 	}
 }
+
+const styles = `<link rel="stylesheet" href="${alertCSS}">
+<style>
+h2 {
+  font-size:14.0pt;
+  font-family:"Segoe UI";
+  font-weight:normal;
+  color:#0078D4;
+}
+h3 {
+  font-size:12.0pt;
+  font-family:"Segoe UI";
+  font-weight:normal;
+  color:#0078D4;
+}
+hr {
+  display: none;
+}
+p {
+  font-size:12.0pt;
+  font-family:"Segoe UI";
+}
+table {
+	width:100%;
+}
+tr {
+	height:50px;
+}
+td {
+	width:25%;
+}
+`;

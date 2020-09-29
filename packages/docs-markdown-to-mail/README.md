@@ -1,5 +1,7 @@
 # Docs Markdown to Mail Extension
 
+This is a beta version of the docs-markdown-to-mail extension.
+
 This extension allows users who have authenticated with Microsoft to convert markdown files to HTML and send the HTML in an Outlook message.
 
 1. Hit F1 to open the VS Code command palette.
