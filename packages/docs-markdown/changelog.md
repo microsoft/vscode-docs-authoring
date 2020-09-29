@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.81 (September 29th, 2020)
+
+- Validation extension integration.
+
 ## 0.2.80 (August 18th, 2020)
 
 - Added :::code::: to triple colon auto-complete.
