@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.10 (September 29th, 2020)
+
+- [docs-validation](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-build)
+
 ## 0.1.8 (March 4th, 2020)
 
 - Updated readme with info about each extension
