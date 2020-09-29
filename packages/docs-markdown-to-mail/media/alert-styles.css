@@ -1,6 +1,5 @@
 blockquote {
 	display: block;
-	border-radius: 6px;
 	padding: 0em 0.8em 0.1em 0.8em;
 	margin: 1em 0 0 0;
 	background-position: top left;
@@ -50,7 +49,7 @@ blockquote > pre {
 blockquote.NOTE {
 	color: #38225d;
 	background: #e2daf1;
-	border-left: 0px solid #e2daf1;
+	border-left: #e2daf1;
 }
 
 blockquote.NOTE p {
@@ -60,7 +59,7 @@ blockquote.NOTE p {
 blockquote.TIP {
 	color: #094409;
 	background: #d2f9d2;
-	border-left: 0px solid #d2f9d2;
+	border-left: #d2f9d2;
 }
 
 blockquote.TIP p {
@@ -70,7 +69,7 @@ blockquote.TIP p {
 blockquote.IMPORTANT {
 	color: #002b4d;
 	background: #e0f2ff;
-	border-left: 0px solid #e0f2ff;
+	border-left: #e0f2ff;
 }
 
 blockquote.IMPORTANT p {
@@ -80,7 +79,7 @@ blockquote.IMPORTANT p {
 blockquote.CAUTION {
 	color: #651b01;
 	background: #ffdacc;
-	border-left: 0px solid #ffdacc;
+	border-left: #ffdacc;
 }
 
 blockquote.CAUTION p {
