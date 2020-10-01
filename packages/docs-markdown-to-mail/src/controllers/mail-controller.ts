@@ -22,6 +22,7 @@ let session: any;
 let attachments = [];
 let extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
 const alertCSS = join(extensionPath, 'media', 'alert-styles.css');
+const siteltrCSS = join(extensionPath, 'media', 'site-ltr.css');
 
 export function mailerCommand() {
 	const commands = [{ command: signInPrompt.name, callback: signInPrompt }];
@@ -143,6 +144,22 @@ export function convertMarkdownToHtml() {
 		});
 	}
 
+	// handle alerts
+	const blockquoteRegex = /<blockquote>([\s\S]*?\[!(.*)])[\s\S]*?<\/blockquote>/gm;
+	let alert: any;
+	let alertType: string;
+	let alertId: string;
+	let alertText: string;
+
+	while ((alert = blockquoteRegex.exec(emailBody)) !== null) {
+		alertText = alert[1];
+		alertType = alert[2].toLowerCase();
+		alertId = alertType.charAt(0).toUpperCase() + alertType.slice(1);
+		emailBody = emailBody
+			.replace('<blockquote>', `<blockquote class="${alertType.toUpperCase()}">`)
+			.replace(alertText, `<p class="code-line"><strong> ${alertId}</strong><br></p><p>`);
+	}
+
 	// if the article is a blog add the banner
 	if (isBlog) {
 		const bannerLabelPath = join(extensionPath, 'images/banner-label.png').replace(/\\/g, '/');
@@ -152,7 +169,7 @@ export function convertMarkdownToHtml() {
 		const bannerImageName = basename(bannerImagePath);
 
 		const titleImage = `
-			<table class="MsoTableGrid" border="0" cellspacing="0" cellpadding="0" style="background:#2E4B70;border-collapse:collapse;border:none"><tr style="height:3.65pt"><td width="443" valign="top" style="width:332.6pt;padding:0in 0in 0in .3in;height:3.65pt"><p class="MsoNormal"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><img width="322" height="67" style="width:3.3541in;height:.6944in" id="Picture_x0020_3" src="cid:${bannerFileName}" alt="&quot;Content + Learning team name&quot;"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><o:p></o:p></span></p></td><td width="190" rowspan="2" valign="bottom" style="width:142.5pt;padding:0in 0in 0in 0in;height:3.65pt"><p class="MsoNormal" align="right" style="text-align:right"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><img width="190" height="158" style="width:1.9791in;height:1.6458in" id="Picture_x0020_2" src="cid:${bannerImageName}" alt="&quot;Decorative Learn Pathways image&quot;"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><o:p></o:p></span></p></td></tr><tr style="height:10.75pt"><td width="443" valign="top" style="width:332.6pt;padding:0in 0in 0in .3in;height:10.75pt"><p class="MsoNormal"><span style="font-size:18.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:white">${emailSubject}<o:p></o:p></span></p></td></tr></table>`;
+      <table class="MsoTableGrid" border="0" cellspacing="0" cellpadding="0" style="background:#2E4B70;border-collapse:collapse;border:none"><tr style="height:3.65pt"><td width="443" valign="top" style="width:332.6pt;padding:0in 0in 0in .3in;height:3.65pt"><p class="MsoNormal"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><img width="322" height="67" style="width:3.3541in;height:.6944in" id="Picture_x0020_3" src="cid:${bannerFileName}" alt="&quot;Content + Learning team name&quot;"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><o:p></o:p></span></p></td><td width="190" rowspan="2" valign="bottom" style="width:142.5pt;padding:0in 0in 0in 0in;height:3.65pt"><p class="MsoNormal" align="right" style="text-align:right"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><img width="190" height="158" style="width:1.9791in;height:1.6458in" id="Picture_x0020_2" src="cid:${bannerImageName}" alt="&quot;Decorative Learn Pathways image&quot;"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><o:p></o:p></span></p></td></tr><tr style="height:10.75pt"><td width="443" valign="top" style="width:332.6pt;padding:0in 0in 0in .3in;height:10.75pt"><p class="MsoNormal"><span style="font-size:18.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:white">${emailSubject}<o:p></o:p></span></p></td></tr></table>`;
 
 		emailBody = titleImage.concat(emailBody);
 
@@ -215,7 +232,8 @@ async function sendMail() {
 	}
 }
 
-const styles = `<link rel="stylesheet" href="${alertCSS}">
+const styles = `<link rel="stylesheet" href="${siteltrCSS}">
+<link rel="stylesheet" href="${alertCSS}">
 <style>
 h2 {
   font-size:14.0pt;
@@ -245,4 +263,6 @@ tr {
 td {
 	width:25%;
 }
+</style>
+</head>
 `;
