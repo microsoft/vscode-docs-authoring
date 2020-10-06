@@ -33,8 +33,8 @@
     "lint-docs-markdown": "yarn workspace docs-markdown lint",
     "lint-docs-metadata": "yarn workspace docs-metadata lint",
     "lint-docs-preview": "yarn workspace docs-preview lint",
-    "compile": "yarn run compile-docs-article-templates && yarn run compile-docs-images && yarn run compile-docs-linting && yarn run compile-docs-markdown && yarn run compile-docs-metadata && yarn run compile-docs-preview && yarn run compile-docs-yaml",
-    "lint": "yarn run lint-docs-article-templates && yarn run lint-docs-images && yarn run lint-docs-linting && yarn run lint-docs-markdown && yarn run lint-docs-metadata && yarn run lint-docs-preview && yarn run lint-docs-yaml",
+    "compile": "yarn run compile-docs-article-templates && yarn run compile-docs-images && yarn run compile-docs-linting && yarn run compile-docs-markdown && yarn run compile-docs-metadata && yarn run compile-docs-preview",
+    "lint": "yarn run lint-docs-article-templates && yarn run lint-docs-images && yarn run lint-docs-linting && yarn run lint-docs-markdown && yarn run lint-docs-metadata && yarn run lint-docs-preview",
     "pre-push": "yarn run lint && yarn run compile"
   },
   "husky": {
