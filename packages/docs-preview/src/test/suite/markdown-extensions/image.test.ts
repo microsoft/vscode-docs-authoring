@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import * as chai from 'chai';
-import { image_end, imageOptions, image_plugin } from '../../../markdown-extensions/image';
+import { image_end, imageOptions } from '../../../markdown-extensions/image';
+import { inline_plugin } from '../../../helper/common';
 const expect = chai.expect;
 
 suite('Image Extension', () => {
-	const md = require('markdown-it')().use(image_plugin, 'image', imageOptions).use(image_end);
+	const md = require('markdown-it')().use(inline_plugin, 'image', imageOptions).use(image_end);
 	test('Image type content', async () => {
 		const result = md.render(
 			`:::image type="content" source="../links/media/LSIs.png" alt-text="lsi":::`

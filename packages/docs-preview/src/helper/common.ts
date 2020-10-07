@@ -107,3 +107,55 @@ export function tryFindFile(rootPath: string, fileName: string) {
 	postWarning(`Unable to find a file named "${fileName}", recursively at root "${rootPath}".`);
 	return undefined;
 }
+
+/* tslint:disable: one-variable-per-declaration prefer-const variable-name */
+
+export function inline_plugin(md, name, options) {
+	options = options || {};
+	const marker_str = options.marker;
+	const render = options.render;
+	const tripleColon = ':::';
+	function nolocContainer(state, silent) {
+		let pos = state.pos;
+		if (state.src.charAt(pos) !== marker_str) {
+			return false;
+		}
+		pos++;
+		if (state.src.charAt(pos) !== marker_str) {
+			return false;
+		}
+		pos++;
+		if (state.src.charAt(pos) !== marker_str) {
+			return false;
+		}
+		pos++;
+		const markup = state.src.slice(state.pos, pos);
+
+		const endOfContainer = state.src.indexOf(tripleColon, pos);
+		if (endOfContainer !== -1) {
+			const params = state.src.slice(state.pos, endOfContainer + 3);
+
+			if (!params.startsWith(`:::${name}`)) {
+				return false;
+			}
+
+			if (!silent) {
+				const token = state.push(`${name}_container`, name, 0);
+				token.info = params;
+			}
+			state.pos = endOfContainer + 3;
+			return true;
+		}
+
+		if (!silent) {
+			state.pending += markup;
+		}
+		state.pos = pos;
+		return true;
+	}
+
+	md.inline.ruler.push(`${name}_container`, nolocContainer, {
+		alt: []
+	});
+	md.renderer.rules[`${name}_container`] = render;
+}
