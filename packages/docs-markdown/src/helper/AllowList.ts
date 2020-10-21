@@ -64,7 +64,7 @@ export class AllowList {
 	getSubServiceList = allowlist => {
 		const subServiceQuickPick: QuickPickItem[] = this.getAllowListQuickPick(
 			allowlist,
-			'msSubService'
+			'ms.service'
 		);
 		return subServiceQuickPick;
 	};
@@ -162,7 +162,7 @@ export class AllowList {
 		const technologyList = this.getTechnologyList(response.data);
 		await this.context.globalState.update('ms.technology', technologyList);
 		const subServiceList = this.getSubServiceList(response.data);
-		await this.context.globalState.update('msSubService', subServiceList);
+		await this.context.globalState.update('ms.service', subServiceList);
 		const prodTechnology = this.getMsProdTechnologyList(response.data);
 		await this.context.globalState.update('prodTechnology', prodTechnology);
 		const serviceSubService = this.getMsServiceSubServiceList(response.data);
