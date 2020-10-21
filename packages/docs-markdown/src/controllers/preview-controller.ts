@@ -16,7 +16,8 @@ let telemetryCommand: string = 'previewTopic';
 export function previewTopicCommand() {
 	const commands = [
 		{ command: previewTopic.name, callback: previewTopic },
-		{ command: seoPreview.name, callback: seoPreview }
+		{ command: seoPreview.name, callback: seoPreview },
+		{ command: yamlPreview.name, callback: yamlPreview }
 	];
 	return commands;
 }
@@ -79,5 +80,36 @@ export function seoPreview() {
 		}
 	}
 	telemetryCommand = 'docs.seoPreview';
+	sendTelemetryData(telemetryCommand, '');
+}
+export function yamlPreview() {
+	const editor = vscode.window.activeTextEditor;
+	if (!editor) {
+		noActiveEditorMessage();
+		return;
+	} else {
+		if (!isValidEditor(editor, false, 'preview yaml')) {
+			return;
+		}
+
+		if (editor.document.languageId !== 'yaml') {
+			vscode.window.showInformationMessage('yaml preview only works on YAML files.');
+			return;
+		}
+
+		const osPlatform = getOSPlatform();
+		const extensionName = 'docsmsft.docs-preview';
+		const { msTimeValue } = generateTimestamp();
+		const friendlyName = 'docsmsft.docs-preview'.split('.').reverse()[0];
+		const inactiveMessage = `[${msTimeValue}] - The ${friendlyName} extension is not installed.`;
+		if (checkExtension(extensionName, inactiveMessage)) {
+			if (osPlatform === 'linux') {
+				vscode.commands.executeCommand('markdown.yamlPreview');
+			} else {
+				vscode.commands.executeCommand('docs.yamlPreview');
+			}
+		}
+	}
+	telemetryCommand = 'docs.yamlPreview';
 	sendTelemetryData(telemetryCommand, '');
 }

@@ -2,7 +2,15 @@
 
 import { appendFileSync, readFileSync, writeFileSync } from 'fs';
 import { basename, join } from 'path';
-import { commands, ExtensionContext, ViewColumn, WebviewPanel, window, workspace } from 'vscode';
+import {
+	commands,
+	ExtensionContext,
+	ViewColumn,
+	WebviewPanel,
+	window,
+	workspace,
+	Uri
+} from 'vscode';
 import {
 	isMarkdownFile,
 	isYamlFile,
@@ -26,6 +34,7 @@ import { videoOptions, legacyVideoOptions } from './markdown-extensions/video';
 import { DocumentContentProvider } from './seo/seoPreview';
 import { xref } from './markdown-extensions/xref';
 import { rootDirectory } from './markdown-extensions/rootDirectory';
+import { YamlContentProvider } from './yaml/yamlPreview';
 import { nolocOptions } from './markdown-extensions/noloc';
 
 export let extensionPath: string;
@@ -36,7 +45,9 @@ const reloadMessage =
 	'Your updated configuration has been recorded, but you must reload to see its effects.';
 
 export async function activate(context: ExtensionContext) {
-	let panel: WebviewPanel;
+	let seoPanel: WebviewPanel;
+	let yamlPanel: WebviewPanel;
+
 	themeHandler(context);
 
 	workspace.onDidChangeConfiguration((e: any) => promptForReload(e, reloadMessage));
@@ -58,13 +69,38 @@ export async function activate(context: ExtensionContext) {
 		sendTelemetryData(telemetryCommand, commandOption);
 	});
 
-	const provider = new DocumentContentProvider();
-
+	const seoProvider = new DocumentContentProvider();
 	context.subscriptions.push(
 		workspace.onDidChangeTextDocument(async event => {
 			if (isMarkdownFile(event.document) || isYamlFile(event.document)) {
-				if (panel) {
-					panel.webview.html = await provider.provideTextDocumentContent();
+				if (seoPanel) {
+					seoPanel.webview.html = await seoProvider.provideTextDocumentContent();
+				}
+			}
+		})
+	);
+
+	const yamlProvider = new YamlContentProvider();
+	context.subscriptions.push(
+		workspace.onDidChangeTextDocument(async event => {
+			if (isYamlFile(event.document)) {
+				if (yamlPanel) {
+					let html = await getYamlHtml(event.document.uri);
+					if (html.length > 0) yamlPanel.webview.html = await applyYamlStyle(html);
+				}
+			}
+		})
+	);
+
+	context.subscriptions.push(
+		window.onDidChangeActiveTextEditor(async event => {
+			if (isYamlFile(event.document)) {
+				if (yamlPanel) {
+					let html = await getYamlHtml(event.document.uri);
+					if (html.length > 0) {
+						yamlPanel.title = `Preview ${basename(event.document.fileName)}`;
+						yamlPanel.webview.html = await applyYamlStyle(html);
+					}
 				}
 			}
 		})
@@ -74,12 +110,16 @@ export async function activate(context: ExtensionContext) {
 		'docs.seoPreview',
 		seoPreview(ViewColumn.Two)
 	);
-
+	const disposableYamlPreview = commands.registerCommand(
+		'docs.yamlPreview',
+		yamlPreview(ViewColumn.Two)
+	);
 	context.subscriptions.push(
 		disposableSidePreview,
 		disposableStandalonePreview,
 		disposableSEOPreview,
-		disposableRefreshPreview
+		disposableRefreshPreview,
+		disposableYamlPreview
 	);
 
 	let filePath = '';
@@ -116,14 +156,58 @@ export async function activate(context: ExtensionContext) {
 	function seoPreview(column): (...args: any[]) => any {
 		return async () => {
 			// Create and show a new webview
-			panel = window.createWebviewPanel(
+			seoPanel = window.createWebviewPanel(
 				'seoPreview',
 				'Search Results Preview',
 				{ preserveFocus: true, viewColumn: column },
 				{}
 			);
-			panel.webview.html = await provider.provideTextDocumentContent();
+			seoPanel.webview.html = await seoProvider.provideTextDocumentContent();
 		};
+	}
+
+	function yamlPreview(column): (...args: any[]) => any {
+		return async () => {
+			let editor = window.activeTextEditor;
+			let html = await getYamlHtml(editor.document.uri);
+			if (html.length > 0) {
+				if (yamlPanel) {
+					yamlPanel.reveal(column, true);
+				} else {
+					yamlPanel = window.createWebviewPanel(
+						'yamlPreview',
+						`Preview ${basename(window.activeTextEditor.document.fileName)}`,
+						{ preserveFocus: true, viewColumn: column },
+						{
+							enableScripts: true,
+							localResourceRoots: [Uri.file(join(context.extensionPath, 'media'))]
+						}
+					);
+				}
+				yamlPanel.webview.html = await applyYamlStyle(html);
+
+				yamlPanel.onDidDispose(
+					() => {
+						yamlPanel = undefined;
+					},
+					null,
+					context.subscriptions
+				);
+			}
+		};
+	}
+
+	async function getYamlHtml(uri: Uri) {
+		return await yamlProvider.provideTextDocumentContent(uri);
+	}
+	async function applyYamlStyle(html: string) {
+		const stylePath = Uri.file(join(context.extensionPath, 'media', 'yamlPreview.css'));
+		const scriptPath = Uri.file(join(context.extensionPath, 'media', 'yamlResize.js'));
+		const styleSrc = yamlPanel.webview.asWebviewUri(stylePath);
+		const scriptSrc = yamlPanel.webview.asWebviewUri(scriptPath);
+		html = html.replace(new RegExp('href=(.*)"', 'i'), `href="${styleSrc}"`);
+		html = html.replace(new RegExp('src=(.*)"', 'i'), `src="${scriptSrc}"`);
+		return html;
 	}
 }
 

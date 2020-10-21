@@ -1,5 +1,7 @@
 # Change Log
 
+- Added Feature : landing yaml preview
+
 ## 0.3.55 (August 14th, 2020)
 
 - Fixed Codesnippet styles preview bug: [Issue 702](https://github.com/microsoft/vscode-docs-authoring/issues/702)
