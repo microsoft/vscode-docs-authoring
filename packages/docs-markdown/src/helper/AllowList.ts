@@ -26,17 +26,17 @@ export class AllowList {
 	};
 	getMsServiceSubServiceList = allowlist => {
 		// get products from response
-		const msServices: any[] = this.getRestrictedList(allowlist, 'list:ms.service');
+		const msServices: any[] = this.getRestrictedList(allowlist, 'ms.service');
 		return msServices;
 	};
 	getMsProdTechnologyList = allowlist => {
 		// get products from response
-		const msProds: any[] = this.getRestrictedList(allowlist, 'list:ms.prod');
+		const msProds: any[] = this.getRestrictedList(allowlist, 'ms.prod');
 		return msProds;
 	};
 	getProductList = allowlist => {
 		// get products from response
-		const productQuickPick: QuickPickItem[] = this.getProductQuickPick(allowlist, 'list:product');
+		const productQuickPick: QuickPickItem[] = this.getProductQuickPick(allowlist, 'product');
 		productQuickPick.push({
 			label: 'other'
 		});
@@ -47,30 +47,24 @@ export class AllowList {
 		return productQuickPick;
 	};
 	getMsProdList = allowlist => {
-		const msProdQuickPick: QuickPickItem[] = this.getRootAllowListQuickPick(
-			allowlist,
-			'list:ms.prod'
-		);
+		const msProdQuickPick: QuickPickItem[] = this.getRootAllowListQuickPick(allowlist, 'ms.prod');
 		return msProdQuickPick;
 	};
 	getServiceList = allowlist => {
 		const serviceQuickPick: QuickPickItem[] = this.getRootAllowListQuickPick(
 			allowlist,
-			'list:ms.service'
+			'ms.service'
 		);
 		return serviceQuickPick;
 	};
 	getTechnologyList = allowlist => {
-		const msTechnologyQuickPick: QuickPickItem[] = this.getAllowListQuickPick(
-			allowlist,
-			'list:ms.prod'
-		);
+		const msTechnologyQuickPick: QuickPickItem[] = this.getAllowListQuickPick(allowlist, 'ms.prod');
 		return msTechnologyQuickPick;
 	};
 	getSubServiceList = allowlist => {
 		const subServiceQuickPick: QuickPickItem[] = this.getAllowListQuickPick(
 			allowlist,
-			'list:ms.service'
+			'msSubService'
 		);
 		return subServiceQuickPick;
 	};
@@ -89,14 +83,9 @@ export class AllowList {
 		Object.keys(allowlist)
 			.filter(x => x.startsWith(type))
 			.forEach((item: string) => {
-				const set = item.split(':');
-				if (set.length > 2) {
-					items.add(set[2]);
-					Object.keys(allowlist[item].values).forEach((prod: string) =>
-						// push the response products into the list of quickpicks.
-						items.add(prod)
-					);
-				}
+				allowlist[item].forEach(prod => {
+					items.add(prod.slug);
+				});
 			});
 		Array.from(items)
 			.sort()
@@ -115,7 +104,14 @@ export class AllowList {
 		Object.keys(allowlist)
 			.filter(x => x.startsWith(type))
 			.forEach((item: string) => {
-				Object.keys(allowlist[item].values).forEach((prod: string) => items.add(prod));
+				switch (item) {
+					case 'ms.prod':
+						allowlist[item].forEach(prod => items.add(prod.msProduct));
+						break;
+					case 'ms.service':
+						allowlist[item].forEach(prod => items.add(prod.msService));
+						break;
+				}
 			});
 		Array.from(items)
 			.sort()
@@ -134,9 +130,13 @@ export class AllowList {
 		Object.keys(allowlist)
 			.filter(x => x.startsWith(type))
 			.forEach((item: string) => {
-				const set = item.split(':');
-				if (set.length > 2) {
-					items.add(set[2]);
+				switch (item) {
+					case 'ms.prod':
+						allowlist[item].forEach(prod => items.add(prod.msProduct));
+						break;
+					case 'ms.service':
+						allowlist[item].forEach(prod => items.add(prod.msService));
+						break;
 				}
 			});
 		Array.from(items)
@@ -162,7 +162,7 @@ export class AllowList {
 		const technologyList = this.getTechnologyList(response.data);
 		await this.context.globalState.update('ms.technology', technologyList);
 		const subServiceList = this.getSubServiceList(response.data);
-		await this.context.globalState.update('ms.subservice', subServiceList);
+		await this.context.globalState.update('msSubService', subServiceList);
 		const prodTechnology = this.getMsProdTechnologyList(response.data);
 		await this.context.globalState.update('prodTechnology', prodTechnology);
 		const serviceSubService = this.getMsServiceSubServiceList(response.data);
