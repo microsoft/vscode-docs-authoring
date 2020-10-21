@@ -162,7 +162,7 @@ export class AllowList {
 		const technologyList = this.getTechnologyList(response.data);
 		await this.context.globalState.update('ms.technology', technologyList);
 		const subServiceList = this.getSubServiceList(response.data);
-		await this.context.globalState.update('ms.service', subServiceList);
+		await this.context.globalState.update('ms.subservice', subServiceList);
 		const prodTechnology = this.getMsProdTechnologyList(response.data);
 		await this.context.globalState.update('prodTechnology', prodTechnology);
 		const serviceSubService = this.getMsServiceSubServiceList(response.data);
