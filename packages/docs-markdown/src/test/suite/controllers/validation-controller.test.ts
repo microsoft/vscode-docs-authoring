@@ -10,7 +10,7 @@ import { validateRepository } from '../../../controllers/validation-controller';
 
 const expect = chai.expect;
 
-suite.only('Validation Controller', () => {
+suite('Validation Controller', () => {
 	teardown(() => {
 		chai.spy.restore(common);
 	});

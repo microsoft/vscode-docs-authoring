@@ -75,10 +75,10 @@ export class AllowList {
 			.forEach((item: string) => {
 				switch (item) {
 					case 'ms.prod':
-						allowlist[item].forEach(prod => msProds.push(prod.msTechnology));
+						allowlist[item].forEach(prod => msProds.push(prod));
 						break;
 					case 'ms.service':
-						allowlist[item].forEach(prod => msProds.push(prod.msSubService));
+						allowlist[item].forEach(prod => msProds.push(prod));
 						break;
 				}
 			});

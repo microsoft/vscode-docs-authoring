@@ -130,18 +130,12 @@ export function getMsTechnologyMetadataCompletionItems(
 			const msProd = match[1];
 			const prodTechnology: any[] = context.globalState.get('prodTechnology');
 			const filteredList = prodTechnology.filter(item => {
-				return item === msProd;
+				return item.msProduct === msProd;
 			});
 			filteredList.forEach(item => {
-				if (item.values) {
-					Object.keys(item.values).forEach(value => {
-						if (value) {
-							msTechnology.push({
-								label: value
-							});
-						}
-					});
-				}
+				msTechnology.push({
+					label: item.msTechnology
+				});
 			});
 		} else {
 			msTechnology = context.globalState.get('ms.technology');
@@ -208,18 +202,12 @@ export function getMsSubServiceMetadataCompletionItems(
 			const msProd = match[1];
 			const serviceSubService: any[] = context.globalState.get('serviceSubService');
 			const filteredList = serviceSubService.filter(item => {
-				return item === msProd;
+				return item.msService === msProd;
 			});
 			filteredList.forEach(item => {
-				if (item.values) {
-					Object.keys(item.values).forEach(value => {
-						if (value) {
-							msSubService.push({
-								label: value
-							});
-						}
-					});
-				}
+				msSubService.push({
+					label: item.msSubService
+				});
 			});
 		} else {
 			msSubService = context.globalState.get('ms.subservice');
