@@ -130,10 +130,7 @@ export function getMsTechnologyMetadataCompletionItems(
 			const msProd = match[1];
 			const prodTechnology: any[] = context.globalState.get('prodTechnology');
 			const filteredList = prodTechnology.filter(item => {
-				const set = item.id.split(':');
-				if (set.length > 2) {
-					return set[2] === msProd;
-				}
+				return item === msProd;
 			});
 			filteredList.forEach(item => {
 				if (item.values) {
@@ -211,10 +208,7 @@ export function getMsSubServiceMetadataCompletionItems(
 			const msProd = match[1];
 			const serviceSubService: any[] = context.globalState.get('serviceSubService');
 			const filteredList = serviceSubService.filter(item => {
-				const set = item.id.split(':');
-				if (set.length > 2) {
-					return set[2] === msProd;
-				}
+				return item === msProd;
 			});
 			filteredList.forEach(item => {
 				if (item.values) {

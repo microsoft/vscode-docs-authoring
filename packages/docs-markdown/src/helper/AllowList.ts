@@ -73,7 +73,14 @@ export class AllowList {
 		Object.keys(allowlist)
 			.filter(x => x.startsWith(type))
 			.forEach((item: string) => {
-				msProds.push(allowlist[item]);
+				switch (item) {
+					case 'ms.prod':
+						allowlist[item].forEach(prod => msProds.push(prod.msTechnology));
+						break;
+					case 'ms.service':
+						allowlist[item].forEach(prod => msProds.push(prod.msSubService));
+						break;
+				}
 			});
 		return msProds;
 	}
