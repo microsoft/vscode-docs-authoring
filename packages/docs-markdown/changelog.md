@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.82 (October 23rd, 2020)
+
+- Update allowlist endpoint
+
 ## 0.2.81 (September 29th, 2020)
 
 - Validation extension integration.
