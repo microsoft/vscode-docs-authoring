@@ -663,7 +663,7 @@
 				},
 				"markdown.allowlistUrl": {
 					"type": "string",
-					"default": "https://visualauthoringservice.azurewebsites.net/api/AllowLists?code=U5wdjUclcEjFtBndGa3Xa926MYmnfc5VnGzE5sLJATaYVl6lon8SNQ=="
+					"default": "https://taxonomyservice.azurefd.net/taxonomies?name=devlang&name=product&name=ms.service&name=ms.prod"
 				},
 				"markdown.metadataNag": {
 					"type": "boolean",
