@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.56 (October 22nd, 2020)
+
+- Fixed noloc preview: [Issue 738](https://github.com/microsoft/vscode-docs-authoring/issues/738)
+
 ## 0.3.55 (August 14th, 2020)
 
 - Fixed Codesnippet styles preview bug: [Issue 702](https://github.com/microsoft/vscode-docs-authoring/issues/702)
