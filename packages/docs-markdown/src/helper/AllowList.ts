@@ -1,6 +1,7 @@
 import { ExtensionContext, QuickPickItem, workspace } from 'vscode';
 import Axios from 'axios';
 import { output } from './output';
+import { getPackageInfo } from './telemetry';
 
 export class AllowList {
 	context;
@@ -18,7 +19,11 @@ export class AllowList {
 	};
 	refreshAllowList = async () => {
 		try {
-			const response = await Axios.get(this.allowlistUrl);
+			const packageInfo = getPackageInfo(this.context);
+			const headerServiceName = packageInfo.name;
+			const response = await Axios.get(this.allowlistUrl, {
+				headers: { 'User-Agent': headerServiceName }
+			});
 			await this.buildAllowList(response);
 		} catch (error) {
 			output.appendLine(error);
