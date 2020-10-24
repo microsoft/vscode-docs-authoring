@@ -1,5 +1,5 @@
 // ### YamlMime:landingContent  CardObj ---> linkLists: sectionObj --->  links : linkObj
-import { getTitle, getSummary, getUrl, getText } from './common';
+import { getTitle, getSummary, getUrl, getText, getMetadata } from './common';
 
 export function buildLandingHeader(yamlObj: any) {
 	let html: string = '';
@@ -9,7 +9,7 @@ export function buildLandingHeader(yamlObj: any) {
                 <div class="column is-full">
         `;
 	html += '<h1 class="is-size-h2">';
-	html += getTitle(yamlObj);
+	html += getTitle(getMetadata(yamlObj));
 	html += '</h1>';
 	html += '<p class="has-margin-top-small has-line-height-reset">';
 	html += getSummary(yamlObj);
