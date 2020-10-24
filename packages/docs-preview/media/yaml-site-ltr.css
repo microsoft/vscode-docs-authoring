@@ -4514,10 +4514,8 @@ h6 {
 
 @font-face {
 	font-family: 'docons';
-	src: url('../fonts/docons.eot');
-	src: url('../fonts/docons.eot') format('embedded-opentype'),
-		url('../fonts/docons.woff2') format('woff2'), url('docons.woff') format('woff'),
-		url('../fonts/docons.ttf') format('truetype');
+	src: url('docons.woff') format('woff');
+
 	font-weight: normal;
 	font-style: normal;
 }

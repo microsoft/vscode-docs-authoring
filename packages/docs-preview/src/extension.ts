@@ -204,17 +204,14 @@ export async function activate(context: ExtensionContext) {
 		const stylePath = Uri.file(join(context.extensionPath, 'media', 'yaml-site-ltr.css'));
 		const stylePath2 = Uri.file(join(context.extensionPath, 'media', 'normalize.css'));
 		const stylePath3 = Uri.file(join(context.extensionPath, 'media', 'minireset.css'));
-		const scriptPath = Uri.file(join(context.extensionPath, 'media', 'yamlPreview.js'));
 		const styleSrc = yamlPanel.webview.asWebviewUri(stylePath);
 		const styleSrc2 = yamlPanel.webview.asWebviewUri(stylePath2);
 		const styleSrc3 = yamlPanel.webview.asWebviewUri(stylePath3);
-		const scriptSrc = yamlPanel.webview.asWebviewUri(scriptPath);
 		html = html.replace(
 			new RegExp('<link rel="stylesheet" type="text/css" href=(.*)">', 'i'),
 			`<link rel="stylesheet" type="text/css" href="${styleSrc2}">
 		<link rel="stylesheet" type="text/css" href="${styleSrc3}"> <link rel="stylesheet" type="text/css" href="${styleSrc}">`
 		);
-		html = html.replace(new RegExp('src=(.*)"', 'i'), `src="${scriptSrc}"`);
 		return html;
 	}
 }
