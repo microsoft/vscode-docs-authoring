@@ -6630,7 +6630,7 @@ html.has-interactive .footer-layout > :not(:last-child) {
 	}
 }
 /*modified original:1088px*/
-@media screen and (min-width: 900px) {
+@media screen and (min-width: 800px) {
 	.column.is-narrow-desktop {
 		flex: none;
 	}
@@ -6896,7 +6896,7 @@ html.has-interactive .footer-layout > :not(:last-child) {
 }
 /*narrow modified original:
 1087px 120dpi 10897.9px */
-@media screen and (max-width: 899px), screen and (min-resolution: 120dpi) and (max-width: 899.9px) {
+@media screen and (max-width: 799px), screen and (min-resolution: 120dpi) and (max-width: 799.9px) {
 	.columns.is-masonry {
 		height: 100% !important;
 	}
@@ -6904,7 +6904,7 @@ html.has-interactive .footer-layout > :not(:last-child) {
 
 /*full modified original:
 1088px */
-@media screen and (min-width: 900px) {
+@media screen and (min-width: 800px) {
 	.columns.is-masonry {
 		flex-flow: column wrap;
 		align-content: space-between;
