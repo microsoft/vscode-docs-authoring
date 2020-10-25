@@ -1,5 +1,6 @@
 // ### YamlMime:Hub
 import * as common from '../common';
+
 export function buildHero(yamlObj: any) {
 	let brand = common.getBrand(yamlObj);
 	if (!brand) brand = 'has-background-docs';
@@ -18,6 +19,7 @@ export function buildHero(yamlObj: any) {
             </div>
           </section>`;
 }
+
 export function getHomeDir(yamlObj: any) {
 	if (yamlObj.brand) return yamlObj.brand;
 	if (yamlObj.metadata) {
@@ -27,26 +29,31 @@ export function getHomeDir(yamlObj: any) {
 		}
 	}
 }
+
 // guess max items per row ,  sucsss 9/10
 export function getItemDiv(num: number) {
 	if (num % 4 != 0) return `<div class="column is-4-tablet is-4-desktop" data-categories="">`;
 	else return `<div class="column is-6-tablet is-3-desktop" data-categories="">`;
 }
+
 export function buildTextLink(textLink: string) {
 	return `<a href="${getLinkAddress(textLink)}" 
                 data-linktype="absolute-path">
                 ${getLinkText(textLink)}</a>`;
 }
+
 export function buildSectionHeader(title: string) {
 	let aria = common.convertHyphenAlpha(title);
 	return `<h2 class="has-margin-top-none heading-anchor" id="${aria.toLowerCase()}">
       <a class="anchor-link docon docon-link" href="#${aria.toLowerCase()}" aria-labelledby="${aria.toLowerCase()}">
       </a>${title}</h2>`;
 }
+
 export function buildSectionSummary(summary: string) {
 	return `<p class="has-margin-top-none has-margin-bottom-large">${summary}
   </p>`;
 }
+
 // mardown links [text]:(link)
 export function getLinkText(text: string) {
 	var matches = text.match(/\[(.*?)\]/);
@@ -54,12 +61,14 @@ export function getLinkText(text: string) {
 		return matches[1];
 	} else return '';
 }
+
 export function getLinkAddress(text: string) {
 	var matches = text.match(/\(([^)]+)\)/);
 	if (matches) {
 		return matches[1];
 	} else return '';
 }
+
 export function getImageUrl(link: string, yamlObj: any) {
 	if (link.startsWith('http')) return link;
 	else if (link.startsWith('.')) link = common.replaceDot(link, '');
@@ -88,6 +97,7 @@ export function getImageUrl(link: string, yamlObj: any) {
 	}
 	return newLink;
 }
+
 export function isSpecialTitle(title: string) {
 	if (title == 'iot') {
 		return 'Internet of Things';

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { postWarning } from '../helper/common';
+import { postError } from '../helper/common';
 import { buildHero } from './hub/hubHelper';
 import { buildHighlightedContent } from './hub/highlightedContent';
 import { buildConceptualContent } from './hub/conceptualContent';
@@ -7,14 +7,16 @@ import { buildTools } from './hub/tools';
 import { buildProductDirectory } from './hub/productDirectory';
 import { buildAdditionalContent } from './hub/additionalContent';
 import { buildLandingContentSection, buildLandingHeader } from './landing/landingContent';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const jsyaml = require('js-yaml');
+
 export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 	public static readonly yamlURI = vscode.Uri.parse('yaml:');
 	public provideTextDocumentContent(uri: vscode.Uri): Thenable<string> {
 		return vscode.workspace.openTextDocument(uri).then(async document => {
 			const content = document.getText();
-			const startLine = document.lineAt(0).text;
+			const startLine = document.lineAt(0).text.trim();
 			var html = '';
 			switch (startLine) {
 				case '### YamlMime:Landing': {
@@ -26,7 +28,7 @@ export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 					break;
 				}
 				default: {
-					postWarning('Yaml Preview currently only supports YamlMime:Landing / Hub');
+					postError('Yaml Preview currently only supports YamlMime: Landing | Hub');
 					return '';
 				}
 			}
@@ -144,6 +146,7 @@ export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 		return yamlObj;
 	}
 }
+
 function getScript() {
 	return `<script>
 	const desktopMinWidth = 1088 / 2;

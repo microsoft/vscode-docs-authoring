@@ -1,5 +1,6 @@
 import * as common from '../common';
 import { buildSectionSummary, getItemDiv, buildSectionHeader, getImageUrl } from './hubHelper';
+
 // tools section
 export async function buildTools(yamlObj: any) {
 	let html = '';
@@ -24,6 +25,7 @@ export async function buildTools(yamlObj: any) {
 	}
 	return html;
 }
+
 async function buildToolsItem(item: any, index: number, yamlObj?: any, numItem?: number) {
 	let html = '';
 	let aria = common.convertHyphenAlphaCounter(common.getTitle(item), index);
@@ -35,6 +37,7 @@ async function buildToolsItem(item: any, index: number, yamlObj?: any, numItem?:
 	html += '</div></a></div>';
 	return html;
 }
+
 function buildToolsItemImageSrc(item: any, yamlObj?: any) {
 	return `
             <div class="column is-narrow is-flex has-flex-align-items-center is-full-height"> 
@@ -47,6 +50,7 @@ function buildToolsItemImageSrc(item: any, yamlObj?: any) {
             </div>
           `;
 }
+
 function buildToolsItemTitle(item: any, aria: string) {
 	return `<div class="column has-flex-align-self-center">
     <h3 id="${aria}" class="is-size-h6 has-margin-none has-text-weight-semibold">${common.getTitle(
@@ -54,6 +58,7 @@ function buildToolsItemTitle(item: any, aria: string) {
 	)}</h3>
   </div>`;
 }
+
 function buildToolsItemUrl(item: any, aria: string) {
 	switch (common.getUrl(item)) {
 		case 'csharp/index.yml':

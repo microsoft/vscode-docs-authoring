@@ -1,5 +1,6 @@
 // ### YamlMime:landingContent  CardObj ---> linkLists: sectionObj --->  links : linkObj
 import { getTitle, getSummary, getUrl, getText, getMetadata } from '../common';
+
 export function buildLandingHeader(yamlObj: any) {
 	let html: string = '';
 	html += `<section id="landing-head">
@@ -15,6 +16,7 @@ export function buildLandingHeader(yamlObj: any) {
 	html += '</p> </div> </div> </div> </section>';
 	return html;
 }
+
 export async function buildLandingContentSection(yamlObj: any) {
 	let html: string = '';
 	html += '<section id="landing-content" class="has-padding-top-medium has-padding-bottom-medium">';
@@ -27,6 +29,7 @@ export async function buildLandingContentSection(yamlObj: any) {
 	html += '</div> </section>';
 	return html;
 }
+
 function buildCardContent(cardObj: any) {
 	let cardContent = '';
 	if (cardObj.title) {
@@ -37,6 +40,7 @@ function buildCardContent(cardObj: any) {
 	}
 	return cardContent;
 }
+
 function buildCard(cardContent: string) {
 	let html: string = '';
 	html += `<div class="column is-12 is-4-desktop">
@@ -45,6 +49,7 @@ function buildCard(cardContent: string) {
 	html += '</div> </div>';
 	return html;
 }
+
 function buildCardTitle(title: string) {
 	let html: string = '';
 	html += '<h2 class="has-margin-none is-size-h6">';
@@ -52,6 +57,7 @@ function buildCardTitle(title: string) {
 	html += '</h2>';
 	return html;
 }
+
 function buildCardLinklist(cardObj: any) {
 	let sections = '';
 	for (let sectionObj of cardObj.linkLists) {
@@ -68,6 +74,7 @@ function buildCardLinklist(cardObj: any) {
 	}
 	return sections;
 }
+
 function buildCardLinklistTitle(title: string) {
 	let html: string = '';
 	html +=
@@ -82,6 +89,7 @@ function buildCardLinklistTitle(title: string) {
 	html += '</h3>';
 	return html;
 }
+
 function buildListItem(url: string, text: string) {
 	let html: string = '';
 	html += '<li class="is-unstyled has-padding-top-small has-padding-bottom-small">';
@@ -92,6 +100,7 @@ function buildListItem(url: string, text: string) {
 	html += '</li>';
 	return html;
 }
+
 function buildUnorderedList(links: string) {
 	return '<ul class="has-margin-none has-line-height-reset">' + links + '</ul>';
 }

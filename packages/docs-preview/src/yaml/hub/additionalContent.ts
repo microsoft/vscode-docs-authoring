@@ -1,5 +1,6 @@
 import * as common from '../common';
 import { buildSectionSummary, getItemDiv, buildTextLink } from './hubHelper';
+
 // additionalContent section
 // Supports up to 3 sections
 export async function buildAdditionalContent(yamlObj: any) {
@@ -26,12 +27,14 @@ export async function buildAdditionalContent(yamlObj: any) {
 	}
 	return html;
 }
+
 function buildAdditionalContentTitle(title: string) {
 	let aria = common.convertHyphenAlpha(title);
 	return `<h2 class="has-margin-top-none has-margin-bottom-large heading-anchor" id="${aria.toLowerCase()}">
       <a class="anchor-link docon docon-link" href="#${aria.toLowerCase()}" aria-labelledby="${aria.toLowerCase()}">
       </a>${title}</h2>`;
 }
+
 async function buildAdditionalContentSectionItem(item: any, numItem: number) {
 	let html = '';
 	html += getItemDiv(numItem);
@@ -56,19 +59,23 @@ async function buildAdditionalContentSectionItem(item: any, numItem: number) {
 	html += '</div>';
 	return html;
 }
+
 function buildAdditionalContentSectionItemUrl(item: any) {
 	return `<a href="${common.getUrl(item)}" 
 					class="additional-card box is-full-height has-heavy-shadow-hover has-border-high-contrast-hover has-padding-large is-undecorated" 
         	aria-labelledby="-net-core-api-reference-0" data-linktype="relative-path">`;
 }
+
 function buildAdditionalContentSectionItemTitle(item: any) {
 	return `<h3 class="is-size-h6 has-margin-top-none has-margin-bottom-small">
 	${common.getTitle(item)}</h3>`;
 }
+
 function buildAdditionalContentSectionItemSummary(item: any) {
 	return `<div class="has-text-subtle is-size-small has-line-height-reset">
             ${common.getSummary(item)}</div>`;
 }
+
 function buildAdditionalContentSectionItemLink(link: any) {
 	let html = '';
 	html += `<li class="is-unstyled has-margin-bottom-small is-size-small">
@@ -79,9 +86,11 @@ function buildAdditionalContentSectionItemLink(link: any) {
 	html += '</li>';
 	return html;
 }
+
 function buildAdditionalContentSectionItemLinkNote(link: any) {
 	return `<span class="has-text-subtle"> ${common.getNote(link)}</span>`;
 }
+
 function buildAdditionalContentSectionFooter(yamlObj: any) {
 	let footer = common.getFooter(yamlObj);
 	let footerHtml = footer;

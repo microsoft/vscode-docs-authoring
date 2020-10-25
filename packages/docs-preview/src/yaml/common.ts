@@ -7,6 +7,7 @@ export function getTitle(Obj: any) {
 	}
 	return title.substr(0, 59);
 }
+
 export function getSummary(Obj: any) {
 	let summary = '';
 	if (Obj.summary) {
@@ -14,6 +15,7 @@ export function getSummary(Obj: any) {
 	}
 	return summary.replace(/(\r\n|\n|\r)/gm, '').substr(0, 159);
 }
+
 export function getMetadata(Obj: any) {
 	let metadata = '';
 	if (Obj.metadata) {
@@ -21,6 +23,7 @@ export function getMetadata(Obj: any) {
 	}
 	return metadata;
 }
+
 export function getBrand(Obj: any) {
 	let brand = '';
 	if (Obj.brand) {
@@ -28,6 +31,7 @@ export function getBrand(Obj: any) {
 	}
 	return brand;
 }
+
 export function getUrl(Obj: any) {
 	let url = '';
 	if (Obj.url) {
@@ -35,6 +39,7 @@ export function getUrl(Obj: any) {
 	}
 	return url;
 }
+
 export function getItemType(Obj: any) {
 	let itemType = '';
 	if (Obj.itemType) {
@@ -42,6 +47,7 @@ export function getItemType(Obj: any) {
 	}
 	return itemType;
 }
+
 export function getText(Obj: any) {
 	let text = '';
 	if (Obj.text) {
@@ -49,6 +55,7 @@ export function getText(Obj: any) {
 	}
 	return text;
 }
+
 export function getImageSrc(Obj: any) {
 	let imageSrc = '';
 	if (Obj.imageSrc) {
@@ -56,6 +63,7 @@ export function getImageSrc(Obj: any) {
 	}
 	return imageSrc;
 }
+
 export function getFooter(Obj: any) {
 	let footer = '';
 	if (Obj.footer) {
@@ -63,6 +71,7 @@ export function getFooter(Obj: any) {
 	}
 	return footer;
 }
+
 export function getNote(Obj: any) {
 	let note = '';
 	if (Obj.note) {
@@ -70,12 +79,15 @@ export function getNote(Obj: any) {
 	}
 	return note;
 }
+
 export function convertHyphenAlpha(string: string) {
 	return string.replace(/[^0-9a-z]/gi, '-').toLowerCase();
 }
+
 export function convertHyphenAlphaCounter(string: string, count: number) {
 	return string.replace(/[^0-9a-z]/gi, '-').toLowerCase() + '-' + count.toString();
 }
+
 export function replaceDot(text: string, replaceWith: string, all?: Boolean) {
 	if (all != undefined) {
 		if (all) {
@@ -85,6 +97,7 @@ export function replaceDot(text: string, replaceWith: string, all?: Boolean) {
 		return text.replace('.', replaceWith);
 	}
 }
+
 export function replaceHypen(text: string, replaceWith: string, all?: Boolean) {
 	if (all != undefined) {
 		if (all) {
@@ -94,6 +107,7 @@ export function replaceHypen(text: string, replaceWith: string, all?: Boolean) {
 		return text.replace('-', replaceWith);
 	}
 }
+
 export function replaceTilde(text: string, replaceWith: string, all?: Boolean) {
 	if (all != undefined) {
 		if (all) {
@@ -103,9 +117,11 @@ export function replaceTilde(text: string, replaceWith: string, all?: Boolean) {
 		return text.replace('~', replaceWith);
 	}
 }
+
 export function getFileNameFromPath(path: string) {
 	return path.split('/').pop();
 }
+
 export function getSvgSource(type: string) {
 	switch (type) {
 		case 'architecture':
@@ -138,6 +154,7 @@ export function getSvgSource(type: string) {
 			return ``;
 	}
 }
+
 export function toTitleCase(str: string, ignore?: string[]) {
 	let newStr = str.toLowerCase().split(' ').map(capFirstChar).join(' ');
 	if (ignore != undefined) {
@@ -153,6 +170,7 @@ export function toTitleCase(str: string, ignore?: string[]) {
 	newStr = newStr.replace('Ai', 'AI');
 	return newStr;
 }
+
 export function sortByKey(obj: any) {
 	return Object.keys(obj)
 		.sort()

@@ -1,5 +1,6 @@
 import * as common from '../common';
 import { getItemDiv, getImageUrl } from './hubHelper';
+
 // productDirectory section
 export async function buildProductDirectory(yamlObj: any) {
 	let html = '';
@@ -59,6 +60,7 @@ export async function buildProductDirectory(yamlObj: any) {
 
 	return html;
 }
+
 function buildProductDirectoryTitle(yamlObj: any) {
 	let title = common.getTitle(yamlObj);
 	if (title) {
@@ -68,6 +70,7 @@ function buildProductDirectoryTitle(yamlObj: any) {
 						${title}</h2>`;
 	} else return '';
 }
+
 async function buildProductDirectoryItem(
 	item: any,
 	index?: number,
@@ -91,18 +94,22 @@ async function buildProductDirectoryItem(
 	html += '</div></div>';
 	return html;
 }
+
 function buildProductDirectoryItemSummary(item: any) {
 	return `<p class="has-margin-none has-text-subtle is-size-small has-line-height-reset">
   ${common.getSummary(item)}</p>`;
 }
+
 function buildProductDirectoryItemTitle(item: any, index: any) {
 	return `<h3 id="${common.convertHyphenAlphaCounter(common.getTitle(item), index)}" 
 	class="is-size-h6 has-margin-none">${common.getTitle(item)}</h3>`;
 }
+
 function buildProductDirectoryItemImage(item: any, yamlObj?: any) {
 	return `<img src="${getImageUrl(common.getImageSrc(item), yamlObj)}" 
 	alt="" loading="lazy" width="48" height="48" class="image is-48x48 has-margin-bottom-small" data-linktype="relative-path">`;
 }
+
 function buildProductDirectoryItemLink(link: any) {
 	let html = '';
 	html += `<li class="is-unstyled has-margin-bottom-small"><a href="${common.getUrl(link)}" 
@@ -112,6 +119,7 @@ function buildProductDirectoryItemLink(link: any) {
 	</li>`;
 	return html;
 }
+
 //productDirectory facet
 async function buildHubFacet(categories: any) {
 	let html = '';
@@ -143,6 +151,7 @@ async function buildHubFacet(categories: any) {
 	}
 	return html;
 }
+
 function buildHubFacetButton(name: string) {
 	let title = isSpecialTitle(name);
 	if (title.length == 0) {
@@ -153,6 +162,7 @@ function buildHubFacetButton(name: string) {
   					${title}</button>
 					</li>`;
 }
+
 async function buildHubFacetSectionItem(item: any, yamlObj?: any) {
 	let html = '';
 	let title = isSpecialTitle(item.azureCategories.join(' '));
@@ -181,11 +191,13 @@ async function buildHubFacetSectionItem(item: any, yamlObj?: any) {
 	html += '</div>';
 	return html;
 }
+
 function buildHubFacetSectionTitle(title: string) {
 	return `<div id="section-title" class="column is-full">
             <h3 class="has-margin-none">${title}</h3>
           </div>`;
 }
+
 function buildHubFacetSectionAll(cards: string) {
 	let html = '';
 	html += `<div id="product-cards-all" class="has-margin-top-none" hidden = "hidden">`;
@@ -193,6 +205,7 @@ function buildHubFacetSectionAll(cards: string) {
 	html += `</div>`;
 	return html;
 }
+
 async function buildHubFacetSectionAllBox(categories: any, item: any) {
 	if (item.azureCategories) {
 		for (let category of item.azureCategories) {
@@ -207,6 +220,7 @@ async function buildHubFacetSectionAllBox(categories: any, item: any) {
 	}
 	return categories;
 }
+
 function buildHubFacetSectionAllBoxListItem(title: string, summary: string, url: string) {
 	return `<li class="grid-item">
   <div class="card is-shadowless">
@@ -219,7 +233,9 @@ function buildHubFacetSectionAllBoxListItem(title: string, summary: string, url:
   </div>
 </li>`;
 }
+
 function buildHubFacetDropDown() {}
+
 async function getAllSortedCategories(items: any) {
 	let categories: any = {};
 	for (let item of items) {
@@ -231,6 +247,7 @@ async function getAllSortedCategories(items: any) {
 	}
 	return common.sortByKey(categories);
 }
+
 function isSpecialTitle(title: string) {
 	switch (title) {
 		case 'iot':

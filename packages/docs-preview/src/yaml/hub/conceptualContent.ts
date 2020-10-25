@@ -1,5 +1,6 @@
 import * as common from '../common';
 import { buildSectionSummary, getItemDiv, buildSectionHeader } from './hubHelper';
+
 // conceptualContent section
 export async function buildConceptualContent(yamlObj: any) {
 	let html = '';
@@ -19,6 +20,7 @@ export async function buildConceptualContent(yamlObj: any) {
 	}
 	return html;
 }
+
 async function buildConceptualContentItem(item: any, numItem: number) {
 	let html = '';
 	html += `${getItemDiv(numItem)}
@@ -31,12 +33,15 @@ async function buildConceptualContentItem(item: any, numItem: number) {
 	html += `</div></div>`;
 	return html;
 }
+
 function buildConceptualContentItemTitle(title: string) {
 	return `<h3 class="is-size-h6 has-margin-top-none has-margin-bottom-small">${title}</h3>`;
 }
+
 function buildConceptualContentItemSummmary(summary: string) {
 	return `<p class="is-size-small has-line-height-reset has-margin-top-none has-margin-bottom-medium">${summary}</p>`;
 }
+
 async function buildConceptualContentItemList(links: any) {
 	let html = '';
 	let url = '';

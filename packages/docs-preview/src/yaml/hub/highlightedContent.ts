@@ -1,5 +1,6 @@
 import * as common from '../common';
 import { getItemDiv } from './hubHelper';
+
 // highlightedContent section
 // Maximum of 8 itemshighlightedContent:
 // itemType: architecture | concept | deploy | download | get-started | how-to-guide | learn | overview | quickstart | reference | tutorial | video | whats-new
@@ -23,6 +24,7 @@ export async function buildHighlightedContent(yamlObj: any) {
 	}
 	return html;
 }
+
 function buildHighlightedContentItem(item: any, index: number, brand: string, numItem?: number) {
 	let html = '';
 	html += getItemDiv(numItem);
