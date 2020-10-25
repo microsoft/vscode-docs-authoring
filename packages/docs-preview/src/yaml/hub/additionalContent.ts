@@ -8,7 +8,7 @@ export async function buildAdditionalContent(yamlObj: any) {
 		if (yamlObj.additionalContent.sections) {
 			html += `<section id="additional-content" class="has-background-alternating-grey has-padding-top-extra-large has-padding-bottom-extra-large">
               <div class="uhf-container anchor-headings">`;
-			for (let section of yamlObj.additionalContent.sections) {
+			for (let section of yamlObj.additionalContent.sections.slice(0, 3)) {
 				html += buildAdditionalContentTitle(common.getTitle(section));
 				html += buildSectionSummary(common.getSummary(section));
 				if (section.items) {

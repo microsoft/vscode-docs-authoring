@@ -11,7 +11,7 @@ export async function buildHighlightedContent(yamlObj: any) {
     <div class="uhf-container has-padding-top-large has-padding-bottom-large">
       <div class="columns is-multiline">`;
 		if (yamlObj.highlightedContent.items) {
-			for (let item of yamlObj.highlightedContent.items) {
+			for (let item of yamlObj.highlightedContent.items.slice(0, 8)) {
 				html += buildHighlightedContentItem(
 					item,
 					yamlObj.highlightedContent.items.indexOf(item),
