@@ -4,7 +4,7 @@
 	"description": "Docs Markdown Extension",
 	"icon": "images/docs-logo-ms.png",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-	"version": "0.2.81",
+	"version": "0.2.82",
 	"publisher": "docsmsft",
 	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
 	"bugs": {
@@ -663,7 +663,7 @@
 				},
 				"markdown.allowlistUrl": {
 					"type": "string",
-					"default": "https://visualauthoringservice.azurewebsites.net/api/AllowLists?code=U5wdjUclcEjFtBndGa3Xa926MYmnfc5VnGzE5sLJATaYVl6lon8SNQ=="
+					"default": "https://taxonomyservice.azurefd.net/taxonomies?name=devlang&name=product&name=ms.service&name=ms.prod"
 				},
 				"markdown.metadataNag": {
 					"type": "boolean",

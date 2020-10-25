@@ -1,12 +1,10 @@
 # Change Log
 
-- Added Feature : yaml preview (landing , Hub)
+- Added Feature : yaml preview for YamlMime: landing | YamlMime: Hub
 
 ## 0.3.56 (October 22nd, 2020)
 
 - Fixed noloc preview: [Issue 738](https://github.com/microsoft/vscode-docs-authoring/issues/738)
-
-## 0.3.55 (August 14th, 2020)
 
 ## 0.3.55 (August 14th, 2020)
 

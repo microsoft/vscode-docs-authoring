@@ -27,7 +27,7 @@ function readJson(path: string) {
 	return JSON.parse(json);
 }
 
-function getPackageInfo(context: ExtensionContext): PackageInfo {
+export function getPackageInfo(context: ExtensionContext): PackageInfo {
 	const extensionPackage = readJson(context.asAbsolutePath('./package.json'));
 	return {
 		name: extensionPackage.name,
