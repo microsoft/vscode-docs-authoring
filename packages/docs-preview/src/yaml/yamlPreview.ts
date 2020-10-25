@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
 import { postWarning } from '../helper/common';
 import {
-	buildHeader,
+	buildHero,
 	buildHighlightedContent,
 	buildConceptualContent,
 	buildTools,
 	buildProductDirectory,
 	buildAdditionalContent
 } from './hubHelper';
-import { buildLandingContentSection, buildLandingHeader } from './landingHelper';
+import { buildLandingContentSection, buildLandingHeader } from './landing/landingHelper';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const jsyaml = require('js-yaml');
 
@@ -42,7 +42,7 @@ export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 		let yamlObj = await this.parseYaml(content);
 		let body = '';
 		let keys = Object.keys(yamlObj);
-		body += buildHeader(yamlObj);
+		body += buildHero(yamlObj);
 		for (let k of keys) {
 			switch (k) {
 				case 'highlightedContent':
