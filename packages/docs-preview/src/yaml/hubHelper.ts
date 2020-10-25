@@ -1,6 +1,4 @@
 // ### YamlMime:Hub
-// issue : button click , no update
-// dropdown
 import * as common from './common';
 export function buildHeader(yamlObj: any) {
 	let brand = common.getBrand(yamlObj);
@@ -356,6 +354,8 @@ function buildHubFacetButton(name: string) {
 	let title = '';
 	if (name == 'iot') {
 		title = 'Internet of Things';
+	} else if (name == 'ai-machine-learning') {
+		title = 'AI + Machine Learning';
 	} else {
 		title = common.toTitleCase(common.replaceHypen(name, ' ', true), ['of', 'and']);
 	}
@@ -391,6 +391,7 @@ async function buildHubFacetSectionItem(item: any, yamlObj?: any) {
 	}
 
 	html += '</div>';
+
 	return html;
 }
 function buildHubFacetSectionTitle(title: string) {
@@ -554,8 +555,6 @@ function buildAdditionalContentSectionFooter(yamlObj: any) {
 }
 
 // common
-
-// for image url start with ~
 function getHomeDir(yamlObj: any) {
 	if (yamlObj.brand) return yamlObj.brand;
 	if (yamlObj.metadata) {
