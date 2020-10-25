@@ -1,14 +1,12 @@
 import * as vscode from 'vscode';
 import { postWarning } from '../helper/common';
-import {
-	buildHero,
-	buildHighlightedContent,
-	buildConceptualContent,
-	buildTools,
-	buildProductDirectory,
-	buildAdditionalContent
-} from './hubHelper';
-import { buildLandingContentSection, buildLandingHeader } from './landing/landingHelper';
+import { buildHero } from './hub/hubHelper';
+import { buildHighlightedContent } from './hub/highlightedContent';
+import { buildConceptualContent } from './hub/conceptualContent';
+import { buildTools } from './hub/tools';
+import { buildProductDirectory } from './hub/productDirectory';
+import { buildAdditionalContent } from './hub/additionalContent';
+import { buildLandingContentSection, buildLandingHeader } from './landing/landingContent';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const jsyaml = require('js-yaml');
 
