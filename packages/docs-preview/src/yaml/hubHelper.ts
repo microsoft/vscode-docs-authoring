@@ -208,14 +208,16 @@ function buildToolsItemUrl(item: any, aria: string) {
 // productDirectory section
 export async function buildProductDirectory(yamlObj: any) {
 	let html = '';
+	let cardsAll = '';
 	if (yamlObj.productDirectory) {
 		html += `<section id="product-directory" class="has-background-alternating-grey">
 							<div class="uhf-container anchor-headings has-padding-top-extra-large has-padding-bottom-extra-large">`;
 		html += buildProductDirectoryTitle(yamlObj.productDirectory);
 
 		if (yamlObj.productDirectory.items) {
+			let categories = await getAllSortedCategories(yamlObj.productDirectory.items);
 			html += `<div class="columns">`;
-			let facet = await buildHubFacet(await getAllSortedCategories(yamlObj.productDirectory.items));
+			let facet = await buildHubFacet(categories);
 
 			if (facet) {
 				html += facet;
@@ -226,13 +228,22 @@ export async function buildProductDirectory(yamlObj: any) {
 				html += buildHubFacetSectionTitle('Featured');
 				for (let item of yamlObj.productDirectory.items) {
 					html += await buildHubFacetSectionItem(item, yamlObj);
+					categories = await buildHubFacetSectionAllBox(categories, item);
+				}
+				for (let key in categories) {
+					let title = isSpecialTitle(key);
+					if (title.length == 0) {
+						title = common.toTitleCase(common.replaceHypen(key, ' ', true), ['of', 'and']);
+					}
+					cardsAll += `<div class="box">
+					<h3 class="title has-margin-top-none has-margin-bottom-small">${title}</h3>`;
+					cardsAll += `<ul class="grid is-3 has-margin-left-none has-margin-bottom-large">`;
+					cardsAll += categories[key];
+					cardsAll += `</ul>`;
+					cardsAll += `</div>`;
 				}
 				html += '</div>'; // end product-cards
-				html += await buildHubFacetSectionAll(
-					'', // issue
-					yamlObj.productDirectory.items
-				);
-
+				html += buildHubFacetSectionAll(cardsAll);
 				html += '</div>';
 			} else {
 				html += `<div class="column">`;
@@ -270,7 +281,7 @@ async function buildProductDirectoryItem(
 	numItem?: number
 ) {
 	let html = '';
-
+	let allCards = '';
 	html += `${getItemDiv(numItem)}	
 						<div class="box has-margin-none is-full-height has-padding-large">`;
 	html += buildProductDirectoryItemImage(item, yamlObj);
@@ -351,14 +362,11 @@ async function buildHubFacet(categories: any) {
 	return html;
 }
 function buildHubFacetButton(name: string) {
-	let title = '';
-	if (name == 'iot') {
-		title = 'Internet of Things';
-	} else if (name == 'ai-machine-learning') {
-		title = 'AI + Machine Learning';
-	} else {
+	let title = isSpecialTitle(name);
+	if (title.length == 0) {
 		title = common.toTitleCase(common.replaceHypen(name, ' ', true), ['of', 'and']);
 	}
+
 	return `<li class="is-unstyled">
   					<button data-facet="${name}" class="hub-facet button has-inner-focus is-full-width has-flex-justify-content-space-between is-text is-small has-text-weight-semibold justify-content-" aria-pressed="false">
   					${title}</button>
@@ -367,9 +375,15 @@ function buildHubFacetButton(name: string) {
 
 async function buildHubFacetSectionItem(item: any, yamlObj?: any) {
 	let html = '';
-	html += `<div class="column is-4-tablet is-3-desktop is-one-fifth-widescreen item-column" data-categories="${common.toTitleCase(
-		common.replaceHypen(item.azureCategories.join(' '), ' ', true)
-	)}" >	
+	let title = isSpecialTitle(item.azureCategories.join(' '));
+	if (title.length == 0) {
+		title = common.toTitleCase(common.replaceHypen(item.azureCategories.join(' '), ' ', true), [
+			'of',
+			'and'
+		]);
+	}
+
+	html += `<div class="column is-4-tablet is-3-desktop is-one-fifth-widescreen item-column" data-categories="${title}" >	
             <a href="${common.getUrl(
 							item
 						)}" class="is-hidden-mobile box has-margin-none is-full-height has-heavy-shadow-hover has-border-high-contrast-hover has-padding-large is-undecorated" aria-labelledby="--" data-linktype="relative-path">
@@ -400,28 +414,28 @@ function buildHubFacetSectionTitle(title: string) {
           </div>`;
 }
 
-async function buildHubFacetSectionAll(title: string, items: any) {
+function buildHubFacetSectionAll(cards: string) {
 	let html = '';
 	html += `<div id="product-cards-all" class="has-margin-top-none" hidden = "hidden">`;
-	html += await buildHubFacetSectionAllBox(title, items);
+	html += cards;
 	html += `</div>`;
 	return html;
 }
 
-async function buildHubFacetSectionAllBox(title: string, items: string[]) {
+async function buildHubFacetSectionAllBox(categories: any, item: any) {
 	let html = '';
-	html += `<div class="box">
-            <h3 class="title has-margin-top-none has-margin-bottom-small">${title}</h3>
-          <ul class="grid is-3 has-margin-left-none has-margin-bottom-large">`;
-	for (let item of items) {
-		html += buildHubFacetSectionAllBoxListItem(
-			common.getTitle(item),
-			common.getSummary(item),
-			common.getUrl(item)
-		);
+	if (item.azureCategories) {
+		for (let category of item.azureCategories) {
+			categories[category] =
+				categories[category] +
+				buildHubFacetSectionAllBoxListItem(
+					common.getTitle(item),
+					common.getSummary(item),
+					common.getUrl(item)
+				);
+		}
 	}
-	html += `</ul> </div>`;
-	return html;
+	return categories;
 }
 
 function buildHubFacetSectionAllBoxListItem(title: string, summary: string, url: string) {
@@ -436,6 +450,8 @@ function buildHubFacetSectionAllBoxListItem(title: string, summary: string, url:
   </div>
 </li>`;
 }
+
+function buildHubFacetDropDown() {}
 
 async function getAllSortedCategories(items: any) {
 	let categories: any = {};
@@ -629,4 +645,12 @@ function getImageUrl(link: string, yamlObj: any) {
 		}
 	}
 	return newLink;
+}
+
+function isSpecialTitle(title: string) {
+	if (title == 'iot') {
+		return 'Internet of Things';
+	} else if (title == 'ai-machine-learning') {
+		return 'AI + Machine Learning';
+	} else return '';
 }
