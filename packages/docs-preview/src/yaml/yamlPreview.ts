@@ -9,10 +9,8 @@ import { buildAdditionalContent } from './hub/additionalContent';
 import { buildLandingContentSection, buildLandingHeader } from './landing/landingContent';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const jsyaml = require('js-yaml');
-
 export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 	public static readonly yamlURI = vscode.Uri.parse('yaml:');
-
 	public provideTextDocumentContent(uri: vscode.Uri): Thenable<string> {
 		return vscode.workspace.openTextDocument(uri).then(async document => {
 			const content = document.getText();
@@ -35,7 +33,6 @@ export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 			return this.setConfigTheme(html);
 		});
 	}
-
 	private async buildHtmlFromHub(content: string): Promise<string> {
 		let yamlObj = await this.parseYaml(content);
 		let body = '';
@@ -65,7 +62,6 @@ export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 
 		return this.finalizeHubHtml(body);
 	}
-
 	private async buildHtmlFromLanding(content: string): Promise<string> {
 		let yamlObj = await this.parseYaml(content);
 		let body = '';
@@ -73,7 +69,6 @@ export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 		body += await buildLandingContentSection(yamlObj);
 		return this.finalizeLandingHtml(body);
 	}
-
 	private finalizeLandingHtml(body: string) {
 		//original <section class="primary-holder column is-two-thirds-tablet is-three-quarters-desktop">
 		return `<!DOCTYPE html>
@@ -97,7 +92,6 @@ export class YamlContentProvider implements vscode.TextDocumentContentProvider {
     </body>
     </html>`;
 	}
-
 	private finalizeHubHtml(body: string) {
 		return `<!DOCTYPE html>
     <html>
@@ -140,7 +134,6 @@ export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 		}
 		return html;
 	}
-
 	private async parseYaml(Content: string) {
 		let yamlObj: any;
 		try {
@@ -151,25 +144,21 @@ export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 		return yamlObj;
 	}
 }
-
 function getScript() {
 	return `<script>
 	const desktopMinWidth = 1088 / 2;
 	const desktopOnlyQuery = window.matchMedia('screen and (min-width: ' + desktopMinWidth + 'px)');
 	const masonry = document.getElementsByClassName('is-masonry');
-	
 	if (masonry.length > 0) {
 		document.addEventListener('DOMContentLoaded', function () {
 			const masonryElement = document.getElementsByClassName('is-masonry')[0];
 			setMasonryContainerHeight(masonryElement, desktopMinWidth);
 		});
-	
 		window.addEventListener('resize', function () {
 			const masonryElement = document.getElementsByClassName('is-masonry')[0];
 			setMasonryContainerHeight(masonryElement, desktopMinWidth);
 		});
 	}
-	
 	function setMasonryContainerHeight(masonryElement) {
 		const bottomPadding = 128;
 		// assumes .columns.is-masonry is the offsetParent because offsetTop returns the distance of the current element relative to the top of the offsetParent node.
@@ -177,7 +166,6 @@ function getScript() {
 		const height = Math.max(...cards.map(x => x.offsetTop + x.offsetHeight)) + bottomPadding;
 		masonryElement.style.height = height + 'px';
 	}
-	
 	var prev = document.querySelector('button[data-facet*="featured"]');
 	var buttons = document.querySelectorAll('button');
 	if (buttons.length > 0) {
@@ -207,7 +195,6 @@ function getScript() {
 			cards[i].setAttribute('hidden', 'hidden');
 		}
 	}
-	
 	function revealCategory(category) {
 		var cards = document.querySelectorAll('div[data-categories*=' + '"' + category + '"' + ']');
 		for (var j = 0; j < cards.length; j++) {
@@ -226,7 +213,6 @@ function getScript() {
 				'hub-facet button has-inner-focus is-full-width has-flex-justify-content-space-between is-text is-small has-text-weight-semibold justify-content- has-background-secondary-light';
 		}
 	}
-	
 	function resetButtonStyle(element) {
 		if (element.innerText == 'Featured') {
 			element.className =
@@ -244,8 +230,5 @@ function getScript() {
 			n = document.querySelector('#product-cards-all');
 		(t ? e : n).setAttribute('hidden', 'hidden'), (t ? n : e).removeAttribute('hidden');
 	}
-	
-	
-	
 	</script > `;
 }

@@ -1,6 +1,5 @@
 import * as common from '../common';
 import { buildSectionSummary, getItemDiv, buildSectionHeader, getImageUrl } from './hubHelper';
-
 // tools section
 export async function buildTools(yamlObj: any) {
 	let html = '';
@@ -25,21 +24,17 @@ export async function buildTools(yamlObj: any) {
 	}
 	return html;
 }
-
 async function buildToolsItem(item: any, index: number, yamlObj?: any, numItem?: number) {
 	let html = '';
 	let aria = common.convertHyphenAlphaCounter(common.getTitle(item), index);
 	html += getItemDiv(numItem);
-
 	html += buildToolsItemUrl(item, aria);
 	html += `<div class="columns is-mobile has-margin-none is-full-height">`;
 	html += buildToolsItemImageSrc(item, yamlObj);
 	html += buildToolsItemTitle(item, aria);
-
 	html += '</div></a></div>';
 	return html;
 }
-
 function buildToolsItemImageSrc(item: any, yamlObj?: any) {
 	return `
             <div class="column is-narrow is-flex has-flex-align-items-center is-full-height"> 

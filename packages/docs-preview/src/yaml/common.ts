@@ -7,7 +7,6 @@ export function getTitle(Obj: any) {
 	}
 	return title.substr(0, 59);
 }
-
 export function getSummary(Obj: any) {
 	let summary = '';
 	if (Obj.summary) {
@@ -15,7 +14,6 @@ export function getSummary(Obj: any) {
 	}
 	return summary.replace(/(\r\n|\n|\r)/gm, '').substr(0, 159);
 }
-
 export function getMetadata(Obj: any) {
 	let metadata = '';
 	if (Obj.metadata) {
@@ -37,7 +35,6 @@ export function getUrl(Obj: any) {
 	}
 	return url;
 }
-
 export function getItemType(Obj: any) {
 	let itemType = '';
 	if (Obj.itemType) {
@@ -45,7 +42,6 @@ export function getItemType(Obj: any) {
 	}
 	return itemType;
 }
-
 export function getText(Obj: any) {
 	let text = '';
 	if (Obj.text) {
@@ -53,7 +49,6 @@ export function getText(Obj: any) {
 	}
 	return text;
 }
-
 export function getImageSrc(Obj: any) {
 	let imageSrc = '';
 	if (Obj.imageSrc) {
@@ -99,7 +94,6 @@ export function replaceHypen(text: string, replaceWith: string, all?: Boolean) {
 		return text.replace('-', replaceWith);
 	}
 }
-
 export function replaceTilde(text: string, replaceWith: string, all?: Boolean) {
 	if (all != undefined) {
 		if (all) {
@@ -109,11 +103,9 @@ export function replaceTilde(text: string, replaceWith: string, all?: Boolean) {
 		return text.replace('~', replaceWith);
 	}
 }
-
 export function getFileNameFromPath(path: string) {
 	return path.split('/').pop();
 }
-
 export function getSvgSource(type: string) {
 	switch (type) {
 		case 'architecture':
@@ -146,10 +138,8 @@ export function getSvgSource(type: string) {
 			return ``;
 	}
 }
-
 export function toTitleCase(str: string, ignore?: string[]) {
 	let newStr = str.toLowerCase().split(' ').map(capFirstChar).join(' ');
-
 	if (ignore != undefined) {
 		if (ignore.length > 0) {
 			for (let word of ignore) {
@@ -157,15 +147,12 @@ export function toTitleCase(str: string, ignore?: string[]) {
 			}
 		}
 	}
-
 	function capFirstChar(word: string) {
 		return word.replace(word[0], word[0].toUpperCase());
 	}
-
 	newStr = newStr.replace('Ai', 'AI');
 	return newStr;
 }
-
 export function sortByKey(obj: any) {
 	return Object.keys(obj)
 		.sort()

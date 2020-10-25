@@ -1,6 +1,5 @@
 // ### YamlMime:landingContent  CardObj ---> linkLists: sectionObj --->  links : linkObj
 import { getTitle, getSummary, getUrl, getText, getMetadata } from '../common';
-
 export function buildLandingHeader(yamlObj: any) {
 	let html: string = '';
 	html += `<section id="landing-head">
@@ -16,7 +15,6 @@ export function buildLandingHeader(yamlObj: any) {
 	html += '</p> </div> </div> </div> </section>';
 	return html;
 }
-
 export async function buildLandingContentSection(yamlObj: any) {
 	let html: string = '';
 	html += '<section id="landing-content" class="has-padding-top-medium has-padding-bottom-medium">';
@@ -29,7 +27,6 @@ export async function buildLandingContentSection(yamlObj: any) {
 	html += '</div> </section>';
 	return html;
 }
-
 function buildCardContent(cardObj: any) {
 	let cardContent = '';
 	if (cardObj.title) {
@@ -40,7 +37,6 @@ function buildCardContent(cardObj: any) {
 	}
 	return cardContent;
 }
-
 function buildCard(cardContent: string) {
 	let html: string = '';
 	html += `<div class="column is-12 is-4-desktop">
@@ -49,7 +45,6 @@ function buildCard(cardContent: string) {
 	html += '</div> </div>';
 	return html;
 }
-
 function buildCardTitle(title: string) {
 	let html: string = '';
 	html += '<h2 class="has-margin-none is-size-h6">';
@@ -78,7 +73,7 @@ function buildCardLinklistTitle(title: string) {
 	html +=
 		'<h3 class="is-flex is-uppercase is-size-small has-border-top has-margin-bottom-small has-margin-top-medium has-padding-top-medium has-text-subtle">';
 	html += `
-  <span class="has-margin-right-extra-small has-flex-align-self-center is-size-h5 docon docon-topic-${title.toLowerCase()}" aria-hidden="true"></span>
+		<span class="has-margin-right-extra-small has-flex-align-self-center is-size-h5 docon docon-topic-${title.toLowerCase()}" aria-hidden="true"></span>
   `;
 	if (title === 'whats-new') html += 'What&#39;s new';
 	else {
@@ -95,7 +90,6 @@ function buildListItem(url: string, text: string) {
   data-linktype="relative-path">${text}</a>
   `;
 	html += '</li>';
-
 	return html;
 }
 function buildUnorderedList(links: string) {

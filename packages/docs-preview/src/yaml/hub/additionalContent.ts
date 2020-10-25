@@ -21,7 +21,6 @@ export async function buildAdditionalContent(yamlObj: any) {
 				}
 			}
 			html += buildAdditionalContentSectionFooter(yamlObj.additionalContent);
-
 			html += '</div></section>';
 		}
 	}
@@ -42,7 +41,6 @@ async function buildAdditionalContentSectionItem(item: any, numItem: number) {
 	html += buildAdditionalContentSectionItemTitle(item);
 	html += `<div class="has-text-subtle is-size-small has-line-height-reset"></div>`;
 	html += buildAdditionalContentSectionItemSummary(item);
-
 	if (item.links) {
 		html += `<ul class="has-line-height-reset has-margin-left-none has-margin-bottom-none has-margin-top-extra-small">`;
 		for (let link of item.links) {
@@ -50,37 +48,33 @@ async function buildAdditionalContentSectionItem(item: any, numItem: number) {
 		}
 		html += '</ul>';
 	}
-
-	if (url) html += '</a>';
-	else html += '</div>';
-
+	if (url) {
+		html += '</a>';
+	} else {
+		html += '</div>';
+	}
 	html += '</div>';
 	return html;
 }
-
 function buildAdditionalContentSectionItemUrl(item: any) {
-	return `<a href="${common.getUrl(
-		item
-	)}" class="additional-card box is-full-height has-heavy-shadow-hover has-border-high-contrast-hover has-padding-large is-undecorated" 
-        aria-labelledby="-net-core-api-reference-0" data-linktype="relative-path">	`;
+	return `<a href="${common.getUrl(item)}" 
+					class="additional-card box is-full-height has-heavy-shadow-hover has-border-high-contrast-hover has-padding-large is-undecorated" 
+        	aria-labelledby="-net-core-api-reference-0" data-linktype="relative-path">`;
 }
 function buildAdditionalContentSectionItemTitle(item: any) {
-	return `<h3 class="is-size-h6 has-margin-top-none has-margin-bottom-small">${common.getTitle(
-		item
-	)}</h3>`;
+	return `<h3 class="is-size-h6 has-margin-top-none has-margin-bottom-small">
+	${common.getTitle(item)}</h3>`;
 }
 function buildAdditionalContentSectionItemSummary(item: any) {
 	return `<div class="has-text-subtle is-size-small has-line-height-reset">
             ${common.getSummary(item)}</div>`;
 }
-
 function buildAdditionalContentSectionItemLink(link: any) {
 	let html = '';
 	html += `<li class="is-unstyled has-margin-bottom-small is-size-small">
-  <a href="${common.getUrl(link)}" data-linktype="absolute-path">
-    ${common.getText(link)}
-  </a> `;
-
+  						<a href="${common.getUrl(link)}" data-linktype="absolute-path">
+    						${common.getText(link)}
+  						</a>`;
 	html += buildAdditionalContentSectionItemLinkNote(link);
 	html += '</li>';
 	return html;
@@ -88,7 +82,6 @@ function buildAdditionalContentSectionItemLink(link: any) {
 function buildAdditionalContentSectionItemLinkNote(link: any) {
 	return `<span class="has-text-subtle"> ${common.getNote(link)}</span>`;
 }
-
 function buildAdditionalContentSectionFooter(yamlObj: any) {
 	let footer = common.getFooter(yamlObj);
 	let footerHtml = footer;

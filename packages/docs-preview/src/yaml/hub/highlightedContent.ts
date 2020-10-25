@@ -1,6 +1,5 @@
 import * as common from '../common';
-import { buildSectionSummary, getItemDiv } from './hubHelper';
-
+import { getItemDiv } from './hubHelper';
 // highlightedContent section
 // Maximum of 8 itemshighlightedContent:
 // itemType: architecture | concept | deploy | download | get-started | how-to-guide | learn | overview | quickstart | reference | tutorial | video | whats-new
@@ -20,10 +19,8 @@ export async function buildHighlightedContent(yamlObj: any) {
 				);
 			}
 		}
-
 		html += `</div></div></section>`;
 	}
-
 	return html;
 }
 function buildHighlightedContentItem(item: any, index: number, brand: string, numItem?: number) {
@@ -48,6 +45,5 @@ function buildHighlightedContentItem(item: any, index: number, brand: string, nu
   </div>
 </a>`;
 	html += `</div>`;
-
 	return html;
 }
