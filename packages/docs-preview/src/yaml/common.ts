@@ -1,9 +1,11 @@
+// title < 60 chars (optional)
+// summary # < 160 chars (optional)
 export function getTitle(Obj: any) {
 	let title = '';
 	if (Obj.title) {
 		title = Obj.title;
 	}
-	return title;
+	return title.substr(0, 59);
 }
 
 export function getSummary(Obj: any) {
@@ -11,7 +13,7 @@ export function getSummary(Obj: any) {
 	if (Obj.summary) {
 		summary = Obj.summary;
 	}
-	return summary.replace(/(\r\n|\n|\r)/gm, '');
+	return summary.replace(/(\r\n|\n|\r)/gm, '').substr(0, 159);
 }
 
 export function getMetadata(Obj: any) {

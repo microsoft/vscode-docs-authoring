@@ -2,8 +2,6 @@ import * as common from '../common';
 import { buildSectionSummary, getItemDiv, buildSectionHeader } from './hubHelper';
 
 // conceptualContent section
-// title < 60 chars (optional)
-// summary: sectionsummary # < 160 chars (optional)
 export async function buildConceptualContent(yamlObj: any) {
 	let html = '';
 	if (yamlObj.conceptualContent) {

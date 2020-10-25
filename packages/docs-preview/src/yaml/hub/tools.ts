@@ -2,8 +2,6 @@ import * as common from '../common';
 import { buildSectionSummary, getItemDiv, buildSectionHeader, getImageUrl } from './hubHelper';
 
 // tools section
-// title < 60 chars (optional)
-// summary: sectionsummary # < 160 chars (optional)
 export async function buildTools(yamlObj: any) {
 	let html = '';
 	if (yamlObj.tools) {

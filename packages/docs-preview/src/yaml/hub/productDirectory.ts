@@ -2,8 +2,6 @@ import * as common from '../common';
 import { getItemDiv, getImageUrl } from './hubHelper';
 
 // productDirectory section
-// title < 60 chars (optional)
-// summary: sectionsummary # < 160 chars (optional)
 export async function buildProductDirectory(yamlObj: any) {
 	let html = '';
 	let cardsAll = '';

@@ -2,8 +2,6 @@ import * as common from '../common';
 import { buildSectionSummary, getItemDiv, buildTextLink } from './hubHelper';
 // additionalContent section
 // Supports up to 3 sections
-// title < 60 chars (optional)
-// summary: sectionsummary # < 160 chars (optional)
 export async function buildAdditionalContent(yamlObj: any) {
 	let html = '';
 	if (yamlObj.additionalContent) {

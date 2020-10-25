@@ -4,8 +4,6 @@ import { buildSectionSummary, getItemDiv } from './hubHelper';
 // highlightedContent section
 // Maximum of 8 itemshighlightedContent:
 // itemType: architecture | concept | deploy | download | get-started | how-to-guide | learn | overview | quickstart | reference | tutorial | video | whats-new
-// title < 60 chars (optional)
-// summary: sectionsummary # < 160 chars (optional)
 export async function buildHighlightedContent(yamlObj: any) {
 	let html = '';
 	if (yamlObj.highlightedContent) {

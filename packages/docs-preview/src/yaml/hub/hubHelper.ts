@@ -51,7 +51,7 @@ export function buildSectionSummary(summary: string) {
   </p>`;
 }
 
-//  mardown links [text]:(link)
+// mardown links [text]:(link)
 export function getLinkText(text: string) {
 	var matches = text.match(/\[(.*?)\]/);
 	if (matches) {
