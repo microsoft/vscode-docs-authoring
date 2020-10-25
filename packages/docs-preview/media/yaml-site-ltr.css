@@ -6629,8 +6629,8 @@ html.has-interactive .footer-layout > :not(:last-child) {
 		width: 100%;
 	}
 }
-
-@media screen and (min-width: 1088px) {
+/*modified original:1088px*/
+@media screen and (min-width: 900px) {
 	.column.is-narrow-desktop {
 		flex: none;
 	}
@@ -6894,15 +6894,17 @@ html.has-interactive .footer-layout > :not(:last-child) {
 	position: relative;
 	flex-wrap: wrap;
 }
-
-@media screen and (max-width: 1087px),
-	screen and (min-resolution: 120dpi) and (max-width: 1087.9px) {
+/*narrow modified original:
+1087px 120dpi 10897.9px */
+@media screen and (max-width: 899px), screen and (min-resolution: 120dpi) and (max-width: 899.9px) {
 	.columns.is-masonry {
 		height: 100% !important;
 	}
 }
 
-@media screen and (min-width: 1088px) {
+/*full modified original:
+1088px */
+@media screen and (min-width: 900px) {
 	.columns.is-masonry {
 		flex-flow: column wrap;
 		align-content: space-between;
