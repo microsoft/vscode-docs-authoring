@@ -94,7 +94,7 @@
 			},
 			{
 				"command": "docs.yamlPreview",
-				"title": "Docs: Yaml Preview"
+				"title": "Docs: YAML Preview"
 			}
 		],
 		"menus": {
