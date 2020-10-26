@@ -22,7 +22,7 @@ export async function buildLandingContentSection(yamlObj: any) {
 	html += '<section id="landing-content" class="has-padding-top-medium has-padding-bottom-medium">';
 	html += '<div class="columns is-masonry is-three-masonry-columns" style="">';
 	if (yamlObj.landingContent) {
-		for (let cardObj of yamlObj.landingContent) {
+		for (const cardObj of yamlObj.landingContent) {
 			html += buildCard(buildCardContent(cardObj));
 		}
 	}
@@ -60,13 +60,13 @@ function buildCardTitle(title: string) {
 
 function buildCardLinklist(cardObj: any) {
 	let sections = '';
-	for (let sectionObj of cardObj.linkLists) {
+	for (const sectionObj of cardObj.linkLists) {
 		if (sectionObj.linkListType) {
 			sections += buildCardLinklistTitle(sectionObj.linkListType);
 		}
 		if (sectionObj.links) {
 			let links = '';
-			for (let linkObj of sectionObj.links) {
+			for (const linkObj of sectionObj.links) {
 				links += buildListItem(getUrl(linkObj), getText(linkObj));
 			}
 			sections += buildUnorderedList(links);

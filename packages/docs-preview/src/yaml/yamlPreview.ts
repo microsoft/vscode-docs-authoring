@@ -17,7 +17,7 @@ export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 		return vscode.workspace.openTextDocument(uri).then(async document => {
 			const content = document.getText();
 			const startLine = document.lineAt(0).text.trim();
-			var html = '';
+			let html = '';
 			switch (startLine) {
 				case '### YamlMime:Landing': {
 					html = await this.buildHtmlFromLanding(content);
@@ -36,11 +36,11 @@ export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 		});
 	}
 	private async buildHtmlFromHub(content: string): Promise<string> {
-		let yamlObj = await this.parseYaml(content);
+		const yamlObj = await this.parseYaml(content);
 		let body = '';
-		let keys = Object.keys(yamlObj);
+		const keys = Object.keys(yamlObj);
 		body += buildHero(yamlObj);
-		for (let k of keys) {
+		for (const k of keys) {
 			switch (k) {
 				case 'highlightedContent':
 					body += await buildHighlightedContent(yamlObj);
@@ -65,7 +65,7 @@ export class YamlContentProvider implements vscode.TextDocumentContentProvider {
 		return this.finalizeHubHtml(body);
 	}
 	private async buildHtmlFromLanding(content: string): Promise<string> {
-		let yamlObj = await this.parseYaml(content);
+		const yamlObj = await this.parseYaml(content);
 		let body = '';
 		body += buildLandingHeader(yamlObj);
 		body += await buildLandingContentSection(yamlObj);

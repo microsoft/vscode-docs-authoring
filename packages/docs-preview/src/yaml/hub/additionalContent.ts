@@ -9,13 +9,13 @@ export async function buildAdditionalContent(yamlObj: any) {
 		if (yamlObj.additionalContent.sections) {
 			html += `<section id="additional-content" class="has-background-alternating-grey has-padding-top-extra-large has-padding-bottom-extra-large">
               <div class="uhf-container anchor-headings">`;
-			for (let section of yamlObj.additionalContent.sections.slice(0, 3)) {
+			for (const section of yamlObj.additionalContent.sections.slice(0, 3)) {
 				html += buildAdditionalContentTitle(common.getTitle(section));
 				html += buildSectionSummary(common.getSummary(section));
 				if (section.items) {
 					html += `<div class="columns is-multiline">`;
-					let itemsNum = section.items.length;
-					for (let item of section.items) {
+					const itemsNum = section.items.length;
+					for (const item of section.items) {
 						html += await buildAdditionalContentSectionItem(item, itemsNum);
 					}
 					html += '</div>';
@@ -29,7 +29,7 @@ export async function buildAdditionalContent(yamlObj: any) {
 }
 
 function buildAdditionalContentTitle(title: string) {
-	let aria = common.convertHyphenAlpha(title);
+	const aria = common.convertHyphenAlpha(title);
 	return `<h2 class="has-margin-top-none has-margin-bottom-large heading-anchor" id="${aria.toLowerCase()}">
       <a class="anchor-link docon docon-link" href="#${aria.toLowerCase()}" aria-labelledby="${aria.toLowerCase()}">
       </a>${title}</h2>`;
@@ -38,7 +38,7 @@ function buildAdditionalContentTitle(title: string) {
 async function buildAdditionalContentSectionItem(item: any, numItem: number) {
 	let html = '';
 	html += getItemDiv(numItem);
-	let url = common.getUrl(item);
+	const url = common.getUrl(item);
 	if (url) html += buildAdditionalContentSectionItemUrl(item);
 	else html += `<div class="additional-card box is-block is-full-height has-padding-large">`;
 	html += buildAdditionalContentSectionItemTitle(item);
@@ -46,7 +46,7 @@ async function buildAdditionalContentSectionItem(item: any, numItem: number) {
 	html += buildAdditionalContentSectionItemSummary(item);
 	if (item.links) {
 		html += `<ul class="has-line-height-reset has-margin-left-none has-margin-bottom-none has-margin-top-extra-small">`;
-		for (let link of item.links) {
+		for (const link of item.links) {
 			html += buildAdditionalContentSectionItemLink(link);
 		}
 		html += '</ul>';
@@ -92,11 +92,11 @@ function buildAdditionalContentSectionItemLinkNote(link: any) {
 }
 
 function buildAdditionalContentSectionFooter(yamlObj: any) {
-	let footer = common.getFooter(yamlObj);
+	const footer = common.getFooter(yamlObj);
 	let footerHtml = footer;
 	if (footer) {
-		let links = footer.match(/\[(.*?)\]\(.*?\)/gm);
-		for (let link of links) {
+		const links = footer.match(/\[(.*?)\]\(.*?\)/gm);
+		for (const link of links) {
 			footerHtml = footerHtml.replace(link, buildTextLink(link));
 		}
 	}

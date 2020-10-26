@@ -32,7 +32,7 @@ export function getHomeDir(yamlObj: any) {
 
 // guess max items per row ,  sucsss 9/10
 export function getItemDiv(num: number) {
-	if (num % 4 != 0) return `<div class="column is-4-tablet is-4-desktop" data-categories="">`;
+	if (num % 4 !== 0) return `<div class="column is-4-tablet is-4-desktop" data-categories="">`;
 	else return `<div class="column is-6-tablet is-3-desktop" data-categories="">`;
 }
 
@@ -43,7 +43,7 @@ export function buildTextLink(textLink: string) {
 }
 
 export function buildSectionHeader(title: string) {
-	let aria = common.convertHyphenAlpha(title);
+	const aria = common.convertHyphenAlpha(title);
 	return `<h2 class="has-margin-top-none heading-anchor" id="${aria.toLowerCase()}">
       <a class="anchor-link docon docon-link" href="#${aria.toLowerCase()}" aria-labelledby="${aria.toLowerCase()}">
       </a>${title}</h2>`;
@@ -56,14 +56,14 @@ export function buildSectionSummary(summary: string) {
 
 // mardown links [text]:(link)
 export function getLinkText(text: string) {
-	var matches = text.match(/\[(.*?)\]/);
+	const matches = text.match(/\[(.*?)\]/);
 	if (matches) {
 		return matches[1];
 	} else return '';
 }
 
 export function getLinkAddress(text: string) {
-	var matches = text.match(/\(([^)]+)\)/);
+	const matches = text.match(/\(([^)]+)\)/);
 	if (matches) {
 		return matches[1];
 	} else return '';
@@ -74,23 +74,23 @@ export function getImageUrl(link: string, yamlObj: any) {
 	else if (link.startsWith('.')) link = common.replaceDot(link, '');
 	else if (link.startsWith('~')) link = getHomeDir(yamlObj) + common.replaceTilde(link, '');
 	else if (!link.startsWith('/')) link = '/' + link;
-	let brand = common.replaceHypen(common.getBrand(yamlObj), '');
+	const brand = common.replaceHypen(common.getBrand(yamlObj), '');
 	let newLink = `https://docs.microsoft.com/en-us/${brand}${link}`;
 	if (yamlObj.title) {
-		if (yamlObj.title == 'Enterprise Mobility + Security Documentation')
+		if (yamlObj.title === 'Enterprise Mobility + Security Documentation')
 			return `https://docs.microsoft.com/en-us/enterprise-mobility-security${link}`;
 	}
 	if (yamlObj.title) {
-		if (yamlObj.title == 'Mixed Reality documentation')
+		if (yamlObj.title === 'Mixed Reality documentation')
 			return `https://docs.microsoft.com/en-us/windows/mixed-reality/${link}`;
 	}
 	if (brand) {
 		if (yamlObj.metadata) {
 			if (yamlObj.metadata['ms.prod']) {
-				if (yamlObj.brand != yamlObj.metadata['ms.prod'])
+				if (yamlObj.brand !== yamlObj.metadata['ms.prod'])
 					newLink = `https://docs.microsoft.com/en-us/${brand}/${yamlObj.metadata['ms.prod']}${link}`;
 			} else if (yamlObj.metadata['ms.service']) {
-				if (yamlObj.brand != yamlObj.metadata['ms.service'])
+				if (yamlObj.brand !== yamlObj.metadata['ms.service'])
 					newLink = ` https://docs.microsoft.com/en-us/${brand}/${yamlObj.metadata['ms.service']}${link}`;
 			}
 		}
@@ -99,9 +99,9 @@ export function getImageUrl(link: string, yamlObj: any) {
 }
 
 export function isSpecialTitle(title: string) {
-	if (title == 'iot') {
+	if (title === 'iot') {
 		return 'Internet of Things';
-	} else if (title == 'ai-machine-learning') {
+	} else if (title === 'ai-machine-learning') {
 		return 'AI + Machine Learning';
 	} else return '';
 }

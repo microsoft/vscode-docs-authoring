@@ -88,8 +88,8 @@ export function convertHyphenAlphaCounter(string: string, count: number) {
 	return string.replace(/[^0-9a-z]/gi, '-').toLowerCase() + '-' + count.toString();
 }
 
-export function replaceDot(text: string, replaceWith: string, all?: Boolean) {
-	if (all != undefined) {
+export function replaceDot(text: string, replaceWith: string, all?: boolean) {
+	if (all !== undefined) {
 		if (all) {
 			return text.replace(new RegExp('.', 'g'), replaceWith);
 		}
@@ -98,8 +98,8 @@ export function replaceDot(text: string, replaceWith: string, all?: Boolean) {
 	}
 }
 
-export function replaceHypen(text: string, replaceWith: string, all?: Boolean) {
-	if (all != undefined) {
+export function replaceHypen(text: string, replaceWith: string, all?: boolean) {
+	if (all !== undefined) {
 		if (all) {
 			return text.replace(new RegExp('-', 'g'), replaceWith);
 		}
@@ -108,8 +108,8 @@ export function replaceHypen(text: string, replaceWith: string, all?: Boolean) {
 	}
 }
 
-export function replaceTilde(text: string, replaceWith: string, all?: Boolean) {
-	if (all != undefined) {
+export function replaceTilde(text: string, replaceWith: string, all?: boolean) {
+	if (all !== undefined) {
 		if (all) {
 			return text.replace(new RegExp('~', 'g'), replaceWith);
 		}
@@ -157,9 +157,9 @@ export function getSvgSource(type: string) {
 
 export function toTitleCase(str: string, ignore?: string[]) {
 	let newStr = str.toLowerCase().split(' ').map(capFirstChar).join(' ');
-	if (ignore != undefined) {
+	if (ignore !== undefined) {
 		if (ignore.length > 0) {
-			for (let word of ignore) {
+			for (const word of ignore) {
 				newStr = newStr.replace(new RegExp(capFirstChar(word), 'g'), word.toLowerCase());
 			}
 		}

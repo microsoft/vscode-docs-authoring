@@ -11,7 +11,7 @@ export async function buildConceptualContent(yamlObj: any) {
 		html += buildSectionSummary(common.getSummary(yamlObj.conceptualContent));
 		if (yamlObj.conceptualContent.items) {
 			html += '<div class="columns is-multiline">';
-			for (let item of yamlObj.conceptualContent.items) {
+			for (const item of yamlObj.conceptualContent.items) {
 				html += await buildConceptualContentItem(item, yamlObj.conceptualContent.items.length);
 			}
 			html += '</div>';
@@ -48,7 +48,7 @@ async function buildConceptualContentItemList(links: any) {
 	let text = '';
 	let itemType = '';
 	html += `<ul class="has-line-height-reset has-margin-left-none has-margin-bottom-none has-margin-top-extra-small">`;
-	for (let item of links) {
+	for (const item of links) {
 		url = common.getUrl(item);
 		itemType = common.getItemType(item);
 		text = common.getText(item);

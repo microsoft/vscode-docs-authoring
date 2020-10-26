@@ -85,7 +85,7 @@ export async function activate(context: ExtensionContext) {
 		workspace.onDidChangeTextDocument(async event => {
 			if (isYamlFile(event.document)) {
 				if (yamlPanel) {
-					let html = await getYamlHtml(event.document.uri);
+					const html = await getYamlHtml(event.document.uri);
 					if (html.length > 0) yamlPanel.webview.html = await applyYamlStyle(html);
 				}
 			}
@@ -96,7 +96,7 @@ export async function activate(context: ExtensionContext) {
 		window.onDidChangeActiveTextEditor(async event => {
 			if (isYamlFile(event.document)) {
 				if (yamlPanel) {
-					let html = await getYamlHtml(event.document.uri);
+					const html = await getYamlHtml(event.document.uri);
 					if (html.length > 0) {
 						yamlPanel.title = `Preview ${basename(event.document.fileName)}`;
 						yamlPanel.webview.html = await applyYamlStyle(html);
@@ -168,8 +168,8 @@ export async function activate(context: ExtensionContext) {
 
 	function yamlPreview(column): (...args: any[]) => any {
 		return async () => {
-			let editor = window.activeTextEditor;
-			let html = await getYamlHtml(editor.document.uri);
+			const editor = window.activeTextEditor;
+			const html = await getYamlHtml(editor.document.uri);
 			if (html.length > 0) {
 				if (yamlPanel) {
 					yamlPanel.reveal(column, true);

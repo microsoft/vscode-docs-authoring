@@ -13,7 +13,7 @@ export async function buildProductDirectory(yamlObj: any) {
 		if (yamlObj.productDirectory.items) {
 			let categories = await getAllSortedCategories(yamlObj.productDirectory.items);
 			html += `<div class="columns">`;
-			let facet = await buildHubFacet(categories);
+			const facet = await buildHubFacet(categories);
 
 			if (facet) {
 				html += facet;
@@ -22,13 +22,13 @@ export async function buildProductDirectory(yamlObj: any) {
 				html +=
 					'<div id="product-cards" class="columns is-multiline has-padding-small has-padding-none-tablet" data-bi-name="hub-product-card">';
 				html += buildHubFacetSectionTitle('Featured');
-				for (let item of yamlObj.productDirectory.items) {
+				for (const item of yamlObj.productDirectory.items) {
 					html += await buildHubFacetSectionItem(item, yamlObj);
 					categories = await buildHubFacetSectionAllBox(categories, item);
 				}
-				for (let key in categories) {
+				for (const key in categories) {
 					let title = isSpecialTitle(key);
-					if (title.length == 0) {
+					if (title.length === 0) {
 						title = common.toTitleCase(common.replaceHypen(key, ' ', true), ['of', 'and']);
 					}
 					cardsAll += `<div class="box">
@@ -44,7 +44,7 @@ export async function buildProductDirectory(yamlObj: any) {
 			} else {
 				html += `<div class="column">`;
 				html += `<div id="product-cards" class="columns is-multiline " data-bi-name="hub-product-card">`;
-				for (let item of yamlObj.productDirectory.items) {
+				for (const item of yamlObj.productDirectory.items) {
 					html += await buildProductDirectoryItem(
 						item,
 						yamlObj.productDirectory.items.indexOf(item),
@@ -62,9 +62,9 @@ export async function buildProductDirectory(yamlObj: any) {
 }
 
 function buildProductDirectoryTitle(yamlObj: any) {
-	let title = common.getTitle(yamlObj);
+	const title = common.getTitle(yamlObj);
 	if (title) {
-		let aria = common.convertHyphenAlpha(common.getTitle(yamlObj));
+		const aria = common.convertHyphenAlpha(common.getTitle(yamlObj));
 		return `<h2 class="has-margin-top-none has-margin-bottom-large heading-anchor" id="${aria}">
 							<a class="anchor-link docon docon-link" href="#${aria}" aria-labelledby="${aria}"></a>
 						${title}</h2>`;
@@ -78,7 +78,7 @@ async function buildProductDirectoryItem(
 	numItem?: number
 ) {
 	let html = '';
-	let allCards = '';
+	const allCards = '';
 	html += `${getItemDiv(numItem)}	
 						<div class="box has-margin-none is-full-height has-padding-large">`;
 	html += buildProductDirectoryItemImage(item, yamlObj);
@@ -86,7 +86,7 @@ async function buildProductDirectoryItem(
 	html += buildProductDirectoryItemSummary(item);
 	if (item.links) {
 		html += `<ul class="has-line-height-reset has-margin-left-none has-margin-bottom-none has-margin-top-extra-small">`;
-		for (let link of item.links) {
+		for (const link of item.links) {
 			html += buildProductDirectoryItemLink(link);
 		}
 		html += '</ul>';
@@ -142,8 +142,8 @@ async function buildHubFacet(categories: any) {
 						All</button>
 						</li>`;
 		}
-		for (let key in categories) {
-			if (key != 'featured') {
+		for (const key in categories) {
+			if (key !== 'featured') {
 				html += buildHubFacetButton(key);
 			}
 		}
@@ -154,7 +154,7 @@ async function buildHubFacet(categories: any) {
 
 function buildHubFacetButton(name: string) {
 	let title = isSpecialTitle(name);
-	if (title.length == 0) {
+	if (title.length === 0) {
 		title = common.toTitleCase(common.replaceHypen(name, ' ', true), ['of', 'and']);
 	}
 	return `<li class="is-unstyled">
@@ -166,7 +166,7 @@ function buildHubFacetButton(name: string) {
 async function buildHubFacetSectionItem(item: any, yamlObj?: any) {
 	let html = '';
 	let title = isSpecialTitle(item.azureCategories.join(' '));
-	if (title.length == 0) {
+	if (title.length === 0) {
 		title = common.toTitleCase(common.replaceHypen(item.azureCategories.join(' '), ' ', true), [
 			'of',
 			'and'
@@ -183,7 +183,7 @@ async function buildHubFacetSectionItem(item: any, yamlObj?: any) {
   					</a>`;
 	if (item.links) {
 		html += `<ul class="has-line-height-reset has-margin-left-none has-margin-bottom-none has-margin-top-extra-small">`;
-		for (let link of item.links) {
+		for (const link of item.links) {
 			html += buildProductDirectoryItemLink(link);
 		}
 		html += '</ul>';
@@ -208,7 +208,7 @@ function buildHubFacetSectionAll(cards: string) {
 
 async function buildHubFacetSectionAllBox(categories: any, item: any) {
 	if (item.azureCategories) {
-		for (let category of item.azureCategories) {
+		for (const category of item.azureCategories) {
 			categories[category] =
 				categories[category] +
 				buildHubFacetSectionAllBoxListItem(
@@ -237,10 +237,10 @@ function buildHubFacetSectionAllBoxListItem(title: string, summary: string, url:
 function buildHubFacetDropDown() {}
 
 async function getAllSortedCategories(items: any) {
-	let categories: any = {};
-	for (let item of items) {
+	const categories: any = {};
+	for (const item of items) {
 		if (item.azureCategories) {
-			for (let category of item.azureCategories) {
+			for (const category of item.azureCategories) {
 				categories[category] = '';
 			}
 		}

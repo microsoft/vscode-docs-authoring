@@ -11,7 +11,7 @@ export async function buildTools(yamlObj: any) {
 		html += buildSectionSummary(common.getSummary(yamlObj.tools));
 		if (yamlObj.tools.items) {
 			html += '<div class="columns is-multiline">';
-			for (let item of yamlObj.tools.items) {
+			for (const item of yamlObj.tools.items) {
 				html += await buildToolsItem(
 					item,
 					yamlObj.tools.items.indexOf(item),
@@ -28,7 +28,7 @@ export async function buildTools(yamlObj: any) {
 
 async function buildToolsItem(item: any, index: number, yamlObj?: any, numItem?: number) {
 	let html = '';
-	let aria = common.convertHyphenAlphaCounter(common.getTitle(item), index);
+	const aria = common.convertHyphenAlphaCounter(common.getTitle(item), index);
 	html += getItemDiv(numItem);
 	html += buildToolsItemUrl(item, aria);
 	html += `<div class="columns is-mobile has-margin-none is-full-height">`;
