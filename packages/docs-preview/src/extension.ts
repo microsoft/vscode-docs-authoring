@@ -83,26 +83,28 @@ export async function activate(context: ExtensionContext) {
 	const yamlProvider = new YamlContentProvider();
 	context.subscriptions.push(
 		workspace.onDidChangeTextDocument(async event => {
-			if (isYamlFile(event.document)) {
-				if (yamlPanel) {
-					const html = await getYamlHtml(event.document.uri);
-					if (html.length > 0) yamlPanel.webview.html = await applyYamlStyle(html);
+			if (event !== undefined)
+				if (isYamlFile(event.document)) {
+					if (yamlPanel) {
+						const html = await getYamlHtml(event.document.uri);
+						if (html.length > 0) yamlPanel.webview.html = await applyYamlStyle(html);
+					}
 				}
-			}
 		})
 	);
 
 	context.subscriptions.push(
 		window.onDidChangeActiveTextEditor(async event => {
-			if (isYamlFile(event.document)) {
-				if (yamlPanel) {
-					const html = await getYamlHtml(event.document.uri);
-					if (html.length > 0) {
-						yamlPanel.title = `Preview ${basename(event.document.fileName)}`;
-						yamlPanel.webview.html = await applyYamlStyle(html);
+			if (event !== undefined)
+				if (isYamlFile(event.document)) {
+					if (yamlPanel) {
+						const html = await getYamlHtml(event.document.uri);
+						if (html.length > 0) {
+							yamlPanel.title = `Preview ${basename(event.document.fileName)}`;
+							yamlPanel.webview.html = await applyYamlStyle(html);
+						}
 					}
 				}
-			}
 		})
 	);
 

@@ -1,81 +1,81 @@
 // title < 60 chars (optional)
 // summary # < 160 chars (optional)
-export function getTitle(Obj: any) {
+export function getTitle(obj: any) {
 	let title = '';
-	if (Obj.title) {
-		title = Obj.title;
+	if (obj.title) {
+		title = obj.title;
 	}
 	return title.substr(0, 59);
 }
 
-export function getSummary(Obj: any) {
+export function getSummary(obj: any) {
 	let summary = '';
-	if (Obj.summary) {
-		summary = Obj.summary;
+	if (obj.summary) {
+		summary = obj.summary;
 	}
 	return summary.replace(/(\r\n|\n|\r)/gm, '').substr(0, 159);
 }
 
-export function getMetadata(Obj: any) {
+export function getMetadata(obj: any) {
 	let metadata = '';
-	if (Obj.metadata) {
-		metadata = Obj.metadata;
+	if (obj.metadata) {
+		metadata = obj.metadata;
 	}
 	return metadata;
 }
 
-export function getBrand(Obj: any) {
+export function getBrand(obj: any) {
 	let brand = '';
-	if (Obj.brand) {
-		brand = Obj.brand;
+	if (obj.brand) {
+		brand = obj.brand;
 	}
 	return brand;
 }
 
-export function getUrl(Obj: any) {
+export function getUrl(obj: any) {
 	let url = '';
-	if (Obj.url) {
-		url = Obj.url;
+	if (obj.url) {
+		url = obj.url;
 	}
 	return url;
 }
 
-export function getItemType(Obj: any) {
+export function getItemType(obj: any) {
 	let itemType = '';
-	if (Obj.itemType) {
-		itemType = Obj.itemType;
+	if (obj.itemType) {
+		itemType = obj.itemType;
 	}
 	return itemType;
 }
 
-export function getText(Obj: any) {
+export function getText(obj: any) {
 	let text = '';
-	if (Obj.text) {
-		text = Obj.text;
+	if (obj.text) {
+		text = obj.text;
 	}
 	return text;
 }
 
-export function getImageSrc(Obj: any) {
+export function getImageSrc(obj: any) {
 	let imageSrc = '';
-	if (Obj.imageSrc) {
-		imageSrc = Obj.imageSrc;
+	if (obj.imageSrc) {
+		imageSrc = obj.imageSrc;
 	}
 	return imageSrc;
 }
 
-export function getFooter(Obj: any) {
+export function getFooter(obj: any) {
 	let footer = '';
-	if (Obj.footer) {
-		footer = Obj.footer;
+	if (obj.footer) {
+		footer = obj.footer;
 	}
 	return footer;
 }
 
-export function getNote(Obj: any) {
+export function getNote(obj: any) {
 	let note = '';
-	if (Obj.note) {
-		note = Obj.note;
+	if (obj.note) {
+		note = obj.note;
 	}
 	return note;
 }
