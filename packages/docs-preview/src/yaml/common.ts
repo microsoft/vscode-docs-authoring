@@ -5,7 +5,7 @@ export function getTitle(obj: any) {
 	if (obj.title) {
 		title = obj.title;
 	}
-	return title.substr(0, 59);
+	return substrIgnore(title, 0, 59, [' ']);
 }
 
 export function getSummary(obj: any) {
@@ -13,7 +13,8 @@ export function getSummary(obj: any) {
 	if (obj.summary) {
 		summary = obj.summary;
 	}
-	return summary.replace(/(\r\n|\n|\r)/gm, '').substr(0, 159);
+	summary = summary.replace(/(\r\n|\n|\r)/gm, '');
+	return substrIgnore(summary, 0, 159, [' ']);
 }
 
 export function getMetadata(obj: any) {
@@ -208,4 +209,15 @@ export function sortByKey(obj: any) {
 	return Object.keys(obj)
 		.sort()
 		.reduce((r, k) => ((r[k] = obj[k]), r), {});
+}
+export function substrIgnore(input: string, start: number, end: number, ignore?: string[]) {
+	let output = '';
+	for (let i = start; i < end; i++) {
+		if (ignore !== undefined)
+			if (ignore.indexOf(input.charAt(i)) !== -1) {
+				end += 1;
+			}
+		output += input.charAt(i);
+	}
+	return output;
 }
