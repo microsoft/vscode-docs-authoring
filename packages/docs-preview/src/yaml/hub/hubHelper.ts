@@ -3,9 +3,9 @@ import * as common from '../common';
 
 export function buildHero(yamlObj: any) {
 	let brand = common.getBrand(yamlObj);
-	if (!brand) brand = 'has-background-docs';
+	if (!brand) brand = 'docs';
 	return `<section id="hero" class="hero has-background-${brand} ">
-            <div class="uhf-container has-text-${common.getBrand(yamlObj)}-invert">
+            <div class="uhf-container has-text-${brand}-invert">
               <div class="columns">
                 <div class="column is-10-desktop">
                   <div class="has-padding-top-extra-large has-padding-bottom-extra-large">
