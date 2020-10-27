@@ -210,14 +210,3 @@ export function sortByKey(obj: any) {
 		.sort()
 		.reduce((r, k) => ((r[k] = obj[k]), r), {});
 }
-export function substrIgnore(input: string, start: number, end: number, ignore?: string[]) {
-	let output = '';
-	for (let i = start; i < end; i++) {
-		if (ignore !== undefined)
-			if (ignore.indexOf(input.charAt(i)) !== -1) {
-				end += 1;
-			}
-		output += input.charAt(i);
-	}
-	return output;
-}
