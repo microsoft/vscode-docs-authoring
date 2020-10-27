@@ -3,7 +3,6 @@ import * as common from '../common';
 
 export function buildHero(yamlObj: any) {
 	let brand = common.getBrand(yamlObj);
-	const metadata = common.getMetadata(yamlObj);
 	if (!brand) brand = 'has-background-docs';
 	return `<section id="hero" class="hero has-background-${brand} ">
             <div class="uhf-container has-text-${common.getBrand(yamlObj)}-invert">
@@ -11,9 +10,9 @@ export function buildHero(yamlObj: any) {
                 <div class="column is-10-desktop">
                   <div class="has-padding-top-extra-large has-padding-bottom-extra-large">
 										<h1 id="hero-title" class="title">
-										${common.getTitle(metadata)}</h1>
+										${common.getTitle(yamlObj)}</h1>
 											<p id="hero-summary" class="has-margin-none has-padding-top-medium">
-											${common.getDescription(metadata)}</p>
+											${common.getSummary(yamlObj)}</p>
                   </div>
                 </div>
               </div>
