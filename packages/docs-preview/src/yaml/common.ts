@@ -80,6 +80,39 @@ export function getNote(obj: any) {
 	return note;
 }
 
+export function getMsProduct(obj: any) {
+	let msProduct = '';
+	if (obj['ms.product']) {
+		msProduct = obj['ms.product'];
+	} else if (obj['ms.prod']) {
+		msProduct = obj['ms.product'];
+	}
+	return msProduct;
+}
+export function getMsTopic(obj: any) {
+	let msTopic = '';
+	if (obj['ms.topic']) {
+		msTopic = obj['ms.topic'];
+	}
+	return msTopic;
+}
+
+export function getMsService(obj: any) {
+	let msService = '';
+	if (obj['ms.service']) {
+		msService = obj['ms.service'];
+	}
+	return msService;
+}
+
+export function getDescription(obj: any) {
+	let description = '';
+	if (obj.description) {
+		description = obj.description;
+	}
+	return description;
+}
+
 export function convertHyphenAlpha(string: string) {
 	return string.replace(/[^0-9a-z]/gi, '-').toLowerCase();
 }

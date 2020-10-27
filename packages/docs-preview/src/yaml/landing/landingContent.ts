@@ -1,18 +1,19 @@
 // ### YamlMime:landingContent  CardObj ---> linkLists: sectionObj --->  links : linkObj
-import { getTitle, getSummary, getUrl, getText, getMetadata } from '../common';
+import { getTitle, getUrl, getText, getMetadata, getDescription } from '../common';
 
 export function buildLandingHeader(yamlObj: any) {
 	let html: string = '';
+	const metadata = getMetadata(yamlObj);
 	html += `<section id="landing-head">
             <div class="has-padding-top-small has-padding-bottom-medium">
               <div class="columns">
                 <div class="column is-full">
         `;
 	html += '<h1 class="is-size-h2">';
-	html += getTitle(getMetadata(yamlObj));
+	html += getTitle(metadata);
 	html += '</h1>';
 	html += '<p class="has-margin-top-small has-line-height-reset">';
-	html += getSummary(yamlObj);
+	html += getDescription(metadata);
 	html += '</p> </div> </div> </div> </section>';
 	return html;
 }

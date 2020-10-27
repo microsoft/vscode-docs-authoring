@@ -3,16 +3,17 @@ import * as common from '../common';
 
 export function buildHero(yamlObj: any) {
 	let brand = common.getBrand(yamlObj);
+	const metadata = common.getMetadata(yamlObj);
 	if (!brand) brand = 'has-background-docs';
 	return `<section id="hero" class="hero has-background-${brand} ">
             <div class="uhf-container has-text-${common.getBrand(yamlObj)}-invert">
               <div class="columns">
                 <div class="column is-10-desktop">
                   <div class="has-padding-top-extra-large has-padding-bottom-extra-large">
-                    <h1 id="hero-title" class="title">${common.getTitle(yamlObj)}</h1>
-                      <p id="hero-summary" class="has-margin-none has-padding-top-medium">${common.getSummary(
-												yamlObj
-											)}</p>
+										<h1 id="hero-title" class="title">
+										${common.getTitle(metadata)}</h1>
+											<p id="hero-summary" class="has-margin-none has-padding-top-medium">
+											${common.getDescription(metadata)}</p>
                   </div>
                 </div>
               </div>
@@ -22,12 +23,13 @@ export function buildHero(yamlObj: any) {
 
 export function getHomeDir(yamlObj: any) {
 	if (yamlObj.brand) return yamlObj.brand;
-	if (yamlObj.metadata) {
-		if (yamlObj.metadata['ms.service']) return yamlObj.metadata['ms.service'].replace('vs-', '');
-		else if (yamlObj.metadata['ms.prod']) {
-			return yamlObj.metadata['ms.prod'].replace('vs-', '');
-		}
+	const metadata = common.getMetadata(yamlObj);
+	if (metadata) {
+		const product = common.getMsProduct(metadata);
+		const service = common.getMsService(metadata);
+		return service ? service.replace('vs-', '') : product.replace('vs-', '');
 	}
+	return '';
 }
 
 // guess max items per row ,  sucsss 9/10
@@ -74,8 +76,9 @@ export function getImageUrl(link: string, yamlObj: any) {
 	else if (link.startsWith('.')) link = common.replaceDot(link, '');
 	else if (link.startsWith('~')) link = getHomeDir(yamlObj) + common.replaceTilde(link, '');
 	else if (!link.startsWith('/')) link = '/' + link;
-	const brand = common.replaceHypen(common.getBrand(yamlObj), '');
-	let newLink = `https://docs.microsoft.com/en-us/${brand}${link}`;
+	const brand = common.getBrand(yamlObj);
+	const formatBrand = common.replaceHypen(brand, '', true);
+	let newLink = `https://docs.microsoft.com/en-us/${formatBrand}${link}`;
 	if (yamlObj.title) {
 		if (yamlObj.title === 'Enterprise Mobility + Security Documentation')
 			return `https://docs.microsoft.com/en-us/enterprise-mobility-security${link}`;
@@ -85,13 +88,16 @@ export function getImageUrl(link: string, yamlObj: any) {
 			return `https://docs.microsoft.com/en-us/windows/mixed-reality/${link}`;
 	}
 	if (brand) {
-		if (yamlObj.metadata) {
-			if (yamlObj.metadata['ms.prod']) {
-				if (yamlObj.brand !== yamlObj.metadata['ms.prod'])
-					newLink = `https://docs.microsoft.com/en-us/${brand}/${yamlObj.metadata['ms.prod']}${link}`;
-			} else if (yamlObj.metadata['ms.service']) {
-				if (yamlObj.brand !== yamlObj.metadata['ms.service'])
-					newLink = ` https://docs.microsoft.com/en-us/${brand}/${yamlObj.metadata['ms.service']}${link}`;
+		const metadata = common.getMetadata(yamlObj);
+		if (metadata) {
+			const product = common.getMsProduct(metadata);
+			const service = common.getMsService(metadata);
+			if (product) {
+				if (brand !== product)
+					newLink = `https://docs.microsoft.com/en-us/${formatBrand}/${product}${link}`;
+			} else if (service) {
+				if (brand !== service)
+					newLink = ` https://docs.microsoft.com/en-us/${formatBrand}/${service}${link}`;
 			}
 		}
 	}
