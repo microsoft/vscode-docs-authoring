@@ -5,7 +5,7 @@ export function getTitle(obj: any) {
 	if (obj.title) {
 		title = obj.title;
 	}
-	return substrIgnore(title, 0, 59, [' ']);
+	return title;
 }
 
 export function getSummary(obj: any) {
@@ -14,7 +14,7 @@ export function getSummary(obj: any) {
 		summary = obj.summary;
 	}
 	summary = summary.replace(/(\r\n|\n|\r)/gm, '');
-	return substrIgnore(summary, 0, 159, [' ']);
+	return summary;
 }
 
 export function getMetadata(obj: any) {
