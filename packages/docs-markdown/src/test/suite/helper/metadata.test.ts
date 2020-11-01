@@ -30,57 +30,86 @@ suite('Metadata Helper', () => {
 		chai.spy.restore(metadata);
 		sinon.restore();
 	});
+	test('insertMetadataCommands', () => {
+		const controllerCommands = [
+			{
+				command: metadataHelper.disableMetadataDateReminder.name,
+				callback: metadataHelper.disableMetadataDateReminder
+			},
+			{
+				command: metadataHelper.enableMetadataDateReminder.name,
+				callback: metadataHelper.enableMetadataDateReminder
+			}
+		];
+		expect(metadataHelper.insertMetadataHelperCommands()).to.deep.equal(controllerCommands);
+	});
 	test('noActiveEditorMessage', async () => {
-		await commands.executeCommand('workbench.action.closeAllEditors');
 		const spy = chai.spy.on(common, 'noActiveEditorMessage');
-		await metadataHelper.nag();
+		await commands.executeCommand('workbench.action.closeAllEditors');
+		await metadataHelper.metadataDateReminder();
 		expect(spy).to.have.been.called();
 	});
-	test('nag => user selects to update ms.date', async () => {
+	test('metadataDateReminder => user selects to update ms.date', async () => {
 		const stub = sinon.stub(metadata, 'updateMetadataDate');
-		// create user response choosing to update the ms.date
-		window.showInformationMessage = <T extends MessageItem>(message: string, ...items: T[]) => {
-			return Promise.resolve('Update') as Thenable<any>;
-		};
+		const config = workspace.getConfiguration('markdown');
+		await config.update('enableMetadataDateReminder', true);
+		// stub user response choosing to update the ms.date
+		const stubShowInformationMessage = sinon.stub(window, 'showInformationMessage');
+		stubShowInformationMessage.onCall(0).resolves(Promise.resolve('Update') as Thenable<any>);
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/test/metadata2.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		await metadataHelper.nag();
-		assert.equal(stub.callCount, 1);
+		await metadataHelper.metadataDateReminder();
+		assert.strictEqual(stub.callCount, 1);
 		stub.restore();
+		stubShowInformationMessage.restore();
 	});
-	test('nag => user selects not to update ms.date', async () => {
+	test('metadataDateReminder => user selects not to update ms.date', async () => {
 		const stub = sinon.stub(metadata, 'updateMetadataDate');
+		const config = workspace.getConfiguration('markdown');
+		await config.update('enableMetadataDateReminder', true);
 		// creates user response choosing not to update the ms.date
-		window.showInformationMessage = <T extends MessageItem>(message: string, ...items: T[]) => {
-			return Promise.resolve(undefined) as Thenable<any>;
-		};
+		const stubShowInformationMessage = sinon.stub(window, 'showInformationMessage');
+		stubShowInformationMessage.onCall(0).resolves(Promise.resolve(undefined) as Thenable<any>);
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/test/metadata3.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		await metadataHelper.nag();
-		assert.equal(stub.callCount, 0);
+		await metadataHelper.metadataDateReminder();
+		assert.strictEqual(stub.callCount, 0);
 		stub.restore();
+		stubShowInformationMessage.restore();
 	});
-	test('nag => only nag once', async () => {
+	test('metadataDateReminder => only remind once', async () => {
 		const stub = sinon.stub(utility, 'findReplacement');
-		window.showInformationMessage = <T extends MessageItem>(message: string, ...items: T[]) => {
-			return Promise.resolve(undefined) as Thenable<any>;
-		};
+		const config = workspace.getConfiguration('markdown');
+		await config.update('enableMetadataDateReminder', true);
+		const stubShowInformationMessage = sinon.stub(window, 'showInformationMessage');
+		stubShowInformationMessage.onCall(0).resolves(Promise.resolve(undefined) as Thenable<any>);
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/test/metadata4.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		await metadataHelper.nag();
-		assert.equal(stub.callCount, 1);
-		await metadataHelper.nag();
-		// method should not have been called again as file was already nagged
-		assert.equal(stub.callCount, 1);
+		await metadataHelper.metadataDateReminder();
+		assert.strictEqual(stub.callCount, 1);
+		await metadataHelper.metadataDateReminder();
+		// method should not have been called again as reminder was already called
+		assert.strictEqual(stub.callCount, 1);
 		stub.restore();
+		stubShowInformationMessage.restore();
+	});
+	test('disableMetadataDateReminder()', async () => {
+		await metadataHelper.disableMetadataDateReminder();
+		const config = workspace.getConfiguration('markdown');
+		assert.strictEqual(config.get<boolean>('enableMetadataDateReminder'), false);
+	});
+	test('enableMetadataDateReminder()', async () => {
+		await metadataHelper.enableMetadataDateReminder();
+		const config = workspace.getConfiguration('markdown');
+		assert.strictEqual(config.get<boolean>('enableMetadataDateReminder'), true);
 	});
 });
