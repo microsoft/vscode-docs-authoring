@@ -16,7 +16,7 @@ Some syntax supported by the extension, such as alerts and snippets, are custom 
 
 To access the Docs Markdown menu, type `ALT+M`. You can click or use up/down arrows to select the function you want, or type to start filtering, then hit `ENTER` when the function you want is highlighted in the menu.
 
-![docs markdown quick pick](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/docs-markdown-quick-pick.png)
+![docs markdown quick pick](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/packages/docs-authoring-pack/images/docs-markdown-quick-pick.png)
 
 You can also now access the Docs commands from the VS Code command palette. Hit F1 to open the command palette and start typing to filter. All the Docs commands begin with "Docs":
 
@@ -102,7 +102,7 @@ There are multiple context menu options that have been added to the right mouse 
 
 Cleanup functionality has been added to docs-markdown to move the experience of fixing validation closer to your development environment. Instead of having to wait until build time, you can proactively reduce the number of validation errors and warnings by running these cleanup scripts. Get started by hitting `F1` and typing `Docs: Cleanup` or hit `Alt+M` and navigate to `Cleanup...` in the quick pick menu. Or right click on a file or folder in the explorer panel to see the `clean up file` option in the context menu.
 
-![cleanup script context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/cleanup-script-context-menu.png)
+![cleanup script context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/packages/docs-authoring-pack/images/cleanup-script-context-menu.png)
 
 Cleanup scripts available:
 
@@ -122,7 +122,7 @@ Additionally, an explorer context-menu item has been added to expose this functi
 
 In a Markdown (*\*.md*) file, when you select a complete table - two table formatting context menu items are now available. Right-click on the selected Markdown table to open the context menu. You will see something similar to the following menu items:
 
-![Reformat table context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/reformat-table-menu.png)
+![Reformat table context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/packages/docs-authoring-pack/images/reformat-table-menu.png)
 
 This feature **does not** work with multiple table selections, but rather is intended for a single Markdown table. You must select the entire table, including headings for desired results.
 
@@ -184,7 +184,7 @@ After being "consolidated":
 
 In a Markdown (*\*.md*) file, there are two contextual menu items specific to metadata. When you right-click anywhere in the text editor, you will see something similar to the following menu items:
 
-![Update metadata context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/update-metadata-menu.png)
+![Update metadata context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/packages/docs-authoring-pack/images/update-metadata-menu.png)
 
 ### Update `ms.date` metadata value
 
