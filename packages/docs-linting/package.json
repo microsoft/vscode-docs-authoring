@@ -32,7 +32,6 @@
 		"watch": "tsc -watch -p ./",
 		"prettier": "prettier --write \"**/*.{ts,js,json,yml}\"",
 		"prettier-check": "prettier --check \"**/*.{ts,js,json,yml}\" --loglevel debug",
-		"postinstall": "node ./node_modules/vscode/bin/install",
 		"test-core": "node ./node_modules/vscode/bin/test",
 		"test": "jest",
 		"lint": "eslint . --ext .ts markdownlint-custom-rules/**/*.js",
@@ -54,6 +53,7 @@
 	"devDependencies": {
 		"@types/jest": "24.0.12",
 		"@types/node": "^7.10.5",
+		"@types/vscode": "^1.22.0",
 		"@typescript-eslint/eslint-plugin": "^2.34.0",
 		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",
 		"@typescript-eslint/parser": "^2.34.0",
@@ -62,13 +62,11 @@
 		"husky": "^4.2.5",
 		"jest": "^24.7.1",
 		"jest-junit": "^6.3.0",
-		"mocha": "^7.1.1",
 		"prettier": "^2.0.5",
 		"pretty-quick": "^2.0.1",
 		"ts-jest": "^24.0.2",
 		"tslint": "^5.20.1",
-		"typescript": "^3.9.3",
-		"vscode": "^1.1.33"
+		"typescript": "^3.9.3"
 	},
 	"jest": {
 		"verbose": true,
