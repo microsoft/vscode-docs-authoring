@@ -32,7 +32,6 @@
 		"watch": "tsc -watch -p ./",
 		"prettier": "prettier --write \"**/*.{ts,js,json,yml}\"",
 		"prettier-check": "prettier --check \"**/*.{ts,js,json,yml}\" --loglevel debug",
-		"test-core": "node ./node_modules/vscode/bin/test",
 		"test": "jest",
 		"lint": "eslint . --ext .ts markdownlint-custom-rules/**/*.js",
 		"precommit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
