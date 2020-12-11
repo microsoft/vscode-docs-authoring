@@ -17,7 +17,7 @@ The Docs Authoring Pack provides a series of extensions to help docs.microsoft.c
 
 To access the Docs Markdown Authoring menu, type <kbd>ALT + M</kbd>. You can click or use up/down arrows to select the function you want, or type to start filtering, then hit <kbd>ENTER</kbd> when the function you want is highlighted in the menu.
 
-![docs markdown quick pick](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/docs-markdown-quick-pick.png)
+![docs markdown quick pick](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/packages/docs-authoring-pack/images/docs-markdown-quick-pick.png)
 
 You can also access the Docs commands from the VS Code command palette by hitting <kbd>F1</kbd> and typing to filter. All the Docs commands begin with "Docs":
 
@@ -33,7 +33,7 @@ For more information about the Docs Markdown commands, see the [Docs Markdown re
 
 To access the Docs Images menu, right click on a folder or individual image file. Select **Compress all images in folder** or **Compress image** from the context menu.
 
-![docs image context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/right-click-image-compression.png)
+![docs image context menu](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/packages/docs-authoring-pack/images/right-click-image-compression.png)
 
 For more information about the Docs Images extension, see the [Docs Images readme](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images).
 
@@ -53,7 +53,7 @@ For more information about the Docs YAML commands, see the [Docs YAML readme](ht
 
 You can open Docs Preview by opening a markdown document and clicking on the preview button. One opens the preview in your current window, and the other opens the markdown preview to the side. Alternatively you can hit <kbd>Alt + M</kbd> and select `Preview` or you can hit <kbd>F1</kbd> and select `Docs: Preview` to open up the markdown preview panel.
 
-![docs preview buttons](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/docs-preview-button.png)
+![docs preview buttons](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/packages/docs-authoring-pack/images/docs-preview-button.png)
 
 For more information about the Docs Preview commands, see the [Docs Preview readme](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-preview).
 
@@ -61,7 +61,7 @@ For more information about the Docs Preview commands, see the [Docs Preview read
 
 Docs Authoring Pack also supports comes with custom linting rules to aid in catching errors many run into when contributing to docs. This should automatically work with Docs Authoring Pack, and you will see the output in the "Problems" pane.
 
-![docs preview buttons](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/docs-authoring-pack/images/docs-linting-problem.png)
+![docs preview buttons](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/packages/docs-authoring-pack/images/docs-linting-problem.png)
 
 For more information about the Docs Linting commands, see the [Docs Linting readme](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-linting).
 
