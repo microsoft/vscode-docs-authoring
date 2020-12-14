@@ -6,7 +6,7 @@
 	"publisher": "docsmsft",
 	"icon": "images/docs-logo-ms.png",
 	"engines": {
-		"vscode": "^1.43.0"
+		"vscode": "^1.52.0"
 	},
 	"categories": [
 		"Other"

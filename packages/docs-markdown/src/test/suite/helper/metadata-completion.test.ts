@@ -41,7 +41,7 @@ let subscriptions: Subscription[];
 
 const context: ExtensionContext = {
 	globalState: {
-		get: key => {},
+		get: key => [{ label: 'azure' }],
 		update: (key, value) => Promise.resolve(),
 		setKeysForSync(keys: string[]): void {}
 	},
