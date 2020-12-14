@@ -52,8 +52,9 @@ let subscriptions: Subscription[];
 
 export const context: ExtensionContext = {
 	globalState: {
-		get: key => undefined,
-		update: (key, value) => Promise.resolve()
+		get: key => {},
+		update: (key, value) => Promise.resolve(),
+		setKeysForSync(keys: string[]): void {}
 	},
 	subscriptions,
 	workspaceState: {
@@ -76,5 +77,8 @@ export const context: ExtensionContext = {
 		clear: () => {},
 		delete: () => {}
 	},
-	extensionMode: ExtensionMode.Test
+	extensionMode: ExtensionMode.Test,
+	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
 };
