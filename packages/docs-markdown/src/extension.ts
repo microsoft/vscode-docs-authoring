@@ -34,6 +34,7 @@ import { linkControllerCommands } from './controllers/link-controller';
 import { insertListsCommands } from './controllers/list-controller';
 import { insertLinksAndMediaCommands } from './controllers/media-controller';
 import { insertMetadataCommands } from './controllers/metadata-controller';
+import { insertMetadataHelperCommands } from './helper/metadata';
 import { insertMonikerCommand } from './controllers/moniker-controller';
 import {
 	noLocCompletionItemsMarkdown,
@@ -76,7 +77,7 @@ import {
 	msTechnologyCompletionItemsProvider,
 	msSubServiceCompletionItemsProvider
 } from './helper/metadata-completion';
-import { nag } from './helper/metadata';
+import { metadataDateReminder } from './helper/metadata';
 import { notebookControllerCommands } from './controllers/notebook-controller';
 import { validateRepositoryCommand } from './controllers/validation-controller';
 
@@ -135,6 +136,7 @@ export async function activate(context: ExtensionContext) {
 	noLocTextCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertRowsAndColumnsCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertMetadataCommands().forEach(cmd => authoringCommands.push(cmd));
+	insertMetadataHelperCommands().forEach(cmd => authoringCommands.push(cmd));
 	insertSortSelectionCommands().forEach(cmd => authoringCommands.push(cmd));
 	insertLanguageCommands().forEach(cmd => authoringCommands.push(cmd));
 
@@ -183,7 +185,7 @@ export async function activate(context: ExtensionContext) {
 
 	workspace.onWillSaveTextDocument(willSaveTextDocument);
 	async function willSaveTextDocument(e: TextDocumentWillSaveEvent) {
-		e.waitUntil(nag());
+		e.waitUntil(metadataDateReminder());
 	}
 
 	// Telemetry

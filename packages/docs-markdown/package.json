@@ -11,7 +11,7 @@
 		"url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
 	},
 	"engines": {
-		"vscode": "^1.47.0"
+		"vscode": "^1.52.0"
 	},
 	"repository": {
 		"url": "https://github.com/Microsoft/vscode-docs-authoring.git"
@@ -227,6 +227,16 @@
 			{
 				"command": "updateImplicitMetadataValues",
 				"title": "Update Implicit Metadata Values",
+				"category": "Docs"
+			},
+			{
+				"command": "disableMetadataDateReminder",
+				"title": "Disable the ms.date date reminder prompt",
+				"category": "Docs"
+			},
+			{
+				"command": "enableMetadataDateReminder",
+				"title": "Enable the ms.date date reminder prompt",
 				"category": "Docs"
 			},
 			{
@@ -665,7 +675,7 @@
 					"type": "string",
 					"default": "https://taxonomyservice.azurefd.net/taxonomies?name=devlang&name=product&name=ms.service&name=ms.prod"
 				},
-				"markdown.metadataNag": {
+				"markdown.enableMetadataDateReminder": {
 					"type": "boolean",
 					"default": false,
 					"description": "On save prompt to update ms.date if it's not up-to-date"
@@ -784,7 +794,7 @@
 		"@types/mocha": "^7.0.2",
 		"@types/node": "^12.12.32",
 		"@types/recursive-readdir": "^2.2.0",
-		"@types/vscode": "^1.47.0",
+		"@types/vscode": "^1.52.0",
 		"@types/yamljs": "^0.2.30",
 		"@typescript-eslint/eslint-plugin": "^2.34.0",
 		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",

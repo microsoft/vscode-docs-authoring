@@ -53,7 +53,8 @@ let subscriptions: Subscription[];
 const context: ExtensionContext = {
 	globalState: {
 		get: key => {},
-		update: (key, value) => Promise.resolve()
+		update: (key, value) => Promise.resolve(),
+		setKeysForSync(keys: string[]): void {}
 	},
 	subscriptions,
 	workspaceState: {
@@ -76,7 +77,10 @@ const context: ExtensionContext = {
 		clear: () => {},
 		delete: () => {}
 	},
-	extensionMode: ExtensionMode.Test
+	extensionMode: ExtensionMode.Test,
+	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
 };
 
 suite('Quick Pick Menu Controller', () => {
