@@ -26,7 +26,8 @@ const extensionMode: ExtensionMode = 1;
 const context: ExtensionContext = {
 	globalState: {
 		get: key => {},
-		update: (key, value) => Promise.resolve()
+		update: (key, value) => Promise.resolve(),
+		setKeysForSync(keys: string[]): void {}
 	},
 	subscriptions,
 	workspaceState: {
@@ -49,8 +50,12 @@ const context: ExtensionContext = {
 		clear: () => {},
 		delete: () => {}
 	},
-	extensionMode
+	extensionMode,
+	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
 };
+
 suite('Extension Tests', function () {
 	test('registerCommand is called', function () {
 		const spy = chai.spy.on(commands, 'registerCommand');
