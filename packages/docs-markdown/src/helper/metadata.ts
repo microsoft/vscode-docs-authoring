@@ -5,11 +5,14 @@ import { findReplacement } from './utility';
 
 const blacklist: string[] = [];
 
-export async function nag() {
-	const config = workspace.getConfiguration('markdown');
-	if (!config.get<boolean>('metadataNag')) {
-		return;
-	}
+export function insertMetadataHelperCommands() {
+	return [
+		{ command: disableMetadataDateReminder.name, callback: disableMetadataDateReminder },
+		{ command: enableMetadataDateReminder.name, callback: enableMetadataDateReminder }
+	];
+}
+
+export async function metadataDateReminder() {
 	const editor = window.activeTextEditor;
 	if (!editor) {
 		noActiveEditorMessage();
@@ -17,6 +20,11 @@ export async function nag() {
 	}
 
 	if (!isMarkdownFileCheck(editor, false)) {
+		return;
+	}
+
+	const config = workspace.getConfiguration('markdown');
+	if (!config.get<boolean>('enableMetadataDateReminder')) {
 		return;
 	}
 
@@ -46,4 +54,14 @@ export async function nag() {
 			}
 		}
 	}
+}
+
+export async function disableMetadataDateReminder() {
+	const config = workspace.getConfiguration('markdown');
+	await config.update('enableMetadataDateReminder', false);
+}
+
+export async function enableMetadataDateReminder() {
+	const config = workspace.getConfiguration('markdown');
+	await config.update('enableMetadataDateReminder', true);
 }
