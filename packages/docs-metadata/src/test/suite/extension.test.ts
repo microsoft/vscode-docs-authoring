@@ -1,6 +1,6 @@
 import { activate } from '../../extension';
 import { resolve } from 'path';
-import { ExtensionContext, Uri, commands, Disposable } from 'vscode';
+import { ExtensionContext, Uri, commands, Disposable, ExtensionMode } from 'vscode';
 import * as applyController from '../../controllers/apply-controller';
 import * as extractController from '../../controllers/extract-controller';
 import * as chai from 'chai';
@@ -20,10 +20,11 @@ interface EnvironmentalMutator {
 const uri = resolve(__dirname, '../../../../../src/test/data/repo/articles/docs-metadata.md');
 let environmentalMutator: EnvironmentalMutator;
 let subscriptions: Subscription[];
-const context: ExtensionContext = {
+export const context: ExtensionContext = {
 	globalState: {
 		get: key => {},
-		update: (key, value) => Promise.resolve()
+		update: (key, value) => Promise.resolve(),
+		setKeysForSync(keys: string[]): void {}
 	},
 	subscriptions,
 	workspaceState: {
@@ -46,7 +47,10 @@ const context: ExtensionContext = {
 		clear: () => {},
 		delete: () => {}
 	},
-	extensionMode: 1
+	extensionMode: ExtensionMode.Test,
+	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
 };
 let disposable: Disposable;
 suite('Extension Tests', function () {
