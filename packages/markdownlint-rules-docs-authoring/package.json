@@ -1,0 +1,72 @@
+{
+	"name": "markdownlint-rules-docs-authoring",
+	"description": "Custom Markdownlint rules for docs.microsoft.com content",
+	"icon": "images/docs-logo-ms.png",
+	"version": "0.0.1",
+	"publisher": "docsmsft",
+	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/markdownlint-rules-docs-authoring",
+	"bugs": {
+		"url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
+	},
+	"repository": {
+		"url": "https://github.com/Microsoft/vscode-docs-authoring.git"
+	},
+	"keywords": [
+		"markdownlint-rule"
+	],
+	"scripts": {
+		"prettier": "prettier --write \"**/*.{js,json,yml}\"",
+		"prettier-check": "prettier --check \"**/*.{js,json,yml}\" --loglevel debug",
+		"test": "jest",
+		"lint": "eslint .",
+		"precommit": "pretty-quick --staged --pattern \"**/*.{js,json,yml}\"",
+		"pre-push": "cd ../.. && yarn run compile && yarn run lint"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "pretty-quick --staged --pattern \"**/*.{js,json,yml}\"",
+			"pre-push": "yarn run pre-push"
+		}
+	},
+	"dependencies": {
+		"axios": "^0.19.2"
+	},
+	"devDependencies": {
+		"eslint": "^7.9.0",
+		"husky": "^4.3.0",
+		"jest": "^26.4.2",
+		"markdownlint": "^0.20.4",
+		"prettier": "^2.1.1",
+		"pretty-quick": "^3.0.2"
+	},
+	"jest": {
+		"verbose": true,
+		"roots": [
+			"<rootDir>/test",
+			"<rootDir>/rules"
+		],
+		"moduleFileExtensions": [
+			"js",
+			"json",
+			"node"
+		],
+		"coverageReporters": [
+			"text-summary",
+			"cobertura",
+			"html"
+		],
+		"reporters": [
+			"default",
+			"jest-junit"
+		],
+		"collectCoverage": true,
+		"collectCoverageFrom": [
+			"rules/**/*"
+		]
+	},
+	"jest-junit": {
+		"output": "test-results-jest.xml",
+		"usePathForSuiteName": "true"
+	},
+	"license": "MIT"
+}
