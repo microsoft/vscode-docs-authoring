@@ -24,7 +24,8 @@ const subscriptions: Subscription[] = [
 const context: ExtensionContext = {
 	globalState: {
 		get: (key: any) => {},
-		update: (key, value) => Promise.resolve()
+		update: (key, value) => Promise.resolve(),
+		setKeysForSync(keys: string[]): void {}
 	},
 	subscriptions,
 	workspaceState: {
@@ -47,7 +48,10 @@ const context: ExtensionContext = {
 		clear: () => {},
 		delete: () => {}
 	},
-	extensionMode: 1
+	extensionMode: 1,
+	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
 };
 suite('Extension Tests', function () {
 	// Defines a Mocha unit test
