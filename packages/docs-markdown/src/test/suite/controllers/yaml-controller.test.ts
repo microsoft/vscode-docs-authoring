@@ -23,7 +23,6 @@ import { createParentNode } from '../../../controllers/yaml/createParentNode';
 import { showTOCQuickPick } from '../../../controllers/yaml/showTOCQuickPick';
 
 chai.use(spies);
-
 import sinon = require('sinon');
 
 const expect = chai.expect;
