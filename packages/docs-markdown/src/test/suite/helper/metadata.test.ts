@@ -9,6 +9,7 @@ import * as telemetry from '../../../helper/telemetry';
 import * as utility from '../../../helper/utility';
 import { loadDocumentAndGetItReady } from '../../test.common/common';
 import { resolve } from 'path';
+import sinon = require('sinon');
 
 chai.use(spies);
 
@@ -16,7 +17,6 @@ const expect = chai.expect;
 
 suite('Metadata Helper', () => {
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
-	const sinon = require('sinon');
 
 	setup(async () => {
 		sinon.stub(workspace, 'onWillSaveTextDocument');
@@ -55,7 +55,7 @@ suite('Metadata Helper', () => {
 		await config.update('enableMetadataDateReminder', true);
 		// stub user response choosing to update the ms.date
 		const stubShowInformationMessage = sinon.stub(window, 'showInformationMessage');
-		stubShowInformationMessage.onCall(0).resolves(Promise.resolve('Update') as Thenable<any>);
+		stubShowInformationMessage.onCall(0).resolves(Promise.resolve('Update') as any);
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/test/metadata2.md'
@@ -72,7 +72,7 @@ suite('Metadata Helper', () => {
 		await config.update('enableMetadataDateReminder', true);
 		// creates user response choosing not to update the ms.date
 		const stubShowInformationMessage = sinon.stub(window, 'showInformationMessage');
-		stubShowInformationMessage.onCall(0).resolves(Promise.resolve(undefined) as Thenable<any>);
+		stubShowInformationMessage.onCall(0).resolves(Promise.resolve(undefined) as any);
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/test/metadata3.md'
@@ -88,7 +88,7 @@ suite('Metadata Helper', () => {
 		const config = workspace.getConfiguration('markdown');
 		await config.update('enableMetadataDateReminder', true);
 		const stubShowInformationMessage = sinon.stub(window, 'showInformationMessage');
-		stubShowInformationMessage.onCall(0).resolves(Promise.resolve(undefined) as Thenable<any>);
+		stubShowInformationMessage.onCall(0).resolves(Promise.resolve(undefined) as any);
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/test/metadata4.md'
@@ -103,11 +103,27 @@ suite('Metadata Helper', () => {
 		stubShowInformationMessage.restore();
 	});
 	test('disableMetadataDateReminder()', async () => {
+		sinon.stub(workspace, 'getConfiguration').returns({
+			get: () => false,
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
+		});
 		await metadataHelper.disableMetadataDateReminder();
 		const config = workspace.getConfiguration('markdown');
 		assert.strictEqual(config.get<boolean>('enableMetadataDateReminder'), false);
 	});
 	test('enableMetadataDateReminder()', async () => {
+		sinon.stub(workspace, 'getConfiguration').returns({
+			get: () => true,
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
+		});
 		await metadataHelper.enableMetadataDateReminder();
 		const config = workspace.getConfiguration('markdown');
 		assert.strictEqual(config.get<boolean>('enableMetadataDateReminder'), true);
