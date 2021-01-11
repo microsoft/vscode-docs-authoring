@@ -50,6 +50,14 @@ suite('Metadata Helper', () => {
 		expect(spy).to.have.been.called();
 	});
 	test('metadataDateReminder => user selects to update ms.date', async () => {
+		sinon.stub(workspace, 'getConfiguration').returns({
+			get: () => true,
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
+		});
 		const stub = sinon.stub(metadata, 'updateMetadataDate');
 		const config = workspace.getConfiguration('markdown');
 		await config.update('enableMetadataDateReminder', true);
@@ -67,6 +75,14 @@ suite('Metadata Helper', () => {
 		stubShowInformationMessage.restore();
 	});
 	test('metadataDateReminder => user selects not to update ms.date', async () => {
+		sinon.stub(workspace, 'getConfiguration').returns({
+			get: () => true,
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
+		});
 		const stub = sinon.stub(metadata, 'updateMetadataDate');
 		const config = workspace.getConfiguration('markdown');
 		await config.update('enableMetadataDateReminder', true);
@@ -84,6 +100,14 @@ suite('Metadata Helper', () => {
 		stubShowInformationMessage.restore();
 	});
 	test('metadataDateReminder => only remind once', async () => {
+		sinon.stub(workspace, 'getConfiguration').returns({
+			get: () => true,
+			has: () => true,
+			inspect: () => {
+				return { key: '' };
+			},
+			update: () => Promise.resolve()
+		});
 		const stub = sinon.stub(utility, 'findReplacement');
 		const config = workspace.getConfiguration('markdown');
 		await config.update('enableMetadataDateReminder', true);
