@@ -2,6 +2,7 @@
 import * as chai from 'chai';
 import { image_end, imageOptions } from '../../../markdown-extensions/image';
 import { inline_plugin } from '../../../helper/common';
+
 const expect = chai.expect;
 
 suite('Image Extension', () => {
