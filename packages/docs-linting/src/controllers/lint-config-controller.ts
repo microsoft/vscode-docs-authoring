@@ -17,6 +17,7 @@ export function removeBlankLineInsideBlockQuote() {
 			.update(markdownlintProperty, existingUserSettings, ConfigurationTarget.Global);
 		showStatusMessage(`disabled MD028 rule in Markdownlint config setting.`);
 	}
+
 	// add md028 property and front_matter_title property directly (no existing settings)
 	if (!markdownlintData.globalValue) {
 		const blankLineInsideBlockQuoterParameter = { MD028: false };
