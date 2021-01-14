@@ -11,7 +11,6 @@ import { Uri, workspace, window } from 'vscode';
 
 let extensionPath: string;
 export const output = window.createOutputChannel('docs-metadata');
-
 export const docsAuthoringDirectory = path.join(os.homedir(), 'Docs Authoring');
 export const metadataDirectory = path.join(docsAuthoringDirectory, 'metadata');
 
