@@ -19,11 +19,10 @@ let emailBody: string;
 let emailSubject: string;
 let primaryEmailAddress: any;
 let session: any;
-let attachments = [];
-let extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
+const attachments = [];
+const extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
 const alertCSS = join(extensionPath, 'media', 'alert-styles.css');
 const siteltrCSS = join(extensionPath, 'media', 'site-ltr.css');
-
 export function mailerCommand() {
 	const commands = [{ command: signInPrompt.name, callback: signInPrompt }];
 	return commands;
@@ -197,7 +196,7 @@ export function convertMarkdownToHtml() {
 
 async function sendMail() {
 	// Create a Graph client
-	var client = Client.init({
+	const client = Client.init({
 		authProvider: done => {
 			// Just return the token
 			done(null, authToken);
