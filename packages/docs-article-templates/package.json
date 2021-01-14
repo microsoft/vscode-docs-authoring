@@ -77,7 +77,7 @@
 		}
 	},
 	"dependencies": {
-		"axios": "^0.19.0",
+		"axios": "^0.21.1",
 		"download-git-repo": "^1.0.2",
 		"front-matter": "^3.0.1",
 		"js-yaml": "^3.13.1",
