@@ -12,11 +12,13 @@ import { resolve } from 'url';
 import { basename, extname, join } from 'path';
 import { Client } from '@microsoft/microsoft-graph-client';
 import 'isomorphic-fetch';
+import { generateHtml } from '../html/coming-soon';
 
 let articleName: string;
 let authToken: string;
-let emailBody: string;
+let emailBody: any;
 let emailSubject: string;
+let emailBodyContent: any;
 let primaryEmailAddress: any;
 let session: any;
 let attachments = [];
@@ -42,7 +44,7 @@ async function signInPrompt() {
 }
 
 // use markdown-it to generate html
-export function convertMarkdownToHtml() {
+export async function convertMarkdownToHtml() {
 	const frontMatterRegex = /^(---)([^]+?)(---)$/gm;
 	const titleRegex = /^(#{1})[\s](.*)[\r]?[\n]/gm;
 	const h1Regex = /^#\s+/;
@@ -113,14 +115,17 @@ export function convertMarkdownToHtml() {
 			// removes yaml header from html
 		});
 	try {
-		emailBody = md.render(updatedAnnouncementContent);
+		emailBodyContent = md.render(updatedAnnouncementContent);
 	} catch (error) {
 		postError(error);
 		return;
 	}
 
-	emailBody = emailBody.replace(/<h1>(.*?)<\/h1>/, '');
+	// emailBody = emailBody.replace(/<h1>(.*?)<\/h1>/, '');
+	emailBody = await generateHtml(emailBodyContent, emailBodyContent);
+	console.log(emailBody);
 	output.appendLine(`Successfully coverted markdown to html.`);
+
 
 	// embed images
 	const fs = require('fs');
@@ -165,23 +170,25 @@ export function convertMarkdownToHtml() {
 		const bannerLabelPath = join(extensionPath, 'images/banner-label.png').replace(/\\/g, '/');
 		const bannerFileName = basename(bannerLabelPath);
 
-		const bannerImagePath = join(extensionPath, 'images/banner-image.png').replace(/\\/g, '/');
+		const bannerImagePath = join(extensionPath, 'images/coming-soon.png').replace(/\\/g, '/');
+		console.log(bannerImagePath);
 		const bannerImageName = basename(bannerImagePath);
+		console.log(bannerImageName);
 
 		const titleImage = `
       <table class="MsoTableGrid" border="0" cellspacing="0" cellpadding="0" style="background:#2E4B70;border-collapse:collapse;border:none"><tr style="height:3.65pt"><td width="443" valign="top" style="width:332.6pt;padding:0in 0in 0in .3in;height:3.65pt"><p class="MsoNormal"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><img width="322" height="67" style="width:3.3541in;height:.6944in" id="Picture_x0020_3" src="cid:${bannerFileName}" alt="&quot;Content + Learning team name&quot;"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><o:p></o:p></span></p></td><td width="190" rowspan="2" valign="bottom" style="width:142.5pt;padding:0in 0in 0in 0in;height:3.65pt"><p class="MsoNormal" align="right" style="text-align:right"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><img width="190" height="158" style="width:1.9791in;height:1.6458in" id="Picture_x0020_2" src="cid:${bannerImageName}" alt="&quot;Decorative Learn Pathways image&quot;"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><o:p></o:p></span></p></td></tr><tr style="height:10.75pt"><td width="443" valign="top" style="width:332.6pt;padding:0in 0in 0in .3in;height:10.75pt"><p class="MsoNormal"><span style="font-size:18.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:white">${emailSubject}<o:p></o:p></span></p></td></tr></table>`;
 
 		emailBody = titleImage.concat(emailBody);
 
-		imageAsBase64 = fs.readFileSync(bannerLabelPath, 'base64');
-		attachments.push({
-			'@odata.type': '#microsoft.graph.fileAttachment',
-			name: bannerFileName,
-			contentType: `image/${imageExtension}`,
-			contentBytes: imageAsBase64,
-			contentId: bannerFileName,
-			isInline: true
-		});
+		/* 				imageAsBase64 = fs.readFileSync(bannerLabelPath, 'base64');
+						attachments.push({
+							'@odata.type': '#microsoft.graph.fileAttachment',
+							name: bannerFileName,
+							contentType: `image/${imageExtension}`,
+							contentBytes: imageAsBase64,
+							contentId: bannerFileName,
+							isInline: true
+						}); */
 		imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
 		attachments.push({
 			'@odata.type': '#microsoft.graph.fileAttachment',
@@ -209,7 +216,7 @@ async function sendMail() {
 			subject: emailSubject,
 			body: {
 				contentType: 'html',
-				content: `${styles}${emailBody}`
+				content: `${emailBody}`
 			},
 			toRecipients: [
 				{
@@ -266,3 +273,4 @@ td {
 </style>
 </head>
 `;
+//}
