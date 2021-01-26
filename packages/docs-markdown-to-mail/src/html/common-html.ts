@@ -1,4 +1,4 @@
-export async function generateHtml(emailBodyContent: string, title: string) {
+export async function generateHtml(emailBodyContent: string, imageCid: string) {
    return `
    <HTML xmlns="http://www.w3.org/TR/REC-html40" xmlns:v = "urn:schemas-microsoft-com:vml" xmlns:o = "urn:schemas-microsoft-com:office:office" xmlns:w = "urn:schemas-microsoft-com:office:word" xmlns:dt = "uuid:C2F41010-65B3-11d1-A29F-00AA00C14882" xmlns:m = "http://schemas.microsoft.com/office/2004/12/omml">
       <HEAD>
@@ -109,7 +109,7 @@ export async function generateHtml(emailBodyContent: string, title: string) {
                                                          <TR>
                                                             <TD style="WIDTH: 480pt; BACKGROUND: white; PADDING-BOTTOM: 0in; PADDING-TOP: 0in; PADDING-LEFT: 0in; PADDING-RIGHT: 0in" vAlign=top width=640>
                                                                <P class=MsoNormal style="mso-line-height-alt: 0pt">
-                                                                  <SPAN style='FONT-FAMILY: "Segoe UI",sans-serif; COLOR: black'><IMG id=Picture style="HEIGHT: 1.25in; WIDTH: 6.677in" alt="Developer Relations Content and Learning Coming Soon" src="cid:coming-soon.png" width=641 height=120></SPAN>
+                                                                  <SPAN style='FONT-FAMILY: "Segoe UI",sans-serif; COLOR: black'><IMG id=Picture style="HEIGHT: 1.25in; WIDTH: 6.677in" alt="Developer Relations Content and Learning Coming Soon" src="cid:${imageCid}" width=641 height=120></SPAN>
                                                                   <SPAN style='FONT-FAMILY: "Segoe UI",sans-serif'>
                                                                      <o:p></o:p>
                                                                   </SPAN>

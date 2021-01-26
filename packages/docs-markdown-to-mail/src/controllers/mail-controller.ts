@@ -12,7 +12,7 @@ import { resolve } from 'url';
 import { basename, extname, join } from 'path';
 import { Client } from '@microsoft/microsoft-graph-client';
 import 'isomorphic-fetch';
-import { generateHtml } from '../html/coming-soon';
+import { generateHtml } from '../html/common-html';
 
 let articleName: string;
 let authToken: string;
@@ -203,7 +203,7 @@ export async function convertMarkdownToHtml() {
 				console.log(`bannerImagePath: ${bannerImagePath}`);
 				bannerImageName = basename(bannerImagePath);
 				console.log(`bannerImageName: ${bannerImageName}`);
-				emailBody = await generateHtml(emailBody, emailSubject);
+				emailBody = await generateHtml(emailBody, bannerImageName);
 				imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
 				attachments.push({
 					'@odata.type': '#microsoft.graph.fileAttachment',
@@ -234,7 +234,7 @@ export async function convertMarkdownToHtml() {
 				console.log(`bannerImagePath: ${bannerImagePath}`);
 				bannerImageName = basename(bannerImagePath);
 				console.log(`bannerImageName: ${bannerImageName}`);
-				emailBody = await generateHtml(emailBody, emailSubject);
+				emailBody = await generateHtml(emailBody, bannerImageName);
 				imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
 				attachments.push({
 					'@odata.type': '#microsoft.graph.fileAttachment',
@@ -260,7 +260,7 @@ export async function convertMarkdownToHtml() {
 			}
 			break;
 	}
-	// sendMail();
+	sendMail();
 }
 
 async function sendMail() {
