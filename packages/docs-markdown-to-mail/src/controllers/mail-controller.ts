@@ -200,8 +200,10 @@ export async function convertMarkdownToHtml() {
 		case 'docs-coming-soon':
 			try {
 				bannerImagePath = join(extensionPath, 'images/coming-soon.png').replace(/\\/g, '/');
+				console.log(`bannerImagePath: ${bannerImagePath}`);
 				bannerImageName = basename(bannerImagePath);
-				emailBody = await generateHtml(csBody, emailSubject);
+				console.log(`bannerImageName: ${bannerImageName}`);
+				emailBody = await generateHtml(emailBody, emailSubject);
 				imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
 				attachments.push({
 					'@odata.type': '#microsoft.graph.fileAttachment',
@@ -213,7 +215,6 @@ export async function convertMarkdownToHtml() {
 				});
 				bannerImagePath = join(extensionPath, 'images/microsoft-logo.png').replace(/\\/g, '/');
 				bannerImageName = basename(bannerImagePath);
-				//emailBody = await generateHtml(emailBodyContent, emailSubject);
 				imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
 				attachments.push({
 					'@odata.type': '#microsoft.graph.fileAttachment',
@@ -226,10 +227,40 @@ export async function convertMarkdownToHtml() {
 			} catch (error) {
 				console.log(error);
 			}
-
+			break;
+		case 'docs-product-update':
+			try {
+				bannerImagePath = join(extensionPath, 'images/product-update.png').replace(/\\/g, '/');
+				console.log(`bannerImagePath: ${bannerImagePath}`);
+				bannerImageName = basename(bannerImagePath);
+				console.log(`bannerImageName: ${bannerImageName}`);
+				emailBody = await generateHtml(emailBody, emailSubject);
+				imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
+				attachments.push({
+					'@odata.type': '#microsoft.graph.fileAttachment',
+					name: bannerImageName,
+					contentType: `image/${imageExtension}`,
+					contentBytes: imageAsBase64,
+					contentId: bannerImageName,
+					isInline: true
+				});
+				bannerImagePath = join(extensionPath, 'images/microsoft-logo.png').replace(/\\/g, '/');
+				bannerImageName = basename(bannerImagePath);
+				imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
+				attachments.push({
+					'@odata.type': '#microsoft.graph.fileAttachment',
+					name: bannerImageName,
+					contentType: `image/${imageExtension}`,
+					contentBytes: imageAsBase64,
+					contentId: bannerImageName,
+					isInline: true
+				});
+			} catch (error) {
+				console.log(error);
+			}
 			break;
 	}
-	sendMail();
+	// sendMail();
 }
 
 async function sendMail() {
