@@ -154,7 +154,6 @@ export async function convertMarkdownToHtml() {
 		showStatusMessage(error);
 	}
 
-
 	// handle alerts
 	const blockquoteRegex = /<blockquote>([\s\S]*?\[!(.*)])[\s\S]*?<\/blockquote>/gm;
 	let alert: any;
