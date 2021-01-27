@@ -175,20 +175,6 @@ export async function generateHtml(emailBodyContent: string, imageCid: string) {
                                                          <o:p></o:p>
                                                       </SPAN>
                                                    </P>
-                                                   <P>
-                                                      <SPAN class=apple-converted-space>
-                                                         <SPAN style='FONT-SIZE: 10pt; FONT-FAMILY: "Times New Roman",serif'>
-                                                            <o:p></o:p>
-                                                         </SPAN>
-                                                      </SPAN>
-                                                   </P>
-                                                   <P style="MARGIN-BOTTOM: 12pt">
-                                                      <SPAN class=apple-converted-space>
-                                                         <SPAN style='FONT-SIZE: 10pt; FONT-FAMILY: "Segoe UI",sans-serif; COLOR: #2f2f2f'>
-                                                            <o:p></o:p>
-                                                         </SPAN>
-                                                      </SPAN>
-                                                   </P>
                                                 </TD>
                                              </TR>
                                           </TBODY>
@@ -202,111 +188,6 @@ export async function generateHtml(emailBodyContent: string, imageCid: string) {
                                              <TBODY>
                                                 <TR>
                                                    <TD style="WIDTH: 480pt; PADDING-BOTTOM: 0in; PADDING-TOP: 0.25in; PADDING-LEFT: 0in; PADDING-RIGHT: 0in" vAlign=top width=640>
-                                                      <TABLE class=MsoNormalTable style="BACKGROUND: white; BORDER-COLLAPSE: collapse; MARGIN-LEFT: 6.75pt; MARGIN-RIGHT: 6.75pt" cellSpacing=0 cellPadding=0 align=left border=0>
-                                                         <TBODY>
-                                                            <TR>
-                                                               <TD style="WIDTH: 480pt; PADDING-BOTTOM: 0in; PADDING-TOP: 0in; PADDING-LEFT: 0in; PADDING-RIGHT: 0in" vAlign=top width=640>
-                                                                  <TABLE class=MsoNormalTable style="WIDTH: 100%; BACKGROUND: white" cellSpacing=0 cellPadding=0 width="100%" border=0>
-                                                                     <TBODY>
-                                                                        <TR>
-                                                                           <TD style="WIDTH: 480pt; PADDING-BOTTOM: 0in; PADDING-TOP: 0in; PADDING-LEFT: 0in; PADDING-RIGHT: 0in" vAlign=top width=640>
-                                                                              <P style="MARGIN: 0in; LINE-HEIGHT: 1.5pt">
-                                                                                 <SPAN style='FONT-SIZE: 1.5pt; FONT-FAMILY: "Times New Roman",serif; COLOR: black'>&nbsp;</SPAN>
-                                                                                 <SPAN style='FONT-SIZE: 10pt; FONT-FAMILY: "Times New Roman",serif'>
-                                                                                    <o:p></o:p>
-                                                                                 </SPAN>
-                                                                              </P>
-                                                                           </TD>
-                                                                        </TR>
-                                                                     </TBODY>
-                                                                  </TABLE>
-                                                               </TD>
-                                                            </TR>
-                                                         </TBODY>
-                                                      </TABLE>
-                                                      <P style="MARGIN: 0in; LINE-HEIGHT: 1.5pt">
-                                                         <SPAN style='FONT-SIZE: 1.5pt; FONT-FAMILY: "Times New Roman",serif; COLOR: black'>&nbsp;</SPAN>
-                                                         <SPAN style='FONT-SIZE: 10pt; FONT-FAMILY: "Times New Roman",serif'>
-                                                            <o:p></o:p>
-                                                         </SPAN>
-                                                      </P>
-                                                      <TABLE class=MsoNormalTable style="WIDTH: 100%; BACKGROUND: white; BORDER-COLLAPSE: collapse" cellSpacing=0 cellPadding=0 width="100%" border=0>
-                                                         <TBODY>
-                                                            <TR style="HEIGHT: 24.9pt">
-                                                               <TD style="HEIGHT: 24.9pt; WIDTH: 100%; PADDING-BOTTOM: 0in; PADDING-TOP: 7.5pt; PADDING-LEFT: 0.25in; PADDING-RIGHT: 0.25in" vAlign=top width="100%">
-                                                                  <P style="MARGIN: 0in; LINE-HEIGHT: 1.5pt">
-                                                                     <SPAN style='FONT-SIZE: 1.5pt; FONT-FAMILY: "Segoe UI",sans-serif; COLOR: #454545'>
-                                                                        &nbsp;&nbsp;
-                                                                        <o:p></o:p>
-                                                                     </SPAN>
-                                                                  </P>
-                                                                  <TABLE class=MsoNormalTable style="MARGIN-LEFT: -2.25pt; MARGIN-RIGHT: -2.25pt" cellSpacing=0 cellPadding=0 align=left border=0>
-                                                                     <TBODY>
-                                                                        <TR>
-                                                                           <TD style="WIDTH: 100%; PADDING-BOTTOM: 7.5pt; PADDING-TOP: 0in; PADDING-LEFT: 0in; PADDING-RIGHT: 0in" vAlign=top width="100%">
-                                                                              <P style="MARGIN: 0in; LINE-HEIGHT: 1.5pt">
-                                                                                 <SPAN style='FONT-SIZE: 1.5pt; FONT-FAMILY: "Times New Roman",serif'>
-                                                                                    &nbsp;
-                                                                                    <o:p></o:p>
-                                                                                 </SPAN>
-                                                                              </P>
-                                                                              <TABLE class=MsoNormalTable style="WIDTH: 142.5pt; BACKGROUND: white; MARGIN-LEFT: -2.25pt; MARGIN-RIGHT: -2.25pt" cellSpacing=0 cellPadding=0 width=190 align=left border=0>
-                                                                                 <TBODY>
-                                                                                    <TR>
-                                                                                       <TD style="WIDTH: 33.75pt; PADDING-BOTTOM: 0in; PADDING-TOP: 0in; PADDING-LEFT: 0in; PADDING-RIGHT: 0in" width=45>
-                                                                                          <P style="MARGIN: 0in">
-                                                                                             <SPAN style='FONT-SIZE: 10pt; FONT-FAMILY: "Segoe UI",sans-serif; COLOR: #334050'>
-                                                                                                <o:p></o:p>
-                                                                                             </SPAN>
-                                                                                          </P>
-                                                                                       </TD>
-                                                                                       <TD style="PADDING-BOTTOM: 0in; PADDING-TOP: 0in; PADDING-LEFT: 0in; PADDING-RIGHT: 7.5pt">
-                                                                                          <P style="MARGIN: 0in">
-                                                                                             <SPAN style='FONT-SIZE: 10pt; FONT-FAMILY: "Segoe UI",sans-serif; COLOR: #334050'>
-                                                                                                <o:p></o:p>
-                                                                                             </SPAN>
-                                                                                          </P>
-                                                                                          <P style="MARGIN: 0in; LINE-HEIGHT: 1.5pt">
-                                                                                             <SPAN style='FONT-SIZE: 1.5pt; FONT-FAMILY: "Segoe UI",sans-serif; COLOR: #334050'>
-                                                                                                &nbsp;
-                                                                                                <o:p></o:p>
-                                                                                             </SPAN>
-                                                                                          </P>
-                                                                                       </TD>
-                                                                                    </TR>
-                                                                                 </TBODY>
-                                                                              </TABLE>
-                                                                              <P style="MARGIN: 0in; LINE-HEIGHT: 1.5pt">
-                                                                                 <SPAN style='FONT-SIZE: 1.5pt; FONT-FAMILY: "Times New Roman",serif'>
-                                                                                    &nbsp;
-                                                                                    <o:p></o:p>
-                                                                                 </SPAN>
-                                                                              </P>
-                                                                              <P style="MARGIN: 0in; LINE-HEIGHT: 1.5pt">
-                                                                                 <SPAN style='FONT-SIZE: 1.5pt; FONT-FAMILY: "Times New Roman",serif'>
-                                                                                    &nbsp;
-                                                                                    <o:p></o:p>
-                                                                                 </SPAN>
-                                                                              </P>
-                                                                           </TD>
-                                                                        </TR>
-                                                                     </TBODY>
-                                                                  </TABLE>
-                                                                  <P style="MARGIN: 0in; LINE-HEIGHT: 1.5pt">
-                                                                     <SPAN style='FONT-SIZE: 1.5pt; FONT-FAMILY: "Segoe UI",sans-serif; COLOR: #454545'>
-                                                                        &nbsp;
-                                                                        <o:p></o:p>
-                                                                     </SPAN>
-                                                                  </P>
-                                                               </TD>
-                                                            </TR>
-                                                         </TBODY>
-                                                      </TABLE>
-                                                      <P style="MARGIN: 0in; mso-line-height-alt: 1.5pt">
-                                                         <SPAN style='FONT-SIZE: 10pt; FONT-FAMILY: "Times New Roman",serif'>
-                                                            <o:p>&nbsp;</o:p>
-                                                         </SPAN>
-                                                      </P>
                                                       <TABLE class=MsoNormalTable style="WIDTH: 100%; BACKGROUND: #f2f2f2; BORDER-COLLAPSE: collapse" cellSpacing=0 cellPadding=0 width="100%" border=0>
                                                          <TBODY>
                                                             <TR>
@@ -319,9 +200,6 @@ export async function generateHtml(emailBodyContent: string, imageCid: string) {
                                                             </TR>
                                                          </TBODY>
                                                       </TABLE>
-                                                      <P class=MsoNormal>
-                                                         <o:p></o:p>
-                                                      </P>
                                                    </TD>
                                                 </TR>
                                              </TBODY>
@@ -336,9 +214,6 @@ export async function generateHtml(emailBodyContent: string, imageCid: string) {
                   </TR>
                </TBODY>
             </TABLE>
-            <P class=MsoNormal>
-               <o:p>&nbsp;</o:p>
-            </P>
          </DIV>
       </BODY>
    </HTML>

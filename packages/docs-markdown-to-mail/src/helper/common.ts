@@ -107,3 +107,8 @@ export function tryFindFile(rootPath: string, fileName: string) {
 	postWarning(`Unable to find a file named "${fileName}", recursively at root "${rootPath}".`);
 	return undefined;
 }
+
+export function showStatusMessage(message: string) {
+	const { msTimeValue } = generateTimestamp();
+	output.appendLine(`[${msTimeValue}] - ${message}`);
+}

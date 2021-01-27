@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { authentication, extensions, window, workspace } from 'vscode';
-import { output, postError, postInformation } from '../helper/common';
+import { postError, postInformation, showStatusMessage } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
 import { div_plugin, divOptions } from '../markdown-extensions/div';
@@ -111,12 +111,12 @@ export async function convertMarkdownToHtml() {
 			});
 		emailBody = md.render(updatedAnnouncementContent);
 	} catch (error) {
+		showStatusMessage(error);
 		postError(error);
 		return;
 	}
 
-	// emailBody = emailBody.replace(/<h1>(.*?)<\/h1>/, '');
-	output.appendLine(`Successfully coverted markdown to html.`);
+	showStatusMessage(`Successfully coverted markdown to html.`);
 
 	// embed images
 	const fs = require('fs');
@@ -143,7 +143,7 @@ export async function convertMarkdownToHtml() {
 			});
 		}
 	} catch (error) {
-		output.appendLine(error);
+		showStatusMessage(error);
 	}
 
 
@@ -178,11 +178,14 @@ export async function convertMarkdownToHtml() {
 		isInline: true
 	});
 
+	let subjectPrefix: string;
 	let templateTypeMatch: any = metatadata.match(msCustomRegex);
 	let templateType = templateTypeMatch[1];
+
 	switch (templateType) {
 		case 'docs-coming-soon':
 			try {
+				subjectPrefix = 'Coming Soon: ';
 				bannerImagePath = join(extensionPath, 'images/coming-soon.png').replace(/\\/g, '/');
 				bannerImageName = basename(bannerImagePath);
 				emailBody = await generateHtml(emailBody, bannerImageName);
@@ -196,11 +199,12 @@ export async function convertMarkdownToHtml() {
 					isInline: true
 				});
 			} catch (error) {
-				console.log(error);
+				showStatusMessage(error);
 			}
 			break;
 		case 'docs-product-update':
 			try {
+				subjectPrefix = 'Product Update: ';
 				bannerImagePath = join(extensionPath, 'images/product-update.png').replace(/\\/g, '/');
 				bannerImageName = basename(bannerImagePath);
 				emailBody = await generateHtml(emailBody, bannerImageName);
@@ -214,11 +218,12 @@ export async function convertMarkdownToHtml() {
 					isInline: true
 				});
 			} catch (error) {
-				console.log(error);
+				showStatusMessage(error);
 			}
 			break;
 		case 'docs-released':
 			try {
+				subjectPrefix = 'Released: ';
 				bannerImagePath = join(extensionPath, 'images/released.png').replace(/\\/g, '/');
 				bannerImageName = basename(bannerImagePath);
 				emailBody = await generateHtml(emailBody, bannerImageName);
@@ -232,15 +237,17 @@ export async function convertMarkdownToHtml() {
 					isInline: true
 				});
 			} catch (error) {
-				console.log(error);
+				showStatusMessage(error);
 			}
 			break;
 	}
-	sendMail();
+	sendMail(subjectPrefix);
 }
 
-async function sendMail() {
-
+async function sendMail(subjectPrefix?: string) {
+	if (!subjectPrefix) {
+		subjectPrefix = '';
+	}
 	// Create a Graph client
 	var client = Client.init({
 		authProvider: done => {
@@ -251,7 +258,7 @@ async function sendMail() {
 
 	const sendMail = {
 		message: {
-			subject: emailSubject,
+			subject: `${subjectPrefix}${emailSubject}`,
 			body: {
 				contentType: 'html',
 				content: `${styles}${emailBody}`
@@ -268,10 +275,10 @@ async function sendMail() {
 	};
 	try {
 		await client.api('/me/sendMail').post(sendMail);
-		output.appendLine(`${articleName} converted to HTML and sent to ${primaryEmailAddress}`);
+		showStatusMessage(`${articleName} converted to HTML and sent to ${primaryEmailAddress}`);
 		postInformation(`${articleName} converted to HTML and sent to ${primaryEmailAddress}`);
 	} catch (error) {
-		output.appendLine(error);
+		showStatusMessage(error);
 		postError(error);
 		throw error;
 	}
