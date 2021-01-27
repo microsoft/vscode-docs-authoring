@@ -1,4 +1,4 @@
-export async function generateHtml(emailBodyContent: string, imageCid: string) {
+export async function generateHtml(emailBodyContent: string, imageCid: string, date: string) {
    return `
    <HTML xmlns="http://www.w3.org/TR/REC-html40" xmlns:v = "urn:schemas-microsoft-com:vml" xmlns:o = "urn:schemas-microsoft-com:office:office" xmlns:w = "urn:schemas-microsoft-com:office:word" xmlns:dt = "uuid:C2F41010-65B3-11d1-A29F-00AA00C14882" xmlns:m = "http://schemas.microsoft.com/office/2004/12/omml">
       <HEAD>
@@ -81,7 +81,7 @@ export async function generateHtml(emailBodyContent: string, imageCid: string) {
                                              <TR>
                                                 <TD style="WIDTH: 5.4in; BACKGROUND: #f1f3f5; PADDING-BOTTOM: 0in; PADDING-TOP: 0in; PADDING-LEFT: 0in; PADDING-RIGHT: 7.5pt" width=518>
                                                    <P style="TEXT-ALIGN: right; MARGIN: 0in" align=right>
-                                                      <SPAN style='FONT-SIZE: 10.5pt; FONT-FAMILY: "Segoe UI Semibold",sans-serif; COLOR: #505050'>January 2021</SPAN>
+                                                      <SPAN style='FONT-SIZE: 10.5pt; FONT-FAMILY: "Segoe UI Semibold",sans-serif; COLOR: #505050'>${date}</SPAN>
                                                       <SPAN style='FONT-SIZE: 10.5pt; FONT-FAMILY: "Times New Roman",serif'>
                                                          <o:p></o:p>
                                                       </SPAN>

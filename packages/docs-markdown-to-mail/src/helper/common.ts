@@ -112,3 +112,11 @@ export function showStatusMessage(message: string) {
 	const { msTimeValue } = generateTimestamp();
 	output.appendLine(`[${msTimeValue}] - ${message}`);
 }
+
+export function getCommunicationDate() {
+	const date = new Date(Date.now());
+	const month = date.toLocaleString('default', { month: 'long' });
+	const year = date.getFullYear();
+	const communicationDate = `${month} ${year}`;
+	return communicationDate;
+}

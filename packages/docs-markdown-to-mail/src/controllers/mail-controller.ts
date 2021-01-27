@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { authentication, extensions, window, workspace } from 'vscode';
-import { postError, postInformation, showStatusMessage } from '../helper/common';
+import { getCommunicationDate, postError, postInformation, showStatusMessage } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
 import { div_plugin, divOptions } from '../markdown-extensions/div';
@@ -13,6 +13,7 @@ import { basename, extname, join } from 'path';
 import { Client } from '@microsoft/microsoft-graph-client';
 import 'isomorphic-fetch';
 import { generateHtml } from '../html/common-html';
+import { now } from 'moment';
 
 let articleName: string;
 let authToken: string;
@@ -61,16 +62,24 @@ export async function convertMarkdownToHtml() {
 	articleName = window.activeTextEditor?.document.fileName;
 	articleName = basename(articleName);
 	const announcementContent = window.activeTextEditor?.document.getText();
-	const metadata = announcementContent.match(frontMatterRegex).toString();
+	let metadata: string;
+	try {
+		metadata = announcementContent.match(frontMatterRegex).toString();
+	} catch (error) {
+		showStatusMessage(`${articleName} does not contain any metadata.`);
+	}
+
 
 	// strip front matter to get correct title
-	let updatedAnnouncementContent = announcementContent.replace(frontMatterRegex, '');
-	const title = updatedAnnouncementContent.match(titleRegex);
-	if (!title) {
+	let updatedAnnouncementContent = announcementContent.replace(frontMatterRegex, '').replace('<br><br>', '');
+	let title: any;
+	try {
+		title = updatedAnnouncementContent.match(titleRegex);
+		emailSubject = title.toString().replace(h1Regex, '');
+	} catch (error) {
 		postError(`Article does not contain a H1 (title). Abandoning command.`);
 		return;
 	}
-	emailSubject = title.toString().replace(h1Regex, '');
 
 	// resolve relative article links
 	const relativeLinkRegex = /\[.*]\((.*\.md)\)/gm;
@@ -110,13 +119,12 @@ export async function convertMarkdownToHtml() {
 				// removes yaml header from html
 			});
 		emailBody = md.render(updatedAnnouncementContent);
+		showStatusMessage(`Successfully coverted markdown to html.`);
 	} catch (error) {
 		showStatusMessage(error);
 		postError(error);
 		return;
 	}
-
-	showStatusMessage(`Successfully coverted markdown to html.`);
 
 	// embed images
 	const fs = require('fs');
@@ -178,9 +186,17 @@ export async function convertMarkdownToHtml() {
 		isInline: true
 	});
 
+	let templateType: any;
 	let subjectPrefix: string;
-	let templateTypeMatch: any = metadata.match(msCustomRegex);
-	let templateType = templateTypeMatch[1];
+
+	try {
+		let templateTypeMatch: any = metadata.match(msCustomRegex);
+		templateType = templateTypeMatch[1];
+	} catch (error) {
+		showStatusMessage(`Not a communication template.`);
+	}
+
+	const communicationDate = getCommunicationDate();
 
 	switch (templateType) {
 		case 'docs-coming-soon':
@@ -188,16 +204,7 @@ export async function convertMarkdownToHtml() {
 				subjectPrefix = 'Coming Soon: ';
 				bannerImagePath = join(extensionPath, 'images/coming-soon.png').replace(/\\/g, '/');
 				bannerImageName = basename(bannerImagePath);
-				emailBody = await generateHtml(emailBody, bannerImageName);
-				imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
-				attachments.push({
-					'@odata.type': '#microsoft.graph.fileAttachment',
-					name: bannerImageName,
-					contentType: `image/${imageExtension}`,
-					contentBytes: imageAsBase64,
-					contentId: bannerImageName,
-					isInline: true
-				});
+				emailBody = await generateHtml(emailBody, bannerImageName, communicationDate);
 			} catch (error) {
 				showStatusMessage(error);
 			}
@@ -207,16 +214,7 @@ export async function convertMarkdownToHtml() {
 				subjectPrefix = 'Product Update: ';
 				bannerImagePath = join(extensionPath, 'images/product-update.png').replace(/\\/g, '/');
 				bannerImageName = basename(bannerImagePath);
-				emailBody = await generateHtml(emailBody, bannerImageName);
-				imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
-				attachments.push({
-					'@odata.type': '#microsoft.graph.fileAttachment',
-					name: bannerImageName,
-					contentType: `image/${imageExtension}`,
-					contentBytes: imageAsBase64,
-					contentId: bannerImageName,
-					isInline: true
-				});
+				emailBody = await generateHtml(emailBody, bannerImageName, communicationDate);
 			} catch (error) {
 				showStatusMessage(error);
 			}
@@ -226,21 +224,23 @@ export async function convertMarkdownToHtml() {
 				subjectPrefix = 'Released: ';
 				bannerImagePath = join(extensionPath, 'images/released.png').replace(/\\/g, '/');
 				bannerImageName = basename(bannerImagePath);
-				emailBody = await generateHtml(emailBody, bannerImageName);
-				imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
-				attachments.push({
-					'@odata.type': '#microsoft.graph.fileAttachment',
-					name: bannerImageName,
-					contentType: `image/${imageExtension}`,
-					contentBytes: imageAsBase64,
-					contentId: bannerImageName,
-					isInline: true
-				});
+				emailBody = await generateHtml(emailBody, bannerImageName, communicationDate);
 			} catch (error) {
 				showStatusMessage(error);
 			}
 			break;
 	}
+	// embed communication banner
+	imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
+	attachments.push({
+		'@odata.type': '#microsoft.graph.fileAttachment',
+		name: bannerImageName,
+		contentType: `image/${imageExtension}`,
+		contentBytes: imageAsBase64,
+		contentId: bannerImageName,
+		isInline: true
+	});
+
 	sendMail(subjectPrefix);
 }
 
@@ -286,5 +286,19 @@ async function sendMail(subjectPrefix?: string) {
 
 const styles = `<link rel="stylesheet" href="${siteltrCSS}">
 <link rel="stylesheet" href="${alertCSS}">
+<style>
+h2 {
+  font-size:12.0pt;
+  font-family:"Segoe UI",sans-serif;
+	color:#2F2F2F;
+	padding: 0;
+}
+p {
+  font-size:11.0pt;
+  font-family:"Segoe UI",sans-serif;
+	color:#2F2F2F;
+	padding: 0;
+}
+</style>
 </head>
 `;
