@@ -61,7 +61,7 @@ export async function convertMarkdownToHtml() {
 	articleName = window.activeTextEditor?.document.fileName;
 	articleName = basename(articleName);
 	const announcementContent = window.activeTextEditor?.document.getText();
-	const metatadata = announcementContent.match(frontMatterRegex).toString();
+	const metadata = announcementContent.match(frontMatterRegex).toString();
 
 	// strip front matter to get correct title
 	let updatedAnnouncementContent = announcementContent.replace(frontMatterRegex, '');
@@ -179,7 +179,7 @@ export async function convertMarkdownToHtml() {
 	});
 
 	let subjectPrefix: string;
-	let templateTypeMatch: any = metatadata.match(msCustomRegex);
+	let templateTypeMatch: any = metadata.match(msCustomRegex);
 	let templateType = templateTypeMatch[1];
 
 	switch (templateType) {
