@@ -147,7 +147,7 @@ export function markdownQuickPick(context: ExtensionContext) {
 	}
 
 	if (checkExtension('docsmsft.docs-article-templates')) {
-		markdownItems.push({
+		markdownItems.unshift({
 			description: '',
 			label: '$(diff) Template'
 		});
