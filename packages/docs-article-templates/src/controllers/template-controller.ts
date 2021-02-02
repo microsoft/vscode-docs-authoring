@@ -87,8 +87,8 @@ export async function displayTemplates() {
 			'content-templates-template-updates',
 			'template-mapping.json'
 		);
-		const termsJson = readFileSync(templateMappingJson, 'utf8');
-		let data = JSON.parse(termsJson);
+		const templatesJson = readFileSync(templateMappingJson, 'utf8');
+		let data = JSON.parse(templatesJson);
 
 		// push quickMap keys to QuickPickItems
 		const templates: QuickPickItem[] = [];
@@ -102,23 +102,23 @@ export async function displayTemplates() {
 		if (workspace.workspaceFolders) {
 			repo = workspace.workspaceFolders[0].name;
 		}
+
 		for (const key of quickPickMap.keys()) {
 			try {
-				let template = data.templateFileName + '.md';
-				const templatePath = quickPickMap.get(key);
-				if (template == basename(templatePath)) {
-					data.repos.forEach((obj: any) => {
-						if (obj == repo) {
-							templates.push({ label: key });
-						}
-					});
-				} else {
-					console.log('nope');
-				}
+				data.templates.forEach((obj: any) => {
+					let template = obj.templateFileName + '.md';
+					const templatePath = quickPickMap.get(key);
+					if (template == basename(templatePath)) {
+						obj.repos.forEach((obj: any) => {
+							if (obj == repo || obj == 'all') {
+								templates.push({ label: key });
+							}
+						});
+					}
+				});
 			} catch (error) {
 				console.log(error);
 			}
-			// templates.push({ label: key });
 		}
 
 		templates.sort(function (a, b) {

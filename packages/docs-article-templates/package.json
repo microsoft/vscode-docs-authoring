@@ -2,7 +2,7 @@
 	"name": "docs-article-templates",
 	"displayName": "docs-article-templates",
 	"description": "Docs article templates",
-	"icon": "images/docs-logo-ms.png",
+	"icon": "https://github.com/microsoft/vscode-docs-authoring/blob/master/packages/docs-article-templates/images/docs-logo-ms.png?raw=true",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
 	"version": "0.2.9",
 	"publisher": "docsmsft",
