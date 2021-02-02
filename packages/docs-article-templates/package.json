@@ -83,7 +83,10 @@
 		"js-yaml": "^3.13.1",
 		"node-dir": "^0.1.17",
 		"octicons": "^4.4.0",
-		"vscode-extension-telemetry": "^0.1.1"
+		"vscode-extension-telemetry": "^0.1.1",
+		"tmp": "^0.2.1",
+		"download": "^8.0.0",
+		"extract-zip": "^2.0.1"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.11",
