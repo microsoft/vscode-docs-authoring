@@ -82,13 +82,20 @@ export async function displayTemplates() {
 				});
 		}
 
-		const templateMappingJson = join(
-			localTemplateRepoPath,
-			'content-templates-template-updates',
-			'template-mapping.json'
-		);
-		const templatesJson = readFileSync(templateMappingJson, 'utf8');
-		let data = JSON.parse(templatesJson);
+		let data: any;
+		try {
+			const templateMappingJson = join(
+				localTemplateRepoPath,
+				'content-templates-template-updates',
+				'template-mapping.json'
+			);
+			const templatesJson = readFileSync(templateMappingJson, 'utf8');
+			data = JSON.parse(templatesJson);
+		} catch (error) {
+			postError(`${error.name} ${error.message}`);
+			showStatusMessage(`${error.name} ${error.message}`);
+			return;
+		}
 
 		// push quickMap keys to QuickPickItems
 		const templates: QuickPickItem[] = [];
@@ -117,7 +124,8 @@ export async function displayTemplates() {
 					}
 				});
 			} catch (error) {
-				console.log(error);
+				postError(`${error.name} ${error.message}`);
+				showStatusMessage(`${error.name} ${error.message}`);
 			}
 		}
 
