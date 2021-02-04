@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { authentication, extensions, window, workspace } from 'vscode';
-import { getCommunicationDate, postError, postInformation, showStatusMessage } from '../helper/common';
+import {
+	getCommunicationDate,
+	postError,
+	postInformation,
+	showStatusMessage
+} from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
 import { div_plugin, divOptions } from '../markdown-extensions/div';
@@ -69,9 +74,10 @@ export async function convertMarkdownToHtml() {
 		showStatusMessage(`${articleName} does not contain any metadata.`);
 	}
 
-
 	// strip front matter to get correct title
-	let updatedAnnouncementContent = announcementContent.replace(frontMatterRegex, '').replace('<br><br>', '');
+	let updatedAnnouncementContent = announcementContent
+		.replace(frontMatterRegex, '')
+		.replace('<br><br>', '');
 	let title: any;
 	try {
 		title = updatedAnnouncementContent.match(titleRegex);
@@ -131,7 +137,10 @@ export async function convertMarkdownToHtml() {
 	let imageAsBase64: string;
 	let imageExtension: string;
 	const featureRequestImage = join(extensionPath, 'images', 'feature-request.png');
-	emailBody = emailBody.replace(`img src="media/feature-request.png"`, `img src="${featureRequestImage}"`);
+	emailBody = emailBody.replace(
+		`img src="media/feature-request.png"`,
+		`img src="${featureRequestImage}"`
+	);
 	try {
 		while ((imageName = imageRegex.exec(emailBody)) !== null) {
 			imageName = imageName[1];
@@ -202,8 +211,6 @@ export async function convertMarkdownToHtml() {
 			try {
 				subjectPrefix = 'Coming Soon: ';
 				bannerImagePath = join(extensionPath, 'images/coming-soon.png').replace(/\\/g, '/');
-				bannerImageName = basename(bannerImagePath);
-				emailBody = await generateHtml(emailBody, bannerImageName, communicationDate);
 			} catch (error) {
 				showStatusMessage(error);
 			}
@@ -212,8 +219,6 @@ export async function convertMarkdownToHtml() {
 			try {
 				subjectPrefix = 'Product Update: ';
 				bannerImagePath = join(extensionPath, 'images/product-update.png').replace(/\\/g, '/');
-				bannerImageName = basename(bannerImagePath);
-				emailBody = await generateHtml(emailBody, bannerImageName, communicationDate);
 			} catch (error) {
 				showStatusMessage(error);
 			}
@@ -222,13 +227,13 @@ export async function convertMarkdownToHtml() {
 			try {
 				subjectPrefix = 'Released: ';
 				bannerImagePath = join(extensionPath, 'images/released.png').replace(/\\/g, '/');
-				bannerImageName = basename(bannerImagePath);
-				emailBody = await generateHtml(emailBody, bannerImageName, communicationDate);
 			} catch (error) {
 				showStatusMessage(error);
 			}
 			break;
 	}
+	bannerImageName = basename(bannerImagePath);
+	emailBody = await generateHtml(emailBody, bannerImageName, communicationDate);
 	// embed communication banner
 	imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
 	attachments.push({
