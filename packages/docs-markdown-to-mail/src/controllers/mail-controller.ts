@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { authentication, extensions, window, workspace } from 'vscode';
-import { output, postError, postInformation } from '../helper/common';
+import {
+	getCommunicationDate,
+	postError,
+	postInformation,
+	showStatusMessage
+} from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
 import { div_plugin, divOptions } from '../markdown-extensions/div';
@@ -12,17 +17,19 @@ import { resolve } from 'url';
 import { basename, extname, join } from 'path';
 import { Client } from '@microsoft/microsoft-graph-client';
 import 'isomorphic-fetch';
+import { generateHtml } from '../html/common-html';
+import { now } from 'moment';
 
 let articleName: string;
 let authToken: string;
-let emailBody: string;
+let emailBody: any;
 let emailSubject: string;
 let primaryEmailAddress: any;
 let session: any;
 let attachments = [];
 let extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
 const alertCSS = join(extensionPath, 'media', 'alert-styles.css');
-const siteltrCSS = join(extensionPath, 'media', 'site-ltr.css');
+const siteltrCSS = join(extensionPath, 'media', 'site-alert.css');
 
 export function mailerCommand() {
 	const commands = [{ command: signInPrompt.name, callback: signInPrompt }];
@@ -42,11 +49,11 @@ async function signInPrompt() {
 }
 
 // use markdown-it to generate html
-export function convertMarkdownToHtml() {
+export async function convertMarkdownToHtml() {
 	const frontMatterRegex = /^(---)([^]+?)(---)$/gm;
 	const titleRegex = /^(#{1})[\s](.*)[\r]?[\n]/gm;
 	const h1Regex = /^#\s+/;
-	const msCustomRegex = /ms\.custom:\s?internal-blog/gm;
+	const msCustomRegex = /^ms\.custom:\s+(.*)/m;
 	const imageRegex = /src="(.*?)"/gi;
 	const editor = window.activeTextEditor;
 	let imageName: any;
@@ -60,20 +67,25 @@ export function convertMarkdownToHtml() {
 	articleName = window.activeTextEditor?.document.fileName;
 	articleName = basename(articleName);
 	const announcementContent = window.activeTextEditor?.document.getText();
-	const metatadata = announcementContent.match(frontMatterRegex).toString();
-	let isBlog: boolean = false;
-	if (metatadata.match(msCustomRegex)) {
-		isBlog = true;
-		output.appendLine(`Blog article`);
+	let metadata: string;
+	try {
+		metadata = announcementContent.match(frontMatterRegex).toString();
+	} catch (error) {
+		showStatusMessage(`${articleName} does not contain any metadata.`);
 	}
+
 	// strip front matter to get correct title
-	let updatedAnnouncementContent = announcementContent.replace(frontMatterRegex, '');
-	const title = updatedAnnouncementContent.match(titleRegex);
-	if (!title) {
+	let updatedAnnouncementContent = announcementContent
+		.replace(frontMatterRegex, '')
+		.replace('<br><br>', '');
+	let title: any;
+	try {
+		title = updatedAnnouncementContent.match(titleRegex);
+		emailSubject = title.toString().replace(h1Regex, '');
+	} catch (error) {
 		postError(`Article does not contain a H1 (title). Abandoning command.`);
 		return;
 	}
-	emailSubject = title.toString().replace(h1Regex, '');
 
 	// resolve relative article links
 	const relativeLinkRegex = /\[.*]\((.*\.md)\)/gm;
@@ -97,51 +109,58 @@ export function convertMarkdownToHtml() {
 
 	const MarkdownIt = require('markdown-it');
 	const md = new MarkdownIt();
-
-	md.use(column_end)
-		.use(container_plugin, 'row', rowOptions)
-		.use(container_plugin, 'row-end', rowEndOptions)
-		.use(container_plugin, 'column', columnOptions)
-		.use(container_plugin, 'column-end', columnEndOptions)
-		.use(div_plugin, 'div', divOptions)
-		.use(image_plugin, 'image', imageOptions)
-		.use(image_end)
-		.use(container_plugin, 'video', videoOptions)
-		.use(container_plugin, 'legacyVideo', legacyVideoOptions)
-		.use(rootDirectory)
-		.use(require('markdown-it-front-matter'), function () {
-			// removes yaml header from html
-		});
 	try {
+		md.use(column_end)
+			.use(container_plugin, 'row', rowOptions)
+			.use(container_plugin, 'row-end', rowEndOptions)
+			.use(container_plugin, 'column', columnOptions)
+			.use(container_plugin, 'column-end', columnEndOptions)
+			.use(div_plugin, 'div', divOptions)
+			.use(image_plugin, 'image', imageOptions)
+			.use(image_end)
+			.use(container_plugin, 'video', videoOptions)
+			.use(container_plugin, 'legacyVideo', legacyVideoOptions)
+			.use(rootDirectory)
+			.use(require('markdown-it-front-matter'), function () {
+				// removes yaml header from html
+			});
 		emailBody = md.render(updatedAnnouncementContent);
+		showStatusMessage(`Successfully coverted markdown to html.`);
 	} catch (error) {
+		showStatusMessage(error);
 		postError(error);
 		return;
 	}
-
-	emailBody = emailBody.replace(/<h1>(.*?)<\/h1>/, '');
-	output.appendLine(`Successfully coverted markdown to html.`);
 
 	// embed images
 	const fs = require('fs');
 	let imageAsBase64: string;
 	let imageExtension: string;
-	while ((imageName = imageRegex.exec(emailBody)) !== null) {
-		imageName = imageName[1];
-		imagePath = resolve(filePath, imageName);
-		imageExtension = extname(imagePath).replace('.', '');
-		imageCid = imageName;
-		imageAsBase64 = fs.readFileSync(imagePath, 'base64');
-		emailBody = emailBody.replace(`<img src="${imageName}">`, `<img src="cid:${imageName}">`);
+	const featureRequestImage = join(extensionPath, 'images', 'feature-request.png');
+	emailBody = emailBody.replace(
+		`img src="media/feature-request.png"`,
+		`img src="${featureRequestImage}"`
+	);
+	try {
+		while ((imageName = imageRegex.exec(emailBody)) !== null) {
+			imageName = imageName[1];
+			imagePath = resolve(filePath, imageName);
+			imageExtension = extname(imagePath).replace('.', '');
+			imageCid = imageName;
+			imageAsBase64 = fs.readFileSync(imagePath, 'base64');
+			emailBody = emailBody.replace(`<img src="${imageName}">`, `<img src="cid:${imageName}">`);
 
-		attachments.push({
-			'@odata.type': '#microsoft.graph.fileAttachment',
-			name: imageName,
-			contentType: `image/${imageExtension}`,
-			contentBytes: imageAsBase64,
-			contentId: imageCid,
-			isInline: true
-		});
+			attachments.push({
+				'@odata.type': '#microsoft.graph.fileAttachment',
+				name: imageName,
+				contentType: `image/${imageExtension}`,
+				contentBytes: imageAsBase64,
+				contentId: imageCid,
+				isInline: true
+			});
+		}
+	} catch (error) {
+		showStatusMessage(error);
 	}
 
 	// handle alerts
@@ -160,42 +179,79 @@ export function convertMarkdownToHtml() {
 			.replace(alertText, `<p class="code-line"><strong> ${alertId}</strong><br></p><p>`);
 	}
 
-	// if the article is a blog add the banner
-	if (isBlog) {
-		const bannerLabelPath = join(extensionPath, 'images/banner-label.png').replace(/\\/g, '/');
-		const bannerFileName = basename(bannerLabelPath);
+	let bannerImagePath: any;
+	let bannerImageName: any;
 
-		const bannerImagePath = join(extensionPath, 'images/banner-image.png').replace(/\\/g, '/');
-		const bannerImageName = basename(bannerImagePath);
+	bannerImagePath = join(extensionPath, 'images/microsoft-logo.png').replace(/\\/g, '/');
+	bannerImageName = basename(bannerImagePath);
+	imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
+	attachments.push({
+		'@odata.type': '#microsoft.graph.fileAttachment',
+		name: bannerImageName,
+		contentType: `image/${imageExtension}`,
+		contentBytes: imageAsBase64,
+		contentId: bannerImageName,
+		isInline: true
+	});
 
-		const titleImage = `
-      <table class="MsoTableGrid" border="0" cellspacing="0" cellpadding="0" style="background:#2E4B70;border-collapse:collapse;border:none"><tr style="height:3.65pt"><td width="443" valign="top" style="width:332.6pt;padding:0in 0in 0in .3in;height:3.65pt"><p class="MsoNormal"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><img width="322" height="67" style="width:3.3541in;height:.6944in" id="Picture_x0020_3" src="cid:${bannerFileName}" alt="&quot;Content + Learning team name&quot;"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><o:p></o:p></span></p></td><td width="190" rowspan="2" valign="bottom" style="width:142.5pt;padding:0in 0in 0in 0in;height:3.65pt"><p class="MsoNormal" align="right" style="text-align:right"><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><img width="190" height="158" style="width:1.9791in;height:1.6458in" id="Picture_x0020_2" src="cid:${bannerImageName}" alt="&quot;Decorative Learn Pathways image&quot;"></span><span style="font-size:14.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#0078D4"><o:p></o:p></span></p></td></tr><tr style="height:10.75pt"><td width="443" valign="top" style="width:332.6pt;padding:0in 0in 0in .3in;height:10.75pt"><p class="MsoNormal"><span style="font-size:18.0pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:white">${emailSubject}<o:p></o:p></span></p></td></tr></table>`;
+	let templateType: any;
+	let subjectPrefix: string;
 
-		emailBody = titleImage.concat(emailBody);
-
-		imageAsBase64 = fs.readFileSync(bannerLabelPath, 'base64');
-		attachments.push({
-			'@odata.type': '#microsoft.graph.fileAttachment',
-			name: bannerFileName,
-			contentType: `image/${imageExtension}`,
-			contentBytes: imageAsBase64,
-			contentId: bannerFileName,
-			isInline: true
-		});
-		imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
-		attachments.push({
-			'@odata.type': '#microsoft.graph.fileAttachment',
-			name: bannerImageName,
-			contentType: `image/${imageExtension}`,
-			contentBytes: imageAsBase64,
-			contentId: bannerImageName,
-			isInline: true
-		});
+	try {
+		let templateTypeMatch: any = metadata.match(msCustomRegex);
+		templateType = templateTypeMatch[1];
+	} catch (error) {
+		showStatusMessage(`Not a communication template.`);
 	}
-	sendMail();
+
+	const communicationDate = getCommunicationDate();
+
+	switch (templateType) {
+		case 'docs-coming-soon':
+			try {
+				subjectPrefix = 'Coming Soon: ';
+				bannerImagePath = join(extensionPath, 'images/coming-soon.png').replace(/\\/g, '/');
+			} catch (error) {
+				showStatusMessage(error);
+			}
+			break;
+		case 'docs-product-update':
+			try {
+				subjectPrefix = 'Product Update: ';
+				bannerImagePath = join(extensionPath, 'images/product-update.png').replace(/\\/g, '/');
+			} catch (error) {
+				showStatusMessage(error);
+			}
+			break;
+		case 'docs-released':
+			try {
+				subjectPrefix = 'Released: ';
+				bannerImagePath = join(extensionPath, 'images/released.png').replace(/\\/g, '/');
+			} catch (error) {
+				showStatusMessage(error);
+			}
+			break;
+	}
+	bannerImageName = basename(bannerImagePath);
+	emailBody = await generateHtml(emailBody, bannerImageName, communicationDate);
+	// embed communication banner
+	imageAsBase64 = fs.readFileSync(bannerImagePath, 'base64');
+	attachments.push({
+		'@odata.type': '#microsoft.graph.fileAttachment',
+		name: bannerImageName,
+		contentType: `image/${imageExtension}`,
+		contentBytes: imageAsBase64,
+		contentId: bannerImageName,
+		isInline: true
+	});
+
+	sendMail(subjectPrefix);
 }
 
-async function sendMail() {
+async function sendMail(subjectPrefix?: string) {
+	if (!subjectPrefix) {
+		subjectPrefix = '';
+	}
 	// Create a Graph client
 	var client = Client.init({
 		authProvider: done => {
@@ -206,7 +262,7 @@ async function sendMail() {
 
 	const sendMail = {
 		message: {
-			subject: emailSubject,
+			subject: `${subjectPrefix}${emailSubject}`,
 			body: {
 				contentType: 'html',
 				content: `${styles}${emailBody}`
@@ -223,10 +279,10 @@ async function sendMail() {
 	};
 	try {
 		await client.api('/me/sendMail').post(sendMail);
-		output.appendLine(`${articleName} converted to HTML and sent to ${primaryEmailAddress}`);
+		showStatusMessage(`${articleName} converted to HTML and sent to ${primaryEmailAddress}`);
 		postInformation(`${articleName} converted to HTML and sent to ${primaryEmailAddress}`);
 	} catch (error) {
-		output.appendLine(error);
+		showStatusMessage(error);
 		postError(error);
 		throw error;
 	}
@@ -236,32 +292,16 @@ const styles = `<link rel="stylesheet" href="${siteltrCSS}">
 <link rel="stylesheet" href="${alertCSS}">
 <style>
 h2 {
-  font-size:14.0pt;
-  font-family:"Segoe UI";
-  font-weight:normal;
-  color:#0078D4;
-}
-h3 {
   font-size:12.0pt;
-  font-family:"Segoe UI";
-  font-weight:normal;
-  color:#0078D4;
-}
-hr {
-  display: none;
+  font-family:"Segoe UI",sans-serif;
+	color:#2F2F2F;
+	padding: 0;
 }
 p {
-  font-size:12.0pt;
-  font-family:"Segoe UI";
-}
-table {
-	width:100%;
-}
-tr {
-	height:50px;
-}
-td {
-	width:25%;
+  font-size:11.0pt;
+  font-family:"Segoe UI",sans-serif;
+	color:#2F2F2F;
+	padding: 0;
 }
 </style>
 </head>
