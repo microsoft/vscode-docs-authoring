@@ -1,12 +1,5 @@
 'use strict';
 
-import {
-	generateTimestamp,
-	templateDirectory,
-	docsAuthoringDirectory,
-	postWarning
-} from '../helper/common';
-import { logRepoData } from '../helper/github';
 import { showStatusMessage, sendTelemetryData, postError } from '../helper/common';
 import { files } from 'node-dir';
 import {
@@ -14,13 +7,12 @@ import {
 	displayTemplateList,
 	moduleQuickPick,
 	newModuleMessage,
-	newUnitMessage,
-	templateNameMetadata
+	newUnitMessage
 } from '../strings';
 import { getUnitName, showLearnFolderSelector } from '../helper/unit-module-builder';
 import { basename, dirname, extname, join, parse } from 'path';
 import { readFileSync } from 'fs';
-import { QuickPickItem, window, workspace } from 'vscode';
+import { QuickPickItem, QuickPickOptions, window, workspace } from 'vscode';
 import { applyDocsTemplate } from '../controllers/quick-pick-controller';
 import { cleanupDownloadFiles } from '../helper/cleanup';
 
@@ -28,7 +20,6 @@ const telemetryCommand: string = 'templateSelected';
 let commandOption: string;
 export let moduleTitle;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fm = require('front-matter');
 const markdownExtensionFilter = ['.md'];
 
 export function applyTemplateCommand() {
@@ -44,8 +35,6 @@ export async function applyTemplate() {
 export async function displayTemplates() {
 	showStatusMessage(displayTemplateList);
 
-	let templateName;
-	let yamlContent;
 	files(localTemplateRepoPath, (err, files) => {
 		if (err) {
 			showStatusMessage(err);
@@ -60,24 +49,7 @@ export async function displayTemplates() {
 				.filter((file: any) => markdownExtensionFilter.indexOf(extname(file.toLowerCase())) !== -1)
 				.forEach((file: any) => {
 					if (basename(file).toLowerCase() !== 'readme.md') {
-						const filePath = join(dirname(file), basename(file));
-						const fileContent = readFileSync(filePath, 'utf8');
-						const updatedContent = fileContent.replace('{@date}', '{date}');
-						try {
-							yamlContent = fm(updatedContent);
-						} catch (error) {
-							// suppress js-yaml error, does not impact
-							// https://github.com/mulesoft-labs/yaml-ast-parser/issues/9#issuecomment-402869930
-						}
-						templateName = yamlContent.attributes[templateNameMetadata];
-
-						if (templateName) {
-							quickPickMap.set(templateName, join(dirname(file), basename(file)));
-						}
-
-						if (!templateName) {
-							quickPickMap.set(basename(file), join(dirname(file), basename(file)));
-						}
+						quickPickMap.set(basename(file), join(dirname(file), basename(file)));
 					}
 				});
 		}
@@ -87,6 +59,7 @@ export async function displayTemplates() {
 			const templateMappingJson = join(
 				localTemplateRepoPath,
 				'content-templates-template-updates',
+				'template-mapping',
 				'template-mapping.json'
 			);
 			const templatesJson = readFileSync(templateMappingJson, 'utf8');
@@ -113,12 +86,17 @@ export async function displayTemplates() {
 		for (const key of quickPickMap.keys()) {
 			try {
 				data.templates.forEach((obj: any) => {
-					let template = obj.templateFileName + '.md';
+					let template = basename(obj.templateFileName);
+					let friendlyName = obj.templateFriendlyName;
 					const templatePath = quickPickMap.get(key);
 					if (template == basename(templatePath)) {
 						obj.repos.forEach((obj: any) => {
-							if (obj == repo || obj == 'all') {
-								templates.push({ label: key });
+							if (obj == repo || obj == '*') {
+								if (friendlyName) {
+									templates.push({ label: friendlyName, description: key });
+								} else {
+									templates.push({ label: key, description: key });
+								}
 							}
 						});
 					}
@@ -141,7 +119,12 @@ export async function displayTemplates() {
 			return 0;
 		});
 
-		window.showQuickPick(templates).then(
+		// const supportedLanguages = getLanguageIdentifierQuickPickItems();
+		const options: QuickPickOptions = {
+			matchOnDescription: false
+		};
+		// const qpSelection = await window.showQuickPick(supportedLanguages, options);
+		window.showQuickPick(templates, options).then(
 			qpSelection => {
 				if (!qpSelection) {
 					return;
@@ -164,10 +147,9 @@ export async function displayTemplates() {
 					qpSelection.label !== moduleQuickPick &&
 					qpSelection.label !== addUnitToQuickPick
 				) {
-					const template = qpSelection.label;
-					console.log(template);
+					const template = qpSelection.description;
 					const templatePath = quickPickMap.get(template);
-					console.log(templatePath);
+
 					applyDocsTemplate(templatePath);
 					commandOption = template;
 					showStatusMessage(`Applying ${template} template.`);
