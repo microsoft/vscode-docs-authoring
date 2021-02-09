@@ -16,6 +16,7 @@ import { readFileSync } from 'fs';
 import { QuickPickItem, QuickPickOptions, window, workspace } from 'vscode';
 import { applyDocsTemplate } from '../controllers/quick-pick-controller';
 import { cleanupDownloadFiles } from '../helper/cleanup';
+import { templateRepo } from '../helper/user-settings';
 
 const telemetryCommand: string = 'templateSelected';
 let commandOption: string;
@@ -170,11 +171,13 @@ export async function downloadRepo() {
 	const tmp = require('tmp');
 	localTemplateRepoPath = tmp.dirSync({ unsafeCleanup: true }).name;
 	showStatusMessage(`Temp working directory ${localTemplateRepoPath} has been created.`);
-	await download(
-		'https://github.com/MicrosoftDocs/content-templates/archive/template-updates.zip',
-		localTemplateRepoPath
-	);
-	templateZip = join(localTemplateRepoPath, 'content-templates-template-updates.zip');
+	try {
+		await download(templateRepo, localTemplateRepoPath);
+		templateZip = join(localTemplateRepoPath, 'template-updates.zip');
+	} catch (error) {
+		postError(error);
+		showStatusMessage(error);
+	}
 	unzipTemplates();
 }
 
