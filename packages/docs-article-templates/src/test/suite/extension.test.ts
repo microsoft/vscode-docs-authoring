@@ -53,8 +53,7 @@ const context: ExtensionContext = {
 	extensionMode,
 	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
 	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
-	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
-	secrets: ''
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
 };
 
 suite('Extension Tests', function () {
