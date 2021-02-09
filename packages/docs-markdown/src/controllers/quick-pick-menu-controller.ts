@@ -11,7 +11,7 @@ import { pickImageType } from './image-controller';
 import { insertInclude } from './include-controller';
 import { formatItalic } from './italic-controller';
 import { pickLinkType } from './link-controller';
-import { insertBulletedList, insertNumberedList, selectListType } from './list-controller';
+import { selectListType } from './list-controller';
 import { insertLink, insertVideo } from './media-controller';
 import { insertMoniker } from './moniker-controller';
 import { noLocText } from './no-loc-controller';
