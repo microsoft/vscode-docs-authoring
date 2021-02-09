@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 'use strict';
 
 import { showStatusMessage, sendTelemetryData, postError } from '../helper/common';
@@ -86,12 +87,12 @@ export async function displayTemplates() {
 		for (const key of quickPickMap.keys()) {
 			try {
 				data.templates.forEach((obj: any) => {
-					let template = basename(obj.templateFileName);
-					let friendlyName = obj.templateFriendlyName;
+					const template = basename(obj.templateFileName);
+					const friendlyName = obj.templateFriendlyName;
 					const templatePath = quickPickMap.get(key);
-					if (template == basename(templatePath)) {
+					if (template === basename(templatePath)) {
 						obj.repos.forEach((obj: any) => {
-							if (obj == repo || obj == '*') {
+							if (obj === repo || obj === '*') {
 								if (friendlyName) {
 									templates.push({ label: friendlyName, description: key });
 								} else {
