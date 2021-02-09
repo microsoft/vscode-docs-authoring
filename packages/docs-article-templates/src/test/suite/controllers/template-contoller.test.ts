@@ -1,13 +1,8 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { commands } from 'vscode';
-import {
-	applyTemplate,
-	applyTemplateCommand,
-	downloadRepo
-} from '../../../controllers/template-controller';
+import { applyTemplate, applyTemplateCommand } from '../../../controllers/template-controller';
 import * as common from '../../../helper/common';
-import { sleep, sleepTime } from '../../test.common/common';
 
 chai.use(spies);
 const expect = chai.expect;

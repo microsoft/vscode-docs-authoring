@@ -119,11 +119,10 @@ export async function displayTemplates() {
 			return 0;
 		});
 
-		// const supportedLanguages = getLanguageIdentifierQuickPickItems();
 		const options: QuickPickOptions = {
 			matchOnDescription: false
 		};
-		// const qpSelection = await window.showQuickPick(supportedLanguages, options);
+
 		window.showQuickPick(templates, options).then(
 			qpSelection => {
 				if (!qpSelection) {
