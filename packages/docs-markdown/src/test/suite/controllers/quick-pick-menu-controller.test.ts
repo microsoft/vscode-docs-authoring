@@ -39,6 +39,7 @@ import {
 } from '../../../controllers/quick-pick-menu-controller';
 
 const expect = chai.expect;
+let emptySecret: any;
 
 interface Subscription {
 	dispose(): any;
@@ -54,7 +55,13 @@ const context: ExtensionContext = {
 	globalState: {
 		get: key => {},
 		update: (key, value) => Promise.resolve(),
-		setKeysForSync(keys: string[]): void {}
+		setKeysForSync(keys: string[]): void {},
+	},
+	secrets: {
+		store: (key, value) => Promise.resolve(),
+		get: async (key) => '',
+		delete: (key) => Promise.resolve(),
+		onDidChange: emptySecret
 	},
 	subscriptions,
 	workspaceState: {
