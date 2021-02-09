@@ -8,3 +8,7 @@
 
 - Alert support.
 - Column support.
+
+## 0.0.3 (February 8th, 2021)
+
+- Support additional communcation templates.
