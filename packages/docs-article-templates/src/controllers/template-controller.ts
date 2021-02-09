@@ -96,7 +96,7 @@ export async function displayTemplates() {
 								if (friendlyName) {
 									templates.push({ label: friendlyName, description: key });
 								} else {
-									templates.push({ label: key, description: key });
+									templates.push({ label: key });
 								}
 							}
 						});
@@ -147,7 +147,12 @@ export async function displayTemplates() {
 					qpSelection.label !== moduleQuickPick &&
 					qpSelection.label !== addUnitToQuickPick
 				) {
-					const template = qpSelection.description;
+					let template: string;
+					if (qpSelection.description) {
+						template = qpSelection.description;
+					} else {
+						template = qpSelection.label;
+					}
 					const templatePath = quickPickMap.get(template);
 
 					applyDocsTemplate(templatePath);
