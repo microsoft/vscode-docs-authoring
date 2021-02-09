@@ -7,7 +7,7 @@
 	"version": "0.2.9",
 	"publisher": "docsmsft",
 	"engines": {
-		"vscode": "^1.52.0"
+		"vscode": "^1.53.0"
 	},
 	"categories": [
 		"Other"
