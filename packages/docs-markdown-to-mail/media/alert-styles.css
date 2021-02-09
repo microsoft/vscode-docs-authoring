@@ -1,10 +1,5 @@
 blockquote {
-	display: block;
-	padding: 0em 0.8em 0.1em 0.8em;
-	margin: 1em 0 0 0;
-	background-position: top left;
-	background-repeat: no-repeat;
-	text-indent: 10px;
+	margin: 0;
 }
 
 blockquote ul {
@@ -12,7 +7,9 @@ blockquote ul {
 }
 
 blockquote p {
-	margin: 0px 0 10px 0;
+	padding: 15px;
+	text-indent: 10px;
+	margin-top: 15px;
 }
 
 blockquote p:first-child {
