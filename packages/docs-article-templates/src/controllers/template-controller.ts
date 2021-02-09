@@ -20,7 +20,6 @@ import { cleanupDownloadFiles } from '../helper/cleanup';
 const telemetryCommand: string = 'templateSelected';
 let commandOption: string;
 export let moduleTitle;
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const markdownExtensionFilter = ['.md'];
 
 export function applyTemplateCommand() {
@@ -190,16 +189,3 @@ async function unzipTemplates() {
 		showStatusMessage(error);
 	}
 }
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-/* const download = require('download-git-repo');
-	const templateRepo = 'MicrosoftDocs/content-templates';
-	download(templateRepo, docsAuthoringDirectory, err => {
-		if (err) {
-			postWarning(err ? `Error: Cannot connect to ${templateRepo}` : 'Success');
-			showStatusMessage(err ? `Error: Cannot connect to ${templateRepo}` : 'Success');
-		} else {
-			displayTemplates().then(() => logRepoData());
-		}
-	}); */
-//}
