@@ -8,7 +8,8 @@ import {
 	insertListsCommands,
 	insertNestedList,
 	insertNumberedList,
-	removeNestedList
+	removeNestedList,
+	selectListType
 } from '../../../controllers/list-controller';
 import * as common from '../../../helper/common';
 import * as list from '../../../helper/list';
@@ -40,7 +41,8 @@ suite('List Controller', () => {
 			{ command: insertBulletedList.name, callback: insertBulletedList },
 			{ command: insertNestedList.name, callback: insertNestedList },
 			{ command: insertNumberedList.name, callback: insertNumberedList },
-			{ command: removeNestedList.name, callback: removeNestedList }
+			{ command: removeNestedList.name, callback: removeNestedList },
+			{ command: selectListType.name, callback: selectListType }
 		];
 		expect(insertListsCommands()).to.deep.equal(controllerCommands);
 	});

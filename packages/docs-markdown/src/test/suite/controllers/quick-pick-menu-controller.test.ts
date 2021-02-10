@@ -55,12 +55,12 @@ const context: ExtensionContext = {
 	globalState: {
 		get: key => {},
 		update: (key, value) => Promise.resolve(),
-		setKeysForSync(keys: string[]): void {},
+		setKeysForSync(keys: string[]): void {}
 	},
 	secrets: {
 		store: (key, value) => Promise.resolve(),
-		get: async (key) => '',
-		delete: (key) => Promise.resolve(),
+		get: async key => '',
+		delete: key => Promise.resolve(),
 		onDidChange: emptySecret
 	},
 	subscriptions,
@@ -178,42 +178,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.onCall(0).resolves(item);
 		stubShowQuickPick.onCall(1).resolves('some selection');
 		const spy = chai.spy.on(alertController, 'insertAlert');
-		markdownQuickPick(context);
-		await sleep(sleepTime);
-		expect(spy).to.have.been.called();
-		stubShowQuickPick.restore();
-	});
-	test('markdownQuickPick - insertNumberedList', async () => {
-		const filePath = resolve(
-			__dirname,
-			'../../../../../src/test/data/repo/articles/docs-markdown.md'
-		);
-		await loadDocumentAndGetItReady(filePath);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
-		const item: QuickPickItem = {
-			description: '',
-			label: '$(list-ordered) Numbered list'
-		};
-		stubShowQuickPick.onCall(0).resolves(item);
-		const spy = chai.spy.on(listController, 'insertNumberedList');
-		markdownQuickPick(context);
-		await sleep(sleepTime);
-		expect(spy).to.have.been.called();
-		stubShowQuickPick.restore();
-	});
-	test('markdownQuickPick - insertBulletedList', async () => {
-		const filePath = resolve(
-			__dirname,
-			'../../../../../src/test/data/repo/articles/docs-markdown.md'
-		);
-		await loadDocumentAndGetItReady(filePath);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
-		const item: QuickPickItem = {
-			description: '',
-			label: '$(list-unordered) Bulleted list'
-		};
-		stubShowQuickPick.onCall(0).resolves(item);
-		const spy = chai.spy.on(listController, 'insertBulletedList');
 		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();

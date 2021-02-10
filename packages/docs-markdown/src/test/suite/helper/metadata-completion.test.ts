@@ -48,8 +48,8 @@ const context: ExtensionContext = {
 	},
 	secrets: {
 		store: (key, value) => Promise.resolve(),
-		get: async (key) => '',
-		delete: (key) => Promise.resolve(),
+		get: async key => '',
+		delete: key => Promise.resolve(),
 		onDidChange: emptySecret
 	},
 	subscriptions,
