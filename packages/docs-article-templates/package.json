@@ -89,6 +89,7 @@
 		"js-yaml": "^3.13.1",
 		"node-dir": "^0.1.17",
 		"octicons": "^4.4.0",
+		"tmp": "^0.2.1",
 		"vscode-extension-telemetry": "^0.1.1"
 	},
 	"devDependencies": {
