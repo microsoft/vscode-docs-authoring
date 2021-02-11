@@ -431,4 +431,27 @@ suite('Quick Pick Menu Controller', () => {
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
 	});
+	test('markdownQuickPick - selectListType', async () => {
+		const filePath = resolve(
+			__dirname,
+			'../../../../../src/test/data/repo/articles/docs-markdown.md'
+		);
+		await loadDocumentAndGetItReady(filePath);
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const item1: QuickPickItem = {
+			description: '',
+			label: '$(list-ordered) List'
+		};
+		const item2: QuickPickItem = {
+			description: '',
+			label: '(foo)'
+		};
+		stubShowQuickPick.onCall(0).resolves(item1);
+		stubShowQuickPick.onCall(1).resolves(item2);
+		const spy = chai.spy.on(listController, 'selectListType');
+		markdownQuickPick(context);
+		await sleep(sleepTime);
+		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
+	});
 });
