@@ -20,6 +20,7 @@ const uri = resolve(
 	__dirname,
 	'../../../../../src/test/data/repo/articles/docs-article-templates.md'
 );
+let emptySecret: any;
 let environmentalMutator: EnvironmentalMutator;
 const subscriptions: Subscription[] = [];
 const extensionMode: ExtensionMode = 1;
@@ -53,7 +54,13 @@ const context: ExtensionContext = {
 	extensionMode,
 	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
 	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
-	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	secrets: {
+		store: (key, value) => Promise.resolve(),
+		get: async key => '',
+		delete: key => Promise.resolve(),
+		onDidChange: emptySecret
+	}
 };
 
 suite('Extension Tests', function () {
