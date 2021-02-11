@@ -7,3 +7,4 @@ export const gitHubID: string = workspace.getConfiguration('docs.templates').git
 export const alias: string = workspace.getConfiguration('docs.templates').alias;
 export const missingValue: string = 'NO VALUE SET';
 export const learnRepoId: string = workspace.getConfiguration('docs.templates').learn_repo_id;
+export const templateRepo: string = workspace.getConfiguration('docs.templates').template_repo;
