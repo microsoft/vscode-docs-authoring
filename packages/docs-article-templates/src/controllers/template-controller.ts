@@ -1,34 +1,26 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 'use strict';
 
-import {
-	generateTimestamp,
-	templateDirectory,
-	docsAuthoringDirectory,
-	postWarning
-} from '../helper/common';
-import { logRepoData } from '../helper/github';
-import { showStatusMessage, sendTelemetryData } from '../helper/common';
+import { showStatusMessage, sendTelemetryData, postError } from '../helper/common';
 import { files } from 'node-dir';
 import {
 	addUnitToQuickPick,
 	displayTemplateList,
 	moduleQuickPick,
 	newModuleMessage,
-	newUnitMessage,
-	templateNameMetadata
+	newUnitMessage
 } from '../strings';
 import { getUnitName, showLearnFolderSelector } from '../helper/unit-module-builder';
 import { basename, dirname, extname, join, parse } from 'path';
 import { readFileSync } from 'fs';
-import { QuickPickItem, window } from 'vscode';
+import { QuickPickItem, QuickPickOptions, window, workspace } from 'vscode';
 import { applyDocsTemplate } from '../controllers/quick-pick-controller';
 import { cleanupDownloadFiles } from '../helper/cleanup';
+import { templateRepo } from '../helper/user-settings';
 
 const telemetryCommand: string = 'templateSelected';
 let commandOption: string;
 export let moduleTitle;
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const fm = require('front-matter');
 const markdownExtensionFilter = ['.md'];
 
 export function applyTemplateCommand() {
@@ -44,9 +36,7 @@ export async function applyTemplate() {
 export async function displayTemplates() {
 	showStatusMessage(displayTemplateList);
 
-	let templateName;
-	let yamlContent;
-	files(templateDirectory, (err, files) => {
+	files(localTemplateRepoPath, (err, files) => {
 		if (err) {
 			showStatusMessage(err);
 			throw err;
@@ -60,26 +50,25 @@ export async function displayTemplates() {
 				.filter((file: any) => markdownExtensionFilter.indexOf(extname(file.toLowerCase())) !== -1)
 				.forEach((file: any) => {
 					if (basename(file).toLowerCase() !== 'readme.md') {
-						const filePath = join(dirname(file), basename(file));
-						const fileContent = readFileSync(filePath, 'utf8');
-						const updatedContent = fileContent.replace('{@date}', '{date}');
-						try {
-							yamlContent = fm(updatedContent);
-						} catch (error) {
-							// suppress js-yaml error, does not impact
-							// https://github.com/mulesoft-labs/yaml-ast-parser/issues/9#issuecomment-402869930
-						}
-						templateName = yamlContent.attributes[templateNameMetadata];
-
-						if (templateName) {
-							quickPickMap.set(templateName, join(dirname(file), basename(file)));
-						}
-
-						if (!templateName) {
-							quickPickMap.set(basename(file), join(dirname(file), basename(file)));
-						}
+						quickPickMap.set(basename(file), join(dirname(file), basename(file)));
 					}
 				});
+		}
+
+		let data: any;
+		try {
+			const templateMappingJson = join(
+				localTemplateRepoPath,
+				'content-templates-template-updates',
+				'template-mapping',
+				'template-mapping.json'
+			);
+			const templatesJson = readFileSync(templateMappingJson, 'utf8');
+			data = JSON.parse(templatesJson);
+		} catch (error) {
+			postError(`${error.name} ${error.message}`);
+			showStatusMessage(`${error.name} ${error.message}`);
+			return;
 		}
 
 		// push quickMap keys to QuickPickItems
@@ -87,11 +76,36 @@ export async function displayTemplates() {
 		templates.push({ label: moduleQuickPick });
 		const activeFilePath = window.activeTextEditor.document.fileName;
 		const activeFile = parse(activeFilePath).base;
+		let repo;
 		if (activeFile === 'index.yml') {
 			templates.push({ label: addUnitToQuickPick });
 		}
+		if (workspace.workspaceFolders) {
+			repo = workspace.workspaceFolders[0].name;
+		}
+
 		for (const key of quickPickMap.keys()) {
-			templates.push({ label: key });
+			try {
+				data.templates.forEach((obj: any) => {
+					const template = basename(obj.templateFileName);
+					const friendlyName = obj.templateFriendlyName;
+					const templatePath = quickPickMap.get(key);
+					if (template === basename(templatePath)) {
+						obj.repos.forEach((obj: any) => {
+							if (obj === repo || obj === '*') {
+								if (friendlyName) {
+									templates.push({ label: friendlyName, description: key });
+								} else {
+									templates.push({ label: key });
+								}
+							}
+						});
+					}
+				});
+			} catch (error) {
+				postError(`${error.name} ${error.message}`);
+				showStatusMessage(`${error.name} ${error.message}`);
+			}
 		}
 
 		templates.sort(function (a, b) {
@@ -106,7 +120,11 @@ export async function displayTemplates() {
 			return 0;
 		});
 
-		window.showQuickPick(templates).then(
+		const options: QuickPickOptions = {
+			matchOnDescription: false
+		};
+
+		window.showQuickPick(templates, options).then(
 			qpSelection => {
 				if (!qpSelection) {
 					return;
@@ -129,8 +147,14 @@ export async function displayTemplates() {
 					qpSelection.label !== moduleQuickPick &&
 					qpSelection.label !== addUnitToQuickPick
 				) {
-					const template = qpSelection.label;
+					let template: string;
+					if (qpSelection.description) {
+						template = qpSelection.description;
+					} else {
+						template = qpSelection.label;
+					}
 					const templatePath = quickPickMap.get(template);
+
 					applyDocsTemplate(templatePath);
 					commandOption = template;
 					showStatusMessage(`Applying ${template} template.`);
@@ -143,18 +167,32 @@ export async function displayTemplates() {
 		);
 	});
 }
+export let localTemplateRepoPath: string;
+let templateZip: string;
 
 // download a copy of the template repo to the "docs authoring" directory.  no .git-related files will be generated by this process.
 export async function downloadRepo() {
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
-	const download = require('download-git-repo');
-	const templateRepo = 'MicrosoftDocs/content-templates';
-	download(templateRepo, docsAuthoringDirectory, err => {
-		if (err) {
-			postWarning(err ? `Error: Cannot connect to ${templateRepo}` : 'Success');
-			showStatusMessage(err ? `Error: Cannot connect to ${templateRepo}` : 'Success');
-		} else {
-			displayTemplates().then(() => logRepoData());
-		}
-	});
+	const download = require('download');
+	const tmp = require('tmp');
+	localTemplateRepoPath = tmp.dirSync({ unsafeCleanup: true }).name;
+	showStatusMessage(`Temp working directory ${localTemplateRepoPath} has been created.`);
+	try {
+		await download(templateRepo, localTemplateRepoPath);
+		templateZip = join(localTemplateRepoPath, 'template-updates.zip');
+	} catch (error) {
+		postError(error);
+		showStatusMessage(error);
+	}
+	unzipTemplates();
+}
+
+async function unzipTemplates() {
+	const extract = require('extract-zip');
+	try {
+		await extract(templateZip, { dir: localTemplateRepoPath });
+		displayTemplates();
+	} catch (error) {
+		postError(error);
+		showStatusMessage(error);
+	}
 }
