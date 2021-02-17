@@ -7,7 +7,7 @@ import {
 	collapseRelativeLinksForFile,
 	collapseRelativeLinksInFolder,
 	linkControllerCommands
-} from '../../../controllers/link-controller';
+} from '../../../controllers/links/link-controller';
 import * as common from '../../../helper/common';
 import { loadDocumentAndGetItReady } from '../../test.common/common';
 

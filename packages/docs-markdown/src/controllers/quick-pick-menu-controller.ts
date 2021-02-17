@@ -10,7 +10,7 @@ import { formatCode } from './code-controller';
 import { pickImageType } from './image-controller';
 import { insertInclude } from './include-controller';
 import { formatItalic } from './italic-controller';
-import { pickLinkType } from './link-controller';
+import { pickLinkType } from './links/link-controller';
 import { insertBulletedList, insertNumberedList } from './list-controller';
 import { insertLink, insertVideo } from './media-controller';
 import { insertMoniker } from './moniker-controller';

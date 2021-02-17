@@ -12,37 +12,26 @@ import {
 	window,
 	workspace
 } from 'vscode';
+import { Command } from '../../Command';
+import { numberFormat } from '../../constants/formatting';
 import {
 	checkExtension,
-	insertContentToEditor,
 	noActiveEditorMessage,
 	postInformation,
-	postWarning,
-	setCursorPosition
-} from '../helper/common';
-import { sendTelemetryData } from '../helper/telemetry';
+	postWarning
+} from '../../helper/common';
+import { sendTelemetryData } from '../../helper/telemetry';
+import { tryGetRelativePath } from '../../helper/tryGetRelativePath';
 import {
 	applyReplacements,
+	findMatchesInText,
 	findReplacements,
 	RegExpWithGroup,
-	Replacements,
-	findMatchesInText,
-	externalLinkBuilder
-} from '../helper/utility';
-import { Command } from '../Command';
-import { headingTextRegex, Insert, insertURL, MediaType, selectLinkType } from './media-controller';
-import { applyXref } from './xref/xref-controller';
-import { numberFormat } from '../constants/formatting';
-import axios from 'axios';
-import { URL, URLSearchParams } from 'url';
-const fs = require('fs').promises;
-import util = require('util');
-const readFile = util.promisify(fs.readFile);
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const HTMLParser = require('node-html-parser');
-
-const telemetryCommandLink: string = 'insertLink';
+	Replacements
+} from '../../helper/utility';
+import { Insert, insertURL, MediaType, selectLinkType } from '../media-controller';
+import { applyXref } from '../xref/xref-controller';
+import { linkToDocsPageByUrl } from './linkToDocsPageByUrl';
 
 export const linkControllerCommands: Command[] = [
 	{
@@ -222,16 +211,6 @@ export async function collapseRelativeLinksForEditor(
 	return replacements.length;
 }
 
-function tryGetRelativePath(directory: string, absolutePath: string): string {
-	try {
-		const relativePath = relative(directory, absolutePath);
-		return !!relativePath ? relativePath.replace(/\\/g, '/') : null;
-	} catch (error) {
-		postWarning(error);
-		return null;
-	}
-}
-
 export function pickLinkType() {
 	const opts: QuickPickOptions = { placeHolder: 'Select an Link type' };
 	const items: QuickPickItem[] = [];
@@ -300,141 +279,4 @@ export function pickLinkType() {
 
 export function runLinkChecker() {
 	commands.executeCommand('extension.generateLinkReport');
-}
-
-export async function linkToDocsPageByUrl() {
-	commandOption = 'linkToDocsPageByUrl';
-	const editor = window.activeTextEditor;
-	if (!editor) {
-		noActiveEditorMessage();
-		return;
-	}
-
-	const val = await window.showInputBox({
-		placeHolder: 'Paste a docs.microsoft.com URL',
-		validateInput: (text: string) =>
-			text !== ''
-				? text.indexOf('docs.microsoft.com') === -1
-					? 'Invalid link. Only use this command for pages on docs.microsoft.com.'
-					: ''
-				: 'URL input must not be empty'
-	});
-	// If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
-	if (!val) {
-		postWarning('Incorrect link syntax. Abandoning command.');
-		return;
-	}
-	const selection = editor.selection;
-	const selectedText = editor.document.getText(selection);
-	let link = '';
-	//file in current repo with bookmark link to markdown document.
-	const resource = editor.document.uri;
-	const folder = workspace.getWorkspaceFolder(resource);
-	if (folder) {
-		link = await getLocalRepoFileLink(
-			val,
-			folder.uri.fsPath,
-			editor.document.uri.fsPath,
-			selectedText
-		);
-	}
-	if (!link) {
-		///relative path to docs site /path/to/url
-		const url = new URL(val);
-		const docsRegexLang = new RegExp(/^(\/[A-Za-z]{2}-[A-Za-z]{2})?\//);
-		const urlWithoutLocal = url.pathname.replace(docsRegexLang, '/');
-		let altText = selectedText;
-		if (selection.isEmpty) {
-			altText = await window.showInputBox({
-				placeHolder: 'Enter alt text for link.'
-			});
-		}
-		link = externalLinkBuilder(urlWithoutLocal, altText ? altText : url.href);
-	}
-	insertContentToEditor(editor, link, true);
-	setCursorPosition(editor, selection.start.line, selection.start.character + link.length);
-	sendTelemetryData(telemetryCommandLink, commandOption);
-}
-
-async function getLocalRepoFileLink(
-	url: string,
-	folderPath: string,
-	currentFilePath: string,
-	altText: string
-) {
-	const page = await axios.get(url);
-	if (page.status === 200) {
-		const htmlDocument = HTMLParser.parse(page.data);
-		const metadataTags = htmlDocument.querySelectorAll('[name="original_content_git_url"]');
-		if (metadataTags.length > 0) {
-			const metadata = metadataTags[0].getAttribute('content');
-			const repoName = folderPath.split('\\').pop();
-			if (checkIfCurrentRepoIsUrl(metadata, repoName)) {
-				const absoluteFilePath = parseMetadata(metadata);
-				const lastIndex = currentFilePath.lastIndexOf('\\');
-				const currentFilePathDirectory = currentFilePath.substring(0, lastIndex);
-				if (absoluteFilePath) {
-					const pathToLinkFile = join(folderPath, absoluteFilePath);
-					const relativePath = tryGetRelativePath(currentFilePathDirectory, pathToLinkFile);
-					if (relativePath) {
-						if (!altText) {
-							altText = await tryGetHeader(pathToLinkFile);
-						}
-						return externalLinkBuilder(relativePath, altText);
-					}
-				}
-			}
-		}
-	}
-	return '';
-}
-
-async function tryGetHeader(absolutePathToFile) {
-	const content = await readFile(absolutePathToFile, 'utf8');
-	const headings = content.match(headingTextRegex);
-	if (headings.length > 0) {
-		const header = headings[0];
-		return header
-			.slice(header.indexOf(' '), header.length - 1)
-			.trim()
-			.toLowerCase();
-	}
-	return '';
-}
-
-function checkIfCurrentRepoIsUrl(repoUrl: string, repoName: string) {
-	const url = new URL(repoUrl);
-	if (url.origin === 'https://github.com') {
-		const repo = getRepoName(url);
-		return repo === repoName;
-	} else if (url.origin.indexOf('visualstudio.com')) {
-		const repo = url.pathname.split('/').pop();
-		return repo === repoName;
-	} else {
-		return '';
-	}
-}
-
-function getRepoName(url: URL) {
-	const fullPath = url.pathname.substring(1);
-	const startIndex = fullPath.indexOf('/') + 1;
-	const endIndex = startIndex + fullPath.indexOf('/');
-	return fullPath.substring(startIndex, endIndex);
-}
-
-function parseMetadata(metadata: string) {
-	const url = new URL(metadata);
-	if (url.origin === 'https://github.com') {
-		const indexStart = 'live/';
-		const href = url.href;
-		const index = url.href.indexOf(indexStart);
-		if (index !== -1) {
-			return href.substring(index + indexStart.length);
-		}
-	} else if (url.origin.indexOf('visualstudio.com')) {
-		const params = new URLSearchParams(url.search);
-		return params.get('path');
-	} else {
-		return '';
-	}
 }
