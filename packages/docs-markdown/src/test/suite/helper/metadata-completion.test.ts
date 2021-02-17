@@ -38,12 +38,19 @@ interface EnvironmentalMutator {
 const uri = resolve(__dirname, '../../../../../src/test/data/repo/articles/common.md');
 let environmentalMutator: EnvironmentalMutator;
 let subscriptions: Subscription[];
+let emptySecret: any;
 
 const context: ExtensionContext = {
 	globalState: {
 		get: key => [{ label: 'azure' }],
 		update: (key, value) => Promise.resolve(),
 		setKeysForSync(keys: string[]): void {}
+	},
+	secrets: {
+		store: (key, value) => Promise.resolve(),
+		get: async key => '',
+		delete: key => Promise.resolve(),
+		onDidChange: emptySecret
 	},
 	subscriptions,
 	workspaceState: {
