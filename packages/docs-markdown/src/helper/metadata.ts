@@ -61,9 +61,10 @@ function checkIfShortDate(msDateReplacement, editor) {
 	const shortMonth = new Date().getMonth() + 1;
 	const year = new Date().getFullYear();
 	const month = shortMonth > 9 ? shortMonth : `0${shortMonth}`;
+	const day = shortDay > 9 ? shortDay : `0${shortDay}`;
 	const shortDayLongMonthDate = `${month}/${shortDay}/${year}`;
 	const shortMonthDayDate = `${shortMonth}/${shortDay}/${year}`;
-	const shortMonthDate = toShortDate(new Date()).substring(1);
+	const shortMonthDate = `${shortMonth}/${day}/${year}`;
 	const selectedText = editor.document.getText(
 		new Range(
 			new Position(
