@@ -1,5 +1,5 @@
 import { updateMetadataDate } from '../controllers/metadata-controller';
-import { workspace, window } from 'vscode';
+import { workspace, window, Position, Range } from 'vscode';
 import { noActiveEditorMessage, toShortDate, isMarkdownFileCheck } from './common';
 import { findReplacement } from './utility';
 
@@ -44,7 +44,7 @@ export async function metadataDateReminder() {
 			`ms.date: ${toShortDate(new Date())}`,
 			msDateRegex
 		);
-		if (msDateReplacement) {
+		if (msDateReplacement && checkIfShortDate(msDateReplacement, editor)) {
 			const syncDate = await window.showInformationMessage(
 				"Would you like to update ms.date to today's date?",
 				'Update'
@@ -54,6 +54,37 @@ export async function metadataDateReminder() {
 			}
 		}
 	}
+}
+
+function checkIfShortDate(msDateReplacement, editor) {
+	const shortDay = new Date().getDate();
+	const shortMonth = new Date().getMonth() + 1;
+	const year = new Date().getFullYear();
+	const month = shortMonth > 9 ? shortMonth : `0${shortMonth}`;
+	const day = shortDay > 9 ? shortDay : `0${shortDay}`;
+	const shortDayLongMonthDate = `${month}/${shortDay}/${year}`;
+	const shortMonthDayDate = `${shortMonth}/${shortDay}/${year}`;
+	const shortMonthDate = `${shortMonth}/${day}/${year}`;
+	const selectedText = editor.document.getText(
+		new Range(
+			new Position(
+				msDateReplacement.selection.start.line,
+				msDateReplacement.selection.start.character
+			),
+			new Position(msDateReplacement.selection.end.line, msDateReplacement.selection.end.character)
+		)
+	);
+	const msDateShortDayDate = `ms.date: ${shortDayLongMonthDate}`;
+	const msDateShortMonthDayDate = `ms.date: ${shortMonthDayDate}`;
+	const msDateShortMonthDate = `ms.date: ${shortMonthDate}`;
+	if (
+		selectedText === msDateShortMonthDate ||
+		selectedText === msDateShortMonthDayDate ||
+		selectedText === msDateShortDayDate
+	) {
+		return false;
+	}
+	return true;
 }
 
 export async function disableMetadataDateReminder() {
