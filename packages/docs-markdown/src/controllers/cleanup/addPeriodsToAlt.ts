@@ -25,14 +25,14 @@ export function addPeriodsToAlt(
 	}
 }
 
-function addPeriodsForMd(data: string) {
+export function addPeriodsForMd(data: string) {
 	const regex = new RegExp(/\!\[(.*(?<!(\?|\!|\.)))\]\((.*)\)/g);
 	const altTextRegex = new RegExp(/\!\[(.*?(?<!(\?|\!|\.)))\]/);
 	data = insertPeriod(data, regex, altTextRegex);
 	return data;
 }
 
-function addPeriodsForTripleColonImage(data: string) {
+export function addPeriodsForTripleColonImage(data: string) {
 	const regex = new RegExp(
 		/image\s+(((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+))"\s*)+:::/g
 	);
