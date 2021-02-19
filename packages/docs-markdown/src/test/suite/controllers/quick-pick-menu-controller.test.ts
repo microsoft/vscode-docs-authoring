@@ -39,8 +39,6 @@ import {
 } from '../../../controllers/quick-pick-menu-controller';
 
 const expect = chai.expect;
-let emptySecret: any;
-
 interface Subscription {
 	dispose(): any;
 }
