@@ -11,7 +11,7 @@
 		"url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
 	},
 	"engines": {
-		"vscode": "^1.52.0"
+		"vscode": "^1.53.0"
 	},
 	"repository": {
 		"url": "https://github.com/Microsoft/vscode-docs-authoring.git"
