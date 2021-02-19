@@ -9,12 +9,9 @@ import {
 import { sendTelemetryData } from '../../helper/telemetry';
 import { externalLinkBuilder } from '../../helper/utility';
 import { URL, URLSearchParams } from 'url';
-const fs = require('fs').promises;
-import util = require('util');
 import { join } from 'path';
 import { tryGetRelativePath } from '../../helper/tryGetRelativePath';
-import { headingTextRegex } from '../bookmark-controller';
-const readFile = util.promisify(fs.readFile);
+import { tryGetHeader } from '../../helper/getHeader';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const HTMLParser = require('node-html-parser');
@@ -87,7 +84,7 @@ async function getLocalRepoFileLink(
 	altText: string
 ) {
 	const page = await axios.get(url);
-	if (page.status === 200) {
+	if (page.data) {
 		const htmlDocument = HTMLParser.parse(page.data);
 		const metadataTags = htmlDocument.querySelectorAll('[name="original_content_git_url"]');
 		if (metadataTags.length > 0) {
@@ -113,20 +110,7 @@ async function getLocalRepoFileLink(
 	return '';
 }
 
-async function tryGetHeader(absolutePathToFile) {
-	const content = await readFile(absolutePathToFile, 'utf8');
-	const headings = content.match(headingTextRegex);
-	if (headings.length > 0) {
-		const header = headings[0];
-		return header
-			.slice(header.indexOf(' '), header.length - 1)
-			.trim()
-			.toLowerCase();
-	}
-	return '';
-}
-
-function checkIfCurrentRepoIsUrl(repoUrl: string, repoName: string) {
+export function checkIfCurrentRepoIsUrl(repoUrl: string, repoName: string) {
 	const url = new URL(repoUrl);
 	if (url.origin === 'https://github.com') {
 		const repo = getRepoName(url);
@@ -142,8 +126,8 @@ function checkIfCurrentRepoIsUrl(repoUrl: string, repoName: string) {
 function getRepoName(url: URL) {
 	const fullPath = url.pathname.substring(1);
 	const startIndex = fullPath.indexOf('/') + 1;
-	const endIndex = startIndex + fullPath.indexOf('/');
-	return fullPath.substring(startIndex, endIndex);
+	const repoWithFilePath = fullPath.substring(startIndex);
+	return repoWithFilePath.substring(0, repoWithFilePath.indexOf('/'));
 }
 
 function parseMetadata(metadata: string) {
