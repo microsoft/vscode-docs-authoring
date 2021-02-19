@@ -41,9 +41,41 @@ export function insertListsCommands() {
 		{ command: insertBulletedList.name, callback: insertBulletedList },
 		{ command: insertNestedList.name, callback: insertNestedList },
 		{ command: insertNumberedList.name, callback: insertNumberedList },
-		{ command: removeNestedList.name, callback: removeNestedList }
+		{ command: removeNestedList.name, callback: removeNestedList },
+		{ command: selectListType.name, callback: selectListType }
 	];
 	return commands;
+}
+
+export function selectListType() {
+	const opts: vscode.QuickPickOptions = { placeHolder: 'Select an Link type' };
+	const items: vscode.QuickPickItem[] = [];
+	items.push(
+		{
+			description: '',
+			label: '$(list-ordered) Numbered list'
+		},
+		{
+			description: '',
+			label: '$(list-unordered) Bulleted list'
+		}
+	);
+
+	vscode.window.showQuickPick(items, opts).then(selection => {
+		if (!selection) {
+			return;
+		}
+		const selectionWithoutIcon = selection.label.toLowerCase().split(')')[1].trim();
+		switch (selectionWithoutIcon) {
+			case 'numbered list':
+				insertNumberedList();
+				break;
+			case 'bulleted list':
+				insertBulletedList();
+				break;
+		}
+		sendTelemetryData(telemetryCommand, commandOption);
+	});
 }
 
 /**
