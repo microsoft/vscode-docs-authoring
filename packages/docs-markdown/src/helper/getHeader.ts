@@ -9,10 +9,7 @@ export async function tryGetHeader(absolutePathToFile) {
 	const headings = getHeadings(content);
 	if (headings.length > 0) {
 		const header = headings[0];
-		return header
-			.slice(header.indexOf(' '), header.length - 1)
-			.trim()
-			.toLowerCase();
+		return header.substring(header.indexOf(' ')).trim().toLowerCase();
 	}
 	return '';
 }

@@ -12,6 +12,7 @@ import { URL, URLSearchParams } from 'url';
 import { join } from 'path';
 import { tryGetRelativePath } from '../../helper/tryGetRelativePath';
 import { tryGetHeader } from '../../helper/getHeader';
+import { getAsync } from '../../helper/http-helper';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const HTMLParser = require('node-html-parser');
@@ -83,7 +84,7 @@ async function getLocalRepoFileLink(
 	currentFilePath: string,
 	altText: string
 ) {
-	const page = await axios.get(url);
+	const page = await getAsync(url);
 	if (page.data) {
 		const htmlDocument = HTMLParser.parse(page.data);
 		const metadataTags = htmlDocument.querySelectorAll('[name="original_content_git_url"]');

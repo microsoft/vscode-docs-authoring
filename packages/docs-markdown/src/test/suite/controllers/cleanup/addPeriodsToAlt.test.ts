@@ -8,7 +8,7 @@ chai.use(spies);
 
 const expect = chai.expect;
 
-suite.only('Add Periods To Alt Text', () => {
+suite('Add Periods To Alt Text', () => {
 	test('cleanup repo - insert periods to alt text md images', async () => {
 		const data = `![Responsive design](../media/responsivedesign.gif)`;
 		const output = addPeriodsForMd(data);
