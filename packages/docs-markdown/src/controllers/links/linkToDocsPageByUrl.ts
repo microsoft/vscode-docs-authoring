@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { AxiosResponse } from 'axios';
 import { window, workspace } from 'vscode';
 import {
 	insertContentToEditor,
@@ -48,19 +48,23 @@ export async function linkToDocsPageByUrl(urlValue?: string) {
 	}
 	const selection = editor.selection;
 	const selectedText = editor.document.getText(selection);
-	let link = '';
+	let repoLink = '';
 	//file in current repo with bookmark link to markdown document.
 	const resource = editor.document.uri;
 	const folder = workspace.getWorkspaceFolder(resource);
 	if (folder) {
-		link = await getLocalRepoFileLink(
+		const { confirmation, link } = await getLocalRepoFileLink(
 			inputValue,
 			folder.uri.fsPath,
 			editor.document.uri.fsPath,
 			selectedText
 		);
+		repoLink = link;
+		if (confirmation === 'Cancel') {
+			return;
+		}
 	}
-	if (!link) {
+	if (!repoLink) {
 		///relative path to docs site /path/to/url
 		const url = new URL(inputValue);
 		const docsRegexLang = new RegExp(/^(\/[A-Za-z]{2}-[A-Za-z]{2})?\//);
@@ -71,10 +75,10 @@ export async function linkToDocsPageByUrl(urlValue?: string) {
 				placeHolder: 'Enter alt text for link.'
 			});
 		}
-		link = externalLinkBuilder(urlWithoutLocal, altText ? altText : url.href);
+		repoLink = externalLinkBuilder(urlWithoutLocal, altText ? altText : url.href);
 	}
-	insertContentToEditor(editor, link, true);
-	setCursorPosition(editor, selection.start.line, selection.start.character + link.length);
+	insertContentToEditor(editor, repoLink, true);
+	setCursorPosition(editor, selection.start.line, selection.start.character + repoLink.length);
 	sendTelemetryData(telemetryCommandLink, commandOption);
 }
 
@@ -84,9 +88,19 @@ async function getLocalRepoFileLink(
 	currentFilePath: string,
 	altText: string
 ) {
-	const page = await getAsync(url);
-	if (page.data) {
-		const htmlDocument = HTMLParser.parse(page.data);
+	const {
+		data,
+		response: { status }
+	} = (await getAsync(url)) as AxiosResponse | any;
+	if (status === 404) {
+		const confirmation = await window.showInformationMessage(
+			'This URL link retuns a 404 not found. Would you like to continue using this URL?',
+			'Cancel',
+			'Continue'
+		);
+		return { confirmation, link: '' };
+	} else if (data) {
+		const htmlDocument = HTMLParser.parse(data);
 		const metadataTags = htmlDocument.querySelectorAll('[name="original_content_git_url"]');
 		if (metadataTags.length > 0) {
 			const metadata = metadataTags[0].getAttribute('content');
@@ -102,13 +116,13 @@ async function getLocalRepoFileLink(
 						if (!altText) {
 							altText = await tryGetHeader(pathToLinkFile);
 						}
-						return externalLinkBuilder(relativePath, altText);
+						return { confirmation: '', link: externalLinkBuilder(relativePath, altText) };
 					}
 				}
 			}
 		}
 	}
-	return '';
+	return { confirmation: '', link: '' };
 }
 
 export function checkIfCurrentRepoIsUrl(repoUrl: string, repoName: string) {
