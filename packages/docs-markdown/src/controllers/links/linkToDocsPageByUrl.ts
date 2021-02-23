@@ -88,11 +88,8 @@ async function getLocalRepoFileLink(
 	currentFilePath: string,
 	altText: string
 ) {
-	const {
-		data,
-		response: { status }
-	} = (await getAsync(url)) as AxiosResponse | any;
-	if (status === 404) {
+	const { data, response } = (await getAsync(url)) as AxiosResponse | any;
+	if (response && response.status === 404) {
 		const confirmation = await window.showInformationMessage(
 			'This URL link retuns a 404 not found. Would you like to continue using this URL?',
 			'Cancel',
