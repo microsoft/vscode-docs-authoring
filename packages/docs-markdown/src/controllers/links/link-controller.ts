@@ -12,24 +12,26 @@ import {
 	window,
 	workspace
 } from 'vscode';
+import { Command } from '../../Command';
+import { numberFormat } from '../../constants/formatting';
 import {
 	checkExtension,
 	noActiveEditorMessage,
 	postInformation,
 	postWarning
-} from '../helper/common';
-import { sendTelemetryData } from '../helper/telemetry';
+} from '../../helper/common';
+import { sendTelemetryData } from '../../helper/telemetry';
+import { tryGetRelativePath } from '../../helper/tryGetRelativePath';
 import {
 	applyReplacements,
+	findMatchesInText,
 	findReplacements,
 	RegExpWithGroup,
-	Replacements,
-	findMatchesInText
-} from '../helper/utility';
-import { Command } from '../Command';
-import { Insert, insertURL, MediaType, selectLinkType } from './media-controller';
-import { applyXref } from './xref/xref-controller';
-import { numberFormat } from '../constants/formatting';
+	Replacements
+} from '../../helper/utility';
+import { Insert, insertURL, MediaType, selectLinkType } from '../media-controller';
+import { applyXref } from '../xref/xref-controller';
+import { linkToDocsPageByUrl } from './linkToDocsPageByUrl';
 
 export const linkControllerCommands: Command[] = [
 	{
@@ -209,16 +211,6 @@ export async function collapseRelativeLinksForEditor(
 	return replacements.length;
 }
 
-function tryGetRelativePath(directory: string, absolutePath: string): string {
-	try {
-		const relativePath = relative(directory, absolutePath);
-		return !!relativePath ? relativePath.replace(/\\/g, '/') : null;
-	} catch (error) {
-		postWarning(error);
-		return null;
-	}
-}
-
 export function pickLinkType() {
 	const opts: QuickPickOptions = { placeHolder: 'Select an Link type' };
 	const items: QuickPickItem[] = [];
@@ -229,6 +221,10 @@ export function pickLinkType() {
 	items.push({
 		description: '',
 		label: '$(globe) Link to web page'
+	});
+	items.push({
+		description: '',
+		label: '$(browser) Link to Docs page by URL'
 	});
 	items.push({
 		description: '',
@@ -271,6 +267,10 @@ export function pickLinkType() {
 			case 'generate a link report':
 				runLinkChecker();
 				commandOption = 'generate a link report';
+				break;
+			case 'link to docs page by url':
+				linkToDocsPageByUrl();
+				commandOption = 'link to docs page by url';
 				break;
 		}
 		sendTelemetryData(telemetryCommand, commandOption);
