@@ -5,10 +5,10 @@ import { basename, dirname, extname, join, relative } from 'path';
 import { QuickPickItem, window, workspace } from 'vscode';
 import { ignoreFiles, noActiveEditorMessage } from '../../helper/common';
 import { noHeadingSelected } from '../../constants/log-messages';
+import { getHeadings } from '../../helper/getHeader';
 
 export async function showTOCQuickPick(options: boolean) {
 	const markdownExtensionFilter = ['.md'];
-	const headingTextRegex = /^(# )(.*)/gm;
 	let folderPath: string = '';
 	let fullPath: string = '';
 
@@ -44,7 +44,7 @@ export async function showTOCQuickPick(options: boolean) {
 	}
 
 	const content = readFileSync(fullPath, 'utf8');
-	const headings = content.match(headingTextRegex);
+	const headings = getHeadings(content);
 
 	if (!headings) {
 		window.showErrorMessage(headings[0]);

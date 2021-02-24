@@ -98,8 +98,11 @@ export function tripleColonCodeSnippets(md, options) {
 								}
 							}
 						} else {
-							file = await readFile(resolve(rootdir, path), 'utf8');
-							fileMap.set(path, file);
+							const filePath = resolve(rootdir, path);
+							if (fs.existsSync(filePath)) {
+								file = await readFile(filePath, 'utf8');
+								fileMap.set(path, file);
+							}
 						}
 					}
 				}
@@ -124,6 +127,8 @@ export function tripleColonCodeSnippets(md, options) {
 					if (shouldUpdate) {
 						await commands.executeCommand('markdown.preview.refresh');
 					}
+				} else {
+					codeSnippetContent = src;
 				}
 			}
 		} else {

@@ -19,7 +19,7 @@ import * as alertController from '../../../controllers/alert-controller';
 import * as listController from '../../../controllers/list-controller';
 import * as tableController from '../../../controllers/table-controller';
 import * as rowColumnsController from '../../../controllers/row-columns-controller';
-import * as linkController from '../../../controllers/link-controller';
+import * as linkController from '../../../controllers/links/link-controller';
 import * as noLocController from '../../../controllers/no-loc-controller';
 import * as imageController from '../../../controllers/image-controller';
 import * as includeController from '../../../controllers/include-controller';
@@ -39,8 +39,6 @@ import {
 } from '../../../controllers/quick-pick-menu-controller';
 
 const expect = chai.expect;
-let emptySecret: any;
-
 interface Subscription {
 	dispose(): any;
 }
@@ -51,6 +49,8 @@ interface EnvironmentalMutator {
 const uri = resolve(__dirname, '../../../../../src/test/data/repo/articles/image-controller2.md');
 let environmentalMutator: EnvironmentalMutator;
 let subscriptions: Subscription[];
+let emptySecret: any;
+
 const context: ExtensionContext = {
 	globalState: {
 		get: key => {},

@@ -6,13 +6,13 @@ import * as recursive from 'recursive-readdir';
 import { QuickPickItem, window, workspace } from 'vscode';
 import { addbookmarkIdentifier, bookmarkBuilder } from '../helper/bookmark-builder';
 import { ignoreFiles, insertContentToEditor, noActiveEditorMessage } from '../helper/common';
+import { getHeadings } from '../helper/getHeader';
 import { sendTelemetryData } from '../helper/telemetry';
 
 const telemetryCommand: string = 'insertBookmark';
 let commandOption: string;
 const markdownExtensionFilter = ['.md'];
 
-export const headingTextRegex = /^ {0,3}(#{2,6})(.*)/gm;
 export const yamlTextRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
 
 export function insertBookmarkCommands() {
@@ -77,7 +77,7 @@ export async function insertBookmarkExternal() {
 	}
 
 	const content = readFileSync(fullPath, 'utf8');
-	const headings = content.match(headingTextRegex);
+	const headings = getHeadings(content);
 
 	if (!headings) {
 		window.showErrorMessage('No headings found in file, cannot insert bookmark!');
@@ -131,7 +131,7 @@ export async function insertBookmarkInternal() {
 	}
 
 	const content = editor.document.getText();
-	const headings = content.match(headingTextRegex);
+	const headings = getHeadings(content);
 	if (!headings) {
 		window.showErrorMessage('No headings found in file, cannot insert bookmark!');
 		return;
