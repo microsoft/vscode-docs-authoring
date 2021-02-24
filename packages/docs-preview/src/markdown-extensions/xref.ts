@@ -6,8 +6,8 @@ import { output } from '../helper/common';
 
 const apiUrl = 'https://xref.docs.microsoft.com/query?uid=';
 // Sadly because of the bug with global regexes, I need two versions. One with global, one without. - Adam
-const XREF_RE_WITH_GLOBAL = /<xref:(.*?)(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?>/gim;
-const XREF_RE = /<xref:(.*?)(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?>/im;
+const XREF_RE_WITH_GLOBAL = /<xref:(.*?)(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?))?)?>/gim;
+const XREF_RE = /<xref:(.*?)(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?))?)?>/im;
 const XREF_MD_LINK_RE_WITH_GLOBAL = /\(xref:(.*?)(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?\)/gim;
 const XREF_MD_LINK_RE = /\(xref:(.*?)(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?\)/im;
 let xrefContent = '';
@@ -111,7 +111,7 @@ async function updateXrefContent(md: any, src: string) {
 				if (response) {
 					if (response.data[0]) {
 						const xrefResponse = response.data[0];
-						const displayProperty = captureGroup[3];
+						const displayProperty = captureGroup[4];
 						if (displayProperty) {
 							if (displayProperty === 'fullName') {
 								mdSrc = `[${xrefResponse.fullName}](${xrefResponse.href})`;
