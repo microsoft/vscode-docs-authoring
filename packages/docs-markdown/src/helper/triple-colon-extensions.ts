@@ -59,6 +59,10 @@ const tripleColonExtensions: TripleColonExtensions = [
 		extension: 'Row :::row:::'
 	},
 	{
+		content: `video source="{source}":::`,
+		extension: 'Video :::video:::'
+	},
+	{
 		content: `zone target="{target}" pivot="{pivot}"
     {content}
 :::zone-end`,
