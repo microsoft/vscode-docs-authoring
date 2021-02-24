@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.57 (February 24th, 2021)
+
+- Fixed code snippet preview where file not found: [Issue 802](https://github.com/microsoft/vscode-docs-authoring/issues/802)
+
 ## 0.3.56 (October 22nd, 2020)
 
 - Fixed noloc preview: [Issue 738](https://github.com/microsoft/vscode-docs-authoring/issues/738)
