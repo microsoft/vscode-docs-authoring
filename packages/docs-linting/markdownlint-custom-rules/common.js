@@ -5,8 +5,8 @@ module.exports.singleColon = /^:/gm;
 module.exports.tripleColonSyntax = /^:::\s?/gm;
 module.exports.validTripleColon = /^:::\s+/gm;
 module.exports.openAndClosingValidTripleColon = /^:::(.*):::/gim;
-module.exports.AttributeMatchGlobal = /(\S+)=["]?((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/gi;
-module.exports.AttributeMatch = /(\S+)=["]?((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/;
+module.exports.AttributeMatchGlobal = /(\S+)=["]((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/gi;
+module.exports.AttributeMatch = /(\S+)=["]((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/;
 
 // Markdown extensions (add valid/supported extensions to list)
 module.exports.openExtension = /^:(.*?)(zone|moniker|no-loc)/gm;
