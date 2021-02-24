@@ -17,6 +17,7 @@ interface EnvironmentalMutator {
 	type: any;
 	value: any;
 }
+let emptySecret: any;
 const uri = resolve(__dirname, '../../../../../src/test/data/repo/articles/docs-metadata.md');
 let environmentalMutator: EnvironmentalMutator;
 let subscriptions: Subscription[];
@@ -25,6 +26,12 @@ export const context: ExtensionContext = {
 		get: key => {},
 		update: (key, value) => Promise.resolve(),
 		setKeysForSync(keys: string[]): void {}
+	},
+	secrets: {
+		store: (key, value) => Promise.resolve(),
+		get: async key => '',
+		delete: key => Promise.resolve(),
+		onDidChange: emptySecret
 	},
 	subscriptions,
 	workspaceState: {
