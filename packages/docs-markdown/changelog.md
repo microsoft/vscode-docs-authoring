@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.2.83 (February 24th, 2021)
+
+- Bug fixes
+- Added feature for Add Docs link by URL to Link quick pick
+- Updated quick-pick-menu ordering
+
 ## 0.2.82 (October 23rd, 2020)
 
 - Update allowlist endpoint
