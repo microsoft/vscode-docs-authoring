@@ -47,8 +47,8 @@ export function lowercaseDevlang(data: string, regex: RegExp) {
 export function convertDevlang(data: string) {
 	// convert non-supported values to supported ones
 	const csharpRegex = new RegExp(/```(c#|cs)\s/gi);
-	data = data.replace(csharpRegex, '```csharp');
+	data = data.replace(csharpRegex, '```csharp\r\n');
 	const markdownRegex = new RegExp(/```markdown\s/gi);
-	data = data.replace(markdownRegex, '```md');
+	data = data.replace(markdownRegex, '```md\r\n');
 	return data;
 }
