@@ -9,7 +9,7 @@ import { sleep, sleepTime } from '../../../test.common/common';
 
 const expect = chai.expect;
 
-suite('Convert devlangs', () => {
+suite.only('Convert devlangs', () => {
 	test('find triple tick code blocks', async () => {
 		const spy = chai.spy(findCodeBlocks);
 		findCodeBlocks('```json');
@@ -23,13 +23,13 @@ suite('Convert devlangs', () => {
 	});
 	test('cs devlang should be csharp', async () => {
 		const inputString = '```cs ```';
-		const outputString = '```csharp```';
+		const outputString = '```csharp\r\n```';
 		const output = convertDevlang(inputString);
 		expect(output).to.equal(outputString);
 	});
 	test('markdown devlang should be md', async () => {
 		const inputString = '```markdown ```';
-		const outputString = '```md```';
+		const outputString = '```md\r\n```';
 		const output = convertDevlang(inputString);
 		expect(output).to.equal(outputString);
 	});
