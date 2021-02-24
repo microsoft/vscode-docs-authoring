@@ -4,6 +4,7 @@
 import { existsSync } from 'graceful-fs';
 import * as recursive from 'recursive-readdir';
 import * as vscode from 'vscode';
+import { QuickPickItem, QuickPickOptions, window } from 'vscode';
 import { insertBookmarkExternal, insertBookmarkInternal } from '../controllers/bookmark-controller';
 import {
 	hasValidWorkSpaceRootPath,
@@ -19,6 +20,7 @@ import {
 } from '../helper/common';
 import { sendTelemetryData } from '../helper/telemetry';
 import { externalLinkBuilder, internalLinkBuilder, videoLinkBuilder } from '../helper/utility';
+import { linkToDocsPageByUrl } from './links/linkToDocsPageByUrl';
 const telemetryCommandMedia: string = 'insertMedia';
 const telemetryCommandLink: string = 'insertLink';
 let commandOption: string;
@@ -39,7 +41,6 @@ export const imageExtensions = ['.jpeg', '.jpg', '.png', '.gif', '.bmp'];
 export const markdownExtensionFilter = ['.md'];
 
 export const h1TextRegex = /\n {0,3}(#{1,6})(.*)/;
-export const headingTextRegex = /^(#+)[\s](.*)[\r]?[\n]/gm;
 export const yamlTextRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
 
 export enum MediaType {
@@ -83,7 +84,7 @@ export async function insertVideo() {
 /**
  * Creates an external URL with the current selection.
  */
-export function insertURL() {
+export async function insertURL() {
 	commandOption = 'external';
 	const editor = vscode.window.activeTextEditor;
 	if (!editor) {
@@ -105,39 +106,101 @@ export function insertURL() {
 		placeHolder: 'Enter link text. If no text is entered, url will be used.'
 	};
 
-	vscode.window.showInputBox(options).then(val => {
-		let contentToInsert;
-		// If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
-		if (val === undefined) {
-			postWarning('Incorrect link syntax. Abandoning command.');
+	const val = await vscode.window.showInputBox(options);
+	// If the user adds a link that doesn't include the http(s) protocol, show a warning and don't add the link.
+	if (!val) {
+		postWarning('Incorrect link syntax. Abandoning command.');
+		return;
+	}
+	let contentToInsert = '';
+	if (val.indexOf('docs.microsoft.com') === -1) {
+		// if user selected text, don't prompt for alt text
+		contentToInsert = await buildLinkForWebURL(selectedText, val, selection, linkTextOptions);
+	} else {
+		const choice = await pickConversionChoice();
+		if (choice === 'convert') {
+			await linkToDocsPageByUrl(val);
+			return;
+		} else if (choice === 'insert without converting') {
+			const docsRegexLang = new RegExp(/\/[A-Za-z]{2}-[A-Za-z]{2}\//);
+			const urlWithoutLocal = val.replace(docsRegexLang, '/');
+			contentToInsert = await buildLinkForWebURL(
+				selectedText,
+				urlWithoutLocal,
+				selection,
+				linkTextOptions
+			);
 		} else {
-			// if user selected text, don't prompt for alt text
-			if (selectedText) {
-				contentToInsert = externalLinkBuilder(val, selectedText);
-				insertContentToEditor(editor, contentToInsert, true);
-			}
-			// if no content is selected, prompt for alt text
-			// no alt text: use link
-			if (selection.isEmpty) {
-				vscode.window.showInputBox(linkTextOptions).then(altText => {
-					if (selection.isEmpty && !altText) {
-						contentToInsert = externalLinkBuilder(val);
-						insertContentToEditor(editor, contentToInsert);
-					}
-					if (altText) {
-						contentToInsert = externalLinkBuilder(val, altText);
-						insertContentToEditor(editor, contentToInsert, true);
-					}
-					setCursorPosition(
-						editor,
-						selection.start.line,
-						selection.start.character + contentToInsert.length
-					);
-				});
-			}
+			return;
 		}
-	});
+	}
+	insertContentToEditor(editor, contentToInsert, true);
+	setCursorPosition(
+		editor,
+		selection.start.line,
+		selection.start.character + contentToInsert.length
+	);
 	sendTelemetryData(telemetryCommandLink, commandOption);
+}
+
+async function buildLinkForWebURL(
+	selectedText: string,
+	val: string,
+	selection: vscode.Selection,
+	linkTextOptions: vscode.InputBoxOptions
+) {
+	let contentToInsert;
+	if (selectedText) {
+		contentToInsert = externalLinkBuilder(val, selectedText);
+	}
+	// if no content is selected, prompt for alt text
+	// no alt text: use link
+	if (selection.isEmpty) {
+		const altText = await window.showInputBox(linkTextOptions);
+		if (selection.isEmpty && !altText) {
+			contentToInsert = externalLinkBuilder(val);
+		}
+		if (altText) {
+			contentToInsert = externalLinkBuilder(val, altText);
+		}
+	}
+	return contentToInsert;
+}
+
+export async function pickConversionChoice() {
+	const opts: QuickPickOptions = {
+		placeHolder:
+			'Fully qualified links to Docs pages will be broken in isolated environments. Convert to a relative link?'
+	};
+	const items: QuickPickItem[] = [];
+	items.push({
+		description: '',
+		label: 'Convert'
+	});
+	items.push({
+		description: '',
+		label: 'Insert without converting'
+	});
+	items.push({
+		description: '',
+		label: 'Cancel'
+	});
+
+	const selection: QuickPickItem = await window.showQuickPick(items, opts);
+	if (!selection) {
+		return;
+	}
+	const selectionWithoutIcon = selection.label.toLowerCase();
+	switch (selectionWithoutIcon) {
+		case 'convert':
+			commandOption = 'convert';
+			return 'convert';
+		case 'insert without converting':
+			commandOption = 'insert without converting';
+			return 'insert without converting';
+		case 'cancel':
+			return '';
+	}
 }
 
 /**
