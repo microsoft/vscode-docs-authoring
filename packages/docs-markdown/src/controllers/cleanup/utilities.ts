@@ -91,7 +91,7 @@ export function readWriteFileWithProgress(
 			.some((part: { added: any; removed: any }) => {
 				return part.added || part.removed;
 			});
-		return new Promise((resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 			if (diff) {
 				writeFile(file, result.data, error => {
 					if (error) {
@@ -115,7 +115,7 @@ export function recurseCallback(
 	progress: any,
 	callback: (progress: any, file: string, files: string[], index: number) => Promise<any>
 ): Promise<any> {
-	return new Promise((chainResolve, chainReject) =>
+	return new Promise<void>((chainResolve, chainReject) =>
 		recursive(workspacePath, ignoreFiles, (err: any, files: string[]) => {
 			if (err) {
 				postError(err);
@@ -137,11 +137,7 @@ export function getCleanUpQuickPick() {
 	const items: QuickPickItem[] = [];
 	items.push({
 		description: '',
-		label: 'Single-valued metadata'
-	});
-	items.push({
-		description: '',
-		label: 'Microsoft links'
+		label: 'Add periods to alt text'
 	});
 	items.push({
 		description: '',
@@ -154,6 +150,14 @@ export function getCleanUpQuickPick() {
 	items.push({
 		description: '',
 		label: 'Empty metadata'
+	});
+	items.push({
+		description: '',
+		label: 'Microsoft links'
+	});
+	items.push({
+		description: '',
+		label: 'Single-valued metadata'
 	});
 	return { items, opts };
 }
