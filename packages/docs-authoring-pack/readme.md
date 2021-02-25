@@ -8,6 +8,7 @@ The Docs Authoring Pack provides a series of extensions to help docs.microsoft.c
 * [Docs Images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images), which compresses and resizes images.
 * [Docs Metadata](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-metadata), which speeds up editing of metadata throughout a Docs repository.
 * [Docs Article Templates](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-article-templates), which allows users to apply Markdown skeleton content to new files.
+* [Docs Scaffolding](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-scaffolding), which automatically generates Learn modules based on standard patterns and automates renaming, inserting, deleting, and reordering units.
 * [Docs Linting](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-linting), which provides markdown linting specific to docs.microsoft.com.
 * [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint), a popular linter by David Anson.
 * [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker), a fully offline spell checker by Street Side Software.
