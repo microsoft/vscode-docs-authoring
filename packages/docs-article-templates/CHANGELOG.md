@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.10 (February 26th, 2021)
+
+- Remove scaffolding functionality from template extension (for Learn module support check out the new [docs-scaffolding](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-scaffolding) extension)
+
 ## 0.2.6 (April 2nd, 2020)
 
 - Bundling with webpack
