@@ -40,11 +40,6 @@
 					"default": "",
 					"description": "GitHub ID"
 				},
-				"docs.templates.learn_repo_id": {
-					"type": "string",
-					"default": "",
-					"description": "Default Learn repo"
-				},
 				"docs.templates.template_repo": {
 					"type": "string",
 					"default": "https://github.com/MicrosoftDocs/content-templates/archive/template-updates.zip",
@@ -108,12 +103,12 @@
 		"eslint": "^7.1.0",
 		"eslint-import-resolver-webpack": "^0.12.1",
 		"eslint-plugin-import": "^2.20.2",
-		"husky": "^4.2.5",
+		"husky": "^4.3.8",
 		"mocha": "^8.0.1",
 		"mocha-junit-reporter": "^1.23.3",
 		"nyc": "^15.0.0",
 		"prettier": "^2.0.5",
-		"pretty-quick": "^2.0.1",
+		"pretty-quick": "^3.1.0",
 		"sinon": "^9.0.1",
 		"source-map-support": "^0.5.16",
 		"terser-webpack-plugin": "^2.3.5",
