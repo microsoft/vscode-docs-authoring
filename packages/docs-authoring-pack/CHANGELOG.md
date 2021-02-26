@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.1.13 (ebruary 25th, 2021)
+## 0.1.13 (February 25th, 2021)
 
 - [docs-scaffolding](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-scaffolding)
 
