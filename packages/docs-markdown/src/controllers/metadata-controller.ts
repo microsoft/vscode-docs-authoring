@@ -9,7 +9,8 @@ import {
 	isMarkdownFileCheck,
 	noActiveEditorMessage,
 	tryFindFile,
-	toShortDate
+	toShortDate,
+	isMarkdownYamlFileCheckWithoutNotification
 } from '../helper/common';
 import { sendTelemetryData } from '../helper/telemetry';
 import { applyReplacements, findReplacement, Replacements } from '../helper/utility';
@@ -215,7 +216,7 @@ export async function updateMetadataDate() {
 		return;
 	}
 
-	if (!isMarkdownFileCheck(editor, false)) {
+	if (!isMarkdownYamlFileCheckWithoutNotification(editor)) {
 		return;
 	}
 
