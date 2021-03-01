@@ -482,6 +482,15 @@ export async function applyCleanup() {
 								message = 'Clean up devlang for code blocks completed.';
 								commandOption = 'devlang';
 								break;
+							case 'add periods to alt text':
+								showStatusMessage('Cleanup: Add periods to alt text.');
+								message = 'Add periods to alt text values started.';
+								progress.report({ increment: 1, message });
+								statusMessage = 'Cleanup: Add periods to alt text values completed.';
+								promises.push(recurseCallback(workspacePath, progress, addPeriodsToAlt));
+								message = 'Add periods to alt text values completed.';
+								commandOption = 'add-periods-to-alt-text';
+								break;
 							case 'everything':
 								progress.report({ increment: 1, message });
 								await runAllWorkspace(workspacePath, progress, resolve);

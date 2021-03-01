@@ -98,12 +98,12 @@ suite('Metadata Controller', () => {
 		metadataController.updateMetadataDate();
 		expect(spy).to.have.been.called();
 	});
-	test('updateMetadataDate().isMarkdownFileCheck()', async () => {
+	test('updateMetadataDate().isMarkdownYamlFileCheckWithoutNotification()', async () => {
 		// pass in a non-markdown file
 		const filePath = resolve(__dirname, '../../../../../src/test/data/repo/docfx.json');
 		await loadDocumentAndGetItReady(filePath);
 
-		const spy = chai.spy.on(common, 'isMarkdownFileCheck');
+		const spy = chai.spy.on(common, 'isMarkdownYamlFileCheckWithoutNotification');
 		await metadataController.updateMetadataDate();
 		expect(spy).to.have.been.called();
 	});
