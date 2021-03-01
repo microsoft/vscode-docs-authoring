@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.84 (March 1st, 2021)
+
+- Bug fixes for metadata date nag and add period to alt text.
+
 ## 0.2.83 (February 24th, 2021)
 
 - Bug fixes
