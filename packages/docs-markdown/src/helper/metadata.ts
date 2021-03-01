@@ -1,6 +1,10 @@
 import { updateMetadataDate } from '../controllers/metadata-controller';
 import { workspace, window, Position, Range } from 'vscode';
-import { noActiveEditorMessage, toShortDate, isMarkdownFileCheck } from './common';
+import {
+	noActiveEditorMessage,
+	toShortDate,
+	isMarkdownYamlFileCheckWithoutNotification
+} from './common';
 import { findReplacement } from './utility';
 
 const blacklist: string[] = [];
@@ -19,7 +23,7 @@ export async function metadataDateReminder() {
 		return;
 	}
 
-	if (!isMarkdownFileCheck(editor, false)) {
+	if (!isMarkdownYamlFileCheckWithoutNotification(editor)) {
 		return;
 	}
 
