@@ -3,7 +3,6 @@
 
 import { showStatusMessage, sendTelemetryData, postError } from '../helper/common';
 import { files } from 'node-dir';
-import { displayTemplateList } from '../strings';
 import { basename, dirname, extname, join } from 'path';
 import { readFileSync } from 'fs';
 import { QuickPickItem, QuickPickOptions, window, workspace } from 'vscode';
@@ -27,6 +26,7 @@ export async function applyTemplate() {
 }
 
 export async function displayTemplates() {
+	const displayTemplateList = 'Display template list';
 	showStatusMessage(displayTemplateList);
 
 	files(localTemplateRepoPath, (err, files) => {
