@@ -50,7 +50,7 @@ export async function displayTemplates() {
 		try {
 			const templateMappingJson = join(
 				localTemplateRepoPath,
-				'content-templates-template-updates',
+				'content-templates-master',
 				'template-mapping',
 				'template-mapping.json'
 			);
@@ -147,7 +147,7 @@ export async function downloadTemplateZip() {
 	showStatusMessage(`Temp working directory ${localTemplateRepoPath} has been created.`);
 	try {
 		await download(templateRepo, localTemplateRepoPath);
-		templateZip = join(localTemplateRepoPath, 'template-updates.zip');
+		templateZip = join(localTemplateRepoPath, 'master.zip');
 	} catch (error) {
 		postError(error);
 		showStatusMessage(error);
