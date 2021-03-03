@@ -1,12 +1,9 @@
 'use strict';
 
 import { readFileSync } from 'fs';
-
 import { Position, TextDocument, Uri, window, workspace } from 'vscode';
 import { generateTimestamp, showStatusMessage } from '../helper/common';
-
 import { alias, gitHubID, missingValue } from '../helper/user-settings';
-import { cleanupDownloadFiles } from '../helper/cleanup';
 
 export function applyDocsTemplate(templatePath: string) {
 	const newFile = Uri.parse('untitled:' + 'New-Topic.md');
@@ -54,6 +51,4 @@ export function applyDocsTemplate(templatePath: string) {
 			}
 		);
 	});
-
-	cleanupDownloadFiles();
 }

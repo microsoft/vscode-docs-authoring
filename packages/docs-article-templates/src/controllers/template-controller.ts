@@ -7,7 +7,6 @@ import { basename, dirname, extname, join } from 'path';
 import { readFileSync } from 'fs';
 import { QuickPickItem, QuickPickOptions, window, workspace } from 'vscode';
 import { applyDocsTemplate } from '../controllers/quick-pick-controller';
-import { cleanupDownloadFiles } from '../helper/cleanup';
 import { templateRepo } from '../helper/user-settings';
 
 const telemetryCommand: string = 'templateSelected';
@@ -21,8 +20,7 @@ export function applyTemplateCommand() {
 }
 
 export async function applyTemplate() {
-	// clean up template directory and download copy of the template repo.
-	cleanupDownloadFiles(true).then(() => downloadTemplateZip());
+	downloadTemplateZip();
 }
 
 export async function displayTemplates() {
