@@ -73,7 +73,7 @@ export async function linkToDocsPageByUrl(urlValue?: string) {
 		let altText = selectedText;
 		if (selection.isEmpty) {
 			altText = await window.showInputBox({
-				placeHolder: 'Enter link text. If no text is entered, url will be used.'
+				placeHolder: 'Enter link text. If no text is entered, URL will be used.'
 			});
 		}
 		repoLink = externalLinkBuilder(urlWithParams, altText ? altText : url.href);
