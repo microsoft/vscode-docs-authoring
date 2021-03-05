@@ -121,16 +121,6 @@ export function getCommunicationDate() {
 	return communicationDate;
 }
 
-export function setSelectorPosition(
-	editor: TextEditor,
-	fromLine: number,
-	fromCharacter: number,
-	toLine: number,
-	toCharacter: number
-) {
-	const cursorPosition = editor.selection.active;
-	const fromPosition = cursorPosition.with(fromLine, fromCharacter);
-	const toPosition = cursorPosition.with(toLine, toCharacter);
-	const newSelection = new Selection(fromPosition, toPosition);
-	editor.selection = newSelection;
+export function updateSiteRelativeLinks(content: string) {
+	return content.replace(/\(\//, '(https://review.docs.microsoft.com/');
 }

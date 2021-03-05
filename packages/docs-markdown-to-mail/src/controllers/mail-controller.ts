@@ -4,7 +4,8 @@ import {
 	getCommunicationDate,
 	postError,
 	postInformation,
-	showStatusMessage
+	showStatusMessage,
+	updateSiteRelativeLinks
 } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
@@ -110,10 +111,7 @@ export async function convertMarkdownToHtml() {
 	// handle site-relative links
 	const siteRelativeLinkRegex = /\[.*]\((\/)/gm;
 	while (siteRelativeLinkRegex.exec(updatedAnnouncementContent) !== null) {
-		updatedAnnouncementContent = updatedAnnouncementContent.replace(
-			/\(\//,
-			'(https://review.docs.microsoft.com/'
-		);
+		updatedAnnouncementContent = updateSiteRelativeLinks(updatedAnnouncementContent);
 	}
 
 	const MarkdownIt = require('markdown-it');
