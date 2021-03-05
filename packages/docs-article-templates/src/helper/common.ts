@@ -59,17 +59,6 @@ export function generateTimestamp() {
 }
 
 /**
- * Formats unit and module names.  Replaces spaces with dashes and set text to lowercase.
- * @param {string} name - Friendly name.
- */
-export function formatLearnNames(name: string) {
-	const formattedName = name.replace(/ /g, '-').toLowerCase();
-	return {
-		formattedName
-	};
-}
-
-/**
  * Return repo name
  * @param Uri
  */
