@@ -106,6 +106,7 @@
 		"webpack-cli": "^3.3.11"
 	},
 	"dependencies": {
+		"@microsoft/microsoft-graph-client": "^2.2.1",
 		"axios": "^0.21.1",
 		"glob": "^7.1.6",
 		"js-yaml": "^3.13.1",
