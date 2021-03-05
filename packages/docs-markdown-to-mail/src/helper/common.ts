@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
-import { Selection, TextDocument, TextEditor, Uri, window, workspace } from 'vscode';
+import { TextDocument, Uri, window, workspace } from 'vscode';
 import { reporter } from './telemetry';
 
 export const output = window.createOutputChannel('docs-markdown-to-mail');
