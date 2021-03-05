@@ -1,10 +1,11 @@
 import { AxiosResponse } from 'axios';
-import { window, workspace } from 'vscode';
+import { TextEditor, window, workspace } from 'vscode';
 import {
 	insertContentToEditor,
 	noActiveEditorMessage,
 	postWarning,
-	setCursorPosition
+	setCursorPosition,
+	tryFindFile
 } from '../../helper/common';
 import { sendTelemetryData } from '../../helper/telemetry';
 import { externalLinkBuilder } from '../../helper/utility';
@@ -13,6 +14,7 @@ import { join } from 'path';
 import { tryGetRelativePath } from '../../helper/tryGetRelativePath';
 import { tryGetHeader } from '../../helper/getHeader';
 import { getAsync } from '../../helper/http-helper';
+import { existsSync, readFileSync } from 'fs';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const HTMLParser = require('node-html-parser');
@@ -56,7 +58,7 @@ export async function linkToDocsPageByUrl(urlValue?: string) {
 		const { confirmation, link } = await getLocalRepoFileLink(
 			inputValue,
 			folder.uri.fsPath,
-			editor.document.uri.fsPath,
+			editor,
 			selectedText
 		);
 		repoLink = link;
@@ -85,7 +87,7 @@ export async function linkToDocsPageByUrl(urlValue?: string) {
 async function getLocalRepoFileLink(
 	url: string,
 	folderPath: string,
-	currentFilePath: string,
+	editor: TextEditor,
 	altText: string
 ) {
 	const { data, response } = (await getAsync(url)) as AxiosResponse | any;
@@ -102,19 +104,10 @@ async function getLocalRepoFileLink(
 		if (metadataTags.length > 0) {
 			const metadata = metadataTags[0].getAttribute('content');
 			const repoName = folderPath.split('\\').pop();
-			if (checkIfCurrentRepoIsUrl(metadata, repoName)) {
-				const absoluteFilePath = parseMetadata(metadata);
-				const lastIndex = currentFilePath.lastIndexOf('\\');
-				const currentFilePathDirectory = currentFilePath.substring(0, lastIndex);
-				if (absoluteFilePath) {
-					const pathToLinkFile = join(folderPath, absoluteFilePath);
-					const relativePath = tryGetRelativePath(currentFilePathDirectory, pathToLinkFile);
-					if (relativePath) {
-						if (!altText) {
-							altText = await tryGetHeader(pathToLinkFile);
-						}
-						return { confirmation: '', link: externalLinkBuilder(relativePath, altText) };
-					}
+			if (checkIfUrlRepoIsInCurrentRepo(metadata, repoName)) {
+				const content = getDocfxContent(editor);
+				if (content && UrlInCurrentContentSet(content, metadata, editor)) {
+					return buildRelativePathBasedOnMetadata(metadata, folderPath, editor, altText);
 				}
 			}
 		}
@@ -122,7 +115,50 @@ async function getLocalRepoFileLink(
 	return { confirmation: '', link: '' };
 }
 
-export function checkIfCurrentRepoIsUrl(repoUrl: string, repoName: string) {
+function UrlInCurrentContentSet(content: DocFxContent, metadata, editor) {
+	if (content.build && content.build.content) {
+		const currentFilePath = editor.document.uri.fsPath;
+		const currentPathFolders = currentFilePath.split('/');
+		const contentArr = content.build.content;
+		const linkPathFolders = metadata.split('/');
+		let bothMatch = false;
+		contentArr.forEach(file => {
+			let match = false;
+			linkPathFolders.forEach(folder => {
+				if (file.src === folder) {
+					match = true;
+				}
+			});
+			currentPathFolders.forEach(folder => {
+				if (file.src === folder && match) {
+					bothMatch = true;
+				}
+			});
+		});
+		return bothMatch;
+	}
+	return true;
+}
+
+async function buildRelativePathBasedOnMetadata(metadata, folderPath, editor, altText) {
+	const absoluteFilePath = parseMetadata(metadata);
+	const currentFilePath = editor.document.uri.fsPath;
+	const lastIndex = currentFilePath.lastIndexOf('\\');
+	const currentFilePathDirectory = currentFilePath.substring(0, lastIndex);
+	if (absoluteFilePath) {
+		const pathToLinkFile = join(folderPath, absoluteFilePath);
+		const relativePath = tryGetRelativePath(currentFilePathDirectory, pathToLinkFile);
+		if (relativePath) {
+			if (!altText) {
+				altText = await tryGetHeader(pathToLinkFile);
+			}
+			return { confirmation: '', link: externalLinkBuilder(relativePath, altText) };
+		}
+	}
+	return { confirmation: '', link: '' };
+}
+
+export function checkIfUrlRepoIsInCurrentRepo(repoUrl: string, repoName: string) {
 	const url = new URL(repoUrl);
 	if (url.origin === 'https://github.com') {
 		const repo = getRepoName(url);
@@ -161,4 +197,31 @@ function parseMetadata(metadata: string) {
 		return params.get('path');
 	}
 	return '';
+}
+
+function getDocfxContent(editor) {
+	const folder = workspace.getWorkspaceFolder(editor.document.uri);
+	if (folder) {
+		// Read the DocFX.json file, search for metadata defaults.
+		const docFxJson = tryFindFile(folder.uri.fsPath, 'docfx.json');
+		if (!!docFxJson && existsSync(docFxJson)) {
+			const jsonBuffer = readFileSync(docFxJson);
+			const content = JSON.parse(jsonBuffer.toString()) as DocFxContent;
+			return content;
+		}
+	}
+	return '';
+}
+
+interface DocFxContent {
+	build: {
+		content?: Content[];
+	};
+}
+
+interface Content {
+	files: string[];
+	src: string;
+	group: string;
+	dest: string;
 }
