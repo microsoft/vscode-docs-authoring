@@ -36,7 +36,7 @@ export function mailerCommand() {
 	return commands;
 }
 
-async function signInPrompt() {
+export async function signInPrompt() {
 	session = await authentication.getSession('microsoft', ['Mail.Send', 'Mail.ReadWrite'], {
 		createIfNone: true
 	});

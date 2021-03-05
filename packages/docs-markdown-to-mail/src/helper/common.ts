@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
-import { TextDocument, Uri, window, workspace } from 'vscode';
+import { Selection, TextDocument, TextEditor, Uri, window, workspace } from 'vscode';
 import { reporter } from './telemetry';
 
 export const output = window.createOutputChannel('docs-markdown-to-mail');
@@ -119,4 +119,18 @@ export function getCommunicationDate() {
 	const year = date.getFullYear();
 	const communicationDate = `${month} ${year}`;
 	return communicationDate;
+}
+
+export function setSelectorPosition(
+	editor: TextEditor,
+	fromLine: number,
+	fromCharacter: number,
+	toLine: number,
+	toCharacter: number
+) {
+	const cursorPosition = editor.selection.active;
+	const fromPosition = cursorPosition.with(fromLine, fromCharacter);
+	const toPosition = cursorPosition.with(toLine, toCharacter);
+	const newSelection = new Selection(fromPosition, toPosition);
+	editor.selection = newSelection;
 }
