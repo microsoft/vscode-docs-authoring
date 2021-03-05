@@ -26,8 +26,8 @@ let emailBody: any;
 let emailSubject: string;
 let primaryEmailAddress: any;
 let session: any;
-let attachments = [];
-let extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
+const attachments = [];
+const extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
 const alertCSS = join(extensionPath, 'media', 'alert-styles.css');
 const siteltrCSS = join(extensionPath, 'media', 'site-alert.css');
 
@@ -104,6 +104,15 @@ export async function convertMarkdownToHtml() {
 		updatedAnnouncementContent = updatedAnnouncementContent.replace(
 			relativeArticleName,
 			reviewLink
+		);
+	}
+
+	// handle site-relative links
+	const siteRelativeLinkRegex = /\[.*]\((\/)/gm;
+	while (siteRelativeLinkRegex.exec(updatedAnnouncementContent) !== null) {
+		updatedAnnouncementContent = updatedAnnouncementContent.replace(
+			/\(\//,
+			'(https://review.docs.microsoft.com/'
 		);
 	}
 
@@ -198,7 +207,7 @@ export async function convertMarkdownToHtml() {
 	let subjectPrefix: string;
 
 	try {
-		let templateTypeMatch: any = metadata.match(msCustomRegex);
+		const templateTypeMatch: any = metadata.match(msCustomRegex);
 		templateType = templateTypeMatch[1];
 	} catch (error) {
 		showStatusMessage(`Not a communication template.`);
@@ -253,7 +262,7 @@ async function sendMail(subjectPrefix?: string) {
 		subjectPrefix = '';
 	}
 	// Create a Graph client
-	var client = Client.init({
+	const client = Client.init({
 		authProvider: done => {
 			// Just return the token
 			done(null, authToken);
