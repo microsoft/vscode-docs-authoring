@@ -27,10 +27,9 @@ let emailBody: any;
 let emailSubject: string;
 let primaryEmailAddress: any;
 let session: any;
+let alertCSS: any;
+let siteltrCSS: any;
 const attachments = [];
-const extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
-const alertCSS = join(extensionPath, 'media', 'alert-styles.css');
-const siteltrCSS = join(extensionPath, 'media', 'site-alert.css');
 
 export function mailerCommand() {
 	const commands = [{ command: signInPrompt.name, callback: signInPrompt }];
@@ -51,6 +50,9 @@ export async function signInPrompt() {
 
 // use markdown-it to generate html
 export async function convertMarkdownToHtml() {
+	const extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
+	alertCSS = join(extensionPath, 'media', 'alert-styles.css');
+	siteltrCSS = join(extensionPath, 'media', 'site-alert.css');
 	const frontMatterRegex = /^(---)([^]+?)(---)$/gm;
 	const titleRegex = /^(#{1})[\s](.*)[\r]?[\n]/gm;
 	const h1Regex = /^#\s+/;
