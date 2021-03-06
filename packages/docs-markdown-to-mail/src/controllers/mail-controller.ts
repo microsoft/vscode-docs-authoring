@@ -4,7 +4,8 @@ import {
 	getCommunicationDate,
 	postError,
 	postInformation,
-	showStatusMessage
+	showStatusMessage,
+	updateSiteRelativeLinks
 } from '../helper/common';
 import { column_end, columnEndOptions, columnOptions } from '../markdown-extensions/column';
 import { container_plugin } from '../markdown-extensions/container';
@@ -26,17 +27,16 @@ let emailBody: any;
 let emailSubject: string;
 let primaryEmailAddress: any;
 let session: any;
-let attachments = [];
-let extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
-const alertCSS = join(extensionPath, 'media', 'alert-styles.css');
-const siteltrCSS = join(extensionPath, 'media', 'site-alert.css');
+let alertCSS: any;
+let siteltrCSS: any;
+const attachments = [];
 
 export function mailerCommand() {
 	const commands = [{ command: signInPrompt.name, callback: signInPrompt }];
 	return commands;
 }
 
-async function signInPrompt() {
+export async function signInPrompt() {
 	session = await authentication.getSession('microsoft', ['Mail.Send', 'Mail.ReadWrite'], {
 		createIfNone: true
 	});
@@ -50,6 +50,9 @@ async function signInPrompt() {
 
 // use markdown-it to generate html
 export async function convertMarkdownToHtml() {
+	const extensionPath = extensions.getExtension('docsmsft.docs-markdown-to-mail').extensionPath;
+	alertCSS = join(extensionPath, 'media', 'alert-styles.css');
+	siteltrCSS = join(extensionPath, 'media', 'site-alert.css');
 	const frontMatterRegex = /^(---)([^]+?)(---)$/gm;
 	const titleRegex = /^(#{1})[\s](.*)[\r]?[\n]/gm;
 	const h1Regex = /^#\s+/;
@@ -105,6 +108,12 @@ export async function convertMarkdownToHtml() {
 			relativeArticleName,
 			reviewLink
 		);
+	}
+
+	// handle site-relative links
+	const siteRelativeLinkRegex = /\[.*]\((\/)/gm;
+	while (siteRelativeLinkRegex.exec(updatedAnnouncementContent) !== null) {
+		updatedAnnouncementContent = updateSiteRelativeLinks(updatedAnnouncementContent);
 	}
 
 	const MarkdownIt = require('markdown-it');
@@ -198,7 +207,7 @@ export async function convertMarkdownToHtml() {
 	let subjectPrefix: string;
 
 	try {
-		let templateTypeMatch: any = metadata.match(msCustomRegex);
+		const templateTypeMatch: any = metadata.match(msCustomRegex);
 		templateType = templateTypeMatch[1];
 	} catch (error) {
 		showStatusMessage(`Not a communication template.`);
@@ -253,7 +262,7 @@ async function sendMail(subjectPrefix?: string) {
 		subjectPrefix = '';
 	}
 	// Create a Graph client
-	var client = Client.init({
+	const client = Client.init({
 		authProvider: done => {
 			// Just return the token
 			done(null, authToken);
