@@ -103,7 +103,7 @@ export async function insertURL() {
 	};
 
 	const linkTextOptions: vscode.InputBoxOptions = {
-		placeHolder: 'Enter link text. If no text is entered, url will be used.'
+		placeHolder: 'Enter link text. If no text is entered, URL will be used.'
 	};
 
 	const val = await vscode.window.showInputBox(options);

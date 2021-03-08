@@ -404,3 +404,7 @@ export function findLineNumberOfPattern(editor: vscode.TextEditor, pattern: stri
 	}
 	return found;
 }
+
+export function isNullOrWhiteSpace(str) {
+	return !str || str.length === 0 || /^\s*$/.test(str);
+}

@@ -69,13 +69,14 @@ export async function linkToDocsPageByUrl(urlValue?: string) {
 		const url = new URL(inputValue);
 		const docsRegexLang = new RegExp(/^(\/[A-Za-z]{2}-[A-Za-z]{2})?\//);
 		const urlWithoutLocal = url.pathname.replace(docsRegexLang, '/');
+		const urlWithParams = `${urlWithoutLocal}${url.search}`;
 		let altText = selectedText;
 		if (selection.isEmpty) {
 			altText = await window.showInputBox({
-				placeHolder: 'Enter alt text for link.'
+				placeHolder: 'Enter link text. If no text is entered, URL will be used.'
 			});
 		}
-		repoLink = externalLinkBuilder(urlWithoutLocal, altText ? altText : url.href);
+		repoLink = externalLinkBuilder(urlWithParams, altText ? altText : url.href);
 	}
 	insertContentToEditor(editor, repoLink, true);
 	setCursorPosition(editor, selection.start.line, selection.start.character + repoLink.length);
