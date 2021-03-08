@@ -119,23 +119,31 @@ async function getLocalRepoFileLink(
 function UrlInCurrentContentSet(content: DocFxContent, metadata, editor) {
 	if (content.build && content.build.content) {
 		const currentFilePath = editor.document.uri.fsPath;
-		const currentPathFolders = currentFilePath.split('/');
+		const currentPathFolders = currentFilePath.replace(/\\/g, '/').split('/');
 		const contentArr = content.build.content;
 		const linkPathFolders = metadata.split('/');
 		let bothMatch = false;
-		contentArr.forEach(file => {
-			let match = false;
-			linkPathFolders.forEach(folder => {
-				if (file.src === folder) {
-					match = true;
+		let match = '';
+		for (const file of contentArr) {
+			if (file.src) {
+				for (const linkPathFolder of linkPathFolders) {
+					if (file.src === linkPathFolder) {
+						match = file.src;
+						break;
+					}
 				}
-			});
-			currentPathFolders.forEach(folder => {
-				if (file.src === folder && match) {
-					bothMatch = true;
+				for (const currentPathFolder of currentPathFolders) {
+					if (file.src === currentPathFolder && match === currentPathFolder) {
+						bothMatch = true;
+						break;
+					}
 				}
-			});
-		});
+				if (bothMatch) {
+					break;
+				}
+			}
+		}
+
 		return bothMatch;
 	}
 	return true;
