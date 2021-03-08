@@ -120,3 +120,7 @@ export function getCommunicationDate() {
 	const communicationDate = `${month} ${year}`;
 	return communicationDate;
 }
+
+export function updateSiteRelativeLinks(content: string) {
+	return content.replace(/\(\//, '(https://review.docs.microsoft.com/');
+}
