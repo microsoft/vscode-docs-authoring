@@ -2,11 +2,11 @@
 	"name": "docs-metadata",
 	"displayName": "docs-metadata",
 	"description": "Simplifies editing metadata within docs.",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"publisher": "docsmsft",
 	"icon": "images/docs-logo-ms.png",
 	"engines": {
-		"vscode": "^1.52.0"
+		"vscode": "^1.53.0"
 	},
 	"categories": [
 		"Other"
@@ -68,7 +68,7 @@
 		"@types/chai-spies": "^1.0.1",
 		"@types/mocha": "^7.0.1",
 		"@types/node": "^10.12.21",
-		"@types/vscode": "^1.52.0",
+		"@types/vscode": "^1.53.0",
 		"@typescript-eslint/eslint-plugin": "^2.34.0",
 		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",
 		"@typescript-eslint/parser": "^2.34.0",

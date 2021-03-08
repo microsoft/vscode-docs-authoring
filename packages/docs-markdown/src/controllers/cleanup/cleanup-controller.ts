@@ -21,6 +21,7 @@ import { runAll, runAllWorkspace } from './runAll';
 import { getCleanUpQuickPick, recurseCallback } from './utilities';
 import { cleanUpDevLangInCodeBlocks } from './devlangsInCodeBlocks';
 import recursive = require('recursive-readdir');
+import { addPeriodsToAlt } from './addPeriodsToAlt';
 
 const telemetryCommand: string = 'applyCleanup';
 let commandOption: string;
@@ -66,7 +67,7 @@ export async function applyCleanupFile(uri: Uri) {
 			let statusMessage = '';
 			const promises: Promise<any>[] = [];
 			progress.report({ increment: 1, message });
-			return new Promise(async (resolve, reject) => {
+			return new Promise<void>(async (resolve, reject) => {
 				switch (selection.label.toLowerCase()) {
 					case 'single-valued metadata':
 						showStatusMessage('Cleanup: Single-Valued metadata started.');
@@ -94,6 +95,15 @@ export async function applyCleanupFile(uri: Uri) {
 						promises.push(capitalizationOfMetadata(progress, file, null, null));
 						message = 'Capitalization of metadata values completed.';
 						commandOption = 'capitalization';
+						break;
+					case 'add periods to alt text':
+						showStatusMessage('Cleanup: Add periods to alt text.');
+						message = 'Add periods to alt text values started.';
+						progress.report({ increment: 1, message });
+						statusMessage = 'Cleanup: Add periods to alt text values completed.';
+						promises.push(addPeriodsToAlt(progress, file, null, null));
+						message = 'Add periods to alt text values completed.';
+						commandOption = 'add-periods-to-alt-text';
 						break;
 					case 'clean up devlang for code blocks':
 						showStatusMessage('Cleanup: Devlang for code blocks started.');
@@ -198,7 +208,7 @@ export async function applyCleanupFolder(uri: Uri) {
 			token.onCancellationRequested(() => {
 				postError('User canceled the long running operation');
 			});
-			return new Promise(async (resolve, reject) => {
+			return new Promise<void>(async (resolve, reject) => {
 				let message = '';
 				let statusMessage = '';
 				const files = await recursive(uri.fsPath, ignoreFiles);
@@ -252,6 +262,17 @@ export async function applyCleanupFolder(uri: Uri) {
 						});
 						message = 'Capitalization of metadata values completed.';
 						commandOption = 'capitalization';
+						break;
+					case 'add periods to alt text':
+						showStatusMessage('Cleanup: Add periods to alt text.');
+						message = 'Add periods to alt text values started.';
+						progress.report({ increment: 1, message });
+						statusMessage = 'Cleanup: Add periods to alt text values completed.';
+						files.map((file, index) => {
+							promises.push(addPeriodsToAlt(progress, file, files, index));
+						});
+						message = 'Add periods to alt text values completed.';
+						commandOption = 'add-periods-to-alt-text';
 						break;
 					case 'clean up devlang for code blocks':
 						showStatusMessage('Cleanup: Clean up devlang for code blocks started.');
@@ -376,7 +397,7 @@ export async function applyCleanup() {
 			token.onCancellationRequested(() => {
 				postError('User canceled the long running operation');
 			});
-			return new Promise(async (resolve, reject) => {
+			return new Promise<void>(async (resolve, reject) => {
 				const editor = window.activeTextEditor;
 				if (!editor) {
 					noActiveEditorMessage();
@@ -461,6 +482,15 @@ export async function applyCleanup() {
 								message = 'Clean up devlang for code blocks completed.';
 								commandOption = 'devlang';
 								break;
+							case 'add periods to alt text':
+								showStatusMessage('Cleanup: Add periods to alt text.');
+								message = 'Add periods to alt text values started.';
+								progress.report({ increment: 1, message });
+								statusMessage = 'Cleanup: Add periods to alt text values completed.';
+								promises.push(recurseCallback(workspacePath, progress, addPeriodsToAlt));
+								message = 'Add periods to alt text values completed.';
+								commandOption = 'add-periods-to-alt-text';
+								break;
 							case 'everything':
 								progress.report({ increment: 1, message });
 								await runAllWorkspace(workspacePath, progress, resolve);
@@ -495,7 +525,7 @@ export async function applyCleanup() {
 								progress.report({ increment: 1, message });
 								statusMessage = 'Cleanup: Metadata attribute cleanup completed.';
 								promises.push(
-									new Promise((chainResolve, chainReject) => {
+									new Promise<void>((chainResolve, chainReject) => {
 										recursive(workspacePath, ignoreFiles, (err: any, files: string[]) => {
 											if (err) {
 												postError(err);

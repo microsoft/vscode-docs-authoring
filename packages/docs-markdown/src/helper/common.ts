@@ -235,6 +235,14 @@ export function isMarkdownFileCheckWithoutNotification(editor: vscode.TextEditor
 	}
 }
 
+export function isMarkdownYamlFileCheckWithoutNotification(editor: vscode.TextEditor) {
+	if (editor.document.languageId === 'markdown' || editor.document.languageId === 'yaml') {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 export function isValidFileCheck(editor: vscode.TextEditor, languageIds: string[]) {
 	return languageIds.some(id => editor.document.languageId === id);
 }
@@ -395,4 +403,8 @@ export function findLineNumberOfPattern(editor: vscode.TextEditor, pattern: stri
 		}
 	}
 	return found;
+}
+
+export function isNullOrWhiteSpace(str) {
+	return !str || str.length === 0 || /^\s*$/.test(str);
 }

@@ -4,10 +4,10 @@
 	"description": "Docs article templates",
 	"icon": "images/docs-logo-ms.png",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-	"version": "0.2.9",
+	"version": "0.2.11",
 	"publisher": "docsmsft",
 	"engines": {
-		"vscode": "^1.52.0"
+		"vscode": "^1.53.0"
 	},
 	"categories": [
 		"Other"
@@ -40,10 +40,10 @@
 					"default": "",
 					"description": "GitHub ID"
 				},
-				"docs.templates.learn_repo_id": {
+				"docs.templates.template_repo": {
 					"type": "string",
-					"default": "",
-					"description": "Default Learn repo"
+					"default": "https://github.com/MicrosoftDocs/content-templates/archive/master.zip",
+					"description": "Docs template repo"
 				}
 			}
 		},
@@ -77,12 +77,14 @@
 		}
 	},
 	"dependencies": {
-		"axios": "^0.19.0",
+		"axios": "^0.21.1",
 		"download-git-repo": "^1.0.2",
+		"extract-zip": "^2.0.1",
 		"front-matter": "^3.0.1",
 		"js-yaml": "^3.13.1",
 		"node-dir": "^0.1.17",
 		"octicons": "^4.4.0",
+		"tmp": "^0.2.1",
 		"vscode-extension-telemetry": "^0.1.1"
 	},
 	"devDependencies": {
@@ -92,7 +94,7 @@
 		"@types/mocha": "^7.0.2",
 		"@types/node": "^12.12.32",
 		"@types/node-dir": "0.0.32",
-		"@types/vscode": "^1.52.0",
+		"@types/vscode": "^1.53.0",
 		"@typescript-eslint/eslint-plugin": "^2.34.0",
 		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",
 		"@typescript-eslint/parser": "^2.34.0",
@@ -101,12 +103,12 @@
 		"eslint": "^7.1.0",
 		"eslint-import-resolver-webpack": "^0.12.1",
 		"eslint-plugin-import": "^2.20.2",
-		"husky": "^4.2.5",
+		"husky": "^4.3.8",
 		"mocha": "^8.0.1",
 		"mocha-junit-reporter": "^1.23.3",
 		"nyc": "^15.0.0",
 		"prettier": "^2.0.5",
-		"pretty-quick": "^2.0.1",
+		"pretty-quick": "^3.1.0",
 		"sinon": "^9.0.1",
 		"source-map-support": "^0.5.16",
 		"terser-webpack-plugin": "^2.3.5",

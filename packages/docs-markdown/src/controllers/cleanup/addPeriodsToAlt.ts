@@ -1,4 +1,4 @@
-import { escapeRegExp, splice } from '../../helper/common';
+import { escapeRegExp, splice, isNullOrWhiteSpace } from '../../helper/common';
 import { reporter } from '../../helper/telemetry';
 import { readWriteFileWithProgress } from './utilities';
 
@@ -25,14 +25,14 @@ export function addPeriodsToAlt(
 	}
 }
 
-function addPeriodsForMd(data: string) {
+export function addPeriodsForMd(data: string) {
 	const regex = new RegExp(/\!\[(.*(?<!(\?|\!|\.)))\]\((.*)\)/g);
 	const altTextRegex = new RegExp(/\!\[(.*?(?<!(\?|\!|\.)))\]/);
 	data = insertPeriod(data, regex, altTextRegex);
 	return data;
 }
 
-function addPeriodsForTripleColonImage(data: string) {
+export function addPeriodsForTripleColonImage(data: string) {
 	const regex = new RegExp(
 		/image\s+(((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+))"\s*)+:::/g
 	);
@@ -46,11 +46,13 @@ function insertPeriod(data: string, regex: RegExp, altTextRegex: RegExp) {
 	if (matches) {
 		matches.forEach(match => {
 			const groups = altTextRegex.exec(match);
-			if (groups) {
-				const insertAtPosition = groups.index + groups[0].length - 1;
-				const imageTagAltTextWithPuctuation = splice(insertAtPosition, match, '.');
-				const imageTagRegex = new RegExp(escapeRegExp(match));
-				data = data.replace(imageTagRegex, imageTagAltTextWithPuctuation);
+			if (groups && groups.length > 0) {
+				if (!isNullOrWhiteSpace(groups[1])) {
+					const insertAtPosition = groups.index + groups[0].length - 1;
+					const imageTagAltTextWithPuctuation = splice(insertAtPosition, match, '.');
+					const imageTagRegex = new RegExp(escapeRegExp(match));
+					data = data.replace(imageTagRegex, imageTagAltTextWithPuctuation);
+				}
 			}
 		});
 	}

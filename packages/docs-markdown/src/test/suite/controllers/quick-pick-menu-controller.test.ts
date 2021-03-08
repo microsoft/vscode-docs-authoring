@@ -19,7 +19,7 @@ import * as alertController from '../../../controllers/alert-controller';
 import * as listController from '../../../controllers/list-controller';
 import * as tableController from '../../../controllers/table-controller';
 import * as rowColumnsController from '../../../controllers/row-columns-controller';
-import * as linkController from '../../../controllers/link-controller';
+import * as linkController from '../../../controllers/links/link-controller';
 import * as noLocController from '../../../controllers/no-loc-controller';
 import * as imageController from '../../../controllers/image-controller';
 import * as includeController from '../../../controllers/include-controller';
@@ -39,7 +39,6 @@ import {
 } from '../../../controllers/quick-pick-menu-controller';
 
 const expect = chai.expect;
-
 interface Subscription {
 	dispose(): any;
 }
@@ -50,11 +49,19 @@ interface EnvironmentalMutator {
 const uri = resolve(__dirname, '../../../../../src/test/data/repo/articles/image-controller2.md');
 let environmentalMutator: EnvironmentalMutator;
 let subscriptions: Subscription[];
+let emptySecret: any;
+
 const context: ExtensionContext = {
 	globalState: {
 		get: key => {},
 		update: (key, value) => Promise.resolve(),
 		setKeysForSync(keys: string[]): void {}
+	},
+	secrets: {
+		store: (key, value) => Promise.resolve(),
+		get: async key => '',
+		delete: key => Promise.resolve(),
+		onDidChange: emptySecret
 	},
 	subscriptions,
 	workspaceState: {
@@ -171,42 +178,6 @@ suite('Quick Pick Menu Controller', () => {
 		stubShowQuickPick.onCall(0).resolves(item);
 		stubShowQuickPick.onCall(1).resolves('some selection');
 		const spy = chai.spy.on(alertController, 'insertAlert');
-		markdownQuickPick(context);
-		await sleep(sleepTime);
-		expect(spy).to.have.been.called();
-		stubShowQuickPick.restore();
-	});
-	test('markdownQuickPick - insertNumberedList', async () => {
-		const filePath = resolve(
-			__dirname,
-			'../../../../../src/test/data/repo/articles/docs-markdown.md'
-		);
-		await loadDocumentAndGetItReady(filePath);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
-		const item: QuickPickItem = {
-			description: '',
-			label: '$(list-ordered) Numbered list'
-		};
-		stubShowQuickPick.onCall(0).resolves(item);
-		const spy = chai.spy.on(listController, 'insertNumberedList');
-		markdownQuickPick(context);
-		await sleep(sleepTime);
-		expect(spy).to.have.been.called();
-		stubShowQuickPick.restore();
-	});
-	test('markdownQuickPick - insertBulletedList', async () => {
-		const filePath = resolve(
-			__dirname,
-			'../../../../../src/test/data/repo/articles/docs-markdown.md'
-		);
-		await loadDocumentAndGetItReady(filePath);
-		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
-		const item: QuickPickItem = {
-			description: '',
-			label: '$(list-unordered) Bulleted list'
-		};
-		stubShowQuickPick.onCall(0).resolves(item);
-		const spy = chai.spy.on(listController, 'insertBulletedList');
 		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();
@@ -455,6 +426,29 @@ suite('Quick Pick Menu Controller', () => {
 		};
 		stubShowQuickPick.onCall(0).resolves(item);
 		const spy = chai.spy.on(yamlController, 'insertExpandableParentNode');
+		markdownQuickPick(context);
+		await sleep(sleepTime);
+		expect(spy).to.have.been.called();
+		stubShowQuickPick.restore();
+	});
+	test('markdownQuickPick - selectListType', async () => {
+		const filePath = resolve(
+			__dirname,
+			'../../../../../src/test/data/repo/articles/docs-markdown.md'
+		);
+		await loadDocumentAndGetItReady(filePath);
+		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
+		const item1: QuickPickItem = {
+			description: '',
+			label: '$(list-ordered) List'
+		};
+		const item2: QuickPickItem = {
+			description: '',
+			label: '(foo)'
+		};
+		stubShowQuickPick.onCall(0).resolves(item1);
+		stubShowQuickPick.onCall(1).resolves(item2);
+		const spy = chai.spy.on(listController, 'selectListType');
 		markdownQuickPick(context);
 		await sleep(sleepTime);
 		expect(spy).to.have.been.called();

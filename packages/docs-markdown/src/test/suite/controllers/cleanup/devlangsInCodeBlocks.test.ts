@@ -23,13 +23,13 @@ suite('Convert devlangs', () => {
 	});
 	test('cs devlang should be csharp', async () => {
 		const inputString = '```cs ```';
-		const outputString = '```csharp```';
+		const outputString = '```csharp\r\n```';
 		const output = convertDevlang(inputString);
 		expect(output).to.equal(outputString);
 	});
 	test('markdown devlang should be md', async () => {
 		const inputString = '```markdown ```';
-		const outputString = '```md```';
+		const outputString = '```md\r\n```';
 		const output = convertDevlang(inputString);
 		expect(output).to.equal(outputString);
 	});

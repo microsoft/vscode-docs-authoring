@@ -266,7 +266,7 @@ export function internalLinkBuilder(
 	if (pathSelection === '') {
 		link = `${startBrace}${selectedText}]()`;
 	} else {
-		link = `${startBrace}${selectedText}](${pathSelection})`;
+		link = `${startBrace}${selectedText}](${pathSelection.replace(' ', '%20')})`;
 	}
 
 	const langId = languageId || 'markdown';

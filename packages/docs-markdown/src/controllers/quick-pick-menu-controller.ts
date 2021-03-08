@@ -10,8 +10,8 @@ import { formatCode } from './code-controller';
 import { pickImageType } from './image-controller';
 import { insertInclude } from './include-controller';
 import { formatItalic } from './italic-controller';
-import { pickLinkType } from './link-controller';
-import { insertBulletedList, insertNumberedList } from './list-controller';
+import { pickLinkType } from './links/link-controller';
+import { selectListType } from './list-controller';
 import { insertLink, insertVideo } from './media-controller';
 import { insertMoniker } from './moniker-controller';
 import { noLocText } from './no-loc-controller';
@@ -46,21 +46,6 @@ export function markdownQuickPick(context: ExtensionContext) {
 			description: '',
 			label: '$(browser) Preview'
 		});
-		markdownItems.push({
-			description: '',
-			label: '$(search) Search Results Preview'
-		});
-	}
-
-	if (checkExtensionInstalled('docsmsft.docs-build')) {
-		markdownItems.push({
-			description: '',
-			label: '$(check) Validate repository'
-		});
-		yamlItems.push({
-			description: '',
-			label: '$(check) Validate repository'
-		});
 	}
 
 	markdownItems.push(
@@ -78,19 +63,11 @@ export function markdownQuickPick(context: ExtensionContext) {
 		},
 		{
 			description: '',
-			label: '$(book) Jupyter Notebook'
-		},
-		{
-			description: '',
 			label: '$(alert) Alert'
 		},
 		{
 			description: '',
-			label: '$(list-ordered) Numbered list'
-		},
-		{
-			description: '',
-			label: '$(list-unordered) Bulleted list'
+			label: '$(list-ordered) List'
 		},
 		{
 			description: '',
@@ -103,10 +80,6 @@ export function markdownQuickPick(context: ExtensionContext) {
 		{
 			description: '',
 			label: '$(link) Link'
-		},
-		{
-			description: '',
-			label: '$(lock) Non-localizable text'
 		},
 		{
 			description: '',
@@ -123,6 +96,38 @@ export function markdownQuickPick(context: ExtensionContext) {
 		{
 			description: '',
 			label: '$(device-camera-video) Video'
+		}
+	);
+
+	if (checkExtension('docsmsft.docs-article-templates')) {
+		markdownItems.push({
+			description: '',
+			label: '$(diff) Template'
+		});
+	}
+
+	if (checkExtensionInstalled('docsmsft.docs-build')) {
+		markdownItems.push({
+			description: '',
+			label: '$(check) Validate repository'
+		});
+		yamlItems.push({
+			description: '',
+			label: '$(check) Validate repository'
+		});
+	}
+
+	if (checkExtension('docsmsft.docs-preview')) {
+		markdownItems.push({
+			description: '',
+			label: '$(search) Search Results Preview'
+		});
+	}
+
+	markdownItems.push(
+		{
+			description: '',
+			label: '$(book) Jupyter Notebook'
 		},
 		{
 			description: '',
@@ -131,6 +136,10 @@ export function markdownQuickPick(context: ExtensionContext) {
 		{
 			description: '',
 			label: '$(project) Moniker'
+		},
+		{
+			description: '',
+			label: '$(lock) Non-localizable text'
 		}
 	);
 
@@ -144,13 +153,6 @@ export function markdownQuickPick(context: ExtensionContext) {
 	const previewFeatures = config.get<boolean>('previewFeatures');
 	if (previewFeatures === true) {
 		output.appendLine('Preview features will be enabled.');
-	}
-
-	if (checkExtension('docsmsft.docs-article-templates')) {
-		markdownItems.push({
-			description: '',
-			label: '$(diff) Template'
-		});
 	}
 
 	yamlItems.push(
@@ -217,11 +219,8 @@ export function markdownQuickPick(context: ExtensionContext) {
 			case 'alert':
 				insertAlert();
 				break;
-			case 'numbered list':
-				insertNumberedList();
-				break;
-			case 'bulleted list':
-				insertBulletedList();
+			case 'list':
+				selectListType();
 				break;
 			case 'table':
 				insertTable();

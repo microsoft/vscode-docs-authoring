@@ -10,6 +10,7 @@ import {
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
 import { loadDocumentAndGetItReady, sleep, sleepTime } from '../../test.common/common';
+import * as getHeader from '../../../helper/getHeader';
 
 chai.use(spies);
 
@@ -69,8 +70,10 @@ suite('Bookmark Controller', () => {
 		const filePath = resolve(__dirname, '../../../../../src/test/data/repo/articles/bookmark.md');
 		await loadDocumentAndGetItReady(filePath);
 		const spy = chai.spy.on(window, 'showErrorMessage');
+		const stubTryGetHeader = sinon.stub(getHeader, 'getHeadings').returns('');
 		await insertBookmarkInternal();
 		expect(spy).to.have.been.called();
+		stubTryGetHeader.restore();
 	});
 	test('insertBookmarkInternal::insertContentToEditor', async () => {
 		const filePath = resolve(
