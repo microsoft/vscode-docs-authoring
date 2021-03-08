@@ -3,7 +3,7 @@
 	"displayName": "docs-markdown-to-mail",
 	"description": "Docs Markdown to Mail Extension",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"publisher": "docsmsft",
 	"icon": "images/docs-logo-ms.png",
 	"preview": true,
