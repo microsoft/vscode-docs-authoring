@@ -101,10 +101,10 @@ suite('Image Controller', () => {
 
 		await loadDocumentAndGetItReady(filePath);
 		await pickImageType(context);
-		await sleep(extendedSleepTime);
 		const expectedText = ':::image type="content" source="../images/test.png" alt-text="foo":::';
 		const editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
+		await sleep(extendedSleepTime);
 		assert.equal(expectedText, actualText);
 		stubShowQuickPick.restore();
 		stubShowInputBox.restore();
