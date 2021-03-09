@@ -107,8 +107,12 @@ async function getLocalRepoFileLink(
 			const repoName = folderPath.split('\\').pop();
 			if (checkIfUrlRepoIsInCurrentRepo(metadata, repoName)) {
 				const content = getDocfxContent(editor);
-				if (content && UrlInCurrentContentSet(content, metadata, editor)) {
+				if (!content) {
 					return buildRelativePathBasedOnMetadata(metadata, folderPath, editor, altText);
+				} else {
+					if (UrlInCurrentContentSet(content, metadata, editor)) {
+						return buildRelativePathBasedOnMetadata(metadata, folderPath, editor, altText);
+					}
 				}
 			}
 		}
