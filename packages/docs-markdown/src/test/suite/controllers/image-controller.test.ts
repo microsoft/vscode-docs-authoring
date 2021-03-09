@@ -32,7 +32,7 @@ import sinon = require('sinon');
 
 const expect = chai.expect;
 
-suite('Image Controller', () => {
+suite.only('Image Controller', () => {
 	// Reset and tear down the spies
 	teardown(() => {
 		chai.spy.restore(common);
@@ -106,10 +106,10 @@ suite('Image Controller', () => {
 
 		await loadDocumentAndGetItReady(filePath);
 		await pickImageType(context);
+		await sleep(longSleepTime);
 		const expectedText = ':::image type="content" source="../images/test.png" alt-text="foo":::';
 		const editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
-		await sleep(longSleepTime);
 		assert.equal(expectedText, actualText);
 		stubShowQuickPick.restore();
 		stubShowInputBox.restore();
@@ -135,6 +135,7 @@ suite('Image Controller', () => {
 
 		await loadDocumentAndGetItReady(filePath);
 		await pickImageType(context);
+		await sleep(longSleepTime);
 		const expectedText =
 			':::image type="complex" source="../images/test.png" alt-text="foo":::' +
 			os.EOL +
@@ -142,7 +143,6 @@ suite('Image Controller', () => {
 			':::image-end:::';
 		const editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
-		await sleep(longSleepTime);
 		assert.equal(expectedText, actualText);
 		stubShowQuickPick.restore();
 		stubShowInputBox.restore();
@@ -200,12 +200,12 @@ suite('Image Controller', () => {
 		let editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 0, 4);
 		await pickImageType(context);
+		await sleep(longSleepTime);
 		const expectedText =
 			':::image type="content" source="../images/test.png" alt-text="foo" loc-scope="markdown" lightbox="../images/test.png":::' +
 			os.EOL;
 		editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
-		await sleep(longSleepTime);
 		assert.equal(expectedText, actualText);
 		stubShowQuickPick.restore();
 	});
@@ -232,12 +232,12 @@ suite('Image Controller', () => {
 		let editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 0, 4);
 		await pickImageType(context);
+		await sleep(longSleepTime);
 		const expectedText =
 			':::image type="content" source="../images/test.png" alt-text="foo" link="https://microsoft.com":::' +
 			os.EOL;
 		editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
-		await sleep(longSleepTime);
 		assert.equal(expectedText, actualText);
 		stubShowQuickPick.restore();
 		stubAxios.restore();
