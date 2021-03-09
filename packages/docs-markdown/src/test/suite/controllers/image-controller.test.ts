@@ -195,12 +195,12 @@ suite('Image Controller', () => {
 		let editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 0, 4);
 		await pickImageType(context);
-		await sleep(extendedSleepTime);
 		const expectedText =
 			':::image type="content" source="../images/test.png" alt-text="foo" loc-scope="markdown" lightbox="../images/test.png":::' +
 			os.EOL;
 		editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
+		await sleep(extendedSleepTime);
 		assert.equal(expectedText, actualText);
 		stubShowQuickPick.restore();
 	});
