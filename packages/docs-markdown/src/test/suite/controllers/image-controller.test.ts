@@ -32,7 +32,7 @@ import sinon = require('sinon');
 
 const expect = chai.expect;
 
-suite.only('Image Controller', () => {
+suite('Image Controller', () => {
 	// Reset and tear down the spies
 	teardown(() => {
 		chai.spy.restore(common);
