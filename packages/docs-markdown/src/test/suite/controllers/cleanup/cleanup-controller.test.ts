@@ -131,8 +131,8 @@ suite('Cleanup Controller', () => {
 		const spy = chai.spy.on(removeEmptyMetadata, 'removeEmptyMetadata');
 		await applyCleanup();
 		await sleep(extendedSleepTime);
-		mockShowQuickPick.restore();
 		expect(spy).to.have.been.called();
+		mockShowQuickPick.restore();
 	});
 	test('cleanup repo - empty metadata - n/a', async () => {
 		await loadDocumentAndGetItReady(filePath);

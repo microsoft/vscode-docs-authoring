@@ -18,7 +18,12 @@ import {
 } from '../../../controllers/image-controller';
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
-import { loadDocumentAndGetItReady, sleep, extendedSleepTime } from '../../test.common/common';
+import {
+	loadDocumentAndGetItReady,
+	sleep,
+	extendedSleepTime,
+	longSleepTime
+} from '../../test.common/common';
 import { context } from '../../test.common/common';
 
 chai.use(spies);
@@ -101,7 +106,7 @@ suite('Image Controller', () => {
 
 		await loadDocumentAndGetItReady(filePath);
 		await pickImageType(context);
-		await sleep(extendedSleepTime);
+		await sleep(longSleepTime);
 		const expectedText = ':::image type="content" source="../images/test.png" alt-text="foo":::';
 		const editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
@@ -130,7 +135,7 @@ suite('Image Controller', () => {
 
 		await loadDocumentAndGetItReady(filePath);
 		await pickImageType(context);
-		await sleep(extendedSleepTime);
+		await sleep(longSleepTime);
 		const expectedText =
 			':::image type="complex" source="../images/test.png" alt-text="foo":::' +
 			os.EOL +
@@ -165,7 +170,7 @@ suite('Image Controller', () => {
 		let editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 0, 4);
 		await pickImageType(context);
-		await sleep(extendedSleepTime);
+		await sleep(longSleepTime);
 		const expectedText =
 			':::image type="content" source="../images/test.png" alt-text="foo" loc-scope="markdown":::' +
 			os.EOL;
@@ -195,7 +200,7 @@ suite('Image Controller', () => {
 		let editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 0, 4);
 		await pickImageType(context);
-		await sleep(extendedSleepTime);
+		await sleep(longSleepTime);
 		const expectedText =
 			':::image type="content" source="../images/test.png" alt-text="foo" loc-scope="markdown" lightbox="../images/test.png":::' +
 			os.EOL;
@@ -227,7 +232,7 @@ suite('Image Controller', () => {
 		let editor = window.activeTextEditor;
 		common.setCursorPosition(editor!, 0, 4);
 		await pickImageType(context);
-		await sleep(extendedSleepTime);
+		await sleep(longSleepTime);
 		const expectedText =
 			':::image type="content" source="../images/test.png" alt-text="foo" link="https://microsoft.com":::' +
 			os.EOL;
