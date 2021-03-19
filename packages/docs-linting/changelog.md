@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.0.7 (March 18th, 2021)
+
+- Fixed issue where xref escaped character was displaying linting problem.
+
 ## 0.0.6 (February 24th, 2021)
 
 - Fixed issue with attribute matching.
