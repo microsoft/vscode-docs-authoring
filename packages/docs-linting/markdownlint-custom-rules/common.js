@@ -91,7 +91,7 @@ module.exports.xrefHasDisplayProperty = /displayProperty=/g;
 module.exports.xrefDisplayPropertyValues = /displayProperty=(fullName|nameWithType)/g;
 module.exports.xrefHasTwoProperties = /&/g;
 module.exports.syntaxXref = /(<|\()xref:(.*?)(\?)?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?))?(>|\))/g;
-module.exports.notEscapedCharacters = /(<|\()xref:(.*[*#`].*)(>|\))/g;
+module.exports.notEscapedCharacters = /(<|\()xref:(.*[*`].*)(>|\))/g;
 
 // Row
 module.exports.looseRow = /(:+)\s*row\s*(count=".*?")?(:*)?([^]+?(:*)row-end?(:*))?/gi;
