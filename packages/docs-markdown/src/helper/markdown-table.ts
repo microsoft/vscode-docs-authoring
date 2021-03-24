@@ -85,12 +85,15 @@ export class MarkdownTable {
 				for (let i = 0; i < columns.length; ++i) {
 					let column = columns[i].trim();
 					let padding = calculatePadding ? columnSpanLengths.get(i) || 0 : 0;
+					const isLastColumn = isLastIteration(i, columns);
 
 					if (index === 0 && i === 0) {
 						value += '|';
+						if (isLastColumn) {
+							value += '|';
+						}
 						continue;
 					}
-					const isLastColumn = isLastIteration(i, columns);
 					if (isAlignmentRow) {
 						const columnAlignment = columnAlignments.get(i) || ColumnAlignment.None;
 						switch (columnAlignment) {

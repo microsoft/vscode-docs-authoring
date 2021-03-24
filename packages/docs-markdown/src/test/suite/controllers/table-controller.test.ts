@@ -1,4 +1,3 @@
-import * as assert from 'assert';
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { resolve } from 'path';
@@ -7,11 +6,17 @@ import {
 	insertTable,
 	insertTableCommand,
 	consolidateTable,
-	distributeTable
+	distributeTable,
+	convertTableToDataMatrix
 } from '../../../controllers/table-controller';
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
-import { loadDocumentAndGetItReady, sleep, sleepTime } from '../../test.common/common';
+import {
+	extendedSleepTime,
+	loadDocumentAndGetItReady,
+	sleep,
+	sleepTime
+} from '../../test.common/common';
 
 chai.use(spies);
 
@@ -19,7 +24,7 @@ import sinon = require('sinon');
 
 const expect = chai.expect;
 
-suite('Table Controller', () => {
+suite.only('Table Controller', () => {
 	// Reset and tear down the spies
 	teardown(() => {
 		chai.spy.restore(common);
@@ -36,7 +41,8 @@ suite('Table Controller', () => {
 		const controllerCommands = [
 			{ command: consolidateTable.name, callback: consolidateTable },
 			{ command: distributeTable.name, callback: distributeTable },
-			{ command: insertTable.name, callback: insertTable }
+			{ command: insertTable.name, callback: insertTable },
+			{ command: convertTableToDataMatrix.name, callback: convertTableToDataMatrix }
 		];
 		expect(insertTableCommand()).to.deep.equal(controllerCommands);
 	});
@@ -64,6 +70,8 @@ suite('Table Controller', () => {
 			__dirname,
 			'../../../../../src/test/data/repo/articles/table-controller.md'
 		);
+		await loadDocumentAndGetItReady(filePath);
+
 		const spy = chai.spy.on(common, 'insertContentToEditor');
 		insertTable();
 		await sleep(sleepTime);
@@ -75,23 +83,43 @@ suite('Table Controller', () => {
 			__dirname,
 			'../../../../../src/test/data/repo/articles/table-controller2.md'
 		);
+		await loadDocumentAndGetItReady(filePath);
+
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor, 1, 0, 4, 0);
-		const spy = chai.spy(distributeTable);
-		distributeTable();
-		await sleep(sleepTime);
-		expect(spy).to.be.spy;
+		common.setSelectorPosition(editor, 0, 0, 3, 0);
+		await distributeTable();
+		await sleep(extendedSleepTime);
+		const expectedValue = '| Column1 |\r\n' + '|---------|\r\n' + '| Row1    |\r\n';
+		const actualValue = editor.document.getText();
+		expect(expectedValue).to.equal(actualValue);
 	});
 	test('consolidateTable', async () => {
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/table-controller2.md'
+			'../../../../../src/test/data/repo/articles/table-controller3.md'
 		);
+		await loadDocumentAndGetItReady(filePath);
+
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor, 1, 0, 4, 0);
-		const spy = chai.spy(consolidateTable);
-		consolidateTable();
+		common.setSelectorPosition(editor, 0, 0, 3, 0);
+		await consolidateTable();
 		await sleep(sleepTime);
-		expect(spy).to.be.spy;
+		const expectedValue = '| Column1 |\r\n' + '|--|\r\n' + '| Row1 |\r\n';
+		const actualValue = editor.document.getText();
+		expect(expectedValue).to.equal(actualValue);
+	});
+	test('convertTableToDataMatrix', async () => {
+		const filePath = resolve(
+			__dirname,
+			'../../../../../src/test/data/repo/articles/table-controller4.md'
+		);
+		await loadDocumentAndGetItReady(filePath);
+		const editor = window.activeTextEditor;
+		common.setSelectorPosition(editor, 0, 0, 3, 0);
+		await convertTableToDataMatrix();
+		await sleep(sleepTime);
+		const expectedValue = '||\r\n' + '|---------|\r\n' + '| **Row1** |';
+		const actualValue = editor.document.getText();
+		expect(expectedValue).to.equal(actualValue);
 	});
 });
