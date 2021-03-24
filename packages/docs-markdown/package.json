@@ -115,6 +115,11 @@
 				"category": "Docs"
 			},
 			{
+				"command": "convertTableToDataMatrix",
+				"title": "Convert table to data matrix",
+				"category": "Docs"
+			},
+			{
 				"command": "consolidateTable",
 				"title": "Consolidate selected table",
 				"category": "Docs"
@@ -317,6 +322,11 @@
 				},
 				{
 					"when": "editorHasSelection",
+					"command": "convertTableToDataMatrix",
+					"group": "1_modification"
+				},
+				{
+					"when": "editorHasSelection",
 					"command": "consolidateTable",
 					"group": "1_modification"
 				}
@@ -404,6 +414,11 @@
 				},
 				{
 					"command": "distributeTable",
+					"group": "Docs",
+					"when": "resourceLangId == markdown"
+				},
+				{
+					"command": "convertTableToDataMatrix",
 					"group": "Docs",
 					"when": "resourceLangId == markdown"
 				},

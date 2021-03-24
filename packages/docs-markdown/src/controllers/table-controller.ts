@@ -20,7 +20,8 @@ export function insertTableCommand() {
 	return [
 		{ command: consolidateTable.name, callback: consolidateTable },
 		{ command: distributeTable.name, callback: distributeTable },
-		{ command: insertTable.name, callback: insertTable }
+		{ command: insertTable.name, callback: insertTable },
+		{ command: convertTableToDataMatrix.name, callback: convertTableToDataMatrix }
 	];
 }
 
@@ -47,6 +48,24 @@ async function reformatTable(formatOptions: FormatOptions) {
 	const table = MarkdownTable.parse(selection, editor.document);
 	if (table) {
 		await table.reformat(editor, formatOptions);
+	}
+}
+
+export async function convertTableToDataMatrix() {
+	const editor = vscode.window.activeTextEditor;
+	if (!editor) {
+		noActiveEditorMessage();
+		return;
+	}
+	const selection = editor.selection;
+	if (!selection) {
+		postWarning('You must select a markdown table first.');
+		return;
+	}
+
+	const table = MarkdownTable.parse(selection, editor.document);
+	if (table) {
+		await table.convertToDataMatrix(editor);
 	}
 }
 
