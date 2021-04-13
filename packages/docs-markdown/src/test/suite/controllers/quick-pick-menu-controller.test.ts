@@ -10,7 +10,8 @@ import {
 	workspace,
 	ExtensionContext,
 	Uri,
-	ExtensionMode
+	ExtensionMode,
+	ExtensionKind
 } from 'vscode';
 import * as boldController from './../../../controllers/bold-controller';
 import * as italicController from '../../../controllers/italic-controller';
@@ -87,7 +88,17 @@ const context: ExtensionContext = {
 	extensionMode: ExtensionMode.Test,
 	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
 	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
-	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	extension: {
+		id: '',
+		extensionUri: Uri.parse(uri),
+		extensionKind: ExtensionKind.UI,
+		exports: '',
+		extensionPath: '',
+		isActive: false,
+		packageJSON: '',
+		activate: () => Promise.resolve()
+	}
 };
 
 suite('Quick Pick Menu Controller', () => {

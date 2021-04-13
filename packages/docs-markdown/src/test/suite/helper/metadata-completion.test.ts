@@ -13,7 +13,8 @@ import {
 	SnippetString,
 	window,
 	ExtensionContext,
-	Uri
+	Uri,
+	ExtensionKind
 } from 'vscode';
 import { loadDocumentAndGetItReady } from '../../test.common/common';
 import {
@@ -76,7 +77,17 @@ const context: ExtensionContext = {
 	extensionMode: ExtensionMode.Test,
 	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
 	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
-	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	extension: {
+		id: '',
+		extensionUri: Uri.parse(uri),
+		extensionKind: ExtensionKind.UI,
+		exports: '',
+		extensionPath: '',
+		isActive: false,
+		packageJSON: '',
+		activate: () => Promise.resolve()
+	}
 };
 
 suite('Metadata Provider', () => {
