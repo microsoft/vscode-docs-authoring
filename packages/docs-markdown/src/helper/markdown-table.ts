@@ -70,23 +70,19 @@ export class MarkdownTable {
 			}
 		});
 
-		const calculatePadding = true;
 		const values: string[] = [];
 		index = 0;
 		this.lines.forEach((line, _) => {
 			if (line) {
-				const isAlignmentRow = index === 1;
 				const columns = this.parseTableRow(line);
 				const isLastIteration = (i: number, array: string[]) => {
 					return i === array.length - 1;
 				};
-
 				let value = '';
 				for (let i = 0; i < columns.length; ++i) {
-					let column = columns[i].trim();
-					let padding = calculatePadding ? columnSpanLengths.get(i) || 0 : 0;
+					let column = columns[i];
+					let padding = columnSpanLengths.get(i) || 0;
 					const isLastColumn = isLastIteration(i, columns);
-
 					if (index === 0 && i === 0) {
 						value += '|';
 						if (isLastColumn) {
@@ -94,29 +90,16 @@ export class MarkdownTable {
 						}
 						continue;
 					}
-					if (isAlignmentRow) {
-						const columnAlignment = columnAlignments.get(i) || ColumnAlignment.None;
-						switch (columnAlignment) {
-							case ColumnAlignment.Center:
-								value += `|:${'-'.padEnd(padding, '-')}:`;
-								break;
-							case ColumnAlignment.Left:
-								value += `|:${'-'.padEnd(padding + 1, '-')}`;
-								break;
-							case ColumnAlignment.Right:
-								value += `|${'-'.padEnd(padding + 1, '-')}:`;
-								break;
-							case ColumnAlignment.None:
-								value += `|${'-'.padEnd(padding + 2, '-')}`;
-								break;
-						}
-					} else {
-						padding = padding - this.countEmoji(column);
-						if (i === 0 && !isFirstColumnSpace && !this.isFormattingRow(column)) {
-							column = this.addStarsIfNeeded(column);
-						}
-						value += `| ${column.padEnd(calculatePadding ? padding : 0)} `;
+					padding = this.countEmoji(column);
+					let paddingStart = 0;
+					let paddingEnd = 0;
+					if (i === 0 && !isFirstColumnSpace && !this.isFormattingRow(column)) {
+						const columnLengthWithStars = 4 + column.trim().length;
+						paddingStart = this.calculatePadding(false, column) + columnLengthWithStars;
+						paddingEnd = this.calculatePadding(true, column) + columnLengthWithStars;
+						column = this.addStarsIfNeeded(column);
 					}
+					value += `|${column.padStart(paddingStart).padEnd(paddingEnd)}`;
 
 					if (isLastColumn) {
 						value += '|';
@@ -278,7 +261,21 @@ export class MarkdownTable {
 		if (isBold(value)) {
 			return value;
 		} else {
-			return `**${value}**`;
+			return `**${value.trim()}**`;
+		}
+	}
+
+	private calculatePadding(paddingRight: boolean, value: string) {
+		if (paddingRight) {
+			const trimmedString = value.trimEnd();
+			const lengthOfStringTrimmed = trimmedString.length;
+			const length = value.length - lengthOfStringTrimmed;
+			return length;
+		} else {
+			const trimmedString = value.trimStart();
+			const lengthOfStringTrimmed = trimmedString.length;
+			const length = value.length - lengthOfStringTrimmed;
+			return length;
 		}
 	}
 }
