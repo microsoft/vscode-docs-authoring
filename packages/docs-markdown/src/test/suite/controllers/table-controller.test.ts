@@ -24,7 +24,7 @@ import sinon = require('sinon');
 
 const expect = chai.expect;
 
-suite.only('Table Controller', () => {
+suite('Table Controller', () => {
 	// Reset and tear down the spies
 	teardown(() => {
 		chai.spy.restore(common);
@@ -118,7 +118,7 @@ suite.only('Table Controller', () => {
 		common.setSelectorPosition(editor, 0, 0, 3, 0);
 		await convertTableToDataMatrix();
 		await sleep(sleepTime);
-		const expectedValue = '||\r\n' + '|---------|\r\n' + '| **Row1** |';
+		const expectedValue = '||\r\n' + '|---------|\r\n' + '|**Row1**     |';
 		const actualValue = editor.document.getText();
 		expect(expectedValue).to.equal(actualValue);
 	});
