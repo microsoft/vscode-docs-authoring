@@ -1,4 +1,5 @@
 import { Selection, TextDocument, TextEditor } from 'vscode';
+import { isBold } from './format-styles';
 
 enum ColumnAlignment {
 	None,
@@ -14,6 +15,7 @@ export enum FormatOptions {
 
 export class MarkdownTable {
 	private readonly emojiRegex: RegExp = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
+	private readonly formattingRowRegex: RegExp = /--/g;
 
 	private constructor(private readonly selection: Selection, private readonly lines: string[]) {}
 	public static parse(selection: Selection, document: TextDocument): MarkdownTable | null {
@@ -34,6 +36,86 @@ export class MarkdownTable {
 		return new MarkdownTable(selection, parseLines(selection));
 	}
 
+	public async convertToDataMatrix(editor: TextEditor) {
+		let isFirstColumnSpace: boolean = false;
+		const columnSpanLengths = new Map<number, number>();
+		const columnAlignments = new Map<number, ColumnAlignment>();
+		let index = 0;
+		this.lines.forEach((line, _) => {
+			const columns = this.parseTableRow(line);
+			if (columns && columns.length > 0) {
+				switch (index) {
+					case 0: // Table headings
+						const columnZero = columns[0];
+						isFirstColumnSpace = columnZero !== '' && this.measureColumnSpan(columnZero) === 0;
+						columns.forEach((col, i) => columnSpanLengths.set(i, this.measureColumnSpan(col)));
+						index++;
+						break;
+					case 1: // Column formatting
+						columns.forEach((col, i) => columnAlignments.set(i, this.parseColumnAlignment(col)));
+						index++;
+						break;
+					default:
+						// Remaining rows
+						columns.forEach((col, i) => {
+							const existingLength = columnSpanLengths.has(i) ? columnSpanLengths.get(i) : -1;
+							const currentLength = this.measureColumnSpan(col);
+							if (existingLength !== -1 && currentLength > (existingLength || 0)) {
+								columnSpanLengths.set(i, currentLength);
+							}
+						});
+						index++;
+						break;
+				}
+			}
+		});
+
+		const values: string[] = [];
+		index = 0;
+		this.lines.forEach((line, _) => {
+			if (line) {
+				const columns = this.parseTableRow(line);
+				const isLastIteration = (i: number, array: string[]) => {
+					return i === array.length - 1;
+				};
+				let value = '';
+				for (let i = 0; i < columns.length; ++i) {
+					let column = columns[i];
+					let padding = columnSpanLengths.get(i) || 0;
+					const isLastColumn = isLastIteration(i, columns);
+					if (index === 0 && i === 0) {
+						value += '|';
+						if (isLastColumn) {
+							value += '|';
+						}
+						continue;
+					}
+					padding = this.countEmoji(column);
+					let paddingStart = 0;
+					let paddingEnd = 0;
+					if (i === 0 && !isFirstColumnSpace && !this.isFormattingRow(column)) {
+						const columnLengthWithStars = 4 + column.trim().length;
+						paddingStart = this.calculatePadding(false, column) + columnLengthWithStars;
+						paddingEnd = this.calculatePadding(true, column) + columnLengthWithStars;
+						column = this.addStarsIfNeeded(column);
+					}
+					value += `|${column.padStart(paddingStart).padEnd(paddingEnd)}`;
+
+					if (isLastColumn) {
+						value += '|';
+					}
+				}
+
+				values.push(value);
+				index++;
+			}
+		});
+
+		await editor.edit(builder => {
+			builder.replace(this.selection, values.join('\n'));
+		});
+	}
+
 	public async reformat(
 		editor: TextEditor,
 		formatOptions: FormatOptions = FormatOptions.Distribute
@@ -42,34 +124,40 @@ export class MarkdownTable {
 		const columnSpanLengths = new Map<number, number>();
 		const columnAlignments = new Map<number, ColumnAlignment>();
 
-		this.lines.forEach((line, index, _) => {
+		let index = 0;
+		this.lines.forEach((line, _) => {
 			const columns = this.parseTableRow(line);
-			switch (index) {
-				case 0: // Table headings
-					const columnZero = columns[0];
-					isFirstColumnSpace = columnZero !== '' && this.measureColumnSpan(columnZero) === 0;
-					columns.forEach((col, i) => columnSpanLengths.set(i, this.measureColumnSpan(col)));
-					break;
-				case 1: // Column formatting
-					columns.forEach((col, i) => columnAlignments.set(i, this.parseColumnAlignment(col)));
-					break;
-
-				default:
-					// Remaining rows
-					columns.forEach((col, i) => {
-						const existingLength = columnSpanLengths.has(i) ? columnSpanLengths.get(i) : -1;
-						const currentLength = this.measureColumnSpan(col);
-						if (existingLength !== -1 && currentLength > (existingLength || 0)) {
-							columnSpanLengths.set(i, currentLength);
-						}
-					});
-					break;
+			if (columns && columns.length > 0) {
+				switch (index) {
+					case 0: // Table headings
+						const columnZero = columns[0];
+						isFirstColumnSpace = columnZero !== '' && this.measureColumnSpan(columnZero) === 0;
+						columns.forEach((col, i) => columnSpanLengths.set(i, this.measureColumnSpan(col)));
+						index++;
+						break;
+					case 1: // Column formatting
+						columns.forEach((col, i) => columnAlignments.set(i, this.parseColumnAlignment(col)));
+						index++;
+						break;
+					default:
+						// Remaining rows
+						columns.forEach((col, i) => {
+							const existingLength = columnSpanLengths.has(i) ? columnSpanLengths.get(i) : -1;
+							const currentLength = this.measureColumnSpan(col);
+							if (existingLength !== -1 && currentLength > (existingLength || 0)) {
+								columnSpanLengths.set(i, currentLength);
+							}
+						});
+						index++;
+						break;
+				}
 			}
 		});
 
 		const calculatePadding = formatOptions === FormatOptions.Distribute;
 		const values: string[] = [];
-		this.lines.forEach((line, index, _) => {
+		index = 0;
+		this.lines.forEach((line, _) => {
 			const isAlignmentRow = index === 1;
 			const columns = this.parseTableRow(line);
 			const isLastIteration = (i: number, array: string[]) => {
@@ -79,11 +167,6 @@ export class MarkdownTable {
 			let value = '';
 			for (let i = 0; i < columns.length; ++i) {
 				const column = columns[i].trim();
-				if (i === 0 && isFirstColumnSpace) {
-					value += columns[i];
-					continue;
-				}
-
 				let padding = calculatePadding ? columnSpanLengths.get(i) || 0 : 0;
 				const isLastColumn = isLastIteration(i, columns);
 				if (isAlignmentRow) {
@@ -113,6 +196,7 @@ export class MarkdownTable {
 			}
 
 			values.push(value);
+			index++;
 		});
 
 		await editor.edit(builder => {
@@ -163,5 +247,35 @@ export class MarkdownTable {
 		}
 
 		return 0;
+	}
+
+	private isFormattingRow(value: string): boolean {
+		if (value) {
+			const result = this.formattingRowRegex.exec(value);
+			return result && result.length > 0;
+		}
+		return false;
+	}
+
+	private addStarsIfNeeded(value: string): string {
+		if (isBold(value)) {
+			return value;
+		} else {
+			return `**${value.trim()}**`;
+		}
+	}
+
+	private calculatePadding(paddingRight: boolean, value: string) {
+		if (paddingRight) {
+			const trimmedString = value.trimEnd();
+			const lengthOfStringTrimmed = trimmedString.length;
+			const length = value.length - lengthOfStringTrimmed;
+			return length;
+		} else {
+			const trimmedString = value.trimStart();
+			const lengthOfStringTrimmed = trimmedString.length;
+			const length = value.length - lengthOfStringTrimmed;
+			return length;
+		}
 	}
 }

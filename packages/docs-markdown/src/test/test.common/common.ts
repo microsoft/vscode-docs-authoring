@@ -1,5 +1,13 @@
 import { resolve } from 'path';
-import { commands, Uri, window, workspace, ExtensionContext, ExtensionMode } from 'vscode';
+import {
+	commands,
+	Uri,
+	window,
+	workspace,
+	ExtensionContext,
+	ExtensionMode,
+	ExtensionKind
+} from 'vscode';
 import { TokenResponse } from '../../helper/Auth';
 
 export const sleepTime = 50;
@@ -87,5 +95,15 @@ export const context: ExtensionContext = {
 	extensionMode: ExtensionMode.Test,
 	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
 	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
-	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	extension: {
+		id: '',
+		extensionUri: Uri.parse(uri),
+		extensionKind: ExtensionKind.UI,
+		exports: '',
+		extensionPath: '',
+		isActive: false,
+		packageJSON: '',
+		activate: () => Promise.resolve()
+	}
 };
