@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.86 (April 15th, 2021)
+
+- Added functionality for formatting markdown table as data matrix using right click context menu when table is selected.
+
 ## 0.2.85 (March 9th, 2021)
 
 - Bug fixes for Add Docs link by URL for content subset in docfx.
