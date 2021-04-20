@@ -21,4 +21,18 @@ suite('Add Periods To Alt Text', () => {
 			`:::image type="content" source="../media/responsivedesign.gif" alt-text="alt-text.":::`
 		);
 	});
+	test('cleanup repo - if alt text ends in a quote, put the period inside the quotes', async () => {
+		const data = `![screenshot of the "Training a classifier notebook"](../media/resources.png)`;
+		const output = addPeriodsForMd(data);
+		expect(output).to.be.equal(
+			`![screenshot of the "Training a classifier notebook."](../media/resources.png)`
+		);
+	});
+	test('cleanup repo - ignore whitespace at the end of alt text to avoid duplicate periods', async () => {
+		const data = `![screenshot of the "Training a classifier notebook". ](../media/resources.png)`;
+		const output = addPeriodsForMd(data);
+		expect(output).to.be.equal(
+			`![screenshot of the "Training a classifier notebook."](../media/resources.png)`
+		);
+	});
 });
