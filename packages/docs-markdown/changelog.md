@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.87 (April 20th, 2021)
+
+- Update alt text cleanup command to support quotes.
+
 ## 0.2.86 (April 15th, 2021)
 
 - Added functionality for formatting markdown table as data matrix using right click context menu when table is selected.
