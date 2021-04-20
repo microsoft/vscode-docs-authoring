@@ -48,8 +48,14 @@ function insertPeriod(data: string, regex: RegExp, altTextRegex: RegExp) {
 			const groups = altTextRegex.exec(match);
 			if (groups && groups.length > 0) {
 				if (!isNullOrWhiteSpace(groups[1])) {
-					const insertAtPosition = groups.index + groups[0].length - 1;
-					const imageTagAltTextWithPuctuation = splice(insertAtPosition, match, '.');
+					let imageTagAltTextWithPuctuation;
+					const altTextExtraCharacterRegex = /[a-zA-Z](\".*)\]/g;
+					if (match.match(altTextExtraCharacterRegex)) {
+						imageTagAltTextWithPuctuation = match.replace(/\"(.\W|\S|)\]/g, '."]');
+					} else {
+						const insertAtPosition = groups.index + groups[0].length - 1;
+						imageTagAltTextWithPuctuation = splice(insertAtPosition, match, '.');
+					}
 					const imageTagRegex = new RegExp(escapeRegExp(match));
 					data = data.replace(imageTagRegex, imageTagAltTextWithPuctuation);
 				}
