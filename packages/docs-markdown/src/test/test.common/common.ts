@@ -8,7 +8,6 @@ import {
 	ExtensionMode,
 	ExtensionKind
 } from 'vscode';
-import { TokenResponse } from '../../helper/Auth';
 
 export const sleepTime = 50;
 export const extendedSleepTime = 300;
@@ -35,17 +34,6 @@ export async function openTestRepository() {
 export async function createDocumentAndGetItReady() {
 	await commands.executeCommand('workbench.action.files.newUntitledFile');
 }
-
-export const tokenResponse: TokenResponse = {
-	_authority: '',
-	accessToken: '',
-	_clientId: '',
-	expiresIn: 0,
-	expiresOn: new Date(),
-	isMRRT: false,
-	resource: '',
-	tokenType: ''
-};
 
 interface Subscription {
 	dispose(): any;
