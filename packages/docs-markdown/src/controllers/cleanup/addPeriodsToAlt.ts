@@ -52,7 +52,7 @@ function insertPeriod(data: string, regex: RegExp, altTextRegex: RegExp) {
 					const altTextExtraCharacterRegex = /[a-zA-Z](\".*)\]/g;
 					const altTextWhitespaceRegex = /(\.\s+)\]/g;
 					if (match.match(altTextExtraCharacterRegex)) {
-						imageTagAltTextWithPuctuation = match.replace(/\"(.\W|\S|)\]/g, '."]');
+						imageTagAltTextWithPuctuation = match.replace(/(?<!\.)\"(.\W|\S|)\]/g, '."]');
 					} else if (match.match(altTextWhitespaceRegex)) {
 						imageTagAltTextWithPuctuation = match.replace(/\.\s+/g, '.');
 					} else {
