@@ -4,14 +4,14 @@
 	"description": "Docs Markdown Extension",
 	"icon": "images/docs-logo-ms.png",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-	"version": "0.2.87",
+	"version": "0.2.84",
 	"publisher": "docsmsft",
 	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
 	"bugs": {
 		"url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
 	},
 	"engines": {
-		"vscode": "^1.55.0"
+		"vscode": "^1.53.0"
 	},
 	"repository": {
 		"url": "https://github.com/Microsoft/vscode-docs-authoring.git"
@@ -30,6 +30,11 @@
 	"main": "./dist/extension",
 	"contributes": {
 		"commands": [
+			{
+				"command": "verify",
+				"title": "Run doc-index verification",
+				"category": "Docs"
+			},
 			{
 				"command": "insertMoniker",
 				"title": "Add moniker range",
@@ -112,11 +117,6 @@
 			{
 				"command": "distributeTable",
 				"title": "Evenly distribute selected table",
-				"category": "Docs"
-			},
-			{
-				"command": "convertTableToDataMatrix",
-				"title": "Convert table to data matrix",
 				"category": "Docs"
 			},
 			{
@@ -322,11 +322,6 @@
 				},
 				{
 					"when": "editorHasSelection",
-					"command": "convertTableToDataMatrix",
-					"group": "1_modification"
-				},
-				{
-					"when": "editorHasSelection",
 					"command": "consolidateTable",
 					"group": "1_modification"
 				}
@@ -414,11 +409,6 @@
 				},
 				{
 					"command": "distributeTable",
-					"group": "Docs",
-					"when": "resourceLangId == markdown"
-				},
-				{
-					"command": "convertTableToDataMatrix",
 					"group": "Docs",
 					"when": "resourceLangId == markdown"
 				},
@@ -808,9 +798,9 @@
 		"@types/graceful-fs": "^2.0.30",
 		"@types/lodash.merge": "^4.6.6",
 		"@types/mocha": "^7.0.2",
-		"@types/node": "^12.12.32",
+		"@types/node": "^12.20.6",
 		"@types/recursive-readdir": "^2.2.0",
-		"@types/vscode": "^1.55.0",
+		"@types/vscode": "^1.53.0",
 		"@types/yamljs": "^0.2.30",
 		"@typescript-eslint/eslint-plugin": "^2.34.0",
 		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",

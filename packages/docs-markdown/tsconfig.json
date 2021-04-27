@@ -3,10 +3,14 @@
 		"module": "commonjs",
 		"target": "es6",
 		"outDir": "out",
-		"lib": ["es6"],
+		"lib": [ "es6", "es2020.string" ],
 		"sourceMap": true,
-		"rootDir": "."
+		"rootDir": ".",
+		"plugins": [
+			{ "transform": "typescript-is/lib/transform-inline/transformer" }
+		]
 	},
-	"exclude": ["node_modules", ".vscode-test"],
-	"include": [".eslintrc.js", "src/**/*"]
+	
+	"exclude": [ "node_modules", ".vscode-test" ],
+	"include": [ ".eslintrc.js", "src/**/*" ]
 }

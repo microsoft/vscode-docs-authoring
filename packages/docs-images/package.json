@@ -140,7 +140,7 @@
 		"@types/imagemin-svgo": "7.0.0",
 		"@types/imagemin-webp": "5.1.0",
 		"@types/mocha": "^7.0.1",
-		"@types/node": "^10.12.21",
+		"@types/node": "^10.17.55",
 		"@types/sinon": "^9.0.4",
 		"@types/vscode": "^1.53.0",
 		"@typescript-eslint/eslint-plugin": "^2.34.0",

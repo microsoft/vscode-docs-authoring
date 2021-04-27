@@ -19,6 +19,7 @@ import {
 	workspace,
 	TextDocumentWillSaveEvent
 } from 'vscode';
+import { insertDocIndexCommand } from './controllers/doc-index/doc-index-controller';
 import { insertAlertCommand } from './controllers/alert-controller';
 import { boldFormattingCommand } from './controllers/bold-controller';
 import {
@@ -117,6 +118,7 @@ export async function activate(context: ExtensionContext) {
 		...quickPickMenuCommand,
 		...notebookControllerCommands
 	];
+	insertDocIndexCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertAlertCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertMonikerCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertIncludeCommand().forEach(cmd => authoringCommands.push(cmd));

@@ -42,5 +42,9 @@
       "pre-commit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
       "pre-push": "yarn run pre-push"
     }
+  },
+  "dependencies": {
+    "stack-typescript": "^1.0.4",
+    "typescript-is": "^0.18.2"
   }
 }
