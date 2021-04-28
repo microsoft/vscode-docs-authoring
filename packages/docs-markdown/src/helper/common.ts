@@ -8,6 +8,8 @@ import * as vscode from 'vscode';
 import { existsSync } from 'fs';
 import { extname, join, resolve } from 'path';
 import { output } from './output';
+import yaml = require('js-yaml');
+import fs = require('fs');
 
 export const ignoreFiles = ['.git', '.github', '.vscode', '.vs', 'node_module'];
 
@@ -407,4 +409,13 @@ export function findLineNumberOfPattern(editor: vscode.TextEditor, pattern: stri
 
 export function isNullOrWhiteSpace(str) {
 	return !str || str.length === 0 || /^\s*$/.test(str);
+}
+
+export function getYmlTitle(filePath: string) {
+	try {
+		const doc = yaml.load(fs.readFileSync(filePath, 'utf8'));
+		return doc.title;
+	} catch (error) {
+		output.appendLine(error);
+	}
 }

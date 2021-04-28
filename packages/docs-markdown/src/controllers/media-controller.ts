@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import { QuickPickItem, QuickPickOptions, window } from 'vscode';
 import { insertBookmarkExternal, insertBookmarkInternal } from '../controllers/bookmark-controller';
 import {
+	getYmlTitle,
 	hasValidWorkSpaceRootPath,
 	ignoreFiles,
 	insertContentToEditor,
@@ -308,9 +309,9 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
 						}
 					}
 					if (linkExtension === '.yml') {
-						const doc = yaml.load(fs.readFileSync(fullPath, 'utf8'));
-						if (doc.title) {
-							selectedText = doc.title;
+						const title = getYmlTitle(fullPath);
+						if (title) {
+							selectedText = title;
 						} else {
 							selectedText = basename(fullPath);
 						}
