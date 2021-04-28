@@ -31,7 +31,14 @@ export function insertDocIndexCommand() {
  */
 export function verify() {
 	const editor = vscode.window.activeTextEditor;
-	AuditRule.LoadRules(<AuditRule[]>JSON.parse(readFileSync('./audit-rules.json', 'utf-8')));
+
+	try {
+		// const json = readFileSync('./audit-rules.json', 'utf-8');
+		// const rules = JSON.parse(json) as AuditRule[];
+		AuditRule.LoadRules();
+	} catch (error) {
+		vscode.window.activeTerminal.sendText(error.toString());
+	}
 
 	if (!editor) {
 		noActiveEditorMessage();

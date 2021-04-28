@@ -1,16 +1,15 @@
 {
 	"compilerOptions": {
+		"resolveJsonModule": true,
 		"module": "commonjs",
 		"target": "es6",
 		"outDir": "out",
-		"lib": [ "es6", "es2020.string" ],
+		"lib": ["es6", "es2020.string"],
 		"sourceMap": true,
 		"rootDir": ".",
-		"plugins": [
-			{ "transform": "typescript-is/lib/transform-inline/transformer" }
-		]
+		"plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
 	},
-	
-	"exclude": [ "node_modules", ".vscode-test" ],
-	"include": [ ".eslintrc.js", "src/**/*" ]
+
+	"exclude": ["node_modules", ".vscode-test"],
+	"include": [".eslintrc.js", "src/**/*"]
 }

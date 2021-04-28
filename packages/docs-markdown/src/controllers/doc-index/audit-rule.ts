@@ -1,3 +1,4 @@
+import * as rules from './data/audit-rules.json';
 import { ContentBlock } from './content-block';
 import { ContentMatch } from './content-match';
 import { RuleSetTypeEnum } from './rule-set-type-enum';
@@ -15,6 +16,10 @@ import { Stack } from 'stack-typescript';
 import { AuditEntry } from './audit-entry';
 
 export class AuditRule {
+	constructor(json: any) {
+		Object.assign(this, json);
+	}
+
 	private _ruleId: string;
 	public get ruleId(): string {
 		return this._ruleId;
@@ -1717,7 +1722,7 @@ export class AuditRule {
 	): IterableIterator<AuditRule> {
 		var stack = new Stack<AuditRule>();
 		stack.push(root);
-		while (stack.length != 0) {
+		while (stack.size != 0) {
 			var current = stack.pop();
 			// If you don't care about maintaining child order then remove the Reverse.
 			for (var child of children(current).reverse()) stack.push(child);
@@ -1826,15 +1831,17 @@ export class AuditRule {
 		this._tablePath = v;
 	}
 
-	public static LoadRules(rules: AuditRule[]) {
-		for (let i = 0; i < rules.length; i++) {
-			rules[i].dependents = [];
-			let dList = rules[i].dependentList.split(',');
+	public static LoadRules() {
+		const anyArray = rules as any[];
+		const r = anyArray.map(json => new AuditRule(json));
+		for (let i = 0; i < r.length; i++) {
+			r[i].dependents = [];
+			let dList = r[i].dependentList.split(',');
 			for (let j = 0; j < dList.length; j++) {
-				rules[i].dependents.push(rules.filter(e => e.tablePath == dList[j])[0]);
+				r[i].dependents.push(r.filter(e => e.tablePath == dList[j])[0]);
 			}
 		}
 
-		AuditRule.Rules = rules;
+		AuditRule.Rules = r;
 	}
 }

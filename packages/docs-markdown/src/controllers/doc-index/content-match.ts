@@ -11,7 +11,7 @@ export class ContentMatch extends RegexContainer {
 	static aHref: RegExp = /(?<link>\<a\s+(?:[^>]*?\s+)?href=["' ]+(?<file>[^"']+)['"]\s*>(?<label>[^<]+)?(<\s*img\s+src=[ "']+(?<image>[^"']+)["'](\s+alt=["' ]+(?<alt>[^"']+)["'])?[ \/>]+)?(.+)(?=<\/a>)<\/a>)/gim;
 	static selectors: RegExp = /(?<link>(?<selector>> [\-\*]  )*!?\[(?<label>[^\]]+)\]\[(?<file>[^\]]+)\])/gim;
 	static zonePivots: RegExp = /^\s*(?<zone>:::.?(zone-end|zone\s+pivot="(?<name>[^"]+))")/gim;
-	static includeLinks: RegExp = /(?<link>!?\[(?<label>[^\]]*)\]\((?<file>(?(?=[^()]*\()[^(]*\([^\)]*\)[^)#]*|[^)#]*))?(?<anchor>#[^\)]+)?\)\]*)/gim;
+	static includeLinks: RegExp = /(?<link>!?\[(?<label>[^\]]*)\]\((?<file>((?=[^()]*\()[^(]*\([^\)]*\)[^)#]*|[^)#]*))?(?<anchor>#[^\)]+)?\)\]*)/gim;
 	static indexFile: RegExp = /(?<=index)\.(md|yml)/gim;
 	static tocFile: RegExp = /toc\.(yml|md)/gim;
 	static moduleUnitFile: RegExp = /(?<!index|toc)\.yml/gim;
@@ -58,8 +58,8 @@ export class ContentMatch extends RegexContainer {
 	static formatMetadata: RegExp = /[ &\-\\/#\?\$\.\^"']+/gim;
 	static noNewLines: RegExp = /\r|\n/gim;
 	static noduleUnit: RegExp = /^-\s(?<module>[^\r]+)\r\n/gim;
-	static extensionsInUrl: RegExp = /(?'ext'\.\w{3,4})$|\?/gim;
-	static extensions: RegExp = /(?'ext'\\.\\w+$)/gim;
+	static extensionsInUrl: RegExp = /(?<ext>\.\w{3,4})$|\?/gim;
+	static extensions: RegExp = /(?<ext>\\.\\w+$)/gim;
 	static cleanUpDBKey_underscore: RegExp = /[&\\\/#\?\$\^]+/gim;
 	static cleanUpDBKey_remove: RegExp = /[\r\n "']+"/gim;
 	static cleanUpDBColumnName_underscore: RegExp = /[&\-\(\)\[\]\\/#\?\$\^:\.;]+/gim;
@@ -95,9 +95,9 @@ export class ContentMatch extends RegexContainer {
 	static partialPathEnUs: RegExp = /\/?en-us\/?/gim;
 	static items: RegExp = /\Aitems:\r\n/gim;
 	static arm: RegExp = /"type": "(?<namespace>([A-Za-z0-9]+\.)+[A-Za-z0-9]+)\/(?<property>[^"]+)"/gim;
-	static containerFrom: RegExp = /\w*(?<!SELECT .*)(?:(?-i)FROM )(?!(["']?(mcr|acr|\Sazurecr))|[<{\[])(?<image>[^\/\s]+)/gim;
-	static containerInline: RegExp = /(?<![\.\\\/@\[\-])(?<host>(microsoft\/))(?<tag>[\w][\w.-]{1,127})(?<version>(?<!http(s)?|xref)(:\S+)?)/gim;
-	static containerOld: RegExp = /[^-[.\\/@a-zA-Z](\w*microsoft\/[\w\d\S]*(?!.*GitHub)(?!.*[gG][iI][tT][hH][uU][bB])).*/gim;
+	// static containerFrom: RegExp = /\w*(?<!SELECT .*)(?:(?-i)FROM )(?!(["']?(mcr|acr|\Sazurecr))|[<{\[])(?<image>[^\/\s]+)/gim;
+	// static containerInline: RegExp = /(?<![\.\\\/@\[\-])(?<host>(microsoft\/))(?<tag>[\w][\w.-]{1,127})(?<version>(?<!http(s)?|xref)(:\S+)?)/gim;
+	// static containerOld: RegExp = /[^-[.\\/@a-zA-Z](\w*microsoft\/[\w\d\S]*(?!.*GitHub)(?!.*[gG][iI][tT][hH][uU][bB])).*/gim;
 
 	private _index: number;
 	public get index(): number {
