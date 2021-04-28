@@ -5,15 +5,15 @@ import yaml = require('js-yaml');
 import { RegexContainer } from './regex-container';
 
 export class ContentMatch extends RegexContainer {
-	static links: RegExp = /(?<link>(?<selector>> [\-\*]  )*!?((?<label>\[[^\]]*\]\([^\)]+\)\])|\[(?<label>[^\]]*)\])\((?<file>(?(?=[^()]*\()[^(]*\([^\)]*\)[^)#]*|[^)#]*))?(?<anchor>#[^\)]+)?\)\]*)/gim;
-	static newLinks: RegExp = /(?<mdlink>(?<link>(?<selector>> [\-\*]  )*(\[(?<label>(?<innerExclaim>\s*!(?=\[))?(?(innerExclaim)\[[^\]\(]*\](?=\()\([^\)]+\)([^\]]|\[[^\]]+\](?![\r\n\(]))*|([^\]]|\[[^\]]+\](?![\r\n\(]))*))\])\((?<file>(?(?=[^()]*\()[^(]*\([^\)]*\)[^)#]*|[^)#]*))?(?<anchor>#[^\)]+)?\)\]*))/gim;
+	static links: RegExp = /(?<link>(?<selector>> [\-\*]  )*!?((?<label>(\[[^\]]*\]\([^\)]+\)\])|\[([^\]]*)\]))\((?<file>((?=[^()]*\()[^(]*\([^\)]*\)[^)#]*|[^)#]*))?(?<anchor>#[^\)]+)?\)\]*)/gim;
+	static newLinks: RegExp = /(?<mdlink>(?<link>(?<selector>> [\-\*]  )*(\[(?<label>(\s*!(?=\[))?(\[[^\]\(]*\](?=\()\([^\)]+\)([^\]]|\[[^\]]+\](?![\r\n\(]))*|([^\]]|\[[^\]]+\](?![\r\n\(]))*))\])\((?<file>((?=[^()]*\()[^(]*\([^\)]*\)[^)#]*|[^)#]*))?(?<anchor>#[^\)]+)?\)\]*))/gim;
 	static images_triple_colon: RegExp = /^\s*(?<link>:::image\s+type="(?<type>[^"]+)"\s+source="(?<file>[^"]+)"(\s+alt-text="(?<label>[^"]+)")?)/gim;
 	static aHref: RegExp = /(?<link>\<a\s+(?:[^>]*?\s+)?href=["' ]+(?<file>[^"']+)['"]\s*>(?<label>[^<]+)?(<\s*img\s+src=[ "']+(?<image>[^"']+)["'](\s+alt=["' ]+(?<alt>[^"']+)["'])?[ \/>]+)?(.+)(?=<\/a>)<\/a>)/gim;
 	static selectors: RegExp = /(?<link>(?<selector>> [\-\*]  )*!?\[(?<label>[^\]]+)\]\[(?<file>[^\]]+)\])/gim;
-	static zonePivots: RegExp = /^\s*(?<zone>:::\s+(zone-end|zone\s+pivot="(?<name>[^"]+))")/gim;
+	static zonePivots: RegExp = /^\s*(?<zone>:::.?(zone-end|zone\s+pivot="(?<name>[^"]+))")/gim;
 	static includeLinks: RegExp = /(?<link>!?\[(?<label>[^\]]*)\]\((?<file>(?(?=[^()]*\()[^(]*\([^\)]*\)[^)#]*|[^)#]*))?(?<anchor>#[^\)]+)?\)\]*)/gim;
 	static indexFile: RegExp = /(?<=index)\.(md|yml)/gim;
-	static toCFile: RegExp = /toc\.(yml|md)/gim;
+	static tocFile: RegExp = /toc\.(yml|md)/gim;
 	static moduleUnitFile: RegExp = /(?<!index|toc)\.yml/gim;
 	static articleFile: RegExp = /(?!index)\.md/gim;
 	static configFile: RegExp = /\.json/gim;
@@ -22,7 +22,7 @@ export class ContentMatch extends RegexContainer {
 	static mediaFile: RegExp = /media\//gim;
 	static auditEntryTitle: RegExp = /({(?<value>[^}]+)})/gim;
 	static notRelative: RegExp = /^(\/|http)/gim;
-	static number: RegExp = /^(?<number>\d)/gim;
+	static num: RegExp = /^(?<number>\d)/gim;
 	static yamlMime: RegExp = /### YamlMime:(?<type>[^\r\n ]+)/gim;
 	static pathService: RegExp = /[^\/]+\/(?<service>[^\/]+)\/(?<subservice>[^\/]+)\//gim;
 	static pipe: RegExp = /\|/gim;

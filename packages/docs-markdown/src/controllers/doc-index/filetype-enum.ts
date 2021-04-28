@@ -1,7 +1,6 @@
-export enum FileTypeEnum
-{
-    Article,
-    Index,
-    ToC,
-    Include
+export enum FileTypeEnum {
+	Article,
+	Index,
+	ToC,
+	Include
 }

@@ -91,7 +91,7 @@ export class Helpers {
 			return FileTypeEnum.Index;
 		}
 
-		if (ContentMatch.toCFile.test(path)) {
+		if (ContentMatch.tocFile.test(path)) {
 			return FileTypeEnum.ToC;
 		}
 	}
