@@ -21,6 +21,8 @@ import {
 import { sendTelemetryData } from '../helper/telemetry';
 import { externalLinkBuilder, internalLinkBuilder, videoLinkBuilder } from '../helper/utility';
 import { linkToDocsPageByUrl } from './links/linkToDocsPageByUrl';
+import { basename, extname } from 'path';
+const yaml = require('js-yaml');
 const telemetryCommandMedia: string = 'insertMedia';
 const telemetryCommandLink: string = 'insertLink';
 let commandOption: string;
@@ -38,7 +40,7 @@ export function insertLinksAndMediaCommands() {
 }
 
 export const imageExtensions = ['.jpeg', '.jpg', '.png', '.gif', '.bmp'];
-export const markdownExtensionFilter = ['.md'];
+export const markdownAndYmlExtensionFilter = ['.md', '.yml'];
 
 export const h1TextRegex = /\n {0,3}(#{1,6})(.*)/;
 export const yamlTextRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
@@ -271,7 +273,8 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
 		} else {
 			files
 				.filter(
-					(file: any) => markdownExtensionFilter.indexOf(path.extname(file.toLowerCase())) !== -1
+					(file: any) =>
+						markdownAndYmlExtensionFilter.indexOf(path.extname(file.toLowerCase())) !== -1
 				)
 				.forEach((file: any) => {
 					items.push({ label: path.basename(file), description: path.dirname(file) });
@@ -297,9 +300,20 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
 						content = yamlMatch[2];
 					}
 					content = '\n' + content;
-					const match = content.match(h1TextRegex);
-					if (match != null) {
-						selectedText = match[2].trim();
+					const linkExtension = extname(fullPath);
+					if (linkExtension === '.md') {
+						const match = content.match(h1TextRegex);
+						if (match != null) {
+							selectedText = match[2].trim();
+						}
+					}
+					if (linkExtension === '.yml') {
+						const doc = yaml.load(fs.readFileSync(fullPath, 'utf8'));
+						if (doc.title) {
+							selectedText = doc.title;
+						} else {
+							selectedText = basename(fullPath);
+						}
 					}
 				}
 

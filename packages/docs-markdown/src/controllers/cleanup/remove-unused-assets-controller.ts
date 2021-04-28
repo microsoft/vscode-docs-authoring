@@ -5,7 +5,7 @@ import { homedir } from 'os';
 import { basename, dirname, extname, join } from 'path';
 import { ignoreFiles, postError, showStatusMessage } from '../../helper/common';
 import { output } from '../../helper/output';
-import { imageExtensions, markdownExtensionFilter } from '../media-controller';
+import { imageExtensions } from '../media-controller';
 import { showProgress } from './utilities';
 import recursive = require('recursive-readdir');
 
@@ -21,6 +21,7 @@ export function getUnusedImagesAndIncludesCommand() {
  */
 const INCLUDE_RE = /\[!include\s?\[.*\]\((.*)\)\]|<img[^>]+src="([^">]+)"|\((.*?.(?:png|jpg|jpeg|svg|tiff|gif))\s*(?:".*")*\)|source\s*=\s*"(.*?)"|lightbox\s*=\s*"(.*?)"|"\s*source_path\s*"\s*:\s*"(.*?)"|href\s*:\s*(.*)"/gim;
 const message = 'Removing unused images and includes. This could take several minutes.';
+const markdownExtensionFilter = ['.md'];
 export async function removeUnusedImagesAndIncludes(
 	progress: any,
 	workspacePath: string,
