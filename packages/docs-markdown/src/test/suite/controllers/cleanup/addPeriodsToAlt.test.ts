@@ -28,11 +28,18 @@ suite('Add Periods To Alt Text', () => {
 			`![screenshot of the "Training a classifier notebook."](../media/resources.png)`
 		);
 	});
-	test('cleanup repo - ignore whitespace at the end of alt text to avoid duplicate periods', async () => {
+	test('cleanup repo - ignore whitespace at the end of alt text with quotes to avoid duplicate periods', async () => {
 		const data = `![screenshot of the "Training a classifier notebook". ](../media/resources.png)`;
 		const output = addPeriodsForMd(data);
 		expect(output).to.be.equal(
 			`![screenshot of the "Training a classifier notebook."](../media/resources.png)`
+		);
+	});
+	test('cleanup repo - ignore whitespace at the end of alt text to avoid duplicate periods', async () => {
+		const data = `![screenshot showing Jupyter Notebooks dashboard.  ](../media/resources.png)`;
+		const output = addPeriodsForMd(data);
+		expect(output).to.be.equal(
+			`![screenshot showing Jupyter Notebooks dashboard.](../media/resources.png)`
 		);
 	});
 });
