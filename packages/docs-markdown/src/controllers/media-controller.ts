@@ -313,7 +313,7 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
 						if (title) {
 							selectedText = title;
 						} else {
-							selectedText = basename(fullPath);
+							selectedText = basename(fullPath, '.yml');
 						}
 					}
 				}
