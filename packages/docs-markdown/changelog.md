@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.2.89 (April 30th, 2021)
+
+- Support linking to YAML files from markdown.
+- Remove auth code.
+- Readme updates.
+
 ## 0.2.87 (April 20th, 2021)
 
 - Update alt text cleanup command to support quotes.
