@@ -159,5 +159,9 @@ export function getCleanUpQuickPick() {
 		description: '',
 		label: 'Single-valued metadata'
 	});
+	items.push({
+		description: '',
+		label: 'Remove comments'
+	});
 	return { items, opts };
 }

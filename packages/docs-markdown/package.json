@@ -345,7 +345,7 @@
 				{
 					"command": "cleanupFile",
 					"group": "1_modification",
-					"when": "resourceLangId == markdown && !listMultipleSelection"
+					"when": "resourceLangId == markdown && !listMultipleSelection || resourceLangId == yaml && !listMultipleSelection"
 				}
 			],
 			"commandPalette": [
