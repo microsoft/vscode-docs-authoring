@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import { QuickPickItem, QuickPickOptions, window } from 'vscode';
 import { insertBookmarkExternal, insertBookmarkInternal } from '../controllers/bookmark-controller';
 import {
+	getYmlTitle,
 	hasValidWorkSpaceRootPath,
 	ignoreFiles,
 	insertContentToEditor,
@@ -21,6 +22,8 @@ import {
 import { sendTelemetryData } from '../helper/telemetry';
 import { externalLinkBuilder, internalLinkBuilder, videoLinkBuilder } from '../helper/utility';
 import { linkToDocsPageByUrl } from './links/linkToDocsPageByUrl';
+import { basename, extname } from 'path';
+const yaml = require('js-yaml');
 const telemetryCommandMedia: string = 'insertMedia';
 const telemetryCommandLink: string = 'insertLink';
 let commandOption: string;
@@ -38,7 +41,7 @@ export function insertLinksAndMediaCommands() {
 }
 
 export const imageExtensions = ['.jpeg', '.jpg', '.png', '.gif', '.bmp'];
-export const markdownExtensionFilter = ['.md'];
+export const markdownAndYmlExtensionFilter = ['.md', '.yml'];
 
 export const h1TextRegex = /\n {0,3}(#{1,6})(.*)/;
 export const yamlTextRegex = /^-{3}\s*\r?\n([\s\S]*?)-{3}\s*\r?\n([\s\S]*)/;
@@ -271,7 +274,8 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
 		} else {
 			files
 				.filter(
-					(file: any) => markdownExtensionFilter.indexOf(path.extname(file.toLowerCase())) !== -1
+					(file: any) =>
+						markdownAndYmlExtensionFilter.indexOf(path.extname(file.toLowerCase())) !== -1
 				)
 				.forEach((file: any) => {
 					items.push({ label: path.basename(file), description: path.dirname(file) });
@@ -297,9 +301,20 @@ export function getFilesShowQuickPick(mediaType: MediaType, altText: string, opt
 						content = yamlMatch[2];
 					}
 					content = '\n' + content;
-					const match = content.match(h1TextRegex);
-					if (match != null) {
-						selectedText = match[2].trim();
+					const linkExtension = extname(fullPath);
+					if (linkExtension === '.md') {
+						const match = content.match(h1TextRegex);
+						if (match != null) {
+							selectedText = match[2].trim();
+						}
+					}
+					if (linkExtension === '.yml') {
+						const title = getYmlTitle(fullPath);
+						if (title) {
+							selectedText = title;
+						} else {
+							selectedText = basename(fullPath, '.yml');
+						}
 					}
 				}
 
