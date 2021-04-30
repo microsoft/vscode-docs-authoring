@@ -6,7 +6,7 @@ export const htmlRegex = new RegExp(/<!--([^]+?)-->/gm);
 export const hashtagRegex = new RegExp(/#.*/gm);
 
 /**
- * Lower cases all metadata found in .md files
+ * Delete comments from yaml and markdown
  */
 export function removeCommentsFromFile(
 	progress: any,
