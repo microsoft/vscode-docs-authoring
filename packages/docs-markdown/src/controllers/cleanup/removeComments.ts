@@ -2,9 +2,8 @@ import { reporter } from '../../helper/telemetry';
 import { readWriteFileWithProgress } from './utilities';
 
 const telemetryCommand: string = 'applyCleanup';
-export const htmlRegex = new RegExp(/<!--.*-->/gm);
+export const htmlRegex = new RegExp(/<!--([^]+?)-->/gm);
 export const hashtagRegex = new RegExp(/#.*/gm);
-export const codeBlockRegex = new RegExp(/```([^]+?)```/gm);
 
 /**
  * Lower cases all metadata found in .md files
