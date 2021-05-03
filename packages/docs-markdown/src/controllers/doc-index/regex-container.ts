@@ -96,17 +96,20 @@ export class RegexContainer {
 				matches.push(data);
 			} else if (input.charAt(res.index) === ')') {
 				let idx = matches.length;
-				while (idx--) {
-					if (matches[idx].end === undefined) {
-						matches[idx].end = re.lastIndex;
-						matches[idx].source = input.substring(matches[idx].start, matches[idx].end);
+				while (idx-- > -1 && matches.length > idx) {
+					if (matches[idx]?.end === undefined) {
+						const match = matches[idx];
+						if (match) {
+							match.end = re.lastIndex;
+							match.source = input.substring(match.start, match.end);
+						}
 						break;
 					}
 				}
 				refCount--;
 				let writeIdx = idx;
-				while (idx--) {
-					if (matches[idx].refCount === refCount) {
+				while (idx-- > -1 && matches.length > idx) {
+					if (matches[idx]?.refCount === refCount) {
 						matches[writeIdx].parent = idx + 1;
 						break;
 					}

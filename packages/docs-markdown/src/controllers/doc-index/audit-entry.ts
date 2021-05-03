@@ -277,11 +277,11 @@ export class AuditEntry {
 
 		// Todo : Make this intuitive.
 		if (
-			!Helpers.strIsNullOrEmpty(this.auditRule.artifact_RegexCaptureName) &&
-			this.auditRule.artifact_RegexCaptureName != '0' &&
-			this.dictionary.has(this.auditRule.artifact_RegexCaptureName)
+			!Helpers.strIsNullOrEmpty(this.auditRule.artifactRegexCaptureName) &&
+			this.auditRule.artifactRegexCaptureName != '0' &&
+			this.dictionary.has(this.auditRule.artifactRegexCaptureName)
 		) {
-			this.capturedValue = this.dictionary.get(this.auditRule.artifact_RegexCaptureName);
+			this.capturedValue = this.dictionary.get(this.auditRule.artifactRegexCaptureName);
 		} else if (this.auditRule.captureList.length > 0) {
 			var first = this.auditRule.captureList[0];
 			if (this.dictionary.has(first) && first != 'ArticlePath')
@@ -290,12 +290,12 @@ export class AuditEntry {
 
 		switch (this.auditRule.operationType) {
 			case OperationEnum.File_FileNameEquals:
-				this.expectedValue = this.auditRule.file_fileName;
+				this.expectedValue = this.auditRule.fileFileName;
 				break;
 
 			case OperationEnum.File_FileName_ContainsText:
 			case OperationEnum.File_FileTypeEquals:
-				this.expectedValue = this.auditRule.file_fileName_text;
+				this.expectedValue = this.auditRule.fileFileNameText;
 				break;
 
 			case OperationEnum.Has_MD_Artifact:
@@ -308,16 +308,16 @@ export class AuditEntry {
 					this.expectedValue = s;
 				}
 
-				this.expectedValue = this.auditRule.artifact_Text;
+				this.expectedValue = this.auditRule.artifactText;
 				break;
 
 			case OperationEnum.IncludesFile:
-				this.expectedValue = this.auditRule.file_fileName;
+				this.expectedValue = this.auditRule.fileFileName;
 				break;
 
 			case OperationEnum.MetadataField_Equals:
 			case OperationEnum.MetadataField_ContainsText:
-				this.expectedValue = this.auditRule.metadataField_Text;
+				this.expectedValue = this.auditRule.metadataFieldText;
 				break;
 		}
 

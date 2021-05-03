@@ -207,18 +207,18 @@ export class AuditRule {
 	}
 
 	private _file_fileName: string;
-	public get file_fileName(): string {
+	public get fileFileName(): string {
 		return this._file_fileName;
 	}
-	public set file_fileName(v: string) {
+	public set fileFileName(v: string) {
 		this._file_fileName = v;
 	}
 
 	private _file_fileName_text: string;
-	public get file_fileName_text(): string {
+	public get fileFileNameText(): string {
 		return this._file_fileName_text;
 	}
-	public set file_fileName_text(v: string) {
+	public set fileFileNameText(v: string) {
 		this._file_fileName_text = v;
 	}
 
@@ -240,20 +240,20 @@ export class AuditRule {
 	}
 
 	private _sibling_Artifact: string;
-	public get sibling_Artifact(): string {
+	public get siblingArtifact(): string {
 		return this._sibling_Artifact;
 	}
-	public set sibling_Artifact(v: string) {
+	public set siblingArtifact(v: string) {
 		this._sibling_Artifact = v;
 	}
 
-	public get sibling_ArtifactType(): MarkdownEnum {
+	public get siblingArtifactType(): MarkdownEnum {
 		var tmp = MarkdownEnum.None;
-		if (!Helpers.strIsNullOrEmpty(this.sibling_Artifact)) tmp = MarkdownEnum[this.sibling_Artifact];
+		if (!Helpers.strIsNullOrEmpty(this.siblingArtifact)) tmp = MarkdownEnum[this.siblingArtifact];
 		return tmp;
 	}
-	public set sibling_ArtifactType(v: MarkdownEnum) {
-		this.sibling_Artifact = MarkdownEnum[v];
+	public set siblingArtifactType(v: MarkdownEnum) {
+		this.siblingArtifact = MarkdownEnum[v];
 	}
 
 	private _siblingsIn: string;
@@ -275,26 +275,26 @@ export class AuditRule {
 	}
 
 	private _artifact_RegexCaptureName: string;
-	public get artifact_RegexCaptureName(): string {
+	public get artifactRegexCaptureName(): string {
 		return this._artifact_RegexCaptureName;
 	}
-	public set artifact_RegexCaptureName(v: string) {
+	public set artifactRegexCaptureName(v: string) {
 		this._artifact_RegexCaptureName = v;
 	}
 
 	private _sibling_artifact_RegexCaptureName: string;
-	public get sibling_artifact_RegexCaptureName(): string {
+	public get siblingArtifactRegexCaptureName(): string {
 		return this._sibling_artifact_RegexCaptureName;
 	}
-	public set sibling_artifact_RegexCaptureName(v: string) {
+	public set siblingArtifactRegexCaptureName(v: string) {
 		this._sibling_artifact_RegexCaptureName = v;
 	}
 
 	private _artifact_Text: string;
-	public get artifact_Text(): string {
+	public get artifactText(): string {
 		return this._artifact_Text;
 	}
-	public set artifact_Text(v: string) {
+	public set artifactText(v: string) {
 		this._artifact_Text = v;
 	}
 
@@ -308,7 +308,7 @@ export class AuditRule {
 
 	public buildRegex() {
 		this.artifactRegex = new RegExp(
-			!Helpers.strIsNullOrEmpty(this.artifact_Text) ? this.artifact_Text : '',
+			!Helpers.strIsNullOrEmpty(this.artifactText) ? this.artifactText : '',
 			'gim'
 		);
 	}
@@ -322,58 +322,58 @@ export class AuditRule {
 	}
 
 	private _artifact_Index: number;
-	public get artifact_Index(): number {
+	public get artifactIndex(): number {
 		return this._artifact_Index;
 	}
-	public set artifact_Index(v: number) {
+	public set artifactIndex(v: number) {
 		this._artifact_Index = v;
 	}
 
 	private _artifact_Count_RangeMin: number;
-	public get artifact_Count_RangeMin(): number {
+	public get artifactCountRangeMin(): number {
 		return this._artifact_Count_RangeMin;
 	}
-	public set artifact_Count_RangeMin(v: number) {
+	public set artifactCountRangeMin(v: number) {
 		this._artifact_Count_RangeMin = v;
 	}
 
 	private _artifact_Count_RangeMax: number;
-	public get artifact_Count_RangeMax(): number {
+	public get artifactCountRangeMax(): number {
 		return this._artifact_Count_RangeMax;
 	}
-	public set artifact_Count_RangeMax(v: number) {
+	public set artifactCountRangeMax(v: number) {
 		this._artifact_Count_RangeMax = v;
 	}
 
 	private _artifact_Count_Range: number;
-	public get artifact_Count_Range(): number {
+	public get artifactCountRange(): number {
 		return this._artifact_Count_Range;
 	}
-	public set artifact_Count_Range(v: number) {
+	public set artifactCountRange(v: number) {
 		this._artifact_Count_Range = v;
 	}
 
 	private _artifact_Count: number;
-	public get artifact_Count(): number {
+	public get artifactCount(): number {
 		return this._artifact_Count;
 	}
-	public set artifact_Count(v: number) {
+	public set artifactCount(v: number) {
 		this._artifact_Count = v;
 	}
 
 	private _artifact_Order_Required: string;
-	public get artifact_Order_Required(): string {
+	public get artifactOrderRequired(): string {
 		return this._artifact_Order_Required;
 	}
-	public set artifact_Order_Required(v: string) {
+	public set artifactOrderRequired(v: string) {
 		this._artifact_Order_Required = v;
 	}
 
 	private _artifact_Order_Optional: string;
-	public get artifact_Order_Optional(): string {
+	public get artifactOrderOptional(): string {
 		return this._artifact_Order_Optional;
 	}
-	public set artifact_Order_Optional(v: string) {
+	public set artifactOrderOptional(v: string) {
 		this._artifact_Order_Optional = v;
 	}
 
@@ -402,26 +402,26 @@ export class AuditRule {
 	}
 
 	private _metadataField_ExpectedValue: string;
-	public get metadataField_ExpectedValue(): string {
+	public get metadataFieldExpectedValue(): string {
 		return this._metadataField_ExpectedValue;
 	}
-	public set metadataField_ExpectedValue(v: string) {
+	public set metadataFieldExpectedValue(v: string) {
 		this._metadataField_ExpectedValue = v;
 	}
 
 	private _metadataField_AllowedValues: string;
-	public get metadataField_AllowedValues(): string {
+	public get metadataFieldAllowedValues(): string {
 		return this._metadataField_AllowedValues;
 	}
-	public set metadataField_AllowedValues(v: string) {
+	public set metadataFieldAllowedValues(v: string) {
 		this._metadataField_AllowedValues = v;
 	}
 
 	private _metadataField_Text: string;
-	public get metadataField_Text(): string {
+	public get metadataFieldText(): string {
 		return this._metadataField_Text;
 	}
-	public set metadataField_Text(v: string) {
+	public set metadataFieldText(v: string) {
 		this._metadataField_Text = v;
 	}
 
@@ -464,7 +464,7 @@ export class AuditRule {
 	///            OR
 	///            I == 3
 	///            I == 4
-	/// (ONE).Sucess = All above.
+	/// (ONE).Success = All above.
 	/// </summary>
 	private _logicalOperator: string;
 	public get logicalOperator(): string {
@@ -476,12 +476,12 @@ export class AuditRule {
 
 	public get logicalOperatorType(): LogicalOperatorEnum {
 		var tmp = LogicalOperatorEnum.None;
-		if (!Helpers.strIsNullOrEmpty(this.sibling_Artifact))
-			tmp = LogicalOperatorEnum[this.sibling_Artifact];
+		if (!Helpers.strIsNullOrEmpty(this.siblingArtifact))
+			tmp = LogicalOperatorEnum[this.siblingArtifact];
 		return tmp;
 	}
 	public set logicalOperatorType(v: LogicalOperatorEnum) {
-		this.sibling_Artifact = LogicalOperatorEnum[v];
+		this.siblingArtifact = LogicalOperatorEnum[v];
 	}
 
 	private _conditions: string[];
@@ -546,19 +546,17 @@ export class AuditRule {
 	}
 
 	public hasArtifactCount(count: number): boolean {
-		if (this.artifact_Count != -777) return count == this.artifact_Count;
+		if (this.artifactCount != -777) return count == this.artifactCount;
 		else if (
-			this.artifact_Count_RangeMax != -777 &&
-			this.artifact_Count_RangeMin != -777 &&
-			this.artifact_Count_RangeMax > this.artifact_Count_RangeMin
+			this.artifactCountRangeMax != -777 &&
+			this.artifactCountRangeMin != -777 &&
+			this.artifactCountRangeMax > this.artifactCountRangeMin
 		)
 			return (
-				Helpers.getRange(this.artifact_Count_RangeMin, this.artifact_Count_RangeMax).indexOf(
-					count
-				) >= 0
+				Helpers.getRange(this.artifactCountRangeMin, this.artifactCountRangeMax).indexOf(count) >= 0
 			);
-		else if (this.artifact_Count_RangeMax != -777) return count <= this.artifact_Count_RangeMax;
-		else if (this.artifact_Count_RangeMin != -777) return count >= this.artifact_Count_RangeMin;
+		else if (this.artifactCountRangeMax != -777) return count <= this.artifactCountRangeMax;
+		else if (this.artifactCountRangeMin != -777) return count >= this.artifactCountRangeMin;
 		else {
 			console.log(
 				`Cannot evalue count for ${this.title}. No Counts are set for Artifact ${this.artifact}`
@@ -586,12 +584,12 @@ export class AuditRule {
 	}
 
 	public atIndex(block: ContentBlock, blocks: ContentBlock[]): boolean {
-		if (this.artifact_Index == -777) return true;
+		if (this.artifactIndex == -777) return true;
 
-		if (blocks.indexOf(block) == blocks.length - 1 && this.artifact_Index == -1) return true;
+		if (blocks.indexOf(block) == blocks.length - 1 && this.artifactIndex == -1) return true;
 
 		var indexOf = blocks.indexOf(block);
-		return this.artifact_Index == indexOf;
+		return this.artifactIndex == indexOf;
 	}
 
 	public dependentConditionRule(rule: AuditRule): boolean {
@@ -722,9 +720,9 @@ export class AuditRule {
 					case OperationEnum.IncludesFile:
 						{
 							// Todo: Ensure this works properly.  Find all blocks that are links or headers etc and then go through children using block text.
-							// Todo: Child Text (not BlockText) needs set up individually. Headers contain there whole secction. Links, just themselvs, etc.
+							// Todo: Child Text (not BlockText) needs set up individually. Headers contain there whole section. Links, just themselves, etc.
 							var match = ContentMatch.getMatches(content, ContentMatch.includeFile).filter(
-								e => e.groups.get('file') == this.artifact_Text
+								e => e.groups.get('file') == this.artifactText
 							)[0];
 							if (this.shouldStore(true) && undefined !== match) {
 								var tmp = new AuditEntry();
@@ -771,7 +769,7 @@ export class AuditRule {
 
 								var artifactText = this.tryGetArtifactText(
 									thisArtifact,
-									this.artifact_RegexCaptureName
+									this.artifactRegexCaptureName
 								);
 								if (is<boolean>(artifactText)) continue;
 
@@ -814,14 +812,14 @@ export class AuditRule {
 										}
 
 										innerBlocks = innerBlocks.filter(
-											e => e.artifactType == this.sibling_ArtifactType
+											e => e.artifactType == this.siblingArtifactType
 										);
 										innerBlocks = innerBlocks.sort((a, b) => b.start - a.start);
 
 										for (var sibling of innerBlocks) {
 											var sibling_artifactText = this.tryGetArtifactText(
 												sibling,
-												this.sibling_artifact_RegexCaptureName
+												this.siblingArtifactRegexCaptureName
 											);
 											if (is<boolean>(sibling_artifactText)) continue;
 
@@ -924,8 +922,8 @@ export class AuditRule {
 									var currentOrder = artifacts
 										.map(e => e.text)
 										.filter(e => this.artifactRegex.test(e));
-									var compare_required = this.artifact_Order_Required.split(',');
-									var compare_optional = this.artifact_Order_Optional.split(',');
+									var compare_required = this.artifactOrderRequired.split(',');
+									var compare_optional = this.artifactOrderOptional.split(',');
 
 									thisAuditEntry = new AuditEntry();
 									thisAuditEntry.fileName = filename;
@@ -943,7 +941,7 @@ export class AuditRule {
 										var current = currentOrder[current_index];
 										if (!new RegExp(compare_required[i], 'gim').test(current)) {
 											var optionalSuccess =
-												!Helpers.strIsNullOrEmpty(this.artifact_Order_Optional) &&
+												!Helpers.strIsNullOrEmpty(this.artifactOrderOptional) &&
 												new RegExp(compare_optional[optional_index], 'gim').test(current);
 											if (this.bExact && !optionalSuccess) {
 												thisAuditEntry = null;
@@ -1008,12 +1006,12 @@ export class AuditRule {
 								var thisArtifact = matches[i];
 								var artifactText = this.tryGetArtifactText(
 									thisArtifact,
-									this.artifact_RegexCaptureName
+									this.artifactRegexCaptureName
 								);
 								if (is<boolean>(artifactText)) continue;
 
 								if (
-									!Helpers.strIsNullOrEmpty(this.artifact_Text) &&
+									!Helpers.strIsNullOrEmpty(this.artifactText) &&
 									this.artifactRegex.test(artifactText)
 								)
 									continue;
@@ -1048,7 +1046,7 @@ export class AuditRule {
 								var thisArtifact = matches[i];
 								let artifactText = this.tryGetArtifactText(
 									thisArtifact,
-									this.artifact_RegexCaptureName
+									this.artifactRegexCaptureName
 								);
 								if (is<boolean>(artifactText)) continue;
 
@@ -1091,7 +1089,7 @@ export class AuditRule {
 									!Helpers.strIsNullOrEmpty(metadata.get(this.metadataField))
 								) {
 									var value = metadata.get(this.metadataField);
-									var allowedValues = this.metadataField_AllowedValues.split(',');
+									var allowedValues = this.metadataFieldAllowedValues.split(',');
 									thisAuditEntry = new AuditEntry();
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
@@ -1141,7 +1139,7 @@ export class AuditRule {
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry
-										.setSuccess(this.metadataField_ExpectedValue.toLowerCase() == value)
+										.setSuccess(this.metadataFieldExpectedValue.toLowerCase() == value)
 										.extractCaptures(metadata);
 								} else {
 									thisAuditEntry = new AuditEntry();
@@ -1196,7 +1194,7 @@ export class AuditRule {
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry
-										.setSuccess(new RegExp(this.metadataField_Text, 'gim').test(value))
+										.setSuccess(new RegExp(this.metadataFieldText, 'gim').test(value))
 										.extractCaptures(metadata);
 								} else {
 									thisAuditEntry = new AuditEntry();
@@ -1248,7 +1246,7 @@ export class AuditRule {
 							let thisAuditEntry: AuditEntry = null;
 							switch (this.operationType) {
 								case OperationEnum.File_FileNameEquals:
-									success = filename.toLowerCase() == this.file_fileName;
+									success = filename.toLowerCase() == this.fileFileName;
 									break;
 
 								case OperationEnum.File_FileTypeEquals:
@@ -1258,7 +1256,7 @@ export class AuditRule {
 								case OperationEnum.File_FileName_ContainsText:
 									var fileNameMatch = ContentMatch.getMatches(
 										filename,
-										new RegExp(this.file_fileName_text, 'gim')
+										new RegExp(this.fileFileNameText, 'gim')
 									)[0];
 									success = null != fileNameMatch;
 									break;
@@ -1389,27 +1387,27 @@ export class AuditRule {
 
 	public fileName_Equals(value: string): AuditRule {
 		this.operationType = OperationEnum.File_FileNameEquals;
-		this.file_fileName = value;
+		this.fileFileName = value;
 		return this;
 	}
 
 	public fileName_ContainsText(value: string): AuditRule {
 		this.operationType = OperationEnum.File_FileName_ContainsText;
-		this.file_fileName_text = value;
+		this.fileFileNameText = value;
 		return this;
 	}
 
 	public metadataField_Equals(name: string, value: string): AuditRule {
 		this.operationType = OperationEnum.MetadataField_Equals;
 		this.metadataField = name;
-		this.metadataField_ExpectedValue = value;
+		this.metadataFieldExpectedValue = value;
 		return this;
 	}
 
 	public metadataField_Contains(name: string, value: string): AuditRule {
 		this.operationType = OperationEnum.MetadataField_ContainsText;
 		this.metadataField = name;
-		this.metadataField_Text = value;
+		this.metadataFieldText = value;
 		return this;
 	}
 
@@ -1431,21 +1429,21 @@ export class AuditRule {
 	public metadataField_InAllowedValues(name: string, values: string[]): AuditRule {
 		this.operationType = OperationEnum.MetadataField_InAllowedValues;
 		this.metadataField = name;
-		this.metadataField_AllowedValues = values.join(',');
+		this.metadataFieldAllowedValues = values.join(',');
 		return this;
 	}
 
 	public H1_Contains(value: string): AuditRule {
 		this.operationType = OperationEnum.Has_MD_Artifact;
 		this.artifactType = MarkdownEnum.Header;
-		this.artifact_Index = 0;
-		this.artifact_Text = value;
+		this.artifactIndex = 0;
+		this.artifactText = value;
 		return this;
 	}
 
 	public includesFile(value: string): AuditRule {
 		this.operationType = OperationEnum.IncludesFile;
-		this.artifact_Text = value;
+		this.artifactText = value;
 		return this;
 	}
 
@@ -1496,8 +1494,8 @@ export class AuditRule {
 
 	public setArtifactText(type: MarkdownEnum, value: string) {
 		if (AuditRule.allowNewLines.indexOf(type) >= 0)
-			this.artifact_Text = value.replace(' ', '(s|\r\n)');
-		else this.artifact_Text = value;
+			this.artifactText = value.replace(' ', '(s|\r\n)');
+		else this.artifactText = value;
 	}
 
 	public setDependentOperation(dependentOperation: DependentOperationEnum): AuditRule {
@@ -1522,14 +1520,14 @@ export class AuditRule {
 		this.artifactType = type;
 
 		this.setArtifactText(type, value);
-		this.artifact_RegexCaptureName = regexname;
+		this.artifactRegexCaptureName = regexname;
 		return this;
 	}
 
 	public containsText(type: MarkdownEnum, value: string, regexname: string = '0'): AuditRule {
 		this.operationType = OperationEnum.Each_MD_Artifact_ContainsText;
 		this.artifactType = type;
-		this.artifact_RegexCaptureName = regexname;
+		this.artifactRegexCaptureName = regexname;
 		this.setArtifactText(type, value);
 		return this;
 	}
@@ -1548,17 +1546,17 @@ export class AuditRule {
 		this.artifactType = MarkdownEnum.Header;
 		var hString = headers.map(e => `"${'#'.repeat(e[0])} ${e[1]}`);
 		var hOrderRequired = headers.filter(e => e[2]).map(e => `${'#'.repeat(e[0])} ${e[1]}`);
-		this.artifact_Text = `"^(${hString.join(' | ')})`;
-		this.artifact_Order_Required = hOrderRequired.map(e => `"^${e}`).join(',');
+		this.artifactText = `"^(${hString.join(' | ')})`;
+		this.artifactOrderRequired = hOrderRequired.map(e => `"^${e}`).join(',');
 
 		if (headers.filter(e => e[2] == false).length > 0) {
 			var hOrderOptional = headers.map(e => `${'#'.repeat(e[0])} ${e[1]}`);
-			this.artifact_Order_Optional = hOrderOptional.map(e => `"^${e}`).join(',');
+			this.artifactOrderOptional = hOrderOptional.map(e => `"^${e}`).join(',');
 		}
 
-		this.artifact_Count_RangeMax = max;
-		this.artifact_Count_RangeMin = min;
-		this.artifact_Count = count;
+		this.artifactCountRangeMax = max;
+		this.artifactCountRangeMin = min;
+		this.artifactCount = count;
 
 		this.bExact = Exact;
 		return this;
@@ -1572,8 +1570,8 @@ export class AuditRule {
 		this.operationType = OperationEnum.Has_MD_ArtifactsInOrder;
 		this.artifactType = type;
 
-		this.artifact_Text = `^(${values.join(' | ')})`;
-		this.artifact_Order_Required = values.map(e => `^${e}`).join(',');
+		this.artifactText = `^(${values.join(' | ')})`;
+		this.artifactOrderRequired = values.map(e => `^${e}`).join(',');
 		this.bExact = Exact;
 		return this;
 	}
@@ -1585,8 +1583,8 @@ export class AuditRule {
 		index: number = -777
 	): AuditRule {
 		this.operationType = OperationEnum.Has_MD_Artifact;
-		this.artifact_Index = index;
-		this.artifact_RegexCaptureName = regexname;
+		this.artifactIndex = index;
+		this.artifactRegexCaptureName = regexname;
 		this.artifactType = type;
 		this.setArtifactText(type, value);
 		return this;
@@ -1599,8 +1597,8 @@ export class AuditRule {
 		index: number = -777
 	): AuditRule {
 		this.operationType = OperationEnum.Has_MD_Artifact_Any;
-		this.artifact_Index = index;
-		this.artifact_RegexCaptureName = regexname;
+		this.artifactIndex = index;
+		this.artifactRegexCaptureName = regexname;
 		this.artifactType = type;
 		this.setArtifactText(type, value);
 		return this;
@@ -1614,10 +1612,10 @@ export class AuditRule {
 		sibling_regexname: string = '0'
 	): AuditRule {
 		this.operationType = OperationEnum.Has_MD_ArtifactSiblings;
-		this.artifact_RegexCaptureName = primary_regexname;
-		this.sibling_artifact_RegexCaptureName = sibling_regexname;
+		this.artifactRegexCaptureName = primary_regexname;
+		this.siblingArtifactRegexCaptureName = sibling_regexname;
 		this.artifactType = primary;
-		this.sibling_ArtifactType = sibling;
+		this.siblingArtifactType = sibling;
 		this.siblingsInType = type;
 		return this;
 	}
@@ -1628,7 +1626,7 @@ export class AuditRule {
 		index: number = -777
 	): AuditRule {
 		this.operationType = OperationEnum.Has_MD_Artifact;
-		this.artifact_Index = index;
+		this.artifactIndex = index;
 		this.artifactType = type;
 		details.forEach((value, key) => {
 			this.dictionary.set(`"details:${key}`, value);
@@ -1638,27 +1636,27 @@ export class AuditRule {
 
 	public Has_H1(value: string): AuditRule {
 		this.operationType = OperationEnum.Has_MD_Artifact;
-		this.artifact_Index = 0;
+		this.artifactIndex = 0;
 		this.artifactType = MarkdownEnum.Header;
-		this.artifact_Text = value;
+		this.artifactText = value;
 		this.dictionary.set('filter:HeaderNumber', 'H1');
 		return this;
 	}
 
 	public Has_H2(value: string, index: number = -777): AuditRule {
 		this.operationType = OperationEnum.Has_MD_Artifact;
-		this.artifact_Index = index;
+		this.artifactIndex = index;
 		this.artifactType = MarkdownEnum.Header;
-		this.artifact_Text = value;
+		this.artifactText = value;
 		this.dictionary.set('filter:HeaderNumber', 'H2');
 		return this;
 	}
 
 	public Has_H3(value: string, index: number = -777): AuditRule {
 		this.operationType = OperationEnum.Has_MD_Artifact;
-		this.artifact_Index = index;
+		this.artifactIndex = index;
 		this.artifactType = MarkdownEnum.Header;
-		this.artifact_Text = value;
+		this.artifactText = value;
 		this.dictionary.set('filter:HeaderNumber', 'H3');
 		return this;
 	}
@@ -1670,7 +1668,7 @@ export class AuditRule {
 		index: number = -777
 	): AuditRule {
 		this.operationType = OperationEnum.Has_MD_Artifact;
-		this.artifact_Index = index;
+		this.artifactIndex = index;
 		this.artifactType = type;
 		this.setArtifactText(type, value);
 		additionalFilters.forEach((value, key) => {
@@ -1689,9 +1687,9 @@ export class AuditRule {
 	): AuditRule {
 		this.operationType = OperationEnum.Has_n_MD_Artifacts;
 		this.artifactType = type;
-		this.artifact_Count = count;
-		this.artifact_Count_RangeMin = min;
-		this.artifact_Count_RangeMax = max;
+		this.artifactCount = count;
+		this.artifactCountRangeMin = min;
+		this.artifactCountRangeMax = max;
 		this.setArtifactText(type, text);
 		return this;
 	}
@@ -1792,7 +1790,7 @@ export class AuditRule {
 		// Last chance to modify rule now that we have all data.
 		if (
 			/%[^%]+%/gim.test(this.title) ||
-			/%[^%]+%/gim.test(this.artifact_Text) ||
+			/%[^%]+%/gim.test(this.artifactText) ||
 			this.artifactDetails.forEach((value, key) => {
 				if (/%[^%]+%/gim.test(key)) {
 					this.lookUpRequired = true;
