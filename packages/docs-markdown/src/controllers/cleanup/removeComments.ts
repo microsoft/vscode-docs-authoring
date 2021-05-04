@@ -19,7 +19,7 @@ export function removeCommentsFromFile(
 	reporter.sendTelemetryEvent('command', { command: telemetryCommand });
 	if (file.endsWith('.md')) {
 		return readWriteFileWithProgress(progress, file, message, files, index, (data: any) => {
-			data = removeMarkdownComments(data);
+			data = removeHtmlComments(data);
 			return data;
 		});
 	} else if (file.endsWith('.yml')) {
@@ -32,12 +32,12 @@ export function removeCommentsFromFile(
 	}
 }
 
-export function removeMarkdownComments(data: string) {
+export function removeHtmlComments(data: string) {
 	const processor: any = unified().use(markdown, { commonmark: true }).parse(data);
 	if (processor.children) {
 		processor.children.forEach((md: any) => {
 			if (md.type === 'html') {
-				data = data.replace(md.value, '');
+				data = data.replace(/<!--[\s\S]*?-->/g, '');
 			}
 		});
 		return data;
