@@ -22,7 +22,7 @@ import { getCleanUpQuickPick, recurseCallback } from './utilities';
 import { cleanUpDevLangInCodeBlocks } from './devlangsInCodeBlocks';
 import recursive = require('recursive-readdir');
 import { addPeriodsToAlt } from './addPeriodsToAlt';
-import { removeCommentsFromFile } from './removeComments';
+import { removeCommentsFromFile } from './stripComments';
 
 const telemetryCommand: string = 'applyCleanup';
 let commandOption: string;
@@ -124,13 +124,13 @@ export async function applyCleanupFile(uri: Uri) {
 						message = 'Everything complete.';
 						commandOption = 'everything';
 						break;
-					case 'remove comments':
-						showStatusMessage('Cleanup: Remove comments from file started.');
-						message = 'Remove comments from file.';
+					case 'strip comments':
+						showStatusMessage('Cleanup: Strip comments from file started.');
+						message = 'Strip comments from file.';
 						progress.report({ increment: 1, message });
-						statusMessage = 'Cleanup: Remove comments from file completed.';
+						statusMessage = 'Cleanup: Strip comments from file completed.';
 						promises.push(removeCommentsFromFile(progress, file, null, null));
-						message = 'Remove comments from file completed.';
+						message = 'Strip comments from file completed.';
 						commandOption = 'comments';
 						break;
 					case 'empty metadata':

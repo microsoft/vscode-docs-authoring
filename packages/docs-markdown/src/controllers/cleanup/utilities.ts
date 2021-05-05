@@ -161,7 +161,7 @@ export function getCleanUpQuickPick() {
 	});
 	items.push({
 		description: '',
-		label: 'Remove comments'
+		label: 'Strip comments'
 	});
 	return { items, opts };
 }
