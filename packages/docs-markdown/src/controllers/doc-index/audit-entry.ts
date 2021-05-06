@@ -1,3 +1,6 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable prefer-const */
 import { ContentMatch } from './content-match';
 import { LogicalOperatorEnum } from './logical-operator-enum';
 import { OperationEnum } from './operation-enum';
@@ -252,9 +255,9 @@ export class AuditEntry {
 		this.locatedAtIndex = index;
 		this.count = count;
 
-		if (Helpers.strIsNullOrEmpty(current) && this.count != -777) {
+		if (Helpers.strIsNullOrEmpty(current) && this.count !== -777) {
 			this.currentValue = `${this.count}`;
-		} else if (Helpers.strIsNullOrEmpty(current) && this.locatedAtIndex != -777) {
+		} else if (Helpers.strIsNullOrEmpty(current) && this.locatedAtIndex !== -777) {
 			this.currentValue = `${this.locatedAtIndex}`;
 		}
 
@@ -263,12 +266,12 @@ export class AuditEntry {
 	}
 
 	public extractCaptures(groups?: Map<string, string>): AuditEntry {
-		for (var value of this.auditRule.captureList) {
-			if (groups != undefined && groups.has(value)) {
+		for (let value of this.auditRule.captureList) {
+			if (groups !== undefined && groups.has(value)) {
 				this.dictionary.set(value, groups.get(value));
-			} else if (value == 'count') {
+			} else if (value === 'count') {
 				this.dictionary.set('Count', `${this.count}`);
-			} else if (value == 'index') {
+			} else if (value === 'index') {
 				this.dictionary.set('Index', `${this.locatedAtIndex}`);
 			}
 		}
@@ -278,13 +281,13 @@ export class AuditEntry {
 		// Todo : Make this intuitive.
 		if (
 			!Helpers.strIsNullOrEmpty(this.auditRule.artifactRegexCaptureName) &&
-			this.auditRule.artifactRegexCaptureName != '0' &&
+			this.auditRule.artifactRegexCaptureName !== '0' &&
 			this.dictionary.has(this.auditRule.artifactRegexCaptureName)
 		) {
 			this.capturedValue = this.dictionary.get(this.auditRule.artifactRegexCaptureName);
 		} else if (this.auditRule.captureList.length > 0) {
-			var first = this.auditRule.captureList[0];
-			if (this.dictionary.has(first) && first != 'ArticlePath')
+			let first = this.auditRule.captureList[0];
+			if (this.dictionary.has(first) && first !== 'ArticlePath')
 				this.capturedValue = this.dictionary.get(first);
 		}
 
@@ -326,13 +329,13 @@ export class AuditEntry {
 
 	public extractCapturedValues(text: string, groups: Map<string, string>) {
 		if (!Helpers.strIsNullOrEmpty(text)) {
-			var matches = ContentMatch.getMatches(text, /({(?<value>[^}]+)})/gim);
-			for (var match of matches) {
+			let matches = ContentMatch.getMatches(text, /({(?<value>[^}]+)})/gim);
+			for (let match of matches) {
 				if (groups !== undefined && groups.has(match.getGroup('value'))) {
 					this.dictionary.set(match.getGroup('value'), groups.get(match.getGroup('value')));
-				} else if (match.getGroup('value') == 'count') {
+				} else if (match.getGroup('value') === 'count') {
 					this.dictionary.set('Count', `${this.count}`);
-				} else if (match.getGroup('value') == 'index') {
+				} else if (match.getGroup('value') === 'index') {
 					this.dictionary.set('Count', `${this.locatedAtIndex}`);
 				}
 			}
@@ -340,11 +343,11 @@ export class AuditEntry {
 	}
 
 	public setTitle() {
-		var matches = ContentMatch.getMatches(this.title, /(%(?<value>[^%]+)%)/gim);
+		let matches = ContentMatch.getMatches(this.title, /(%(?<value>[^%]+)%)/gim);
 
 		if (this.success) {
 			matches = ContentMatch.getMatches(this.title, ContentMatch.auditEntryTitle);
-			for (var match of matches) {
+			for (let match of matches) {
 				if (this.dictionary.has(match.getGroup('value'))) {
 					this.title = this.title.replace(
 						match.getGroup('0'),
@@ -358,17 +361,17 @@ export class AuditEntry {
 	}
 
 	public clearTitle() {
-		var matches = ContentMatch.getMatches(this.title, ContentMatch.auditEntryTitle);
-		for (var match of matches) {
+		let matches = ContentMatch.getMatches(this.title, ContentMatch.auditEntryTitle);
+		for (let match of matches) {
 			this.title = this.title.replace(match.getGroup('0'), '');
 		}
 	}
 
 	public setConditionValues(entries: AuditEntry[]) {
-		for (var entry of entries) {
+		for (let entry of entries) {
 			entry.dictionary.forEach((value, key) => {
 				if (this.dictionary.has(key)) {
-					if (this.dictionary.get(key).toLowerCase() != value.toLowerCase()) {
+					if (this.dictionary.get(key).toLowerCase() !== value.toLowerCase()) {
 						this.dictionary.set(key, this.dictionary.get(key) + `, ${value}`);
 					}
 				} else {
@@ -383,7 +386,7 @@ export class AuditEntry {
 		this.dependentTestCount = dependentEntries.length;
 		this.dependentSuccessCount = dependentEntries.filter(e => e.success).length;
 		this.dependentFailureCount = dependentEntries.filter(e => !e.success).length;
-		for (var entry of dependentEntries) {
+		for (let entry of dependentEntries) {
 			if (entry.success) {
 				this.passedDependents.push(entry.title);
 			} else {
@@ -406,14 +409,14 @@ export class AuditEntry {
 		this.dependentSuccessCount = dependentEntries.filter(e => e.success).length;
 		this.dependentFailureCount = dependentEntries.filter(e => !e.success).length;
 
-		for (var entry of dependentEntries) {
+		for (let entry of dependentEntries) {
 			if (entry.success) {
 				this.passedDependents.push(entry.title);
 			} else {
 				this.failedDependents.push(entry.title);
 			}
 		}
-		if (logicalOperatorType == LogicalOperatorEnum.Or) {
+		if (logicalOperatorType === LogicalOperatorEnum.Or) {
 			this.dependentTestCount = 1;
 			if (this.dependentSuccessCount > 0) {
 				this.dependentSuccessCount = 1;

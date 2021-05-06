@@ -1,1 +1,6 @@
-{ "type": "module" }
+{
+	"type": "module",
+	"dependencies": {
+		"supports-color": "^9.0.0"
+	}
+}

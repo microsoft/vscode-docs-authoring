@@ -2,11 +2,13 @@
 {
 	"version": "0.1.0",
 	"configurations": [
+
 		{
 			"name": "Launch Extension",
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
+			"outputCapture": "std",
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}"],
 			"outFiles": ["${workspaceFolder}/dist/**/*.js"],
 			"preLaunchTask": "webpack"
@@ -16,6 +18,7 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
+			"outputCapture": "std",
 			"args": [
 				"${workspaceFolder}/src/test/data/repo",
 				"--extensionDevelopmentPath=${workspaceFolder}",

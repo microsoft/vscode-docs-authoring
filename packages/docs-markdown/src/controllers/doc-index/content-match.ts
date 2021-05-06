@@ -1,3 +1,9 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable no-console */
+/* eslint-disable dot-notation */
+/* eslint-disable @typescript-eslint/prefer-for-of */
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable prefer-const */
 import { ContentBlock } from './content-block';
 import { Helpers } from './helpers';
 import { dirname } from 'path';
@@ -167,8 +173,8 @@ export class ContentMatch extends RegexContainer {
 	}
 
 	public getGroup(group: string): string {
-		var returnValue = this.groups[group];
-		if (undefined == returnValue) {
+		let returnValue = this.groups[group];
+		if (undefined === returnValue) {
 			returnValue = '';
 		}
 
@@ -176,16 +182,16 @@ export class ContentMatch extends RegexContainer {
 	}
 
 	public getIncludeLinks(content: string, filename: string) {
-		var links = ContentMatch.getMatches(content, ContentMatch.includeLinks).filter(
+		let links = ContentMatch.getMatches(content, ContentMatch.includeLinks).filter(
 			e => e.groups.has('link') && ContentMatch.includeLabel.test(e.groups['link'])
 		);
 
 		for (let i = 0; i < links.length; i++) {
-			var includeLink = links[i];
+			let includeLink = links[i];
 
 			if (ContentMatch.notRelative.test(includeLink.getGroup('file'))) {
-				var fileName = Helpers.getFileName(filename);
-				var hrefPath = Helpers.fixPath(dirname(filename), includeLink.getGroup('file'));
+				let fileName = Helpers.getFileName(filename);
+				let hrefPath = Helpers.fixPath(dirname(filename), includeLink.getGroup('file'));
 				includeLink.groups['HrefPath'] = hrefPath;
 			}
 		}
@@ -198,7 +204,7 @@ export class ContentMatch extends RegexContainer {
 		pattern: RegExp,
 		codeFences: ContentMatch[] = []
 	): ContentMatch[] {
-		var matches = RegexContainer.exec(pattern, source);
+		let matches = RegexContainer.exec(pattern, source);
 		if (codeFences !== undefined) {
 			matches = matches.filter(e => !ContentMatch.inCodeFence(e, codeFences));
 		}
@@ -208,18 +214,18 @@ export class ContentMatch extends RegexContainer {
 
 	public static getLastIndexMetadata(content: string, filename: string): number {
 		try {
-			var lines = ContentMatch.getMatches(content, ContentMatch.yamlSeparator);
+			let lines = ContentMatch.getMatches(content, ContentMatch.yamlSeparator);
 			if (lines.length <= 1) {
-				if (lines.length == 0) {
+				if (lines.length === 0) {
 					return 0;
 				} else {
-					var length = 1000;
+					let length = 1000;
 					if (content.length < length) length = content.length;
 					lines = ContentMatch.getMatches(
 						content.substring(0, length),
 						ContentMatch.yamlSeparatorAlt
 					);
-					if (lines.length == 1) return lines[0].index + lines[0].length;
+					if (lines.length === 1) return lines[0].index + lines[0].length;
 					else if (lines.length > 1) return lines[1].index + lines[1].length;
 					else {
 						return 0;
@@ -236,7 +242,7 @@ export class ContentMatch extends RegexContainer {
 	}
 
 	public static getMetadata(content: string, fileName: string): string {
-		var lastIndexMetadata = ContentMatch.getLastIndexMetadata(content, fileName);
+		let lastIndexMetadata = ContentMatch.getLastIndexMetadata(content, fileName);
 		return content.substring(0, lastIndexMetadata);
 	}
 
@@ -247,15 +253,15 @@ export class ContentMatch extends RegexContainer {
 	}
 
 	public static cleanUpColumnName(key: string): string {
-		var underscore = ContentMatch.cleanUpDBColumnName_underscore;
-		var remove = ContentMatch.cleanUpDBKey_remove;
+		let underscore = ContentMatch.cleanUpDBColumnName_underscore;
+		let remove = ContentMatch.cleanUpDBKey_remove;
 		return key.replace(underscore, '_').replace(remove, '');
 	}
 
 	public static extractMetadata(source: string): Map<string, string> {
-		var re = ContentMatch.metadataValue;
-		var map = new Map<string, string>();
-		for (var m of ContentMatch.getMatches(source, ContentMatch.metadataValue)) {
+		let re = ContentMatch.metadataValue;
+		let map = new Map<string, string>();
+		for (let m of ContentMatch.getMatches(source, ContentMatch.metadataValue)) {
 			m.groups.forEach((value: string, key: string) => {
 				if (!Helpers.strIsNullOrEmpty(value)) {
 					map.set(ContentMatch.cleanUpColumnName(key), value);
@@ -281,10 +287,10 @@ export class ContentMatch extends RegexContainer {
 	}
 
 	public static getCodeFences(content: string): ContentMatch[] {
-		var matches = ContentMatch.getMatches(content, ContentMatch.codeFences);
-		var broken = ContentMatch.getMatches(content, ContentMatch.codeFencesWithBroken);
+		let matches = ContentMatch.getMatches(content, ContentMatch.codeFences);
+		let broken = ContentMatch.getMatches(content, ContentMatch.codeFencesWithBroken);
 
-		if (matches.length % 2 == 1 || (broken.length > matches.length && broken.length % 2 == 0))
+		if (matches.length % 2 === 1 || (broken.length > matches.length && broken.length % 2 === 0))
 			return broken;
 		else return matches;
 	}
@@ -292,14 +298,14 @@ export class ContentMatch extends RegexContainer {
 	public static inCodeFence(match: ContentMatch, codeFences: ContentMatch[]): boolean {
 		try {
 			for (let i = 0; i < codeFences.length; i += 2) {
-				var startCodeFence = codeFences[i].index + codeFences[i].length;
-				var endCodeFence = codeFences[i + 1].index + codeFences[i + 1].length;
+				let startCodeFence = codeFences[i].index + codeFences[i].length;
+				let endCodeFence = codeFences[i + 1].index + codeFences[i + 1].length;
 				if (match.index > startCodeFence && match.index + match.length < endCodeFence) {
 					return true;
 				}
 			}
 		} catch (e) {
-			if (!(codeFences.length % 2 == 1)) console.log(e);
+			if (!(codeFences.length % 2 === 1)) console.log(e);
 		}
 
 		return false;
@@ -336,15 +342,15 @@ export class ContentMatch extends RegexContainer {
 		refs?: ContentMatch[]
 	): ContentMatch[] {
 		let keyedMatches: ContentMatch[] = [];
-		var matches = ContentMatch.getMatches(source, ContentMatch.links, codeFences);
-		for (var m of matches) {
+		let matches = ContentMatch.getMatches(source, ContentMatch.links, codeFences);
+		for (let m of matches) {
 			if (m.groups.has('file') && m.groups.has('anchor')) {
 				let anchor: string = m.getGroup('anchor');
 				let file: string = m.getGroup('file');
 				if (ContentMatch.forwardSlash.test(anchor)) {
 					file = file + anchor;
-					var anchorMatch = ContentMatch.getMatches(file, ContentMatch.anchor)[0];
-					if (anchorMatch != undefined) {
+					let anchorMatch = ContentMatch.getMatches(file, ContentMatch.anchor)[0];
+					if (anchorMatch !== undefined) {
 						m.groups.set('anchor', anchorMatch.getGroup('anchor'));
 						m.groups.set('file', file.replace(anchorMatch.getGroup('anchor'), ''));
 					} else {
@@ -355,11 +361,11 @@ export class ContentMatch extends RegexContainer {
 			}
 
 			if (m.groups.has('file') && m.groups.get('file').indexOf('?') >= 0) {
-				var portions = m.groups.get('file').split('?');
+				let portions = m.groups.get('file').split('?');
 				m.groups.set('file', portions[0]);
-				if (portions.length == 2) {
-					var queryString = portions[1];
-					var collection = ContentMatch.parseQueryString(queryString);
+				if (portions.length === 2) {
+					let queryString = portions[1];
+					let collection = ContentMatch.parseQueryString(queryString);
 					ContentMatch.parseQueryString(m.groups.get('file')).forEach(
 						(value: string, key: string) => {
 							m.groups.set(key, value);
@@ -372,13 +378,13 @@ export class ContentMatch extends RegexContainer {
 		keyedMatches = keyedMatches.concat(matches);
 		matches = ContentMatch.getMatches(source, ContentMatch.aHref);
 
-		for (var m of matches) {
+		for (let m of matches) {
 			if (m.groups.has('file') && m.groups.get('file').indexOf('?') >= 0) {
-				var portions = m.groups.get('file').split('?');
+				let portions = m.groups.get('file').split('?');
 				m.groups.set('file', portions[0]);
-				if (portions.length == 2) {
-					var queryString = portions[1];
-					var collection = ContentMatch.parseQueryString(queryString);
+				if (portions.length === 2) {
+					let queryString = portions[1];
+					let collection = ContentMatch.parseQueryString(queryString);
 					ContentMatch.parseQueryString(m.groups.get('file')).forEach(
 						(value: string, key: string) => {
 							m.groups.set(key, value);
@@ -391,13 +397,13 @@ export class ContentMatch extends RegexContainer {
 		matches = ContentMatch.getMatches(source, ContentMatch.images_triple_colon);
 		keyedMatches = keyedMatches.concat(matches);
 
-		if (null != refs && refs.length > 0) {
+		if (null !== refs && refs.length > 0) {
 			matches = ContentMatch.getMatches(source, ContentMatch.selectors);
-			for (var m of matches) {
-				if (codeFences == undefined || !ContentMatch.inCodeFence(m, codeFences)) {
+			for (let m of matches) {
+				if (codeFences === undefined || !ContentMatch.inCodeFence(m, codeFences)) {
 					if (m.groups.has('file')) {
-						var refMatch = matches.filter(
-							e => e.groups.has('label') && e.groups.get('label') == m.groups.get('file')
+						let refMatch = matches.filter(
+							e => e.groups.has('label') && e.groups.get('label') === m.groups.get('file')
 						)[0];
 						if (refMatch !== undefined) {
 							m.groups.set('file', refMatch.groups.get('file'));
@@ -409,11 +415,11 @@ export class ContentMatch extends RegexContainer {
 					}
 
 					if (m.groups.has('file') && m.groups.get('file').indexOf('?') >= 0) {
-						var portions = m.groups.get('file').split('?');
+						let portions = m.groups.get('file').split('?');
 						m.groups.set('file', portions[0]);
-						if (portions.length == 2) {
-							var queryString = portions[1];
-							var collection = ContentMatch.parseQueryString(queryString);
+						if (portions.length === 2) {
+							let queryString = portions[1];
+							let collection = ContentMatch.parseQueryString(queryString);
 							ContentMatch.parseQueryString(m.groups.get('file')).forEach(
 								(value: string, key: string) => {
 									m.groups.set(key, value);
@@ -441,8 +447,8 @@ export class ContentMatch extends RegexContainer {
 	}
 
 	public static padPatternSpaces(pattern: string, spaces: number): string {
-		var leadingSpaces = '{' + ' '.repeat(spaces) + ',}';
-		var innerSpaces = '{' + ' '.repeat(spaces + 1) + ',' + ' '.repeat(spaces + 4) + '}';
+		let leadingSpaces = '{' + ' '.repeat(spaces) + ',}';
+		let innerSpaces = '{' + ' '.repeat(spaces + 1) + ',' + ' '.repeat(spaces + 4) + '}';
 		pattern = pattern.replace('{0,}', leadingSpaces);
 		pattern = pattern.replace('{1,3}', innerSpaces);
 		return pattern;
@@ -456,27 +462,29 @@ export class ContentMatch extends RegexContainer {
 		let keyedMatches: ContentMatch[] = [];
 
 		try {
-			var pattern = ContentMatch.bulletedList;
-			if (spaces != -1) pattern = new RegExp(ContentMatch.padPatternSpaces(pattern.source, spaces));
+			let pattern = ContentMatch.bulletedList;
+			if (spaces !== -1)
+				pattern = new RegExp(ContentMatch.padPatternSpaces(pattern.source, spaces));
 
-			var matches = ContentMatch.getMatches(source, pattern);
+			let matches = ContentMatch.getMatches(source, pattern);
 
-			for (var m of matches) {
-				if (codeFences == undefined || !ContentMatch.inCodeFence(m, codeFences))
+			for (let m of matches) {
+				if (codeFences === undefined || !ContentMatch.inCodeFence(m, codeFences))
 					keyedMatches.push(m);
 			}
 
 			pattern = ContentMatch.numberedList;
-			if (spaces != -1) pattern = new RegExp(ContentMatch.padPatternSpaces(pattern.source, spaces));
+			if (spaces !== -1)
+				pattern = new RegExp(ContentMatch.padPatternSpaces(pattern.source, spaces));
 
 			matches = ContentMatch.getMatches(source, pattern);
 
-			for (var m of matches) {
-				if (codeFences == undefined || !ContentMatch.inCodeFence(m, codeFences)) {
-					var contains = keyedMatches.filter(e => e.containsContentMatch(m));
-					if (contains.length == 0) {
+			for (let m of matches) {
+				if (codeFences === undefined || !ContentMatch.inCodeFence(m, codeFences)) {
+					let contains = keyedMatches.filter(e => e.containsContentMatch(m));
+					if (contains.length === 0) {
 						contains = keyedMatches.filter(e => m.containsContentMatch(e));
-						for (var n of contains) Helpers.removeAt(keyedMatches, n);
+						for (let n of contains) Helpers.removeAt(keyedMatches, n);
 
 						keyedMatches.push(m);
 					}
@@ -486,13 +494,13 @@ export class ContentMatch extends RegexContainer {
 			console.log(e);
 		}
 
-		if (spaces == -1) {
+		if (spaces === -1) {
 			let inner: ContentMatch[] = [];
-			for (var match of keyedMatches) {
-				var addSpaces = 3;
+			for (let match of keyedMatches) {
+				let addSpaces = 3;
 				if (match.groups.has('spaces') && match.getGroup('spaces').length > 0) {
 					addSpaces = match.groups['spaces'].Length + 3;
-					var innerMatches = ContentMatch.getBullets(source, codeFences, addSpaces);
+					let innerMatches = ContentMatch.getBullets(source, codeFences, addSpaces);
 					if (innerMatches.length > 0) inner = inner.concat(innerMatches);
 				}
 			}

@@ -1,3 +1,7 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/prefer-for-of */
+/* eslint-disable prefer-const */
 'use strict';
 
 import { readFileSync } from 'fs';
@@ -14,7 +18,6 @@ import * as vscode from 'vscode';
 import { ContentMatch } from './content-match';
 import { ContentBlock } from './content-block';
 
-const telemetryCommand: string = 'doc-index-verify';
 let commandOption: string;
 
 export function insertDocIndexCommand() {
@@ -44,30 +47,27 @@ export function verify() {
 		noActiveEditorMessage();
 		return;
 	} else {
-		if (!isMarkdownFileCheck(editor, false)) {
-			return;
-		}
-
 		try {
 			const entireFile = editor.document.getText();
+			// eslint-disa ble-next-line prefer-const
 			let fileName = vscode.window.activeTextEditor.document.fileName;
 			let blocks = ContentBlock.splitContentIntoBlocks(fileName, entireFile, false);
 			let metadataString = ContentMatch.getMetadata(fileName, entireFile);
 			let metadata = ContentMatch.readMetadata(metadataString);
-			if (metadata.keys.length == 0) {
+			if (metadata.keys.length === 0) {
 				metadata = ContentMatch.extractMetadata(entireFile);
 			}
 			let topic = metadata.has('ms.topic') ? metadata['ms.topic'] : '';
-			if (topic == '') {
+			if (topic === '') {
 				vscode.window.activeTerminal.sendText('No MS.Topic detected for MVC guidance');
 			} else {
 				let rules = AuditRule.Rules.filter(
 					e =>
-						e.ruleGroup == 'MVC' &&
-						e.ruleSet.toLowerCase() == topic.toLowerCase() &&
-						e.dependsOn == undefined
+						e.ruleGroup === 'MVC' &&
+						e.ruleSet.toLowerCase() === topic.toLowerCase() &&
+						e.dependsOn === undefined
 				);
-				if (rules.length == 0) {
+				if (rules.length === 0) {
 					vscode.window.activeTerminal.sendText('No MVC Guidance for ' + topic);
 				} else {
 					for (let i = 0; i < rules.length; i++) {

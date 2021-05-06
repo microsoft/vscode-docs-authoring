@@ -1,3 +1,7 @@
+/* eslint-disable no-console */
+/* eslint-disable import/no-unresolved */
+/* eslint-disable prefer-const */
+import { writeFile } from 'node:fs';
 import { ContentMatch } from './content-match';
 
 export class RegexContainer {
@@ -73,6 +77,7 @@ export class RegexContainer {
 	}
 
 	static getRegexMatch(parent: number, refCount: number, start: number) {
+		// eslint-disable-next-line prefer-const
 		let result: RegexContainer = new RegexContainer();
 		result.parent = parent;
 		result.refCount = refCount;
@@ -86,37 +91,45 @@ export class RegexContainer {
 		let res: RegExpExecArray;
 		let data: RegexContainer;
 		re.lastIndex = 0;
-		while ((res = re.exec(input)) !== null) {
-			if (isCapturingStartItem(res[0])) {
-				refCount++;
-				data = RegexContainer.getRegexMatch(0, refCount, res.index);
-				if (res.groups.name) {
-					data.groupName = res.groups.name;
-				}
-				matches.push(data);
-			} else if (input.charAt(res.index) === ')') {
-				let idx = matches.length;
-				while (idx-- > -1 && matches.length > idx) {
-					if (matches[idx]?.end === undefined) {
-						const match = matches[idx];
-						if (match) {
-							match.end = re.lastIndex;
-							match.source = input.substring(match.start, match.end);
-						}
-						break;
+		try {
+			while ((res = re.exec(input)) !== null) {
+				if (isCapturingStartItem(res[0])) {
+					refCount++;
+					data = RegexContainer.getRegexMatch(0, refCount, res.index);
+					if (res.groups.name) {
+						data.groupName = res.groups.name;
 					}
-				}
-				refCount--;
-				let writeIdx = idx;
-				while (idx-- > -1 && matches.length > idx) {
-					if (matches[idx]?.refCount === refCount) {
-						matches[writeIdx].parent = idx + 1;
-						break;
+					matches.push(data);
+				} else if (input.charAt(res.index) === ')') {
+					let idx = matches.length;
+					while (idx-- > -1 && matches.length > idx) {
+						if (matches[idx]?.end === undefined) {
+							const match = matches[idx];
+							if (match) {
+								match.end = re.lastIndex;
+								match.source = input.substring(match.start, match.end);
+							}
+							break;
+						}
+					}
+					refCount--;
+					let writeIdx = idx;
+					while (idx-- > -1 && matches.length > idx) {
+						if (matches[idx] !== undefined) {
+							if (matches[idx]?.refCount === refCount) {
+								matches[writeIdx].parent = idx + 1;
+								break;
+							}
+						}
 					}
 				}
 			}
+			matches.unshift(RegexContainer.getRegexContainerForRegExp(0, input.length, input));
+		} catch (error) {
+			console.log(error);
+			console.log(error.stack);
+			throw error;
 		}
-		matches.unshift(RegexContainer.getRegexContainerForRegExp(0, input.length, input));
 		return matches;
 
 		function isCapturingStartItem(str: string): boolean {

@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable no-console */
 import { ContentBlock } from './content-block';
 import { ContentMatch } from './content-match';
 import { FileTypeEnum } from './filetype-enum';
@@ -33,17 +35,18 @@ export class Helpers {
 			if (ContentMatch.rootedPath.test(path))
 				return path.replace(ContentMatch.startingSlash, '').replace('\\', '/');
 
-			var tmpPath = path.replace(ContentMatch.startingSlashDot, '');
+			let tmpPath = path.replace(ContentMatch.startingSlashDot, '');
 			tmpPath = tmpPath.replace(ContentMatch.queryStringStart, '');
 
 			// TODO: this assumes Windows OS, VS Code is cross-plat and content devs are using this
 			// On macOS and Linux, we need to use the proper bits from Node.JS path:
 			// https://nodejs.dev/learn/nodejs-file-paths
 
-			var tmpRoot = 'C:\\' + root.replace('/', '\\');
+			// eslint-disable-next-line prefer-const
+			let tmpRoot = 'C:\\' + root.replace('/', '\\');
 			tmpPath = tmpPath.replace('/', '\\');
 
-			var newPath = `${resolve(tmpRoot + '\\' + tmpPath)}`;
+			let newPath = `${resolve(tmpRoot + '\\' + tmpPath)}`;
 			newPath = newPath.replace('C:\\', '').replace('\\', '/');
 
 			return newPath;
