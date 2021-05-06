@@ -5,7 +5,6 @@ import unified = require('unified');
 
 const telemetryCommand: string = 'applyCleanup';
 export const hashtagRegex = new RegExp(/#(?!#)(.*)/gm);
-export const htmlRegex = new RegExp(/<!--[\s\S]*?-->/g);
 
 /**
  * Delete comments from yaml and markdown
@@ -33,12 +32,20 @@ export function removeCommentsFromFile(
 	}
 }
 
+/**
+ * check for html blocks and make sure they are comments.
+ * get the first word of the comment and build replacement regex to remove the comment.
+ */
 export function removeHtmlComments(data: string) {
 	const processor: any = unified().use(markdown, { commonmark: true }).parse(data);
 	if (processor.children) {
 		processor.children.forEach((md: any) => {
-			if (md.type === 'html') {
-				data = data.replace(htmlRegex, '');
+			if (md.type === 'html' && md.value.startsWith('<!--')) {
+				const firstWordRegex = /<!--\W*(\w+)/gim;
+				const htmlComment = md.value.match(firstWordRegex);
+				const firstWord = htmlComment.toString().replace(/[^a-zA-Z0-9]+/, '');
+				const commentRegex = new RegExp('<!--\\s*' + firstWord + '([^]+?)-->', 'gmi');
+				data = data.replace(commentRegex, '');
 			}
 		});
 		return data;
