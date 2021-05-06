@@ -2,6 +2,7 @@ import { reporter } from '../../helper/telemetry';
 import { readWriteFileWithProgress } from './utilities';
 import markdown = require('remark-parse');
 import unified = require('unified');
+import { output } from '../../helper/output';
 
 const telemetryCommand: string = 'applyCleanup';
 export const hashtagRegex = new RegExp(/#(?!#)(.*)/gm);
@@ -37,29 +38,37 @@ export function removeCommentsFromFile(
  * get the first word of the comment and build replacement regex to remove the comment.
  */
 export function removeHtmlComments(data: string) {
-	const processor: any = unified().use(markdown, { commonmark: true }).parse(data);
-	if (processor.children) {
-		processor.children.forEach((md: any) => {
-			if (md.type === 'html' && md.value.startsWith('<!--')) {
-				const firstWordRegex = /<!--\W*(\w+)/gim;
-				const htmlComment = md.value.match(firstWordRegex);
-				const firstWord = htmlComment.toString().replace(/[^a-zA-Z0-9]+/, '');
-				const commentRegex = new RegExp('<!--\\s*' + firstWord + '([^]+?)-->', 'gmi');
-				data = data.replace(commentRegex, '');
-			}
-		});
-		return data;
+	try {
+		const processor: any = unified().use(markdown, { commonmark: true }).parse(data);
+		if (processor.children) {
+			processor.children.forEach((md: any) => {
+				if (md.type === 'html' && md.value.startsWith('<!--')) {
+					const firstWordRegex = /<!--\W*(\w+)/gim;
+					const htmlComment = md.value.match(firstWordRegex);
+					const firstWord = htmlComment.toString().replace(/[^a-zA-Z0-9]+/, '');
+					const commentRegex = new RegExp('<!--\\s*' + firstWord + '([^]+?)-->', 'gmi');
+					data = data.replace(commentRegex, '');
+				}
+			});
+			return data;
+		}
+	} catch (error) {
+		output.appendLine(error);
 	}
 }
 
 export function removeHashtagComments(data: string) {
-	const matches = data.match(hashtagRegex);
-	if (matches) {
-		matches.forEach(match => {
-			if (!match.includes('YamlMime')) {
-				data = data.replace(match, '');
-			}
-		});
+	try {
+		const matches = data.match(hashtagRegex);
+		if (matches) {
+			matches.forEach(match => {
+				if (!match.includes('YamlMime')) {
+					data = data.replace(match, '');
+				}
+			});
+		}
+		return data;
+	} catch (error) {
+		output.appendLine(error);
 	}
-	return data;
 }
