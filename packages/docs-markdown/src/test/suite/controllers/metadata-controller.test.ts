@@ -58,7 +58,7 @@ suite('Metadata Controller', () => {
 	test('updateImplicitMetadataValues()', async () => {
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/test/metadata.md'
+			'../../../../../../../src/test/data/repo/articles/test/metadata.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
 
@@ -110,7 +110,7 @@ suite('Metadata Controller', () => {
 	test('updateMetadataDate()', async () => {
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/test/metadata1.md'
+			'../../../../../../src/test/data/repo/articles/test/metadata1.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
 

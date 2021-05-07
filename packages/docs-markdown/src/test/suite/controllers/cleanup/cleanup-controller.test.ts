@@ -85,11 +85,11 @@ suite('Cleanup Controller', () => {
 		stubShowQuickPick.onCall(0).resolves({ label: 'single-valued metadata', detail: '' });
 		const markdown = resolve(
 			__dirname,
-			'../../../../../../src/test/data/repo/articles/test/cleanup-test.md'
+			'../../../../../../../src/test/data/repo/articles/test/cleanup-test.md'
 		);
 		await loadDocumentAndGetItReady(markdown);
 		await applyCleanupFolder(
-			Uri.file(resolve(__dirname, '../../../../../../src/test/data/repo/articles/test'))
+			Uri.file(resolve(__dirname, '../../../../../../../src/test/data/repo/articles/test'))
 		);
 		await sleep(400);
 		const actualText = window.activeTextEditor?.document.getText();
@@ -335,7 +335,7 @@ suite('Cleanup Controller', () => {
 		stubShowQuickPick.onCall(0).resolves({ label: 'single-valued metadata', detail: '' });
 		const markdown = resolve(
 			__dirname,
-			'../../../../../../src/test/data/repo/markdown-stubs/cleanup-test.md'
+			'../../../../../src/test/data/repo/markdown-stubs/cleanup-test.md'
 		);
 		await loadDocumentAndGetItReady(markdown);
 		const editor = window.activeTextEditor;

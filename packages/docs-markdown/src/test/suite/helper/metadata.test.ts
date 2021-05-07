@@ -66,7 +66,7 @@ suite('Metadata Helper', () => {
 		stubShowInformationMessage.onCall(0).resolves(Promise.resolve('Update') as any);
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/test/metadata2.md'
+			'../../../../../../src/test/data/repo/articles/test/metadata2.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
 		await metadataHelper.metadataDateReminder();
@@ -91,7 +91,7 @@ suite('Metadata Helper', () => {
 		stubShowInformationMessage.onCall(0).resolves(Promise.resolve(undefined) as any);
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/test/metadata3.md'
+			'../../../../../../src/test/data/repo/articles/test/metadata3.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
 		await metadataHelper.metadataDateReminder();
@@ -115,7 +115,7 @@ suite('Metadata Helper', () => {
 		stubShowInformationMessage.onCall(0).resolves(Promise.resolve(undefined) as any);
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/test/metadata4.md'
+			'../../../../../../src/test/data/repo/articles/test/metadata4.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
 		await metadataHelper.metadataDateReminder();
@@ -168,7 +168,7 @@ suite('Metadata Helper', () => {
 		stubShowInformationMessage.onCall(0).resolves(Promise.resolve(undefined) as any);
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/test/metadata5.md'
+			'../../../../../../src/test/data/repo/articles/test/metadata5.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const clock = sinon.useFakeTimers({
