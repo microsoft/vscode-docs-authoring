@@ -5,7 +5,7 @@ import unified = require('unified');
 import { output } from '../../helper/output';
 
 const telemetryCommand: string = 'applyCleanup';
-export const hashtagRegex = new RegExp(/#(?!#)\s?\w+/gm);
+export const hashtagRegex = new RegExp(/#(?!#)\s?.*/gm);
 
 /**
  * Delete comments from yaml and markdown
