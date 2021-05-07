@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.90 (May 7th, 2021)
+
+- Lightbox bugfix.
+
 ## 0.2.89 (April 30th, 2021)
 
 - Support linking to YAML files from markdown.
