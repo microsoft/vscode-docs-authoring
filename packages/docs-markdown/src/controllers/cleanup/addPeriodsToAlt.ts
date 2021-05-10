@@ -27,7 +27,7 @@ export function addPeriodsToAlt(
 
 export function addPeriodsForMd(data: string) {
 	const regex = new RegExp(/\!\[(.*(?<!(\?|\!|\.)))\]\((.*)\)/g);
-	const altTextRegex = new RegExp(/\!\[(.*?(?<!(\?|\!|\.)))\]/);
+	const altTextRegex = new RegExp(/\!\[(.*?)\]/);
 	data = insertPeriod(data, regex, altTextRegex);
 	return data;
 }
@@ -47,7 +47,7 @@ function insertPeriod(data: string, regex: RegExp, altTextRegex: RegExp) {
 		matches.forEach(match => {
 			const groups = altTextRegex.exec(match);
 			if (groups && groups.length > 0) {
-				if (!isNullOrWhiteSpace(groups[1])) {
+				if (!isNullOrWhiteSpace(groups[1]) && !groups[1].endsWith('.')) {
 					let imageTagAltTextWithPuctuation;
 					const altTextExtraCharacterRegex = /[a-zA-Z](\".*)\]/g;
 					const altTextWhitespaceRegex = /(\.\s+)\]/g;
