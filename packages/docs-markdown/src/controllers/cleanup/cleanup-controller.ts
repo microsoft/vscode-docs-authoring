@@ -37,6 +37,10 @@ export async function applyCleanupFile(uri: Uri) {
 	const file = uri.fsPath;
 	items.push({
 		description: '',
+		label: 'Strip comments'
+	});
+	items.push({
+		description: '',
 		label: 'Everything'
 	});
 	const selection = await window.showQuickPick(items, opts);
