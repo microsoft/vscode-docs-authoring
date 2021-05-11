@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.91 (May 11th, 2021)
+
+- Add comment cleanup script.
+- Alt text lightbox bugfix.
+
 ## 0.2.90 (May 7th, 2021)
 
 - Lightbox bugfix.
