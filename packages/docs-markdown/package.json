@@ -4,7 +4,7 @@
 	"description": "Docs Markdown Extension",
 	"icon": "images/docs-logo-ms.png",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
-	"version": "0.2.90",
+	"version": "0.2.91",
 	"publisher": "docsmsft",
 	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
 	"bugs": {
@@ -345,7 +345,7 @@
 				{
 					"command": "cleanupFile",
 					"group": "1_modification",
-					"when": "resourceLangId == markdown && !listMultipleSelection"
+					"when": "resourceLangId == markdown && !listMultipleSelection || resourceLangId == yaml && !listMultipleSelection"
 				}
 			],
 			"commandPalette": [
@@ -799,7 +799,9 @@
 		"node-html-parser": "^2.1.0",
 		"recursive-readdir": "^2.2.2",
 		"typescript-collections": "^1.3.3",
-		"vscode-extension-telemetry": "^0.1.1"
+		"vscode-extension-telemetry": "^0.1.1",
+		"remark-parse": "^7.0.2",
+		"unified": "^8.4.2"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.11",
