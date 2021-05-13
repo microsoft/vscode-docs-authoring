@@ -76,7 +76,7 @@ export class ContentMatch extends RegexContainer {
 	static signUp: RegExp = /https:\/\/azure\.microsoft\.com\/free\/\?WT\.mc_id=A261C142F/gim;
 	static tabAnchor: RegExp = /#tab/gim;
 	static anyNewLines: RegExp = /[\r\n]+/gim;
-	static metadataValue: RegExp = /(?<=^)(?<key>[^:]+):\s{0,1}(?<value>[^\r\n]+)/gim;
+	static metadataValue: RegExp = /(?<=^)(?<key>[^:]+):\s{0,1}(?<value>[^\r\n]+)\r\n/gim;
 	static newLineX2: RegExp = /(\r\n){2,}/gim;
 	static ufeff: RegExp = /\uFEFF/gim;
 	static u200b: RegExp = /\u200B/gim;
@@ -143,6 +143,7 @@ export class ContentMatch extends RegexContainer {
 	): ContentMatch {
 		let value: ContentMatch = new ContentMatch();
 		value.start = result.index;
+		value.index = result.index;
 		value.length = result.length;
 		value.end = result.index + result.length;
 		value.groups = new Map(array.map(i => [i.groupName, i.value]));
@@ -173,7 +174,7 @@ export class ContentMatch extends RegexContainer {
 	}
 
 	public getGroup(group: string): string {
-		let returnValue = this.groups[group];
+		let returnValue = this.groups.get(group);
 		if (undefined === returnValue) {
 			returnValue = '';
 		}
@@ -181,9 +182,13 @@ export class ContentMatch extends RegexContainer {
 		return returnValue;
 	}
 
+	public setGroup(group: string, value: string) {
+		this.groups.set(group, value);
+	}
+
 	public getIncludeLinks(content: string, filename: string) {
 		let links = ContentMatch.getMatches(content, ContentMatch.includeLinks).filter(
-			e => e.groups.has('link') && ContentMatch.includeLabel.test(e.groups['link'])
+			e => e.groups.has('link') && ContentMatch.includeLabel.test(e.groups.get('link'))
 		);
 
 		for (let i = 0; i < links.length; i++) {
@@ -192,7 +197,7 @@ export class ContentMatch extends RegexContainer {
 			if (ContentMatch.notRelative.test(includeLink.getGroup('file'))) {
 				let fileName = Helpers.getFileName(filename);
 				let hrefPath = Helpers.fixPath(dirname(filename), includeLink.getGroup('file'));
-				includeLink.groups['HrefPath'] = hrefPath;
+				includeLink.groups.set('HrefPath', hrefPath);
 			}
 		}
 
@@ -259,14 +264,15 @@ export class ContentMatch extends RegexContainer {
 	}
 
 	public static extractMetadata(source: string): Map<string, string> {
+		source = source.replace(/---(\r\n)*/gim, '');
 		let re = ContentMatch.metadataValue;
 		let map = new Map<string, string>();
 		for (let m of ContentMatch.getMatches(source, ContentMatch.metadataValue)) {
-			m.groups.forEach((value: string, key: string) => {
-				if (!Helpers.strIsNullOrEmpty(value)) {
-					map.set(ContentMatch.cleanUpColumnName(key), value);
-				}
-			});
+			let value = m.getGroup('value');
+			let key = m.getGroup('key');
+			if (!Helpers.strIsNullOrEmpty(value) && !Helpers.strIsNullOrEmpty(key)) {
+				map.set(ContentMatch.cleanUpColumnName(key), value);
+			}
 		}
 
 		return map;
@@ -434,7 +440,7 @@ export class ContentMatch extends RegexContainer {
 		}
 
 		return keyedMatches.sort((a, b) => {
-			return b.index - a.index;
+			return a.index - b.index;
 		});
 	}
 
@@ -499,7 +505,7 @@ export class ContentMatch extends RegexContainer {
 			for (let match of keyedMatches) {
 				let addSpaces = 3;
 				if (match.groups.has('spaces') && match.getGroup('spaces').length > 0) {
-					addSpaces = match.groups['spaces'].Length + 3;
+					addSpaces = match.groups.get('spaces').length + 3;
 					let innerMatches = ContentMatch.getBullets(source, codeFences, addSpaces);
 					if (innerMatches.length > 0) inner = inner.concat(innerMatches);
 				}
@@ -509,7 +515,7 @@ export class ContentMatch extends RegexContainer {
 		}
 
 		return keyedMatches.sort((a, b) => {
-			return b.index - a.index;
+			return a.index - b.index;
 		});
 	}
 

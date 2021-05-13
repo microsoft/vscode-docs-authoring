@@ -244,6 +244,28 @@ export class AuditEntry {
 		this.initialConditions = rule.conditions;
 	}
 
+	constructor() {
+		this.dictionary = new Map<string, string>();
+		this.passedDependents = [];
+		this.failedDependents = [];
+		this.title = '';
+		this.fileName = '';
+		this.currentValue = '';
+		this.capturedValue = '';
+		this.expectedValue = '';
+		this.termString = '';
+		this.locatedAtIndex = -1;
+		this.count = -1;
+		this.dependentFailureCount = -1;
+		this.description = '';
+		this.reference = '';
+		this.conditionName = '';
+		this.auditRule = undefined;
+		this.parent = undefined;
+		this.parents = '';
+		this.parentTitle = '';
+	}
+
 	public setSuccess(
 		success: boolean,
 		current: string = '',
@@ -267,7 +289,7 @@ export class AuditEntry {
 
 	public extractCaptures(groups?: Map<string, string>): AuditEntry {
 		for (let value of this.auditRule.captureList) {
-			if (groups !== undefined && groups.has(value)) {
+			if (groups !== undefined && groups.size > 0 && groups.has(value)) {
 				this.dictionary.set(value, groups.get(value));
 			} else if (value === 'count') {
 				this.dictionary.set('Count', `${this.count}`);
@@ -280,12 +302,12 @@ export class AuditEntry {
 
 		// Todo : Make this intuitive.
 		if (
-			!Helpers.strIsNullOrEmpty(this.auditRule.artifactRegexCaptureName) &&
-			this.auditRule.artifactRegexCaptureName !== '0' &&
-			this.dictionary.has(this.auditRule.artifactRegexCaptureName)
+			!Helpers.strIsNullOrEmpty(this.auditRule.artifactRegExCaptureName) &&
+			this.auditRule.artifactRegExCaptureName !== '0' &&
+			this.dictionary.has(this.auditRule.artifactRegExCaptureName)
 		) {
-			this.capturedValue = this.dictionary.get(this.auditRule.artifactRegexCaptureName);
-		} else if (this.auditRule.captureList.length > 0) {
+			this.capturedValue = this.dictionary.get(this.auditRule.artifactRegExCaptureName);
+		} else if (this.auditRule.captureList !== undefined && this.auditRule.captureList.length > 0) {
 			let first = this.auditRule.captureList[0];
 			if (this.dictionary.has(first) && first !== 'ArticlePath')
 				this.capturedValue = this.dictionary.get(first);
@@ -302,7 +324,7 @@ export class AuditEntry {
 				break;
 
 			case OperationEnum.Has_MD_Artifact:
-				if (this.auditRule.artifactDetails.keys.length > 0) {
+				if (this.auditRule.artifactDetails.size > 0) {
 					let s: string = '';
 					this.auditRule.artifactDetails.forEach((value, key) => {
 						s + `${key}: ${value}` + ',';
@@ -386,6 +408,14 @@ export class AuditEntry {
 		this.dependentTestCount = dependentEntries.length;
 		this.dependentSuccessCount = dependentEntries.filter(e => e.success).length;
 		this.dependentFailureCount = dependentEntries.filter(e => !e.success).length;
+		if (this.dependentSuccessCount === undefined) {
+			this.dependentSuccessCount = 0;
+		}
+
+		if (this._dependentFailureCount === undefined) {
+			this.dependentFailureCount = 0;
+		}
+
 		for (let entry of dependentEntries) {
 			if (entry.success) {
 				this.passedDependents.push(entry.title);

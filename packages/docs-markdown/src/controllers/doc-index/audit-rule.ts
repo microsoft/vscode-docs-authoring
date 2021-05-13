@@ -19,6 +19,7 @@ import { is } from 'typescript-is';
 import { MarkdownEnum } from './markdown-enum';
 import { Stack } from 'stack-typescript';
 import { AuditEntry } from './audit-entry';
+import { log } from 'console';
 
 export class AuditRule {
 	constructor(json: any) {
@@ -205,10 +206,10 @@ export class AuditRule {
 	}
 
 	private _file_fileType: string;
-	public get file_fileType(): string {
+	public get fileFileType(): string {
 		return this._file_fileType;
 	}
-	public set file_fileType(v: string) {
+	public set fileFileType(v: string) {
 		this._file_fileType = v;
 	}
 
@@ -281,10 +282,10 @@ export class AuditRule {
 	}
 
 	private _artifact_RegexCaptureName: string;
-	public get artifactRegexCaptureName(): string {
+	public get artifactRegExCaptureName(): string {
 		return this._artifact_RegexCaptureName;
 	}
-	public set artifactRegexCaptureName(v: string) {
+	public set artifactRegExCaptureName(v: string) {
 		this._artifact_RegexCaptureName = v;
 	}
 
@@ -648,24 +649,28 @@ export class AuditRule {
 				this.operationType !== OperationEnum.GateKeeper
 			) {
 				for (let dependent of this.dependents) {
-					auditEntries = auditEntries.concat(
-						dependent.test(contentBlocks, filename, metadata, content, blocks)
-					);
+					if (dependent !== undefined) {
+						auditEntries = auditEntries.concat(
+							dependent.test(contentBlocks, filename, metadata, content, blocks)
+						);
+					}
 				}
 
-				let logicalTestResult: AuditEntry = null;
+				let logicalTestResult: AuditEntry;
 				switch (this.logicalOperatorType) {
 					case LogicalOperatorEnum.And:
 						let successes_and = auditEntries.filter(e => this.dependentConditionEntry(e));
 						successes_and.reverse();
 						if (successes_and.every(e => e.success)) {
 							logicalTestResult = new AuditEntry();
+							logicalTestResult.setAuditEntry(this);
 							logicalTestResult.auditRule = this;
 							logicalTestResult.fileName = filename;
 							logicalTestResult.setSuccess(true, this.joinConditionValues(successes_and));
 						} else {
 							logicalTestResult = new AuditEntry();
 							logicalTestResult.auditRule = this;
+							logicalTestResult.setAuditEntry(this);
 							logicalTestResult.fileName = filename;
 							logicalTestResult.setSuccess(false);
 						}
@@ -679,11 +684,13 @@ export class AuditRule {
 						successes_or.reverse();
 						if (successes_or.length > 0) {
 							logicalTestResult = new AuditEntry();
+							logicalTestResult.setAuditEntry(this);
 							logicalTestResult.auditRule = this;
 							logicalTestResult.setSuccess(true, this.joinConditionValues(successes_or));
 						} else {
 							logicalTestResult = new AuditEntry();
 							logicalTestResult.auditRule = this;
+							logicalTestResult.setAuditEntry(this);
 							logicalTestResult.fileName = filename;
 							logicalTestResult.setSuccess(false);
 						}
@@ -732,12 +739,14 @@ export class AuditRule {
 							)[0];
 							if (this.shouldStore(true) && undefined !== match) {
 								let tmp = new AuditEntry();
+								tmp.setAuditEntry(this);
 								tmp.fileName = filename;
 								tmp.auditRule = this;
 								tmp.setSuccess(true);
 								auditEntries.push(tmp);
 							} else if (this.shouldStore(false)) {
 								let tmp = new AuditEntry();
+								tmp.setAuditEntry(this);
 								tmp.fileName = filename;
 								tmp.auditRule = this;
 								tmp.setSuccess(false);
@@ -757,27 +766,34 @@ export class AuditRule {
 							let artifacts: ContentBlock[] = [];
 							artifacts = contentBlocks
 								.filter(e => e.artifactType === this.artifactType)
-								.sort((a, b) => b.start - a.start);
+								.sort((a, b) => a.start - b.start);
 
-							this.additionalFilters.forEach((value, key) => {
-								artifacts = artifacts.filter(
-									e => e.groups.has(key) && new RegExp(e.getGroup(key), 'gim').test(value)
-								);
-							});
+							try {
+								if (this.additionalFilters !== undefined && this.additionalFilters.size > 0) {
+									this.additionalFilters.forEach((value, key) => {
+										artifacts = artifacts.filter(
+											e => e.groups.has(key) && new RegExp(e.getGroup(key), 'gim').test(value)
+										);
+									});
+								}
+							} catch (Error) {
+								let l = 0;
+								// Really TypeScript?
+							}
 
 							// This is the last index.
 							let successes = 0;
 							let matches: ContentBlock[] = [];
 							let sibling_matches = new Map<ContentBlock, ContentBlock>();
-							let matchedAtIndex: ContentBlock = null;
+							let matchedAtIndex: ContentBlock;
 							for (let i = 0; i < artifacts.length; i++) {
 								let thisArtifact = artifacts[i];
 
 								let artifactText = this.tryGetArtifactText(
 									thisArtifact,
-									this.artifactRegexCaptureName
+									this.artifactRegExCaptureName
 								);
-								if (is<boolean>(artifactText)) continue;
+								if (typeof artifactText === 'boolean') continue;
 
 								let success = false;
 
@@ -785,7 +801,7 @@ export class AuditRule {
 									this.artifactRegex.test(artifactText) &&
 									this.atIndex(thisArtifact, artifacts)
 								) {
-									if (this.artifactDetails.keys.length > 0) {
+									if (this.artifactDetails.size > 0) {
 										let detailsFound = true;
 										this.artifactDetails.forEach((value, key) => {
 											if (
@@ -814,20 +830,20 @@ export class AuditRule {
 											innerBlocks = thisArtifact.parent.AllInnerBlocks();
 										else if (this.siblingsInType === SiblingsInEnum.SameHeader) {
 											let parent = thisArtifact.getParent(MarkdownEnum.Header);
-											if (null != parent) innerBlocks = parent.AllInnerBlocks();
+											if (undefined !== parent) innerBlocks = parent.AllInnerBlocks();
 										}
 
 										innerBlocks = innerBlocks.filter(
 											e => e.artifactType === this.siblingArtifactType
 										);
-										innerBlocks = innerBlocks.sort((a, b) => b.start - a.start);
+										innerBlocks = innerBlocks.sort((a, b) => a.start - b.start);
 
 										for (let sibling of innerBlocks) {
 											let sibling_artifactText = this.tryGetArtifactText(
 												sibling,
 												this.siblingArtifactRegexCaptureName
 											);
-											if (is<boolean>(sibling_artifactText)) continue;
+											if (typeof sibling_artifactText === 'boolean') continue;
 
 											if (this.artifactRegex.test(sibling_artifactText)) {
 												matches.push(thisArtifact);
@@ -842,6 +858,7 @@ export class AuditRule {
 							for (let artifactMatch of matches) {
 								let dependentEntries: AuditEntry[] = [];
 								let thisAuditEntry = new AuditEntry();
+								thisAuditEntry.setAuditEntry(this);
 								thisAuditEntry.auditRule = this;
 								thisAuditEntry.fileName = filename;
 								thisAuditEntry.setSuccess(true, artifactMatch.text);
@@ -851,7 +868,7 @@ export class AuditRule {
 										thisAuditEntry.setSuccess(false, artifactMatch.text);
 									else {
 										sibling_matches.get(artifactMatch).groups.forEach((value, key) => {
-											groups[key] = value;
+											groups.set(key, value);
 										});
 									}
 								}
@@ -866,42 +883,44 @@ export class AuditRule {
 									auditEntries.push(thisAuditEntry);
 
 								for (let dependentRule of this.dependents) {
-									switch (this.dependentOperationType) {
-										case DependentOperationEnum.AllChildBlocks:
-											dependentEntries = dependentEntries.concat(
-												dependentRule.test(
-													artifactMatch.AllInnerBlocks(),
-													filename,
-													metadata,
-													content,
-													blocks
-												)
-											);
-											break;
+									if (dependentRule !== undefined) {
+										switch (this.dependentOperationType) {
+											case DependentOperationEnum.AllChildBlocks:
+												dependentEntries = dependentEntries.concat(
+													dependentRule.test(
+														artifactMatch.AllInnerBlocks(),
+														filename,
+														metadata,
+														content,
+														blocks
+													)
+												);
+												break;
 
-										case DependentOperationEnum.CurrentBlocks:
-											dependentEntries = dependentEntries.concat(
-												dependentRule.test(contentBlocks, filename, metadata, content, blocks)
-											);
-											break;
+											case DependentOperationEnum.CurrentBlocks:
+												dependentEntries = dependentEntries.concat(
+													dependentRule.test(contentBlocks, filename, metadata, content, blocks)
+												);
+												break;
 
-										case DependentOperationEnum.DirectChildren:
-											dependentEntries = dependentEntries.concat(
-												dependentRule.test(
-													artifactMatch.AllInnerBlocks(),
-													filename,
-													metadata,
-													content,
-													blocks
-												)
-											);
-											break;
+											case DependentOperationEnum.DirectChildren:
+												dependentEntries = dependentEntries.concat(
+													dependentRule.test(
+														artifactMatch.AllInnerBlocks(),
+														filename,
+														metadata,
+														content,
+														blocks
+													)
+												);
+												break;
 
-										case DependentOperationEnum.AllBlocks:
-											dependentEntries = dependentEntries.concat(
-												dependentRule.test(blocks, filename, metadata, content, blocks)
-											);
-											break;
+											case DependentOperationEnum.AllBlocks:
+												dependentEntries = dependentEntries.concat(
+													dependentRule.test(blocks, filename, metadata, content, blocks)
+												);
+												break;
+										}
 									}
 								}
 
@@ -918,9 +937,10 @@ export class AuditRule {
 							}
 
 							if (matches.length > 0) {
-								let thisAuditEntry = null;
+								let thisAuditEntry;
 								if (this.operationType === OperationEnum.Has_n_MD_Artifacts) {
 									thisAuditEntry = new AuditEntry();
+									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry.setSuccess(this.hasArtifactCount(matches.length), matches.length);
@@ -932,6 +952,7 @@ export class AuditRule {
 									let compare_optional = this.artifactOrderOptional.split(',');
 
 									thisAuditEntry = new AuditEntry();
+									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.setSuccess(true, currentOrder.join(','));
@@ -940,7 +961,7 @@ export class AuditRule {
 									let current_index = 0;
 									for (let i = 0; i < compare_required.length; i++) {
 										if (current_index >= currentOrder.length) {
-											thisAuditEntry = null;
+											thisAuditEntry;
 											break;
 										}
 
@@ -950,12 +971,12 @@ export class AuditRule {
 												!Helpers.strIsNullOrEmpty(this.artifactOrderOptional) &&
 												new RegExp(compare_optional[optional_index], 'gim').test(current);
 											if (this.bExact && !optionalSuccess) {
-												thisAuditEntry = null;
+												thisAuditEntry;
 												break;
 											}
 
 											// If this was the last chance.
-											if (i + 1 === compare_required.length - 1) thisAuditEntry = null;
+											if (i + 1 === compare_required.length - 1) thisAuditEntry;
 
 											if (optionalSuccess) successes++;
 										} else {
@@ -965,8 +986,9 @@ export class AuditRule {
 										}
 									}
 
-									if (null == thisAuditEntry) {
+									if (undefined === thisAuditEntry) {
 										thisAuditEntry = new AuditEntry();
+										thisAuditEntry.setAuditEntry(this);
 										thisAuditEntry.fileName = filename;
 										thisAuditEntry.auditRule = this;
 										thisAuditEntry.setSuccess(false, currentOrder.join(','));
@@ -975,17 +997,18 @@ export class AuditRule {
 									}
 
 									if (currentOrder.length > 0) {
-										thisAuditEntry.ExtractCaptures(
+										thisAuditEntry.extractCaptures(
 											new Map<string, string>([['order', currentOrder.join(',')]])
 										);
 									}
 								}
 
-								if (null != thisAuditEntry && this.shouldStore(thisAuditEntry.Success))
+								if (undefined !== thisAuditEntry && this.shouldStore(thisAuditEntry.Success))
 									auditEntries.push(thisAuditEntry);
 							} else if (this.shouldStore(false)) {
 								let actualValue = '';
 								let thisAuditEntry = new AuditEntry();
+								thisAuditEntry.setAuditEntry(this);
 								thisAuditEntry.fileName = filename;
 								thisAuditEntry.auditRule = this;
 								thisAuditEntry.setSuccess(false, actualValue);
@@ -1007,14 +1030,14 @@ export class AuditRule {
 							let matches: ContentBlock[] = [];
 							matches = contentBlocks
 								.filter(e => e.artifactType === this.artifactType)
-								.sort((a, b) => b.start - a.start);
+								.sort((a, b) => a.start - b.start);
 							for (let i = 0; i < matches.length; i++) {
 								let thisArtifact = matches[i];
 								let artifactText = this.tryGetArtifactText(
 									thisArtifact,
-									this.artifactRegexCaptureName
+									this.artifactRegExCaptureName
 								);
-								if (is<boolean>(artifactText)) continue;
+								if (typeof artifactText === 'boolean') continue;
 
 								if (
 									!Helpers.strIsNullOrEmpty(this.artifactText) &&
@@ -1023,15 +1046,17 @@ export class AuditRule {
 									continue;
 
 								for (let dependent of this.dependents) {
-									auditEntries = auditEntries.concat(
-										dependent.test(
-											thisArtifact.AllInnerBlocks(),
-											filename,
-											metadata,
-											content,
-											blocks
-										)
-									);
+									if (dependent !== undefined) {
+										auditEntries = auditEntries.concat(
+											dependent.test(
+												thisArtifact.AllInnerBlocks(),
+												filename,
+												metadata,
+												content,
+												blocks
+											)
+										);
+									}
 								}
 							}
 						}
@@ -1047,16 +1072,17 @@ export class AuditRule {
 							let matches: ContentBlock[] = [];
 							matches = contentBlocks
 								.filter(e => e.artifactType === this.artifactType)
-								.sort((a, b) => b.start - a.start);
+								.sort((a, b) => a.start - b.start);
 							for (let i = 0; i < matches.length; i++) {
 								let thisArtifact = matches[i];
 								let artifactText = this.tryGetArtifactText(
 									thisArtifact,
-									this.artifactRegexCaptureName
+									this.artifactRegExCaptureName
 								);
-								if (is<boolean>(artifactText)) continue;
+								if (typeof artifactText === 'boolean') continue;
 
 								let thisAuditEntry = new AuditEntry();
+								thisAuditEntry.setAuditEntry(this);
 								thisAuditEntry.fileName = filename;
 								thisAuditEntry.auditRule = this;
 								thisAuditEntry
@@ -1068,9 +1094,11 @@ export class AuditRule {
 								if (thisAuditEntry.success) {
 									let dependentEntries: AuditEntry[] = [];
 									for (let dependent of this.dependents) {
-										dependentEntries = dependentEntries.concat(
-											dependent.test(contentBlocks, filename, metadata, content, blocks)
-										);
+										if (dependent !== undefined) {
+											dependentEntries = dependentEntries.concat(
+												dependent.test(contentBlocks, filename, metadata, content, blocks)
+											);
+										}
 									}
 
 									if (this.shouldStore(thisAuditEntry.success))
@@ -1087,8 +1115,8 @@ export class AuditRule {
 
 					case OperationEnum.MetadataField_InAllowedValues:
 						{
-							if (null != metadata) {
-								let thisAuditEntry: AuditEntry = null;
+							if (undefined !== metadata) {
+								let thisAuditEntry: AuditEntry;
 
 								if (
 									metadata.has(this.metadataField) &&
@@ -1104,6 +1132,7 @@ export class AuditRule {
 										.extractCaptures(metadata);
 								} else {
 									thisAuditEntry = new AuditEntry();
+									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry.setSuccess(false);
@@ -1115,9 +1144,11 @@ export class AuditRule {
 									if (thisAuditEntry.success) {
 										let dependentEntries: AuditEntry[] = [];
 										for (let dependent of this.dependents) {
-											dependentEntries = dependentEntries.concat(
-												dependent.test(contentBlocks, filename, metadata, content, blocks)
-											);
+											if (dependent !== undefined) {
+												dependentEntries = dependentEntries.concat(
+													dependent.test(contentBlocks, filename, metadata, content, blocks)
+												);
+											}
 										}
 
 										if (this.shouldStore(thisAuditEntry.success))
@@ -1134,14 +1165,15 @@ export class AuditRule {
 
 					case OperationEnum.MetadataField_Equals:
 						{
-							if (null != metadata) {
-								let thisAuditEntry: AuditEntry = null;
+							if (undefined !== metadata) {
+								let thisAuditEntry: AuditEntry;
 								if (
 									metadata.has(this.metadataField) &&
 									!Helpers.strIsNullOrEmpty(metadata.get(this.metadataField))
 								) {
 									let value = metadata.get(this.metadataField);
 									thisAuditEntry = new AuditEntry();
+									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry
@@ -1149,6 +1181,7 @@ export class AuditRule {
 										.extractCaptures(metadata);
 								} else {
 									thisAuditEntry = new AuditEntry();
+									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry.setSuccess(false);
@@ -1160,64 +1193,11 @@ export class AuditRule {
 									if (thisAuditEntry.success) {
 										let dependentEntries: AuditEntry[] = [];
 										for (let dependent of this.dependents) {
-											dependentEntries = dependentEntries.concat(
-												dependent.test(contentBlocks, filename, metadata, content, blocks)
-											);
-										}
-
-										if (this.shouldStore(thisAuditEntry.success))
-											dependentEntries
-												.filter(e => null == e.parent)
-												.forEach(e => (e.parent = thisAuditEntry));
-
-										thisAuditEntry.setSummary(dependentEntries);
-										auditEntries = auditEntries.concat(dependentEntries);
-									} else if (this.onFailureOperation === OnFailureEnum.SummarizeDependents) {
-										let dependentEntries: AuditEntry[] = [];
-										for (let dependent of this.dependents) {
-											dependentEntries = dependentEntries.concat(
-												dependent.test(contentBlocks, filename, metadata, content, blocks)
-											);
-										}
-
-										thisAuditEntry.setSummary(dependentEntries);
-									}
-								}
-							}
-						}
-						break;
-
-					case OperationEnum.MetadataField_ContainsText:
-						{
-							if (null != metadata) {
-								let thisAuditEntry: AuditEntry = null;
-								if (
-									metadata.has(this.metadataField) &&
-									!Helpers.strIsNullOrEmpty(metadata.get(this.metadataField))
-								) {
-									let value = metadata.get(this.metadataField);
-									thisAuditEntry = new AuditEntry();
-									thisAuditEntry.auditRule = this;
-									thisAuditEntry.fileName = filename;
-									thisAuditEntry
-										.setSuccess(new RegExp(this.metadataFieldText, 'gim').test(value))
-										.extractCaptures(metadata);
-								} else {
-									thisAuditEntry = new AuditEntry();
-									thisAuditEntry.auditRule = this;
-									thisAuditEntry.fileName = filename;
-									thisAuditEntry.setSuccess(false);
-								}
-
-								if (undefined !== thisAuditEntry) {
-									if (this.shouldStore(thisAuditEntry.success)) auditEntries.push(thisAuditEntry);
-
-									if (thisAuditEntry.success) {
-										let dependentEntries: AuditEntry[] = [];
-										for (let dependent of this.dependents) {
-											dependentEntries = dependentEntries.concat(
-												dependent.test(contentBlocks, filename, metadata, content, blocks)
-											);
+											if (dependent !== undefined) {
+												dependentEntries = dependentEntries.concat(
+													dependent.test(contentBlocks, filename, metadata, content, blocks)
+												);
+											}
 										}
 
 										if (this.shouldStore(thisAuditEntry.success))
@@ -1230,9 +1210,72 @@ export class AuditRule {
 									} else if (this.onFailureOperation === OnFailureEnum.SummarizeDependents) {
 										let dependentEntries: AuditEntry[] = [];
 										for (let dependent of this.dependents) {
-											dependentEntries = dependentEntries.concat(
-												dependent.test(contentBlocks, filename, metadata, content, blocks)
-											);
+											if (dependent !== undefined) {
+												dependentEntries = dependentEntries.concat(
+													dependent.test(contentBlocks, filename, metadata, content, blocks)
+												);
+											}
+										}
+
+										thisAuditEntry.setSummary(dependentEntries);
+									}
+								}
+							}
+						}
+						break;
+
+					case OperationEnum.MetadataField_ContainsText:
+						{
+							if (undefined !== metadata) {
+								let thisAuditEntry: AuditEntry;
+								if (
+									metadata.has(this.metadataField) &&
+									!Helpers.strIsNullOrEmpty(metadata.get(this.metadataField))
+								) {
+									let value = metadata.get(this.metadataField);
+									thisAuditEntry = new AuditEntry();
+									thisAuditEntry.setAuditEntry(this);
+									thisAuditEntry.auditRule = this;
+									thisAuditEntry.fileName = filename;
+									thisAuditEntry
+										.setSuccess(new RegExp(this.metadataFieldText, 'gim').test(value))
+										.extractCaptures(metadata);
+								} else {
+									thisAuditEntry = new AuditEntry();
+									thisAuditEntry.setAuditEntry(this);
+									thisAuditEntry.auditRule = this;
+									thisAuditEntry.fileName = filename;
+									thisAuditEntry.setSuccess(false);
+								}
+
+								if (undefined !== thisAuditEntry) {
+									if (this.shouldStore(thisAuditEntry.success)) auditEntries.push(thisAuditEntry);
+
+									if (thisAuditEntry.success) {
+										let dependentEntries: AuditEntry[] = [];
+										for (let dependent of this.dependents) {
+											if (dependent !== undefined) {
+												dependentEntries = dependentEntries.concat(
+													dependent.test(contentBlocks, filename, metadata, content, blocks)
+												);
+											}
+										}
+
+										if (this.shouldStore(thisAuditEntry.success))
+											dependentEntries
+												.filter(e => undefined === e.parent)
+												.forEach(e => (e.parent = thisAuditEntry));
+
+										thisAuditEntry.setSummary(dependentEntries);
+										auditEntries = auditEntries.concat(dependentEntries);
+									} else if (this.onFailureOperation === OnFailureEnum.SummarizeDependents) {
+										let dependentEntries: AuditEntry[] = [];
+										for (let dependent of this.dependents) {
+											if (dependent !== undefined) {
+												dependentEntries = dependentEntries.concat(
+													dependent.test(contentBlocks, filename, metadata, content, blocks)
+												);
+											}
 										}
 
 										thisAuditEntry.setSummary(dependentEntries);
@@ -1249,14 +1292,14 @@ export class AuditRule {
 							let success = false;
 							filename = Helpers.getFileName(filename);
 							let fileType = Helpers.getFileType(filename);
-							let thisAuditEntry: AuditEntry = null;
+							let thisAuditEntry: AuditEntry;
 							switch (this.operationType) {
 								case OperationEnum.File_FileNameEquals:
 									success = filename.toLowerCase() === this.fileFileName;
 									break;
 
 								case OperationEnum.File_FileTypeEquals:
-									success = fileType === FileTypeEnum[this.file_fileType];
+									success = fileType === FileTypeEnum[this.fileFileType];
 									break;
 
 								case OperationEnum.File_FileName_ContainsText:
@@ -1264,11 +1307,12 @@ export class AuditRule {
 										filename,
 										new RegExp(this.fileFileNameText, 'gim')
 									)[0];
-									success = null != fileNameMatch;
+									success = undefined !== fileNameMatch;
 									break;
 							}
 
 							thisAuditEntry = new AuditEntry();
+							thisAuditEntry.setAuditEntry(this);
 							thisAuditEntry.auditRule = this;
 							thisAuditEntry.fileName = filename;
 							thisAuditEntry.setSuccess(success, `(${FileTypeEnum[fileType]}) ${filename}`);
@@ -1279,9 +1323,11 @@ export class AuditRule {
 								if (thisAuditEntry.success) {
 									let dependentEntries: AuditEntry[] = [];
 									for (let dependent of this.dependents) {
-										dependentEntries = dependentEntries.concat(
-											dependent.test(contentBlocks, filename, metadata, content, blocks)
-										);
+										if (dependent !== undefined) {
+											dependentEntries = dependentEntries.concat(
+												dependent.test(contentBlocks, filename, metadata, content, blocks)
+											);
+										}
 									}
 
 									if (this.shouldStore(thisAuditEntry.success))
@@ -1294,9 +1340,11 @@ export class AuditRule {
 								} else if (this.onFailureOperation === OnFailureEnum.SummarizeDependents) {
 									let dependentEntries: AuditEntry[] = [];
 									for (let dependent of this.dependents) {
-										dependentEntries = dependentEntries.concat(
-											dependent.test(contentBlocks, filename, metadata, content, blocks)
-										);
+										if (dependent !== undefined) {
+											dependentEntries = dependentEntries.concat(
+												dependent.test(contentBlocks, filename, metadata, content, blocks)
+											);
+										}
 									}
 
 									thisAuditEntry.setSummary(dependentEntries);
@@ -1349,6 +1397,7 @@ export class AuditRule {
 					case OperationEnum.KeyMaster:
 						{
 							let thisAuditEntry = new AuditEntry();
+							thisAuditEntry.setAuditEntry(this);
 							thisAuditEntry.auditRule = this;
 							thisAuditEntry.fileName = filename;
 
@@ -1379,15 +1428,15 @@ export class AuditRule {
 			}
 
 			return auditEntries;
-		} catch (e) {
-			console.log(e);
-			return null;
+		} catch (Error) {
+			console.log(Error);
+			return undefined;
 		}
 	}
 
 	public isFileType(value: string): AuditRule {
 		this.operationType = OperationEnum.File_FileTypeEquals;
-		this.file_fileType = FileTypeEnum[value];
+		this.fileFileType = FileTypeEnum[value];
 		return this;
 	}
 
@@ -1526,14 +1575,14 @@ export class AuditRule {
 		this.artifactType = type;
 
 		this.setArtifactText(type, value);
-		this.artifactRegexCaptureName = regexname;
+		this.artifactRegExCaptureName = regexname;
 		return this;
 	}
 
 	public containsText(type: MarkdownEnum, value: string, regexname: string = '0'): AuditRule {
 		this.operationType = OperationEnum.Each_MD_Artifact_ContainsText;
 		this.artifactType = type;
-		this.artifactRegexCaptureName = regexname;
+		this.artifactRegExCaptureName = regexname;
 		this.setArtifactText(type, value);
 		return this;
 	}
@@ -1590,7 +1639,7 @@ export class AuditRule {
 	): AuditRule {
 		this.operationType = OperationEnum.Has_MD_Artifact;
 		this.artifactIndex = index;
-		this.artifactRegexCaptureName = regexname;
+		this.artifactRegExCaptureName = regexname;
 		this.artifactType = type;
 		this.setArtifactText(type, value);
 		return this;
@@ -1604,7 +1653,7 @@ export class AuditRule {
 	): AuditRule {
 		this.operationType = OperationEnum.Has_MD_Artifact_Any;
 		this.artifactIndex = index;
-		this.artifactRegexCaptureName = regexname;
+		this.artifactRegExCaptureName = regexname;
 		this.artifactType = type;
 		this.setArtifactText(type, value);
 		return this;
@@ -1618,7 +1667,7 @@ export class AuditRule {
 		sibling_regexname: string = '0'
 	): AuditRule {
 		this.operationType = OperationEnum.Has_MD_ArtifactSiblings;
-		this.artifactRegexCaptureName = primary_regexname;
+		this.artifactRegExCaptureName = primary_regexname;
 		this.siblingArtifactRegexCaptureName = sibling_regexname;
 		this.artifactType = primary;
 		this.siblingArtifactType = sibling;
@@ -1754,7 +1803,7 @@ export class AuditRule {
 		return result;
 	}
 	public static getAllParentRules(node: AuditRule, DependsOnlist: AuditRule[]): AuditRule[] {
-		if (node.dependsOn == null) return DependsOnlist;
+		if (node.dependsOn === undefined) return DependsOnlist;
 
 		DependsOnlist.push(node.dependsOn);
 		this.getAllParentRules(node.dependsOn, DependsOnlist);
@@ -1774,7 +1823,7 @@ export class AuditRule {
 	}
 
 	public TopParent(): AuditRule {
-		if (null != this.dependsOn) return this.dependsOn.TopParent();
+		if (undefined !== this.dependsOn) return this.dependsOn.TopParent();
 		else return this;
 	}
 
@@ -1835,17 +1884,39 @@ export class AuditRule {
 		this._tablePath = v;
 	}
 
-	public static LoadRules() {
-		const anyArray = rules as any[];
-		const r = anyArray.map(json => new AuditRule(json));
-		for (let i = 0; i < r.length; i++) {
-			r[i].dependents = [];
-			let dList = r[i].dependentList.split(',');
-			for (let j = 0; j < dList.length; j++) {
-				r[i].dependents.push(r.filter(e => e.tablePath === dList[j])[0]);
-			}
-		}
+	public static LoadRules(rules: any[]) {
+		try {
+			const anyArray = rules as any[];
+			const r = anyArray.map(json => new AuditRule(json));
+			for (let i = 0; i < r.length; i++) {
+				let thisRule = r[i];
+				try {
+					r[i].buildRegex();
+				} catch (Error) {
+					let i = 0;
+				}
+				r[i].dependents = [];
+				if (!Helpers.strIsNullOrEmpty(r[i].dependentList)) {
+					let dList = r[i].dependentList.split(',');
+					for (let j = 0; j < dList.length; j++) {
+						let tablePath = dList[j];
+						if (tablePath !== undefined) {
+							if (tablePath.indexOf('||') < 0) {
+								let args = tablePath.split(':');
+								tablePath = args[0] + ':' + args[1] + '||' + args[2] + ':' + args[3];
+							}
 
-		AuditRule.Rules = r;
+							r[i].dependents.push(r.filter(e => e.tablePath === tablePath)[0]);
+						} else {
+							let i = 0;
+						}
+					}
+				}
+			}
+
+			AuditRule.Rules = r;
+		} catch (Error) {
+			log(Error);
+		}
 	}
 }

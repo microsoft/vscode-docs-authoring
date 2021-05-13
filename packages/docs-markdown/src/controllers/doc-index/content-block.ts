@@ -184,7 +184,9 @@ export class ContentBlock {
 			: (source as T);
 	}
 
-	constructor() {}
+	constructor() {
+		this.groups = new Map<string, string>();
+	}
 
 	public setCodeFence(text: string, tag: string, filename: string = '') {
 		this.text = text;
@@ -211,7 +213,7 @@ export class ContentBlock {
 	}
 
 	public getGroup(group: string): string {
-		let returnValue = this.groups[group];
+		let returnValue = this.groups.get(group);
 		if (undefined === returnValue) {
 			returnValue = '';
 		}
@@ -406,7 +408,10 @@ export class ContentBlock {
 
 			let hMatch = ContentMatch.getMatches(header, ContentMatch.headerNumber)[0];
 			let headerNumber = header.split('#').length - 1;
-			if (null !== hMatch) headerNumber = hMatch.getGroup('number').length;
+			if (hMatch !== undefined) {
+				headerNumber = hMatch.getGroup('number').length;
+			}
+
 			let index = match.index;
 			let text = '';
 
@@ -437,7 +442,7 @@ export class ContentBlock {
 			if (ContentMatch.links.test(header) && ContentMatch.tabAnchor.test(header)) {
 				let conceptualTab = currentBlock;
 				currentBlock.artifactType = MarkdownEnum.ConceptualTab;
-				currentBlock.groups['name'] = header;
+				currentBlock.groups.set('name', header);
 			}
 
 			Blocks.push(currentBlock);
@@ -509,7 +514,7 @@ export class ContentBlock {
 
 		let HeaderBlocks = blocks
 			.filter(e => e.artifactType === MarkdownEnum.Header)
-			.sort((a, b) => b.start - a.start);
+			.sort((a, b) => a.start - b.start);
 
 		if (HeaderBlocks.length === 0) return;
 
@@ -550,7 +555,7 @@ export class ContentBlock {
 			}
 		}
 
-		HeaderBlocks.forEach(e => (e.innerBlocks = e.innerBlocks.sort((a, b) => b.start - a.start)));
+		HeaderBlocks.forEach(e => (e.innerBlocks = e.innerBlocks.sort((a, b) => a.start - b.start)));
 	}
 
 	public copyParentInfo(parent: ContentBlock) {
@@ -587,14 +592,14 @@ export class ContentBlock {
 				.filter(
 					f => block.start >= f.start && block.start + block.length - 1 <= f.start + f.length - 1
 				)
-				.sort((a, b) => b.length - a.length)[0];
+				.sort((a, b) => a.length - b.length)[0];
 			if (inner !== undefined) inner.addInnerBlock(block);
 			else {
 				let newChildBlocks = this.innerBlocks
 					.filter(
 						f => f.start >= block.start && f.start + f.length - 1 <= block.start + block.length - 1
 					)
-					.sort((a, b) => b.length - a.length);
+					.sort((a, b) => a.length - b.length);
 
 				for (let child of newChildBlocks) {
 					Helpers.removeAt(this.innerBlocks, child);
@@ -870,7 +875,7 @@ export class ContentBlock {
 					tmp.length = length;
 					tmp.artifactType = MarkdownEnum.TableColumn;
 					tmp.fileName = fileName;
-					tmp.groups['ColumnName'] = value;
+					tmp.groups.set('ColumnName', value);
 					columns.push(tmp);
 					contentBlock.addInnerBlock(tmp);
 					column++;
@@ -887,7 +892,7 @@ export class ContentBlock {
 						tmp.length = length;
 						tmp.artifactType = MarkdownEnum.TableColumn;
 						tmp.fileName = fileName;
-						tmp.groups['ColumnName'] = value;
+						tmp.groups.set('ColumnName', value);
 						columns.push(tmp);
 						contentBlock.addInnerBlock(tmp);
 						column++;
@@ -906,7 +911,7 @@ export class ContentBlock {
 						tmp.length = length;
 						tmp.artifactType = MarkdownEnum.TableColumn;
 						tmp.fileName = fileName;
-						tmp.groups['ColumnName'] = value;
+						tmp.groups.set('ColumnName', value);
 						columns.push(tmp);
 						contentBlock.addInnerBlock(tmp);
 						column++;
@@ -927,7 +932,7 @@ export class ContentBlock {
 						length = rowValues[i].index - INDEX;
 						let value = Helpers.strTrimSpaces(row.substring(INDEX, length));
 						INDEX = rowValues[i].index + rowValues[i].length;
-						let columnName = columns[column].groups['ColumnName'];
+						let columnName = columns[column].groups.get('ColumnName');
 						if (column >= columns.length) console.log('Issues Extracting Table Data');
 						let tmp = new ContentBlock();
 						tmp.text = value;
@@ -978,7 +983,7 @@ export class ContentBlock {
 
 							if (column >= columns.length) column = 0;
 
-							let columnName = columns[column].groups['ColumnName'];
+							let columnName = columns[column].groups.get('ColumnName');
 							let tmp = new ContentBlock();
 							tmp.text = value;
 							tmp.start = INDEX + tableRow.index;
@@ -1014,7 +1019,7 @@ export class ContentBlock {
 		ContentMatch.getBullets(content, codeFences).forEach(e => artifacts.push(e));
 		ContentMatch.getTables(content).forEach(e => artifacts.push(e));
 		ContentMatch.getNotes(content).forEach(e => artifacts.push(e));
-		artifacts = artifacts.sort((a, b) => b.index - a.index);
+		artifacts = artifacts.sort((a, b) => a.index - b.index);
 		let INDEX2 = 0;
 		let startIndex = 0;
 		let thisStart = this.start + this.text.length;
@@ -1051,7 +1056,7 @@ export class ContentBlock {
 					!ContentMatch.mediaFile.test(artifacts[k].getGroup('label'))
 				) {
 					let includeBlocks = ContentBlock.extractIncludeBlocks(artifacts[k], filename);
-					includeBlocks = includeBlocks.sort((a, b) => b.start - a.start);
+					includeBlocks = includeBlocks.sort((a, b) => a.start - b.start);
 					if (includeBlocks.length === 1 && includeBlocks[0].artifactType === MarkdownEnum.None) {
 						includeBlocks[0].allChildBlocks().forEach(e => e.copyParentInfo(this));
 					}
@@ -1078,18 +1083,18 @@ export class ContentBlock {
 
 					let snippet = ContentMatch.getMatches(gFile, ContentMatch.altSnippet)[0];
 					if (snippet !== undefined) {
-						artifacts[k].groups['file'] = snippet.getGroup('file');
-						artifacts[k].groups['snippet'] = snippet.getGroup('snippet');
+						artifacts[k].groups.set('file', snippet.getGroup('file'));
+						artifacts[k].groups.set('snippet', snippet.getGroup('snippet'));
 						if (snippet.groups.has('name')) {
-							artifacts[k].groups['name'] = snippet.getGroup('name');
+							artifacts[k].groups.set('name', snippet.getGroup('name'));
 						}
 
 						if (artifacts[k].groups.has('QS_range')) {
-							artifacts[k].groups['range'] = artifacts[k].getGroup('QS_range');
+							artifacts[k].groups.set('range', artifacts[k].getGroup('QS_range'));
 						}
 
 						if (artifacts[k].groups.has('QS_highlight')) {
-							artifacts[k].groups['highlight'] = artifacts[k].getGroup('QS_highlight');
+							artifacts[k].groups.set('highlight', artifacts[k].getGroup('QS_highlight'));
 						}
 					}
 
@@ -1155,7 +1160,9 @@ export class ContentBlock {
 				note.fileName = filename;
 				note.start = artifacts[k].index + thisStart;
 				note.length = artifacts[k].length;
-				if (artifacts[k].groups.has('type')) note.groups.set('type', artifacts[k].getGroup('type'));
+				if (artifacts[k].groups.has('type')) {
+					note.groups.set('type', artifacts[k].getGroup('type'));
+				}
 				this.addInnerBlock(note);
 			} else if (artifacts[k].groups.has('snippet')) {
 				let file = Helpers.getFileName(artifacts[k].getGroup('file'));
@@ -1185,20 +1192,22 @@ export class ContentBlock {
 	}
 
 	public getHref(item): string {
-		if (item.has('href') && undefined !== item['href'] && !Helpers.strIsNullOrEmpty(item['href'])) {
-			return item['href'].ToString();
+		if (item.has('href')) {
+			let value = item.get('href');
+			if (value !== undefined && !!Helpers.strIsNullOrEmpty(value)) {
+				return value;
+			}
 		}
-
 		return '';
 	}
 
 	public getHrefFromOrdered(item): string {
 		if (
 			item.Contains('href') &&
-			undefined !== item['href'] &&
-			!Helpers.strIsNullOrEmpty(item['href'])
+			undefined !== item.get('href') &&
+			!Helpers.strIsNullOrEmpty(item.get('href'))
 		) {
-			return item['href'].ToString();
+			return item.get('href').ToString();
 		}
 
 		return '';
@@ -1212,11 +1221,14 @@ export class ContentBlock {
 				let thisItem = new ContentBlock();
 				thisItem.fileName = this.fileName;
 				thisItem.artifactType = MarkdownEnum.ToC_Entry;
-				thisItem.text = `${item['name']}`;
+				thisItem.text = `${item.get('name')}`;
 				this.parent = this;
 
 				thisItem.copyParentInfo(this);
-				thisItem.groups.set('ToCNodePath', this.getGroup('ToCNodePath') + '/' + `${item['name']}`);
+				thisItem.groups.set(
+					'ToCNodePath',
+					this.getGroup('ToCNodePath') + '/' + `${item.get('name')}`
+				);
 				thisItem.groups.set('ParentNodeName', this.text);
 				thisItem.groups.set('TopNodeOrder', `${order}`);
 				thisItem.groups.set('0', thisItem.text);
@@ -1232,23 +1244,23 @@ export class ContentBlock {
 				}
 
 				if (item.has('displayName')) {
-					thisItem.groups.set('displayName', `${item['displayName']}`);
+					thisItem.groups.set('displayName', `${item.get('displayName')}`);
 				}
 
 				if (item.has('expanded')) {
-					thisItem.groups['expanded'] = `${item['expanded']}`;
+					thisItem.groups.set('expanded', `${item.get('expanded')}`);
 				}
 
 				thisItem.groups.set('label', thisItem.text);
 
 				if (item.has('items')) {
-					if (item['items'] !== undefined) {
+					if (item.get('items') !== undefined) {
 						thisItem.artifactType = MarkdownEnum.ToC_Node;
-						let subItems = [item['items']];
+						let subItems = [item.get('items')];
 						thisItem.groups.set('NodeName', this.text);
 						order = thisItem.processNodes(subItems, order);
 					} else {
-						console.log(`"Found null items for ${item['name']}`);
+						console.log(`"Found null items for ${item.get('name')}`);
 					}
 				} else {
 					order++;
@@ -1260,4 +1272,6 @@ export class ContentBlock {
 
 		return order;
 	}
+
+	public static AllBlocks: ContentBlock[];
 }

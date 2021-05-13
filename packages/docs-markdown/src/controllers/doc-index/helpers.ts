@@ -11,7 +11,7 @@ export class Helpers {
 	}
 
 	public static strIsNullOrEmpty(str: string): boolean {
-		return typeof str === 'string' && (str === null || str === '');
+		return typeof str === 'string' && (str === undefined || str === '');
 	}
 
 	public static mapObject(obj: any): Map<string, any> {
