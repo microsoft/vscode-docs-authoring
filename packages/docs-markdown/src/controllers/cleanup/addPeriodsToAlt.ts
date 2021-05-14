@@ -36,7 +36,7 @@ export function addPeriodsForTripleColonImage(data: string) {
 	const regex = new RegExp(
 		/image\s+(((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+))"\s*)+:::/g
 	);
-	const altTextRegex = new RegExp(/alt-text="(.*?(?<!(\?|\!|\.)))"/);
+	const altTextRegex = new RegExp(/alt-text="(.*?)"/);
 	data = insertPeriod(data, regex, altTextRegex);
 	return data;
 }
