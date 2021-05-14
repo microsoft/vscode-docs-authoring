@@ -42,11 +42,6 @@ suite('Add Periods To Alt Text', () => {
 			`![screenshot showing Jupyter Notebooks dashboard.](../media/resources.png)`
 		);
 	});
-	test('cleanup repo - do not add period to additional properties', async () => {
-		const data = `:::image type="content" source="../media/satellite.png" alt-text="Image of a satellite map of Seattle." border="false":::`;
-		const output = addPeriodsForTripleColonImage(data);
-		expect(output).to.be.equal(
-			`:::image type="content" source="../media/satellite.png" alt-text="Image of a satellite map of Seattle." border="false":::`
 	test('cleanup repo - add period to lightbox alt text', async () => {
 		const data = `[![How to enable Azure Synapse Link in the Azure portal](../media/enable-azure-synpase-link-sql-api.png)](../media/enable-azure-synpase-link-sql-api.png#lightbox)`;
 		const output = addPeriodsForMd(data);
@@ -59,6 +54,13 @@ suite('Add Periods To Alt Text', () => {
 		const output = addPeriodsForMd(data);
 		expect(output).to.be.equal(
 			`[![How to enable Azure Synapse Link in the Azure portal.](../media/enable-azure-synpase-link-sql-api.png)](../media/enable-azure-synpase-link-sql-api.png#lightbox)`
+		);
+	});
+	test('cleanup repo - do not add period to additional properties', async () => {
+		const data = `:::image type="content" source="../media/satellite.png" alt-text="Image of a satellite map of Seattle." border="false":::`;
+		const output = addPeriodsForTripleColonImage(data);
+		expect(output).to.be.equal(
+			`:::image type="content" source="../media/satellite.png" alt-text="Image of a satellite map of Seattle." border="false":::`
 		);
 	});
 });
