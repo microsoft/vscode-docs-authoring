@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.92 (May 17th, 2021)
+
+- Cleanup script bugfixes.
+
 ## 0.2.91 (May 11th, 2021)
 
 - Add comment cleanup script.
