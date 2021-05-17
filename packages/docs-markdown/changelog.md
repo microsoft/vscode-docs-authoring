@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.92 (May 14th, 2021)
+## 0.2.92 (May 17th, 2021)
 
 - Cleanup script bugfixes.
 
