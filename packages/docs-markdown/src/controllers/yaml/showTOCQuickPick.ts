@@ -6,6 +6,7 @@ import { QuickPickItem, window, workspace } from 'vscode';
 import { ignoreFiles, noActiveEditorMessage } from '../../helper/common';
 import { noHeadingSelected } from '../../constants/log-messages';
 import { getHeadings } from '../../helper/getHeader';
+import fg = require('fast-glob');
 
 export async function showTOCQuickPick(options: boolean) {
 	const markdownExtensionFilter = ['.md'];
@@ -16,7 +17,7 @@ export async function showTOCQuickPick(options: boolean) {
 		folderPath = workspace.workspaceFolders[0].uri.fsPath;
 	}
 
-	const files = await recursive(folderPath, ignoreFiles);
+	const files = fg.sync(['**.md'], { dot: true, cwd: folderPath });
 
 	const items: QuickPickItem[] = [];
 	files.sort();

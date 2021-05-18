@@ -20,7 +20,7 @@ export function getHeadings(content) {
 		const regex = new RegExp(`^(---)([^]+?)(---)$`, 'm');
 		const contentWithoutMetadata = content.replace(regex, '');
 		const headings = contentWithoutMetadata.match(headingTextRegex);
-		return headings[2].trim();
+		return headings;
 	} catch (error) {
 		showStatusMessage(error);
 	}
