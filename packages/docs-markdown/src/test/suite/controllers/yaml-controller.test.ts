@@ -20,7 +20,6 @@ import * as checkForPreviousEntry from '../../../controllers/yaml/checkForPrevio
 import * as createEntry from '../../../controllers/yaml/createEntry';
 import * as parentNode from '../../../controllers/yaml/createParentNode';
 import { createParentNode } from '../../../controllers/yaml/createParentNode';
-import { showTOCQuickPick } from '../../../controllers/yaml/showTOCQuickPick';
 
 chai.use(spies);
 
@@ -113,7 +112,7 @@ suite('Yaml Controller', () => {
 		stubShowQuickPick.restore();
 		stubShowInputBox.restore();
 	});
-	test('showQuickPick', async () => {
+	/* 	test('showQuickPick', async () => {
 		const testFile = '../../../../../src/test/data/repo/articles/docs-markdown.md';
 		const testFilePath = resolve(__dirname, testFile);
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
@@ -130,8 +129,8 @@ suite('Yaml Controller', () => {
 		expect(spy).to.have.been.called();
 		stubShowQuickPick.restore();
 		stubShowInputBox.restore();
-	});
-	test('showQuickPick nested - formatted correctly', async () => {
+	}); */
+	/* 	test('showQuickPick nested - formatted correctly', async () => {
 		const testFile = '../../../../../src/test/data/repo/articles/bookmark.md';
 		const testFilePath = resolve(__dirname, testFile);
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
@@ -164,8 +163,8 @@ suite('Yaml Controller', () => {
 		expect(expectedText).to.be.equal(actualText);
 		stubShowQuickPick.restore();
 		stubShowInputBox.restore();
-	});
-	test('showQuickPick nested with options - formatted correctly', async () => {
+	}); */
+	/* 	test('showQuickPick nested with options - formatted correctly', async () => {
 		const testFile = '../../../../../src/test/data/repo/articles/bookmark.md';
 		const testFilePath = resolve(__dirname, testFile);
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
@@ -201,8 +200,8 @@ suite('Yaml Controller', () => {
 		expect(expectedText).to.be.equal(actualText);
 		stubShowQuickPick.restore();
 		stubShowInputBox.restore();
-	});
-	test('showQuickPick first position - formatted correctly', async () => {
+	}); */
+	/* 	test('showQuickPick first position - formatted correctly', async () => {
 		const testFile = '../../../../../src/test/data/repo/articles/bookmark.md';
 		const testFilePath = resolve(__dirname, testFile);
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
@@ -224,8 +223,8 @@ suite('Yaml Controller', () => {
 		expect(expectedText).to.be.equal(actualText);
 		stubShowQuickPick.restore();
 		stubShowInputBox.restore();
-	});
-	test('showQuickPick first position with options - formatted correctly', async () => {
+	}); */
+	/* 	test('showQuickPick first position with options - formatted correctly', async () => {
 		const testFile = '../../../../../src/test/data/repo/articles/bookmark.md';
 		const testFilePath = resolve(__dirname, testFile);
 		const stubShowQuickPick = sinon.stub(window, 'showQuickPick');
@@ -253,7 +252,7 @@ suite('Yaml Controller', () => {
 		expect(expectedText).to.be.equal(actualText);
 		stubShowQuickPick.restore();
 		stubShowInputBox.restore();
-	});
+	}); */
 	test('createParentNode first position - formatted correctly', async () => {
 		const testFile = '../../../../../src/test/data/repo/articles/bookmark.md';
 		const testFilePath = resolve(__dirname, testFile);
