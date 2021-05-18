@@ -2,7 +2,7 @@ const fs = require('fs').promises;
 import util = require('util');
 const readFile = util.promisify(fs.readFile);
 
-export const headingTextRegex = /^ {0,3}(#{1,6})(.*)/gm;
+export const headingTextRegex = /^ {0,3}(#{1,6})(.*)/m;
 
 export async function tryGetHeader(absolutePathToFile) {
 	const content = await readFile(absolutePathToFile, 'utf8');
