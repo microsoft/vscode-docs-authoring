@@ -1,7 +1,6 @@
 const fs = require('fs').promises;
 import util = require('util');
 import { showStatusMessage } from './common';
-import { output } from './output';
 const readFile = util.promisify(fs.readFile);
 
 export const headingTextRegex = /^ {0,3}(#{1,6})(.*)/m;
@@ -21,7 +20,7 @@ export function getHeadings(content) {
 		const regex = new RegExp(`^(---)([^]+?)(---)$`, 'm');
 		const contentWithoutMetadata = content.replace(regex, '');
 		const headings = contentWithoutMetadata.match(headingTextRegex);
-		return headings;
+		return headings[2].trim();
 	} catch (error) {
 		showStatusMessage(error);
 	}
