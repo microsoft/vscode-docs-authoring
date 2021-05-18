@@ -1884,7 +1884,7 @@ export class AuditRule {
 		this._tablePath = v;
 	}
 
-	public static LoadRules(rules: any[]) {
+	public static LoadRules() {
 		try {
 			const anyArray = rules as any[];
 			const r = anyArray.map(json => new AuditRule(json));
