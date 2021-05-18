@@ -29,7 +29,7 @@ export async function showTOCQuickPick(options: boolean) {
 		return;
 	}
 
-	const fullPath = join(folderPath, selectionPick.description, selectionPick.label);
+	const fullPath = join(selectionPick.description, selectionPick.label);
 	const content = readFileSync(fullPath, 'utf8');
 	let title = getHeadings(content);
 
@@ -69,7 +69,8 @@ export function getQuickPickItems(folderPath: string) {
 	const items: QuickPickItem[] = [];
 	files.sort();
 	files.forEach((file: any) => {
-		items.push({ label: basename(file), description: dirname(file) });
+		const descriptionPath = join(folderPath, dirname(file));
+		items.push({ label: basename(file), description: descriptionPath });
 	});
 	return items;
 }
