@@ -370,7 +370,7 @@ export class ContentBlock {
 		if (hasHeaders) {
 			first = Headers[0];
 			let header = first.getGroup('header');
-			hasH1 = ContentMatch.links.test(header) && ContentMatch.tabAnchor.test(header);
+			hasH1 = !(ContentMatch.links.test(header) && ContentMatch.tabAnchor.test(header));
 		}
 
 		if (!hasHeaders || !hasH1) {
@@ -416,9 +416,9 @@ export class ContentBlock {
 			let text = '';
 
 			if (i + 1 < nonCodeHeaders.length) {
-				text = content.substring(index, nonCodeHeaders[i + 1].index - index);
+				text = content.substring(index, nonCodeHeaders[i + 1].index);
 			} else {
-				text = content.substring(index, content.length - index);
+				text = content.substring(index, content.length);
 			}
 
 			let length = 0;
@@ -733,12 +733,12 @@ export class ContentBlock {
 						tag = codeFences[j].getGroup('currenttag').trim().toLowerCase();
 					}
 
-					let beforeCodeBlock = content.substring(INDEX, codeFences[j].index - INDEX);
+					let beforeCodeBlock = content.substring(INDEX, codeFences[j].index);
 
 					this.extractArtifacts(beforeCodeBlock, filename, codeFences, refs);
 
 					INDEX = codeFences[j + 1].index + codeFences[j + 1].length;
-					let insidecodeblock = content.substring(codeFences[j].index, INDEX - codeFences[j].index);
+					let insidecodeblock = content.substring(codeFences[j].index, INDEX);
 					let codeFence = new ContentBlock();
 					codeFence.setCodeFence(insidecodeblock, tag);
 					(codeFence.start = codeFences[j].index + this.start),
@@ -748,7 +748,7 @@ export class ContentBlock {
 					this.extractCodeFenceTokens(tag, codeFence, filename);
 				}
 
-				let afterCodeBlocks = content.substring(INDEX, content.length - INDEX);
+				let afterCodeBlocks = content.substring(INDEX, content.length);
 				this.extractArtifacts(afterCodeBlocks, filename, codeFences, refs);
 			} else if (codeFences.length === 0) {
 				this.extractArtifacts(content, filename, codeFences, refs);
@@ -782,7 +782,7 @@ export class ContentBlock {
 		if (startIndex !== 0) thisStart = startIndex;
 
 		for (let i = 0; i < paragraphs.length; i++) {
-			p = content.substring(INDEX, paragraphs[i].index - INDEX);
+			p = content.substring(INDEX, paragraphs[i].index);
 			c = new ContentBlock();
 			c.blockText = content;
 			c.start = INDEX + thisStart;
@@ -794,7 +794,7 @@ export class ContentBlock {
 			INDEX = paragraphs[i].index + paragraphs[i].length;
 		}
 
-		let after = content.substring(INDEX, content.length - INDEX);
+		let after = content.substring(INDEX, content.length);
 		c = new ContentBlock();
 		c.blockText = content;
 		c.start = INDEX + thisStart;
@@ -824,7 +824,10 @@ export class ContentBlock {
 				c.index = bulletRow.index + contentBlock.start;
 				c.length = bulletRow.length;
 				c.fileName = this.fileName;
-				c.artifactType = MarkdownEnum.ListRow;
+				c.artifactType =
+					contentBlock.artifactType === MarkdownEnum.NumberedList
+						? MarkdownEnum.NumberedListRow
+						: MarkdownEnum.BulletedListRow;
 				contentBlock.addInnerBlock(c);
 			}
 		}
@@ -863,7 +866,7 @@ export class ContentBlock {
 			let columnName = '';
 			for (let i = 0; i < columnMatches.length; i++) {
 				if (noBorders) {
-					length = columnMatches[i].index - INDEX;
+					length = columnMatches[i].index;
 					let value = Helpers.strTrimSpaces(firstRow.substring(INDEX, length));
 					INDEX = columnMatches[i].index + columnMatches[i].length;
 
@@ -881,7 +884,7 @@ export class ContentBlock {
 					column++;
 
 					if (i + 1 === columnMatches.length) {
-						length = firstRow.length - INDEX;
+						length = firstRow.length;
 
 						value = firstRow.substring(INDEX, length);
 						value = value.replace(ContentMatch.anyNewLines, '');
@@ -901,7 +904,7 @@ export class ContentBlock {
 					INDEX = columnMatches[i].index + columnMatches[i].length;
 					length = firstRow.length;
 					if (i + 1 < columnMatches.length) {
-						length = columnMatches[i + 1].index - INDEX;
+						length = columnMatches[i + 1].index;
 
 						let value = Helpers.strTrimSpaces(firstRow.substring(INDEX, length));
 
@@ -929,7 +932,7 @@ export class ContentBlock {
 				for (let i = 0; i < rowValues.length; i++) {
 					let length = 0;
 					if (noBorders) {
-						length = rowValues[i].index - INDEX;
+						length = rowValues[i].index;
 						let value = Helpers.strTrimSpaces(row.substring(INDEX, length));
 						INDEX = rowValues[i].index + rowValues[i].length;
 						let columnName = columns[column].groups.get('ColumnName');
@@ -953,7 +956,7 @@ export class ContentBlock {
 					column++;
 
 					if (i + 1 === rowValues.length) {
-						length = row.length - INDEX;
+						length = row.length;
 
 						value = row.substring(INDEX, length);
 						value = value.replace(ContentMatch.anyNewLines, '');
@@ -978,7 +981,7 @@ export class ContentBlock {
 						INDEX = rowValues[i].index + rowValues[i].length;
 						length = row.length;
 						if (i + 1 < rowValues.length) {
-							length = rowValues[i + 1].index - INDEX;
+							length = rowValues[i + 1].index;
 							let value = Helpers.strTrimSpaces(row.substring(INDEX, length));
 
 							if (column >= columns.length) column = 0;
@@ -1032,7 +1035,7 @@ export class ContentBlock {
 				continue;
 			}
 
-			let beforeArtifactLength = artifacts[k].index - INDEX2;
+			let beforeArtifactLength = artifacts[k].index;
 			if (beforeArtifactLength > 0) {
 				let beforeArtifact = content.substring(INDEX2, beforeArtifactLength);
 				if (beforeArtifact.length > 0) {
@@ -1185,7 +1188,7 @@ export class ContentBlock {
 			startIndex = thisStart + artifacts[k].index + artifacts[k].length;
 		}
 
-		let afterArtifacts = content.substring(INDEX2, content.length - INDEX2);
+		let afterArtifacts = content.substring(INDEX2, content.length);
 		if (afterArtifacts.length > 0) {
 			this.extractParagraphs(afterArtifacts, filename, startIndex);
 		}

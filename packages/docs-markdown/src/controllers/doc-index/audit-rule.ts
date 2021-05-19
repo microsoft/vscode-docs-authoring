@@ -543,7 +543,8 @@ export class AuditRule {
 		MarkdownEnum.Paragraph,
 		MarkdownEnum.NumberedList,
 		MarkdownEnum.Note,
-		MarkdownEnum.ListRow,
+		MarkdownEnum.BulletedListRow,
+		MarkdownEnum.NumberedListRow,
 		MarkdownEnum.BulletedList,
 		MarkdownEnum.CodeFence
 	];
@@ -742,14 +743,14 @@ export class AuditRule {
 								tmp.setAuditEntry(this);
 								tmp.fileName = filename;
 								tmp.auditRule = this;
-								tmp.setSuccess(true);
+								tmp.setSuccess(true, '', 1, -1);
 								auditEntries.push(tmp);
 							} else if (this.shouldStore(false)) {
 								let tmp = new AuditEntry();
 								tmp.setAuditEntry(this);
 								tmp.fileName = filename;
 								tmp.auditRule = this;
-								tmp.setSuccess(false);
+								tmp.setSuccess(false, '', 1, 100000);
 								auditEntries.push(tmp);
 							}
 						}
@@ -861,11 +862,11 @@ export class AuditRule {
 								thisAuditEntry.setAuditEntry(this);
 								thisAuditEntry.auditRule = this;
 								thisAuditEntry.fileName = filename;
-								thisAuditEntry.setSuccess(true, artifactMatch.text);
+								thisAuditEntry.setSuccess(true, artifactMatch.text, 1, artifactMatch.index);
 								let groups = new Map<string, string>(artifactMatch.groups);
 								if (this.operationType === OperationEnum.Has_MD_ArtifactSiblings) {
 									if (!sibling_matches.has(artifactMatch))
-										thisAuditEntry.setSuccess(false, artifactMatch.text);
+										thisAuditEntry.setSuccess(false, artifactMatch.text, 1, artifactMatch.index);
 									else {
 										sibling_matches.get(artifactMatch).groups.forEach((value, key) => {
 											groups.set(key, value);
@@ -874,13 +875,15 @@ export class AuditRule {
 								}
 
 								thisAuditEntry.extractCaptures(groups);
+								let shouldStore = this.shouldStore(thisAuditEntry.success);
 								// ExtractGlobals(groups);
 								if (
-									this.shouldStore(thisAuditEntry.success) &&
+									shouldStore &&
 									(this.operationType === OperationEnum.Has_MD_Artifact ||
 										this.operationType === OperationEnum.Has_MD_ArtifactSiblings)
-								)
+								) {
 									auditEntries.push(thisAuditEntry);
+								}
 
 								for (let dependentRule of this.dependents) {
 									if (dependentRule !== undefined) {
@@ -1011,7 +1014,7 @@ export class AuditRule {
 								thisAuditEntry.setAuditEntry(this);
 								thisAuditEntry.fileName = filename;
 								thisAuditEntry.auditRule = this;
-								thisAuditEntry.setSuccess(false, actualValue);
+								thisAuditEntry.setSuccess(false, actualValue, 1, 100000);
 								if (undefined !== matchedAtIndex) {
 									thisAuditEntry.currentValue = matchedAtIndex.text;
 									// ExtractGlobals(matchedAtIndex.groups);
@@ -1086,7 +1089,12 @@ export class AuditRule {
 								thisAuditEntry.fileName = filename;
 								thisAuditEntry.auditRule = this;
 								thisAuditEntry
-									.setSuccess(this.artifactRegex.test(artifactText), thisArtifact.text)
+									.setSuccess(
+										this.artifactRegex.test(artifactText),
+										thisArtifact.text,
+										1,
+										thisArtifact.index
+									)
 									.extractCaptures(thisArtifact.groups);
 								// ExtractGlobals(thisArtifact.groups);
 								if (this.shouldStore(thisAuditEntry.success)) auditEntries.push(thisAuditEntry);
@@ -1128,14 +1136,14 @@ export class AuditRule {
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry
-										.setSuccess(allowedValues.includes(value), value)
+										.setSuccess(allowedValues.includes(value), value, 1, 0)
 										.extractCaptures(metadata);
 								} else {
 									thisAuditEntry = new AuditEntry();
 									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
-									thisAuditEntry.setSuccess(false);
+									thisAuditEntry.setSuccess(false, '', 1, 0);
 								}
 
 								if (undefined !== thisAuditEntry) {
@@ -1177,14 +1185,19 @@ export class AuditRule {
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry
-										.setSuccess(this.metadataFieldExpectedValue.toLowerCase() === value)
+										.setSuccess(
+											this.metadataFieldExpectedValue.toLowerCase() === value,
+											value,
+											1,
+											0
+										)
 										.extractCaptures(metadata);
 								} else {
 									thisAuditEntry = new AuditEntry();
 									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
-									thisAuditEntry.setSuccess(false);
+									thisAuditEntry.setSuccess(false, '', 1, 0);
 								}
 
 								if (undefined !== thisAuditEntry) {
@@ -1238,14 +1251,14 @@ export class AuditRule {
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry
-										.setSuccess(new RegExp(this.metadataFieldText, 'gim').test(value))
+										.setSuccess(new RegExp(this.metadataFieldText, 'gim').test(value), value, 1, 0)
 										.extractCaptures(metadata);
 								} else {
 									thisAuditEntry = new AuditEntry();
 									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
-									thisAuditEntry.setSuccess(false);
+									thisAuditEntry.setSuccess(false, '', 1, 0);
 								}
 
 								if (undefined !== thisAuditEntry) {
@@ -1315,7 +1328,7 @@ export class AuditRule {
 							thisAuditEntry.setAuditEntry(this);
 							thisAuditEntry.auditRule = this;
 							thisAuditEntry.fileName = filename;
-							thisAuditEntry.setSuccess(success, `(${FileTypeEnum[fileType]}) ${filename}`);
+							thisAuditEntry.setSuccess(success, `(${FileTypeEnum[fileType]}) ${filename}`, 1, -2);
 
 							if (undefined !== thisAuditEntry) {
 								if (this.shouldStore(thisAuditEntry.success)) auditEntries.push(thisAuditEntry);

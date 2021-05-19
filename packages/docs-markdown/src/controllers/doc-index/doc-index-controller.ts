@@ -33,7 +33,7 @@ export function insertDocIndexCommand() {
 /**
  * Run doc-index verification
  */
-export function verify() {
+export async function verify() {
 	const editor = vscode.window.activeTextEditor;
 	const output: OutputChannel = vscode.window.createOutputChannel('Docs: audit rules');
 	output.show();
@@ -83,15 +83,19 @@ export function verify() {
 				theseRules = theseRules.filter(e => e.ruleGroup.toLowerCase() === topic.toLowerCase());
 				theseRules = theseRules.filter(e => e.dependsOn === undefined || e.dependsOn == null);
 				if (theseRules.length === 0) {
-					vscode.window.activeTerminal.sendText(`No MVC Guidance for ${topic}`);
+					output.appendLine(`No MVC Guidance for ${topic}`);
 				} else {
-					let theseAudits = [];
+					let theseAudits: AuditEntry[] = [];
 					for (let i = 0; i < theseRules.length; i++) {
 						let audits = theseRules[i].test(blocks, fileName, metadata, entireFile, blocks);
 						audits.forEach(function (value: AuditEntry) {
-							output.appendLine(`${value.title}:${value.success}`);
 							theseAudits.push(value);
 						});
+					}
+
+					theseAudits = theseAudits.sort((a, b) => a.ruleNum - b.ruleNum);
+					for (let entry of theseAudits) {
+						output.appendLine(`${entry.title}: ${entry.success}`);
 					}
 				}
 			}

@@ -21,6 +21,14 @@ export class AuditEntry {
 		this._ruleId = v;
 	}
 
+	public get ruleNum(): number {
+		let y = `${this.ruleId}`.split(':')[-1];
+		if (Helpers.strIsNullOrEmpty(y)) {
+			return +y;
+		}
+		return -1;
+	}
+
 	private _ruleSet: string;
 	public get ruleSet(): string {
 		return this._ruleSet;
@@ -110,7 +118,7 @@ export class AuditEntry {
 	}
 
 	private _dependentRuleCount: number;
-	public get dependentRulelength(): number {
+	public get dependentRuleCount(): number {
 		return this._dependentRuleCount;
 	}
 	public set dependentRuleCount(v: number) {
@@ -118,7 +126,7 @@ export class AuditEntry {
 	}
 
 	private _dependentSuccessCount: number;
-	public get dependentSuccesslength(): number {
+	public get dependentSuccessCount(): number {
 		return this._dependentSuccessCount;
 	}
 	public set dependentSuccessCount(v: number) {
@@ -126,7 +134,7 @@ export class AuditEntry {
 	}
 
 	private _dependentFailureCount: number;
-	public get dependentFailurelength(): number {
+	public get dependentFailureCount(): number {
 		return this._dependentFailureCount;
 	}
 	public set dependentFailureCount(v: number) {
@@ -134,7 +142,7 @@ export class AuditEntry {
 	}
 
 	private _dependentTestCount: number;
-	public get dependentTestlength(): number {
+	public get dependentTestCount(): number {
 		return this._dependentTestCount;
 	}
 	public set dependentTestCount(v: number) {
@@ -434,7 +442,8 @@ export class AuditEntry {
 		dependentEntries: AuditEntry[],
 		logicalOperatorType: LogicalOperatorEnum
 	) {
-		this.dependentRuleCount = this.auditRule.AllDependents().length;
+		let allDependents = this.auditRule.AllDependents();
+		this.dependentRuleCount = allDependents.length;
 		this.dependentTestCount = dependentEntries.length;
 		this.dependentSuccessCount = dependentEntries.filter(e => e.success).length;
 		this.dependentFailureCount = dependentEntries.filter(e => !e.success).length;
