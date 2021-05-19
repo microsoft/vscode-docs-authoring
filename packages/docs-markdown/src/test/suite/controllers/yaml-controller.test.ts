@@ -20,11 +20,11 @@ import * as checkForPreviousEntry from '../../../controllers/yaml/checkForPrevio
 import * as createEntry from '../../../controllers/yaml/createEntry';
 import * as parentNode from '../../../controllers/yaml/createParentNode';
 import { createParentNode } from '../../../controllers/yaml/createParentNode';
+import { showTOCQuickPick } from '../../../controllers/yaml/showTOCQuickPick';
 
 chai.use(spies);
 
 import sinon = require('sinon');
-import { showTOCQuickPick } from '../../../controllers/yaml/showTOCQuickPick';
 
 const expect = chai.expect;
 
