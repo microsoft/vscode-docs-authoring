@@ -1,30 +1,20 @@
 import { createEntry } from './createEntry';
 import { readFileSync } from 'fs';
-import * as recursive from 'recursive-readdir';
-import { basename, dirname, extname, join, relative } from 'path';
+import { basename, dirname, join, relative } from 'path';
 import { QuickPickItem, window, workspace } from 'vscode';
-import { ignoreFiles, noActiveEditorMessage } from '../../helper/common';
+import { noActiveEditorMessage, postError, showStatusMessage } from '../../helper/common';
 import { noHeadingSelected } from '../../constants/log-messages';
 import { getHeadings } from '../../helper/getHeader';
+import fg = require('fast-glob');
 
 export async function showTOCQuickPick(options: boolean) {
-	const markdownExtensionFilter = ['.md'];
 	let folderPath: string = '';
-	let fullPath: string = '';
 
 	if (workspace.workspaceFolders) {
 		folderPath = workspace.workspaceFolders[0].uri.fsPath;
 	}
 
-	const files = await recursive(folderPath, ignoreFiles);
-
-	const items: QuickPickItem[] = [];
-	files.sort();
-	files
-		.filter((file: any) => markdownExtensionFilter.indexOf(extname(file.toLowerCase())) !== -1)
-		.forEach((file: any) => {
-			items.push({ label: basename(file), description: dirname(file) });
-		});
+	const items = getQuickPickItems(folderPath);
 
 	// show the quick pick menu
 	const selectionPick = await window.showQuickPick(items);
@@ -39,33 +29,31 @@ export async function showTOCQuickPick(options: boolean) {
 		return;
 	}
 
-	if (selectionPick.description) {
-		fullPath = join(selectionPick.description, selectionPick.label);
-	}
-
+	const fullPath = join(selectionPick.description, selectionPick.label);
 	const content = readFileSync(fullPath, 'utf8');
-	const headings = getHeadings(content);
+	let title = getHeadings(content);
 
-	if (!headings) {
-		window.showErrorMessage(headings[0]);
+	if (!title) {
+		postError(`Could not find H1: ${fullPath}`);
+		showStatusMessage(`Could not find H1: ${fullPath}`);
 		return;
 	}
-	let headingName = headings.toString().replace('# ', '');
+
 	const activeFilePath = editor.document.fileName;
 	const href = relative(activeFilePath, fullPath);
 	// format href: remove addtional leading segment (support windows, macos and linux), set path separators to standard
 	const formattedHrefPath = href.replace('..\\', '').replace('../', '').replace(/\\/g, '/');
 	const val = await window.showInputBox({
-		value: headingName,
+		value: title,
 		valueSelection: [0, 0]
 	});
 	if (!val) {
 		window.showInformationMessage(noHeadingSelected);
 	}
 	if (val) {
-		headingName = val;
+		title = val;
 	}
-	await createEntry(headingName, formattedHrefPath, options);
+	await createEntry(title, formattedHrefPath, options);
 }
 
 export async function launchTOCQuickPick(options: boolean) {
@@ -74,4 +62,15 @@ export async function launchTOCQuickPick(options: boolean) {
 	} else {
 		await showTOCQuickPick(true);
 	}
+}
+
+export function getQuickPickItems(folderPath: string) {
+	const files = fg.sync(['**.md'], { dot: true, cwd: folderPath });
+	const items: QuickPickItem[] = [];
+	files.sort();
+	files.forEach((file: any) => {
+		const descriptionPath = join(folderPath, dirname(file));
+		items.push({ label: basename(file), description: descriptionPath });
+	});
+	return items;
 }
