@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.93 (May 25th, 2021)
+
+- TOC entry bugfix.
+
 ## 0.2.92 (May 17th, 2021)
 
 - Cleanup script bugfixes.
