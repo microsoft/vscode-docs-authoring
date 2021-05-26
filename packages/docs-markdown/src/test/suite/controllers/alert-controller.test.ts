@@ -8,7 +8,6 @@ import * as telemetry from '../../../helper/telemetry';
 import { loadDocumentAndGetItReady, sleep, sleepTime } from '../../test.common/common';
 
 chai.use(spies);
-
 import sinon = require('sinon');
 
 const expect = chai.expect;
