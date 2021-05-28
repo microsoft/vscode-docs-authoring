@@ -11,6 +11,7 @@ import { Helpers } from './helpers';
 import { log } from 'util';
 import { SpawnOptionsWithStdioTuple } from 'child_process';
 import { AuditRule } from './audit-rule';
+import { ContentBlock } from './content-block';
 
 export class AuditEntry {
 	private _ruleId: string;
@@ -237,6 +238,22 @@ export class AuditEntry {
 		this._dictionary = v;
 	}
 
+	private _start: number;
+	public get start(): number {
+		return this._start;
+	}
+	public set start(v: number) {
+		this._start = v;
+	}
+
+	private _end: number;
+	public get end(): number {
+		return this._start;
+	}
+	public set end(v: number) {
+		this._end = v;
+	}
+
 	public setAuditEntry(rule: AuditRule) {
 		this.ruleSet = rule.ruleSet;
 		this.ruleGroup = rule.ruleGroup;
@@ -278,11 +295,14 @@ export class AuditEntry {
 		success: boolean,
 		current: string = '',
 		count: number = -777,
-		index: number = -777
-	) {
+		index: number = -777,
+		end_index: number = -777
+	): AuditEntry {
 		this.success = Boolean(+success ^ +this.auditRule.bNot);
 		this.currentValue = current;
 		this.locatedAtIndex = index;
+		this.start = index;
+		this.end = end_index;
 		this.count = count;
 
 		if (Helpers.strIsNullOrEmpty(current) && this.count !== -777) {
@@ -293,6 +313,15 @@ export class AuditEntry {
 
 		this.capturedValue = this.currentValue;
 		return this;
+	}
+
+	public setSuccessArtifact(
+		success: boolean,
+		current: string = '',
+		count: number = -777,
+		block: ContentBlock
+	): AuditEntry {
+		return this.setSuccess(success, current, count, block.start, block.start + block.length);
 	}
 
 	public extractCaptures(groups?: Map<string, string>): AuditEntry {

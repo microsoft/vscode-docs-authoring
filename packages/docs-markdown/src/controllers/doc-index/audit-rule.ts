@@ -743,14 +743,14 @@ export class AuditRule {
 								tmp.setAuditEntry(this);
 								tmp.fileName = filename;
 								tmp.auditRule = this;
-								tmp.setSuccess(true, '', 1, -1);
+								tmp.setSuccess(true, '', 1, 0, 0);
 								auditEntries.push(tmp);
 							} else if (this.shouldStore(false)) {
 								let tmp = new AuditEntry();
 								tmp.setAuditEntry(this);
 								tmp.fileName = filename;
 								tmp.auditRule = this;
-								tmp.setSuccess(false, '', 1, 100000);
+								tmp.setSuccess(false, '', 1, 0, 0);
 								auditEntries.push(tmp);
 							}
 						}
@@ -862,11 +862,11 @@ export class AuditRule {
 								thisAuditEntry.setAuditEntry(this);
 								thisAuditEntry.auditRule = this;
 								thisAuditEntry.fileName = filename;
-								thisAuditEntry.setSuccess(true, artifactMatch.text, 1, artifactMatch.index);
+								thisAuditEntry.setSuccessArtifact(true, artifactMatch.text, 1, artifactMatch);
 								let groups = new Map<string, string>(artifactMatch.groups);
 								if (this.operationType === OperationEnum.Has_MD_ArtifactSiblings) {
 									if (!sibling_matches.has(artifactMatch))
-										thisAuditEntry.setSuccess(false, artifactMatch.text, 1, artifactMatch.index);
+										thisAuditEntry.setSuccessArtifact(false, artifactMatch.text, 1, artifactMatch);
 									else {
 										sibling_matches.get(artifactMatch).groups.forEach((value, key) => {
 											groups.set(key, value);
@@ -946,7 +946,12 @@ export class AuditRule {
 									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
-									thisAuditEntry.setSuccess(this.hasArtifactCount(matches.length), matches.length);
+									thisAuditEntry.setSuccessArtifact(
+										this.hasArtifactCount(matches.length),
+										matches.length,
+										matches.length,
+										matches[0]
+									);
 								} else if (this.operationType === OperationEnum.Has_MD_ArtifactsInOrder) {
 									let currentOrder = artifacts
 										.map(e => e.text)
@@ -958,7 +963,12 @@ export class AuditRule {
 									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry.auditRule = this;
-									thisAuditEntry.setSuccess(true, currentOrder.join(','));
+									thisAuditEntry.setSuccessArtifact(
+										true,
+										currentOrder.join(','),
+										matches.length,
+										matches[0]
+									);
 									successes = 0;
 									let optional_index = 0;
 									let current_index = 0;
@@ -994,9 +1004,19 @@ export class AuditRule {
 										thisAuditEntry.setAuditEntry(this);
 										thisAuditEntry.fileName = filename;
 										thisAuditEntry.auditRule = this;
-										thisAuditEntry.setSuccess(false, currentOrder.join(','));
+										thisAuditEntry.setSuccessArtifact(
+											false,
+											currentOrder.join(','),
+											matches.length,
+											matches[0]
+										);
 									} else {
-										thisAuditEntry.setSuccess(this.hasArtifactCount(successes), successes);
+										thisAuditEntry.setSuccessArtifact(
+											this.hasArtifactCount(successes),
+											successes,
+											matches.length,
+											matches[0]
+										);
 									}
 
 									if (currentOrder.length > 0) {
@@ -1014,7 +1034,7 @@ export class AuditRule {
 								thisAuditEntry.setAuditEntry(this);
 								thisAuditEntry.fileName = filename;
 								thisAuditEntry.auditRule = this;
-								thisAuditEntry.setSuccess(false, actualValue, 1, 100000);
+								thisAuditEntry.setSuccess(false, actualValue, 1, 0, 0);
 								if (undefined !== matchedAtIndex) {
 									thisAuditEntry.currentValue = matchedAtIndex.text;
 									// ExtractGlobals(matchedAtIndex.groups);
@@ -1089,11 +1109,11 @@ export class AuditRule {
 								thisAuditEntry.fileName = filename;
 								thisAuditEntry.auditRule = this;
 								thisAuditEntry
-									.setSuccess(
+									.setSuccessArtifact(
 										this.artifactRegex.test(artifactText),
 										thisArtifact.text,
 										1,
-										thisArtifact.index
+										matches[i]
 									)
 									.extractCaptures(thisArtifact.groups);
 								// ExtractGlobals(thisArtifact.groups);
@@ -1136,14 +1156,26 @@ export class AuditRule {
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry
-										.setSuccess(allowedValues.includes(value), value, 1, 0)
+										.setSuccess(
+											allowedValues.includes(value),
+											value,
+											1,
+											0,
+											ContentMatch.getLastIndexMetadata(content, filename)
+										)
 										.extractCaptures(metadata);
 								} else {
 									thisAuditEntry = new AuditEntry();
 									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
-									thisAuditEntry.setSuccess(false, '', 1, 0);
+									thisAuditEntry.setSuccess(
+										false,
+										'',
+										1,
+										0,
+										ContentMatch.getLastIndexMetadata(content, filename)
+									);
 								}
 
 								if (undefined !== thisAuditEntry) {
@@ -1189,7 +1221,8 @@ export class AuditRule {
 											this.metadataFieldExpectedValue.toLowerCase() === value,
 											value,
 											1,
-											0
+											0,
+											ContentMatch.getLastIndexMetadata(content, filename)
 										)
 										.extractCaptures(metadata);
 								} else {
@@ -1197,7 +1230,13 @@ export class AuditRule {
 									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
-									thisAuditEntry.setSuccess(false, '', 1, 0);
+									thisAuditEntry.setSuccess(
+										false,
+										'',
+										1,
+										0,
+										ContentMatch.getLastIndexMetadata(content, filename)
+									);
 								}
 
 								if (undefined !== thisAuditEntry) {
@@ -1251,14 +1290,26 @@ export class AuditRule {
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry
-										.setSuccess(new RegExp(this.metadataFieldText, 'gim').test(value), value, 1, 0)
+										.setSuccess(
+											new RegExp(this.metadataFieldText, 'gim').test(value),
+											value,
+											1,
+											0,
+											ContentMatch.getLastIndexMetadata(content, filename)
+										)
 										.extractCaptures(metadata);
 								} else {
 									thisAuditEntry = new AuditEntry();
 									thisAuditEntry.setAuditEntry(this);
 									thisAuditEntry.auditRule = this;
 									thisAuditEntry.fileName = filename;
-									thisAuditEntry.setSuccess(false, '', 1, 0);
+									thisAuditEntry.setSuccess(
+										false,
+										'',
+										1,
+										0,
+										ContentMatch.getLastIndexMetadata(content, filename)
+									);
 								}
 
 								if (undefined !== thisAuditEntry) {
@@ -1328,7 +1379,13 @@ export class AuditRule {
 							thisAuditEntry.setAuditEntry(this);
 							thisAuditEntry.auditRule = this;
 							thisAuditEntry.fileName = filename;
-							thisAuditEntry.setSuccess(success, `(${FileTypeEnum[fileType]}) ${filename}`, 1, -2);
+							thisAuditEntry.setSuccess(
+								success,
+								`(${FileTypeEnum[fileType]}) ${filename}`,
+								1,
+								0,
+								0
+							);
 
 							if (undefined !== thisAuditEntry) {
 								if (this.shouldStore(thisAuditEntry.success)) auditEntries.push(thisAuditEntry);
