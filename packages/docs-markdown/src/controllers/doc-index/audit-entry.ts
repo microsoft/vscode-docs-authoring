@@ -248,7 +248,7 @@ export class AuditEntry {
 
 	private _end: number;
 	public get end(): number {
-		return this._start;
+		return this._end;
 	}
 	public set end(v: number) {
 		this._end = v;

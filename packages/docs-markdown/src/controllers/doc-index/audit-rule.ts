@@ -940,7 +940,7 @@ export class AuditRule {
 							}
 
 							if (matches.length > 0) {
-								let thisAuditEntry;
+								let thisAuditEntry: AuditEntry;
 								if (this.operationType === OperationEnum.Has_n_MD_Artifacts) {
 									thisAuditEntry = new AuditEntry();
 									thisAuditEntry.setAuditEntry(this);
@@ -948,7 +948,7 @@ export class AuditRule {
 									thisAuditEntry.fileName = filename;
 									thisAuditEntry.setSuccessArtifact(
 										this.hasArtifactCount(matches.length),
-										matches.length,
+										`${matches.length}`,
 										matches.length,
 										matches[0]
 									);
@@ -1013,7 +1013,7 @@ export class AuditRule {
 									} else {
 										thisAuditEntry.setSuccessArtifact(
 											this.hasArtifactCount(successes),
-											successes,
+											`${successes}`,
 											matches.length,
 											matches[0]
 										);
@@ -1026,7 +1026,7 @@ export class AuditRule {
 									}
 								}
 
-								if (undefined !== thisAuditEntry && this.shouldStore(thisAuditEntry.Success))
+								if (undefined !== thisAuditEntry && this.shouldStore(thisAuditEntry.success))
 									auditEntries.push(thisAuditEntry);
 							} else if (this.shouldStore(false)) {
 								let actualValue = '';
@@ -1113,7 +1113,7 @@ export class AuditRule {
 										this.artifactRegex.test(artifactText),
 										thisArtifact.text,
 										1,
-										matches[i]
+										thisArtifact
 									)
 									.extractCaptures(thisArtifact.groups);
 								// ExtractGlobals(thisArtifact.groups);
