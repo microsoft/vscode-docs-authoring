@@ -39,34 +39,34 @@ export function docindexDiagnostics(audits: AuditEntry[]) {
 
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	let text = textDocument.getText();
-	let diagnosticMap: Map<string, vscode.Diagnostic[]> = new Map();
 	if (audits.length > 0) {
 		let problems = 0;
 		let canonicalFile = vscode.Uri.file(
 			vscode.window.activeTextEditor.document.fileName
 		).toString();
-		let diagnostics = diagnosticMap.get(canonicalFile);
+		let diagnostics = [];
+		let problemOutput = vscode.languages.createDiagnosticCollection('DocIndex');
 		if (!diagnostics) {
 			diagnostics = [];
 		}
+
 		for (let audit of audits) {
-			problems++;
+			if (!audit.success) {
+				problems++;
 
-			let range = new vscode.Range(
-				textDocument.positionAt(audit.start),
-				textDocument.positionAt(audit.end)
-			);
+				let range = new vscode.Range(
+					textDocument.positionAt(audit.start),
+					textDocument.positionAt(audit.end)
+				);
 
-			diagnostics.push(
-				new vscode.Diagnostic(range, audit.title, vscode.DiagnosticSeverity.Warning)
-			);
-			diagnosticMap.set(canonicalFile, diagnostics);
+				diagnostics.push(
+					new vscode.Diagnostic(range, audit.title, vscode.DiagnosticSeverity.Warning)
+				);
+			}
 		}
-	}
 
-	diagnosticMap.forEach((diags, file) => {
-		diagnosticCollection.set(vscode.Uri.parse(file), diags);
-	});
+		problemOutput.set(vscode.Uri.parse(canonicalFile), diagnostics);
+	}
 }
 
 /**

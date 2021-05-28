@@ -639,7 +639,8 @@ export class AuditRule {
 		filename: string,
 		metadata: Map<string, string>,
 		content: string,
-		blocks: ContentBlock[]
+		blocks: ContentBlock[],
+		parent: ContentBlock = undefined
 	): AuditEntry[] {
 		try {
 			let auditEntries: AuditEntry[] = [];
@@ -652,7 +653,7 @@ export class AuditRule {
 				for (let dependent of this.dependents) {
 					if (dependent !== undefined) {
 						auditEntries = auditEntries.concat(
-							dependent.test(contentBlocks, filename, metadata, content, blocks)
+							dependent.test(contentBlocks, filename, metadata, content, blocks, parent)
 						);
 					}
 				}
@@ -895,14 +896,22 @@ export class AuditRule {
 														filename,
 														metadata,
 														content,
-														blocks
+														blocks,
+														artifactMatch
 													)
 												);
 												break;
 
 											case DependentOperationEnum.CurrentBlocks:
 												dependentEntries = dependentEntries.concat(
-													dependentRule.test(contentBlocks, filename, metadata, content, blocks)
+													dependentRule.test(
+														contentBlocks,
+														filename,
+														metadata,
+														content,
+														blocks,
+														artifactMatch
+													)
 												);
 												break;
 
@@ -913,14 +922,22 @@ export class AuditRule {
 														filename,
 														metadata,
 														content,
-														blocks
+														blocks,
+														artifactMatch
 													)
 												);
 												break;
 
 											case DependentOperationEnum.AllBlocks:
 												dependentEntries = dependentEntries.concat(
-													dependentRule.test(blocks, filename, metadata, content, blocks)
+													dependentRule.test(
+														blocks,
+														filename,
+														metadata,
+														content,
+														blocks,
+														artifactMatch
+													)
 												);
 												break;
 										}
@@ -974,7 +991,7 @@ export class AuditRule {
 									let current_index = 0;
 									for (let i = 0; i < compare_required.length; i++) {
 										if (current_index >= currentOrder.length) {
-											thisAuditEntry;
+											thisAuditEntry = undefined;
 											break;
 										}
 
@@ -984,7 +1001,7 @@ export class AuditRule {
 												!Helpers.strIsNullOrEmpty(this.artifactOrderOptional) &&
 												new RegExp(compare_optional[optional_index], 'gim').test(current);
 											if (this.bExact && !optionalSuccess) {
-												thisAuditEntry;
+												thisAuditEntry = undefined;
 												break;
 											}
 
@@ -1034,7 +1051,7 @@ export class AuditRule {
 								thisAuditEntry.setAuditEntry(this);
 								thisAuditEntry.fileName = filename;
 								thisAuditEntry.auditRule = this;
-								thisAuditEntry.setSuccess(false, actualValue, 1, 0, 0);
+								thisAuditEntry.setSuccessArtifact(false, actualValue, 1, parent);
 								if (undefined !== matchedAtIndex) {
 									thisAuditEntry.currentValue = matchedAtIndex.text;
 									// ExtractGlobals(matchedAtIndex.groups);
@@ -1076,7 +1093,8 @@ export class AuditRule {
 												filename,
 												metadata,
 												content,
-												blocks
+												blocks,
+												thisArtifact
 											)
 										);
 									}
@@ -1124,7 +1142,14 @@ export class AuditRule {
 									for (let dependent of this.dependents) {
 										if (dependent !== undefined) {
 											dependentEntries = dependentEntries.concat(
-												dependent.test(contentBlocks, filename, metadata, content, blocks)
+												dependent.test(
+													contentBlocks,
+													filename,
+													metadata,
+													content,
+													blocks,
+													thisArtifact
+												)
 											);
 										}
 									}

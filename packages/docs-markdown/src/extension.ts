@@ -19,7 +19,7 @@ import {
 	workspace,
 	TextDocumentWillSaveEvent
 } from 'vscode';
-import { insertDocIndexCommand } from './controllers/doc-index/doc-index-controller';
+import { insertDocIndexCommand, verify } from './controllers/doc-index/doc-index-controller';
 import { insertAlertCommand } from './controllers/alert-controller';
 import { boldFormattingCommand } from './controllers/bold-controller';
 import {

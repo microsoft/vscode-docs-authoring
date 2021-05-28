@@ -59490,7 +59490,7 @@
 		"metadataFieldAllowedValues": null,
 		"metadataFieldText": null,
 		"bExclusive": false,
-		"bExact": false,
+		"bExact": true,
 		"bNot": false,
 		"inventoryOnly": false,
 		"logicalOperator": "",

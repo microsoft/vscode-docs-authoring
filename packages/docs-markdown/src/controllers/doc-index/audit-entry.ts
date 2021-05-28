@@ -321,7 +321,13 @@ export class AuditEntry {
 		count: number = -777,
 		block: ContentBlock
 	): AuditEntry {
-		return this.setSuccess(success, current, count, block.start, block.start + block.length);
+		let start = 0;
+		let end = 0;
+		if (block !== undefined) {
+			start = block.start;
+			end = block.start + block.text.length;
+		}
+		return this.setSuccess(success, current, count, start, end);
 	}
 
 	public extractCaptures(groups?: Map<string, string>): AuditEntry {
