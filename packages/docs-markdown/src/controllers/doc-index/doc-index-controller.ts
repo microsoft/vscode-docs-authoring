@@ -30,6 +30,45 @@ export function insertDocIndexCommand() {
 	];
 }
 
+import { Diagnostic, DiagnosticSeverity } from 'vscode';
+let diagnosticCollection: vscode.DiagnosticCollection;
+
+export function docindexDiagnostics(audits: AuditEntry[]) {
+	const editor = vscode.window.activeTextEditor;
+	let textDocument = editor.document;
+
+	// The validator creates diagnostics for all uppercase words length 2 and more
+	let text = textDocument.getText();
+	let diagnosticMap: Map<string, vscode.Diagnostic[]> = new Map();
+	if (audits.length > 0) {
+		let problems = 0;
+		let canonicalFile = vscode.Uri.file(
+			vscode.window.activeTextEditor.document.fileName
+		).toString();
+		let diagnostics = diagnosticMap.get(canonicalFile);
+		if (!diagnostics) {
+			diagnostics = [];
+		}
+		for (let audit of audits) {
+			problems++;
+
+			let range = new vscode.Range(
+				textDocument.positionAt(audit.start),
+				textDocument.positionAt(audit.end)
+			);
+
+			diagnostics.push(
+				new vscode.Diagnostic(range, audit.title, vscode.DiagnosticSeverity.Warning)
+			);
+			diagnosticMap.set(canonicalFile, diagnostics);
+		}
+	}
+
+	diagnosticMap.forEach((diags, file) => {
+		diagnosticCollection.set(vscode.Uri.parse(file), diags);
+	});
+}
+
 /**
  * Run doc-index verification
  */
@@ -94,6 +133,7 @@ export async function verify() {
 					}
 
 					theseAudits = theseAudits.sort((a, b) => a.ruleNum - b.ruleNum);
+					docindexDiagnostics(theseAudits);
 					for (let entry of theseAudits) {
 						output.appendLine(`${entry.title}: ${entry.success}`);
 					}
