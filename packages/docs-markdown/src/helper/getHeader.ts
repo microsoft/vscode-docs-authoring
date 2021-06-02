@@ -1,9 +1,8 @@
 const fs = require('fs').promises;
 import util = require('util');
-import { showStatusMessage } from './common';
 const readFile = util.promisify(fs.readFile);
 
-export const headingTextRegex = /^ {0,3}(#{1,6})(.*)/m;
+export const headingTextRegex = /^ {0,3}(#{1,6})(.*)/gm;
 
 export async function tryGetHeader(absolutePathToFile) {
 	const content = await readFile(absolutePathToFile, 'utf8');
@@ -16,12 +15,8 @@ export async function tryGetHeader(absolutePathToFile) {
 }
 
 export function getHeadings(content) {
-	try {
-		const regex = new RegExp(`^(---)([^]+?)(---)$`, 'm');
-		const contentWithoutMetadata = content.replace(regex, '');
-		const headings = contentWithoutMetadata.match(headingTextRegex);
-		return headings[2].trim();
-	} catch (error) {
-		showStatusMessage(error);
-	}
+	const regex = new RegExp(`^(---)([^]+?)(---)$`, 'm');
+	const contentWithoutMetadata = content.replace(regex, '');
+	const headings = contentWithoutMetadata.match(headingTextRegex);
+	return headings;
 }
