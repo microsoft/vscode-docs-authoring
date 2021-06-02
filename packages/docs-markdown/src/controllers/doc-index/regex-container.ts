@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable prefer-const */
-import { writeFile } from 'node:fs';
 import { ContentMatch } from './content-match';
 
 export class RegexContainer {
