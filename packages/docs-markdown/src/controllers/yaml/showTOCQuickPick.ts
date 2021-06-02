@@ -21,8 +21,8 @@ export async function showTOCQuickPick(options: boolean) {
 	const items: QuickPickItem[] = [];
 	files.sort();
 	files
-		.filter((file: any) => markdownExtensionFilter.indexOf(extname(file.toLowerCase())) !== -1)
-		.forEach((file: any) => {
+		.filter((file: string) => markdownExtensionFilter.indexOf(extname(file.toLowerCase())) !== -1)
+		.forEach((file: string) => {
 			items.push({ label: basename(file), description: dirname(file) });
 		});
 
