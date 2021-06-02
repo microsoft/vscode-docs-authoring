@@ -19,7 +19,12 @@ import {
 	workspace,
 	TextDocumentWillSaveEvent
 } from 'vscode';
-import { insertDocIndexCommand, verify } from './controllers/doc-index/doc-index-controller';
+import {
+	insertDocIndexCommand,
+	verify,
+	verifysilent,
+	docIndexActivate
+} from './controllers/doc-index/doc-index-controller';
 import { insertAlertCommand } from './controllers/alert-controller';
 import { boldFormattingCommand } from './controllers/bold-controller';
 import {
@@ -184,7 +189,8 @@ export async function activate(context: ExtensionContext) {
 
 	// When the document changes, find and replace target expressions (for example, smart quotes).
 	workspace.onDidChangeTextDocument(findAndReplaceTargetExpressions);
-
+	workspace.onDidChangeTextDocument(verifysilent);
+	docIndexActivate();
 	workspace.onWillSaveTextDocument(willSaveTextDocument);
 	async function willSaveTextDocument(e: TextDocumentWillSaveEvent) {
 		e.waitUntil(metadataDateReminder());
@@ -268,9 +274,4 @@ export function setupAutoComplete() {
 			}
 		}
 	});
-}
-
-// this method is called when your extension is deactivated
-export function deactivate() {
-	output.appendLine('Deactivating extension.');
 }

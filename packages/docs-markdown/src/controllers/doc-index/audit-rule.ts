@@ -1051,12 +1051,15 @@ export class AuditRule {
 								thisAuditEntry.setAuditEntry(this);
 								thisAuditEntry.fileName = filename;
 								thisAuditEntry.auditRule = this;
-								thisAuditEntry.setSuccessArtifact(false, actualValue, 1, parent);
 								if (undefined !== matchedAtIndex) {
+									thisAuditEntry.setSuccessArtifact(false, actualValue, 1, matchedAtIndex);
 									thisAuditEntry.currentValue = matchedAtIndex.text;
 									// ExtractGlobals(matchedAtIndex.groups);
 									thisAuditEntry.extractCaptures(matchedAtIndex.groups);
-								} else thisAuditEntry.extractCaptures();
+								} else {
+									thisAuditEntry.setSuccessArtifact(false, actualValue, 1, parent);
+									thisAuditEntry.extractCaptures();
+								}
 
 								auditEntries.push(thisAuditEntry);
 							}
