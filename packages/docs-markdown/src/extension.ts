@@ -275,3 +275,7 @@ export function setupAutoComplete() {
 		}
 	});
 }
+
+export function deactivate() {
+	output.appendLine('Deactivating extension.');
+}
