@@ -704,6 +704,11 @@ export class AuditRule {
 					e => this.dependentConditionEntry(e) && !e.success
 				);
 				if (undefined !== logicalTestResult) {
+					if (failedDependents.length > 0) {
+						let firstFailure: AuditEntry = failedDependents.sort((a, b) => a.start - b.start)[0];
+						logicalTestResult.start = firstFailure.start;
+						logicalTestResult.end = firstFailure.end;
+					}
 					let dependents = auditEntries.filter(e => this.dependentConditionEntry(e));
 					logicalTestResult.setConditionValues(dependents);
 					dependents
@@ -798,11 +803,9 @@ export class AuditRule {
 								if (typeof artifactText === 'boolean') continue;
 
 								let success = false;
-
-								if (
-									this.artifactRegex.test(artifactText) &&
-									this.atIndex(thisArtifact, artifacts)
-								) {
+								let one: boolean = new RegExp(this.artifactRegex, 'gim').test(artifactText);
+								let two: boolean = this.atIndex(thisArtifact, artifacts);
+								if (one && two) {
 									if (this.artifactDetails.size > 0) {
 										let detailsFound = true;
 										this.artifactDetails.forEach((value, key) => {
@@ -847,7 +850,7 @@ export class AuditRule {
 											);
 											if (typeof sibling_artifactText === 'boolean') continue;
 
-											if (this.artifactRegex.test(sibling_artifactText)) {
+											if (new RegExp(this.artifactRegex, 'gim').test(sibling_artifactText)) {
 												matches.push(thisArtifact);
 												sibling_matches.set(thisArtifact, sibling);
 												break;
@@ -972,7 +975,7 @@ export class AuditRule {
 								} else if (this.operationType === OperationEnum.Has_MD_ArtifactsInOrder) {
 									let currentOrder = artifacts
 										.map(e => e.text)
-										.filter(e => this.artifactRegex.test(e));
+										.filter(e => new RegExp(this.artifactRegex, 'gim').test(e));
 									let compare_required = this.artifactOrderRequired.split(',');
 									let compare_optional = this.artifactOrderOptional.split(',');
 
@@ -1084,7 +1087,7 @@ export class AuditRule {
 
 								if (
 									!Helpers.strIsNullOrEmpty(this.artifactText) &&
-									this.artifactRegex.test(artifactText)
+									new RegExp(this.artifactRegex, 'gim').test(artifactText)
 								)
 									continue;
 
@@ -1131,7 +1134,7 @@ export class AuditRule {
 								thisAuditEntry.auditRule = this;
 								thisAuditEntry
 									.setSuccessArtifact(
-										this.artifactRegex.test(artifactText),
+										new RegExp(this.artifactRegex, 'gim').test(artifactText),
 										thisArtifact.text,
 										1,
 										thisArtifact
@@ -1942,10 +1945,10 @@ export class AuditRule {
 	public SetUpRule() {
 		// Last chance to modify rule now that we have all data.
 		if (
-			/%[^%]+%/gim.test(this.title) ||
-			/%[^%]+%/gim.test(this.artifactText) ||
+			new RegExp(/%[^%]+%/, 'gim').test(this.title) ||
+			new RegExp(/%[^%]+%/, 'gim').test(this.artifactText) ||
 			this.artifactDetails.forEach((value, key) => {
-				if (/%[^%]+%/gim.test(key)) {
+				if (new RegExp(/%[^%]+%/, 'gim').test(key)) {
 					this.lookUpRequired = true;
 				}
 			})

@@ -229,7 +229,7 @@ export class ContentBlock {
 		this.artifactType = MarkdownEnum.Link;
 
 		let file = this.groups.get('file');
-		if (file !== undefined && !ContentMatch.externalLink.test(file)) {
+		if (file !== undefined && !new RegExp(ContentMatch.externalLink, 'gim').test(file)) {
 			let root = dirname(this.fileName);
 			let fixedPath = Helpers.fixPath(root, file);
 			if (fixedPath !== undefined) this.groups.set('hrefpath', fixedPath);
@@ -252,11 +252,11 @@ export class ContentBlock {
 				this.groups.set('linkType', LinkTypes.GitHub.toString());
 			} else if (!Helpers.strIsNullOrEmpty(this.getGroup('selector'))) {
 				this.groups.set('linkType', LinkTypes.Selector.toString());
-			} else if (ContentMatch.includeFile.test(this.getGroup('file'))) {
+			} else if (new RegExp(ContentMatch.includeFile, 'gim').test(this.getGroup('file'))) {
 				this.groups.set('linkType', LinkTypes.Include.toString());
-			} else if (ContentMatch.mediaFile.test(this.getGroup('file'))) {
+			} else if (new RegExp(ContentMatch.mediaFile, 'gim').test(this.getGroup('file'))) {
 				this.groups.set('linkType', LinkTypes.Media.toString());
-			} else if (ContentMatch.signUp.test(this.getGroup('file'))) {
+			} else if (new RegExp(ContentMatch.signUp, 'gim').test(this.getGroup('file'))) {
 				this.groups.set('linkType', LinkTypes.SignUp.toString());
 			} else this.groups.set('linkType', LinkTypes.External.toString());
 		}
@@ -370,7 +370,10 @@ export class ContentBlock {
 		if (hasHeaders) {
 			first = Headers[0];
 			let header = first.getGroup('header');
-			hasH1 = !(ContentMatch.links.test(header) && ContentMatch.tabAnchor.test(header));
+			hasH1 = !(
+				new RegExp(ContentMatch.links, 'gim').test(header) &&
+				new RegExp(ContentMatch.tabAnchor, 'gim').test(header)
+			);
 		}
 
 		if (!hasHeaders || !hasH1) {
@@ -439,7 +442,10 @@ export class ContentBlock {
 				['HeaderNumberValue', `${headerNumber}`]
 			]);
 
-			if (ContentMatch.links.test(header) && ContentMatch.tabAnchor.test(header)) {
+			if (
+				new RegExp(ContentMatch.links, 'gim').test(header) &&
+				new RegExp(ContentMatch.tabAnchor, 'gim').test(header)
+			) {
 				let conceptualTab = currentBlock;
 				currentBlock.artifactType = MarkdownEnum.ConceptualTab;
 				currentBlock.groups.set('name', header);
@@ -523,8 +529,8 @@ export class ContentBlock {
 		for (let i = 1; i < HeaderBlocks.length; i++) {
 			let thisHeader = HeaderBlocks[i];
 			if (
-				ContentMatch.links.test(thisHeader.text) &&
-				ContentMatch.tabAnchor.test(thisHeader.text)
+				new RegExp(ContentMatch.links, 'gim').test(thisHeader.text) &&
+				new RegExp(ContentMatch.tabAnchor, 'gim').test(thisHeader.text)
 			) {
 				stack.top.innerBlocks.push(thisHeader);
 				thisHeader.parent = stack.top;
@@ -735,7 +741,7 @@ export class ContentBlock {
 
 					let beforeCodeBlock = content.substring(INDEX, codeFences[j].index);
 
-					this.extractArtifacts(beforeCodeBlock, filename, codeFences, refs);
+					this.extractArtifacts(beforeCodeBlock, filename, codeFences, refs, INDEX + this.start);
 
 					INDEX = codeFences[j + 1].index + codeFences[j + 1].length;
 					let insidecodeblock = content.substring(codeFences[j].index, INDEX);
@@ -749,7 +755,7 @@ export class ContentBlock {
 				}
 
 				let afterCodeBlocks = content.substring(INDEX, content.length);
-				this.extractArtifacts(afterCodeBlocks, filename, codeFences, refs);
+				this.extractArtifacts(afterCodeBlocks, filename, codeFences, refs, INDEX + this.start);
 			} else if (codeFences.length === 0) {
 				this.extractArtifacts(content, filename, codeFences, refs);
 			} else {
@@ -761,7 +767,10 @@ export class ContentBlock {
 
 	public getHrefPath(href: string): string {
 		let path = '';
-		if (!Helpers.strIsNullOrEmpty(href) && !ContentMatch.externalLink.test(href)) {
+		if (
+			!Helpers.strIsNullOrEmpty(href) &&
+			!new RegExp(ContentMatch.externalLink, 'gim').test(href)
+		) {
 			href = href.split('?')[0].split('#')[0];
 			if (Helpers.strIsNullOrEmpty(this.fileName)) return '';
 			let root = this.fileName.replace(Helpers.getFileName(this.fileName), '');
@@ -798,7 +807,7 @@ export class ContentBlock {
 		c = new ContentBlock();
 		c.blockText = content;
 		c.start = INDEX + thisStart;
-		c.length = p.length;
+		c.length = content.length - INDEX;
 		c.fileName = fileName;
 		c.artifactType = MarkdownEnum.Paragraph;
 		c.isParagraph = true;
@@ -1013,7 +1022,8 @@ export class ContentBlock {
 		content: string,
 		filename: string,
 		codeFences?: ContentMatch[],
-		refs?: ContentMatch[]
+		refs?: ContentMatch[],
+		setStart: number = -1
 	) {
 		let artifacts: ContentMatch[] = [];
 		ContentMatch.getLinks(content, codeFences, refs).forEach(e => artifacts.push(e));
@@ -1025,7 +1035,12 @@ export class ContentBlock {
 		artifacts = artifacts.sort((a, b) => a.index - b.index);
 		let INDEX2 = 0;
 		let startIndex = 0;
-		let thisStart = this.start + this.text.length;
+		let thisStart = this.start;
+
+		if (setStart > 0) {
+			thisStart = setStart;
+		}
+
 		let tagName = '';
 		for (let k = 0; k < artifacts.length; k++) {
 			if (
@@ -1055,8 +1070,8 @@ export class ContentBlock {
 
 			if (artifacts[k].groups.has('link')) {
 				if (
-					ContentMatch.includeLabel.test(artifacts[k].getGroup('label')) &&
-					!ContentMatch.mediaFile.test(artifacts[k].getGroup('label'))
+					new RegExp(ContentMatch.includeLabel, 'gim').test(artifacts[k].getGroup('label')) &&
+					!new RegExp(ContentMatch.mediaFile, 'gim').test(artifacts[k].getGroup('label'))
 				) {
 					let includeBlocks = ContentBlock.extractIncludeBlocks(artifacts[k], filename);
 					includeBlocks = includeBlocks.sort((a, b) => a.start - b.start);
@@ -1186,6 +1201,10 @@ export class ContentBlock {
 			}
 
 			startIndex = thisStart + artifacts[k].index + artifacts[k].length;
+		}
+
+		if (artifacts.length === 0) {
+			INDEX2 = INDEX2 + this.text.length;
 		}
 
 		let afterArtifacts = content.substring(INDEX2, content.length);

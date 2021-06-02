@@ -32,11 +32,11 @@ export class Helpers {
 
 	public static fixPath(root: string, path: string): string {
 		try {
-			if (ContentMatch.rootedPath.test(path))
-				return path.replace(ContentMatch.startingSlash, '').replace('\\', '/');
+			if (new RegExp(ContentMatch.rootedPath, 'gim').test(path))
+				return path.replace(new RegExp(ContentMatch.startingSlash, 'gim'), '').replace('\\', '/');
 
-			let tmpPath = path.replace(ContentMatch.startingSlashDot, '');
-			tmpPath = tmpPath.replace(ContentMatch.queryStringStart, '');
+			let tmpPath = path.replace(new RegExp(ContentMatch.startingSlashDot, 'gim'), '');
+			tmpPath = tmpPath.replace(new RegExp(ContentMatch.queryStringStart, 'gim'), '');
 
 			// TODO: this assumes Windows OS, VS Code is cross-plat and content devs are using this
 			// On macOS and Linux, we need to use the proper bits from Node.JS path:
@@ -82,19 +82,19 @@ export class Helpers {
 	}
 
 	public static getFileType(path: string): FileTypeEnum {
-		if (ContentMatch.includeFile.test(path)) {
+		if (new RegExp(ContentMatch.includeFile, 'gim').test(path)) {
 			return FileTypeEnum.Include;
 		}
 
-		if (ContentMatch.articleFile.test(path)) {
+		if (new RegExp(ContentMatch.articleFile, 'gim').test(path)) {
 			return FileTypeEnum.Article;
 		}
 
-		if (ContentMatch.indexFile.test(path)) {
+		if (new RegExp(ContentMatch.indexFile, 'gim').test(path)) {
 			return FileTypeEnum.Index;
 		}
 
-		if (ContentMatch.tocFile.test(path)) {
+		if (new RegExp(ContentMatch.tocFile, 'gim').test(path)) {
 			return FileTypeEnum.ToC;
 		}
 	}

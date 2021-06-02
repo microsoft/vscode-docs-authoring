@@ -194,7 +194,7 @@ export class ContentMatch extends RegexContainer {
 		for (let i = 0; i < links.length; i++) {
 			let includeLink = links[i];
 
-			if (ContentMatch.notRelative.test(includeLink.getGroup('file'))) {
+			if (new RegExp(ContentMatch.notRelative, 'gim').test(includeLink.getGroup('file'))) {
 				let fileName = Helpers.getFileName(filename);
 				let hrefPath = Helpers.fixPath(dirname(filename), includeLink.getGroup('file'));
 				includeLink.groups.set('HrefPath', hrefPath);
@@ -268,7 +268,7 @@ export class ContentMatch extends RegexContainer {
 		let re = ContentMatch.metadataValue;
 		let map = new Map<string, string>();
 		for (let m of ContentMatch.getMatches(source, ContentMatch.metadataValue)) {
-			let value = m.getGroup('value');
+			let value = m.getGroup('value').trim();
 			let key = m.getGroup('key');
 			if (!Helpers.strIsNullOrEmpty(value) && !Helpers.strIsNullOrEmpty(key)) {
 				map.set(ContentMatch.cleanUpColumnName(key), value);
@@ -353,7 +353,7 @@ export class ContentMatch extends RegexContainer {
 			if (m.groups.has('file') && m.groups.has('anchor')) {
 				let anchor: string = m.getGroup('anchor');
 				let file: string = m.getGroup('file');
-				if (ContentMatch.forwardSlash.test(anchor)) {
+				if (new RegExp(ContentMatch.forwardSlash, 'gim').test(anchor)) {
 					file = file + anchor;
 					let anchorMatch = ContentMatch.getMatches(file, ContentMatch.anchor)[0];
 					if (anchorMatch !== undefined) {

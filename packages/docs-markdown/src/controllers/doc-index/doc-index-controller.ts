@@ -52,6 +52,7 @@ export function docindexDiagnostics(audits: AuditEntry[]) {
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	let text = textDocument.getText();
 	if (audits.length > 0) {
+		audits = audits.sort((a, b) => b.title.length - b.title.length);
 		let problems = 0;
 		let canonicalFile = vscode.Uri.file(
 			vscode.window.activeTextEditor.document.fileName
