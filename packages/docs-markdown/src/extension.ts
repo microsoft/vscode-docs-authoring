@@ -189,8 +189,9 @@ export async function activate(context: ExtensionContext) {
 
 	// When the document changes, find and replace target expressions (for example, smart quotes).
 	workspace.onDidChangeTextDocument(findAndReplaceTargetExpressions);
-	workspace.onDidChangeTextDocument(verifysilent);
 	docIndexActivate();
+	workspace.onDidChangeTextDocument(verifysilent);
+	workspace.onDidOpenTextDocument(verifysilent);
 	workspace.onWillSaveTextDocument(willSaveTextDocument);
 	async function willSaveTextDocument(e: TextDocumentWillSaveEvent) {
 		e.waitUntil(metadataDateReminder());
