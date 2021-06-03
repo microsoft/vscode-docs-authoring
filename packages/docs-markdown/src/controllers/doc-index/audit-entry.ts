@@ -325,7 +325,7 @@ export class AuditEntry {
 		let end = 0;
 		if (block !== undefined) {
 			start = block.start;
-			end = block.start + block.text.length;
+			end = block.start + `${block.text}`.length;
 		}
 		return this.setSuccess(success, current, count, start, end);
 	}

@@ -144,8 +144,8 @@ export class ContentMatch extends RegexContainer {
 		let value: ContentMatch = new ContentMatch();
 		value.start = result.index;
 		value.index = result.index;
-		value.length = result.length;
-		value.end = result.index + result.length;
+		value.length = result[0].length;
+		value.end = result.index + result[0].length;
 		value.groups = new Map(array.map(i => [i.groupName, i.value]));
 		return value;
 	}
@@ -252,6 +252,7 @@ export class ContentMatch extends RegexContainer {
 	}
 
 	public static readMetadata(content: string): Map<string, string> {
+		content = content.replace(/---(\r\n)*/gim, '');
 		if (!Helpers.strIsNullOrEmpty(content)) {
 			return Helpers.mapObjectToStr(yaml.load(content));
 		}

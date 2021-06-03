@@ -760,7 +760,7 @@ export class AuditRule {
 								auditEntries.push(tmp);
 							}
 						}
-						break;
+							break;
 
 					case OperationEnum.Has_MD_Artifact:
 					case OperationEnum.Has_MD_Artifact_Any:

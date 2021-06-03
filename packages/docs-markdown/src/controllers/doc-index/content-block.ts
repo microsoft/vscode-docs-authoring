@@ -574,8 +574,11 @@ export class ContentBlock {
 				'ToCNodePath',
 				'TopNodeName'
 			];
-			parent.groups.forEach((key, value) => {
-				if (info_to_copy.indexOf(key)) this.groups.set(key, value);
+			parent.groups.forEach((value, key) => {
+				if (info_to_copy.indexOf(key) > 0) {
+					let index = info_to_copy.indexOf(key);
+					this.groups.set(key, value);
+				}
 			});
 
 			this.index = parent.innerBlocks.length;
@@ -794,8 +797,10 @@ export class ContentBlock {
 			p = content.substring(INDEX, paragraphs[i].index);
 			c = new ContentBlock();
 			c.blockText = content;
+			c.text = content;
 			c.start = INDEX + thisStart;
 			c.length = p.length;
+			c.groups.set('0', c.text);
 			c.fileName = fileName;
 			c.artifactType = MarkdownEnum.Paragraph;
 			c.isParagraph = true;
@@ -806,11 +811,13 @@ export class ContentBlock {
 		let after = content.substring(INDEX, content.length);
 		c = new ContentBlock();
 		c.blockText = content;
+		c.text = content;
 		c.start = INDEX + thisStart;
 		c.length = content.length - INDEX;
 		c.fileName = fileName;
 		c.artifactType = MarkdownEnum.Paragraph;
 		c.isParagraph = true;
+		c.groups.set('0', c.text);
 		this.addInnerBlock(c);
 	}
 
@@ -960,32 +967,32 @@ export class ContentBlock {
 							['colnumber', `${column}`]
 						]);
 						columns[column].addInnerBlock(tmp);
-					}
 
-					column++;
-
-					if (i + 1 === rowValues.length) {
-						length = row.length;
-
-						value = row.substring(INDEX, length);
-						value = value.replace(ContentMatch.anyNewLines, '');
-						value = Helpers.strTrimSpaces(value);
-						let tmp = new ContentBlock();
-						tmp.text = value;
-						tmp.start = INDEX + tableRow.index;
-						tmp.length = length;
-						tmp.artifactType = MarkdownEnum.TableRow;
-						tmp.fileName = fileName;
-						tmp.groups = new Map([
-							['0', value],
-							['row', value],
-							['rownumber', `${i}`],
-							['columnname', columnName],
-							['colnumber', `${column}`]
-						]);
-
-						columns[column].addInnerBlock(tmp);
 						column++;
+
+						if (i + 1 === rowValues.length) {
+							length = row.length - INDEX;
+
+							value = row.substring(INDEX, length);
+							value = value.replace(ContentMatch.anyNewLines, '');
+							value = Helpers.strTrimSpaces(value);
+							let tmp = new ContentBlock();
+							tmp.text = value;
+							tmp.start = INDEX + tableRow.index;
+							tmp.length = length;
+							tmp.artifactType = MarkdownEnum.TableRow;
+							tmp.fileName = fileName;
+							tmp.groups = new Map([
+								['0', value],
+								['row', value],
+								['rownumber', `${i}`],
+								['columnname', columnName],
+								['colnumber', `${column}`]
+							]);
+
+							columns[column].addInnerBlock(tmp);
+							column++;
+						}
 					} else {
 						INDEX = rowValues[i].index + rowValues[i].length;
 						length = row.length;
