@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.94 (June 2nd, 2021)
+
+- Header link generator fix: [Issue 880](https://github.com/microsoft/vscode-docs-authoring/issues/880)
+
 ## 0.2.93 (May 25th, 2021)
 
 - TOC entry bugfix.
