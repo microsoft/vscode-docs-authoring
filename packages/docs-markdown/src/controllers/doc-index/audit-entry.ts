@@ -13,6 +13,29 @@ import { SpawnOptionsWithStdioTuple } from 'child_process';
 import { AuditRule } from './audit-rule';
 import { ContentBlock } from './content-block';
 
+export class Point {
+	private _start: number;
+	public get start(): number {
+		return this._start;
+	}
+	public set start(v: number) {
+		this._start = v;
+	}
+
+	private _end: number;
+	public get end(): number {
+		return this._end;
+	}
+	public set end(v: number) {
+		this._end = v;
+	}
+
+	constructor(x: number, y: number) {
+		this.start = x;
+		this.end = y;
+	}
+}
+
 export class AuditEntry {
 	private _ruleId: string;
 	public get ruleId(): string {
@@ -238,20 +261,12 @@ export class AuditEntry {
 		this._dictionary = v;
 	}
 
-	private _start: number;
-	public get start(): number {
-		return this._start;
+	private _indexes: Point[];
+	public get indexes(): Point[] {
+		return this._indexes;
 	}
-	public set start(v: number) {
-		this._start = v;
-	}
-
-	private _end: number;
-	public get end(): number {
-		return this._end;
-	}
-	public set end(v: number) {
-		this._end = v;
+	public set indexes(v: Point[]) {
+		this._indexes = v;
 	}
 
 	public setAuditEntry(rule: AuditRule) {
@@ -301,8 +316,12 @@ export class AuditEntry {
 		this.success = Boolean(+success ^ +this.auditRule.bNot);
 		this.currentValue = current;
 		this.locatedAtIndex = index;
-		this.start = index;
-		this.end = end_index;
+		if (this.indexes === undefined || this.indexes.length == 0) {
+			this.indexes = [];
+			if (index !== -777 && end_index !== -777) {
+				this.indexes.push(new Point(index, end_index));
+			}
+		}
 		this.count = count;
 
 		if (Helpers.strIsNullOrEmpty(current) && this.count !== -777) {
@@ -319,15 +338,19 @@ export class AuditEntry {
 		success: boolean,
 		current: string = '',
 		count: number = -777,
-		block: ContentBlock
+		blocks: ContentBlock[]
 	): AuditEntry {
 		let start = 0;
 		let end = 0;
-		if (block !== undefined) {
-			start = block.start;
-			end = block.start + `${block.text}`.length;
+		this.indexes = [];
+		if (blocks !== undefined) {
+			for (let block of blocks) {
+				if (block !== undefined) {
+					this.indexes.push(new Point(block.start, block.start + `${block.text}`.length));
+				}
+			}
 		}
-		return this.setSuccess(success, current, count, start, end);
+		return this.setSuccess(success, current, count);
 	}
 
 	public extractCaptures(groups?: Map<string, string>): AuditEntry {

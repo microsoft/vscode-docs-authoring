@@ -62,14 +62,16 @@ export function docindexDiagnostics(audits: AuditEntry[]) {
 			if (!audit.success) {
 				problems++;
 
-				let range = new vscode.Range(
-					textDocument.positionAt(audit.start),
-					textDocument.positionAt(audit.end)
-				);
+				for (let point of audit.indexes) {
+					let range = new vscode.Range(
+						textDocument.positionAt(point.start),
+						textDocument.positionAt(point.end)
+					);
 
-				diagnostics.push(
-					new vscode.Diagnostic(range, audit.title, vscode.DiagnosticSeverity.Warning)
-				);
+					diagnostics.push(
+						new vscode.Diagnostic(range, audit.title, vscode.DiagnosticSeverity.Error)
+					);
+				}
 			}
 		}
 

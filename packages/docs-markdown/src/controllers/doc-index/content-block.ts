@@ -131,6 +131,14 @@ export class ContentBlock {
 		this._index = v;
 	}
 
+	private _indexInCollection: number;
+	public get indexInCollection(): number {
+		return this._indexInCollection;
+	}
+	public set indexInCollection(v: number) {
+		this._indexInCollection = v;
+	}
+
 	private _isParagraph: boolean;
 	public get isParagraph(): boolean {
 		return this._isParagraph;
@@ -581,7 +589,7 @@ export class ContentBlock {
 				}
 			});
 
-			this.index = parent.innerBlocks.length;
+			this.indexInCollection = parent.innerBlocks.length;
 			parent = parent;
 		} catch (e) {
 			console.log(e);
@@ -750,8 +758,8 @@ export class ContentBlock {
 					let insidecodeblock = content.substring(codeFences[j].index, INDEX);
 					let codeFence = new ContentBlock();
 					codeFence.setCodeFence(insidecodeblock, tag);
-					(codeFence.start = codeFences[j].index + this.start),
-						(codeFence.length = INDEX - codeFences[j].index);
+					codeFence.start = codeFences[j].index + this.start;
+					codeFence.length = INDEX - codeFences[j].index;
 					this.fileName = filename;
 
 					this.extractCodeFenceTokens(tag, codeFence, filename);
@@ -1046,6 +1054,10 @@ export class ContentBlock {
 
 		if (setStart > 0) {
 			thisStart = setStart;
+		}
+
+		if (/Next Steps/gim.test(content)) {
+			INDEX2 = INDEX2;
 		}
 
 		let tagName = '';
