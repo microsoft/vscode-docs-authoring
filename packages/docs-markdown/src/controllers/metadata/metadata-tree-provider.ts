@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { getAllEffectiveMetadata } from './metadata-controller';
 import { MetadataTreeNode } from './metadata-tree-node';
+import { MetadataCategory } from './metadata-category';
 
 export class MetadataTreeProvider implements vscode.TreeDataProvider<MetadataTreeNode> {
 	private _onDidChangeTreeData: vscode.EventEmitter<
@@ -27,11 +28,48 @@ export class MetadataTreeProvider implements vscode.TreeDataProvider<MetadataTre
 		}
 
 		if (element) {
-			// None have children.
-			return Promise.resolve([]);
+			const treeNodes = this.getTreeNodes();
+			// Classify by category (required/optional).
+			if (element.category === MetadataCategory.Required) {
+				return Promise.resolve(
+					treeNodes.filter(treeNode => treeNode.category === MetadataCategory.Required)
+				);
+			} else if (element.category === MetadataCategory.Optional) {
+				return Promise.resolve(
+					treeNodes.filter(treeNode => treeNode.category === MetadataCategory.Optional)
+				);
+			}
 		} else {
 			// Root of tree.
-			return Promise.resolve(getAllEffectiveMetadata());
+			return Promise.resolve(this.getParentNodes());
 		}
+	}
+
+	private getParentNodes(): MetadataTreeNode[] {
+		const data: MetadataTreeNode[] = [
+			new MetadataTreeNode({ category: MetadataCategory.Required }),
+			new MetadataTreeNode({ category: MetadataCategory.Optional })
+		];
+
+		return data;
+	}
+
+	private getTreeNodes(): MetadataTreeNode[] {
+		const metadataEntries = getAllEffectiveMetadata();
+		// Sort alphabetically.
+		metadataEntries.sort((a, b) => (a.key < b.key ? -1 : 1));
+		const treeNodes: MetadataTreeNode[] = new Array(metadataEntries.length);
+
+		// Convert to tree nodes.
+		for (let index = 0; index < metadataEntries.length; index++) {
+			treeNodes[index] = new MetadataTreeNode({
+				category: metadataEntries[index].category,
+				source: metadataEntries[index].source,
+				key: metadataEntries[index].key,
+				value: metadataEntries[index].value
+			});
+		}
+
+		return treeNodes;
 	}
 }

@@ -16,9 +16,11 @@ import { sendTelemetryData } from '../../helper/telemetry';
 import { applyReplacements, findReplacement, Replacements } from '../../helper/utility';
 import { MetadataSource } from './metadata-source';
 import { MetadataTreeNode } from './metadata-tree-node';
-import { MetadataType } from './metadata-type';
+import { MetadataKey } from './metadata-type';
+import { MetadataEntry } from './metadata-entry';
 import { metadataExpressions, metadataFrontMatterRegex, msDateRegex } from './metadata-expressions';
 import { readDocFxJson } from './docfx-file-parser';
+import { MetadataCategory } from './metadata-category';
 
 export function insertMetadataCommands() {
 	return [
@@ -28,7 +30,7 @@ export function insertMetadataCommands() {
 }
 
 class ReplacementFormat {
-	constructor(readonly type: MetadataType, private readonly value: string) {}
+	constructor(readonly type: MetadataKey, private readonly value: string) {}
 
 	public toReplacementString() {
 		return `${this.type}: ${this.value}`;
@@ -84,7 +86,7 @@ async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementF
 			const fileMetadata = metadata.build.fileMetadata;
 			const tryAssignReplacement = (
 				filePath: string,
-				type: MetadataType,
+				type: MetadataKey,
 				globs?: { [glob: string]: string }
 			) => {
 				if (globs) {
@@ -125,7 +127,7 @@ async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementF
 	return [];
 }
 
-export function getAllEffectiveMetadata(): MetadataTreeNode[] {
+export function getAllEffectiveMetadata(): MetadataEntry[] {
 	const editor = window.activeTextEditor;
 	if (!editor) {
 		return [];
@@ -135,9 +137,20 @@ export function getAllEffectiveMetadata(): MetadataTreeNode[] {
 		return;
 	}
 
-	const metadataTreeNodes: MetadataTreeNode[] = [];
+	const requiredMetadata: string[] = [
+		'author',
+		'description',
+		'ms.author',
+		'ms.date',
+		'ms.service',
+		'ms.prod',
+		'ms.topic',
+		'title'
+	];
 
-	// parse frontMatter metadata from the file
+	const metadataEntries: MetadataEntry[] = [];
+
+	// Parse frontMatter metadata from the file.
 	const content = editor.document.getText();
 	const results = matchAll(metadataFrontMatterRegex, content);
 	if (results && results.length) {
@@ -146,8 +159,13 @@ export function getAllEffectiveMetadata(): MetadataTreeNode[] {
 			const metadataJson = jsyaml.load(result.groups.metadata);
 			if (metadataJson) {
 				for (const [key, value] of Object.entries(metadataJson)) {
-					metadataTreeNodes.push(
-						new MetadataTreeNode(MetadataSource.FrontMatter, key as MetadataType, value as string)
+					metadataEntries.push(
+						new MetadataEntry(
+							MetadataSource.FrontMatter,
+							key as MetadataKey,
+							value as string,
+							requiredMetadata.includes(key) ? MetadataCategory.Required : MetadataCategory.Optional
+						)
 					);
 				}
 			}
@@ -165,21 +183,30 @@ export function getAllEffectiveMetadata(): MetadataTreeNode[] {
 
 			const tryFindMetadata = (
 				filePath: string,
-				type: MetadataType,
+				key: MetadataKey,
 				source: MetadataSource,
 				globs?: { [glob: string]: string }
 			) => {
 				if (globs) {
 					const value = getReplacementValue(globs, filePath);
 					if (value) {
-						metadataTreeNodes.push(new MetadataTreeNode(source, type, value));
+						metadataEntries.push(
+							new MetadataEntry(
+								source,
+								key,
+								value,
+								requiredMetadata.includes(key)
+									? MetadataCategory.Required
+									: MetadataCategory.Optional
+							)
+						);
 						return true;
 					}
 				}
 				return false;
 			};
 
-			const metadataTypes: MetadataType[] = [
+			const metadataTypes: MetadataKey[] = [
 				'author',
 				'contributors_to_exclude',
 				'dev_langs',
@@ -232,9 +259,9 @@ export function getAllEffectiveMetadata(): MetadataTreeNode[] {
 
 	// Group by key/MetadataType
 	// Sort the listing of values from frontMatter > fileMetadata > globalMetadata
-	const grouping: Map<MetadataType, MetadataTreeNode[]> = new Map();
-	for (let i = 0; i < metadataTreeNodes.length; ++i) {
-		const node = metadataTreeNodes[i];
+	const grouping: Map<MetadataKey, MetadataEntry[]> = new Map();
+	for (let i = 0; i < metadataEntries.length; ++i) {
+		const node = metadataEntries[i];
 		if (grouping.has(node.key)) {
 			grouping.get(node.key).push(node);
 		} else {
@@ -242,7 +269,7 @@ export function getAllEffectiveMetadata(): MetadataTreeNode[] {
 		}
 	}
 
-	const resultingNodes: MetadataTreeNode[] = [];
+	const resultingNodes: MetadataEntry[] = [];
 	for (const [key, nodes] of grouping) {
 		nodes.sort((a, b) => a.source - b.source);
 		resultingNodes.push(nodes[0]);

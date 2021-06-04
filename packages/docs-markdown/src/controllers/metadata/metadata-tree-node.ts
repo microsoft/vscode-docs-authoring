@@ -1,19 +1,50 @@
 import { MarkdownString, ThemeIcon, TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { MetadataSource } from './metadata-source';
-import { MetadataType } from './metadata-type';
+import { MetadataKey } from './metadata-type';
+import { MetadataCategory } from './metadata-category';
 
 export class MetadataTreeNode extends TreeItem {
-	constructor(
-		public readonly source: MetadataSource,
-		public readonly key: MetadataType,
-		public readonly value: string
-	) {
-		super(toLabel(key, value), TreeItemCollapsibleState.None);
+	category: MetadataCategory;
+	source: MetadataSource;
+	value: any;
+	key: MetadataKey;
 
-		this.description = toDescription(source);
-		this.tooltip = toTooltip(this);
-		this.iconPath = toSourceIcon(source);
+	// constructor(
+	// 	public readonly source: MetadataSource,
+	// 	public readonly key: MetadataKey,
+	// 	public readonly value: string
+	// ) {
+	// 	super(toLabel(key, value), TreeItemCollapsibleState.None);
+
+	// 	this.description = toDescription(source);
+	// 	this.tooltip = toTooltip(this);
+	// 	this.iconPath = toSourceIcon(source);
+	// }
+
+	constructor({ category, source = null, key = null, value = null }: NamedParameters) {
+		super(
+			key != null && value != null ? toLabel(key, value) : category.toString(),
+			key == null ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.None
+		);
+
+		this.category = category;
+		this.source = source;
+		this.key = key;
+		this.value = value;
+
+		if (key != null && value != null) {
+			this.description = toDescription(source);
+			this.tooltip = toTooltip(this);
+			this.iconPath = toSourceIcon(source);
+		}
 	}
+}
+
+interface NamedParameters {
+	category: MetadataCategory;
+	source?: MetadataSource;
+	key?: MetadataKey;
+	value?: string;
 }
 
 const toDescription = (source: MetadataSource): string | null => {
@@ -72,9 +103,10 @@ const toSourceString = (source: MetadataSource): string => {
 	}
 };
 
-const toLabel = (key: MetadataType, value: string): string | null => {
+const toLabel = (key: MetadataKey, value: string): string | null => {
+	// Empty strings are valid (e.g. titleSuffix).
 	if (!value) {
-		return null;
+		return `${key}: ""`;
 	}
 
 	return `${key}: ${value}`;

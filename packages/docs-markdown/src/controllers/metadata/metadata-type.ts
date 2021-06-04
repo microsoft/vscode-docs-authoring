@@ -1,7 +1,7 @@
 /**
  * Source: https://review.docs.microsoft.com/en-us/help/contribute/metadata-attributes?branch=master
  */
-export type MetadataType =
+export type MetadataKey =
 	| 'author'
 	| 'contributors_to_exclude'
 	| 'dev_langs'

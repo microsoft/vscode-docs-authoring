@@ -1,4 +1,4 @@
-import { MetadataType } from './metadata-type';
+import { MetadataKey } from './metadata-type';
 
 export const metadataFrontMatterRegex = /^(?:-{3}(?<metadata>[\w\W]+?)-{3})*/gim;
 export const authorRegex = /^author:\s*\b(.+?)$/im;
@@ -20,7 +20,7 @@ export const productRegex = /^product:\s*\b(.+?)$/im;
 export const robotsRegex = /^robots:\s*\b(.+?)$/im;
 export const titleSuffixRegex = /^titleSuffix:\s*\b(.+?)$/im;
 
-export const metadataExpressions: Map<MetadataType, RegExp> = new Map([
+export const metadataExpressions: Map<MetadataKey, RegExp> = new Map([
 	['author', authorRegex],
 	['contributors_to_exclude', contributorsToExcludeRegex],
 	['dev_langs', devLangsRegex],
