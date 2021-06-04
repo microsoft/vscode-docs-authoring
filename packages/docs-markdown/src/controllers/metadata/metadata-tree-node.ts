@@ -19,11 +19,11 @@ export class MetadataTreeNode extends TreeItem {
 const toDescription = (source: MetadataSource): string | null => {
 	switch (source) {
 		case MetadataSource.FileMetadata:
-			return 'fileMetadata';
+			return '(docfx fileMetadata)';
 		case MetadataSource.FrontMatter:
-			return 'frontMatter';
+			return '(YAML front matter)';
 		case MetadataSource.GlobalMetadata:
-			return 'globalMetadata';
+			return '(docfx globalMetadata)';
 
 		default:
 			return null;
@@ -49,7 +49,7 @@ const toSourceString = (source: MetadataSource): string => {
 		case MetadataSource.FileMetadata:
 			return "_docfx.json_ file's `fileMetadata` $(json) section";
 		case MetadataSource.FrontMatter:
-			return 'the front matter of the $(markdown) file itself';
+			return 'the YAML front matter of the $(markdown) file';
 		case MetadataSource.GlobalMetadata:
 			return "_docfx.json_ file's `globalMetadata` $(globe) section";
 
