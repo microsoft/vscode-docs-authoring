@@ -753,6 +753,14 @@
 				"when": "editorTextFocus && workspaceContains:.openpublishing.publish.config.json && !vim.active"
 			}
 		],
+		"views": {
+			"explorer": [
+				{
+					"id": "effectiveMetadata",
+					"name": "Metadata"
+				}
+			]
+		},
 		"yamlValidation": [
 			{
 				"fileMatch": "toc.yml",

@@ -77,6 +77,7 @@ import {
 	msTechnologyCompletionItemsProvider,
 	msSubServiceCompletionItemsProvider
 } from './helper/metadata-completion';
+import { MetadataTreeProvider } from './controllers/metadata/tree-provider';
 import { metadataDateReminder } from './helper/metadata';
 import { notebookControllerCommands } from './controllers/notebook-controller';
 import { validateRepositoryCommand } from './controllers/validation-controller';
@@ -179,6 +180,12 @@ export async function activate(context: ExtensionContext) {
 	languages.registerCompletionItemProvider('markdown', tripleColonCompletionItemsProvider, ':');
 	languages.registerCompletionItemProvider('markdown', markdownCompletionItemsProvider, '`');
 	languages.registerCodeActionsProvider('markdown', markdownCodeActionProvider);
+
+	// Effective metadata tree view.
+	window.registerTreeDataProvider(
+		'effectiveMetadata',
+		new MetadataTreeProvider(workspace.rootPath)
+	);
 
 	// When the document changes, find and replace target expressions (for example, smart quotes).
 	workspace.onDidChangeTextDocument(findAndReplaceTargetExpressions);
