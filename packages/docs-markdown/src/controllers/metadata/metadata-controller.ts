@@ -16,7 +16,7 @@ import { sendTelemetryData } from '../../helper/telemetry';
 import { applyReplacements, findReplacement, Replacements } from '../../helper/utility';
 import { MetadataSource } from './metadata-source';
 import { MetadataTreeNode } from './metadata-tree-node';
-import { MetadataKey } from './metadata-type';
+import { MetadataKey, isRequired, isOptional } from './metadata-key';
 import { MetadataEntry } from './metadata-entry';
 import { metadataExpressions, metadataFrontMatterRegex, msDateRegex } from './metadata-expressions';
 import { readDocFxJson } from './docfx-file-parser';
@@ -137,17 +137,6 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 		return;
 	}
 
-	const requiredMetadata: string[] = [
-		'author',
-		'description',
-		'ms.author',
-		'ms.date',
-		'ms.service',
-		'ms.prod',
-		'ms.topic',
-		'title'
-	];
-
 	const metadataEntries: MetadataEntry[] = [];
 
 	// Parse frontMatter metadata from the file.
@@ -164,7 +153,7 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 							MetadataSource.FrontMatter,
 							key as MetadataKey,
 							value as string,
-							requiredMetadata.includes(key) ? MetadataCategory.Required : MetadataCategory.Optional
+							isRequired(key as MetadataKey) ? MetadataCategory.Required : MetadataCategory.Optional
 						)
 					);
 				}
@@ -195,7 +184,7 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 								source,
 								key,
 								value,
-								requiredMetadata.includes(key)
+								isRequired(key as MetadataKey)
 									? MetadataCategory.Required
 									: MetadataCategory.Optional
 							)

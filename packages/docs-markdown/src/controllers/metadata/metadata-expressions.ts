@@ -1,4 +1,4 @@
-import { MetadataKey } from './metadata-type';
+import { MetadataKey } from './metadata-key';
 
 export const metadataFrontMatterRegex = /^(?:-{3}(?<metadata>[\w\W]+?)-{3})*/gim;
 export const authorRegex = /^author:\s*\b(.+?)$/im;

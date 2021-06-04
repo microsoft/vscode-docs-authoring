@@ -1,5 +1,5 @@
 import { MetadataSource } from './metadata-source';
-import { MetadataKey } from './metadata-type';
+import { MetadataKey } from './metadata-key';
 import { MetadataCategory } from './metadata-category';
 
 export class MetadataEntry {
