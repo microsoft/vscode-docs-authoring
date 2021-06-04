@@ -31,6 +31,14 @@
 	"contributes": {
 		"commands": [
 			{
+				"command": "effectiveMetadata.refreshEntry",
+				"title": "Refresh",
+				"icon": {
+					"light": "images/light-refresh.svg",
+					"dark": "images/dark-refresh.svg"
+				}
+			},
+			{
 				"command": "insertMoniker",
 				"title": "Add moniker range",
 				"category": "Docs"
@@ -529,6 +537,13 @@
 				{
 					"command": "cleanupFile",
 					"when": "false"
+				}
+			],
+			"view/title": [
+				{
+					"command": "effectiveMetadata.refreshEntry",
+					"when": "view == effectiveMetadata",
+					"group": "navigation"
 				}
 			]
 		},

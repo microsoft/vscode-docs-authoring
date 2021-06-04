@@ -77,7 +77,7 @@ import {
 	msTechnologyCompletionItemsProvider,
 	msSubServiceCompletionItemsProvider
 } from './helper/metadata-completion';
-import { MetadataTreeProvider } from './controllers/metadata/tree-provider';
+import { MetadataTreeProvider } from './controllers/metadata/metadata-tree-provider';
 import { metadataDateReminder } from './helper/metadata';
 import { notebookControllerCommands } from './controllers/notebook-controller';
 import { validateRepositoryCommand } from './controllers/validation-controller';
@@ -181,11 +181,23 @@ export async function activate(context: ExtensionContext) {
 	languages.registerCompletionItemProvider('markdown', markdownCompletionItemsProvider, '`');
 	languages.registerCodeActionsProvider('markdown', markdownCodeActionProvider);
 
-	// Effective metadata tree view.
-	window.registerTreeDataProvider(
-		'effectiveMetadata',
-		new MetadataTreeProvider(workspace.rootPath)
-	);
+	// Metadata tree view.
+	const metadataTreeProvider = new MetadataTreeProvider(workspace.workspaceFolders[0].name);
+	const treeView = window.createTreeView('effectiveMetadata', {
+		treeDataProvider: metadataTreeProvider,
+		showCollapseAll: true
+	});
+	commands.registerCommand('effectiveMetadata.refreshEntry', () => metadataTreeProvider.refresh());
+	workspace.onDidSaveTextDocument(e => {
+		if (['markdown', 'yaml', 'json'].includes(e.languageId)) {
+			metadataTreeProvider.refresh();
+		}
+	});
+	window.onDidChangeActiveTextEditor(e => {
+		if (['markdown', 'yaml', 'json'].includes(e.document.languageId)) {
+			metadataTreeProvider.refresh();
+		}
+	});
 
 	// When the document changes, find and replace target expressions (for example, smart quotes).
 	workspace.onDidChangeTextDocument(findAndReplaceTargetExpressions);

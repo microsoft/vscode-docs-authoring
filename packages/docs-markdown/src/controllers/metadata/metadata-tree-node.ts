@@ -47,11 +47,11 @@ const toSourceIcon = (source: MetadataSource): ThemeIcon | null => {
 const toSourceString = (source: MetadataSource): string => {
 	switch (source) {
 		case MetadataSource.FileMetadata:
-			return "_docfx.json_ file's `fileMetadata` $(json) section";
+			return "_docfx.json_ file's `fileMetadata` section.";
 		case MetadataSource.FrontMatter:
-			return 'the YAML front matter of the $(markdown) file';
+			return 'the YAML front matter of the file.';
 		case MetadataSource.GlobalMetadata:
-			return "_docfx.json_ file's `globalMetadata` $(globe) section";
+			return "_docfx.json_ file's `globalMetadata` section.";
 
 		default:
 			return '';
