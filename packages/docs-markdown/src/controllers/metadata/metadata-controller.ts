@@ -13,7 +13,7 @@ import {
 	matchAll
 } from '../../helper/common';
 import { sendTelemetryData } from '../../helper/telemetry';
-import { applyReplacements, findReplacement, groupBy, Replacements } from '../../helper/utility';
+import { applyReplacements, findReplacement, Replacements } from '../../helper/utility';
 import { MetadataSource } from './metadata-source';
 import { MetadataTreeNode } from './metadata-tree-node';
 import { MetadataType } from './metadata-type';
@@ -128,11 +128,10 @@ async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementF
 export function getAllEffectiveMetadata(): MetadataTreeNode[] {
 	const editor = window.activeTextEditor;
 	if (!editor) {
-		noActiveEditorMessage();
-		return;
+		return [];
 	}
 
-	if (!isMarkdownFileCheck(editor, false)) {
+	if (!['markdown', 'yaml'].includes(editor.document.languageId)) {
 		return;
 	}
 

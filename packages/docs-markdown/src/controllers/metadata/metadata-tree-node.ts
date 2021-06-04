@@ -1,4 +1,4 @@
-import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from 'vscode';
+import { MarkdownString, ThemeIcon, TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { MetadataSource } from './metadata-source';
 import { MetadataType } from './metadata-type';
 
@@ -44,6 +44,20 @@ const toSourceIcon = (source: MetadataSource): ThemeIcon | null => {
 	}
 };
 
+const toSourceIconString = (source: MetadataSource): string | null => {
+	switch (source) {
+		case MetadataSource.FileMetadata:
+			return '$(json)';
+		case MetadataSource.FrontMatter:
+			return '$(markdown)';
+		case MetadataSource.GlobalMetadata:
+			return '$(globe)';
+
+		default:
+			return null;
+	}
+};
+
 const toSourceString = (source: MetadataSource): string => {
 	switch (source) {
 		case MetadataSource.FileMetadata:
@@ -66,11 +80,15 @@ const toLabel = (key: MetadataType, value: string): string | null => {
 	return `${key}: ${value}`;
 };
 
-const toTooltip = (element: MetadataTreeNode): string | null => {
+const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
 	if (!element) {
 		return null;
 	}
 
+	const icon = toSourceIconString(element.source);
 	const source = toSourceString(element.source);
-	return `The \`${element.key}: ${element.value}\` metadata comes from ${source}`;
+	return new MarkdownString(
+		`${icon} The \`${element.key}: ${element.value}\` metadata comes from ${source}`,
+		true
+	);
 };
