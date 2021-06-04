@@ -146,12 +146,10 @@ export function getAllEffectiveMetadata(): MetadataTreeNode[] {
 		if (result) {
 			const metadataJson = jsyaml.load(result.groups.metadata);
 			if (metadataJson) {
-				for (const [key, value] of Object.entries(JSON.parse(metadataJson))) {
-					metadataTreeNodes.push({
-						source: MetadataSource.FrontMatter,
-						key: key as MetadataType,
-						value: value as string
-					});
+				for (const [key, value] of Object.entries(metadataJson)) {
+					metadataTreeNodes.push(
+						new MetadataTreeNode(MetadataSource.FrontMatter, key as MetadataType, value as string)
+					);
 				}
 			}
 		}
@@ -162,6 +160,78 @@ export function getAllEffectiveMetadata(): MetadataTreeNode[] {
 	// frontMatter > fileMetadata > globalMetadata
 	const folder = workspace.getWorkspaceFolder(editor.document.uri);
 	if (folder) {
+		// Read the DocFX.json file, search for metadata defaults.
+		const metadata = readDocFxJson(folder.uri.fsPath);
+		if (metadata && metadata.build) {
+			const fsPath = editor.document.uri.fsPath;
+			const fileMetadata = metadata.build.fileMetadata;
+			const globalMetadata = metadata.build.globalMetadata;
+
+			const tryFindMetadata = (
+				filePath: string,
+				type: MetadataType,
+				source: MetadataSource,
+				globs?: { [glob: string]: string }
+			) => {
+				if (globs) {
+					const value = getReplacementValue(globs, filePath);
+					if (value) {
+						metadataTreeNodes.push(new MetadataTreeNode(source, type, value));
+						return true;
+					}
+				}
+				return false;
+			};
+
+			const metadataTypes: MetadataType[] = [
+				'author',
+				'contributors_to_exclude',
+				'dev_langs',
+				'manager',
+				'ms.author',
+				'ms.collection',
+				'ms.custom',
+				'ms.date',
+				'ms.devlang',
+				'ms.prod',
+				'ms.reviewer',
+				'ms.service',
+				'ms.subservice',
+				'ms.technology',
+				'ms.topic',
+				'no_loc',
+				'product',
+				'ROBOTS',
+				'titleSuffix'
+			];
+
+			for (let i = 0; i < metadataTypes.length; i++) {
+				const metadata = metadataTypes[i];
+
+				let appliedFileMetadata = false;
+				if (fileMetadata && fileMetadata[metadata]) {
+					const fileMetadataGlobs = fileMetadata[metadata];
+					appliedFileMetadata = tryFindMetadata(
+						fsPath,
+						metadata,
+						MetadataSource.FileMetadata,
+						fileMetadataGlobs
+					);
+				}
+
+				if (!appliedFileMetadata) {
+					if (globalMetadata && globalMetadata[metadata]) {
+						const globalMetadataGlobs = globalMetadata[metadata];
+						appliedFileMetadata = tryFindMetadata(
+							fsPath,
+							metadata,
+							MetadataSource.GlobalMetadata,
+							globalMetadataGlobs
+						);
+					}
+				}
+			}
+		}
 	}
 
 	return metadataTreeNodes;
