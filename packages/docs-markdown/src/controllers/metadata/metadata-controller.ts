@@ -13,7 +13,7 @@ import {
 	matchAll
 } from '../../helper/common';
 import { sendTelemetryData } from '../../helper/telemetry';
-import { applyReplacements, findReplacement, Replacements } from '../../helper/utility';
+import { applyReplacements, findReplacement, groupBy, Replacements } from '../../helper/utility';
 import { MetadataSource } from './metadata-source';
 import { MetadataTreeNode } from './metadata-tree-node';
 import { MetadataType } from './metadata-type';
@@ -155,9 +155,6 @@ export function getAllEffectiveMetadata(): MetadataTreeNode[] {
 		}
 	}
 
-	// parse effective metadata applicable to file
-	// apply precedence
-	// frontMatter > fileMetadata > globalMetadata
 	const folder = workspace.getWorkspaceFolder(editor.document.uri);
 	if (folder) {
 		// Read the DocFX.json file, search for metadata defaults.
@@ -234,7 +231,25 @@ export function getAllEffectiveMetadata(): MetadataTreeNode[] {
 		}
 	}
 
-	return metadataTreeNodes;
+	// Group by key/MetadataType
+	// Sort the listing of values from frontMatter > fileMetadata > globalMetadata
+	const grouping: Map<MetadataType, MetadataTreeNode[]> = new Map();
+	for (let i = 0; i < metadataTreeNodes.length; ++i) {
+		const node = metadataTreeNodes[i];
+		if (grouping.has(node.key)) {
+			grouping.get(node.key).push(node);
+		} else {
+			grouping.set(node.key, [node]);
+		}
+	}
+
+	const resultingNodes: MetadataTreeNode[] = [];
+	for (const [key, nodes] of grouping) {
+		nodes.sort((a, b) => a.source - b.source);
+		resultingNodes.push(nodes[0]);
+	}
+
+	return resultingNodes;
 }
 
 function getReplacementValue(
