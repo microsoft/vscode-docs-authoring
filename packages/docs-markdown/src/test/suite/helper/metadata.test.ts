@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { commands, MessageItem, window, workspace } from 'vscode';
-import * as metadata from '../../../controllers/metadata-controller';
+import * as metadata from '../../../controllers/metadata/metadata-controller';
 import * as common from '../../../helper/common';
 import * as metadataHelper from '../../../helper/metadata';
 import * as telemetry from '../../../helper/telemetry';

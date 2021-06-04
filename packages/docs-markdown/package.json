@@ -25,10 +25,22 @@
 	"activationEvents": [
 		"onLanguage:json",
 		"onLanguage:markdown",
-		"onLanguage:yaml"
+		"onLanguage:yaml",
+		"onView:markdownMetadata"
 	],
 	"main": "./dist/extension",
 	"contributes": {
+		"views": {
+			"explorer": [
+				{
+					"id": "markdownMetadata",
+					"name": "Markdown Metadata",
+					"type": "tree",
+					"visibility": "visible",
+					"when": "resourceLangId == markdown"
+				}
+			]
+		},
 		"commands": [
 			{
 				"command": "insertMoniker",

@@ -4,7 +4,7 @@ import * as os from 'os';
 import * as spies from 'chai-spies';
 import { resolve } from 'path';
 import { commands, window } from 'vscode';
-import * as metadataController from '../../../controllers/metadata-controller';
+import * as metadataController from '../../../controllers/metadata/metadata-controller';
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
 import { extendedSleepTime, loadDocumentAndGetItReady, sleep } from '../../test.common/common';

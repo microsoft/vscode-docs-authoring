@@ -1,4 +1,4 @@
-import { updateMetadataDate } from '../controllers/metadata-controller';
+import { updateMetadataDate } from '../controllers/metadata/metadata-controller';
 import { workspace, window, Position, Range } from 'vscode';
 import {
 	noActiveEditorMessage,
