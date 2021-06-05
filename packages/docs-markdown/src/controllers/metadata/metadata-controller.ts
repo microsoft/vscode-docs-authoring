@@ -198,6 +198,7 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 			const metadataTypes: MetadataKey[] = [
 				'author',
 				'contributors_to_exclude',
+				'description',
 				'dev_langs',
 				'manager',
 				'ms.author',
@@ -214,6 +215,8 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 				'no_loc',
 				'product',
 				'ROBOTS',
+				'social_image_url',
+				'title',
 				'titleSuffix'
 			];
 

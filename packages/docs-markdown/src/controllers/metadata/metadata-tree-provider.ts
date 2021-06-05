@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { getAllEffectiveMetadata } from './metadata-controller';
 import { MetadataTreeNode } from './metadata-tree-node';
 import { MetadataCategory } from './metadata-category';
+import { naturalLanguageCompare } from '../../helper/common';
 
 export class MetadataTreeProvider implements vscode.TreeDataProvider<MetadataTreeNode> {
 	private _onDidChangeTreeData: vscode.EventEmitter<
@@ -57,7 +58,7 @@ export class MetadataTreeProvider implements vscode.TreeDataProvider<MetadataTre
 	private getTreeNodes(): MetadataTreeNode[] {
 		const metadataEntries = getAllEffectiveMetadata();
 		// Sort alphabetically.
-		metadataEntries.sort((a, b) => (a.key < b.key ? -1 : 1));
+		metadataEntries.sort((a, b) => naturalLanguageCompare(a.key, b.key));
 		const treeNodes: MetadataTreeNode[] = new Array(metadataEntries.length);
 
 		// Convert to tree nodes.

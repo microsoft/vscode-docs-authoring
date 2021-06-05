@@ -36,6 +36,11 @@ export class MetadataTreeNode extends TreeItem {
 			this.description = toDescription(source);
 			this.tooltip = toTooltip(this);
 			this.iconPath = toSourceIcon(source);
+		} else {
+			this.iconPath =
+				category === MetadataCategory.Optional
+					? new ThemeIcon('unverified')
+					: new ThemeIcon('verified');
 		}
 	}
 }
