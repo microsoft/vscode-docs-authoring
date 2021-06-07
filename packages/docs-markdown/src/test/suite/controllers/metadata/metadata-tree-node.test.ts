@@ -30,13 +30,13 @@ suite('Metadata Tree Node', () => {
 		expect(toSourceIcon(null)).to.be.null;
 
 		let icon = toSourceIcon(MetadataSource.FileMetadata);
-		expect(icon).to.equal(new ThemeIcon('json'));
+		expect(icon.id).to.equal(new ThemeIcon('json').id);
 
 		icon = toSourceIcon(MetadataSource.GlobalMetadata);
-		expect(icon).to.equal(new ThemeIcon('globe'));
+		expect(icon.id).to.equal(new ThemeIcon('globe').id);
 
 		icon = toSourceIcon(MetadataSource.FrontMatter);
-		expect(icon).to.equal(new ThemeIcon('markdown'));
+		expect(icon.id).to.equal(new ThemeIcon('markdown').id);
 	});
 
 	test('toSourceIconString', () => {
@@ -56,10 +56,10 @@ suite('Metadata Tree Node', () => {
 		expect(toSourceString(null)).to.be.null;
 
 		let sourceString = toSourceString(MetadataSource.FileMetadata);
-		expect(sourceString).to.equal("_docfx.json_ file's `fileMetadata` section.");
+		expect(sourceString).to.equal("_docfx.json_ file's `build/fileMetadata` section.");
 
 		sourceString = toSourceString(MetadataSource.GlobalMetadata);
-		expect(sourceString).to.equal("_docfx.json_ file's `globalMetadata` section.");
+		expect(sourceString).to.equal("_docfx.json_ file's `build/globalMetadata` section.");
 
 		sourceString = toSourceString(MetadataSource.FrontMatter);
 		expect(sourceString).to.equal('the YAML front matter of the file.');
