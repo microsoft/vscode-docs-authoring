@@ -12,18 +12,22 @@ import {
 const expect = chai.expect;
 
 suite('Metadata Tree Node', () => {
-	// test('toDescription', () => {
-	// 	expect(toDescription(null)).to.be.null;
+	test('toDescription', () => {
+		expect(toDescription(null)).to.be.null;
 
-	// 	let description = toDescription(MetadataSource.FileMetadata);
-	// 	expect(description).to.equal('(docfx fileMetadata)');
+		let description = toDescription('');
+		expect(description).to.equal('""');
 
-	// 	description = toDescription(MetadataSource.GlobalMetadata);
-	// 	expect(description).to.equal('(docfx globalMetadata)');
+		description = toDescription('conceptual');
+		expect(description).to.equal('conceptual');
 
-	// 	description = toDescription(MetadataSource.FrontMatter);
-	// 	expect(description).to.equal('(YAML front matter)');
-	// });
+		// Value arrays.
+		description = toDescription(['CSharp']);
+		expect(description).to.equal('CSharp');
+
+		description = toDescription(['CSharp', 'VB']);
+		expect(description).to.equal('(hover to see values)');
+	});
 
 	test('toSourceIcon', () => {
 		expect(toSourceIcon(null)).to.be.null;
@@ -63,12 +67,4 @@ suite('Metadata Tree Node', () => {
 		sourceString = toSourceString(MetadataSource.FrontMatter);
 		expect(sourceString).to.equal('the YAML front matter of the file.');
 	});
-
-	// test('toLabel', () => {
-	// 	let keyValuePair = toLabel('ms.author', null);
-	// 	expect(keyValuePair).to.equal('ms.author: ""');
-
-	// 	keyValuePair = toLabel('ms.author', 'dapine');
-	// 	expect(keyValuePair).to.equal('ms.author: dapine');
-	// });
 });
