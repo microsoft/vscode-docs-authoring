@@ -182,7 +182,7 @@ export async function activate(context: ExtensionContext) {
 	languages.registerCodeActionsProvider('markdown', markdownCodeActionProvider);
 
 	// Metadata tree view.
-	const metadataTreeProvider = new MetadataTreeProvider(workspace.workspaceFolders[0].name);
+	const metadataTreeProvider = new MetadataTreeProvider();
 	const treeView = window.createTreeView('effectiveMetadata', {
 		treeDataProvider: metadataTreeProvider,
 		showCollapseAll: true

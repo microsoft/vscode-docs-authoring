@@ -12,8 +12,6 @@ export class MetadataTreeProvider implements vscode.TreeDataProvider<MetadataTre
 	readonly onDidChangeTreeData: vscode.Event<MetadataTreeNode | undefined | null | void> = this
 		._onDidChangeTreeData.event;
 
-	constructor(private workspaceRoot: string) {}
-
 	refresh(): void {
 		this._onDidChangeTreeData.fire();
 	}
@@ -23,23 +21,10 @@ export class MetadataTreeProvider implements vscode.TreeDataProvider<MetadataTre
 	}
 
 	getChildren(element?: MetadataTreeNode): Thenable<MetadataTreeNode[]> {
-		if (!this.workspaceRoot) {
-			vscode.window.showInformationMessage('No metadata in empty workspace');
-			return Promise.resolve([]);
-		}
-
 		if (element) {
 			const treeNodes = this.getTreeNodes();
 			// Classify by category (required/optional).
-			if (element.category === MetadataCategory.Required) {
-				return Promise.resolve(
-					treeNodes.filter(treeNode => treeNode.category === MetadataCategory.Required)
-				);
-			} else if (element.category === MetadataCategory.Optional) {
-				return Promise.resolve(
-					treeNodes.filter(treeNode => treeNode.category === MetadataCategory.Optional)
-				);
-			}
+			return Promise.resolve(treeNodes.filter(treeNode => treeNode.category === element.category));
 		} else {
 			// Root of tree.
 			return Promise.resolve(this.getParentNodes());
@@ -47,30 +32,19 @@ export class MetadataTreeProvider implements vscode.TreeDataProvider<MetadataTre
 	}
 
 	private getParentNodes(): MetadataTreeNode[] {
-		const data: MetadataTreeNode[] = [
+		return [
 			new MetadataTreeNode({ category: MetadataCategory.Required }),
 			new MetadataTreeNode({ category: MetadataCategory.Optional })
 		];
-
-		return data;
 	}
 
 	private getTreeNodes(): MetadataTreeNode[] {
 		const metadataEntries = getAllEffectiveMetadata();
 		// Sort alphabetically.
-		metadataEntries.sort((a, b) => naturalLanguageCompare(a.key, b.key));
-		const treeNodes: MetadataTreeNode[] = new Array(metadataEntries.length);
-
-		// Convert to tree nodes.
-		for (let index = 0; index < metadataEntries.length; index++) {
-			treeNodes[index] = new MetadataTreeNode({
-				category: metadataEntries[index].category,
-				source: metadataEntries[index].source,
-				key: metadataEntries[index].key,
-				value: metadataEntries[index].value
+		return metadataEntries
+			.sort((a, b) => naturalLanguageCompare(a.key, b.key))
+			.map(treeNode => {
+				return new MetadataTreeNode(treeNode);
 			});
-		}
-
-		return treeNodes;
 	}
 }

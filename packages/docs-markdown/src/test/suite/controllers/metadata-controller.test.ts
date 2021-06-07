@@ -125,6 +125,6 @@ suite('Metadata Controller', () => {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const { exec } = require('child_process');
 		exec('cd ' + __dirname + ' && git checkout ' + filePath);
-		assert.equal(expectedText, actualText);
+		assert.strictEqual(expectedText, actualText);
 	});
 });
