@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import { resolve } from 'path';
 import {
 	commands,
@@ -33,6 +34,13 @@ export async function openTestRepository() {
 
 export async function createDocumentAndGetItReady() {
 	await commands.executeCommand('workbench.action.files.newUntitledFile');
+}
+
+/**
+ * Replaces '\r' carriage returns with '', and the '\n' characters are unaffected.
+ */
+export function expectStringsToEqual(actual: string, expected: string) {
+	expect(expected).to.equal(actual.replace('\r', ''));
 }
 
 interface Subscription {

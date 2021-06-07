@@ -17,7 +17,8 @@ import {
 	Uri,
 	window,
 	workspace,
-	TextDocumentWillSaveEvent
+	TextDocumentWillSaveEvent,
+	WorkspaceConfiguration
 } from 'vscode';
 import { insertAlertCommand } from './controllers/alert-controller';
 import { boldFormattingCommand } from './controllers/bold-controller';
@@ -189,8 +190,17 @@ export async function activate(context: ExtensionContext) {
 	});
 	commands.registerCommand('effectiveMetadata.refreshEntry', () => metadataTreeProvider.refresh());
 	workspace.onDidSaveTextDocument(e => {
+		// TODO: only refresh when auto-save is off.
+
 		if (['markdown', 'yaml', 'json'].includes(e.languageId)) {
-			metadataTreeProvider.refresh();
+			const filesConfiguration: WorkspaceConfiguration = workspace.getConfiguration('files');
+			if (
+				filesConfiguration &&
+				filesConfiguration.has('autoSave') &&
+				filesConfiguration.get('autoSave') === 'off'
+			) {
+				metadataTreeProvider.refresh();
+			}
 		}
 	});
 	window.onDidChangeActiveTextEditor(e => {

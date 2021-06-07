@@ -1,5 +1,4 @@
-import * as fs from 'fs';
-
+import { existsSync, readFileSync, watch } from 'fs';
 import { tryFindFile } from '../../helper/common';
 import { DocFxMetadata } from './docfx-metadata';
 
@@ -11,12 +10,12 @@ export function readDocFxJson(filePath: string): DocFxMetadata | null {
 	}
 
 	// Read the DocFX.json file, search for metadata defaults.
-	const docFxJson = tryFindFile(filePath, 'docfx.json');
-	if (!!docFxJson && fs.existsSync(docFxJson)) {
-		const jsonBuffer = fs.readFileSync(docFxJson);
+	const docFxJson = fileFile(filePath);
+	if (!!docFxJson && existsSync(docFxJson)) {
+		const jsonBuffer = readFileSync(docFxJson);
 		cachedDocFxJsonFile = JSON.parse(jsonBuffer.toString()) as DocFxMetadata;
 
-		fs.watch(docFxJson, (event, fileName) => {
+		watch(docFxJson, (event, fileName) => {
 			if (fileName && event === 'change') {
 				// If the file changes, clear out our cache - and reload it next time it's needed.
 				cachedDocFxJsonFile = null;
@@ -27,4 +26,8 @@ export function readDocFxJson(filePath: string): DocFxMetadata | null {
 	}
 
 	return null;
+}
+
+function fileFile(filePath: string): string {
+	return tryFindFile(filePath, 'docfx.json');
 }

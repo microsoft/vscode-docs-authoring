@@ -94,4 +94,7 @@ export const isRequired = (type: MetadataKey): boolean => {
 	);
 };
 
+/**
+ * See: https://aka.ms/docs/required-metadata#optional-metadata
+ */
 export const isOptional = (type: MetadataKey): boolean => !isRequired(type);

@@ -7,18 +7,20 @@ import { DocFxMetadata } from '../../../../controllers/metadata/docfx-metadata';
 chai.use(spies);
 const expect = chai.expect;
 
-suite('DocFX file parser', () => {
+suite('docfx-file-parser.ts', () => {
 	// Reset and tear down the spies
 	teardown(() => {
 		chai.spy.restore(readDocFxJson);
 	});
 
-	test('readDocFxJson correctly caches file', () => {
-		const spy = chai.spy.on(readDocFxJson, 'tryFindFile');
+	test('readDocFxJson() correctly caches file', () => {
+		// Spy on the parsing of the JSON file, it should only be called once.
+		const spy = chai.spy.on(readDocFxJson, 'fileFile');
+
 		const filePath = resolve(__dirname, '../../../../../src/test/data/repo/docfx.json');
 		let docFxMetadata: DocFxMetadata = readDocFxJson(filePath);
 
-		expect(spy).to.have.been.called.once;
+		expect(spy).to.have.been.called();
 		docFxMetadata = readDocFxJson(filePath);
 
 		// It should have been cached, and only called once.
