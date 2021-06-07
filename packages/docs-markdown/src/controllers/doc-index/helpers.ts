@@ -74,7 +74,7 @@ export class Helpers {
 	}
 
 	public static getRange(start: number, end: number): number[] {
-		return Array.from({ length: end - start }, (v, k) => k + start);
+		return Array.from({ length: end - start + 1 }, (v, k) => k + start);
 	}
 
 	public static intersects(one: any[], two: any[]): boolean {

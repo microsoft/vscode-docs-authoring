@@ -437,7 +437,8 @@ export class ContentBlock {
 			else length = content.length - match.index;
 
 			let currentBlock = new ContentBlock();
-			currentBlock.blockText = text;
+			let blockText = text.substring(header.length);
+			currentBlock.blockText = blockText;
 			currentBlock.artifactType = MarkdownEnum.Header;
 			currentBlock.text = header;
 			currentBlock.index = i;
@@ -898,7 +899,7 @@ export class ContentBlock {
 
 					let tmp = new ContentBlock();
 					tmp.text = value;
-					tmp.start = INDEX + tableData.index;
+					tmp.start = INDEX + tableData.index + contentBlock.start;
 					tmp.length = length;
 					tmp.artifactType = MarkdownEnum.TableColumn;
 					tmp.fileName = fileName;
@@ -915,7 +916,7 @@ export class ContentBlock {
 						value = Helpers.strTrimSpaces(value);
 						tmp = new ContentBlock();
 						tmp.text = value;
-						tmp.index = INDEX + tableData.index;
+						tmp.index = INDEX + tableData.index + contentBlock.start;
 						tmp.length = length;
 						tmp.artifactType = MarkdownEnum.TableColumn;
 						tmp.fileName = fileName;
@@ -934,7 +935,7 @@ export class ContentBlock {
 
 						let tmp = new ContentBlock();
 						tmp.text = value;
-						tmp.index = INDEX + tableData.length;
+						tmp.index = INDEX + tableData.length + contentBlock.start;
 						tmp.length = length;
 						tmp.artifactType = MarkdownEnum.TableColumn;
 						tmp.fileName = fileName;
@@ -963,7 +964,7 @@ export class ContentBlock {
 						if (column >= columns.length) console.log('Issues Extracting Table Data');
 						let tmp = new ContentBlock();
 						tmp.text = value;
-						tmp.start = INDEX + tableRow.index;
+						tmp.start = INDEX + tableRow.index + contentBlock.start;
 						tmp.length = length;
 						tmp.artifactType = MarkdownEnum.TableRow;
 						tmp.fileName = fileName;
@@ -986,7 +987,7 @@ export class ContentBlock {
 							value = Helpers.strTrimSpaces(value);
 							let tmp = new ContentBlock();
 							tmp.text = value;
-							tmp.start = INDEX + tableRow.index;
+							tmp.start = INDEX + tableRow.index + contentBlock.start;
 							tmp.length = length;
 							tmp.artifactType = MarkdownEnum.TableRow;
 							tmp.fileName = fileName;
@@ -1013,7 +1014,7 @@ export class ContentBlock {
 							let columnName = columns[column].groups.get('ColumnName');
 							let tmp = new ContentBlock();
 							tmp.text = value;
-							tmp.start = INDEX + tableRow.index;
+							tmp.start = INDEX + tableRow.index + contentBlock.start;
 							tmp.length = length;
 							tmp.artifactType = MarkdownEnum.TableRow;
 							tmp.fileName = fileName;
@@ -1056,9 +1057,7 @@ export class ContentBlock {
 			thisStart = setStart;
 		}
 
-		if (/Next Steps/gim.test(content)) {
-			INDEX2 = INDEX2;
-		}
+		thisStart += `${this.text}`.length;
 
 		let tagName = '';
 		for (let k = 0; k < artifacts.length; k++) {
@@ -1073,7 +1072,7 @@ export class ContentBlock {
 			if (beforeArtifactLength > 0) {
 				let beforeArtifact = content.substring(INDEX2, beforeArtifactLength);
 				if (beforeArtifact.length > 0) {
-					this.extractParagraphs(beforeArtifact, filename);
+					this.extractParagraphs(beforeArtifact, filename, startIndex);
 				}
 
 				let newIndex = artifacts[k].index + artifacts[k].length;
@@ -1220,10 +1219,6 @@ export class ContentBlock {
 			}
 
 			startIndex = thisStart + artifacts[k].index + artifacts[k].length;
-		}
-
-		if (artifacts.length === 0) {
-			INDEX2 = INDEX2 + this.text.length;
 		}
 
 		let afterArtifacts = content.substring(INDEX2, content.length);
