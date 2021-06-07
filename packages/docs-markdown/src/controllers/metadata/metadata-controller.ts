@@ -134,7 +134,7 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 	}
 
 	if (!['markdown', 'yaml'].includes(editor.document.languageId)) {
-		return;
+		return [];
 	}
 
 	const metadataEntries: MetadataEntry[] = [];

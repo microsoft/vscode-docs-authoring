@@ -52,7 +52,7 @@ interface NamedParameters {
 	value?: string;
 }
 
-const toDescription = (source: MetadataSource): string | null => {
+export const toDescription = (source: MetadataSource): string | null => {
 	switch (source) {
 		case MetadataSource.FileMetadata:
 			return '(docfx fileMetadata)';
@@ -66,7 +66,7 @@ const toDescription = (source: MetadataSource): string | null => {
 	}
 };
 
-const toSourceIcon = (source: MetadataSource): ThemeIcon | null => {
+export const toSourceIcon = (source: MetadataSource): ThemeIcon | null => {
 	switch (source) {
 		case MetadataSource.FileMetadata:
 			return new ThemeIcon('json');
@@ -80,7 +80,7 @@ const toSourceIcon = (source: MetadataSource): ThemeIcon | null => {
 	}
 };
 
-const toSourceIconString = (source: MetadataSource): string | null => {
+export const toSourceIconString = (source: MetadataSource): string | null => {
 	switch (source) {
 		case MetadataSource.FileMetadata:
 			return '$(json)';
@@ -94,7 +94,7 @@ const toSourceIconString = (source: MetadataSource): string | null => {
 	}
 };
 
-const toSourceString = (source: MetadataSource): string => {
+export const toSourceString = (source: MetadataSource): string | null => {
 	switch (source) {
 		case MetadataSource.FileMetadata:
 			return "_docfx.json_ file's `fileMetadata` section.";
@@ -104,11 +104,11 @@ const toSourceString = (source: MetadataSource): string => {
 			return "_docfx.json_ file's `globalMetadata` section.";
 
 		default:
-			return '';
+			return null;
 	}
 };
 
-const toLabel = (key: MetadataKey, value: string): string | null => {
+export const toLabel = (key: MetadataKey, value: string): string => {
 	// Empty strings are valid (e.g. titleSuffix).
 	if (!value) {
 		return `${key}: ""`;
@@ -117,7 +117,7 @@ const toLabel = (key: MetadataKey, value: string): string | null => {
 	return `${key}: ${value}`;
 };
 
-const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
+export const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
 	if (!element) {
 		return null;
 	}
