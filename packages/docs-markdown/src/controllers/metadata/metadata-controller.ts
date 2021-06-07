@@ -15,8 +15,7 @@ import {
 import { sendTelemetryData } from '../../helper/telemetry';
 import { applyReplacements, findReplacement, Replacements } from '../../helper/utility';
 import { MetadataSource } from './metadata-source';
-import { MetadataTreeNode } from './metadata-tree-node';
-import { MetadataKey, isRequired, isOptional } from './metadata-key';
+import { MetadataKey, isRequired, allMetadataKeys } from './metadata-key';
 import { MetadataEntry } from './metadata-entry';
 import { metadataExpressions, metadataFrontMatterRegex, msDateRegex } from './metadata-expressions';
 import { readDocFxJson } from './docfx-file-parser';
@@ -195,34 +194,7 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 				return false;
 			};
 
-			const metadataTypes: MetadataKey[] = [
-				'author',
-				'contributors_to_exclude',
-				'description',
-				'dev_langs',
-				'f1_keywords',
-				'helpviewer_keywords',
-				'manager',
-				'ms.assetid',
-				'ms.author',
-				'ms.collection',
-				'ms.custom',
-				'ms.date',
-				'ms.devlang',
-				'ms.prod',
-				'ms.reviewer',
-				'ms.service',
-				'ms.subservice',
-				'ms.technology',
-				'ms.topic',
-				'no_loc',
-				'product',
-				'ROBOTS',
-				'social_image_url',
-				'title',
-				'titleSuffix'
-			];
-
+			const metadataTypes = allMetadataKeys;
 			for (let i = 0; i < metadataTypes.length; i++) {
 				const metadata = metadataTypes[i];
 

@@ -94,11 +94,11 @@ export const toSourceIconString = (source: MetadataSource): string | null => {
 export const toSourceString = (source: MetadataSource): string | null => {
 	switch (source) {
 		case MetadataSource.FileMetadata:
-			return "_docfx.json_ file's `fileMetadata` section.";
+			return "_docfx.json_ file's `build/fileMetadata` section.";
 		case MetadataSource.FrontMatter:
 			return 'the YAML front matter of the file.';
 		case MetadataSource.GlobalMetadata:
-			return "_docfx.json_ file's `globalMetadata` section.";
+			return "_docfx.json_ file's `build/globalMetadata` section.";
 
 		default:
 			return null;
@@ -120,10 +120,8 @@ export const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
 		return null;
 	}
 
-	const required = isRequired(element.key);
 	const icon = toSourceIconString(element.source);
-	const source = toSourceString(element.source);
-	const builder = new MarkdownString(`${icon} This key value pair:\n\n`, true);
+	const builder = new MarkdownString(`${icon} ${element.category} metadata.\n\n`, true);
 
 	if (Array.isArray(element.value)) {
 		const values = `${element.key}:\n${element.value.map(v => `  - "${v}"`).join('\n')}`;
@@ -131,11 +129,9 @@ export const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
 	} else {
 		builder.appendCodeblock(`${element.key}: ${element.value}`, 'yaml');
 	}
-	builder.appendText(
-		`\n\n is considered ${
-			required ? 'required' : 'optional'
-		} metadata. It was sourced from ${source}`
-	);
+
+	const source = toSourceString(element.source);
+	builder.appendText(`\n\nSourced from ${source}`);
 
 	return builder;
 };

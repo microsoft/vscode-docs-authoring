@@ -28,6 +28,34 @@ export type MetadataKey =
 	| 'title'
 	| 'titleSuffix';
 
+export const allMetadataKeys: MetadataKey[] = [
+	'author',
+	'contributors_to_exclude',
+	'description',
+	'dev_langs',
+	'f1_keywords',
+	'helpviewer_keywords',
+	'manager',
+	'ms.assetid',
+	'ms.author',
+	'ms.collection',
+	'ms.custom',
+	'ms.date',
+	'ms.devlang',
+	'ms.prod',
+	'ms.reviewer',
+	'ms.service',
+	'ms.subservice',
+	'ms.technology',
+	'ms.topic',
+	'no_loc',
+	'product',
+	'ROBOTS',
+	'social_image_url',
+	'title',
+	'titleSuffix'
+];
+
 /**
  * See: https://review.docs.microsoft.com/en-us/help/contribute/metadata-attributes?branch=master#required-metadata
  */
