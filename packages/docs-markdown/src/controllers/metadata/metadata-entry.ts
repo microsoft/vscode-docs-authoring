@@ -6,7 +6,7 @@ export class MetadataEntry {
 	constructor(
 		public readonly source: MetadataSource,
 		public readonly key: MetadataKey,
-		public readonly value: string | string[],
+		public readonly value: boolean | string | string[],
 		public readonly category: MetadataCategory
 	) {}
 }

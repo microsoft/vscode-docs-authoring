@@ -2,13 +2,11 @@ export interface DocFxMetadata {
 	build: {
 		fileMetadata?: {
 			[key: string]: {
-				[glob: string]: string;
+				[glob: string]: boolean | string | string[];
 			};
 		};
 		globalMetadata?: {
-			[key: string]: {
-				[glob: string]: string;
-			};
+			[key: string]: boolean | string | string[];
 		};
 	};
 }

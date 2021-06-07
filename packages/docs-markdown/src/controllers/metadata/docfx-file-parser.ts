@@ -18,7 +18,7 @@ export function readDocFxJson(filePath: string): DocFxMetadata | null {
 
 		fs.watch(docFxJson, (event, fileName) => {
 			if (fileName && event === 'change') {
-				// If the file changes, clear out our cache.
+				// If the file changes, clear out our cache - and reload it next time it's needed.
 				cachedDocFxJsonFile = null;
 			}
 		});

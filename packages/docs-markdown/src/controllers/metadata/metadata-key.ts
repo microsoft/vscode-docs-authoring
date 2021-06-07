@@ -2,12 +2,21 @@
  * See: https://aka.ms/docs/required-metadata
  */
 export type MetadataKey =
+	| 'apiPlatform'
 	| 'author'
+	| 'brand'
+	| 'breadcrumb_path'
 	| 'contributors_to_exclude'
 	| 'description'
 	| 'dev_langs'
 	| 'f1_keywords'
+	| 'featureFlags'
+	| 'feedback_github_repo'
+	| 'feedback_product_url'
+	| 'feedback_system'
 	| 'helpviewer_keywords'
+	| 'learn_banner_products'
+	| 'manager'
 	| 'manager'
 	| 'ms.assetid'
 	| 'ms.author'
@@ -23,18 +32,29 @@ export type MetadataKey =
 	| 'ms.topic'
 	| 'no_loc'
 	| 'product'
+	| 'recommendations'
 	| 'ROBOTS'
+	| 'searchScope'
 	| 'social_image_url'
 	| 'title'
 	| 'titleSuffix';
 
 export const allMetadataKeys: MetadataKey[] = [
+	'apiPlatform',
 	'author',
+	'brand',
+	'breadcrumb_path',
 	'contributors_to_exclude',
 	'description',
 	'dev_langs',
 	'f1_keywords',
+	'featureFlags',
+	'feedback_github_repo',
+	'feedback_product_url',
+	'feedback_system',
 	'helpviewer_keywords',
+	'learn_banner_products',
+	'manager',
 	'manager',
 	'ms.assetid',
 	'ms.author',
@@ -50,14 +70,16 @@ export const allMetadataKeys: MetadataKey[] = [
 	'ms.topic',
 	'no_loc',
 	'product',
+	'recommendations',
 	'ROBOTS',
+	'searchScope',
 	'social_image_url',
 	'title',
 	'titleSuffix'
 ];
 
 /**
- * See: https://review.docs.microsoft.com/en-us/help/contribute/metadata-attributes?branch=master#required-metadata
+ * See: https://aka.ms/docs/required-metadata#required-metadata
  */
 export const isRequired = (type: MetadataKey): boolean => {
 	return (

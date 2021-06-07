@@ -1,18 +1,18 @@
 import { MarkdownString, ThemeIcon, TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { MetadataSource } from './metadata-source';
-import { isRequired, MetadataKey } from './metadata-key';
+import { MetadataKey } from './metadata-key';
 import { MetadataCategory } from './metadata-category';
 
 export class MetadataTreeNode extends TreeItem {
 	readonly category: MetadataCategory;
 	readonly source?: MetadataSource | null;
-	readonly value?: string | string[] | null;
+	readonly value?: boolean | string | string[] | null;
 	readonly key?: MetadataKey | null;
 
 	constructor({ category, source = null, key = null, value = null }: NamedParameters) {
 		super(
-			key != null && value != null ? toLabel(key, value) : category.toString(),
-			key == null ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.None
+			key !== null && value !== null ? toLabel(key, value) : category.toString(),
+			key === null ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.None
 		);
 
 		this.category = category;
@@ -20,7 +20,7 @@ export class MetadataTreeNode extends TreeItem {
 		this.key = key;
 		this.value = value;
 
-		if (key != null && value != null) {
+		if (key !== null && value !== null) {
 			this.description = toDescription(source);
 			this.tooltip = toTooltip(this);
 			this.iconPath = toSourceIcon(source);
@@ -46,7 +46,7 @@ interface NamedParameters {
 	category: MetadataCategory;
 	source?: MetadataSource;
 	key?: MetadataKey;
-	value?: string | string[];
+	value?: boolean | string | string[];
 }
 
 export const toDescription = (source: MetadataSource): string | null => {
@@ -105,7 +105,7 @@ export const toSourceString = (source: MetadataSource): string | null => {
 	}
 };
 
-export const toLabel = (key: MetadataKey, value: string | string[]): string => {
+export const toLabel = (key: MetadataKey, value: boolean | string | string[]): string => {
 	// Empty strings are valid (e.g. titleSuffix).
 	if (!value) {
 		return `${key}: ""`;
@@ -131,7 +131,7 @@ export const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
 	}
 
 	const source = toSourceString(element.source);
-	builder.appendText(`\n\nSourced from ${source}`);
+	builder.appendMarkdown(`\n\nSourced from ${source}`);
 
 	return builder;
 };

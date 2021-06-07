@@ -86,11 +86,11 @@ async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementF
 			const tryAssignReplacement = (
 				filePath: string,
 				type: MetadataKey,
-				globs?: { [glob: string]: string }
+				globs?: { [glob: string]: boolean | string | string[] }
 			) => {
 				if (globs) {
 					const value = getReplacementValue(globs, filePath);
-					if (value) {
+					if (value && typeof value === 'string') {
 						replacements.push(new ReplacementFormat(type, value));
 						return true;
 					}
@@ -128,17 +128,13 @@ async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementF
 
 export function getAllEffectiveMetadata(): MetadataEntry[] {
 	const editor = window.activeTextEditor;
-	if (!editor) {
-		return [];
-	}
-
-	if (!['markdown', 'yaml'].includes(editor.document.languageId)) {
+	if (!editor || !['markdown', 'yaml'].includes(editor.document.languageId)) {
 		return [];
 	}
 
 	const metadataEntries: MetadataEntry[] = [];
 
-	// Parse frontMatter metadata from the file.
+	// Parse front-matter metadata from the file.
 	const content = editor.document.getText();
 	const results = matchAll(metadataFrontMatterRegex, content);
 	if (results && results.length) {
@@ -147,11 +143,17 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 			const metadataJson = jsyaml.load(result.groups.metadata);
 			if (metadataJson) {
 				for (const [key, value] of Object.entries(metadataJson)) {
+					const typedValue: boolean | string | string[] = Array.isArray(value)
+						? (value as string[])
+						: typeof value === 'boolean'
+						? (value as boolean)
+						: (value as string);
+
 					metadataEntries.push(
 						new MetadataEntry(
 							MetadataSource.FrontMatter,
 							key as MetadataKey,
-							Array.isArray(value) ? (value as string[]) : (value as string),
+							typedValue,
 							isRequired(key as MetadataKey) ? MetadataCategory.Required : MetadataCategory.Optional
 						)
 					);
@@ -173,10 +175,18 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 				filePath: string,
 				key: MetadataKey,
 				source: MetadataSource,
-				globs?: { [glob: string]: string }
+				metadataNodeOrValue?:
+					| { [glob: string]: boolean | string | string[] }
+					| (boolean | string | string[])
 			) => {
-				if (globs) {
-					const value = getReplacementValue(globs, filePath);
+				if (metadataNodeOrValue) {
+					const isGlobal = source === MetadataSource.GlobalMetadata;
+					const value = isGlobal
+						? (metadataNodeOrValue as boolean | string | string[])
+						: getReplacementValue(
+								metadataNodeOrValue as { [glob: string]: boolean | string | string[] },
+								filePath
+						  );
 					if (value) {
 						metadataEntries.push(
 							new MetadataEntry(
@@ -198,27 +208,15 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 			for (let i = 0; i < metadataTypes.length; i++) {
 				const metadata = metadataTypes[i];
 
-				let appliedFileMetadata = false;
 				if (fileMetadata && fileMetadata[metadata]) {
-					const fileMetadataGlobs = fileMetadata[metadata];
-					appliedFileMetadata = tryFindMetadata(
-						fsPath,
-						metadata,
-						MetadataSource.FileMetadata,
-						fileMetadataGlobs
-					);
+					const fileMetadataGlobs: { [glob: string]: string | boolean | string[] } =
+						fileMetadata[metadata];
+					tryFindMetadata(fsPath, metadata, MetadataSource.FileMetadata, fileMetadataGlobs);
 				}
 
-				if (!appliedFileMetadata) {
-					if (globalMetadata && globalMetadata[metadata]) {
-						const globalMetadataGlobs = globalMetadata[metadata];
-						appliedFileMetadata = tryFindMetadata(
-							fsPath,
-							metadata,
-							MetadataSource.GlobalMetadata,
-							globalMetadataGlobs
-						);
-					}
+				if (globalMetadata && globalMetadata[metadata]) {
+					const globalMetadataGlobs: string | boolean | string[] = globalMetadata[metadata];
+					tryFindMetadata(fsPath, metadata, MetadataSource.GlobalMetadata, globalMetadataGlobs);
 				}
 			}
 		}
@@ -237,7 +235,7 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 	}
 
 	const resultingNodes: MetadataEntry[] = [];
-	for (const [key, nodes] of grouping) {
+	for (const [_, nodes] of grouping) {
 		nodes.sort((a, b) => a.source - b.source);
 		resultingNodes.push(nodes[0]);
 	}
@@ -246,12 +244,12 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 }
 
 function getReplacementValue(
-	globs: { [glob: string]: string },
+	globNode: { [glob: string]: boolean | string | string[] },
 	fsPath: string
-): string | undefined {
-	if (globs && fsPath) {
+): boolean | string | string[] | undefined {
+	if (globNode && fsPath) {
 		let segments = fsPath.split(path.sep);
-		const globKeys = Object.keys(globs).map(key => ({ key, segments: key.split('/') }));
+		const globKeys = Object.keys(globNode).map(key => ({ key, segments: key.split('/') }));
 		const firstSegment = globKeys[0].segments[0];
 		segments = segments.slice(segments.indexOf(firstSegment));
 		const length = segments.length;
@@ -271,7 +269,7 @@ function getReplacementValue(
 				}
 
 				if (equals) {
-					return globs[globKey.key];
+					return globNode[globKey.key];
 				}
 			}
 		}
