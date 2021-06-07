@@ -152,7 +152,7 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 						new MetadataEntry(
 							MetadataSource.FrontMatter,
 							key as MetadataKey,
-							value as string,
+							Array.isArray(value) ? (value as string[]) : (value as string),
 							isRequired(key as MetadataKey) ? MetadataCategory.Required : MetadataCategory.Optional
 						)
 					);

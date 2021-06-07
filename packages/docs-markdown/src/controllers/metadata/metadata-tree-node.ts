@@ -1,25 +1,13 @@
 import { MarkdownString, ThemeIcon, TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { MetadataSource } from './metadata-source';
-import { MetadataKey } from './metadata-key';
+import { isRequired, MetadataKey } from './metadata-key';
 import { MetadataCategory } from './metadata-category';
 
 export class MetadataTreeNode extends TreeItem {
-	category: MetadataCategory;
-	source: MetadataSource;
-	value: any;
-	key: MetadataKey;
-
-	// constructor(
-	// 	public readonly source: MetadataSource,
-	// 	public readonly key: MetadataKey,
-	// 	public readonly value: string
-	// ) {
-	// 	super(toLabel(key, value), TreeItemCollapsibleState.None);
-
-	// 	this.description = toDescription(source);
-	// 	this.tooltip = toTooltip(this);
-	// 	this.iconPath = toSourceIcon(source);
-	// }
+	readonly category: MetadataCategory;
+	readonly source?: MetadataSource | null;
+	readonly value?: string | string[] | null;
+	readonly key?: MetadataKey | null;
 
 	constructor({ category, source = null, key = null, value = null }: NamedParameters) {
 		super(
@@ -37,10 +25,19 @@ export class MetadataTreeNode extends TreeItem {
 			this.tooltip = toTooltip(this);
 			this.iconPath = toSourceIcon(source);
 		} else {
-			this.iconPath =
-				category === MetadataCategory.Optional
-					? new ThemeIcon('unverified')
-					: new ThemeIcon('verified');
+			if (category === MetadataCategory.Optional) {
+				this.iconPath = new ThemeIcon('unverified');
+				this.tooltip = new MarkdownString(
+					'$(unverified) Metadata that is optional, see https://aka.ms/docs/required-metadata#optional-metadata.',
+					true
+				);
+			} else {
+				this.iconPath = new ThemeIcon('verified');
+				this.tooltip = new MarkdownString(
+					'$(verified) Metadata that is required, see https://aka.ms/docs/required-metadata.',
+					true
+				);
+			}
 		}
 	}
 }
@@ -49,7 +46,7 @@ interface NamedParameters {
 	category: MetadataCategory;
 	source?: MetadataSource;
 	key?: MetadataKey;
-	value?: string;
+	value?: string | string[];
 }
 
 export const toDescription = (source: MetadataSource): string | null => {
@@ -108,13 +105,14 @@ export const toSourceString = (source: MetadataSource): string | null => {
 	}
 };
 
-export const toLabel = (key: MetadataKey, value: string): string => {
+export const toLabel = (key: MetadataKey, value: string | string[]): string => {
 	// Empty strings are valid (e.g. titleSuffix).
 	if (!value) {
 		return `${key}: ""`;
 	}
 
-	return `${key}: ${value}`;
+	const valueString = Array.isArray(value) ? 'hover to see values...' : value;
+	return `${key}: ${valueString}`;
 };
 
 export const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
@@ -122,10 +120,22 @@ export const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
 		return null;
 	}
 
+	const required = isRequired(element.key);
 	const icon = toSourceIconString(element.source);
 	const source = toSourceString(element.source);
-	return new MarkdownString(
-		`${icon} The \`${element.key}: ${element.value}\` metadata comes from ${source}`,
-		true
+	const builder = new MarkdownString(`${icon} This key value pair:\n\n`, true);
+
+	if (Array.isArray(element.value)) {
+		const values = `${element.key}:\n${element.value.map(v => `  - "${v}"`).join('\n')}`;
+		builder.appendCodeblock(values, 'yaml');
+	} else {
+		builder.appendCodeblock(`${element.key}: ${element.value}`, 'yaml');
+	}
+	builder.appendText(
+		`\n\n is considered ${
+			required ? 'required' : 'optional'
+		} metadata. It was sourced from ${source}`
 	);
+
+	return builder;
 };

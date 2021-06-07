@@ -1,5 +1,5 @@
 /**
- * See: https://review.docs.microsoft.com/en-us/help/contribute/metadata-attributes?branch=master
+ * See: https://aka.ms/docs/required-metadata
  */
 export type MetadataKey =
 	| 'author'
