@@ -316,7 +316,7 @@ export class AuditEntry {
 		this.success = Boolean(+success ^ +this.auditRule.bNot);
 		this.currentValue = current;
 		this.locatedAtIndex = index;
-		if (this.indexes === undefined || this.indexes.length == 0) {
+		if (this.indexes === undefined || this.indexes.length === 0) {
 			this.indexes = [];
 			if (index !== -777 && end_index !== -777) {
 				this.indexes.push(new Point(index, end_index));
