@@ -4,7 +4,6 @@ import { ThemeIcon } from 'vscode';
 import { MetadataSource } from '../../../../controllers/metadata/metadata-source';
 import {
 	toDescription,
-	toLabel,
 	toSourceIcon,
 	toSourceIconString,
 	toSourceString
@@ -13,18 +12,18 @@ import {
 const expect = chai.expect;
 
 suite('Metadata Tree Node', () => {
-	test('toDescription', () => {
-		expect(toDescription(null)).to.be.null;
+	// test('toDescription', () => {
+	// 	expect(toDescription(null)).to.be.null;
 
-		let description = toDescription(MetadataSource.FileMetadata);
-		expect(description).to.equal('(docfx fileMetadata)');
+	// 	let description = toDescription(MetadataSource.FileMetadata);
+	// 	expect(description).to.equal('(docfx fileMetadata)');
 
-		description = toDescription(MetadataSource.GlobalMetadata);
-		expect(description).to.equal('(docfx globalMetadata)');
+	// 	description = toDescription(MetadataSource.GlobalMetadata);
+	// 	expect(description).to.equal('(docfx globalMetadata)');
 
-		description = toDescription(MetadataSource.FrontMatter);
-		expect(description).to.equal('(YAML front matter)');
-	});
+	// 	description = toDescription(MetadataSource.FrontMatter);
+	// 	expect(description).to.equal('(YAML front matter)');
+	// });
 
 	test('toSourceIcon', () => {
 		expect(toSourceIcon(null)).to.be.null;
@@ -65,11 +64,11 @@ suite('Metadata Tree Node', () => {
 		expect(sourceString).to.equal('the YAML front matter of the file.');
 	});
 
-	test('toLabel', () => {
-		let keyValuePair = toLabel('ms.author', null);
-		expect(keyValuePair).to.equal('ms.author: ""');
+	// test('toLabel', () => {
+	// 	let keyValuePair = toLabel('ms.author', null);
+	// 	expect(keyValuePair).to.equal('ms.author: ""');
 
-		keyValuePair = toLabel('ms.author', 'dapine');
-		expect(keyValuePair).to.equal('ms.author: dapine');
-	});
+	// 	keyValuePair = toLabel('ms.author', 'dapine');
+	// 	expect(keyValuePair).to.equal('ms.author: dapine');
+	// });
 });
