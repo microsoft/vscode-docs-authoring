@@ -190,9 +190,7 @@ export async function activate(context: ExtensionContext) {
 	});
 	commands.registerCommand('effectiveMetadata.refreshEntry', () => metadataTreeProvider.refresh());
 	workspace.onDidSaveTextDocument(e => {
-		// TODO: only refresh when auto-save is off.
-
-		if (['markdown', 'yaml', 'json'].includes(e.languageId)) {
+		if (['markdown', 'json'].includes(e.languageId)) {
 			const filesConfiguration: WorkspaceConfiguration = workspace.getConfiguration('files');
 			if (
 				filesConfiguration &&
@@ -204,7 +202,7 @@ export async function activate(context: ExtensionContext) {
 		}
 	});
 	window.onDidChangeActiveTextEditor(e => {
-		if (['markdown', 'yaml', 'json'].includes(e.document.languageId)) {
+		if (['markdown', 'json'].includes(e.document.languageId)) {
 			metadataTreeProvider.refresh();
 		}
 	});
