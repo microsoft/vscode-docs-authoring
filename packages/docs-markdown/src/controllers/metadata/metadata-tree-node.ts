@@ -31,7 +31,7 @@ export class MetadataTreeNode extends TreeItem {
 		} else {
 			if (category === MetadataCategory.Optional) {
 				this.tooltip = new MarkdownString(
-					"$(unverified) Metadata that's optional. [See optional metadata keys.](https://aka.ms/docs/required-metadata#optional-metadata)",
+					"$(unverified) Metadata that's optional. [See optional metadata keys.](https://aka.ms/docs/optional-metadata)",
 					true
 				);
 			} else {

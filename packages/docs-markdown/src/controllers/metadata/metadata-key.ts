@@ -79,7 +79,7 @@ export const allMetadataKeys: MetadataKey[] = [
 ];
 
 /**
- * See: https://aka.ms/docs/required-metadata#required-metadata
+ * See: https://aka.ms/docs/required-metadata
  */
 export const isRequired = (type: MetadataKey): boolean => {
 	return (
@@ -95,6 +95,6 @@ export const isRequired = (type: MetadataKey): boolean => {
 };
 
 /**
- * See: https://aka.ms/docs/required-metadata#optional-metadata
+ * See: https://aka.ms/docs/optional-metadata
  */
 export const isOptional = (type: MetadataKey): boolean => !isRequired(type);
