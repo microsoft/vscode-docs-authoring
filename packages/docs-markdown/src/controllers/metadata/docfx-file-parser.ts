@@ -10,7 +10,7 @@ export function readDocFxJson(filePath: string): DocFxMetadata | null {
 	}
 
 	// Read the DocFX.json file, search for metadata defaults.
-	const docFxJson = fileFile(filePath);
+	const docFxJson = tryFindFile(filePath, 'docfx.json');
 	if (!!docFxJson && existsSync(docFxJson)) {
 		const jsonBuffer = readFileSync(docFxJson);
 		cachedDocFxJsonFile = JSON.parse(jsonBuffer.toString()) as DocFxMetadata;
@@ -26,8 +26,4 @@ export function readDocFxJson(filePath: string): DocFxMetadata | null {
 	}
 
 	return null;
-}
-
-function fileFile(filePath: string): string {
-	return tryFindFile(filePath, 'docfx.json');
 }
