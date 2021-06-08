@@ -3,23 +3,23 @@
 
 import jsyaml = require('js-yaml');
 import minimatch = require('minimatch');
+import { dirname, sep } from 'path';
 import { commands, TextEditor, window, workspace } from 'vscode';
 import {
 	isMarkdownFileCheck,
-	noActiveEditorMessage,
-	toShortDate,
 	isMarkdownYamlFileCheckWithoutNotification,
-	matchAll
+	matchAll,
+	noActiveEditorMessage,
+	toShortDate
 } from '../../helper/common';
 import { sendTelemetryData } from '../../helper/telemetry';
 import { applyReplacements, findReplacement, Replacements } from '../../helper/utility';
-import { MetadataSource } from './metadata-source';
-import { MetadataKey, isRequired, allMetadataKeys } from './metadata-key';
-import { MetadataEntry } from './metadata-entry';
-import { metadataExpressions, metadataFrontMatterRegex, msDateRegex } from './metadata-expressions';
 import { readDocFxJson } from './docfx-file-parser';
 import { MetadataCategory } from './metadata-category';
-import { sep } from 'path';
+import { MetadataEntry } from './metadata-entry';
+import { metadataExpressions, metadataFrontMatterRegex, msDateRegex } from './metadata-expressions';
+import { allMetadataKeys, isRequired, MetadataKey } from './metadata-key';
+import { MetadataSource } from './metadata-source';
 
 export function insertMetadataCommands() {
 	return [
@@ -78,11 +78,11 @@ async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementF
 	const folder = workspace.getWorkspaceFolder(editor.document.uri);
 	if (folder) {
 		// Read the DocFX.json file, search for metadata defaults.
-		const metadata = readDocFxJson(folder.uri.fsPath);
-		if (metadata && metadata.build && metadata.build.fileMetadata) {
+		const { fullPath, contents } = readDocFxJson(folder.uri.fsPath);
+		if (contents && contents.build && contents.build.fileMetadata) {
 			const replacements: ReplacementFormat[] = [];
 			const fsPath = editor.document.uri.fsPath;
-			const fileMetadata = metadata.build.fileMetadata;
+			const fileMetadata = contents.build.fileMetadata;
 			const tryAssignReplacement = (
 				filePath: string,
 				type: MetadataKey,
@@ -165,12 +165,13 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 	const folder = workspace.getWorkspaceFolder(editor.document.uri);
 	if (folder) {
 		// Read the DocFX.json file, search for metadata defaults.
-		const metadata = readDocFxJson(folder.uri.fsPath);
-		if (metadata && metadata.build) {
-			const path = editor.document.uri.fsPath.replace(folder.uri.fsPath, '');
+		const { fullPath, contents } = readDocFxJson(folder.uri.fsPath);
+		if (contents && contents.build) {
+			const docFxDirectory = dirname(fullPath);
+			const path = editor.document.uri.fsPath.replace(docFxDirectory, '');
 			const fsPath = path.startsWith(sep) ? path.substr(1) : path;
-			const fileMetadata = metadata.build.fileMetadata;
-			const globalMetadata = metadata.build.globalMetadata;
+			const fileMetadata = contents.build.fileMetadata;
+			const globalMetadata = contents.build.globalMetadata;
 
 			const tryFindMetadata = (
 				filePath: string,
