@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/prefer-for-of */
 'use strict';
 
-import * as path from 'path';
 import jsyaml = require('js-yaml');
-
+import minimatch = require('minimatch');
 import { commands, TextEditor, window, workspace } from 'vscode';
 import {
 	isMarkdownFileCheck,
@@ -20,7 +19,7 @@ import { MetadataEntry } from './metadata-entry';
 import { metadataExpressions, metadataFrontMatterRegex, msDateRegex } from './metadata-expressions';
 import { readDocFxJson } from './docfx-file-parser';
 import { MetadataCategory } from './metadata-category';
-import { glob } from 'glob';
+import { sep } from 'path';
 
 export function insertMetadataCommands() {
 	return [
@@ -168,7 +167,8 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 		// Read the DocFX.json file, search for metadata defaults.
 		const metadata = readDocFxJson(folder.uri.fsPath);
 		if (metadata && metadata.build) {
-			const fsPath = editor.document.uri.fsPath;
+			const path = editor.document.uri.fsPath.replace(folder.uri.fsPath, '');
+			const fsPath = path.startsWith(sep) ? path.substr(1) : path;
 			const fileMetadata = metadata.build.fileMetadata;
 			const globalMetadata = metadata.build.globalMetadata;
 
@@ -248,34 +248,17 @@ function getReplacementValue(
 	globNode: { [glob: string]: boolean | string | string[] },
 	fsPath: string
 ): boolean | string | string[] | undefined {
-	// if (globNode && fsPath) {
-	// 	//let segments = fsPath.split(path.sep);
+	if (globNode && fsPath) {
+		const globKeys = Object.keys(globNode);
 
-	// 	const globKeys = Object.keys(globNode);
-
-	// 	//const firstSegment = globKeys[0].segments[0];
-	// 	//segments = segments.slice(segments.indexOf(firstSegment));
-
-	// 	// Loop through backward, as last entry takes precedence.
-	// 	for (let i = globKeys.length - 1; i >= 0; i--) {
-	// 		const globKey = globKeys[i];
-	// 		const g = new glob.Glob(globKey);
-
-	// 		let equals = false;
-	// 		for (let f = 0; f < segments.length; f++) {
-	// 			const left = segments[f];
-	// 			const right = globKey.segments[f];
-	// 			if (right.startsWith('*')) {
-	// 				break;
-	// 			}
-	// 			equals = left.toLowerCase() === right.toLowerCase();
-	// 		}
-
-	// 		if (equals) {
-	// 			return globNode[globKey.key];
-	// 		}
-	// 	}
-	// }
+		// Loop through backward, as last entry takes precedence.
+		for (let i = globKeys.length - 1; i >= 0; i--) {
+			const globKey = globKeys[i];
+			if (minimatch(fsPath, globKey, { nocase: true })) {
+				return globNode[globKey];
+			}
+		}
+	}
 
 	return undefined;
 }
