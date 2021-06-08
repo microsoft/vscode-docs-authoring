@@ -110,7 +110,7 @@ export const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
 	}
 
 	const icon = toSourceIconString(element.source);
-	const builder = new MarkdownString(`${icon} ${element.category} metadata.\n\n`, true);
+	const builder = new MarkdownString(`${icon} ${element.category} metadata\n\n`, true);
 
 	if (element.category === MetadataCategory.Required && element.source === MetadataSource.Missing) {
 		builder.appendMarkdown(`Unable to find **required** \`${element.key}\` metadata!`);
@@ -119,7 +119,9 @@ export const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
 			const values = `${element.key}:\n${element.value.map(v => `  - "${v}"`).join('\n')}`;
 			builder.appendCodeblock(values, 'yaml');
 		} else {
-			builder.appendCodeblock(`${element.key}: ${element.value}`, 'yaml');
+			if (!element.value) {
+				builder.appendCodeblock(`${element.key}: ""`, 'yaml');
+			} else builder.appendCodeblock(`${element.key}: ${element.value}`, 'yaml');
 		}
 
 		const source = toSourceString(element.source);

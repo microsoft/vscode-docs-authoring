@@ -140,24 +140,29 @@ export function getAllEffectiveMetadata(docFxFileInfo: DocFxFileInfo): MetadataE
 	if (results && results.length) {
 		const result = results.find(r => !!r.groups && r.groups.metadata);
 		if (result) {
-			const metadataJson = jsyaml.load(result.groups.metadata);
-			if (metadataJson) {
-				for (const [key, value] of Object.entries(metadataJson)) {
-					const typedValue: boolean | string | string[] = Array.isArray(value)
-						? (value as string[])
-						: typeof value === 'boolean'
-						? (value as boolean)
-						: (value as string);
+			try {
+				const metadataJson = jsyaml.load(result.groups.metadata);
 
-					metadataEntries.push({
-						category: isRequired(key as MetadataKey)
-							? MetadataCategory.Required
-							: MetadataCategory.Optional,
-						source: MetadataSource.FrontMatter,
-						key: key as MetadataKey,
-						value: typedValue
-					});
+				if (metadataJson) {
+					for (const [key, value] of Object.entries(metadataJson)) {
+						const typedValue: boolean | string | string[] = Array.isArray(value)
+							? (value as string[])
+							: typeof value === 'boolean'
+							? (value as boolean)
+							: (value as string);
+
+						metadataEntries.push({
+							category: isRequired(key as MetadataKey)
+								? MetadataCategory.Required
+								: MetadataCategory.Optional,
+							source: MetadataSource.FrontMatter,
+							key: key as MetadataKey,
+							value: typedValue
+						});
+					}
 				}
+			} catch (e) {
+				window.showErrorMessage(e.message);
 			}
 		}
 	}
