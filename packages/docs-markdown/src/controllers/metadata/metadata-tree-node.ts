@@ -1,4 +1,4 @@
-import { MarkdownString, ThemeIcon, TreeItem, TreeItemCollapsibleState } from 'vscode';
+import { MarkdownString, ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { MetadataSource } from './metadata-source';
 import { MetadataKey } from './metadata-key';
 import { MetadataCategory } from './metadata-category';
@@ -54,11 +54,11 @@ interface NamedParameters {
 export const toSourceIcon = (source: MetadataSource): ThemeIcon | null => {
 	switch (source) {
 		case MetadataSource.FileMetadata:
-			return new ThemeIcon('json');
+			return new ThemeIcon('json', new ThemeColor('terminal.ansiBrightYellow'));
 		case MetadataSource.FrontMatter:
-			return new ThemeIcon('markdown');
+			return new ThemeIcon('markdown', new ThemeColor('terminal.ansiCyan'));
 		case MetadataSource.GlobalMetadata:
-			return new ThemeIcon('globe');
+			return new ThemeIcon('globe', new ThemeColor('terminal.ansiGreen'));
 
 		default:
 			return null;

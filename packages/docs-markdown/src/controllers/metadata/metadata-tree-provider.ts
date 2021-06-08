@@ -21,6 +21,9 @@ export class MetadataTreeProvider implements vscode.TreeDataProvider<MetadataTre
 	}
 
 	getChildren(element?: MetadataTreeNode): Thenable<MetadataTreeNode[]> {
+		// Only show tree if it's a Markdown file.
+		if (vscode.window.activeTextEditor.document.languageId !== 'markdown') return;
+
 		if (element) {
 			const treeNodes = this.getTreeNodes();
 			// Classify by category (required/optional).

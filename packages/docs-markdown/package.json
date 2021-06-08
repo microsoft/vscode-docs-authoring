@@ -547,6 +547,12 @@
 				}
 			]
 		},
+		"viewsWelcome": [
+			{
+				"view": "effectiveMetadata",
+				"contents": "Open a Markdown file in a DocFx repo to see its local and global metadata."
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Docs Markdown",
