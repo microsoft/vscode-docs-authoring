@@ -2,6 +2,7 @@ import { MarkdownString, ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleSta
 import { MetadataSource } from './metadata-source';
 import { MetadataKey } from './metadata-key';
 import { MetadataCategory } from './metadata-category';
+import { MetadataEntry } from './metadata-entry';
 
 export class MetadataTreeNode extends TreeItem {
 	readonly category: MetadataCategory;
@@ -9,27 +10,29 @@ export class MetadataTreeNode extends TreeItem {
 	readonly value?: boolean | string | string[] | null;
 	readonly key?: MetadataKey | null;
 
-	constructor({ category, source = null, key = null, value = null }: NamedParameters) {
+	constructor(entry: MetadataEntry) {
 		super(
-			key !== null ? `${key}:` /* child nodes */ : category.toString() /* parent nodes */,
-			key !== null
-				? TreeItemCollapsibleState.None /* child nodes */
-				: category === MetadataCategory.Required
+			entry.key
+				? `${entry.key}:` // child nodes
+				: entry.category.toString(), // parent nodes
+			entry.key
+				? TreeItemCollapsibleState.None // child nodes
+				: entry.category === MetadataCategory.Required
 				? TreeItemCollapsibleState.Expanded
 				: TreeItemCollapsibleState.Collapsed
 		);
 
-		this.category = category;
-		this.source = source;
-		this.key = key;
-		this.value = value;
+		this.category = entry.category;
+		this.key = entry.key;
+		this.source = entry.source;
+		this.value = entry.value;
 
-		if (key !== null && value !== null) {
-			this.description = toDescription(value);
+		if (this.key) {
+			this.description = toDescription(this);
 			this.tooltip = toTooltip(this);
-			this.iconPath = toSourceIcon(source);
+			this.iconPath = toSourceIcon(this.source);
 		} else {
-			if (category === MetadataCategory.Optional) {
+			if (entry.category === MetadataCategory.Optional) {
 				this.tooltip = new MarkdownString(
 					"$(unverified) Metadata that's optional. [See optional metadata keys.](https://aka.ms/docs/optional-metadata)",
 					true
@@ -44,13 +47,6 @@ export class MetadataTreeNode extends TreeItem {
 	}
 }
 
-interface NamedParameters {
-	category: MetadataCategory;
-	source?: MetadataSource;
-	key?: MetadataKey;
-	value?: boolean | string | string[];
-}
-
 export const toSourceIcon = (source: MetadataSource): ThemeIcon | null => {
 	switch (source) {
 		case MetadataSource.FileMetadata:
@@ -59,6 +55,8 @@ export const toSourceIcon = (source: MetadataSource): ThemeIcon | null => {
 			return new ThemeIcon('markdown', new ThemeColor('terminal.ansiCyan'));
 		case MetadataSource.GlobalMetadata:
 			return new ThemeIcon('globe', new ThemeColor('terminal.ansiGreen'));
+		case MetadataSource.Missing:
+			return new ThemeIcon('warning', new ThemeColor('terminal.ansiBrightRed'));
 
 		default:
 			return null;
@@ -73,6 +71,8 @@ export const toSourceIconString = (source: MetadataSource): string | null => {
 			return '$(markdown)';
 		case MetadataSource.GlobalMetadata:
 			return '$(globe)';
+		case MetadataSource.Missing:
+			return '$(warning)';
 
 		default:
 			return null;
@@ -93,13 +93,15 @@ export const toSourceString = (source: MetadataSource): string | null => {
 	}
 };
 
-export const toDescription = (value: boolean | string | string[]): string | null => {
-	if (Array.isArray(value) && value.length > 1) return `(hover to see values)`;
+export const toDescription = (element: MetadataTreeNode): string | null => {
+	if (element.source === MetadataSource.Missing) return '?';
+
+	if (Array.isArray(element.value) && element.value.length > 1) return `(hover to see values)`;
 
 	// Empty strings are valid (e.g. titleSuffix).
-	if (!value) return `""`;
+	if (!element.value) return `""`;
 
-	return `${value}`;
+	return `${element.value}`;
 };
 
 export const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
@@ -110,15 +112,19 @@ export const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
 	const icon = toSourceIconString(element.source);
 	const builder = new MarkdownString(`${icon} ${element.category} metadata.\n\n`, true);
 
-	if (Array.isArray(element.value)) {
-		const values = `${element.key}:\n${element.value.map(v => `  - "${v}"`).join('\n')}`;
-		builder.appendCodeblock(values, 'yaml');
+	if (element.category === MetadataCategory.Required && element.source === MetadataSource.Missing) {
+		builder.appendMarkdown(`Unable to find **required** \`${element.key}\` metadata!`);
 	} else {
-		builder.appendCodeblock(`${element.key}: ${element.value}`, 'yaml');
-	}
+		if (Array.isArray(element.value)) {
+			const values = `${element.key}:\n${element.value.map(v => `  - "${v}"`).join('\n')}`;
+			builder.appendCodeblock(values, 'yaml');
+		} else {
+			builder.appendCodeblock(`${element.key}: ${element.value}`, 'yaml');
+		}
 
-	const source = toSourceString(element.source);
-	builder.appendMarkdown(`\n\nSourced from ${source}`);
+		const source = toSourceString(element.source);
+		builder.appendMarkdown(`\n\nSourced from ${source}`);
+	}
 
 	return builder;
 };

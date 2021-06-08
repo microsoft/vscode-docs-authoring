@@ -18,7 +18,7 @@ import { DocFxFileInfo, readDocFxJson } from './docfx-file-parser';
 import { MetadataCategory } from './metadata-category';
 import { MetadataEntry } from './metadata-entry';
 import { metadataExpressions, metadataFrontMatterRegex, msDateRegex } from './metadata-expressions';
-import { allMetadataKeys, isRequired, MetadataKey } from './metadata-key';
+import { allMetadataKeys, isRequired, MetadataKey, requiredMetadataKeys } from './metadata-key';
 import { MetadataSource } from './metadata-source';
 
 export function insertMetadataCommands() {
@@ -149,14 +149,14 @@ export function getAllEffectiveMetadata(docFxFileInfo: DocFxFileInfo): MetadataE
 						? (value as boolean)
 						: (value as string);
 
-					metadataEntries.push(
-						new MetadataEntry(
-							MetadataSource.FrontMatter,
-							key as MetadataKey,
-							typedValue,
-							isRequired(key as MetadataKey) ? MetadataCategory.Required : MetadataCategory.Optional
-						)
-					);
+					metadataEntries.push({
+						category: isRequired(key as MetadataKey)
+							? MetadataCategory.Required
+							: MetadataCategory.Optional,
+						source: MetadataSource.FrontMatter,
+						key: key as MetadataKey,
+						value: typedValue
+					});
 				}
 			}
 		}
@@ -187,14 +187,14 @@ export function getAllEffectiveMetadata(docFxFileInfo: DocFxFileInfo): MetadataE
 							filePath
 					  );
 				if (value) {
-					metadataEntries.push(
-						new MetadataEntry(
-							source,
-							key,
-							value,
-							isRequired(key as MetadataKey) ? MetadataCategory.Required : MetadataCategory.Optional
-						)
-					);
+					metadataEntries.push({
+						category: isRequired(key as MetadataKey)
+							? MetadataCategory.Required
+							: MetadataCategory.Optional,
+						source,
+						key,
+						value
+					});
 					return true;
 				}
 			}
@@ -227,6 +227,34 @@ export function getAllEffectiveMetadata(docFxFileInfo: DocFxFileInfo): MetadataE
 			grouping.get(node.key).push(node);
 		} else {
 			grouping.set(node.key, [node]);
+		}
+	}
+
+	// Interleave placeholders where required metadata was unresolved.
+	for (let i = 0; i < requiredMetadataKeys.length; ++i) {
+		const requiredKey = requiredMetadataKeys[i];
+		if (requiredKey === 'ms.prod' || requiredKey === 'ms.service') {
+			if (!grouping.has('ms.prod') && !grouping.has('ms.service')) {
+				grouping.set(requiredKey, [
+					{
+						key: requiredKey,
+						category: MetadataCategory.Required,
+						source: MetadataSource.Missing
+					}
+				]);
+			}
+
+			continue;
+		}
+
+		if (!grouping.has(requiredKey)) {
+			grouping.set(requiredKey, [
+				{
+					key: requiredKey,
+					category: MetadataCategory.Required,
+					source: MetadataSource.Missing
+				}
+			]);
 		}
 	}
 

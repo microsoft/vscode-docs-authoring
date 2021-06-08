@@ -1,5 +1,6 @@
 export enum MetadataSource {
 	FrontMatter,
 	FileMetadata,
-	GlobalMetadata
+	GlobalMetadata,
+	Missing
 }

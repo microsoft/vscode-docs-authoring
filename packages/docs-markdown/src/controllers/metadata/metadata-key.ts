@@ -78,23 +78,25 @@ export const allMetadataKeys: MetadataKey[] = [
 	'titleSuffix'
 ];
 
+export const requiredMetadataKeys: MetadataKey[] = [
+	'author',
+	'description',
+	'ms.author',
+	'ms.date',
+	'ms.service',
+	'ms.prod',
+	'ms.topic',
+	'title'
+];
+
 /**
  * See: https://aka.ms/docs/required-metadata
  */
-export const isRequired = (type: MetadataKey): boolean => {
-	return (
-		type === 'author' ||
-		type === 'description' ||
-		type === 'ms.author' ||
-		type === 'ms.date' ||
-		type === 'ms.service' ||
-		type === 'ms.prod' ||
-		type === 'ms.topic' ||
-		type === 'title'
-	);
+export const isRequired = (key: MetadataKey): boolean => {
+	return requiredMetadataKeys.includes(key);
 };
 
 /**
  * See: https://aka.ms/docs/optional-metadata
  */
-export const isOptional = (type: MetadataKey): boolean => !isRequired(type);
+export const isOptional = (key: MetadataKey): boolean => !isRequired(key);
