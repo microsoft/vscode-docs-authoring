@@ -14,7 +14,7 @@ import {
 } from '../../helper/common';
 import { sendTelemetryData } from '../../helper/telemetry';
 import { applyReplacements, findReplacement, Replacements } from '../../helper/utility';
-import { readDocFxJson } from './docfx-file-parser';
+import { DocFxFileInfo, readDocFxJson } from './docfx-file-parser';
 import { MetadataCategory } from './metadata-category';
 import { MetadataEntry } from './metadata-entry';
 import { metadataExpressions, metadataFrontMatterRegex, msDateRegex } from './metadata-expressions';
@@ -126,7 +126,7 @@ async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementF
 	return [];
 }
 
-export function getAllEffectiveMetadata(): MetadataEntry[] {
+export function getAllEffectiveMetadata(docFxFileInfo: DocFxFileInfo): MetadataEntry[] {
 	const editor = window.activeTextEditor;
 	if (!editor || !['markdown', 'yaml'].includes(editor.document.languageId)) {
 		return [];
@@ -162,64 +162,58 @@ export function getAllEffectiveMetadata(): MetadataEntry[] {
 		}
 	}
 
-	const folder = workspace.getWorkspaceFolder(editor.document.uri);
-	if (folder) {
-		// Read the DocFX.json file, search for metadata defaults.
-		const { fullPath, contents } = readDocFxJson(folder.uri.fsPath);
-		if (contents && contents.build) {
-			const docFxDirectory = dirname(fullPath);
-			const path = editor.document.uri.fsPath.replace(docFxDirectory, '');
-			const fsPath = path.startsWith(sep) ? path.substr(1) : path;
-			const fileMetadata = contents.build.fileMetadata;
-			const globalMetadata = contents.build.globalMetadata;
+	const { fullPath, contents } = docFxFileInfo;
+	if (contents && contents.build) {
+		const docFxDirectory = dirname(fullPath);
+		const path = editor.document.uri.fsPath.replace(docFxDirectory, '');
+		const fsPath = path.startsWith(sep) ? path.substr(1) : path;
+		const fileMetadata = contents.build.fileMetadata;
+		const globalMetadata = contents.build.globalMetadata;
 
-			const tryFindMetadata = (
-				filePath: string,
-				key: MetadataKey,
-				source: MetadataSource,
-				metadataNodeOrValue?:
-					| { [glob: string]: boolean | string | string[] }
-					| (boolean | string | string[])
-			) => {
-				if (metadataNodeOrValue) {
-					const isGlobal = source === MetadataSource.GlobalMetadata;
-					const value = isGlobal
-						? (metadataNodeOrValue as boolean | string | string[])
-						: getReplacementValue(
-								metadataNodeOrValue as { [glob: string]: boolean | string | string[] },
-								filePath
-						  );
-					if (value) {
-						metadataEntries.push(
-							new MetadataEntry(
-								source,
-								key,
-								value,
-								isRequired(key as MetadataKey)
-									? MetadataCategory.Required
-									: MetadataCategory.Optional
-							)
-						);
-						return true;
-					}
+		const tryFindMetadata = (
+			filePath: string,
+			key: MetadataKey,
+			source: MetadataSource,
+			metadataNodeOrValue?:
+				| { [glob: string]: boolean | string | string[] }
+				| (boolean | string | string[])
+		) => {
+			if (metadataNodeOrValue) {
+				const isGlobal = source === MetadataSource.GlobalMetadata;
+				const value = isGlobal
+					? (metadataNodeOrValue as boolean | string | string[])
+					: getReplacementValue(
+							metadataNodeOrValue as { [glob: string]: boolean | string | string[] },
+							filePath
+					  );
+				if (value) {
+					metadataEntries.push(
+						new MetadataEntry(
+							source,
+							key,
+							value,
+							isRequired(key as MetadataKey) ? MetadataCategory.Required : MetadataCategory.Optional
+						)
+					);
+					return true;
 				}
-				return false;
-			};
+			}
+			return false;
+		};
 
-			const metadataTypes = allMetadataKeys;
-			for (let i = 0; i < metadataTypes.length; i++) {
-				const metadata = metadataTypes[i];
+		const metadataTypes = allMetadataKeys;
+		for (let i = 0; i < metadataTypes.length; i++) {
+			const metadata = metadataTypes[i];
 
-				if (fileMetadata && fileMetadata[metadata]) {
-					const fileMetadataGlobs: { [glob: string]: string | boolean | string[] } =
-						fileMetadata[metadata];
-					tryFindMetadata(fsPath, metadata, MetadataSource.FileMetadata, fileMetadataGlobs);
-				}
+			if (fileMetadata && fileMetadata[metadata]) {
+				const fileMetadataGlobs: { [glob: string]: string | boolean | string[] } =
+					fileMetadata[metadata];
+				tryFindMetadata(fsPath, metadata, MetadataSource.FileMetadata, fileMetadataGlobs);
+			}
 
-				if (globalMetadata && globalMetadata[metadata]) {
-					const globalMetadataGlobs: string | boolean | string[] = globalMetadata[metadata];
-					tryFindMetadata(fsPath, metadata, MetadataSource.GlobalMetadata, globalMetadataGlobs);
-				}
+			if (globalMetadata && globalMetadata[metadata]) {
+				const globalMetadataGlobs: string | boolean | string[] = globalMetadata[metadata];
+				tryFindMetadata(fsPath, metadata, MetadataSource.GlobalMetadata, globalMetadataGlobs);
 			}
 		}
 	}

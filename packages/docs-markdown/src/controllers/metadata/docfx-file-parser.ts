@@ -5,8 +5,8 @@ import { DocFxMetadata } from './docfx-metadata';
 let cachedDocFxJsonFile: DocFxFileInfo | null = null;
 
 export type DocFxFileInfo = {
-	fullPath: string;
-	contents: DocFxMetadata;
+	readonly fullPath?: string | undefined;
+	readonly contents?: DocFxMetadata | undefined;
 };
 
 export function readDocFxJson(workspaceRootDirectory: string): DocFxFileInfo | null {

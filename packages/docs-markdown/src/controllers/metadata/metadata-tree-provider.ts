@@ -1,53 +1,60 @@
-import * as vscode from 'vscode';
+import { Event, EventEmitter, TreeDataProvider, TreeItem, window, workspace } from 'vscode';
+import { naturalLanguageCompare } from '../../helper/common';
+import { DocFxFileInfo, readDocFxJson } from './docfx-file-parser';
+import { MetadataCategory } from './metadata-category';
 import { getAllEffectiveMetadata } from './metadata-controller';
 import { MetadataTreeNode } from './metadata-tree-node';
-import { MetadataCategory } from './metadata-category';
-import { naturalLanguageCompare } from '../../helper/common';
 
-export class MetadataTreeProvider implements vscode.TreeDataProvider<MetadataTreeNode> {
-	private _onDidChangeTreeData: vscode.EventEmitter<
+export class MetadataTreeProvider implements TreeDataProvider<MetadataTreeNode> {
+	private readonly parentNodes: MetadataTreeNode[] = [
+		new MetadataTreeNode({ category: MetadataCategory.Required }),
+		new MetadataTreeNode({ category: MetadataCategory.Optional })
+	];
+
+	private _onDidChangeTreeData: EventEmitter<
 		MetadataTreeNode | undefined | null | void
-	> = new vscode.EventEmitter<MetadataTreeNode | undefined | null | void>();
+	> = new EventEmitter<MetadataTreeNode | undefined | null | void>();
 	// eslint-disable-next-line @typescript-eslint/member-ordering
-	readonly onDidChangeTreeData: vscode.Event<MetadataTreeNode | undefined | null | void> = this
+	readonly onDidChangeTreeData: Event<MetadataTreeNode | undefined | null | void> = this
 		._onDidChangeTreeData.event;
 
 	refresh(): void {
 		this._onDidChangeTreeData.fire();
 	}
 
-	getTreeItem(element: MetadataTreeNode): vscode.TreeItem {
+	getTreeItem(element: MetadataTreeNode): TreeItem {
 		return element;
 	}
 
 	getChildren(element?: MetadataTreeNode): Thenable<MetadataTreeNode[]> {
+		const editor = window.activeTextEditor;
 		// Only show tree if it's a Markdown file.
-		if (vscode.window.activeTextEditor.document.languageId !== 'markdown') return;
+		if (editor.document.languageId !== 'markdown') return;
+
+		let docFxFileInfo: DocFxFileInfo;
+		const folder = workspace.getWorkspaceFolder(editor.document.uri);
+		if (folder) {
+			// Read the DocFX.json file, search for metadata defaults.
+			docFxFileInfo = readDocFxJson(folder.uri.fsPath);
+			if (!docFxFileInfo) {
+				return;
+			}
+		}
 
 		if (element) {
-			const treeNodes = this.getTreeNodes();
+			const metadataEntries = getAllEffectiveMetadata(docFxFileInfo);
+			const treeNodes = metadataEntries
+				? metadataEntries // Sort alphabetically
+						.sort((a, b) => naturalLanguageCompare(a.key, b.key))
+						.map(treeNode => {
+							return new MetadataTreeNode(treeNode);
+						})
+				: [];
 			// Classify by category (required/optional).
 			return Promise.resolve(treeNodes.filter(treeNode => treeNode.category === element.category));
 		} else {
 			// Root of tree.
-			return Promise.resolve(this.getParentNodes());
+			return Promise.resolve(this.parentNodes);
 		}
-	}
-
-	private getParentNodes(): MetadataTreeNode[] {
-		return [
-			new MetadataTreeNode({ category: MetadataCategory.Required }),
-			new MetadataTreeNode({ category: MetadataCategory.Optional })
-		];
-	}
-
-	private getTreeNodes(): MetadataTreeNode[] {
-		const metadataEntries = getAllEffectiveMetadata();
-		// Sort alphabetically.
-		return metadataEntries
-			.sort((a, b) => naturalLanguageCompare(a.key, b.key))
-			.map(treeNode => {
-				return new MetadataTreeNode(treeNode);
-			});
 	}
 }

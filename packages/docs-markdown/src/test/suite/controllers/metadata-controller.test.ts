@@ -3,7 +3,7 @@ import * as chai from 'chai';
 import * as os from 'os';
 import * as spies from 'chai-spies';
 import { resolve } from 'path';
-import { commands, window } from 'vscode';
+import { commands, window, workspace } from 'vscode';
 import * as metadataController from '../../../controllers/metadata/metadata-controller';
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
@@ -12,6 +12,7 @@ import sinon = require('sinon');
 import { MetadataEntry } from '../../../controllers/metadata/metadata-entry';
 import { MetadataCategory } from '../../../controllers/metadata/metadata-category';
 import { MetadataSource } from '../../../controllers/metadata/metadata-source';
+import { DocFxFileInfo, readDocFxJson } from '../../../controllers/metadata/docfx-file-parser';
 
 chai.use(spies);
 const expect = chai.expect;
@@ -62,7 +63,18 @@ suite('Metadata Controller', () => {
 			'../../../../../src/test/data/repo/articles/test/effective-metadata.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
-		const metadataEntries = metadataController.getAllEffectiveMetadata();
+
+		const editor = window.activeTextEditor;
+		let docFxFileInfo: DocFxFileInfo;
+		const folder = workspace.getWorkspaceFolder(editor.document.uri);
+		if (folder) {
+			// Read the DocFX.json file, search for metadata defaults.
+			docFxFileInfo = readDocFxJson(folder.uri.fsPath);
+			if (!docFxFileInfo) {
+				return;
+			}
+		}
+		const metadataEntries = metadataController.getAllEffectiveMetadata(docFxFileInfo);
 		const expectedEntries: MetadataEntry[] = [
 			{
 				source: MetadataSource.FrontMatter,
