@@ -20,6 +20,7 @@ import { MetadataEntry } from './metadata-entry';
 import { metadataExpressions, metadataFrontMatterRegex, msDateRegex } from './metadata-expressions';
 import { readDocFxJson } from './docfx-file-parser';
 import { MetadataCategory } from './metadata-category';
+import { glob } from 'glob';
 
 export function insertMetadataCommands() {
 	return [
@@ -247,33 +248,34 @@ function getReplacementValue(
 	globNode: { [glob: string]: boolean | string | string[] },
 	fsPath: string
 ): boolean | string | string[] | undefined {
-	if (globNode && fsPath) {
-		let segments = fsPath.split(path.sep);
-		const globKeys = Object.keys(globNode).map(key => ({ key, segments: key.split('/') }));
-		const firstSegment = globKeys[0].segments[0];
-		segments = segments.slice(segments.indexOf(firstSegment));
-		const length = segments.length;
+	// if (globNode && fsPath) {
+	// 	//let segments = fsPath.split(path.sep);
 
-		// Loop through backward, as last entry takes precedence.
-		for (let i = globKeys.length - 1; i >= 0; i--) {
-			const globKey = globKeys[i];
-			if (length <= globKey.segments.length) {
-				let equals = false;
-				for (let f = 0; f < segments.length - 1; ++f) {
-					const left = segments[f];
-					const right = globKey.segments[f];
-					if (right.startsWith('*')) {
-						break;
-					}
-					equals = left.toLowerCase() === right.toLowerCase();
-				}
+	// 	const globKeys = Object.keys(globNode);
 
-				if (equals) {
-					return globNode[globKey.key];
-				}
-			}
-		}
-	}
+	// 	//const firstSegment = globKeys[0].segments[0];
+	// 	//segments = segments.slice(segments.indexOf(firstSegment));
+
+	// 	// Loop through backward, as last entry takes precedence.
+	// 	for (let i = globKeys.length - 1; i >= 0; i--) {
+	// 		const globKey = globKeys[i];
+	// 		const g = new glob.Glob(globKey);
+
+	// 		let equals = false;
+	// 		for (let f = 0; f < segments.length; f++) {
+	// 			const left = segments[f];
+	// 			const right = globKey.segments[f];
+	// 			if (right.startsWith('*')) {
+	// 				break;
+	// 			}
+	// 			equals = left.toLowerCase() === right.toLowerCase();
+	// 		}
+
+	// 		if (equals) {
+	// 			return globNode[globKey.key];
+	// 		}
+	// 	}
+	// }
 
 	return undefined;
 }
