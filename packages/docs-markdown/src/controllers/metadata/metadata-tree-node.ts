@@ -94,12 +94,13 @@ export const toSourceString = (source: MetadataSource): string | null => {
 };
 
 export const toDescription = (element: MetadataTreeNode): string | null => {
+	if (element === null || element === undefined) return null;
 	if (element.source === MetadataSource.Missing) return '?';
 
 	if (Array.isArray(element.value) && element.value.length > 1) return `(hover to see values)`;
 
 	// Empty strings are valid (e.g. titleSuffix).
-	if (!element.value) return `""`;
+	if (element.value === '') return `""`;
 
 	return `${element.value}`;
 };

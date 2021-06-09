@@ -280,7 +280,7 @@ suite('Metadata Controller', () => {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const { exec } = require('child_process');
 		exec('cd ' + __dirname + ' && git checkout ' + filePath);
-		expectStringsToEqual(expectedText, actualText);
+		expectStringsToEqual(actualText, expectedText);
 	});
 	test('updateMetadataDate().noActiveEditorMessage()', async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
@@ -315,6 +315,6 @@ suite('Metadata Controller', () => {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const { exec } = require('child_process');
 		exec('cd ' + __dirname + ' && git checkout ' + filePath);
-		expectStringsToEqual(expectedText, actualText);
+		expectStringsToEqual(actualText, expectedText);
 	});
 });

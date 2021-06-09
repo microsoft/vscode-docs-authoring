@@ -21,9 +21,11 @@ suite('docfx-file-parser.ts', () => {
 		let docFxMetadata: DocFxFileInfo = readDocFxJson(filePath);
 
 		expect(spy).to.have.been.called();
+		chai.spy.restore(common);
+
 		docFxMetadata = readDocFxJson(filePath);
 
 		// It should have been cached, and only called once.
-		expect(spy).to.have.been.called.once;
+		expect(spy).not.to.have.been.called();
 	});
 });

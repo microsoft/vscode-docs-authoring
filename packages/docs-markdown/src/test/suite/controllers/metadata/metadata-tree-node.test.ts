@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import { ThemeIcon } from 'vscode';
-
+import { MetadataCategory } from '../../../../controllers/metadata/metadata-category';
 import { MetadataSource } from '../../../../controllers/metadata/metadata-source';
 import {
 	toDescription,
@@ -15,18 +15,48 @@ suite('Metadata Tree Node', () => {
 	test('toDescription', () => {
 		expect(toDescription(null)).to.be.null;
 
-		// let description = toDescription('');
-		// expect(description).to.equal('""');
+		let description = toDescription({
+			category: MetadataCategory.Required,
+			value: '',
+			source: MetadataSource.FrontMatter
+		});
+		expect(description).to.equal('""');
 
-		// description = toDescription('conceptual');
-		// expect(description).to.equal('conceptual');
+		description = toDescription({
+			category: MetadataCategory.Required,
+			value: 'conceptual',
+			source: MetadataSource.FrontMatter
+		});
+		expect(description).to.equal('conceptual');
 
-		// // Value arrays.
-		// description = toDescription(['CSharp']);
-		// expect(description).to.equal('CSharp');
+		description = toDescription({
+			category: MetadataCategory.Required,
+			value: false,
+			source: MetadataSource.FrontMatter
+		});
+		expect(description).to.equal('false');
 
-		// description = toDescription(['CSharp', 'VB']);
-		// expect(description).to.equal('(hover to see values)');
+		description = toDescription({
+			category: MetadataCategory.Required,
+			value: false,
+			source: MetadataSource.Missing
+		});
+		expect(description).to.equal('?');
+
+		// Value arrays.
+		description = toDescription({
+			category: MetadataCategory.Required,
+			value: ['CSharp'],
+			source: MetadataSource.FrontMatter
+		});
+		expect(description).to.equal('CSharp');
+
+		description = toDescription({
+			category: MetadataCategory.Required,
+			value: ['CSharp', 'VB'],
+			source: MetadataSource.FrontMatter
+		});
+		expect(description).to.equal('(hover to see values)');
 	});
 
 	test('toSourceIcon', () => {
@@ -65,6 +95,6 @@ suite('Metadata Tree Node', () => {
 		expect(sourceString).to.equal("_docfx.json_ file's `build/globalMetadata` section.");
 
 		sourceString = toSourceString(MetadataSource.FrontMatter);
-		expect(sourceString).to.equal('the YAML front matter of the file.');
+		expect(sourceString).to.equal('the YAML front matter of this Markdown file.');
 	});
 });

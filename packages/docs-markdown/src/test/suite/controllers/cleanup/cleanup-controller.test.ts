@@ -18,6 +18,7 @@ import * as masterRedirection from '../../../../controllers/redirects/generateRe
 import * as common from '../../../../helper/common';
 import * as telemetry from '../../../../helper/telemetry';
 import {
+	expectStringsToEqual,
 	extendedSleepTime,
 	loadDocumentAndGetItReady,
 	sleep,
@@ -356,7 +357,7 @@ suite('Cleanup Controller', () => {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const { exec } = require('child_process');
 		exec('cd ' + __dirname + ' && git checkout ' + markdown);
-		chai.assert.equal(expectedText, actualText);
+		expectStringsToEqual(expectedText, actualText);
 		stubShowQuickPick.restore();
 	});
 });
