@@ -1,24 +1,24 @@
 import { MetadataKey } from './metadata-key';
 
 export const metadataFrontMatterRegex = /^(?:-{3}(?<metadata>[\w\W]+?)-{3})*/gim;
-export const authorRegex = /^author:\s*\b(.+?)$/im;
-export const contributorsToExcludeRegex = /^contributors_to_exclude:\s*\b(.+?)$/im;
-export const devLangsRegex = /^dev_langs:\s*\b(.+?)$/im;
-export const managerRegex = /^manager:\s*\b(.+?)$/im;
-export const msAuthorRegex = /ms.author:\s*\b(.+?)$/im;
-export const msCollectionRegex = /ms.collection:\s*\b(.+?)$/im;
-export const msCustomRegex = /ms.custom:\s*\b(.+?)$/im;
-export const msDateRegex = /ms.date:\s*\b(.+?)$/im;
-export const msDevLangRegex = /ms.devlang:\s*\b(.+?)$/im;
-export const msProdRegex = /ms.prod:\s*\b(.+?)$/im;
-export const msReviewerRegex = /ms.reviewer:\s*\b(.+?)$/im;
-export const msServiceRegex = /ms.service:\s*\b(.+?)$/im;
-export const msSubserviceRegex = /ms.subservice:\s*\b(.+?)$/im;
-export const msTechnologyRegex = /ms.technology:\s*\b(.+?)$/im;
-export const msTopicRegex = /ms.topic:\s*\b(.+?)$/im;
-export const productRegex = /^product:\s*\b(.+?)$/im;
-export const robotsRegex = /^robots:\s*\b(.+?)$/im;
-export const titleSuffixRegex = /^titleSuffix:\s*\b(.+?)$/im;
+export const authorRegex = /^author:\s*\B(.+?)$/im;
+export const contributorsToExcludeRegex = /^contributors_to_exclude:\s*\B(.+?)$/im;
+export const devLangsRegex = /^dev_langs:\s*\B(.+?)$/im;
+export const managerRegex = /^manager:\s*\B(.+?)$/im;
+export const msAuthorRegex = /ms.author:\s*\B(.+?)$/im;
+export const msCollectionRegex = /ms.collection:\s*\B(.+?)$/im;
+export const msCustomRegex = /ms.custom:\s*\B(.+?)$/im;
+export const msDateRegex = /ms.date:\s*\B(.+?)$/im;
+export const msDevLangRegex = /ms.devlang:\s*\B(.+?)$/im;
+export const msProdRegex = /ms.prod:\s*\B(.+?)$/im;
+export const msReviewerRegex = /ms.reviewer:\s*\B(.+?)$/im;
+export const msServiceRegex = /ms.service:\s*\B(.+?)$/im;
+export const msSubserviceRegex = /ms.subservice:\s*\B(.+?)$/im;
+export const msTechnologyRegex = /ms.technology:\s*\B(.+?)$/im;
+export const msTopicRegex = /ms.topic:\s*\B(.+?)$/im;
+export const productRegex = /^product:\s*\B(.+?)$/im;
+export const robotsRegex = /^robots:\s*\B(.+?)$/im;
+export const titleSuffixRegex = /^titleSuffix:\s*\B(.+?)$/im;
 
 export const metadataExpressions: Map<MetadataKey, RegExp> = new Map([
 	['author', authorRegex],
