@@ -121,7 +121,16 @@ export const toTooltip = (element: MetadataTreeNode): MarkdownString | null => {
 		} else {
 			if (!element.value) {
 				builder.appendCodeblock(`${element.key}: ""`, 'yaml');
-			} else builder.appendCodeblock(`${element.key}: ${element.value}`, 'yaml');
+			} else {
+				let value: string | boolean;
+				if (element.key === 'ms.date' && typeof element.value === 'string') {
+					const date = new Date(element.value);
+					value = `${element.value} # ${date.toDateString()}`;
+				} else {
+					value = `${element.value}`;
+				}
+				builder.appendCodeblock(`${element.key}: ${value}`, 'yaml');
+			}
 		}
 
 		const source = toSourceString(element.source);
