@@ -1,26 +1,38 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use-strict';
 
-import * as glob from 'glob';
-import * as os from 'os';
-import * as vscode from 'vscode';
-
-import { existsSync } from 'fs';
-import { extname, join, resolve } from 'path';
-import { output } from './output';
 import yaml = require('js-yaml');
-import fs = require('fs');
+import { existsSync, readFileSync } from 'fs';
+import { sync } from 'glob';
+import { platform } from 'os';
+import { basename, dirname, extname, join, parse, sep, resolve } from 'path';
+import {
+	DocumentLink,
+	Extension,
+	extensions,
+	Position,
+	Range,
+	Selection,
+	TextDocument,
+	TextEditor,
+	Uri,
+	window,
+	workspace
+} from 'vscode';
+import { output } from './output';
 
 export const ignoreFiles = ['.git', '.github', '.vscode', '.vs', 'node_module'];
 
-export function tryFindFile(rootPath: string, fileName: string) {
+export function tryFindFile(rootPath: string, fileName: string, attemptTraverse?: boolean) {
 	try {
 		const fullPath = resolve(rootPath, fileName);
 		const exists = existsSync(fullPath);
 		if (exists) {
 			return fullPath;
+		} else if (attemptTraverse === true) {
+			return traverseDirectoryToFile(rootPath, fileName);
 		} else {
-			const files = glob.sync(`**/${fileName}`, {
+			const files = sync(`**/${fileName}`, {
 				cwd: rootPath
 			});
 
@@ -36,12 +48,50 @@ export function tryFindFile(rootPath: string, fileName: string) {
 	return undefined;
 }
 
+function traverseDirectoryToFile(rootPath: string, fileName: string) {
+	try {
+		const getParent = (dir: string) => {
+			if (dir) {
+				const segments = dir.split(sep);
+				if (segments.length > 1) {
+					segments.pop();
+					return segments.join(sep);
+				}
+			}
+			return dir;
+		};
+		const isRoot = (dir: string) => parse(dir).root === dir;
+
+		let currentDirectory = rootPath;
+		let filePath: string;
+		while (!filePath) {
+			const fullPath = resolve(currentDirectory, fileName);
+			const exists = existsSync(fullPath);
+			if (exists) {
+				filePath = fullPath;
+			} else {
+				currentDirectory = getParent(currentDirectory);
+				if (isRoot(currentDirectory)) {
+					break;
+				}
+			}
+		}
+		return filePath;
+	} catch (error) {
+		postError(
+			`Unable to traverse directory hierarchy for fileName: ${fileName} at starting rootPath: ${rootPath}.\n${error}`
+		);
+	}
+
+	return undefined;
+}
+
 /**
  * Provide current os platform
  */
 export function getOSPlatform(this: any) {
 	if (this.osPlatform == null) {
-		this.osPlatform = os.platform();
+		this.osPlatform = platform();
 		this.osPlatform = this.osPlatform;
 	}
 	return this.osPlatform;
@@ -52,7 +102,7 @@ export function getOSPlatform(this: any) {
  * @param {string} message - the message to post to the editor as an warning.
  */
 export function postWarning(message: string) {
-	vscode.window.showWarningMessage(message);
+	window.showWarningMessage(message);
 }
 
 /**
@@ -60,7 +110,7 @@ export function postWarning(message: string) {
  * @param {string} message - the message to post to the editor as an information.
  */
 export function postInformation(message: string) {
-	vscode.window.showInformationMessage(message);
+	window.showInformationMessage(message);
 }
 
 /**
@@ -68,7 +118,7 @@ export function postInformation(message: string) {
  * @param {string} message - the message to post to the editor as an information.
  */
 export function postError(message: string) {
-	vscode.window.showErrorMessage(message);
+	window.showErrorMessage(message);
 }
 
 /**
@@ -78,11 +128,7 @@ export function postError(message: string) {
  * @param {boolean} testSelection - test to see if the selection includes text in addition to testing a editor is open.
  * @param {string} senderName - the name of the command running the test.
  */
-export function isValidEditor(
-	editor: vscode.TextEditor,
-	testSelection: boolean,
-	senderName: string
-) {
+export function isValidEditor(editor: TextEditor, testSelection: boolean, senderName: string) {
 	if (editor === undefined) {
 		output.appendLine('Please open a document to apply ' + senderName + ' to.');
 		return false;
@@ -129,8 +175,8 @@ export function hasValidWorkSpaceRootPath(senderName: string) {
 		return false;
 	}
 
-	if (vscode.workspace.workspaceFolders) {
-		folderPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+	if (workspace.workspaceFolders) {
+		folderPath = workspace.workspaceFolders[0].uri.fsPath;
 	}
 
 	return true;
@@ -149,10 +195,10 @@ export function hasValidWorkSpaceRootPath(senderName: string) {
  */
 
 export async function insertContentToEditor(
-	editor: vscode.TextEditor,
+	editor: TextEditor,
 	content: string,
 	overwrite: boolean = false,
-	selection: vscode.Range = null!
+	selection: Range = null!
 ) {
 	if (selection == null) {
 		selection = editor.selection;
@@ -182,25 +228,23 @@ export async function insertContentToEditor(
  * @param {number} line -
  * @param {number} character -
  */
-export function setCursorPosition(editor: vscode.TextEditor, line: number, character: number) {
+export function setCursorPosition(editor: TextEditor, line: number, character: number) {
 	const cursorPosition = editor.selection.active;
 	const newPosition = cursorPosition.with(line, character);
-	const newSelection = new vscode.Selection(newPosition, newPosition);
+	const newSelection = new Selection(newPosition, newPosition);
 	editor.selection = newSelection;
 }
 
 export function setSelectorPosition(
-	editor: vscode.TextEditor,
+	editor: TextEditor,
 	fromLine: number,
 	fromCharacter: number,
 	toLine: number,
 	toCharacter: number
 ) {
-	const cursorPosition = editor.selection.active;
-	const fromPosition = cursorPosition.with(fromLine, fromCharacter);
-	const toPosition = cursorPosition.with(toLine, toCharacter);
-	const newSelection = new vscode.Selection(fromPosition, toPosition);
-	editor.selection = newSelection;
+	const fromPosition = new Position(fromLine, fromCharacter);
+	const toPosition = new Position(toLine, toCharacter);
+	editor.selection = new Selection(fromPosition, toPosition);
 }
 
 /**
@@ -218,7 +262,7 @@ export function rtrim(str: string, chr: string) {
  * Commands should only run on markdown files.
  * @param {vscode.TextEditor} editor - the active editor in vs code.
  */
-export function isMarkdownFileCheck(editor: vscode.TextEditor, languageId: boolean) {
+export function isMarkdownFileCheck(editor: TextEditor, languageId: boolean) {
 	if (editor.document.languageId !== 'markdown') {
 		if (editor.document.languageId !== 'yaml') {
 			postInformation('The docs-markdown extension only works on Markdown files.');
@@ -229,7 +273,7 @@ export function isMarkdownFileCheck(editor: vscode.TextEditor, languageId: boole
 	}
 }
 
-export function isMarkdownFileCheckWithoutNotification(editor: vscode.TextEditor) {
+export function isMarkdownFileCheckWithoutNotification(editor: TextEditor) {
 	if (editor.document.languageId !== 'markdown') {
 		return false;
 	} else {
@@ -237,7 +281,7 @@ export function isMarkdownFileCheckWithoutNotification(editor: vscode.TextEditor
 	}
 }
 
-export function isMarkdownYamlFileCheckWithoutNotification(editor: vscode.TextEditor) {
+export function isMarkdownYamlFileCheckWithoutNotification(editor: TextEditor) {
 	if (editor.document.languageId === 'markdown' || editor.document.languageId === 'yaml') {
 		return true;
 	} else {
@@ -245,7 +289,7 @@ export function isMarkdownYamlFileCheckWithoutNotification(editor: vscode.TextEd
 	}
 }
 
-export function isValidFileCheck(editor: vscode.TextEditor, languageIds: string[]) {
+export function isValidFileCheck(editor: TextEditor, languageIds: string[]) {
 	return languageIds.some(id => editor.document.languageId === id);
 }
 
@@ -287,8 +331,8 @@ export function checkExtension(extensionName: string, notInstalledMessage?: stri
 function getInstalledExtension(
 	extensionName: string,
 	notInstalledMessage?: string
-): vscode.Extension<any> {
-	const extensionValue = vscode.extensions.getExtension(extensionName);
+): Extension<any> {
+	const extensionValue = extensions.getExtension(extensionName);
 	if (!extensionValue) {
 		if (notInstalledMessage) {
 			output.appendLine(notInstalledMessage);
@@ -317,7 +361,7 @@ export function detectFileExtension(filePath: string) {
  * @param {string} message - the message to post to the editor as an error.
  */
 export async function showWarningMessage(message: string) {
-	vscode.window.showWarningMessage(message);
+	await window.showWarningMessage(message);
 }
 
 export function matchAll(pattern: RegExp, text: string): RegExpMatchArray[] {
@@ -340,28 +384,25 @@ export function matchAll(pattern: RegExp, text: string): RegExpMatchArray[] {
 }
 
 export function extractDocumentLink(
-	document: vscode.TextDocument,
+	document: TextDocument,
 	link: string,
 	matchIndex: number | undefined
-): vscode.DocumentLink | undefined {
+): DocumentLink | undefined {
 	const offset = (matchIndex || 0) + 8;
 	const linkStart = document.positionAt(offset);
 	const linkEnd = document.positionAt(offset + link.length);
-	const text = document.getText(new vscode.Range(linkStart, linkEnd));
+	const text = document.getText(new Range(linkStart, linkEnd));
 	try {
 		const httpMatch = text.match(/^(http|https):\/\//);
 		if (httpMatch) {
-			const documentLink = new vscode.DocumentLink(
-				new vscode.Range(linkStart, linkEnd),
-				vscode.Uri.parse(link)
-			);
+			const documentLink = new DocumentLink(new Range(linkStart, linkEnd), Uri.parse(link));
 			return documentLink;
 		} else {
 			const filePath = document.fileName.split('\\').slice(0, -1).join('\\');
 
-			const documentLink = new vscode.DocumentLink(
-				new vscode.Range(linkStart, linkEnd),
-				vscode.Uri.file(resolve(filePath, link))
+			const documentLink = new DocumentLink(
+				new Range(linkStart, linkEnd),
+				Uri.file(resolve(filePath, link))
 			);
 			return documentLink;
 		}
@@ -392,7 +433,7 @@ export function toShortDate(date: Date) {
 	return `${monthStr}/${dayStr}/${year}`;
 }
 
-export function findLineNumberOfPattern(editor: vscode.TextEditor, pattern: string) {
+export function findLineNumberOfPattern(editor: TextEditor, pattern: string) {
 	const article = editor.document;
 	let found = -1;
 
@@ -407,13 +448,13 @@ export function findLineNumberOfPattern(editor: vscode.TextEditor, pattern: stri
 	return found;
 }
 
-export function isNullOrWhiteSpace(str) {
+export function isNullOrWhiteSpace(str: string) {
 	return !str || str.length === 0 || /^\s*$/.test(str);
 }
 
 export function getYmlTitle(filePath: string) {
 	try {
-		const doc = yaml.load(fs.readFileSync(filePath, 'utf8'));
+		const doc = yaml.load(readFileSync(filePath, 'utf8'));
 		return doc.title;
 	} catch (error) {
 		output.appendLine(error);

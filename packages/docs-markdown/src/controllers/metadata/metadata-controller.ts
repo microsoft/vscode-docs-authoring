@@ -1,0 +1,327 @@
+/* eslint-disable @typescript-eslint/prefer-for-of */
+'use strict';
+
+import jsyaml = require('js-yaml');
+import minimatch = require('minimatch');
+import { dirname, sep } from 'path';
+import { commands, TextEditor, window, workspace } from 'vscode';
+import {
+	isMarkdownFileCheck,
+	isMarkdownYamlFileCheckWithoutNotification,
+	matchAll,
+	noActiveEditorMessage,
+	toShortDate
+} from '../../helper/common';
+import { sendTelemetryData } from '../../helper/telemetry';
+import { applyReplacements, findReplacement, Replacements } from '../../helper/utility';
+import { DocFxFileInfo, readDocFxJson } from './docfx-file-parser';
+import { MetadataCategory } from './metadata-category';
+import { MetadataEntry } from './metadata-entry';
+import { metadataExpressions, metadataFrontMatterRegex, msDateRegex } from './metadata-expressions';
+import { allMetadataKeys, isRequired, MetadataKey, requiredMetadataKeys } from './metadata-key';
+import { MetadataSource } from './metadata-source';
+
+export function insertMetadataCommands() {
+	return [
+		{ command: updateMetadataDate.name, callback: updateMetadataDate },
+		{ command: updateImplicitMetadataValues.name, callback: updateImplicitMetadataValues }
+	];
+}
+
+class ReplacementFormat {
+	constructor(readonly type: MetadataKey, private readonly value: string) {}
+
+	public toReplacementString() {
+		return `${this.type}: ${this.value}`;
+	}
+}
+
+export async function updateImplicitMetadataValues() {
+	const editor = window.activeTextEditor;
+	if (!editor) {
+		noActiveEditorMessage();
+		return;
+	}
+
+	if (!isMarkdownFileCheck(editor, false)) {
+		return;
+	}
+
+	const content = editor.document.getText();
+	if (content) {
+		const replacementFormats = await getMetadataReplacements(editor);
+		if (replacementFormats) {
+			const replacements: Replacements = [];
+			for (let i = 0; i < replacementFormats.length; ++i) {
+				const replacementFormat = replacementFormats[i];
+				if (replacementFormat) {
+					const expression = metadataExpressions.get(replacementFormat.type);
+					const replacement = findReplacement(
+						editor.document,
+						content,
+						replacementFormat.toReplacementString(),
+						expression
+					);
+					if (replacement) {
+						replacements.push(replacement);
+					}
+				}
+			}
+
+			await applyReplacements(replacements, editor);
+			await saveAndSendTelemetry();
+		}
+	}
+}
+
+async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementFormat[]> {
+	const folder = workspace.getWorkspaceFolder(editor.document.uri);
+	if (folder) {
+		// Read the DocFX.json file, search for metadata defaults.
+		const { fullPath, contents } = readDocFxJson(folder.uri.fsPath);
+		if (contents && contents.build && contents.build.fileMetadata) {
+			const replacements: ReplacementFormat[] = [];
+			const docFxDirectory = dirname(fullPath);
+			const path = editor.document.uri.fsPath.replace(docFxDirectory, '');
+			const fsPath = path.startsWith(sep) ? path.substr(1) : path;
+			const fileMetadata = contents.build.fileMetadata;
+			const tryAssignReplacement = (
+				filePath: string,
+				type: MetadataKey,
+				globs?: { [glob: string]: boolean | string | string[] }
+			) => {
+				if (globs) {
+					const value = getReplacementValue(globs, filePath);
+					if (value && typeof value === 'string') {
+						replacements.push(new ReplacementFormat(type, value));
+						return true;
+					}
+				}
+				return false;
+			};
+
+			// Fall back to templates config, if unable to find author and ms.author
+			if (!tryAssignReplacement(fsPath, 'author', fileMetadata.author)) {
+				const gitHubId = workspace.getConfiguration('docs.templates').githubid;
+				if (gitHubId) {
+					replacements.push(new ReplacementFormat('author', gitHubId));
+				}
+			}
+			if (!tryAssignReplacement(fsPath, 'ms.author', fileMetadata['ms.author'])) {
+				const alias = workspace.getConfiguration('docs.templates').alias;
+				if (alias) {
+					replacements.push(new ReplacementFormat('ms.author', alias));
+				}
+			}
+
+			tryAssignReplacement(fsPath, 'manager', fileMetadata.manager);
+			tryAssignReplacement(fsPath, 'titleSuffix', fileMetadata.titleSuffix);
+			tryAssignReplacement(fsPath, 'ms.service', fileMetadata['ms.service']);
+			tryAssignReplacement(fsPath, 'ms.subservice', fileMetadata['ms.subservice']);
+
+			replacements.push(new ReplacementFormat('ms.date', toShortDate(new Date())));
+
+			return replacements;
+		}
+	}
+
+	return [];
+}
+
+export function getAllEffectiveMetadata(docFxFileInfo: DocFxFileInfo): MetadataEntry[] {
+	const editor = window.activeTextEditor;
+	if (!editor || !['markdown', 'yaml'].includes(editor.document.languageId)) {
+		return [];
+	}
+
+	const metadataEntries: MetadataEntry[] = [];
+
+	// Parse front-matter metadata from the file.
+	const content = editor.document.getText();
+	const results = matchAll(metadataFrontMatterRegex, content);
+	if (results && results.length) {
+		const result = results.find(r => !!r.groups && r.groups.metadata);
+		if (result) {
+			try {
+				const metadataJson = jsyaml.load(result.groups.metadata);
+
+				if (metadataJson) {
+					for (const [key, value] of Object.entries(metadataJson)) {
+						const typedValue: boolean | string | string[] = Array.isArray(value)
+							? (value as string[])
+							: typeof value === 'boolean'
+							? (value as boolean)
+							: (value as string);
+
+						metadataEntries.push({
+							category: isRequired(key as MetadataKey)
+								? MetadataCategory.Required
+								: MetadataCategory.Optional,
+							source: MetadataSource.FrontMatter,
+							key: key as MetadataKey,
+							value: typedValue
+						});
+					}
+				}
+			} catch (e) {
+				window.showErrorMessage(e.message);
+			}
+		}
+	}
+
+	const { fullPath, contents } = docFxFileInfo;
+	if (contents && contents.build) {
+		const docFxDirectory = dirname(fullPath);
+		const path = editor.document.uri.fsPath.replace(docFxDirectory, '');
+		const fsPath = path.startsWith(sep) ? path.substr(1) : path;
+		const fileMetadata = contents.build.fileMetadata;
+		const globalMetadata = contents.build.globalMetadata;
+
+		const tryFindMetadata = (
+			filePath: string,
+			key: MetadataKey,
+			source: MetadataSource,
+			metadataNodeOrValue?:
+				| { [glob: string]: boolean | string | string[] }
+				| (boolean | string | string[])
+		) => {
+			if (metadataNodeOrValue) {
+				const isGlobal = source === MetadataSource.GlobalMetadata;
+				const value = isGlobal
+					? (metadataNodeOrValue as boolean | string | string[])
+					: getReplacementValue(
+							metadataNodeOrValue as { [glob: string]: boolean | string | string[] },
+							filePath
+					  );
+				if (value) {
+					metadataEntries.push({
+						category: isRequired(key as MetadataKey)
+							? MetadataCategory.Required
+							: MetadataCategory.Optional,
+						source,
+						key,
+						value
+					});
+					return true;
+				}
+			}
+			return false;
+		};
+
+		const metadataTypes = allMetadataKeys;
+		for (let i = 0; i < metadataTypes.length; i++) {
+			const metadata = metadataTypes[i];
+
+			if (fileMetadata && fileMetadata[metadata]) {
+				const fileMetadataGlobs: { [glob: string]: string | boolean | string[] } =
+					fileMetadata[metadata];
+				tryFindMetadata(fsPath, metadata, MetadataSource.FileMetadata, fileMetadataGlobs);
+			}
+
+			if (globalMetadata && globalMetadata[metadata]) {
+				const globalMetadataGlobs: string | boolean | string[] = globalMetadata[metadata];
+				tryFindMetadata(fsPath, metadata, MetadataSource.GlobalMetadata, globalMetadataGlobs);
+			}
+		}
+	}
+
+	// Group by key/MetadataType
+	// Sort the listing of values from frontMatter > fileMetadata > globalMetadata
+	const grouping: Map<MetadataKey, MetadataEntry[]> = new Map();
+	for (let i = 0; i < metadataEntries.length; ++i) {
+		const node = metadataEntries[i];
+		if (grouping.has(node.key)) {
+			grouping.get(node.key).push(node);
+		} else {
+			grouping.set(node.key, [node]);
+		}
+	}
+
+	// Interleave placeholders where required metadata was unresolved.
+	for (let i = 0; i < requiredMetadataKeys.length; ++i) {
+		const requiredKey = requiredMetadataKeys[i];
+		if (requiredKey === 'ms.prod' || requiredKey === 'ms.service') {
+			if (!grouping.has('ms.prod') && !grouping.has('ms.service')) {
+				grouping.set(requiredKey, [
+					{
+						key: requiredKey,
+						category: MetadataCategory.Required,
+						source: MetadataSource.Missing
+					}
+				]);
+			}
+
+			continue;
+		}
+
+		if (!grouping.has(requiredKey)) {
+			grouping.set(requiredKey, [
+				{
+					key: requiredKey,
+					category: MetadataCategory.Required,
+					source: MetadataSource.Missing
+				}
+			]);
+		}
+	}
+
+	const resultingNodes: MetadataEntry[] = [];
+	for (const [_, nodes] of grouping) {
+		nodes.sort((a, b) => a.source - b.source);
+		resultingNodes.push(nodes[0]);
+	}
+
+	return resultingNodes;
+}
+
+function getReplacementValue(
+	globNode: { [glob: string]: boolean | string | string[] },
+	fsPath: string
+): boolean | string | string[] | undefined {
+	if (globNode && fsPath) {
+		const globKeys = Object.keys(globNode);
+
+		// Loop through backward, as last entry takes precedence.
+		for (let i = globKeys.length - 1; i >= 0; i--) {
+			const globKey = globKeys[i];
+			if (minimatch(fsPath, globKey, { nocase: true })) {
+				return globNode[globKey];
+			}
+		}
+	}
+
+	return undefined;
+}
+
+export async function updateMetadataDate() {
+	const editor = window.activeTextEditor;
+	if (!editor) {
+		noActiveEditorMessage();
+		return;
+	}
+
+	if (!isMarkdownYamlFileCheckWithoutNotification(editor)) {
+		return;
+	}
+
+	const content = editor.document.getText();
+	if (content) {
+		const replacement = findReplacement(
+			editor.document,
+			content,
+			`ms.date: ${toShortDate(new Date())}`,
+			msDateRegex
+		);
+		if (replacement) {
+			await applyReplacements([replacement], editor);
+			await saveAndSendTelemetry();
+		}
+	}
+}
+
+async function saveAndSendTelemetry() {
+	await commands.executeCommand('workbench.action.files.save');
+
+	const telemetryCommand = 'updateMetadata';
+	sendTelemetryData(telemetryCommand, updateMetadataDate.name);
+}

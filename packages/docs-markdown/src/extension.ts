@@ -17,7 +17,8 @@ import {
 	Uri,
 	window,
 	workspace,
-	TextDocumentWillSaveEvent
+	TextDocumentWillSaveEvent,
+	WorkspaceConfiguration
 } from 'vscode';
 import { insertAlertCommand } from './controllers/alert-controller';
 import { boldFormattingCommand } from './controllers/bold-controller';
@@ -33,7 +34,7 @@ import { italicFormattingCommand } from './controllers/italic-controller';
 import { linkControllerCommands } from './controllers/links/link-controller';
 import { insertListsCommands } from './controllers/list-controller';
 import { insertLinksAndMediaCommands } from './controllers/media-controller';
-import { insertMetadataCommands } from './controllers/metadata-controller';
+import { insertMetadataCommands } from './controllers/metadata/metadata-controller';
 import { insertMetadataHelperCommands } from './helper/metadata';
 import { insertMonikerCommand } from './controllers/moniker-controller';
 import {
@@ -77,6 +78,7 @@ import {
 	msTechnologyCompletionItemsProvider,
 	msSubServiceCompletionItemsProvider
 } from './helper/metadata-completion';
+import { MetadataTreeProvider } from './controllers/metadata/metadata-tree-provider';
 import { metadataDateReminder } from './helper/metadata';
 import { notebookControllerCommands } from './controllers/notebook-controller';
 import { validateRepositoryCommand } from './controllers/validation-controller';
@@ -179,6 +181,31 @@ export async function activate(context: ExtensionContext) {
 	languages.registerCompletionItemProvider('markdown', tripleColonCompletionItemsProvider, ':');
 	languages.registerCompletionItemProvider('markdown', markdownCompletionItemsProvider, '`');
 	languages.registerCodeActionsProvider('markdown', markdownCodeActionProvider);
+
+	// Metadata tree view.
+	const metadataTreeProvider = new MetadataTreeProvider();
+	const treeView = window.createTreeView('effectiveMetadata', {
+		treeDataProvider: metadataTreeProvider,
+		showCollapseAll: true
+	});
+	commands.registerCommand('effectiveMetadata.refreshEntry', () => metadataTreeProvider.refresh());
+	workspace.onDidSaveTextDocument(e => {
+		if (['markdown', 'json'].includes(e.languageId)) {
+			const filesConfiguration: WorkspaceConfiguration = workspace.getConfiguration('files');
+			if (
+				filesConfiguration &&
+				filesConfiguration.has('autoSave') &&
+				filesConfiguration.get('autoSave') === 'off'
+			) {
+				metadataTreeProvider.refresh();
+			}
+		}
+	});
+	window.onDidChangeActiveTextEditor(e => {
+		if (['markdown', 'json'].includes(e.document.languageId)) {
+			metadataTreeProvider.refresh();
+		}
+	});
 
 	// When the document changes, find and replace target expressions (for example, smart quotes).
 	workspace.onDidChangeTextDocument(findAndReplaceTargetExpressions);

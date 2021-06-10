@@ -237,7 +237,7 @@ export class FileFxMetadataContent extends MetadataContentBase {
 	}
 
 	public getYamlMetadataContentInner(): string {
-		// parses file base metadata passed from from the docfx.json file. If filepattern is speficied it's taken only if
+		// Parses file-base metadata passed from from the docfx.json file. If filepattern is specified it's taken only if
 		// this.referenceTopicFileName is matched.
 
 		const parsed = JSON.parse(
@@ -275,7 +275,7 @@ export class FileFxMetadataContent extends MetadataContentBase {
 }
 
 /**
- * Returns docfx.json metadata representation if find in the specified directory.
+ * Returns docfx.json metadata representation if found in the specified directory.
  */
 export function findDocFxMetadataForDir(
 	dirname: string,
@@ -340,7 +340,7 @@ function mergeYamlMetadata(
 }
 
 /**
- * Merges all metadata in the passed priority queue into the one. This merge does expansion if DocFxMetadataContent representing docfx.json is specified
+ * Merges all metadata in the passed priority queue into one. This merge does expansion if DocFxMetadataContent representing docfx.json is specified.
  * Highest priority item in the queue will be merged as highest priority metadata.
  */
 export function mergeMetadata(
@@ -384,8 +384,8 @@ export function mergeMetadata(
 }
 
 /**
- * merges all metadata in the passed stack specified by content holder class. Merging is done from the top of the stack to the bottom.
- * Bottom item has highest priotity.
+ * Merges all metadata in the passed stack specified by content holder class. Merging is done from the top of the stack to the bottom.
+ * Bottom item has highest priority.
  * Does not expand docfx.json content representation!
  */
 function mergeMetadataFromTop(stack: Stack<MetadataContentBase>): MetadataContentBase {

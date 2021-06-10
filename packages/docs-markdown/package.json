@@ -31,6 +31,14 @@
 	"contributes": {
 		"commands": [
 			{
+				"command": "effectiveMetadata.refreshEntry",
+				"title": "Refresh",
+				"icon": {
+					"light": "images/light-refresh.svg",
+					"dark": "images/dark-refresh.svg"
+				}
+			},
+			{
 				"command": "insertMoniker",
 				"title": "Add moniker range",
 				"category": "Docs"
@@ -530,8 +538,21 @@
 					"command": "cleanupFile",
 					"when": "false"
 				}
+			],
+			"view/title": [
+				{
+					"command": "effectiveMetadata.refreshEntry",
+					"when": "view == effectiveMetadata",
+					"group": "navigation"
+				}
 			]
 		},
+		"viewsWelcome": [
+			{
+				"view": "effectiveMetadata",
+				"contents": "Open a Markdown file in a DocFx repo to see its local and global metadata."
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Docs Markdown",
@@ -753,6 +774,14 @@
 				"when": "editorTextFocus && workspaceContains:.openpublishing.publish.config.json && !vim.active"
 			}
 		],
+		"views": {
+			"explorer": [
+				{
+					"id": "effectiveMetadata",
+					"name": "Metadata"
+				}
+			]
+		},
 		"yamlValidation": [
 			{
 				"fileMatch": "toc.yml",
@@ -795,6 +824,7 @@
 		"graceful-fs": "^4.2.3",
 		"js-yaml": "^3.13.1",
 		"lodash.merge": "^4.6.2",
+		"minimatch": "3.0.4",
 		"matcher": "^1.1.1",
 		"node-html-parser": "^2.1.0",
 		"recursive-readdir": "^2.2.2",
@@ -810,6 +840,7 @@
 		"@types/graceful-fs": "^2.0.30",
 		"@types/lodash.merge": "^4.6.6",
 		"@types/mocha": "^7.0.2",
+		"@types/minimatch": "3.0.4",
 		"@types/node": "^12.12.32",
 		"@types/recursive-readdir": "^2.2.0",
 		"@types/vscode": "^1.55.0",

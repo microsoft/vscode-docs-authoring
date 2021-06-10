@@ -22,7 +22,8 @@ import {
 	loadDocumentAndGetItReady,
 	sleep,
 	extendedSleepTime,
-	longSleepTime
+	longSleepTime,
+	expectStringsToEqual
 } from '../../test.common/common';
 import { context } from '../../test.common/common';
 
@@ -238,7 +239,7 @@ suite('Image Controller', () => {
 			os.EOL;
 		editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
-		assert.equal(expectedText, actualText);
+		expectStringsToEqual(expectedText, actualText);
 		stubShowQuickPick.restore();
 		stubAxios.restore();
 	});
