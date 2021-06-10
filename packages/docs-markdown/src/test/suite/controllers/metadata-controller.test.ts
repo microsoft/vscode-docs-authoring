@@ -1,18 +1,18 @@
-import * as assert from 'assert';
 import * as chai from 'chai';
-import * as os from 'os';
 import * as spies from 'chai-spies';
+import { execSync } from 'child_process';
+import * as os from 'os';
 import { resolve } from 'path';
 import { commands, window, workspace } from 'vscode';
+import { DocFxFileInfo, readDocFxJson } from '../../../controllers/metadata/docfx-file-parser';
+import { MetadataCategory } from '../../../controllers/metadata/metadata-category';
 import * as metadataController from '../../../controllers/metadata/metadata-controller';
+import { MetadataEntry } from '../../../controllers/metadata/metadata-entry';
+import { MetadataSource } from '../../../controllers/metadata/metadata-source';
 import * as common from '../../../helper/common';
 import * as telemetry from '../../../helper/telemetry';
 import { expectStringsToEqual, loadDocumentAndGetItReady, sleep } from '../../test.common/common';
 import sinon = require('sinon');
-import { MetadataEntry } from '../../../controllers/metadata/metadata-entry';
-import { MetadataCategory } from '../../../controllers/metadata/metadata-category';
-import { MetadataSource } from '../../../controllers/metadata/metadata-source';
-import { DocFxFileInfo, readDocFxJson } from '../../../controllers/metadata/docfx-file-parser';
 
 chai.use(spies);
 const expect = chai.expect;
@@ -277,9 +277,7 @@ suite('Metadata Controller', () => {
 		const actualText = window.activeTextEditor?.document.getText();
 
 		// cleanup the modified metadata.md to prevent false positives for future tests.
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const { exec } = require('child_process');
-		exec('cd ' + __dirname + ' && git checkout ' + filePath);
+		execSync(`cd ${__dirname} && git checkout ${filePath}`);
 		expectStringsToEqual(actualText, expectedText);
 	});
 	test('updateMetadataDate().noActiveEditorMessage()', async () => {
@@ -312,9 +310,7 @@ suite('Metadata Controller', () => {
 		const actualText = window.activeTextEditor?.document.getText();
 
 		// cleanup the modified metadata.md to prevent false positives for future tests.
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const { exec } = require('child_process');
-		exec('cd ' + __dirname + ' && git checkout ' + filePath);
+		execSync(`cd ${__dirname} && git checkout ${filePath}`);
 		expectStringsToEqual(actualText, expectedText);
 	});
 });
