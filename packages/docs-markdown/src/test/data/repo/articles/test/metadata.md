@@ -1,9 +1,9 @@
 ---
-author: foo
-manager: foo
-titleSuffix: foo
-ms.author: foo
+author: bar
+manager: bar
+titleSuffix: bar
+ms.author: bar
 ms.date: 01/01/2019
-ms.service: foo
-ms.subservice: foo
+ms.service: bar
+ms.subservice: bar
 ---
