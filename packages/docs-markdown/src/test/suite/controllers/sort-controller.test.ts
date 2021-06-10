@@ -45,49 +45,49 @@ suite('Sort Controller', () => {
 	test('Sort Selection Ascending', async () => {
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/docs-markdown.md'
+			'../../../../../src/test/data/repo/articles/docs-markdown-sort-test.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor, 3, 0, 6, 19);
+		common.setSelectorPosition(editor, 2, 0, 5, 19);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		sortSelectionAscending();
 		await sleep(100);
+		const line2 = editor?.document.lineAt(2).text;
 		const line3 = editor?.document.lineAt(3).text;
 		const line4 = editor?.document.lineAt(4).text;
 		const line5 = editor?.document.lineAt(5).text;
-		const line6 = editor?.document.lineAt(6).text;
 		stub.restore();
 
-		expect(line3).to.equal('author: meganbradley');
-		expect(line4).to.equal(
+		expect(line2).to.equal('author: meganbradley');
+		expect(line3).to.equal(
 			'description: The OPS platform guide to Markdown and DocFX Flavored Markdown (DFM) extensions.'
 		);
-		expect(line5).to.equal('ms.author: mbradley');
-		expect(line6).to.equal('title: Docs Markdown reference');
+		expect(line4).to.equal('ms.author: mbradley');
+		expect(line5).to.equal('title: Docs Markdown reference');
 	});
 	test('Sort Selection Descending', async () => {
 		const filePath = resolve(
 			__dirname,
-			'../../../../../src/test/data/repo/articles/docs-markdown.md'
+			'../../../../../src/test/data/repo/articles/docs-markdown-sort-test.md'
 		);
 		await loadDocumentAndGetItReady(filePath);
 		const editor = window.activeTextEditor;
-		common.setSelectorPosition(editor, 3, 0, 6, 19);
+		common.setSelectorPosition(editor, 2, 0, 5, 19);
 		const stub = sinon.stub(telemetry, 'sendTelemetryData');
 		sortSelectionDescending();
 		await sleep(100);
+		const line2 = editor?.document.lineAt(2).text;
 		const line3 = editor?.document.lineAt(3).text;
 		const line4 = editor?.document.lineAt(4).text;
 		const line5 = editor?.document.lineAt(5).text;
-		const line6 = editor?.document.lineAt(6).text;
 		stub.restore();
 
-		expect(line3).to.equal('title: Docs Markdown reference');
-		expect(line4).to.equal('ms.author: mbradley');
-		expect(line5).to.equal(
+		expect(line2).to.equal('title: Docs Markdown reference');
+		expect(line3).to.equal('ms.author: mbradley');
+		expect(line4).to.equal(
 			'description: The OPS platform guide to Markdown and DocFX Flavored Markdown (DFM) extensions.'
 		);
-		expect(line6).to.equal('author: meganbradley');
+		expect(line5).to.equal('author: meganbradley');
 	});
 });

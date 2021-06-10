@@ -39,8 +39,13 @@ export async function createDocumentAndGetItReady() {
 /**
  * Replaces '\r' carriage returns with '', and the '\n' characters are unaffected.
  */
-export function expectStringsToEqual(actual: string, expected: string) {
-	expect(expected).to.equal(actual.replace('\r', ''));
+export function expectStringsToEqual(expected: string, actual: string) {
+	const normalizeNewLines = (str: string) => str.replace(/\r/g, '');
+
+	const normalizedExpected = normalizeNewLines(expected);
+	const normalizedActual = normalizeNewLines(actual);
+
+	expect(normalizedExpected).to.equal(normalizedActual);
 }
 
 interface Subscription {

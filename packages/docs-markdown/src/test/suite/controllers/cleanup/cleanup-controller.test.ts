@@ -350,7 +350,7 @@ suite('Cleanup Controller', () => {
 		await applyCleanupFolder(
 			Uri.file(resolve(__dirname, '../../../../../../src/test/data/repo/markdown-stubs'))
 		);
-		await sleep(400);
+		await sleep(500);
 		const actualText = window.activeTextEditor?.document.getText();
 		const expectedText = '---' + os.EOL + 'ms.author: ["foo"]' + os.EOL + '---' + os.EOL + content;
 		// cleanup the modified *.md to prevent false positives for future tests.

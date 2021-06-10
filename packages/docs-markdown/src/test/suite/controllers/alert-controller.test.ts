@@ -26,7 +26,8 @@ suite('Alert Controller', () => {
 		const controllerCommands = [{ command: insertAlert.name, callback: insertAlert }];
 		expect(insertAlertCommand()).to.deep.equal(controllerCommands);
 	});
-	test('noActiveEditorMessage', () => {
+	test('noActiveEditorMessage', async () => {
+		await commands.executeCommand('workbench.action.closeAllEditors');
 		const spy = chai.spy.on(common, 'noActiveEditorMessage');
 		insertAlert();
 		expect(spy).to.have.been.called();

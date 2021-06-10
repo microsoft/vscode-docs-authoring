@@ -10,6 +10,7 @@ import {
 	DocumentLink,
 	Extension,
 	extensions,
+	Position,
 	Range,
 	Selection,
 	TextDocument,
@@ -241,11 +242,9 @@ export function setSelectorPosition(
 	toLine: number,
 	toCharacter: number
 ) {
-	const cursorPosition = editor.selection.active;
-	const fromPosition = cursorPosition.with(fromLine, fromCharacter);
-	const toPosition = cursorPosition.with(toLine, toCharacter);
-	const newSelection = new Selection(fromPosition, toPosition);
-	editor.selection = newSelection;
+	const fromPosition = new Position(fromLine, fromCharacter);
+	const toPosition = new Position(toLine, toCharacter);
+	editor.selection = new Selection(fromPosition, toPosition);
 }
 
 /**
