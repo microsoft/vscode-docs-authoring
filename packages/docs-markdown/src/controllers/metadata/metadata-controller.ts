@@ -81,7 +81,9 @@ async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementF
 		const { fullPath, contents } = readDocFxJson(folder.uri.fsPath);
 		if (contents && contents.build && contents.build.fileMetadata) {
 			const replacements: ReplacementFormat[] = [];
-			const fsPath = editor.document.uri.fsPath;
+			const docFxDirectory = dirname(fullPath);
+			const path = editor.document.uri.fsPath.replace(docFxDirectory, '');
+			const fsPath = path.startsWith(sep) ? path.substr(1) : path;
 			const fileMetadata = contents.build.fileMetadata;
 			const tryAssignReplacement = (
 				filePath: string,
