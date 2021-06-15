@@ -94,7 +94,7 @@ Users of the pre-release version of the extension will notice that the authoring
 
    ![toolbar](https://github.com/Microsoft/vscode-docs-authoring/raw/master/media/image/legacy-toolbar.png)
 
-## Context Menus
+## Context menus
 
 There are multiple context menu options that have been added to the right mouse click button when editing markdown documents. This includes update metadata, and reformat tables. Or you can right mouse click on a markdown file or folder for the cleanup scripts context menu option.
 
@@ -106,10 +106,14 @@ Cleanup functionality has been added to docs-markdown to move the experience of 
 
 Cleanup scripts available:
 
+- Add periods to alt text: Adds a period at the end of alternate text for images if there isn't one already. This is an accessibility requirement to make screen readers pause appropriately at the end of alt text.
+- Capitalization of metadata values: Lowercases certain metadata properties.
+- Empty metadata: Removes metadata fields with no values.
 - Single-valued metadata: Converts single value arrays of metadata into inline properties without array brackets.
 - Microsoft links: Converts `http://` to `https://` for microsoft docs, azure, technet, and msdn. Removes hardcoded locales (`en-us`) from url.
-- Capitalization of metadata values: Lowercases certain metadata properties.
+- Single-valued metadata: Converts single-valued metadata from array to scalar format.
 - Master redirection file: Adds redirect_url entries to the master redirect file and removes redirected Markdown files from the repo.
+- Unused images and includes: Removes image and includes files that aren't being used in any parent file.
 - Everything: Runs all the available cleanup scripts.
 
 ### Collapse relative links
