@@ -29,12 +29,12 @@ export class MetadataTreeProvider implements TreeDataProvider<MetadataTreeNode> 
 	getChildren(element?: MetadataTreeNode): Thenable<MetadataTreeNode[]> {
 		const editor = window.activeTextEditor;
 		// Only show tree if it's a Markdown file.
-		if (editor.document.languageId !== 'markdown') return;
+		if (editor === undefined || editor.document.languageId !== 'markdown') return;
 
 		let docFxFileInfo: DocFxFileInfo;
 		const folder = workspace.getWorkspaceFolder(editor.document.uri);
 		if (folder) {
-			// Read the DocFX.json file, search for metadata defaults.
+			// Read the DocFx.json file, search for metadata defaults.
 			docFxFileInfo = readDocFxJson(folder.uri.fsPath);
 			if (!docFxFileInfo) {
 				return;
