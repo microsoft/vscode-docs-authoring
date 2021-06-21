@@ -9,7 +9,8 @@ import {
 	workspace,
 	ExtensionContext,
 	Uri,
-	ExtensionMode
+	ExtensionMode,
+	ExtensionKind
 } from 'vscode';
 import { loadDocumentAndGetItReady, sleep, sleepTime } from '../../test.common/common';
 import { applyDocsTemplate } from '../../../controllers/quick-pick-controller';
@@ -69,7 +70,17 @@ const context: ExtensionContext = {
 	extensionMode: ExtensionMode.Test,
 	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
 	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
-	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	extension: {
+		exports: '',
+		extensionKind: ExtensionKind.Workspace,
+		extensionPath: '',
+		extensionUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+		id: '',
+		isActive: true,
+		packageJSON: '',
+		activate: () => Promise.resolve()
+	}
 };
 
 suite('Quick Pick Menu Controller', () => {
