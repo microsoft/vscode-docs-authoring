@@ -4,3 +4,5 @@ docs-metadata/install.Lock
 
 .vscode/*
 node_modules
+
+.vscode-test/*
