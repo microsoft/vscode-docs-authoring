@@ -1,6 +1,6 @@
 import { activate, deactivate } from '../../extension';
 import { resolve } from 'path';
-import { ExtensionContext, Uri, commands, ExtensionMode } from 'vscode';
+import { ExtensionContext, Uri, commands, ExtensionMode, ExtensionKind } from 'vscode';
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import { sleep, sleepTime } from '../test.common/common';
@@ -60,6 +60,16 @@ const context: ExtensionContext = {
 		get: async key => '',
 		delete: key => Promise.resolve(),
 		onDidChange: emptySecret
+	},
+	extension: {
+		exports: '',
+		extensionKind: ExtensionKind.Workspace,
+		extensionPath: '',
+		extensionUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+		id: '',
+		isActive: true,
+		packageJSON: '',
+		activate: () => Promise.resolve()
 	}
 };
 
