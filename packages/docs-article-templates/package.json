@@ -7,7 +7,7 @@
 	"version": "0.2.11",
 	"publisher": "docsmsft",
 	"engines": {
-		"vscode": "^1.53.0"
+		"vscode": "^1.57.0"
 	},
 	"categories": [
 		"Other"
@@ -94,7 +94,7 @@
 		"@types/mocha": "^7.0.2",
 		"@types/node": "^12.12.32",
 		"@types/node-dir": "0.0.32",
-		"@types/vscode": "^1.53.0",
+		"@types/vscode": "^1.57.0",
 		"@typescript-eslint/eslint-plugin": "^2.34.0",
 		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",
 		"@typescript-eslint/parser": "^2.34.0",
