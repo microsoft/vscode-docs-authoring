@@ -4,15 +4,11 @@
 	"version": "2.0.0",
 	"name": "npmTask",
 	"command": "npm",
-	"args": ["run"],
 	"tasks": [
 		{
 			"label": "webpack",
 			"type": "shell",
-			"args": [
-				"run",
-				"webpack"
-			],
+			"args": ["run", "webpack"],
 			"problemMatcher": [
 				{
 					"pattern": [
@@ -35,10 +31,7 @@
 		{
 			"label": "mocha",
 			"type": "shell",
-			"args": [
-				"run",
-				"compile"
-			],
+			"args": ["run", "compile"],
 			"problemMatcher": [],
 			"group": "test"
 		}

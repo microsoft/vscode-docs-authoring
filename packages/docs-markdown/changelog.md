@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.95 (June 10th, 2021)
+
+- Added metadata tree view in metadata explorer panel that displays the markdown metadata from the current .md file and docfx.json.
+
 ## 0.2.94 (June 2nd, 2021)
 
 - Header link generator fix: [Issue 880](https://github.com/microsoft/vscode-docs-authoring/issues/880)

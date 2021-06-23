@@ -138,6 +138,7 @@
 	"devDependencies": {
 		"@types/chai": "^4.2.11",
 		"@types/chai-spies": "^1.0.1",
+		"@types/file-type": "^10.9.1",
 		"@types/glob": "^7.1.1",
 		"@types/image-size": "0.8.0",
 		"@types/imagemin-gifsicle": "5.2.0",
