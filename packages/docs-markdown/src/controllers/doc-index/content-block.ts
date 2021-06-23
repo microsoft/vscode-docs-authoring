@@ -10,6 +10,7 @@ import { LinkTypes } from './linktypes-enum';
 import { MarkdownEnum } from './markdown-enum';
 import { Stack } from 'stack-typescript';
 import { dirname, relative } from 'path';
+import { Notebook } from './notebook';
 
 export class ContentBlock {
 	private _name: string;
@@ -81,6 +82,14 @@ export class ContentBlock {
 	}
 	public set fromInclude(v: boolean) {
 		this._fromInclude = v;
+	}
+
+	private _addedContentLengthFromInclude: number;
+	public get addedContentLengthFromInclude(): number {
+		return this._addedContentLengthFromInclude;
+	}
+	public set addedContentLengthFromInclude(v: number) {
+		this._addedContentLengthFromInclude = v;
 	}
 
 	private _fileName: string;
@@ -358,8 +367,48 @@ export class ContentBlock {
 
 	public static extractIncludeBlocks(artifact: ContentMatch, filename: string): ContentBlock[] {
 		let file = artifact.getGroup('file');
-		filename = relative(filename, file);
-		return Helpers.readInclude(filename);
+		let includeFilename = relative(filename, file);
+		let attributeValues: Map<string, string> = new Map<string, string>();
+		if (!Helpers.fileExists(filename)) {
+			let snippetContent: string = artifact.getGroup('snippet');
+			if (!Helpers.strIsNullOrEmpty(snippetContent)) {
+				attributeValues = ContentMatch.getSnippetAttributes(snippetContent);
+				if (attributeValues.has('source')) {
+					includeFilename = attributeValues.get('source');
+				}
+
+				includeFilename = relative(filename, includeFilename);
+				if (!Helpers.fileExists(includeFilename)) return undefined;
+			} else return undefined;
+		}
+
+		let content: string = '';
+		if (attributeValues.size > 0) {
+			let lineNumbers: Set<number> = new Set<number>();
+			content = Helpers.getSnippetContent(attributeValues, content, file);
+			let tag = '';
+			if (attributeValues.has('language')) {
+				tag = attributeValues.get('language');
+			}
+
+			let block = new ContentBlock();
+			block.text = content;
+			block.artifactType = MarkdownEnum.CodeFence;
+			block.start = 0;
+			block.length = content.length;
+			block.fileName = includeFilename;
+			block.fromInclude = true;
+			block.groups = new Map([
+				['0', content],
+				['code', content],
+				['tag', tag]
+			]);
+			let blocks: ContentBlock[] = [];
+			blocks.push(block);
+			return blocks;
+		} else {
+			return Helpers.readInclude(includeFilename);
+		}
 	}
 
 	public static splitIntoLines(content: string): ContentMatch[] {
@@ -475,7 +524,7 @@ export class ContentBlock {
 		let HeaderBlocks = ContentBlock.getHeaderBlocks(content, AllCodeFences);
 		HeaderBlocks.forEach(e => (e.fileName = filename));
 		let linkRefs = ContentMatch.getLinkRefs(content);
-
+		let externalContentAdded = 0;
 		if (AllCodeFences.length % 2 === 1) {
 			console.log('Odd number of code fences!');
 			return [];
@@ -483,9 +532,15 @@ export class ContentBlock {
 
 		for (let i = 0; i < HeaderBlocks.length; i++) {
 			let header = HeaderBlocks[i].getGroup('HeaderName');
+			if (externalContentAdded > 0) {
+				HeaderBlocks[i].start += externalContentAdded;
+			}
 			HeaderBlocks[i].extractInnerBlocks(filename, linkRefs);
-
-			if (isInclude) HeaderBlocks[i].setIncludeFile(filename);
+			if (HeaderBlocks[i].addedContentLengthFromInclude > 0) {
+				HeaderBlocks[i].length += HeaderBlocks[i].addedContentLengthFromInclude;
+				externalContentAdded += HeaderBlocks[i].addedContentLengthFromInclude;
+			}
+			// if (isInclude) HeaderBlocks[i].setIncludeFile(filename);
 		}
 
 		return HeaderBlocks;
@@ -606,7 +661,7 @@ export class ContentBlock {
 			)
 				block.copyParentInfo(this);
 			let inner = this.innerBlocks
-				.filter(e => !e.fromInclude)
+				.filter(e => e.fileName.toLowerCase() === block.fileName.toLowerCase())
 				.filter(
 					f => block.start >= f.start && block.start + block.length - 1 <= f.start + f.length - 1
 				)
@@ -615,7 +670,10 @@ export class ContentBlock {
 			else {
 				let newChildBlocks = this.innerBlocks
 					.filter(
-						f => f.start >= block.start && f.start + f.length - 1 <= block.start + block.length - 1
+						f =>
+							f.fileName.toLowerCase() === block.fileName.toLowerCase() &&
+							f.start >= block.start &&
+							f.start + f.length - 1 <= block.start + block.length - 1
 					)
 					.sort((a, b) => a.length - b.length);
 
@@ -629,6 +687,59 @@ export class ContentBlock {
 		}
 	}
 
+	public addIncludeBlocks(
+		includeBlocks: ContentBlock[],
+		artifact: ContentMatch,
+		filename: string,
+		thisStart: number
+	): number {
+		let tmpStart = 0;
+		let currentStart = thisStart;
+		if (undefined !== includeBlocks && includeBlocks.length > 0) {
+			includeBlocks = includeBlocks.sort((a, b) => a.start - b.start);
+			if (includeBlocks.length === 1 && includeBlocks[0].artifactType === MarkdownEnum.None)
+				includeBlocks[0].allChildBlocks().forEach(element => {
+					element.copyParentInfo(this);
+				});
+
+			for (let includeBlock of includeBlocks) {
+				includeBlock.start += artifact.index + currentStart;
+				includeBlock.innerBlocks.forEach(e => (e.start += artifact.index + currentStart));
+				if (includeBlock.artifactType === MarkdownEnum.None) {
+					includeBlock.innerBlocks.forEach(e => this.addInnerBlock(e));
+					// parent.TopParent().AllBlocks.AddRange(includeBlock.AllChildBlocks());
+				} else {
+					this.addInnerBlock(includeBlock);
+				}
+
+				tmpStart += includeBlock.length;
+			}
+
+			thisStart += tmpStart;
+			this.addedContentLengthFromInclude += tmpStart;
+			artifact.length = 0;
+			return thisStart;
+		} else return -1;
+	}
+
+	public addSnippet(
+		codeFence: ContentBlock,
+		artifact: ContentMatch,
+		filename: string,
+		thisStart: number
+	): number {
+		let currentStart = thisStart;
+		if (undefined !== codeFence) {
+			codeFence.copyParentInfo(this);
+			codeFence.start += artifact.index + currentStart;
+			this.extractCodeFenceTokens(codeFence.getGroup('tag'), codeFence, filename);
+			artifact.length = 0;
+			thisStart += codeFence.length;
+			this.addedContentLengthFromInclude += codeFence.length;
+			return thisStart;
+		} else return -1;
+	}
+
 	public extractCodeFenceTokens(tag: string, codeFence: ContentBlock, fileName?: string) {
 		let content = codeFence.text;
 		this.addInnerBlock(codeFence);
@@ -637,102 +748,115 @@ export class ContentBlock {
 	}
 
 	public static extractSnippet(artifact: ContentMatch, filename: string): ContentBlock {
-		if (!artifact.groups.has('snippet') || !artifact.groups.has('file')) {
+		let snippetContent = artifact.getGroup('snippet');
+		let snippetFileName = artifact.getGroup('file');
+		let attributeValues = new Map<string, string>();
+		if (Helpers.strIsNullOrEmpty(snippetContent)) {
+			if (Helpers.strIsNullOrEmpty(snippetFileName)) {
+				console.log(`Cannot retrieve code for ${artifact.getGroup('0')}`);
+				return undefined;
+			}
+		} else {
+			attributeValues = ContentMatch.getSnippetAttributes(snippetContent);
+			if (attributeValues.has('source')) {
+				snippetFileName = attributeValues.get('source');
+			}
+		}
+
+		let content = '';
+		if (!Helpers.strIsNullOrEmpty(snippetFileName)) {
+			let [snippetName, snippetFileName] = ContentMatch.getSnippetDetails(snippetContent, filename);
+			if (!Helpers.strIsNullOrEmpty(snippetName) && !Helpers.strIsNullOrEmpty(snippetFileName)) {
+				let snippet = Helpers.readSnippetFile(snippetName, snippetFileName, filename);
+				if (!Helpers.strIsNullOrEmpty(snippet)) {
+					content = Helpers.getSnippetContent(attributeValues, content, filename);
+					let tag = '';
+					if (attributeValues.has('language')) {
+						tag = attributeValues.get('language');
+					}
+
+					let blocks: ContentBlock[] = [];
+					let block = new ContentBlock();
+					block.text = content;
+					block.start = 0;
+					block.length = content.length;
+					block.fileName = snippetFileName;
+					block.fromInclude = true;
+					block.groups = new Map([
+						['0', content],
+						['code', content],
+						['tag', tag]
+					]);
+					blocks.push(block);
+					return blocks[0];
+				}
+			}
+		} else console.log(`Could not get filename for snippet ${snippetContent}`);
+
+		return undefined;
+	}
+
+	public static extractNotebook(artifact: ContentMatch, filename: string): ContentBlock {
+		let snippetContent = artifact.getGroup('snippet');
+		let snippetFileName = artifact.getGroup('file');
+		let tag = artifact.getGroup('label');
+		let name = artifact.getGroup('QS_name');
+		if (tag.indexOf('-') > 0) {
+			tag = tag.split('-')[-1];
+		}
+
+		if (Helpers.strIsNullOrEmpty(snippetContent)) {
 			console.log(`Cannot retrieve code for ${artifact.getGroup('0')}`);
+			return undefined;
 		}
 
-		let file = artifact.getGroup('file');
-
-		let snippetname = artifact.getGroup('snippet');
-		let snippet = Helpers.readSnippetFile(snippetname, file, filename);
-		if (null === snippet) return null;
-
-		let content = snippet;
-		let lines = ContentBlock.splitIntoLines(content);
-
-		if (artifact.groups.has('range')) {
-			let ranges = artifact.getGroup('range').split(',');
-			let lineNumbers: Set<number> = new Set<number>();
-			for (let range of ranges) {
-				if (range.indexOf('-') >= 0) {
-					let portions = range.split('-');
-					if (portions.length !== 2) {
-						console.log(`"Could not get ranges for ${range} for ${file}`);
-						continue;
+		let snippetName = '';
+		[snippetName, snippetFileName] = ContentMatch.getSnippetDetails(snippetContent, filename);
+		let content = '';
+		if (!Helpers.strIsNullOrEmpty(snippetName) && !Helpers.strIsNullOrEmpty(snippetFileName)) {
+			let snippet = Helpers.readSnippetFile(snippetName, snippetFileName, filename);
+			let lines = ContentMatch.splitIntoLines(snippet);
+			if (!Helpers.strIsNullOrEmpty(name)) {
+				try {
+					const notebook: Notebook = new Notebook(snippet);
+					if (notebook.cells.length > 0) {
+						let cells = notebook.cells.filter(
+							e => name.toLowerCase() === e.getName().toLowerCase()
+						);
+						if (cells.length > 0) {
+							let content = cells
+								.map(element => {
+									element.source;
+								})
+								.join('\r\n');
+						} else console.log(`Could not get Cell ${name} from ${snippetContent}`);
 					}
-
-					let start = -1;
-					let end = -1;
-					start = +portions[0];
-					end = +portions[1];
-					if (start >= 0 && end >= 0) {
-						start--;
-						for (let i = start; i < end; i++) lineNumbers.add(i);
-					}
-				} else {
-					let line = -1;
-					line = +range;
-					if (line >= 0) {
-						line--;
-						lineNumbers.add(line);
-					}
+				} catch (error) {
+					const stackTrace = !!error.stack ? error.stack : '';
+					console.log(error);
 				}
 			}
 
-			let join: string[] = [];
-			try {
-				content = Array.from(lineNumbers.values())
-					.filter(e => e >= 0 && e <= lines.length)
-					.map(e => lines[e].getGroup('line'))
-					.join('\r\n');
-			} catch (e) {
-				console.log(e);
-			}
-		} else if (artifact.groups.has('id') || artifact.groups.has('QS_id')) {
-			let id = artifact.getGroup('id');
-			if (!Helpers.strIsNullOrEmpty(artifact.getGroup('QS_id'))) id = artifact.getGroup('QS_id');
-			let startLine = lines.filter(e => new RegExp(`<${id}>`, 'gim').test(e.getGroup('0')))[0];
-			let endLine = lines.filter(e => new RegExp(`</${id}>`, 'gim').test(e.getGroup('0')))[0];
-
-			if (startLine !== undefined && endLine !== undefined && startLine !== endLine) {
-				let startIndex = lines.indexOf(startLine);
-				let endIndex = lines.indexOf(endLine);
-				while (lines[startIndex].getGroup('line').startsWith('#') && startIndex < endIndex) {
-					startIndex++;
-				}
-
-				if (endIndex > startIndex) {
-					content = lines
-						.slice(startIndex, endIndex - startIndex)
-						.map(e => e.getGroup('line'))
-						.join('\r\n');
-				} else console.log(`Could not get snippet ${id} for ${file}`);
-			} else {
-				console.log(`Could not get snippet ${id} for ${file}. Returning all content`);
+			if (!Helpers.strIsNullOrEmpty(content)) {
+				let blocks: ContentBlock[] = [];
+				let block = new ContentBlock();
+				block.text = content;
+				block.start = 0;
+				block.length = content.length;
+				block.fileName = snippetFileName;
+				block.fromInclude = true;
+				block.groups = new Map([
+					['0', content],
+					['code', content],
+					['tag', tag],
+					['name', name]
+				]);
+				blocks.push(block);
+				return blocks[0];
 			}
 		}
 
-		let block = new ContentBlock();
-		block.text = content;
-		block.artifactType = MarkdownEnum.CodeFence;
-		block.start = artifact.index;
-		block.length = content.length;
-		block.fileName = file;
-		block.fromInclude = true;
-		let text = '';
-		if (
-			artifact.groups.has('currenttag') &&
-			Helpers.strIsNullOrEmpty(artifact.getGroup('currenttag'))
-		)
-			text = artifact.getGroup('currenttag');
-
-		block.groups = new Map([
-			['0', content],
-			['code', content],
-			['tag', text]
-		]);
-
-		return block;
+		return undefined;
 	}
 
 	public extractInnerBlocks(filename: string, refs?: ContentMatch[]) {
@@ -966,7 +1090,7 @@ export class ContentBlock {
 						tmp.text = value;
 						tmp.start = INDEX + tableRow.index + contentBlock.start;
 						tmp.length = length;
-						tmp.artifactType = MarkdownEnum.TableRow;
+						tmp.artifactType = MarkdownEnum.TableRowValue;
 						tmp.fileName = fileName;
 						tmp.groups = new Map([
 							['0', value],
@@ -989,7 +1113,7 @@ export class ContentBlock {
 							tmp.text = value;
 							tmp.start = INDEX + tableRow.index + contentBlock.start;
 							tmp.length = length;
-							tmp.artifactType = MarkdownEnum.TableRow;
+							tmp.artifactType = MarkdownEnum.TableRowValue;
 							tmp.fileName = fileName;
 							tmp.groups = new Map([
 								['0', value],
@@ -1016,7 +1140,7 @@ export class ContentBlock {
 							tmp.text = value;
 							tmp.start = INDEX + tableRow.index + contentBlock.start;
 							tmp.length = length;
-							tmp.artifactType = MarkdownEnum.TableRow;
+							tmp.artifactType = MarkdownEnum.TableRowValue;
 							tmp.fileName = fileName;
 							tmp.groups = new Map([
 								['0', value],
@@ -1043,6 +1167,7 @@ export class ContentBlock {
 	) {
 		let artifacts: ContentMatch[] = [];
 		ContentMatch.getLinks(content, codeFences, refs).forEach(e => artifacts.push(e));
+		ContentMatch.getCodeCallouts(content, codeFences).forEach(e => artifacts.push(e));
 		// To Do - Lookup redirections for links.
 		ContentMatch.getSnippets(content, codeFences).forEach(e => artifacts.push(e));
 		ContentMatch.getBullets(content, codeFences).forEach(e => artifacts.push(e));
@@ -1091,52 +1216,34 @@ export class ContentBlock {
 					new RegExp(ContentMatch.includeLabel, 'gim').test(artifacts[k].getGroup('label')) &&
 					!new RegExp(ContentMatch.mediaFile, 'gim').test(artifacts[k].getGroup('label'))
 				) {
-					let includeBlocks = ContentBlock.extractIncludeBlocks(artifacts[k], filename);
-					includeBlocks = includeBlocks.sort((a, b) => a.start - b.start);
-					if (includeBlocks.length === 1 && includeBlocks[0].artifactType === MarkdownEnum.None) {
-						includeBlocks[0].allChildBlocks().forEach(e => e.copyParentInfo(this));
+					let newStart = this.addIncludeBlocks(
+						ContentBlock.extractIncludeBlocks(artifacts[k], filename),
+						artifacts[k],
+						filename,
+						thisStart
+					);
+					if (newStart >= 0) {
+						thisStart = newStart;
+					} else {
+						newStart = this.addSnippet(
+							ContentBlock.extractSnippet(artifacts[k], filename),
+							artifacts[k],
+							filename,
+							thisStart
+						);
+						if (newStart >= 0) {
+							thisStart = newStart;
+						} else console.log(`Issue with Snippet and Include for ${filename}`);
 					}
-
-					for (let includeBlock of includeBlocks) {
-						includeBlock.start += artifacts[k].index + thisStart;
-						includeBlock.innerBlocks.forEach(e => (e.start += artifacts[k].index + thisStart));
-						if (includeBlock.artifactType === MarkdownEnum.None) {
-							includeBlock.innerBlocks.forEach(e => this.addInnerBlock(e));
-						} else {
-							this.addInnerBlock(includeBlock);
-						}
-					}
-				} else if (/!code/gim.test(artifacts[k].getGroup('label'))) {
-					let gLabel = artifacts[k].getGroup('label');
-					let gFile = artifacts[k].getGroup('file');
-					let sTag = '';
-
-					let tag = ContentMatch.getMatches(gLabel, ContentMatch.bangCode)[0];
-					if (tag !== undefined) {
-						sTag = tag.getGroup('tag');
-						artifacts[k].groups.set('currenttag', sTag);
-					}
-
-					let snippet = ContentMatch.getMatches(gFile, ContentMatch.altSnippet)[0];
-					if (snippet !== undefined) {
-						artifacts[k].groups.set('file', snippet.getGroup('file'));
-						artifacts[k].groups.set('snippet', snippet.getGroup('snippet'));
-						if (snippet.groups.has('name')) {
-							artifacts[k].groups.set('name', snippet.getGroup('name'));
-						}
-
-						if (artifacts[k].groups.has('QS_range')) {
-							artifacts[k].groups.set('range', artifacts[k].getGroup('QS_range'));
-						}
-
-						if (artifacts[k].groups.has('QS_highlight')) {
-							artifacts[k].groups.set('highlight', artifacts[k].getGroup('QS_highlight'));
-						}
-					}
-
-					let codeFence = ContentBlock.extractSnippet(artifacts[k], this.fileName);
-					if (codeFence !== undefined) {
-						this.extractCodeFenceTokens(sTag, codeFence, snippet.getGroup('file'));
+				} else if (`${artifacts[k].getGroup('label')}`.toLowerCase().indexOf('!notebook-') >= 0) {
+					let notebookBlock = ContentBlock.extractNotebook(artifacts[k], filename);
+					if (undefined !== notebookBlock) {
+						notebookBlock.copyParentInfo(this);
+						notebookBlock.start += artifacts[k].index + thisStart;
+						this.extractCodeFenceTokens(notebookBlock.getGroup('tag'), notebookBlock, filename);
+						thisStart += notebookBlock.length;
+						this.addedContentLengthFromInclude += notebookBlock.length;
+						artifacts[k].length = 0;
 					}
 				} else {
 					let hrefPath = this.getHrefPath(artifacts[k].getGroup('file'));
@@ -1188,6 +1295,14 @@ export class ContentBlock {
 				table.start = artifacts[k].index + thisStart;
 				table.length = artifacts[k].length;
 				this.extractTableData(table, filename);
+			} else if (artifacts[k].groups.has('callout')) {
+				let codecallout = new ContentBlock();
+				codecallout.text = artifacts[k].getGroup('callout');
+				codecallout.artifactType = MarkdownEnum.CodeCallOut;
+				codecallout.fileName = filename;
+				codecallout.start = artifacts[k].index + thisStart;
+				codecallout.length = artifacts[k].length;
+				this.addInnerBlock(codecallout);
 			} else if (artifacts[k].groups.has('note')) {
 				let note = new ContentBlock();
 
@@ -1201,19 +1316,25 @@ export class ContentBlock {
 				}
 				this.addInnerBlock(note);
 			} else if (artifacts[k].groups.has('snippet')) {
-				let file = Helpers.getFileName(artifacts[k].getGroup('file'));
-				let codeFence = ContentBlock.extractSnippet(artifacts[k], filename);
-				if (codeFence !== undefined) {
-					let tagName = '';
-					if (
-						artifacts[k].groups.has('currenttag') &&
-						!Helpers.strIsNullOrEmpty(artifacts[k].getGroup('currenttag'))
-					) {
-						tagName = artifacts[k].getGroup('currenttag').trim().toLowerCase();
-					}
+				let newStart = this.addSnippet(
+					ContentBlock.extractSnippet(artifacts[k], filename),
+					artifacts[k],
+					filename,
+					thisStart
+				);
+				if (newStart >= 0) {
+					thisStart = newStart;
+				} else {
+					newStart = this.addIncludeBlocks(
+						ContentBlock.extractIncludeBlocks(artifacts[k], filename),
+						artifacts[k],
+						filename,
+						thisStart
+					);
+					if (newStart >= 0) {
+						thisStart = newStart;
+					} else console.log(`Issue with Snippet and Include for ${filename}`);
 				}
-
-				this.extractCodeFenceTokens(tagName, codeFence, filename);
 			} else {
 				console.log(`Found artifact ${artifacts[k].groups.keys}`);
 			}

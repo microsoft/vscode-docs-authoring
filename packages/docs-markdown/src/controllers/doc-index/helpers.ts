@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/interface-name-prefix */
+/* eslint-disable prefer-const */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable no-console */
 import { ContentBlock } from './content-block';
 import { ContentMatch } from './content-match';
 import { FileTypeEnum } from './filetype-enum';
+import { existsSync } from 'fs';
 const resolve = require('path').resolve;
 
 export class Helpers {
@@ -28,6 +31,10 @@ export class Helpers {
 		array.forEach((item, index) => {
 			if (item === me) array.splice(index, 1);
 		});
+	}
+
+	public static fileExists(path: string): boolean {
+		return existsSync(path);
 	}
 
 	public static fixPath(root: string, path: string): string {
@@ -57,6 +64,96 @@ export class Helpers {
 		return '';
 	}
 
+	public static getSnippetContent(
+		attributeValues: Map<string, string>,
+		content: string,
+		file: string
+	) {
+		const lines: ContentMatch[] = ContentMatch.splitIntoLines(content);
+
+		if (attributeValues.has('range')) {
+			const ranges = `${attributeValues.get('range')}`.split(',');
+			let lineNumbers: Set<number> = new Set<number>();
+			for (let range of ranges) {
+				if (range.indexOf('-') >= 0) {
+					let portions = range.split('-');
+					if (portions.length !== 2) {
+						console.log(`"Could not get ranges for ${range} for ${file}`);
+						continue;
+					}
+
+					let start = -1;
+					let end = -1;
+					start = +portions[0];
+					end = +portions[1];
+					if (start >= 0 && end >= 0) {
+						start--;
+						for (let i = start; i < end; i++) lineNumbers.add(i);
+					}
+				} else {
+					let line = -1;
+					line = +range;
+					if (line >= 0) {
+						line--;
+						lineNumbers.add(line);
+					}
+				}
+			}
+
+			let join: string[] = [];
+			try {
+				content = Array.from(lineNumbers.values())
+					.filter(e => e >= 0 && e <= lines.length)
+					.map(e => lines[e].getGroup('line'))
+					.join('\r\n');
+			} catch (e) {
+				console.log(e);
+			}
+		} else if (attributeValues.has('id')) {
+			let id = attributeValues.get('id');
+			let startLine = lines.filter(e =>
+				new RegExp(`(#\\s*region\\s*(Snippet)?${id}|<(Snippet)?${id}>)`, 'gim').test(
+					e.getGroup('0')
+				)
+			)[0];
+			let ends = lines.filter(e => new RegExp(`#\\s*endregion`, 'gim').test(e.getGroup('0')));
+			let endLine = lines.filter(e =>
+				new RegExp(`</(Snippet)?${id}>`, 'gim').test(e.getGroup('0'))
+			)[0];
+
+			if (
+				startLine !== undefined &&
+				((endLine !== undefined && startLine !== endLine) || ends.length > 0)
+			) {
+				let startIndex = lines.indexOf(startLine);
+				let endIndex = -1;
+				if (undefined === endLine && ends.length > 0) {
+					for (let newEnd of ends) {
+						endIndex = lines.indexOf(newEnd);
+						if (endIndex > startIndex) {
+							break;
+						}
+					}
+				} else endIndex = lines.indexOf(endLine);
+
+				while (lines[startIndex].getGroup('line').startsWith('#') && startIndex < endIndex) {
+					startIndex++;
+				}
+
+				if (endIndex > startIndex) {
+					content = lines
+						.slice(startIndex, endIndex - startIndex)
+						.map(e => e.getGroup('line'))
+						.join('\r\n');
+				} else console.log(`Could not get snippet ${id} for ${file}`);
+			} else {
+				console.log(`Could not get snippet ${id} for ${file}. Returning all content`);
+			}
+		}
+
+		return content;
+	}
+
 	public static readInclude(filename: string): ContentBlock[] {
 		return [];
 	}
@@ -71,6 +168,28 @@ export class Helpers {
 
 	public static strTrimSpaces(input: string): string {
 		return input.replace(/^\s*/gim, '').replace(/\s*$/gim, '');
+	}
+
+	public static trim(str, ch) {
+		let start = 0;
+		let end = str.length;
+		while (start < end && str[start] === ch) ++start;
+		while (end > start && str[end - 1] === ch) --end;
+		return start > 0 || end < str.length ? str.substring(start, end) : str;
+	}
+
+	public static trimEnd(str, ch) {
+		let start = 0;
+		let end = str.length;
+		while (end > start && str[end - 1] === ch) --end;
+		return start > 0 || end < str.length ? str.substring(start, end) : str;
+	}
+
+	public static trimStart(str, ch) {
+		let start = 0;
+		let end = str.length;
+		while (start < end && str[start] === ch) ++start;
+		return start > 0 || end < str.length ? str.substring(start, end) : str;
 	}
 
 	public static getRange(start: number, end: number): number[] {

@@ -25,5 +25,6 @@ export enum MarkdownEnum {
 	ZonePivot,
 	CodeFence_ARM_ResourceType,
 	CodeFence_ARM_Namespace,
-	Null
+	Null,
+	CodeCallOut
 }

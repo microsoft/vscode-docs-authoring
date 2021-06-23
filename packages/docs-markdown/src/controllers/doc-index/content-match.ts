@@ -9,6 +9,7 @@ import { Helpers } from './helpers';
 import { dirname } from 'path';
 import yaml = require('js-yaml');
 import { RegexContainer } from './regex-container';
+import { Queue } from 'typescript-collections';
 
 export class ContentMatch extends RegexContainer {
 	static links: RegExp = /(?<link>(?<selector>> [\-\*]  )*!?((?<label>(\[[^\]]*\]\([^\)]+\)\])|\[([^\]]*)\]))\((?<file>((?=[^()]*\()[^(]*\([^\)]*\)[^)#]*|[^)#]*))?(?<anchor>#[^\)]+)?\)\]*)/gim;
@@ -90,6 +91,8 @@ export class ContentMatch extends RegexContainer {
 	static startingSlash: RegExp = /^~[\/\\]/gim;
 	static startingSlashDot: RegExp = /^\.\//gim;
 	static queryStringStart: RegExp = /\?.+/gim;
+	static codeCallouts: RegExp = /(?<fence>`{1,3})(?!`)(?<callout>[^`\r\n]+)(?=`{1,3})/gim;
+	static snippetDetails: RegExp = /(?<name>(language|source|range|highlight|id|interactive))\s*=\s*"(?<value>[^"]+)"/gim;
 	static cleanUpYaml_HasChildren: RegExp = /\{|\[/gim;
 	static anchor: RegExp = /(?<!\/)(?<anchor>#[^)]+)/gim;
 	static headerNumber: RegExp = /^[ ]*(?<number>[#]+)/gim;
@@ -262,6 +265,69 @@ export class ContentMatch extends RegexContainer {
 		let underscore = ContentMatch.cleanUpDBColumnName_underscore;
 		let remove = ContentMatch.cleanUpDBKey_remove;
 		return key.replace(underscore, '_').replace(remove, '');
+	}
+
+	public static getSnippetAttributes(snippetContent: string): Map<string, string> {
+		let attributes = this.getMatches(snippetContent, this.snippetDetails);
+		let attributeValues: Map<string, string> = new Map<string, string>();
+		for (let attribute of attributes) {
+			let name = '';
+			let value = '';
+			name = attribute.getGroup('name');
+			value = attribute.getGroup('value');
+			if (!Helpers.strIsNullOrEmpty(name) && !Helpers.strIsNullOrEmpty(value)) {
+				if (!attributeValues.has(name)) attributeValues.set(name, value);
+			}
+		}
+
+		return attributeValues;
+	}
+
+	public static getSnippetDetails(snippet: string, filename: string): [string, string] {
+		let snippetName = '';
+		let fileName = '';
+		snippet = snippet.replace('_', '_');
+		if (snippet.startsWith('~')) {
+			snippet = Helpers.trimStart(snippet, '~/');
+			let paths = new Queue<string>();
+			for (let s of snippet.split('/')) {
+				paths.add(s);
+			}
+			while (paths.size() > 0 && paths.peek() === '..') {
+				paths.dequeue();
+			}
+
+			snippetName = paths.dequeue();
+			fileName = paths.dequeue();
+			while (paths.size() > 0) {
+				fileName += '/' + paths.dequeue();
+			}
+		} else {
+			let paths = new Queue<string>();
+			for (let s of snippet.split('/')) {
+				paths.add(s);
+			}
+			let relative: string[] = [];
+			while (paths.size() > 0 && paths.peek() === '..') {
+				relative.push(paths.dequeue());
+			}
+			if (relative.length > 0) {
+				let relativePath = Helpers.fixPath(dirname(fileName), relative.join('/'));
+				if (Helpers.strIsNullOrEmpty(relativePath)) {
+					snippetName = paths.dequeue();
+					fileName = paths.dequeue();
+					while (paths.size() > 0) {
+						fileName += '/' + paths.dequeue();
+					}
+				}
+			} else console.log(`Could not get snippet name for ${snippet}`);
+		}
+
+		return [snippetName, fileName];
+	}
+
+	public static splitIntoLines(content: string): ContentMatch[] {
+		return ContentMatch.getMatches(content, ContentMatch.line);
 	}
 
 	public static extractMetadata(source: string): Map<string, string> {
@@ -451,6 +517,26 @@ export class ContentMatch extends RegexContainer {
 
 	public static getNotes(source: string, codeFences?: ContentMatch[]): ContentMatch[] {
 		return ContentMatch.getMatches(source, ContentMatch.note, codeFences);
+	}
+
+	public static getCodeCallouts(source: string, codeFences?: ContentMatch[]): ContentMatch[] {
+		let keyedMatches: ContentMatch[] = [];
+
+		try {
+			let pattern = ContentMatch.codeCallouts;
+			let matches = ContentMatch.getMatches(source, pattern);
+
+			for (let m of matches) {
+				if (codeFences === undefined || !ContentMatch.inCodeFence(m, codeFences))
+					keyedMatches.push(m);
+			}
+		} catch (e) {
+			console.log(e);
+		}
+
+		return keyedMatches.sort((a, b) => {
+			return a.index - b.index;
+		});
 	}
 
 	public static padPatternSpaces(pattern: string, spaces: number): string {
