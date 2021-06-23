@@ -20,6 +20,13 @@ module.exports = {
 		'import/resolver': 'webpack'
 	},
 	rules: {
+		'@typescript-eslint/restrict-template-expressions': 'off',
+		'@typescript-eslint/no-unsafe-assignment': 'off',
+		'@typescript-eslint/no-unsafe-return': 'off',
+		'@typescript-eslint/no-unsafe-member-access': 'off',
+		'@typescript-eslint/no-unsafe-call': 'off',
+		'@typescript-eslint/explicit-module-boundary-types': 'off',
+		'@typescript-eslint/no-floating-promises': 'off',
 		'@typescript-eslint/no-inferrable-types': 'off',
 		'@typescript-eslint/no-unnecessary-type-assertion': 'off',
 		'@typescript-eslint/require-await': 'off',
@@ -27,10 +34,8 @@ module.exports = {
 		'@typescript-eslint/explicit-function-return-type': 'off',
 		'@typescript-eslint/adjacent-overload-signatures': 'error',
 		'@typescript-eslint/array-type': 'error',
-		'@typescript-eslint/class-name-casing': 'error',
 		'@typescript-eslint/consistent-type-assertions': 'off',
 		'@typescript-eslint/indent': ['off', 'tabs'],
-		'@typescript-eslint/interface-name-prefix': 'error',
 		'@typescript-eslint/member-ordering': 'error',
 		'@typescript-eslint/no-empty-function': 'off',
 		'@typescript-eslint/no-empty-interface': 'error',
@@ -130,7 +135,7 @@ module.exports = {
 		'no-unused-expressions': 'off',
 		'no-throw-literal': 'off',
 		'@typescript-eslint/no-unused-vars': 'off',
-		'import/no-unresolved': [2, { ignore: ['squirejs'] }],
+		'import/no-unresolved': [2, { ignore: ['vscode'] }],
 		'import/no-cycle': [2, { maxDepth: 10 }],
 		semi: ['error', 'always']
 	}

@@ -19,7 +19,7 @@ export function removeCommentsFromFile(
 	const message = 'Remove comments from file';
 	reporter.sendTelemetryEvent('command', { command: telemetryCommand });
 	if (file.endsWith('.md')) {
-		return readWriteFileWithProgress(progress, file, message, files, index, (data: any) => {
+		return readWriteFileWithProgress(progress, file, message, files, index, (data: string) => {
 			data = removeHtmlComments(data);
 			return data;
 		});
@@ -39,14 +39,14 @@ export function removeCommentsFromFile(
  */
 export function removeHtmlComments(data: string) {
 	try {
-		const processor: any = unified().use(markdown, { commonmark: true }).parse(data);
+		const processor: any = unified().use(markdown).parse(data);
 		if (processor.children) {
 			processor.children.forEach((md: any) => {
 				if (md.type === 'html' && md.value.startsWith('<!--')) {
 					const firstWordRegex = /<!--\W*(\w+)/gim;
 					const htmlComment = md.value.match(firstWordRegex);
-					const firstWord = htmlComment.toString().replace(/[^a-zA-Z0-9]+/, '');
-					const commentRegex = new RegExp('<!--\\s*' + firstWord + '([^]+?)-->', 'gmi');
+					const firstWord: string = htmlComment.toString().replace(/[^a-zA-Z0-9]+/, '');
+					const commentRegex = new RegExp(`<!--\\s*${firstWord}([^]+?)-->`, 'gmi');
 					data = data.replace(commentRegex, '');
 				}
 			});

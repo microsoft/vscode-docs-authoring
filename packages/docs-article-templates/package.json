@@ -6,6 +6,12 @@
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
 	"version": "0.2.11",
 	"publisher": "docsmsft",
+	"private": true,
+	"workspaces": {
+		"nohoist": [
+			"**"
+		]
+	},
 	"engines": {
 		"vscode": "^1.57.0"
 	},
@@ -95,12 +101,12 @@
 		"@types/node": "^12.12.32",
 		"@types/node-dir": "0.0.32",
 		"@types/vscode": "^1.57.0",
-		"@typescript-eslint/eslint-plugin": "^2.34.0",
-		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",
-		"@typescript-eslint/parser": "^2.34.0",
+		"@typescript-eslint/eslint-plugin": "^4.28.0",
+		"@typescript-eslint/eslint-plugin-tslint": "^4.28.0",
+		"@typescript-eslint/parser": "^4.28.0",
 		"chai": "^4.2.0",
 		"chai-spies": "^1.0.0",
-		"eslint": "^7.1.0",
+		"eslint": "^7.29.0",
 		"eslint-import-resolver-webpack": "^0.12.1",
 		"eslint-plugin-import": "^2.20.2",
 		"husky": "^4.3.8",

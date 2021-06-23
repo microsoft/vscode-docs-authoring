@@ -354,8 +354,6 @@ export function createChildProcess(path: any, args: any, options: any) {
 	const childProcess = promise.childProcess;
 	return childProcess;
 }
-
-// eslint-disable-next-line @typescript-eslint/interface-name-prefix
 interface IExpressionReplacementPair {
 	expression: RegExp;
 	replacement: string;
