@@ -4,7 +4,7 @@ Interested in making a code contribution and not sure where to begin? Check out 
 
 ## Getting Started with Development Environment
 
-Navigate to the root directory `vscode-docs-authoring` and run `yarn install`. This will install all dependencies for each of the extension packages. To work on an extension navigate to that package folder directory. For example: if you want to work on the docs-markdown extension, navigate to `vscode-docs-authoring/packages/docs-markdown` and open the folder in VSCode. Run the extension by hitting F5 to run the Extension Host.
+Navigate to the root directory `vscode-docs-authoring` and run `npm install`. This will install all dependencies for each of the extension packages. To work on an extension navigate to that package folder directory. For example: if you want to work on the docs-markdown extension, navigate to `vscode-docs-authoring/packages/docs-markdown` and open the folder in VSCode. Run the extension by hitting F5 to run the Extension Host.
 
 Pre-push hooks will run when doing a push to your upstream or origin branch. This hook will check that all of the extensions compile and lint without errors.
 
@@ -20,10 +20,10 @@ When creating your pull request, please include:
 
 - A title with [BUG FIX] or [ENHANCEMENT] prefix
 - In the description, include:
-	- A description of the change.
-	- A link to the issue.
-		- For a BUG - If an issue does not exist, include a description of what the fix is, including a detailed description of the _expected_ and _actual_ behavior of the system.
-		- For an ENHANCEMENT – If an issue does not exist, create one with a detailed description of the proposed change for review.
+  - A description of the change.
+  - A link to the issue.
+    - For a BUG - If an issue does not exist, include a description of what the fix is, including a detailed description of the _expected_ and _actual_ behavior of the system.
+    - For an ENHANCEMENT – If an issue does not exist, create one with a detailed description of the proposed change for review.
 - Possible side-effects or negative impact
 - Verification process
 - Release notes  
