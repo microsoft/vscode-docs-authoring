@@ -19,11 +19,6 @@
 	"engines": {
 		"vscode": "^1.48.0"
 	},
-	"workspaces": {
-		"nohoist": [
-			"**"
-		]
-	},
 	"categories": [
 		"Snippets",
 		"Other"

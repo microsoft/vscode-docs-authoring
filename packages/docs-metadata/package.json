@@ -9,11 +9,6 @@
 	"engines": {
 		"vscode": "^1.57.0"
 	},
-	"workspaces": {
-		"nohoist": [
-			"**"
-		]
-	},
 	"categories": [
 		"Other"
 	],

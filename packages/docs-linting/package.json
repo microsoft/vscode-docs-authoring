@@ -13,11 +13,6 @@
 	"engines": {
 		"vscode": "^1.22.0"
 	},
-	"workspaces": {
-		"nohoist": [
-			"**"
-		]
-	},
 	"repository": {
 		"url": "https://github.com/Microsoft/vscode-docs-authoring.git"
 	},

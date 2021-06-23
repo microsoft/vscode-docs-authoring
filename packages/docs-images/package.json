@@ -10,11 +10,6 @@
 	"bugs": {
 		"url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
 	},
-	"workspaces": {
-		"nohoist": [
-			"**"
-		]
-	},
 	"engines": {
 		"vscode": "^1.57.0"
 	},

@@ -7,11 +7,6 @@
 	"version": "0.2.11",
 	"publisher": "docsmsft",
 	"private": true,
-	"workspaces": {
-		"nohoist": [
-			"**"
-		]
-	},
 	"engines": {
 		"vscode": "^1.57.0"
 	},
@@ -125,7 +120,7 @@
 		"vscode-test": "^1.3.0",
 		"webpack": "^4.42.1",
 		"webpack-bundle-analyzer": "^3.6.1",
-		"webpack-cli": "^3.3.11"
+		"webpack-cli": "^3.3.12"
 	},
 	"repository": {
 		"type": "git",
