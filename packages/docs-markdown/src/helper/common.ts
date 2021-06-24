@@ -29,8 +29,6 @@ export function tryFindFile(rootPath: string, fileName: string, attemptTraverse?
 		const exists = existsSync(fullPath);
 		if (exists) {
 			return fullPath;
-		} else if (attemptTraverse === true) {
-			return traverseDirectoryToFile(rootPath, fileName);
 		} else {
 			const files = sync(`**/${fileName}`, {
 				cwd: rootPath
@@ -45,7 +43,7 @@ export function tryFindFile(rootPath: string, fileName: string, attemptTraverse?
 	}
 
 	postWarning(`Unable to find a file named "${fileName}", recursively at root "${rootPath}".`);
-	return undefined;
+	return attemptTraverse === true ? traverseDirectoryToFile(rootPath, fileName) : undefined;
 }
 
 function traverseDirectoryToFile(rootPath: string, fileName: string) {
