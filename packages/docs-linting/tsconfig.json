@@ -8,7 +8,7 @@
 		"noUnusedLocals": true,
 		"noImplicitAny": true,
 		"noImplicitThis": true,
-		"lib": ["es6"],
+		"lib": ["es6", "esnext"],
 		"sourceMap": true,
 		"rootDir": "."
 	},
