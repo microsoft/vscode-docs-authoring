@@ -239,11 +239,6 @@
 				"category": "Docs"
 			},
 			{
-				"command": "updateImplicitMetadataValues",
-				"title": "Update Implicit Metadata Values",
-				"category": "Docs"
-			},
-			{
 				"command": "disableMetadataDateReminder",
 				"title": "Disable the ms.date date reminder prompt",
 				"category": "Docs"
@@ -302,11 +297,6 @@
 				{
 					"when": "editorTextFocus && resourceLangId == markdown || resourceLangId == yaml",
 					"command": "updateMetadataDate",
-					"group": "1_modification"
-				},
-				{
-					"when": "editorTextFocus && resourceLangId == markdown || resourceLangId == yaml",
-					"command": "updateImplicitMetadataValues",
 					"group": "1_modification"
 				},
 				{

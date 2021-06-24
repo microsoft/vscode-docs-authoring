@@ -201,8 +201,10 @@ export async function activate(context: ExtensionContext) {
 			}
 		}
 	});
-	workspace.onDidCloseTextDocument(e => {
-		metadataTreeProvider.refresh();
+	workspace.onDidChangeTextDocument(e => {
+		if (e.document.languageId === 'markdown') {
+			metadataTreeProvider.refresh();
+		}
 	});
 
 	// When the document changes, find and replace target expressions (for example, smart quotes).

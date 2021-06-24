@@ -1,4 +1,14 @@
-import { MarkdownString, ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState } from 'vscode';
+import {
+	commands,
+	MarkdownString,
+	Position,
+	Range,
+	TextDocumentShowOptions,
+	ThemeColor,
+	ThemeIcon,
+	TreeItem,
+	TreeItemCollapsibleState
+} from 'vscode';
 import { MetadataSource } from './metadata-source';
 import { MetadataKey } from './metadata-key';
 import { MetadataCategory } from './metadata-category';
@@ -26,8 +36,27 @@ export class MetadataTreeNode extends TreeItem {
 		this.key = entry.key;
 		this.source = entry.source;
 		this.value = entry.value;
+		// this.resourceUri = entry.resourceUri;
 
 		if (this.key) {
+			if (entry.resourceUri) {
+				const args: any[] = [entry.resourceUri];
+				if (entry.lineNumber > -1) {
+					args.push({
+						preserveFocus: true,
+						preview: false,
+						selection: new Range(
+							new Position(entry.lineNumber, 0),
+							new Position(entry.lineNumber, 0)
+						)
+					} as TextDocumentShowOptions);
+				}
+				this.command = {
+					title: 'open',
+					command: `vscode.open`,
+					arguments: args
+				};
+			}
 			this.description = toDescription(this);
 			this.tooltip = toTooltip(this);
 			this.iconPath = toSourceIcon(this.source);
