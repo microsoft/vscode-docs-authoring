@@ -29,38 +29,38 @@ export function microsoftLinks(
 export function handleLinksWithRegex(data: string) {
 	const akaRegex = new RegExp(/http:\/\/aka.ms/g);
 	data = data.replace(akaRegex, 'https://aka.ms');
-	const microsoftRegex = new RegExp(/http:\/\/microsoft.com/g);
+	const microsoftRegex = new RegExp(/http:\/\/microsoft\.com/g);
 	data = data.replace(microsoftRegex, 'https://microsoft.com');
-	const goMicrosoftRegex = new RegExp(/http:\/\/go.microsoft.com/g);
+	const goMicrosoftRegex = new RegExp(/http:\/\/go.microsoft\.com/g);
 	data = data.replace(goMicrosoftRegex, 'https://go.microsoft.com');
-	const visualstudioRegex = new RegExp(/http:\/\/visualstudio.com/g);
+	const visualstudioRegex = new RegExp(/http:\/\/visualstudio\.com/g);
 	data = data.replace(visualstudioRegex, 'https://visualstudio.com');
-	const officeRegex = new RegExp(/http:\/\/office.com/g);
+	const officeRegex = new RegExp(/http:\/\/office\.com/g);
 	data = data.replace(officeRegex, 'https://office.com');
-	const docsRegex = new RegExp(/http:\/\/docs.microsoft.com/g);
+	const docsRegex = new RegExp(/http:\/\/docs\.microsoft\.com/g);
 	data = data.replace(docsRegex, 'https://docs.microsoft.com');
-	const azureRegex = new RegExp(/http:\/\/azure.microsoft.com/g);
+	const azureRegex = new RegExp(/http:\/\/azure\.microsoft\.com/g);
 	data = data.replace(azureRegex, 'https://azure.microsoft.com');
-	const azureRegex2 = new RegExp(/http:\/\/azure.com/g);
+	const azureRegex2 = new RegExp(/http:\/\/azure\.com/g);
 	data = data.replace(azureRegex2, 'https://azure.com');
-	const msdnRegex = new RegExp(/http:\/\/msdn.microsoft.com/g);
+	const msdnRegex = new RegExp(/http:\/\/msdn\.microsoft\.com/g);
 	data = data.replace(msdnRegex, 'https://msdn.microsoft.com');
-	const msdnRegex2 = new RegExp(/http:\/\/msdn.com/g);
+	const msdnRegex2 = new RegExp(/http:\/\/msdn\.com/g);
 	data = data.replace(msdnRegex2, 'https://msdn.com');
-	const technetRegex = new RegExp(/http:\/\/technet.microsoft.com/g);
+	const technetRegex = new RegExp(/http:\/\/technet\.microsoft\.com/g);
 	data = data.replace(technetRegex, 'https://technet.microsoft.com');
-	const technetRegex2 = new RegExp(/http:\/\/technet.com/g);
+	const technetRegex2 = new RegExp(/http:\/\/technet\.com/g);
 	data = data.replace(technetRegex2, 'https://technet.com');
-	const downloadRegex = new RegExp(/http:\/\/download.microsoft.com/g);
+	const downloadRegex = new RegExp(/http:\/\/download\.microsoft\.com/g);
 	data = data.replace(downloadRegex, 'https://download.microsoft.com');
-	const docsRegexLang = new RegExp(/https:\/\/docs.microsoft.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
+	const docsRegexLang = new RegExp(/https:\/\/docs\.microsoft\.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
 	data = data.replace(docsRegexLang, 'https://docs.microsoft.com/');
-	const azureRegexLang = new RegExp(/https:\/\/azure.microsoft.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
+	const azureRegexLang = new RegExp(/https:\/\/azure\.microsoft\.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
 	data = data.replace(azureRegexLang, 'https://azure.microsoft.com/');
-	const msdnRegexLang = new RegExp(/https:\/\/msdn.microsoft.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
+	const msdnRegexLang = new RegExp(/https:\/\/msdn\.microsoft\.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
 	data = data.replace(msdnRegexLang, 'https://msdn.microsoft.com/');
 	const technetRegexLang = new RegExp(
-		/https:\/\/technet.microsoft.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g
+		/https:\/\/technet\.microsoft\.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g
 	);
 	data = data.replace(technetRegexLang, 'https://technet.microsoft.com/');
 	return data;

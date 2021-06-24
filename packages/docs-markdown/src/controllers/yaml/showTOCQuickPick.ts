@@ -6,6 +6,7 @@ import { QuickPickItem, window, workspace } from 'vscode';
 import { ignoreFiles, noActiveEditorMessage } from '../../helper/common';
 import { noHeadingSelected } from '../../constants/log-messages';
 import { getHeadings } from '../../helper/getHeader';
+import { removeFirstOccurrence } from '../../helper/utility';
 
 export async function showTOCQuickPick(options: boolean) {
 	const markdownExtensionFilter = ['.md'];
@@ -54,7 +55,9 @@ export async function showTOCQuickPick(options: boolean) {
 	const activeFilePath = editor.document.fileName;
 	const href = relative(activeFilePath, fullPath);
 	// format href: remove addtional leading segment (support windows, macos and linux), set path separators to standard
-	const formattedHrefPath = href.replace('..\\', '').replace('../', '').replace(/\\/g, '/');
+	let updatedHref = removeFirstOccurrence(href, '..\\');
+	updatedHref = removeFirstOccurrence(updatedHref, '../');
+	const formattedHrefPath = updatedHref.replace(/\\/g, '/');
 	const val = await window.showInputBox({
 		value: headingName,
 		valueSelection: [0, 0]

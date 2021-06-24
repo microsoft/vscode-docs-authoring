@@ -116,7 +116,7 @@ export async function insertURL() {
 		return;
 	}
 	let contentToInsert = '';
-	if (val.indexOf('docs.microsoft.com') === -1) {
+	if (!/http(s)?:\/\/docs.microsoft.com/.test(val)) {
 		// if user selected text, don't prompt for alt text
 		contentToInsert = await buildLinkForWebURL(selectedText, val, selection, linkTextOptions);
 	} else {

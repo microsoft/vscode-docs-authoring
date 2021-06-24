@@ -21,6 +21,7 @@ const HTMLParser = require('node-html-parser');
 
 const telemetryCommandLink: string = 'insertLink';
 let commandOption: string;
+const allowedHosts = ['https://visualstudio.com'];
 
 export async function linkToDocsPageByUrl(urlValue?: string) {
 	commandOption = 'linkToDocsPageByUrl';
@@ -179,7 +180,7 @@ export function checkIfUrlRepoIsInCurrentRepo(repoUrl: string, repoName: string)
 	if (url.origin === 'https://github.com') {
 		const repo = getRepoName(url);
 		return repo === repoName;
-	} else if (url.origin.indexOf('visualstudio.com')) {
+	} else if (allowedHosts.includes(url.origin)) {
 		const repo = url.pathname.split('/').pop();
 		return repo === repoName;
 	} else {
@@ -208,7 +209,7 @@ function parseMetadata(metadata: string) {
 				return pathWithBranchName.substring(branchIndex + 1);
 			}
 		}
-	} else if (url.origin.indexOf('visualstudio.com')) {
+	} else if (allowedHosts.includes(url.origin)) {
 		const params = new URLSearchParams(url.search);
 		return params.get('path');
 	}
