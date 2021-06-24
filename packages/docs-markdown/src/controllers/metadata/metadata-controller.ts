@@ -4,88 +4,25 @@
 import jsyaml = require('js-yaml');
 import minimatch = require('minimatch');
 import { dirname, sep } from 'path';
-import { commands, TextEditor, Uri, window, workspace } from 'vscode';
+import { commands, Uri, window } from 'vscode';
 import {
-	isMarkdownFileCheck,
 	isMarkdownYamlFileCheckWithoutNotification,
 	matchAll,
 	noActiveEditorMessage,
 	toShortDate
 } from '../../helper/common';
 import { sendTelemetryData } from '../../helper/telemetry';
-import { applyReplacements, findReplacement, Replacements } from '../../helper/utility';
-import { DocFxFileInfo, readDocFxJson } from './docfx-file-parser';
+import { applyReplacements, findReplacement } from '../../helper/utility';
+import { DocFxFileInfo } from './docfx-file-parser';
 import { MetadataCategory } from './metadata-category';
 import { MetadataEntry } from './metadata-entry';
-import { metadataExpressions, metadataFrontMatterRegex, msDateRegex } from './metadata-expressions';
+import { metadataFrontMatterRegex, msDateRegex } from './metadata-expressions';
 import { allMetadataKeys, isRequired, MetadataKey, requiredMetadataKeys } from './metadata-key';
 import { MetadataSource } from './metadata-source';
 
 export function insertMetadataCommands() {
 	return [{ command: updateMetadataDate.name, callback: updateMetadataDate }];
 }
-
-// class ReplacementFormat {
-// 	constructor(readonly type: MetadataKey, private readonly value: string) {}
-
-// 	public toReplacementString() {
-// 		return `${this.type}: ${this.value}`;
-// 	}
-// }
-
-// async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementFormat[]> {
-// 	const folder = workspace.getWorkspaceFolder(editor.document.uri);
-// 	if (folder) {
-// 		// Read the DocFX.json file, search for metadata defaults.
-// 		const { fullPath, contents } = readDocFxJson(folder.uri.fsPath);
-// 		if (contents && contents.build && contents.build.fileMetadata) {
-// 			const replacements: ReplacementFormat[] = [];
-// 			const docFxDirectory = dirname(fullPath);
-// 			const path = editor.document.uri.fsPath.replace(docFxDirectory, '');
-// 			const fsPath = path.startsWith(sep) ? path.substr(1) : path;
-// 			const fileMetadata = contents.build.fileMetadata;
-// 			const tryAssignReplacement = (
-// 				filePath: string,
-// 				type: MetadataKey,
-// 				globs?: { [glob: string]: boolean | string | string[] }
-// 			) => {
-// 				if (globs) {
-// 					const { value } = getReplacementValue(globs, filePath);
-// 					if (value && typeof value === 'string') {
-// 						replacements.push(new ReplacementFormat(type, value));
-// 						return true;
-// 					}
-// 				}
-// 				return false;
-// 			};
-
-// 			// Fall back to templates config, if unable to find author and ms.author
-// 			if (!tryAssignReplacement(fsPath, 'author', fileMetadata.author)) {
-// 				const gitHubId = workspace.getConfiguration('docs.templates').githubid;
-// 				if (gitHubId) {
-// 					replacements.push(new ReplacementFormat('author', gitHubId));
-// 				}
-// 			}
-// 			if (!tryAssignReplacement(fsPath, 'ms.author', fileMetadata['ms.author'])) {
-// 				const alias = workspace.getConfiguration('docs.templates').alias;
-// 				if (alias) {
-// 					replacements.push(new ReplacementFormat('ms.author', alias));
-// 				}
-// 			}
-
-// 			tryAssignReplacement(fsPath, 'manager', fileMetadata.manager);
-// 			tryAssignReplacement(fsPath, 'titleSuffix', fileMetadata.titleSuffix);
-// 			tryAssignReplacement(fsPath, 'ms.service', fileMetadata['ms.service']);
-// 			tryAssignReplacement(fsPath, 'ms.subservice', fileMetadata['ms.subservice']);
-
-// 			replacements.push(new ReplacementFormat('ms.date', toShortDate(new Date())));
-
-// 			return replacements;
-// 		}
-// 	}
-
-// 	return [];
-// }
 
 export function getAllEffectiveMetadata(docFxFileInfo: DocFxFileInfo): MetadataEntry[] {
 	const editor = window.activeTextEditor;
