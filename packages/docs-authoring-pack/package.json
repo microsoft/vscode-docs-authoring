@@ -5,6 +5,7 @@
   "icon": "images/docs-logo-ms.png",
   "version": "0.1.13",
   "publisher": "docsmsft",
+  "private": true,
   "engines": {
     "vscode": "^1.20.0"
   },

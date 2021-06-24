@@ -20,10 +20,10 @@ When creating your pull request, please include:
 
 - A title with [BUG FIX] or [ENHANCEMENT] prefix
 - In the description, include:
-	- A description of the change.
-	- A link to the issue.
-		- For a BUG - If an issue does not exist, include a description of what the fix is, including a detailed description of the _expected_ and _actual_ behavior of the system.
-		- For an ENHANCEMENT – If an issue does not exist, create one with a detailed description of the proposed change for review.
+  - A description of the change.
+  - A link to the issue.
+    - For a BUG - If an issue does not exist, include a description of what the fix is, including a detailed description of the _expected_ and _actual_ behavior of the system.
+    - For an ENHANCEMENT – If an issue does not exist, create one with a detailed description of the proposed change for review.
 - Possible side-effects or negative impact
 - Verification process
 - Release notes  

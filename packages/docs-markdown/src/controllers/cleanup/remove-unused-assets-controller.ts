@@ -29,7 +29,7 @@ export async function removeUnusedImagesAndIncludes(
 ): Promise<any> {
 	let unusedFiles = await getImageAndIncludesFiles(workspacePath);
 	const files = await recursive(workspacePath, ignoreFiles);
-	const promises: Promise<{} | void>[] = [];
+	const promises: Promise<any | void>[] = [];
 	files.map((file: string, index: number) => {
 		if (
 			file.endsWith('.md') ||

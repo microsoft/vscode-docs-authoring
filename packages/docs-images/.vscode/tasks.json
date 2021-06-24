@@ -8,10 +8,7 @@
 		{
 			"label": "webpack",
 			"type": "shell",
-			"args": [
-				"run",
-				"webpack"
-			],
+			"args": ["run", "webpack"],
 			"problemMatcher": [
 				{
 					"pattern": [
@@ -34,10 +31,7 @@
 		{
 			"label": "mocha",
 			"type": "shell",
-			"args": [
-				"run",
-				"compile"
-			],
+			"args": ["run", "compile"],
 			"problemMatcher": [],
 			"group": "test"
 		}
