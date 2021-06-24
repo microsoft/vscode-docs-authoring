@@ -86,7 +86,7 @@ export function getAllEffectiveMetadata(docFxFileInfo: DocFxFileInfo): MetadataE
 				const { value, resourceUri, lineNumber } = {
 					value: tryFindFileMetadataGlobValue(fileMetadataGlobs, fsPath),
 					resourceUri: Uri.file(fullPath),
-					lineNumber: tryFindFileMetadataLineNumber(key, lines, fileMetadataGlobs)
+					lineNumber: tryFindFileMetadataLineNumber(key, fsPath, lines, fileMetadataGlobs)
 				};
 				if (value) {
 					metadataEntries.push({
@@ -250,6 +250,7 @@ function tryFindGlobalMetadataLineNumber(key: MetadataKey, lines: string[]) {
 
 function tryFindFileMetadataLineNumber(
 	key: MetadataKey,
+	fsPath: string,
 	lines: string[],
 	globNode: { [glob: string]: boolean | string | string[] }
 ) {
@@ -292,7 +293,7 @@ function tryFindFileMetadataLineNumber(
 			const globKey = globKeys[i];
 			for (let j = length + globNodeIndex; j >= fileMetadataIndex; --j) {
 				const line = lines[j].trim();
-				if (line && line.indexOf(globKey) > -1) {
+				if (line && line.indexOf(globKey) > -1 && minimatch(fsPath, globKey, { nocase: true })) {
 					return j;
 				}
 			}
