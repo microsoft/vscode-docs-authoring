@@ -36,7 +36,6 @@ export class MetadataTreeNode extends TreeItem {
 		this.key = entry.key;
 		this.source = entry.source;
 		this.value = entry.value;
-		// this.resourceUri = entry.resourceUri;
 
 		if (this.key) {
 			if (entry.resourceUri) {
