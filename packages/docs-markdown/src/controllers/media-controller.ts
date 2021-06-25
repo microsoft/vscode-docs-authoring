@@ -60,11 +60,13 @@ export async function insertVideo() {
 		return;
 	}
 	const validateInput = (urlInput: string) => {
+		const allowedHosts = [
+			'https://channel9.msdn.com',
+			'https://www.youtube.com/embed',
+			'https://www.microsoft.com/en-us/videoplayer/embed'
+		];
 		const urlLowerCase = urlInput.toLowerCase();
-		return (urlLowerCase.startsWith('https://channel9.msdn.com') &&
-			urlLowerCase.split('?')[0].endsWith('player')) ||
-			urlLowerCase.startsWith('https://www.youtube.com/embed') ||
-			urlLowerCase.startsWith('https://www.microsoft.com/en-us/videoplayer/embed')
+		return allowedHosts.includes(urlLowerCase) && urlLowerCase.split('?')[0].endsWith('player')
 			? ''
 			: 'https://channel9.msdn.com, https://www.youtube.com/embed or https://www.microsoft.com/en-us/videoplayer/embed are required prefixes for video URLs. Link will not be added if prefix is not present.';
 	};
@@ -116,7 +118,7 @@ export async function insertURL() {
 		return;
 	}
 	let contentToInsert = '';
-	if (!/http(s)?:\/\/docs.microsoft.com/.test(val)) {
+	if (!/^http(s)?:\/\/docs\.microsoft\.com/.test(val)) {
 		// if user selected text, don't prompt for alt text
 		contentToInsert = await buildLinkForWebURL(selectedText, val, selection, linkTextOptions);
 	} else {

@@ -31,7 +31,7 @@ export function handleLinksWithRegex(data: string) {
 	data = data.replace(akaRegex, 'https://aka.ms');
 	const microsoftRegex = new RegExp(/http:\/\/microsoft\.com/g);
 	data = data.replace(microsoftRegex, 'https://microsoft.com');
-	const goMicrosoftRegex = new RegExp(/http:\/\/go.microsoft\.com/g);
+	const goMicrosoftRegex = new RegExp(/http:\/\/go\.microsoft\.com/g);
 	data = data.replace(goMicrosoftRegex, 'https://go.microsoft.com');
 	const visualstudioRegex = new RegExp(/http:\/\/visualstudio\.com/g);
 	data = data.replace(visualstudioRegex, 'https://visualstudio.com');

@@ -36,7 +36,7 @@ export async function linkToDocsPageByUrl(urlValue?: string) {
 			placeHolder: 'Paste a docs.microsoft.com URL',
 			validateInput: (text: string) =>
 				text !== ''
-					? text.indexOf('docs.microsoft.com') === -1
+					? text.indexOf('https://docs.microsoft.com') === -1
 						? 'Invalid link. Only use this command for pages on docs.microsoft.com.'
 						: ''
 					: 'URL input must not be empty'
