@@ -16,7 +16,7 @@ export function readDocFxJson(workspaceRootDirectory: string): DocFxFileInfo | n
 	}
 
 	// Read the DocFX.json file, search for metadata defaults.
-	const docFxJson = tryFindFile(workspaceRootDirectory, 'docfx.json', true);
+	const docFxJson = tryFindFile(workspaceRootDirectory, 'docfx.json');
 	if (!!docFxJson && existsSync(docFxJson)) {
 		const jsonBuffer = readFileSync(docFxJson);
 		const json = jsonBuffer.toString();

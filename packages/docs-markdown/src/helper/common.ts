@@ -5,7 +5,7 @@ import yaml = require('js-yaml');
 import { existsSync, readFileSync } from 'fs';
 import { sync } from 'glob';
 import { platform } from 'os';
-import { basename, dirname, extname, join, parse, sep, resolve } from 'path';
+import { extname, join, parse, sep, resolve } from 'path';
 import {
 	DocumentLink,
 	Extension,
@@ -23,32 +23,51 @@ import { output } from './output';
 
 export const ignoreFiles = ['.git', '.github', '.vscode', '.vs', 'node_module'];
 
-export function tryFindFile(rootPath: string, fileName: string, attemptTraverse?: boolean) {
+export function tryFindFile(rootPath: string, fileName: string) {
+	let result: {
+		path?: string;
+		error?: any | unknown;
+	};
+
 	try {
 		const fullPath = resolve(rootPath, fileName);
 		const exists = existsSync(fullPath);
 		if (exists) {
-			return fullPath;
-		} else if (attemptTraverse === true) {
-			return traverseDirectoryToFile(rootPath, fileName);
+			result = { path: fullPath };
 		} else {
 			const files = sync(`**/${fileName}`, {
 				cwd: rootPath
 			});
 
 			if (files && files.length === 1) {
-				return join(rootPath, files[0]);
+				result = { path: join(rootPath, files[0]) };
 			}
 		}
 	} catch (error) {
-		postError(error.toString());
+		result = { error };
 	}
 
-	postWarning(`Unable to find a file named "${fileName}", recursively at root "${rootPath}".`);
-	return undefined;
+	if (!result?.path) {
+		result = traverseDirectoryToFile(rootPath, fileName);
+	}
+
+	if (result?.error) {
+		postWarning(
+			`Unable to find a file named "${fileName}", recursively at root "${rootPath}".\n${result?.error}`
+		);
+	}
+
+	return result?.path;
 }
 
-function traverseDirectoryToFile(rootPath: string, fileName: string) {
+function traverseDirectoryToFile(
+	rootPath: string,
+	fileName: string
+): {
+	path?: string;
+	error?: any | unknown;
+} {
+	let error: any | unknown;
 	try {
 		const getParent = (dir: string) => {
 			if (dir) {
@@ -76,14 +95,12 @@ function traverseDirectoryToFile(rootPath: string, fileName: string) {
 				}
 			}
 		}
-		return filePath;
-	} catch (error) {
-		postError(
-			`Unable to traverse directory hierarchy for fileName: ${fileName} at starting rootPath: ${rootPath}.\n${error}`
-		);
+		return { path: filePath };
+	} catch (e) {
+		error = e;
 	}
 
-	return undefined;
+	return { error };
 }
 
 /**
