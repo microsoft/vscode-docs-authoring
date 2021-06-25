@@ -37,7 +37,11 @@ export interface Status {
 
 export class PackageError extends Error {
 	// Do not put PII (personally identifiable information) in the 'message' field as it will be logged to telemetry
-	constructor(public message: string, public pkg: Package, public innerError: any = null) {
+	constructor(
+		public message: string,
+		public pkg: Package,
+		public innerError: NodeJS.ErrnoException = null
+	) {
 		super(message);
 	}
 }

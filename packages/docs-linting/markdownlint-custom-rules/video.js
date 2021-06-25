@@ -82,7 +82,8 @@ module.exports = {
 											context: text.line
 										});
 									}
-									if (source.includes('channel9.msdn.com') && !source.includes('/player')) {
+									let allowedHosts = ['channel9.msdn.com'];
+									if (allowedHosts.includes(source) && !source.includes('/player')) {
 										onError({
 											lineNumber: text.lineNumber,
 											detail: detailStrings.videoChannel9,

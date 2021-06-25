@@ -21,6 +21,7 @@ const HTMLParser = require('node-html-parser');
 
 const telemetryCommandLink: string = 'insertLink';
 let commandOption: string;
+const allowedHosts = ['https://visualstudio.com'];
 
 export async function linkToDocsPageByUrl(urlValue?: string) {
 	commandOption = 'linkToDocsPageByUrl';
@@ -35,7 +36,7 @@ export async function linkToDocsPageByUrl(urlValue?: string) {
 			placeHolder: 'Paste a docs.microsoft.com URL',
 			validateInput: (text: string) =>
 				text !== ''
-					? text.indexOf('docs.microsoft.com') === -1
+					? text.indexOf('https://docs.microsoft.com') === -1
 						? 'Invalid link. Only use this command for pages on docs.microsoft.com.'
 						: ''
 					: 'URL input must not be empty'
@@ -179,7 +180,7 @@ export function checkIfUrlRepoIsInCurrentRepo(repoUrl: string, repoName: string)
 	if (url.origin === 'https://github.com') {
 		const repo = getRepoName(url);
 		return repo === repoName;
-	} else if (url.origin.indexOf('visualstudio.com')) {
+	} else if (allowedHosts.includes(url.origin)) {
 		const repo = url.pathname.split('/').pop();
 		return repo === repoName;
 	} else {
@@ -208,7 +209,7 @@ function parseMetadata(metadata: string) {
 				return pathWithBranchName.substring(branchIndex + 1);
 			}
 		}
-	} else if (url.origin.indexOf('visualstudio.com')) {
+	} else if (allowedHosts.includes(url.origin)) {
 		const params = new URLSearchParams(url.search);
 		return params.get('path');
 	}
