@@ -33,11 +33,8 @@
 		"commands": [
 			{
 				"command": "effectiveMetadata.refreshEntry",
-				"title": "Refresh",
-				"icon": {
-					"light": "images/light-refresh.svg",
-					"dark": "images/dark-refresh.svg"
-				}
+				"title": "Refresh Metadata",
+				"icon": "$(refresh)"
 			},
 			{
 				"command": "insertMoniker",
