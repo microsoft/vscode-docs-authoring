@@ -218,12 +218,22 @@ suite('Metadata Controller', () => {
 				key: 'titleSuffix',
 				value: 'bar',
 				category: MetadataCategory.Optional
+			},
+			{
+				source: MetadataSource.Missing,
+				key: 'ms.topic',
+				category: MetadataCategory.Required
 			}
 		];
 
+		expect(expectedEntries.length).to.equal(metadataEntries.length);
 		expectedEntries.forEach(expected => {
 			const actual = metadataEntries.find(e => e.key === expected.key);
-			expect(actual).deep.equal(expected);
+			if (actual) {
+				expect(actual.source).to.equal(expected.source);
+				expect(actual.value).to.equal(expected.value);
+				expect(actual.category).to.equal(expected.category);
+			}
 		});
 	});
 	test('updateMetadataDate().noActiveEditorMessage()', async () => {

@@ -136,6 +136,10 @@ function groupByMetadataKey(metadataEntries: MetadataEntry[]) {
 	const grouping: Map<MetadataKey, MetadataEntry[]> = new Map();
 	for (let i = 0; i < metadataEntries.length; ++i) {
 		const node = metadataEntries[i];
+		if (node.value === undefined) {
+			continue;
+		}
+
 		if (grouping.has(node.key)) {
 			grouping.get(node.key).push(node);
 		} else {
