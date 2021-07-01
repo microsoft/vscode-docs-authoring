@@ -7,6 +7,7 @@ let cachedDocFxJsonFile: DocFxFileInfo | null = null;
 export type DocFxFileInfo = {
 	readonly fullPath?: string | undefined;
 	readonly contents?: DocFxMetadata | undefined;
+	readonly lines?: string[] | undefined;
 };
 
 export function readDocFxJson(workspaceRootDirectory: string): DocFxFileInfo | null {
@@ -15,12 +16,14 @@ export function readDocFxJson(workspaceRootDirectory: string): DocFxFileInfo | n
 	}
 
 	// Read the DocFX.json file, search for metadata defaults.
-	const docFxJson = tryFindFile(workspaceRootDirectory, 'docfx.json', true);
+	const docFxJson = tryFindFile(workspaceRootDirectory, 'docfx.json');
 	if (!!docFxJson && existsSync(docFxJson)) {
 		const jsonBuffer = readFileSync(docFxJson);
+		const json = jsonBuffer.toString();
 		cachedDocFxJsonFile = {
 			fullPath: docFxJson,
-			contents: JSON.parse(jsonBuffer.toString()) as DocFxMetadata
+			contents: JSON.parse(json) as DocFxMetadata,
+			lines: json.split(/\r\n|\n\r|\n|\r/)
 		};
 
 		watch(docFxJson, (event, fileName) => {

@@ -34,28 +34,9 @@ suite('Metadata Controller', () => {
 			{
 				command: metadataController.updateMetadataDate.name,
 				callback: metadataController.updateMetadataDate
-			},
-			{
-				command: metadataController.updateImplicitMetadataValues.name,
-				callback: metadataController.updateImplicitMetadataValues
 			}
 		];
 		expect(metadataController.insertMetadataCommands()).to.deep.equal(controllerCommands);
-	});
-	test('updateImplicitMetadataValues().noActiveEditorMessage()', async () => {
-		await commands.executeCommand('workbench.action.closeAllEditors');
-		const spy = chai.spy.on(common, 'noActiveEditorMessage');
-		metadataController.updateImplicitMetadataValues();
-		expect(spy).to.have.been.called();
-	});
-	test('updateImplicitMetadataValues().isMarkdownFileCheck()', async () => {
-		// pass in a non-markdown file
-		const filePath = resolve(__dirname, '../../../../../src/test/data/repo/docfx.json');
-		await loadDocumentAndGetItReady(filePath);
-
-		const spy = chai.spy.on(common, 'isMarkdownFileCheck');
-		await metadataController.updateImplicitMetadataValues();
-		expect(spy).to.have.been.called();
 	});
 	test('getAllEffectiveMetadata()', async () => {
 		const filePath = resolve(
@@ -237,48 +218,23 @@ suite('Metadata Controller', () => {
 				key: 'titleSuffix',
 				value: 'bar',
 				category: MetadataCategory.Optional
+			},
+			{
+				source: MetadataSource.Missing,
+				key: 'ms.topic',
+				category: MetadataCategory.Required
 			}
 		];
 
+		expect(expectedEntries.length).to.equal(metadataEntries.length);
 		expectedEntries.forEach(expected => {
 			const actual = metadataEntries.find(e => e.key === expected.key);
-			expect(actual).deep.equal(expected);
+			if (actual) {
+				expect(actual.source).to.equal(expected.source);
+				expect(actual.value).deep.equal(expected.value);
+				expect(actual.category).to.equal(expected.category);
+			}
 		});
-	});
-	test('updateImplicitMetadataValues()', async () => {
-		const filePath = resolve(
-			__dirname,
-			'../../../../../src/test/data/repo/articles/test/metadata.md'
-		);
-		await loadDocumentAndGetItReady(filePath);
-
-		const expectedText =
-			'---' +
-			os.EOL +
-			'author: bar' +
-			os.EOL +
-			'manager: bar' +
-			os.EOL +
-			'titleSuffix: bar' +
-			os.EOL +
-			'ms.author: bar' +
-			os.EOL +
-			'ms.date: ' +
-			common.toShortDate(new Date()) +
-			os.EOL +
-			'ms.service: bar' +
-			os.EOL +
-			'ms.subservice: bar' +
-			os.EOL +
-			'---' +
-			os.EOL;
-
-		await metadataController.updateImplicitMetadataValues();
-		const actualText = window.activeTextEditor?.document.getText();
-
-		// cleanup the modified metadata.md to prevent false positives for future tests.
-		execSync(`cd ${__dirname} && git checkout ${filePath}`);
-		expectStringsToEqual(actualText, expectedText);
 	});
 	test('updateMetadataDate().noActiveEditorMessage()', async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');

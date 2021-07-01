@@ -201,7 +201,7 @@ export async function activate(context: ExtensionContext) {
 			}
 		}
 	});
-	workspace.onDidCloseTextDocument(e => {
+	workspace.onDidChangeTextDocument(e => {
 		metadataTreeProvider.refresh();
 	});
 
