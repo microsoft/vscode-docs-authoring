@@ -231,7 +231,7 @@ suite('Metadata Controller', () => {
 			const actual = metadataEntries.find(e => e.key === expected.key);
 			if (actual) {
 				expect(actual.source).to.equal(expected.source);
-				expect(actual.value).to.equal(expected.value);
+				expect(actual.value).deep.equal(expected.value);
 				expect(actual.category).to.equal(expected.category);
 			}
 		});
