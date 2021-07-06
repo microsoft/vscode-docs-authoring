@@ -15,6 +15,7 @@ export class Logger {
 		return this._outputChannel;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	static info(value: string | object | undefined, indent = false, title = '') {
 		if (title) {
 			this._outputChannel.appendLine(title);
@@ -24,6 +25,7 @@ export class Logger {
 	}
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 function prepareMessage(value: string | object | undefined, indent: boolean) {
 	const prefix = indent ? '  ' : '';
 	let text = '';

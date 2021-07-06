@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { visualAreasSection, AllSettings } from '../models';
+import { visualAreasSection, AllSettings } from '../models/index';
 
 export function getGutterIndicatorHeight() {
 	return readConfiguration<number>(AllSettings.gutterIndicatorHeight);

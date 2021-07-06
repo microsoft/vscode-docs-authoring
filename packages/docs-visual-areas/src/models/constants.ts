@@ -6,8 +6,7 @@ export const visualAreasSection = 'docs-visual-areas';
 
 // export const timeout = async (ms = 200) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const isObjectEmpty = (o: {} | undefined) =>
-	typeof o === 'object' && Object.keys(o).length === 0;
+export const isObjectEmpty = (o: any) => typeof o === 'object' && Object.keys(o).length === 0;
 
 export const colors = [
 	// { name: 'Yellow', value: '#f9e64f' },

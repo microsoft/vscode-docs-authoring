@@ -28,16 +28,16 @@ export function updateStatusBarItem() {
 }
 
 function getTabInfo() {
-	let matches = getMatchData(patterns.tabs.regex);
-	let currentLine = getLineNumber(vscode.window.activeTextEditor);
-	let label = Switchers.tabs;
+	const matches = getMatchData(patterns.tabs.regex);
+	const currentLine = getLineNumber(vscode.window.activeTextEditor);
+	const label = Switchers.tabs;
 	return { matches, currentLine, label };
 }
 
 function getZoneInfo() {
-	let matches = getMatchData(patterns.zones.regex);
-	let currentLine = getLineNumber(vscode.window.activeTextEditor);
-	let label = Switchers.zones;
+	const matches = getMatchData(patterns.zones.regex);
+	const currentLine = getLineNumber(vscode.window.activeTextEditor);
+	const label = Switchers.zones;
 	return { matches, currentLine, label };
 }
 
@@ -84,14 +84,14 @@ function getLineNumber(editor: vscode.TextEditor | undefined): number {
  * @description Create an array of tabs or zones including the start line and text label.
  * @returns array of tabs or zones (LabelInfo[])
  */
-function getMatchData(regEx: RegExp): Array<LabelInfo> {
+function getMatchData(regEx: RegExp): LabelInfo[] {
 	if (!vscode.window.activeTextEditor) {
 		return [];
 	}
 
 	// regex returns the zone name in a capture group
 	const text = vscode.window.activeTextEditor.document.getText();
-	let matches: LabelInfo[] = [];
+	const matches: LabelInfo[] = [];
 	let match: RegExpExecArray | null;
 
 	// add each regex match to the zones array

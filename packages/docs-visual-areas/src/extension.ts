@@ -8,7 +8,7 @@ import { updateStatusBarItem } from './statusbar';
 export function activate(context: vscode.ExtensionContext) {
 	State.extensionContext = context;
 	Logger.info('Starting up Docs Visual Areas', false, 'Docs Visual Areas');
-	let { activeTextEditor } = vscode.window;
+	const { activeTextEditor } = vscode.window;
 
 	addSubscriptions();
 	addEventHandlers();

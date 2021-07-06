@@ -19,7 +19,7 @@ import { colors, GutterSVGs, getPattern, AreaDecoration, Switchers, patterns } f
 
 let nextColorIndex = 0;
 let scopeDecorations: TextEditorDecorationType[] = [];
-let timeout: NodeJS.Timer | undefined = undefined;
+let timeout: NodeJS.Timer | undefined;
 
 setDecorationFunctions();
 
@@ -38,12 +38,11 @@ export function triggerUpdateDecorations() {
  * @description Find the matches for the tokens. Create a range using the line numbers. Then decorate the range using the pre-defined colors.
  */
 function updateDecorations() {
-	let { activeTextEditor } = window;
+	const { activeTextEditor } = window;
 	disposeScopeDecorations();
 	nextColorIndex = 0;
 
 	if (!activeTextEditor || !isValidFile()) {
-		console.log('not a valid file');
 		return;
 	}
 
@@ -57,7 +56,7 @@ function updateDecorations() {
 
 	Logger.info(`Decorating gutters on: ${fileName}`);
 
-	let previousDecoration = undefined;
+	let previousDecoration;
 	if (pattern.getDecorations) {
 		while ((match = regEx.exec(text))) {
 			const { decorationOptions, decorationType, color, isEnd } = pattern.getDecorations(
@@ -121,7 +120,7 @@ function getDecorationsForZones(
 	// Create the deco options using the range.
 	const decorationOptions: DecorationOptions = {
 		range: new Range(startPos, endPos),
-		hoverMessage: hoverMessage
+		hoverMessage
 	};
 
 	const color = (isEnd ? previousDecoration?.color : getColor()) ?? getColor();
@@ -162,7 +161,7 @@ function getDecorationsForTabs(
 	// Create the deco options using the range.
 	const decorationOptions: DecorationOptions = {
 		range: new Range(startPos, endPos),
-		hoverMessage: hoverMessage
+		hoverMessage
 	};
 
 	const color = getColor();
@@ -197,7 +196,7 @@ function getColor() {
  * @param decorations The areas (ranges and decorations) to apply to the gutters
  */
 function applyGutters(decorations: AreaDecoration[]) {
-	let { activeTextEditor } = window;
+	const { activeTextEditor } = window;
 	decorations.forEach(area => {
 		scopeDecorations.push(area.decorationType);
 		activeTextEditor?.setDecorations(area.decorationType, [area.decorationOptions]);
