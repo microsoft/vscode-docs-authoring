@@ -6,23 +6,23 @@ import { State } from './models';
 import { updateStatusBarItem } from './statusbar';
 
 export function activate(context: vscode.ExtensionContext) {
-  State.extensionContext = context;
-  Logger.info('Starting up Docs Visual Areas', false, 'Docs Visual Areas');
-  let { activeTextEditor } = vscode.window;
+	State.extensionContext = context;
+	Logger.info('Starting up Docs Visual Areas', false, 'Docs Visual Areas');
+	let { activeTextEditor } = vscode.window;
 
-  addSubscriptions();
-  addEventHandlers();
+	addSubscriptions();
+	addEventHandlers();
 
-  // context.subscriptions.push(disposable);
+	// context.subscriptions.push(disposable);
 
-  if (activeTextEditor) {
-    triggerUpdateDecorations();
-    updateStatusBarItem();
-  }
+	if (activeTextEditor) {
+		triggerUpdateDecorations();
+		updateStatusBarItem();
+	}
 }
 
 function addSubscriptions() {
-  State.extensionContext.subscriptions.push(Logger.getChannel());
+	State.extensionContext.subscriptions.push(Logger.getChannel());
 }
 
 export function deactivate() {}

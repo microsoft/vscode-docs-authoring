@@ -3,13 +3,13 @@ import { Switchers } from './enums';
 import { AreaPattern } from './interfaces';
 
 type PatternSetType = {
-  tabs: AreaPattern;
-  zones: AreaPattern;
+	tabs: AreaPattern;
+	zones: AreaPattern;
 };
 
 export const patterns: PatternSetType = {
-  tabs: {
-    /*
+	tabs: {
+		/*
       A two part expression, separated by the OR (|) operator.
 
       == PART 1: ==== /# \[(.*)\] ====================
@@ -39,26 +39,26 @@ export const patterns: PatternSetType = {
 
       flags:        global and case insensitive
     */
-    regex: /# \[(.*)\]|(?<=(# \[[.\S\s]*))---[\n\r]/gi,
-    name: Switchers.tabs,
-  },
-  zones: {
-    regex: /::: ?zone.pivot="(.*)"[\S\s.]|::: ?zone-end/gi,
-    name: Switchers.zones,
-  },
+		regex: /# \[(.*)\]|(?<=(# \[[.\S\s]*))---[\n\r]/gi,
+		name: Switchers.tabs
+	},
+	zones: {
+		regex: /::: ?zone.pivot="(.*)"[\S\s.]|::: ?zone-end/gi,
+		name: Switchers.zones
+	}
 };
 
 export function getPattern(text: string) {
-  const { tabs, zones } = patterns;
-  let areaPattern: AreaPattern = zones; // default
+	const { tabs, zones } = patterns;
+	let areaPattern: AreaPattern = zones; // default
 
-  if (zones.regex.test(text)) {
-    areaPattern = zones;
-    zones.regex.lastIndex = 0;
-  } else if (tabs.regex.test(text)) {
-    areaPattern = tabs;
-    tabs.regex.lastIndex = 0;
-  }
+	if (zones.regex.test(text)) {
+		areaPattern = zones;
+		zones.regex.lastIndex = 0;
+	} else if (tabs.regex.test(text)) {
+		areaPattern = tabs;
+		tabs.regex.lastIndex = 0;
+	}
 
-  return areaPattern;
+	return areaPattern;
 }

@@ -1,30 +1,30 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-    "files.exclude": {
-        "out": false // set this to true to hide the "out" folder with the compiled JS files
-    },
-    "search.exclude": {
-        "out": true // set this to false to include "out" folder in search results
-    },
-    // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
-    "typescript.tsc.autoDetect": "off",
-    "workbench.colorCustomizations": {
-        "activityBar.activeBackground": "#832561",
-        "activityBar.activeBorder": "#121907",
-        "activityBar.background": "#832561",
-        "activityBar.foreground": "#e7e7e7",
-        "activityBar.inactiveForeground": "#e7e7e799",
-        "activityBarBadge.background": "#121907",
-        "activityBarBadge.foreground": "#e7e7e7",
-        "statusBar.background": "#832561",
-        "statusBar.debuggingBackground": "#258347",
-        "statusBar.debuggingForeground": "#e7e7e7",
-        "statusBar.foreground": "#e7e7e7",
-        "statusBarItem.hoverBackground": "#ab307e",
-        "titleBar.activeBackground": "#832561",
-        "titleBar.activeForeground": "#e7e7e7",
-        "titleBar.inactiveBackground": "#83256199",
-        "titleBar.inactiveForeground": "#e7e7e799"
-    },
-    "peacock.color": "#832561"
+	"files.exclude": {
+		"out": false // set this to true to hide the "out" folder with the compiled JS files
+	},
+	"search.exclude": {
+		"out": true // set this to false to include "out" folder in search results
+	},
+	// Turn off tsc task auto detection since we have the necessary tasks as npm scripts
+	"typescript.tsc.autoDetect": "off",
+	"workbench.colorCustomizations": {
+		"activityBar.activeBackground": "#832561",
+		"activityBar.activeBorder": "#121907",
+		"activityBar.background": "#832561",
+		"activityBar.foreground": "#e7e7e7",
+		"activityBar.inactiveForeground": "#e7e7e799",
+		"activityBarBadge.background": "#121907",
+		"activityBarBadge.foreground": "#e7e7e7",
+		"statusBar.background": "#832561",
+		"statusBar.debuggingBackground": "#258347",
+		"statusBar.debuggingForeground": "#e7e7e7",
+		"statusBar.foreground": "#e7e7e7",
+		"statusBarItem.hoverBackground": "#ab307e",
+		"titleBar.activeBackground": "#832561",
+		"titleBar.activeForeground": "#e7e7e7",
+		"titleBar.inactiveBackground": "#83256199",
+		"titleBar.inactiveForeground": "#e7e7e799"
+	},
+	"peacock.color": "#832561"
 }
