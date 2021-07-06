@@ -2,17 +2,18 @@
 
 The Docs Authoring Pack provides a series of extensions to help docs.microsoft.com authors work better and more efficiently. You can read more about all of the Docs Authoring Pack features here in the [overview guide](https://docs.microsoft.com/en-us/contribute/how-to-write-docs-auth-pack). The Docs Authoring Pack provides the following extensions to help author content for docs.microsoft.com:
 
-* [Docs Markdown](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown), which provides Markdown authoring assistance, including support for inserting custom Markdown syntax specific to docs.microsoft.com. The rest of this readme provides details on the Docs Markdown extension.
-* [Docs Preview](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-preview), which uses the docs.microsoft.com CSS for more accurate Markdown preview, including custom Markdown.
-* [Docs YAML](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml), which validates Docs .yml files against the appropriate YAML schemas.
-* [Docs Images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images), which compresses and resizes images.
-* [Docs Metadata](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-metadata), which speeds up editing of metadata throughout a Docs repository.
-* [Docs Article Templates](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-article-templates), which allows users to apply Markdown skeleton content to new files.
-* [Docs Scaffolding](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-scaffolding), which automatically generates Learn modules based on standard patterns and automates renaming, inserting, deleting, and reordering units.
-* [Docs Linting](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-linting), which provides markdown linting specific to docs.microsoft.com.
-* [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint), a popular linter by David Anson.
-* [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker), a fully offline spell checker by Street Side Software.
-* [LinkCheckMD](https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD), which generates a report on the links in the document, including broken links.
+- [Docs Markdown](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown), which provides Markdown authoring assistance, including support for inserting custom Markdown syntax specific to docs.microsoft.com. The rest of this readme provides details on the Docs Markdown extension.
+- [Docs Preview](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-preview), which uses the docs.microsoft.com CSS for more accurate Markdown preview, including custom Markdown.
+- [Docs YAML](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml), which validates Docs .yml files against the appropriate YAML schemas.
+- [Docs Images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images), which compresses and resizes images.
+- [Docs Metadata](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-metadata), which speeds up editing of metadata throughout a Docs repository.
+- [Docs Article Templates](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-article-templates), which allows users to apply Markdown skeleton content to new files.
+- [Docs Scaffolding](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-scaffolding), which automatically generates Learn modules based on standard patterns and automates renaming, inserting, deleting, and reordering units.
+- [Docs Linting](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-linting), which provides markdown linting specific to docs.microsoft.com.
+- [Docs Visual Areas](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-visual-areas), which provides visualizations of tabs and zones specific to markdown files for docs.microsoft.com.
+- [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint), a popular linter by David Anson.
+- [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker), a fully offline spell checker by Street Side Software.
+- [LinkCheckMD](https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD), which generates a report on the links in the document, including broken links.
 
 ## How to use the Docs Markdown extension
 
@@ -40,9 +41,9 @@ For more information about the Docs Images extension, see the [Docs Images readm
 
 ## How to use Docs YAML extension
 
-* The code intellisense is more intelligent now; the extension can provide the intellisense according to the schema structure, not just text mapping. To invoke intellisense, hit <kbd>CTRL + Space</kbd> to view the list of schema options.
-* The extension can generate an input template for `object` (including required properties and optional properties with default value).
-* You can type a `-` and hit <kbd>CTRL + Space</kbd> to trigger the intellisense for generating a new array item.
+- The code intellisense is more intelligent now; the extension can provide the intellisense according to the schema structure, not just text mapping. To invoke intellisense, hit <kbd>CTRL + Space</kbd> to view the list of schema options.
+- The extension can generate an input template for `object` (including required properties and optional properties with default value).
+- You can type a `-` and hit <kbd>CTRL + Space</kbd> to trigger the intellisense for generating a new array item.
 
 Intellisense is automatically triggered by <kbd>CTRL + Space</kbd> to get what you can type.
 
@@ -77,21 +78,21 @@ Default keyboard shortcuts are available for some commands, as noted in the tabl
 1. Click the plus that appears near the command name when you mouse over the line.
 1. After a new input box is visible, type the keyboard shortcut you want to bind to that particular command. For example, to use the common shortcut for bold, type <kbd>CTRL+B</kbd>.
 1. It's a good idea to insert a `when` clause into your keybinding, so it won't be available in files other than Markdown. To do this, open keybindings.json and insert the following line below the command name (be sure to add a comma between lines):
-   
-    `"when": "editorTextFocus && editorLangId == 'markdown'"`
 
-    Your completed custom keybinding should look like this in keybindings.json:
+   `"when": "editorTextFocus && editorLangId == 'markdown'"`
 
-    ```json
-    // Place your key bindings in this file to overwrite the defaults
-    [
-        {
-            "key": "ctrl+b",
-            "command": "formatBold",
-            "when": "editorTextFocus && editorLangId == 'markdown'"
-        }
-    ]
-    ```
+   Your completed custom keybinding should look like this in keybindings.json:
+
+   ```json
+   // Place your key bindings in this file to overwrite the defaults
+   [
+     {
+       "key": "ctrl+b",
+       "command": "formatBold",
+       "when": "editorTextFocus && editorLangId == 'markdown'"
+     }
+   ]
+   ```
 
 1. Save keybindings.json.
 
@@ -102,7 +103,7 @@ See [Keybindings](https://code.visualstudio.com/docs/getstarted/keybindings) in 
 Users of the pre-release version of the extension will notice that the authoring toolbar no longer appears at the bottom of the VS Code window when the Docs Markdown extension is installed. This is because the toolbar took up a lot of space on the VS Code status bar, and did not follow best practices for extension UX, so it is deprecated in the new extension. However, you can optionally show the toolbar by updating your VS Code settings.json file as follows:
 
 1. In VS Code, go to **File** > **Preferences** > **Settings** (<kbd>CTRL+,</kbd>).
-1. Select User Settings to change the settings for all VS Code workspaces, or  Workspace Settings to change them for just the current workspace.
+1. Select User Settings to change the settings for all VS Code workspaces, or Workspace Settings to change them for just the current workspace.
 1. In the **Default Settings** pane on the left, find Docs Markdown Extension Configuration, and select the pencil icon next to the desired setting, and select `true`. VS Code will automatically add the value to the settings.json file and you will be prompted to reload the window for the changes to take effect.
 1. Now you will see the toolbar at the bottom of your VS Code window:
 
@@ -110,7 +111,7 @@ Users of the pre-release version of the extension will notice that the authoring
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
 the rights to use your contribution. For details, visit [https://cla.microsoft.com](https://cla.microsoft.com).
 
