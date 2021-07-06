@@ -34,7 +34,8 @@
     "docsmsft.docs-yaml",
     "docsmsft.docs-metadata",
     "blackmist.LinkCheckMD",
-    "docsmsft.docs-scaffolding"
+    "docsmsft.docs-scaffolding",
+    "docsmsft.docs-visual-areas"
   ],
   "extensionDependencies": [
     "DavidAnson.vscode-markdownlint",
@@ -48,7 +49,8 @@
     "docsmsft.docs-yaml",
     "docsmsft.docs-metadata",
     "blackmist.LinkCheckMD",
-    "docsmsft.docs-scaffolding"
+    "docsmsft.docs-scaffolding",
+    "docsmsft.docs-visual-areas"
   ],
   "license": "MIT"
 }
