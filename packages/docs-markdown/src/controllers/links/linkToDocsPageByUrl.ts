@@ -23,7 +23,7 @@ const telemetryCommandLink: string = 'insertLink';
 let commandOption: string;
 const allowedHosts = ['https://visualstudio.com'];
 // lgtm[js/regex/missing-regexp-anchor]
-const regex = new RegExp(/https:\/\/docs\.microsoft\.com/);
+const regex = new RegExp(/^https:\/\/docs\.microsoft\.com/);
 export async function linkToDocsPageByUrl(urlValue?: string) {
 	commandOption = 'linkToDocsPageByUrl';
 	const editor = window.activeTextEditor;
