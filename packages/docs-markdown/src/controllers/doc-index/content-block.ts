@@ -11,6 +11,7 @@ import { MarkdownEnum } from './markdown-enum';
 import { Stack } from 'stack-typescript';
 import { dirname, relative } from 'path';
 import { Notebook } from './notebook';
+import { getIncludeText, getSnippetText } from '../include-controller';
 
 export class ContentBlock {
 	private _name: string;
@@ -367,9 +368,9 @@ export class ContentBlock {
 
 	public static extractIncludeBlocks(artifact: ContentMatch, filename: string): ContentBlock[] {
 		let file = artifact.getGroup('file');
-		let includeFilename = relative(filename, file);
+		let includeFilename = Helpers.absolute(dirname(filename), file);
 		let attributeValues: Map<string, string> = new Map<string, string>();
-		if (!Helpers.fileExists(filename)) {
+		if (!Helpers.fileExists(includeFilename)) {
 			let snippetContent: string = artifact.getGroup('snippet');
 			if (!Helpers.strIsNullOrEmpty(snippetContent)) {
 				attributeValues = ContentMatch.getSnippetAttributes(snippetContent);
@@ -382,7 +383,11 @@ export class ContentBlock {
 			} else return undefined;
 		}
 
-		let content: string = '';
+		let content = '';
+		getIncludeText(includeFilename).then(text => {
+			content = text;
+		});
+		let includeBlocks = ContentBlock.splitContentIntoBlocks(includeFilename, content, false);
 		if (attributeValues.size > 0) {
 			let lineNumbers: Set<number> = new Set<number>();
 			content = Helpers.getSnippetContent(attributeValues, content, file);
@@ -407,7 +412,7 @@ export class ContentBlock {
 			blocks.push(block);
 			return blocks;
 		} else {
-			return Helpers.readInclude(includeFilename);
+			return includeBlocks;
 		}
 	}
 
@@ -767,7 +772,10 @@ export class ContentBlock {
 		if (!Helpers.strIsNullOrEmpty(snippetFileName)) {
 			let [snippetName, snippetFileName] = ContentMatch.getSnippetDetails(snippetContent, filename);
 			if (!Helpers.strIsNullOrEmpty(snippetName) && !Helpers.strIsNullOrEmpty(snippetFileName)) {
-				let snippet = Helpers.readSnippetFile(snippetName, snippetFileName, filename);
+				let snippet = '';
+				getSnippetText(snippetName, snippetFileName).then(text => {
+					snippet = text;
+				});
 				if (!Helpers.strIsNullOrEmpty(snippet)) {
 					content = Helpers.getSnippetContent(attributeValues, content, filename);
 					let tag = '';
@@ -814,7 +822,10 @@ export class ContentBlock {
 		[snippetName, snippetFileName] = ContentMatch.getSnippetDetails(snippetContent, filename);
 		let content = '';
 		if (!Helpers.strIsNullOrEmpty(snippetName) && !Helpers.strIsNullOrEmpty(snippetFileName)) {
-			let snippet = Helpers.readSnippetFile(snippetName, snippetFileName, filename);
+			let snippet = '';
+			getSnippetText(snippetName, snippetFileName).then(text => {
+				snippet = text;
+			});
 			let lines = ContentMatch.splitIntoLines(snippet);
 			if (!Helpers.strIsNullOrEmpty(name)) {
 				try {

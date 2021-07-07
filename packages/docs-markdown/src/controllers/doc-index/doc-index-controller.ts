@@ -18,6 +18,7 @@ import * as vscode from 'vscode';
 import { ContentMatch } from './content-match';
 import { ContentBlock } from './content-block';
 import { OutputChannel } from 'vscode';
+import { getMetadataReplacements } from '../metadata-controller';
 
 let commandOption: string;
 
@@ -124,6 +125,16 @@ export async function verify(writeOutput: boolean = true) {
 			if (metadata.keys.length === 0) {
 				metadata = ContentMatch.extractMetadata(entireFile);
 			}
+
+			const replacementFormats = await getMetadataReplacements(editor);
+			for (let replacementFormat of replacementFormats) {
+				let type = `${replacementFormat.type}`.replace('.', '_');
+				let value = replacementFormat
+					.toReplacementString()
+					.replace(`${replacementFormat.type}: `, '');
+				metadata.set(type, value);
+			}
+
 			let topic = metadata.has('ms_topic') ? metadata.get('ms_topic') : '';
 			if (topic === '' && writeOutput) {
 				outputChannel.appendLine('No MS.Topic detected for MVC guidance');

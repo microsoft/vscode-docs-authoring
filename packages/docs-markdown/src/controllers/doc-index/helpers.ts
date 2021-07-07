@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-for-of */
 /* eslint-disable @typescript-eslint/interface-name-prefix */
 /* eslint-disable prefer-const */
 /* eslint-disable import/no-unresolved */
@@ -50,11 +51,12 @@ export class Helpers {
 			// https://nodejs.dev/learn/nodejs-file-paths
 
 			// eslint-disable-next-line prefer-const
-			let tmpRoot = 'C:\\' + root.replace('/', '\\');
-			tmpPath = tmpPath.replace('/', '\\');
+
+			let tmpRoot = 'C:\\' + root.replace(/\//gim, '\\');
+			tmpPath = tmpPath.replace(/\//gim, '\\');
 
 			let newPath = `${resolve(tmpRoot + '\\' + tmpPath)}`;
-			newPath = newPath.replace('C:\\', '').replace('\\', '/');
+			newPath = newPath.replace('C:\\', '').replace(/\\/gim, '/');
 
 			return newPath;
 		} catch (e) {
@@ -154,14 +156,6 @@ export class Helpers {
 		return content;
 	}
 
-	public static readInclude(filename: string): ContentBlock[] {
-		return [];
-	}
-
-	public static readSnippetFile(snippetName: string, filename: string, baseFile: string): string {
-		return '';
-	}
-
 	public static getRedirect(path: string): string {
 		return '';
 	}
@@ -216,5 +210,19 @@ export class Helpers {
 		if (new RegExp(ContentMatch.tocFile, 'gim').test(path)) {
 			return FileTypeEnum.ToC;
 		}
+	}
+
+	public static absolute(base: string, relative: string): string {
+		base = base.replace(/\\/g, '/');
+		let stack = base.split('/');
+		let parts = relative.split('/');
+		stack.pop(); // remove current file name (or empty string)
+		// (omit if "base" is the current folder without trailing slash)
+		for (let i = 0; i < parts.length; i++) {
+			if (parts[i] === '.') continue;
+			if (parts[i] === '..') stack.pop();
+			else stack.push(parts[i]);
+		}
+		return stack.join('/');
 	}
 }

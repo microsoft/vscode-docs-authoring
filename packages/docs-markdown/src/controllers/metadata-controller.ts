@@ -120,7 +120,7 @@ export async function updateImplicitMetadataValues() {
 	}
 }
 
-async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementFormat[]> {
+export async function getMetadataReplacements(editor: TextEditor): Promise<ReplacementFormat[]> {
 	const folder = workspace.getWorkspaceFolder(editor.document.uri);
 	if (folder) {
 		// Read the DocFX.json file, search for metadata defaults.
