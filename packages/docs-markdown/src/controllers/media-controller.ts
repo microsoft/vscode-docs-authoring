@@ -118,7 +118,7 @@ export async function insertURL() {
 		return;
 	}
 	let contentToInsert = '';
-	/* lgtm[js/regex/missing-regexp-anchor] */ if (!/^http(s)?:\/\/docs\.microsoft\.com/.test(val)) {
+	if (!/^http(s)?:\/\/docs\.microsoft\.com\//.test(val)) {
 		// if user selected text, don't prompt for alt text
 		contentToInsert = await buildLinkForWebURL(selectedText, val, selection, linkTextOptions);
 	} else {
