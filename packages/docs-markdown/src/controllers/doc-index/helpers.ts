@@ -186,6 +186,29 @@ export class Helpers {
 		return start > 0 || end < str.length ? str.substring(start, end) : str;
 	}
 
+	public static trimStartStr(str, trim): string {
+		for (let t of trim) {
+			str = this.trimStart(str, t);
+		}
+		return str;
+	}
+
+	public static trimEndStr(str, trim): string {
+		if (trim.length > 1) {
+			trim = this.reverse(trim);
+		}
+
+		for (let t of trim) {
+			str = this.trimEnd(str, t);
+		}
+
+		return str;
+	}
+
+	public static reverse(s) {
+		return s.split('').reverse().join('');
+	}
+
 	public static getRange(start: number, end: number): number[] {
 		return Array.from({ length: end - start + 1 }, (v, k) => k + start);
 	}

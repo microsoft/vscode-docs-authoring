@@ -59,7 +59,8 @@ export class ContentMatch extends RegexContainer {
 	static bulletedList: RegExp = /(?<list>(^(?<spaces>[ ]{0,})(?<!-)(\*|\+|-{2}|-{1}(?=(?: {1,})))(?: )+[^\r\n]+(\r\n)((^\r\n)*(^[ ]{1,3}[^\r\n]+(\r\n))*)*)+)/gim;
 	static linkRef: RegExp = /^(?<link>\[(?<label>[^\]]+)\]: (?<file>[^#\r\n]+)?(?<anchor>#[^\r\n]+)?)/gim;
 	static table: RegExp = /(?<table>((^(?: *)\|?([^\r\n|]+\|)+[^\r\n]*\r\n)+))/gim;
-	static snippet: RegExp = /:::\s*code\s+language\s*=\s*"(?<currenttag>[^"]+)"\s+source\s*=\s*"~*\/(?<snippet>[^\/]+)\/(?<file>[^"]+)"\s*(highlight\s*=\s*"(?<highlight>[^"]+)")*(range\s*=\s*"(?<range>[^"]+)"|id\s*="(?<name>[^"]+)")*/gim;
+	static snippet: RegExp = /:::\s*code\s+(?<snippet>[^:]+):::/gim;
+	static snippetDetail: RegExp = /(?<name>(language|source|range|highlight|id|interactive))\s*=\s*"(?<value>[^"]+)"/gim;
 	static altSnippet: RegExp = /[\.\/~]+(?<snippet>[^\/]+)\/(?<file>[^\s]+)(\s*"(?<name>[^"]+)")*/gim;
 	static metadataSplit: RegExp = /\s*---\s*\r?\n?/gim;
 	static formatMetadata: RegExp = /[ &\-\\/#\?\$\.\^"']+/gim;
@@ -288,7 +289,7 @@ export class ContentMatch extends RegexContainer {
 		let fileName = '';
 		snippet = snippet.replace('_', '_');
 		if (snippet.startsWith('~')) {
-			snippet = Helpers.trimStart(snippet, '~/');
+			snippet = Helpers.trimStartStr(snippet, '~/');
 			let paths = new Queue<string>();
 			for (let s of snippet.split('/')) {
 				paths.add(s);

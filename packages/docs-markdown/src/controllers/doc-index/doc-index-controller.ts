@@ -111,14 +111,14 @@ export async function verify(writeOutput: boolean = true) {
 				outputChannel.appendLine(`Verifying file: ${fileName}`);
 			}
 
-			const blocks = ContentBlock.splitContentIntoBlocks(fileName, entireFile, false);
-			const allBlocks = [];
-			for (let block of blocks) {
-				allBlocks.push(block);
-				block.AllInnerBlocks().forEach((value: ContentBlock) => {
-					allBlocks.push(value);
-				});
-			}
+			const blocks = await ContentBlock.splitContentIntoBlocks(fileName, entireFile, false);
+			const allBlocks = ContentBlock.AllBlocks;
+			//for (let block of blocks) {
+			//allBlocks.push(block);
+			//block.AllInnerBlocks().forEach((value: ContentBlock) => {
+			//allBlocks.push(value);
+			//});
+			//}
 
 			const metadataString = ContentMatch.getMetadata(entireFile, fileName);
 			let metadata = ContentMatch.readMetadata(metadataString);
@@ -147,7 +147,7 @@ export async function verify(writeOutput: boolean = true) {
 				} else {
 					let theseAudits: AuditEntry[] = [];
 					for (let i = 0; i < theseRules.length; i++) {
-						let audits = theseRules[i].test(blocks, fileName, metadata, entireFile, blocks);
+						let audits = theseRules[i].test(allBlocks, fileName, metadata, entireFile, allBlocks);
 						audits.forEach(function (value: AuditEntry) {
 							theseAudits.push(value);
 						});

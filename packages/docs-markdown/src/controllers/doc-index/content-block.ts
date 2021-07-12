@@ -172,11 +172,11 @@ export class ContentBlock {
 		this._startLine = v;
 	}
 
-	public containsContentBlock(block: ContentBlock) {
+	public async containsContentBlock(block: ContentBlock) {
 		return block.start >= this.index && block.start + block.length <= this.index + this.length;
 	}
 
-	public containsContentMatch(match: ContentMatch) {
+	public async containsContentMatch(match: ContentMatch) {
 		return match.index >= this.index && match.index + match.length <= this.index + this.length;
 	}
 
@@ -366,7 +366,10 @@ export class ContentBlock {
 		this.innerBlocks.forEach(e => e.setIncludeFile(filename));
 	}
 
-	public static extractIncludeBlocks(artifact: ContentMatch, filename: string): ContentBlock[] {
+	public static async extractIncludeBlocks(
+		artifact: ContentMatch,
+		filename: string
+	): Promise<ContentBlock[]> {
 		let file = artifact.getGroup('file');
 		let includeFilename = Helpers.absolute(dirname(filename), file);
 		let attributeValues: Map<string, string> = new Map<string, string>();
@@ -383,11 +386,8 @@ export class ContentBlock {
 			} else return undefined;
 		}
 
-		let content = '';
-		getIncludeText(includeFilename).then(text => {
-			content = text;
-		});
-		let includeBlocks = ContentBlock.splitContentIntoBlocks(includeFilename, content, false);
+		let content = await getIncludeText(includeFilename);
+		let includeBlocks = await ContentBlock.splitContentIntoBlocks(includeFilename, content, false);
 		if (attributeValues.size > 0) {
 			let lineNumbers: Set<number> = new Set<number>();
 			content = Helpers.getSnippetContent(attributeValues, content, file);
@@ -440,7 +440,8 @@ export class ContentBlock {
 
 		if (!hasHeaders || !hasH1) {
 			let currentParent = new ContentBlock();
-			currentParent.text = '';
+			currentParent.text = content;
+			currentParent.length = content.length;
 			currentParent.groups = new Map<string, string>([
 				['0', ''],
 				['HeaderIndex', '-1'],
@@ -495,6 +496,7 @@ export class ContentBlock {
 			currentBlock.blockText = blockText;
 			currentBlock.artifactType = MarkdownEnum.Header;
 			currentBlock.text = header;
+			currentBlock.length = length;
 			currentBlock.index = i;
 			currentBlock.start = match.index;
 			currentBlock.groups = new Map<string, string>([
@@ -520,11 +522,13 @@ export class ContentBlock {
 		return Blocks;
 	}
 
-	public static splitContentIntoBlocks(
+	static AllBlocks: ContentBlock[] = [];
+
+	public static async splitContentIntoBlocks(
 		filename: string,
 		content: string,
 		isInclude: boolean
-	): ContentBlock[] {
+	): Promise<ContentBlock[]> {
 		let AllCodeFences = ContentMatch.getCodeFences(content);
 		let HeaderBlocks = ContentBlock.getHeaderBlocks(content, AllCodeFences);
 		HeaderBlocks.forEach(e => (e.fileName = filename));
@@ -540,11 +544,22 @@ export class ContentBlock {
 			if (externalContentAdded > 0) {
 				HeaderBlocks[i].start += externalContentAdded;
 			}
-			HeaderBlocks[i].extractInnerBlocks(filename, linkRefs);
+			await HeaderBlocks[i].extractInnerBlocks(filename, linkRefs);
 			if (HeaderBlocks[i].addedContentLengthFromInclude > 0) {
 				HeaderBlocks[i].length += HeaderBlocks[i].addedContentLengthFromInclude;
 				externalContentAdded += HeaderBlocks[i].addedContentLengthFromInclude;
 			}
+
+			if (
+				HeaderBlocks[i].artifactType !== MarkdownEnum.None ||
+				(HeaderBlocks.length === 1 && HeaderBlocks[i].artifactType === MarkdownEnum.None)
+			) {
+				this.AllBlocks.push(HeaderBlocks[i]);
+				for (let block of HeaderBlocks[i].allChildBlocks()) {
+					this.AllBlocks.push(block);
+				}
+			}
+
 			// if (isInclude) HeaderBlocks[i].setIncludeFile(filename);
 		}
 
@@ -752,7 +767,10 @@ export class ContentBlock {
 		// This will need rewritten with interfaccs
 	}
 
-	public static extractSnippet(artifact: ContentMatch, filename: string): ContentBlock {
+	public static async extractSnippet(
+		artifact: ContentMatch,
+		filename: string
+	): Promise<ContentBlock> {
 		let snippetContent = artifact.getGroup('snippet');
 		let snippetFileName = artifact.getGroup('file');
 		let attributeValues = new Map<string, string>();
@@ -770,12 +788,9 @@ export class ContentBlock {
 
 		let content = '';
 		if (!Helpers.strIsNullOrEmpty(snippetFileName)) {
-			let [snippetName, snippetFileName] = ContentMatch.getSnippetDetails(snippetContent, filename);
-			if (!Helpers.strIsNullOrEmpty(snippetName) && !Helpers.strIsNullOrEmpty(snippetFileName)) {
-				let snippet = '';
-				getSnippetText(snippetName, snippetFileName).then(text => {
-					snippet = text;
-				});
+			let [snippetName, snippetPath] = ContentMatch.getSnippetDetails(snippetFileName, filename);
+			if (!Helpers.strIsNullOrEmpty(snippetName) && !Helpers.strIsNullOrEmpty(snippetPath)) {
+				let snippet = await getSnippetText(snippetName, snippetPath);
 				if (!Helpers.strIsNullOrEmpty(snippet)) {
 					content = Helpers.getSnippetContent(attributeValues, content, filename);
 					let tag = '';
@@ -788,7 +803,7 @@ export class ContentBlock {
 					block.text = content;
 					block.start = 0;
 					block.length = content.length;
-					block.fileName = snippetFileName;
+					block.fileName = snippetPath;
 					block.fromInclude = true;
 					block.groups = new Map([
 						['0', content],
@@ -804,7 +819,10 @@ export class ContentBlock {
 		return undefined;
 	}
 
-	public static extractNotebook(artifact: ContentMatch, filename: string): ContentBlock {
+	public static async extractNotebook(
+		artifact: ContentMatch,
+		filename: string
+	): Promise<ContentBlock> {
 		let snippetContent = artifact.getGroup('snippet');
 		let snippetFileName = artifact.getGroup('file');
 		let tag = artifact.getGroup('label');
@@ -822,10 +840,7 @@ export class ContentBlock {
 		[snippetName, snippetFileName] = ContentMatch.getSnippetDetails(snippetContent, filename);
 		let content = '';
 		if (!Helpers.strIsNullOrEmpty(snippetName) && !Helpers.strIsNullOrEmpty(snippetFileName)) {
-			let snippet = '';
-			getSnippetText(snippetName, snippetFileName).then(text => {
-				snippet = text;
-			});
+			let snippet = await getSnippetText(snippetName, snippetFileName);
 			let lines = ContentMatch.splitIntoLines(snippet);
 			if (!Helpers.strIsNullOrEmpty(name)) {
 				try {
@@ -870,7 +885,7 @@ export class ContentBlock {
 		return undefined;
 	}
 
-	public extractInnerBlocks(filename: string, refs?: ContentMatch[]) {
+	public async extractInnerBlocks(filename: string, refs?: ContentMatch[]) {
 		let content = this.blockText;
 		let codeFences = ContentMatch.getCodeFences(content);
 
@@ -888,7 +903,13 @@ export class ContentBlock {
 
 					let beforeCodeBlock = content.substring(INDEX, codeFences[j].index);
 
-					this.extractArtifacts(beforeCodeBlock, filename, codeFences, refs, INDEX + this.start);
+					await this.extractArtifacts(
+						beforeCodeBlock,
+						filename,
+						codeFences,
+						refs,
+						INDEX + this.start
+					);
 
 					INDEX = codeFences[j + 1].index + codeFences[j + 1].length;
 					let insidecodeblock = content.substring(codeFences[j].index, INDEX);
@@ -902,12 +923,18 @@ export class ContentBlock {
 				}
 
 				let afterCodeBlocks = content.substring(INDEX, content.length);
-				this.extractArtifacts(afterCodeBlocks, filename, codeFences, refs, INDEX + this.start);
+				await this.extractArtifacts(
+					afterCodeBlocks,
+					filename,
+					codeFences,
+					refs,
+					INDEX + this.start
+				);
 			} else if (codeFences.length === 0) {
-				this.extractArtifacts(content, filename, codeFences, refs);
+				await this.extractArtifacts(content, filename, codeFences, refs);
 			} else {
 				console.log('Odd Number of Code Fences');
-				this.extractArtifacts(content, filename, codeFences, refs);
+				await this.extractArtifacts(content, filename, codeFences, refs);
 			}
 		}
 	}
@@ -1169,7 +1196,7 @@ export class ContentBlock {
 		}
 	}
 
-	public extractArtifacts(
+	public async extractArtifacts(
 		content: string,
 		filename: string,
 		codeFences?: ContentMatch[],
@@ -1228,7 +1255,7 @@ export class ContentBlock {
 					!new RegExp(ContentMatch.mediaFile, 'gim').test(artifacts[k].getGroup('label'))
 				) {
 					let newStart = this.addIncludeBlocks(
-						ContentBlock.extractIncludeBlocks(artifacts[k], filename),
+						await ContentBlock.extractIncludeBlocks(artifacts[k], filename),
 						artifacts[k],
 						filename,
 						thisStart
@@ -1237,7 +1264,7 @@ export class ContentBlock {
 						thisStart = newStart;
 					} else {
 						newStart = this.addSnippet(
-							ContentBlock.extractSnippet(artifacts[k], filename),
+							await ContentBlock.extractSnippet(artifacts[k], filename),
 							artifacts[k],
 							filename,
 							thisStart
@@ -1247,7 +1274,7 @@ export class ContentBlock {
 						} else console.log(`Issue with Snippet and Include for ${filename}`);
 					}
 				} else if (`${artifacts[k].getGroup('label')}`.toLowerCase().indexOf('!notebook-') >= 0) {
-					let notebookBlock = ContentBlock.extractNotebook(artifacts[k], filename);
+					let notebookBlock = await ContentBlock.extractNotebook(artifacts[k], filename);
 					if (undefined !== notebookBlock) {
 						notebookBlock.copyParentInfo(this);
 						notebookBlock.start += artifacts[k].index + thisStart;
@@ -1262,16 +1289,16 @@ export class ContentBlock {
 						hrefPath = Helpers.getRedirect(hrefPath);
 						artifacts[k].groups.set('file', hrefPath);
 					}
-				}
 
-				let link = new ContentBlock();
-				link.setLink(
-					artifacts[k].groups,
-					artifacts[k].index + thisStart,
-					artifacts[k].length,
-					filename
-				);
-				this.addInnerBlock(link);
+					let link = new ContentBlock();
+					link.setLink(
+						artifacts[k].groups,
+						artifacts[k].index + thisStart,
+						artifacts[k].length,
+						filename
+					);
+					this.addInnerBlock(link);
+				}
 			} else if (artifacts[k].groups.has('list')) {
 				let list = new ContentBlock();
 				list.text = artifacts[k].getGroup('list');
@@ -1328,7 +1355,7 @@ export class ContentBlock {
 				this.addInnerBlock(note);
 			} else if (artifacts[k].groups.has('snippet')) {
 				let newStart = this.addSnippet(
-					ContentBlock.extractSnippet(artifacts[k], filename),
+					await ContentBlock.extractSnippet(artifacts[k], filename),
 					artifacts[k],
 					filename,
 					thisStart
@@ -1337,7 +1364,7 @@ export class ContentBlock {
 					thisStart = newStart;
 				} else {
 					newStart = this.addIncludeBlocks(
-						ContentBlock.extractIncludeBlocks(artifacts[k], filename),
+						await ContentBlock.extractIncludeBlocks(artifacts[k], filename),
 						artifacts[k],
 						filename,
 						thisStart
@@ -1440,6 +1467,4 @@ export class ContentBlock {
 
 		return order;
 	}
-
-	public static AllBlocks: ContentBlock[];
 }

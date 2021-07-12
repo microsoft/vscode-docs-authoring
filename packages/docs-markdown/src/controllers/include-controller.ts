@@ -12,6 +12,9 @@ import {
 import { sendTelemetryData } from '../helper/telemetry';
 import { includeBuilder } from '../helper/utility';
 import { getOpenPublishingFile } from './snippet/utilities';
+import { resolve, join } from 'path';
+import * as vscode from 'vscode';
+import { Helpers } from './doc-index/helpers';
 const util = require('util');
 const glob = util.promisify(require('glob'));
 
@@ -22,6 +25,8 @@ export function insertIncludeCommand() {
 	const commands = [{ command: insertInclude.name, callback: insertInclude }];
 	return commands;
 }
+
+const repoLookup: Map<string, string> = new Map<string, string>();
 
 /**
  * transforms the current selection into an include.
@@ -132,28 +137,60 @@ export async function getIncludeText(filePath: string): Promise<string> {
 	return await fs.readFileSync(filePath, 'utf8');
 }
 
-export async function getSnippetText(filePath?: string, crossReference?: string) {
+export async function getOpenPublishingConfigFile(filePath: string) {
+	const fs = require('fs');
+	const openPublishingFilePath = resolve(filePath, '.openpublishing.publish.config.json');
+	const openPublishingFile = await fs.readFileSync(openPublishingFilePath, 'utf8');
+	const openPublishingJson = JSON.parse(openPublishingFile);
+	return openPublishingJson.dependent_repositories;
+}
+
+export async function getSnippetText(crossReference?: string, filePath?: string): Promise<string> {
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	let result = '';
 	const path = require('path');
 	let selected: QuickPickItem | undefined;
+	if (repoLookup.has(crossReference)) {
+		result = await getIncludeText(
+			Helpers.trimEndStr(Helpers.trimEndStr(repoLookup.get(crossReference), '\\'), '/').replace(
+				/\\/gim,
+				'/'
+			) +
+				'/' +
+				filePath
+		);
+	}
+
 	if (workspace) {
 		if (workspace.workspaceFolders) {
 			const repoRoot = workspace.workspaceFolders[0].uri.fsPath;
-			const openPublishingRepos = await getOpenPublishingFile(repoRoot);
+			const openPublishingRepos = await getOpenPublishingConfigFile(repoRoot);
 			if (openPublishingRepos) {
 				const openPublishingOptions: QuickPickItem[] = [];
 				openPublishingRepos.map((repo: { path_to_root: string; url: string }) => {
 					openPublishingOptions.push({ label: repo.path_to_root, description: repo.url });
 				});
-				const repo = openPublishingOptions.filter(e => e.label === crossReference);
-				if (repo) {
-					const inputRepoPath = await window.showInputBox({
-						prompt: `Enter file path for Cross-Reference GitHub Repo: ${crossReference}`
-					});
+				const repo = openPublishingOptions.filter(e => e.label === crossReference)[0];
+				if (repo !== undefined) {
+					try {
+						const inputRepoPath = await vscode.window.showInputBox({
+							prompt: `Enter file path for Cross-Reference GitHub Repo: ${repo.description}`
+						});
 
-					if (inputRepoPath) {
-						result = await getIncludeText(filePath);
+						if (inputRepoPath) {
+							repoLookup.set(crossReference, inputRepoPath);
+							result = await getIncludeText(
+								Helpers.trimEndStr(Helpers.trimEndStr(inputRepoPath, '\\'), '/').replace(
+									/\\/gim,
+									'/'
+								) +
+									'/' +
+									filePath
+							);
+						}
+					} catch (error) {
+						const errorString = error.toString();
+						const stackTrace = !!error.stack ? error.stack : '';
 					}
 				}
 			}
