@@ -111,6 +111,7 @@ export async function verify(writeOutput: boolean = true) {
 				outputChannel.appendLine(`Verifying file: ${fileName}`);
 			}
 
+			ContentBlock.AllBlocks = [];
 			const blocks = await ContentBlock.splitContentIntoBlocks(fileName, entireFile, false);
 			const allBlocks = ContentBlock.AllBlocks;
 			//for (let block of blocks) {
