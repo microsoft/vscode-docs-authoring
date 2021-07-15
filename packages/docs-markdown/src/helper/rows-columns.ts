@@ -2,7 +2,7 @@
 import { Position, Selection, window } from 'vscode';
 import { insertContentToEditor, showStatusMessage, showWarningMessage } from '../helper/common';
 
-// strings.
+// strings
 const indentSpacing = '    ';
 const columnCursorSpacing = indentSpacing.repeat(2);
 const columnOpenSyntax = ':::column:::';
