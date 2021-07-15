@@ -115,7 +115,7 @@ export async function activate(context: ExtensionContext) {
 
 	function seoPreview(column): (...args: any[]) => any {
 		return async () => {
-			// Create and show a new webview
+			// Create and show a new webview.
 			panel = window.createWebviewPanel(
 				'seoPreview',
 				'Search Results Preview',
