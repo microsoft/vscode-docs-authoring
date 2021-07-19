@@ -93,7 +93,7 @@
 	"runtimeDependencies": [
 		{
 			"description": "mdextractcore and mdapplycore",
-			"url": "https://docsauthortoolspublic.azurefd.net//metadataupdatetool/MUTCore.zip",
+			"url": "https://docsauthortoolspublic.azurefd.net/metadataupdatetool/MUTCore.zip",
 			"installPath": ".muttools",
 			"platforms": [
 				"netcore",
