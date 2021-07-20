@@ -72,9 +72,15 @@ module.exports = {
 								if (sourceMatch) {
 									const source = sourceMatch[1];
 									if (
-										!source.includes('channel9.msdn.com') &&
-										!source.includes('youtube.com/embed') &&
-										!source.includes('microsoft.com/en-us/videoplayer/embed')
+										!source.includes(
+											'channel9.msdn.com' /* lgtm[js/incomplete-url-substring-sanitization] */
+										) &&
+										!source.includes(
+											'youtube.com/embed' /* lgtm[js/incomplete-url-substring-sanitization] */
+										) &&
+										!source.includes(
+											'microsoft.com/en-us/videoplayer/embed' /* lgtm[js/incomplete-url-substring-sanitization] */
+										)
 									) {
 										onError({
 											lineNumber: text.lineNumber,
