@@ -10,7 +10,8 @@ module.exports.AttributeMatch = /(\S+)=["]((?:.(?!["]?\s+(?:\S+)=|["]))+.)["]?/;
 
 // Markdown extensions (add valid/supported extensions to list)
 module.exports.openExtension = /^:(.*?)(zone|moniker|no-loc)/gm;
-module.exports.supportedExtensions = /^:::\s?(zone|moniker|row|column|form|no-loc|image|code|video|notes)(.:*)?/g;
+module.exports.supportedExtensions =
+	/^:::\s?(zone|moniker|row|column|form|no-loc|image|code|video|notes)(.:*)?/g;
 module.exports.unsupportedExtensionRegex = /^:::\s+(.*)/gm;
 
 // Zones
@@ -52,7 +53,8 @@ module.exports.syntaxSingleQuotesNoLoc = /:::no-loc\stext='(.*?)':::/gim;
 module.exports.syntaxNoLoc = /:::no-loc\stext="(.*?)":::/gm;
 
 //image
-module.exports.syntaxImageLooseMatch = /((:+)(.\s*)(image.*(complex))(.\s*)(.*)(.:*)\s*(.*)\s*(.:*)([a-z]*-[a-z]*)(.:*))|((:+)(.\s*)(image)(.\s*)(.*)(.:*))/gim;
+module.exports.syntaxImageLooseMatch =
+	/((:+)(.\s*)(image.*(complex))(.\s*)(.*)(.:*)\s*(.*)\s*(.:*)([a-z]*-[a-z]*)(.:*))|((:+)(.\s*)(image)(.\s*)(.*)(.:*))/gim;
 module.exports.syntaxImageAttributes = /(:image)|([a-z-]*(?==))/gim;
 module.exports.allowedImageTypes = ['content', 'complex', 'icon'];
 module.exports.imageTypeMatch = /type\s*=\s*"([a-z]*)"/m;
@@ -77,20 +79,24 @@ module.exports.alertTypeNoOpen = /^\[!(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]/gm;
 // false hits.
 // ^>\s+\[!(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\][ \t]*[a-zA-Z0-9]/gm is closer but needs to also support non-letters and numbers
 module.exports.alertNoExclam = /\[(NOTE|TIP|IMPORTANT|CAUTION|WARNING)\]/gm; //identify alerts missing !
-
 //Links
-module.exports.linkPattern = /(http:\/\/(|www\.))(visualstudio\.com|msdn\.com|microsoft\.com|office\.com|azure\.com|aka\.ms).*/;
+
+module.exports.linkPattern =
+	/(http:\/\/(|www\.))(visualstudio\.com|msdn\.com|microsoft\.com|office\.com|azure\.com|aka\.ms).*/;
 
 //xref
 module.exports.openXref = /(<|\()xref(:)?.*?(>|\))/gim;
 module.exports.xrefHasSpace = /(<|\()xref:[ ]+((>|\)))?/gim;
-module.exports.xrefShouldIncludeColon = /(<|\()xref(?!:)(.*?)?(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(?<!.md)(>|\))/gim;
-module.exports.missingUidAttributeXref = /(<|\()xref:(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(>|\))/g;
+module.exports.xrefShouldIncludeColon =
+	/(<|\()xref(?!:)(.*?)?(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(?<!.md)(>|\))/gim;
+module.exports.missingUidAttributeXref =
+	/(<|\()xref:(\?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?)))?(>|\))/g;
 module.exports.xrefHasPropertyQuestionMark = /(<|\()xref:(.*?)(\?)((>|\)))?/g;
 module.exports.xrefHasDisplayProperty = /displayProperty=/g;
 module.exports.xrefDisplayPropertyValues = /displayProperty=(fullName|nameWithType)/g;
 module.exports.xrefHasTwoProperties = /&/g;
-module.exports.syntaxXref = /(<|\()xref:(.*?)(\?)?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?))?(>|\))/g;
+module.exports.syntaxXref =
+	/(<|\()xref:(.*?)(\?)?(displayProperty=(fullName|nameWithType)|view=(.*?))(&)?(displayProperty=(fullName|nameWithType)|view=(.*?))?(>|\))/g;
 module.exports.notEscapedCharacters = /(<|\()xref:(.*[*`].*)(>|\))/g;
 
 // Row
@@ -105,7 +111,8 @@ module.exports.rowAttributeMatchGlobal = /:::\s*row(?!-).*?:::/gi;
 module.exports.rowCountValue = /count\s*=\s*"(.*?)"/i;
 
 // Column
-module.exports.looseColumn = /(:+)\s*column\s*(span=".*?")?(:*)?([^]+?(:*)column-end?(\s*)?(:*))?/gi;
+module.exports.looseColumn =
+	/(:+)\s*column\s*(span=".*?")?(:*)?([^]+?(:*)column-end?(\s*)?(:*))?/gi;
 module.exports.startColumn = /:::\s*column(?!-end)/gm;
 module.exports.columnEndTagMatch = /\s*:::(\s*)?column-end(\s*)?:::/gim;
 module.exports.columnEnd = /\s*:::(\s*)?column-end(\s*)?:::/;
@@ -116,7 +123,8 @@ module.exports.columnAttributeMatchGlobal = /:::\s*column(?!-).*?:::/gi;
 
 //codesnippet
 module.exports.syntaxCodeLooseMatch = /(:+)(\s+)?code.*?(:+)/g;
-module.exports.syntaxCodeExactMatch = /:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+))?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/i;
+module.exports.syntaxCodeExactMatch =
+	/:::(\s+)?code\s+(source|range|id|highlight|language|interactive)=".*?"(\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+))?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"\s+)?((source|range|id|highlight|language|interactive)=".*?"(\s+)?)?:::/i;
 module.exports.syntaxCodeAttributes = /([a-z]*(?==))/g;
 module.exports.allowedCodeAttributes = [
 	':code',
@@ -149,6 +157,9 @@ module.exports.videoSourceMatch = /source\s*=\s*"(.*?)"/m;
 module.exports.videoTitleMatch = /title\s*=\s*"(.*?)"/m;
 module.exports.videoMaxWidthMatch = /max-width\s*=\s*"(.*?)"/m;
 module.exports.allowedVideoAttributes = ['source', 'title', 'max-width'];
+module.exports.channel9 = /http(s)?:\/\/channel9\.msdn\.com\//;
+module.exports.youtube = /http(s)?:\/\/(www\.)?youtube\.com\/embed\//;
+module.exports.videoplayer = /http(s)?:\/\/(www\.)?microsoft\.com\/en-us\/videoplayer\/embed\//;
 
 module.exports.getMaxLineNotEmpty = function getMaxLineNotEmpty(lines) {
 	if (lines.length > 1) {
