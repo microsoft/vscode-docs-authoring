@@ -157,9 +157,9 @@ module.exports.videoSourceMatch = /source\s*=\s*"(.*?)"/m;
 module.exports.videoTitleMatch = /title\s*=\s*"(.*?)"/m;
 module.exports.videoMaxWidthMatch = /max-width\s*=\s*"(.*?)"/m;
 module.exports.allowedVideoAttributes = ['source', 'title', 'max-width'];
-module.exports.channel9 = /http(s)?:\/\/channel9\.msdn\.com\//;
-module.exports.youtube = /http(s)?:\/\/(www\.)?youtube\.com\/embed\//;
-module.exports.videoplayer = /http(s)?:\/\/(www\.)?microsoft\.com\/en-us\/videoplayer\/embed\//;
+module.exports.channel9 = /^http(s)?:\/\/channel9\.msdn\.com\//;
+module.exports.youtube = /^http(s)?:\/\/(www\.)?youtube\.com\/embed\//;
+module.exports.videoplayer = /^http(s)?:\/\/(www\.)?microsoft\.com\/en-us\/videoplayer\/embed\//;
 
 module.exports.getMaxLineNotEmpty = function getMaxLineNotEmpty(lines) {
 	if (lines.length > 1) {
