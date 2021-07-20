@@ -40,7 +40,7 @@ export class PackageError extends Error {
 	constructor(
 		public message: string,
 		public pkg: Package,
-		public innerError: NodeJS.ErrnoException = null /* lgtm[js/regex/missing-regexp-anchor] */
+		public innerError: NodeJS.ErrnoException = null /* lgtm[js/remote-property-injection] */
 	) {
 		super(message);
 	}
