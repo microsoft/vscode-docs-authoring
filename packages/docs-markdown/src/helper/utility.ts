@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/interface-name-prefix */
 /* eslint-disable @typescript-eslint/prefer-for-of */
 import * as recursive from 'recursive-readdir';
 import {
