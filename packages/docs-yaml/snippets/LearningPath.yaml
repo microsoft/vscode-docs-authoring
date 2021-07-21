@@ -1,0 +1,18 @@
+name: YamlMime LearningPath
+label: YamlMime LearningPath
+description: Create a LearningPath YAML
+body: |2
+  ### YamlMime:LearningPath
+  uid: $1
+  title: $2
+  summary: $3
+  roles:
+    - $4
+  products:
+    - $5
+  modules:
+    - $6
+  levels:
+    - $7
+  iconUrl: $8
+  achievement: $9
