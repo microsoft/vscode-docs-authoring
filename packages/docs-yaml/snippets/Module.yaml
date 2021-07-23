@@ -1,0 +1,19 @@
+name: YamlMime Module
+label: YamlMime Module
+description: Create a Module YAML
+body: |2
+  ### YamlMime:Module
+  uid: $1
+  title: $2
+  summary: $3
+  abstract: $4
+  achievement: $5
+  iconUrl: $6
+  levels:
+    - $7
+  roles:
+    - $8
+  products:
+    - $9
+  units:
+    - $10

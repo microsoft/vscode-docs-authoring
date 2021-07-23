@@ -1,0 +1,12 @@
+.vscode
+.vscode-test/
+node_modules
+out/
+src/
+.gitignore
+tsconfig.json
+webpack.config.js
+images/docs-yaml-extension-hover.gif
+images/docs-yaml-extension-intellisense.gif
+images/docs-yaml-extension-validation.gif
+images/docs-yaml-extension.gif
