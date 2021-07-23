@@ -22,9 +22,6 @@
 		"docs"
 	],
 	"icon": "images/docs-logo-ms.png",
-	"bugs": {
-		"url": "https://github.com/vscode-docs-authoring/docs-yaml/issues"
-	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Microsoft/vscode-docs-authoring.git"
