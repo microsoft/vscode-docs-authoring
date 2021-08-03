@@ -29,7 +29,7 @@
 	"activationEvents": [
 		"onLanguage:markdown"
 	],
-	"main": "./out/extension.js",
+	"main": "./dist/extension",
 	"contributes": {
 		"configuration": {
 			"properties": {
