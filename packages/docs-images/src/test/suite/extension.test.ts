@@ -26,7 +26,8 @@ const context: ExtensionContext = {
 	globalState: {
 		get: (key: any) => {},
 		update: (key, value) => Promise.resolve(),
-		setKeysForSync(keys: string[]): void {}
+		setKeysForSync(keys: string[]): void {},
+		keys: () => []
 	},
 	secrets: {
 		store: (key, value) => Promise.resolve(),
@@ -37,7 +38,8 @@ const context: ExtensionContext = {
 	subscriptions,
 	workspaceState: {
 		get: () => {},
-		update: (key, value) => Promise.resolve()
+		update: (key, value) => Promise.resolve(),
+		keys: () => []
 	},
 	extensionPath: '',
 	asAbsolutePath: relative => '',

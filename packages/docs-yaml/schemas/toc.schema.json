@@ -1,0 +1,113 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"version": "1.0.0",
+	"id": "https://github.com/dotnet/docfx/test/schemas/toc.schema.json",
+	"title": "TOC",
+	"description": "The schema for table of contents (TOC) in Yaml or JSON format",
+	"oneOf": [
+		{
+			"$ref": "#/definitions/tocItemsWithMetadata"
+		},
+		{
+			"items": {
+				"$ref": "#/definitions/tocItem"
+			},
+			"type": "array",
+			"minItems": 1
+		}
+	],
+	"definitions": {
+		"name": {
+			"type": "string",
+			"description": "A string name that is displayed for the TOC item. The name cannot include a colon (:).",
+			"minLength": 1,
+			"pattern": "^[^:]+$"
+		},
+		"displayName": {
+			"type": "string",
+			"description": "An additional string value that doesn’t get displayed (yes, it's a poor name) but is searched, as well as name, during TOC filtering.",
+			"minLength": 1
+		},
+		"href": {
+			"type": "string",
+			"description": "The path the TOC item navigates to. Optional because items can exist just to parent other items. There are three-folded meanings for href: 1. href can specify the path the item navigates to. It can be either relative path, absolute path or external URL. 2. href can also point to another TOC file - this is the scenario called TOC include: all the items inside the included TOC file are considered and built into result as children of the current TOC item. 3. At last, href can point to a folder, indicating the navigation path be resolved to the first item in the TOC file under the root of that folder if both the TOC file and the item exist.",
+			"minLength": 1
+		},
+		"topicHref": {
+			"type": "string",
+			"description": "Specifies the path the item navigates to (see #1 in href). It is useful when href points to another TOC file (see #2 in href) or points to a folder (see #3 in href).",
+			"minLength": 1
+		},
+		"uid": {
+			"type": "string",
+			"description": "The uid the TOC item navigates to. Optional because items can exist just to parent other items.",
+			"minLength": 1
+		},
+		"maintainContext": {
+			"type": "boolean",
+			"description": "This property specifies whether the navigation to this TOC item maintains the current TOC context. The default value is false.",
+			"default": false
+		},
+		"expanded": {
+			"type": "boolean",
+			"description": "This property specifies whether the item should be expanded by default when the TOC is loaded. Only one root-level item can be expanded on load. The default value is false, so only add this with value true if you want the item to be expanded.",
+			"default": false
+		},
+		"tocItem": {
+			"properties": {
+				"name": {
+					"$ref": "#/definitions/name"
+				},
+				"displayName": {
+					"$ref": "#/definitions/displayName"
+				},
+				"href": {
+					"$ref": "#/definitions/href"
+				},
+				"topicHref": {
+					"$ref": "#/definitions/topicHref"
+				},
+				"uid": {
+					"$ref": "#/definitions/uid"
+				},
+				"maintainContext": {
+					"$ref": "#/definitions/maintainContext"
+				},
+				"expanded": {
+					"$ref": "#/definitions/expanded"
+				},
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/tocItem"
+					},
+					"minItems": 1
+				}
+			},
+			"type": "object",
+			"required": ["name"],
+			"additionalProperties": true
+		},
+		"tocItemsWithMetadata": {
+			"properties": {
+				"metadata": {
+					"description": "The metadata of the TOC.",
+					"properties": {},
+					"type": "object"
+				},
+				"items": {
+					"description": "The tree which represents the hierarchy of the TOC.",
+					"items": {
+						"$ref": "#/definitions/tocItem"
+					},
+					"type": "array",
+					"minItems": 1
+				}
+			},
+			"type": "object",
+			"required": ["items"],
+			"additionalProperties": false,
+			"metadata": "/metadata"
+		}
+	}
+}

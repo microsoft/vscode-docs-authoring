@@ -1,0 +1,5 @@
+name: YamlMime Hub
+label: YamlMime Hub
+description: Create a Hub YAML
+body: |2
+  ### YamlMime:Hub

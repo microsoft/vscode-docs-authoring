@@ -1,0 +1,8 @@
+name: YamlMime ModuleUnit
+label: YamlMime ModuleUnit
+description: Create a ModuleUnit YAML
+body: |2
+  ### YamlMime:ModuleUnit
+  uid: $1
+  title: $2
+  durationInMinutes: $3

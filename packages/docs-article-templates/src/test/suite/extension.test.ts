@@ -28,11 +28,13 @@ const context: ExtensionContext = {
 	globalState: {
 		get: key => {},
 		update: (key, value) => Promise.resolve(),
+		keys: () => [],
 		setKeysForSync(keys: string[]): void {}
 	},
 	subscriptions,
 	workspaceState: {
 		get: () => {},
+		keys: () => [],
 		update: (key, value) => Promise.resolve()
 	},
 	extensionPath: '',

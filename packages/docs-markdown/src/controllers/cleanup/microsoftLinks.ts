@@ -27,58 +27,47 @@ export function microsoftLinks(
  * @param data takes data string as arg
  */
 export function handleLinksWithRegex(data: string) {
-	// lgtm[js/regex/missing-regexp-anchor]
-	const akaRegex = new RegExp(/http:\/\/aka.ms/g);
+	const akaRegex = /http:\/\/aka.ms/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(akaRegex, 'https://aka.ms');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const microsoftRegex = new RegExp(/http:\/\/microsoft\.com/g);
+	const microsoftRegex = /http:\/\/microsoft\.com/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(microsoftRegex, 'https://microsoft.com');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const goMicrosoftRegex = new RegExp(/http:\/\/go\.microsoft\.com/g);
+	const goMicrosoftRegex =
+		/http:\/\/go\.microsoft\.com/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(goMicrosoftRegex, 'https://go.microsoft.com');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const visualstudioRegex = new RegExp(/http:\/\/visualstudio\.com/g);
+	const visualstudioRegex =
+		/http:\/\/visualstudio\.com/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(visualstudioRegex, 'https://visualstudio.com');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const officeRegex = new RegExp(/http:\/\/office\.com/g);
+	const officeRegex = /http:\/\/office\.com/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(officeRegex, 'https://office.com');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const docsRegex = new RegExp(/http:\/\/docs\.microsoft\.com/g);
+	const docsRegex = /http:\/\/docs\.microsoft\.com/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(docsRegex, 'https://docs.microsoft.com');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const azureRegex = new RegExp(/http:\/\/azure\.microsoft\.com/g);
+	const azureRegex = /http:\/\/azure\.microsoft\.com/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(azureRegex, 'https://azure.microsoft.com');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const azureRegex2 = new RegExp(/http:\/\/azure\.com/g);
+	const azureRegex2 = /http:\/\/azure\.com/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(azureRegex2, 'https://azure.com');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const msdnRegex = new RegExp(/http:\/\/msdn\.microsoft\.com/g);
+	const msdnRegex = /http:\/\/msdn\.microsoft\.com/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(msdnRegex, 'https://msdn.microsoft.com');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const msdnRegex2 = new RegExp(/http:\/\/msdn\.com/g);
+	const msdnRegex2 = /http:\/\/msdn\.com/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(msdnRegex2, 'https://msdn.com');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const technetRegex = new RegExp(/http:\/\/technet\.microsoft\.com/g);
+	const technetRegex =
+		/http:\/\/technet\.microsoft\.com/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(technetRegex, 'https://technet.microsoft.com');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const technetRegex2 = new RegExp(/http:\/\/technet\.com/g);
+	const technetRegex2 = /http:\/\/technet\.com/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(technetRegex2, 'https://technet.com');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const downloadRegex = new RegExp(/http:\/\/download\.microsoft\.com/g);
+	const downloadRegex =
+		/http:\/\/download\.microsoft\.com/g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(downloadRegex, 'https://download.microsoft.com');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const docsRegexLang = new RegExp(/https:\/\/docs\.microsoft\.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
+	const docsRegexLang =
+		/https:\/\/docs\.microsoft\.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(docsRegexLang, 'https://docs.microsoft.com/');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const azureRegexLang = new RegExp(/https:\/\/azure\.microsoft\.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
+	const azureRegexLang =
+		/https:\/\/azure\.microsoft\.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(azureRegexLang, 'https://azure.microsoft.com/');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const msdnRegexLang = new RegExp(/https:\/\/msdn\.microsoft\.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g);
+	const msdnRegexLang =
+		/https:\/\/msdn\.microsoft\.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(msdnRegexLang, 'https://msdn.microsoft.com/');
-	// lgtm[js/regex/missing-regexp-anchor]
-	const technetRegexLang = new RegExp(
-		/https:\/\/technet\.microsoft\.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g
-	);
+	const technetRegexLang =
+		/https:\/\/technet\.microsoft\.com\/[A-Za-z]{2}-[A-Za-z]{2}\//g; /* lgtm[js/regex/missing-regexp-anchor] */
 	data = data.replace(technetRegexLang, 'https://technet.microsoft.com/');
 	return data;
 }

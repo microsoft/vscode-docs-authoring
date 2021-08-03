@@ -43,6 +43,7 @@ let emptySecret: any;
 
 const context: ExtensionContext = {
 	globalState: {
+		keys: () => [],
 		get: key => [{ label: 'azure' }],
 		update: (key, value) => Promise.resolve(),
 		setKeysForSync(keys: string[]): void {}
@@ -55,6 +56,7 @@ const context: ExtensionContext = {
 	},
 	subscriptions,
 	workspaceState: {
+		keys: () => [],
 		get: () => {},
 		update: (key, value) => Promise.resolve()
 	},
