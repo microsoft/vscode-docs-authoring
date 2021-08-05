@@ -19,7 +19,8 @@ import {
 	detectFileExtension,
 	extractDocumentLink,
 	escapeRegExp,
-	splice
+	splice,
+	getYmlTitle
 } from '../../../helper/common';
 const expect = chai.expect;
 
@@ -125,5 +126,10 @@ suite('Common', () => {
 	test('splice returns spliced content', async () => {
 		const content = splice(5, 'brown jumped', ' fox');
 		expect(content).to.equal('brown fox jumped');
+	});
+	test('Get yml title', async () => {
+		const filePath = resolve(__dirname, '../../../../../src/test/data/repo/articles/yml-title.yml');
+		const title = getYmlTitle(filePath);
+		expect(title).to.equal('Power BI Premium FAQ');
 	});
 });

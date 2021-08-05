@@ -4,8 +4,13 @@
 	"description": "Docs Markdown Extension",
 	"icon": "images/docs-logo-ms.png",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
+<<<<<<< HEAD
 	"version": "0.2.84",
+=======
+	"version": "0.2.96",
+>>>>>>> 2dffe0875d21d0f71b18cabcce02cdd573775b18
 	"publisher": "docsmsft",
+	"private": true,
 	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
 	"bugs": {
 		"url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
@@ -31,9 +36,15 @@
 	"contributes": {
 		"commands": [
 			{
+<<<<<<< HEAD
 				"command": "verify",
 				"title": "Run doc-index verification",
 				"category": "Docs"
+=======
+				"command": "effectiveMetadata.refreshEntry",
+				"title": "Refresh Metadata",
+				"icon": "$(refresh)"
+>>>>>>> 2dffe0875d21d0f71b18cabcce02cdd573775b18
 			},
 			{
 				"command": "insertMoniker",
@@ -230,11 +241,6 @@
 				"category": "Docs"
 			},
 			{
-				"command": "updateImplicitMetadataValues",
-				"title": "Update Implicit Metadata Values",
-				"category": "Docs"
-			},
-			{
 				"command": "disableMetadataDateReminder",
 				"title": "Disable the ms.date date reminder prompt",
 				"category": "Docs"
@@ -296,11 +302,6 @@
 					"group": "1_modification"
 				},
 				{
-					"when": "editorTextFocus && resourceLangId == markdown || resourceLangId == yaml",
-					"command": "updateImplicitMetadataValues",
-					"group": "1_modification"
-				},
-				{
 					"when": "editorTextFocus && resourceLangId == markdown",
 					"command": "collapseRelativeLinks",
 					"group": "1_modification"
@@ -340,7 +341,7 @@
 				{
 					"command": "cleanupFile",
 					"group": "1_modification",
-					"when": "resourceLangId == markdown && !listMultipleSelection"
+					"when": "resourceLangId == markdown && !listMultipleSelection || resourceLangId == yaml && !listMultipleSelection"
 				}
 			],
 			"commandPalette": [
@@ -520,8 +521,21 @@
 					"command": "cleanupFile",
 					"when": "false"
 				}
+			],
+			"view/title": [
+				{
+					"command": "effectiveMetadata.refreshEntry",
+					"when": "view == effectiveMetadata",
+					"group": "navigation"
+				}
 			]
 		},
+		"viewsWelcome": [
+			{
+				"view": "effectiveMetadata",
+				"contents": "Open a Markdown file in a DocFx repo to see its local and global metadata."
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Docs Markdown",
@@ -743,6 +757,14 @@
 				"when": "editorTextFocus && workspaceContains:.openpublishing.publish.config.json && !vim.active"
 			}
 		],
+		"views": {
+			"explorer": [
+				{
+					"id": "effectiveMetadata",
+					"name": "Metadata"
+				}
+			]
+		},
 		"yamlValidation": [
 			{
 				"fileMatch": "toc.yml",
@@ -777,7 +799,6 @@
 		}
 	},
 	"dependencies": {
-		"adal-node": "^0.2.1",
 		"axios": "^0.21.1",
 		"child-process-promise": "^2.2.1",
 		"diff": "^4.0.2",
@@ -786,10 +807,16 @@
 		"js-yaml": "^3.13.1",
 		"lodash.merge": "^4.6.2",
 		"matcher": "^1.1.1",
+		"minimatch": "3.0.4",
 		"node-html-parser": "^2.1.0",
 		"recursive-readdir": "^2.2.2",
+<<<<<<< HEAD
 		"supports-color": "^9.0.0",
+=======
+		"remark-parse": "^9.0.0",
+>>>>>>> 2dffe0875d21d0f71b18cabcce02cdd573775b18
 		"typescript-collections": "^1.3.3",
+		"unified": "^8.4.2",
 		"vscode-extension-telemetry": "^0.1.1"
 	},
 	"devDependencies": {
@@ -798,17 +825,18 @@
 		"@types/glob": "^7.1.1",
 		"@types/graceful-fs": "^2.0.30",
 		"@types/lodash.merge": "^4.6.6",
+		"@types/minimatch": "3.0.4",
 		"@types/mocha": "^7.0.2",
 		"@types/node": "^12.20.6",
 		"@types/recursive-readdir": "^2.2.0",
 		"@types/vscode": "^1.55.0",
 		"@types/yamljs": "^0.2.30",
-		"@typescript-eslint/eslint-plugin": "^2.34.0",
-		"@typescript-eslint/eslint-plugin-tslint": "^2.34.0",
-		"@typescript-eslint/parser": "^2.34.0",
+		"@typescript-eslint/eslint-plugin": "^4.28.0",
+		"@typescript-eslint/eslint-plugin-tslint": "^4.28.0",
+		"@typescript-eslint/parser": "^4.28.0",
 		"chai": "^4.2.0",
 		"chai-spies": "^1.0.0",
-		"eslint": "^7.1.0",
+		"eslint": "^7.29.0",
 		"eslint-import-resolver-webpack": "^0.12.1",
 		"eslint-plugin-import": "^2.20.2",
 		"husky": "^4.2.3",

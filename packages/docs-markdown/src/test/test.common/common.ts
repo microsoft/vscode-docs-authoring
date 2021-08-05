@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import { resolve } from 'path';
 import {
 	commands,
@@ -35,6 +36,18 @@ export async function createDocumentAndGetItReady() {
 	await commands.executeCommand('workbench.action.files.newUntitledFile');
 }
 
+/**
+ * Replaces '\r' carriage returns with '', and the '\n' characters are unaffected.
+ */
+export function expectStringsToEqual(expected: string, actual: string) {
+	const normalizeNewLines = (str: string) => str.replace(/\r/g, '');
+
+	const normalizedExpected = normalizeNewLines(expected);
+	const normalizedActual = normalizeNewLines(actual);
+
+	expect(normalizedExpected).to.equal(normalizedActual);
+}
+
 interface Subscription {
 	dispose(): any;
 }
@@ -49,6 +62,7 @@ let emptySecret: any;
 
 export const context: ExtensionContext = {
 	globalState: {
+		keys: () => [],
 		get: key => {},
 		update: (key, value) => Promise.resolve(),
 		setKeysForSync(keys: string[]): void {}
@@ -61,6 +75,7 @@ export const context: ExtensionContext = {
 	},
 	subscriptions,
 	workspaceState: {
+		keys: () => [],
 		get: () => {},
 		update: (key, value) => Promise.resolve()
 	},

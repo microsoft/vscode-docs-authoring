@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { authentication, extensions, window, workspace } from 'vscode';
 import {
 	getCommunicationDate,

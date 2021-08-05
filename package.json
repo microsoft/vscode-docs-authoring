@@ -10,37 +10,38 @@
       "**/husky",
       "**/jest",
       "**/mocha",
-      "**/@types"
+      "**/@types",
+      "**/@types/jest",
+      "**/@types/mocha"
     ]
   },
   "devDependencies": {
-    "lerna": "^3.22.1",
+    "husky": "^4.2.5",
     "prettier": "2.0.5",
-    "pretty-quick": "2.0.1",
-    "husky": "^4.2.5"
+    "pretty-quick": "2.0.1"
   },
   "scripts": {
     "preinstall": "node ./cleanup-prepush.js",
-    "compile-docs-article-templates": "yarn workspace docs-article-templates compile",
-    "compile-docs-images": "yarn workspace docs-images compile",
-    "compile-docs-linting": "yarn workspace docs-linting compile",
-    "compile-docs-markdown": "yarn workspace docs-markdown compile",
-    "compile-docs-metadata": "yarn workspace docs-metadata compile",
-    "compile-docs-preview": "yarn workspace docs-preview compile",
-    "lint-docs-article-templates": "yarn workspace docs-article-templates lint",
-    "lint-docs-images": "yarn workspace docs-images lint",
-    "lint-docs-linting": "yarn workspace docs-linting lint",
-    "lint-docs-markdown": "yarn workspace docs-markdown lint",
-    "lint-docs-metadata": "yarn workspace docs-metadata lint",
-    "lint-docs-preview": "yarn workspace docs-preview lint",
-    "compile": "yarn run compile-docs-article-templates && yarn run compile-docs-images && yarn run compile-docs-linting && yarn run compile-docs-markdown && yarn run compile-docs-metadata && yarn run compile-docs-preview",
-    "lint": "yarn run lint-docs-article-templates && yarn run lint-docs-images && yarn run lint-docs-linting && yarn run lint-docs-markdown && yarn run lint-docs-metadata && yarn run lint-docs-preview",
-    "pre-push": "yarn run lint && yarn run compile"
+    "compile-docs-article-templates": "npm run --prefix packages/docs-article-templates compile",
+    "compile-docs-images": "npm run --prefix packages/docs-images compile",
+    "compile-docs-linting": "npm run --prefix packages/docs-linting compile",
+    "compile-docs-markdown": "npm run --prefix packages/docs-markdown compile",
+    "compile-docs-metadata": "npm run --prefix packages/docs-metadata compile",
+    "compile-docs-preview": "npm run --prefix packages/docs-preview compile",
+    "lint-docs-article-templates": "npm run --prefix packages/docs-article-templates lint",
+    "lint-docs-images": "npm run --prefix packages/docs-images lint",
+    "lint-docs-linting": "npm run --prefix packages/docs-linting lint",
+    "lint-docs-markdown": "npm run --prefix packages/docs-markdown lint",
+    "lint-docs-metadata": "npm run --prefix packages/docs-metadata lint",
+    "lint-docs-preview": "npm run --prefix packages/docs-preview lint",
+    "compile": "npm run compile-docs-article-templates && npm run compile-docs-images && npm run compile-docs-linting && npm run compile-docs-markdown && npm run compile-docs-metadata && npm run compile-docs-preview",
+    "lint": "npm run lint-docs-article-templates && npm run lint-docs-images && npm run lint-docs-linting && npm run lint-docs-markdown && npm run lint-docs-metadata && npm run lint-docs-preview",
+    "pre-push": "npm run lint && npm run compile"
   },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
-      "pre-push": "yarn run pre-push"
+      "pre-push": "npm run pre-push"
     }
   },
   "dependencies": {

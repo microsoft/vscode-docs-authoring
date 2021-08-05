@@ -266,7 +266,7 @@ export function internalLinkBuilder(
 	if (pathSelection === '') {
 		link = `${startBrace}${selectedText}]()`;
 	} else {
-		link = `${startBrace}${selectedText}](${pathSelection.replace(' ', '%20')})`;
+		link = `${startBrace}${selectedText}](${pathSelection.replace(/[ ]/g, '%20')})`;
 	}
 
 	const langId = languageId || 'markdown';
@@ -354,8 +354,6 @@ export function createChildProcess(path: any, args: any, options: any) {
 	const childProcess = promise.childProcess;
 	return childProcess;
 }
-
-// eslint-disable-next-line @typescript-eslint/interface-name-prefix
 interface IExpressionReplacementPair {
 	expression: RegExp;
 	replacement: string;
@@ -614,4 +612,12 @@ export function checkVersion(context: ExtensionContext) {
 	} else {
 		return false;
 	}
+}
+
+export function removeFirstOccurrence(str: string, searchstr: string) {
+	const index = str.indexOf(searchstr);
+	if (index === -1) {
+		return str;
+	}
+	return str.slice(0, index) + str.slice(index + searchstr.length);
 }

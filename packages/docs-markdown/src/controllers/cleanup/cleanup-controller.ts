@@ -22,6 +22,7 @@ import { getCleanUpQuickPick, recurseCallback } from './utilities';
 import { cleanUpDevLangInCodeBlocks } from './devlangsInCodeBlocks';
 import recursive = require('recursive-readdir');
 import { addPeriodsToAlt } from './addPeriodsToAlt';
+import { removeCommentsFromFile } from './stripComments';
 
 const telemetryCommand: string = 'applyCleanup';
 let commandOption: string;
@@ -34,6 +35,10 @@ export function applyCleanupCommand() {
 export async function applyCleanupFile(uri: Uri) {
 	const { items, opts } = getCleanUpQuickPick();
 	const file = uri.fsPath;
+	items.push({
+		description: '',
+		label: 'Strip comments'
+	});
 	items.push({
 		description: '',
 		label: 'Everything'
@@ -122,6 +127,15 @@ export async function applyCleanupFile(uri: Uri) {
 						promises.push(runAll(progress, file, null, null));
 						message = 'Everything complete.';
 						commandOption = 'everything';
+						break;
+					case 'strip comments':
+						showStatusMessage('Cleanup: Strip comments from file started.');
+						message = 'Strip comments from file.';
+						progress.report({ increment: 1, message });
+						statusMessage = 'Cleanup: Strip comments from file completed.';
+						promises.push(removeCommentsFromFile(progress, file, null, null));
+						message = 'Strip comments from file completed.';
+						commandOption = 'comments';
 						break;
 					case 'empty metadata':
 						const options: QuickPickOptions = { placeHolder: 'Cleanup...' };

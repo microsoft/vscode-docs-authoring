@@ -1,6 +1,6 @@
 import { activate } from '../../extension';
 import { resolve } from 'path';
-import { ExtensionContext, Uri, commands } from 'vscode';
+import { ExtensionContext, Uri, commands, ExtensionKind } from 'vscode';
 import chai from 'chai';
 import spies from 'chai-spies';
 chai.use(spies);
@@ -26,7 +26,8 @@ const context: ExtensionContext = {
 	globalState: {
 		get: (key: any) => {},
 		update: (key, value) => Promise.resolve(),
-		setKeysForSync(keys: string[]): void {}
+		setKeysForSync(keys: string[]): void {},
+		keys: () => []
 	},
 	secrets: {
 		store: (key, value) => Promise.resolve(),
@@ -37,7 +38,8 @@ const context: ExtensionContext = {
 	subscriptions,
 	workspaceState: {
 		get: () => {},
-		update: (key, value) => Promise.resolve()
+		update: (key, value) => Promise.resolve(),
+		keys: () => []
 	},
 	extensionPath: '',
 	asAbsolutePath: relative => '',
@@ -58,7 +60,17 @@ const context: ExtensionContext = {
 	extensionMode: 1,
 	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
 	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
-	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	extension: {
+		exports: '',
+		extensionKind: ExtensionKind.Workspace,
+		extensionPath: '',
+		extensionUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+		id: '',
+		isActive: true,
+		packageJSON: '',
+		activate: () => Promise.resolve()
+	}
 };
 suite('Extension Tests', function () {
 	// Defines a Mocha unit test

@@ -1,6 +1,6 @@
 import { activate } from '../../extension';
 import { resolve } from 'path';
-import { ExtensionContext, Uri, commands, Disposable, ExtensionMode } from 'vscode';
+import { ExtensionContext, Uri, commands, Disposable, ExtensionMode, ExtensionKind } from 'vscode';
 import * as applyController from '../../controllers/apply-controller';
 import * as extractController from '../../controllers/extract-controller';
 import * as chai from 'chai';
@@ -25,6 +25,7 @@ export const context: ExtensionContext = {
 	globalState: {
 		get: key => {},
 		update: (key, value) => Promise.resolve(),
+		keys: () => [],
 		setKeysForSync(keys: string[]): void {}
 	},
 	secrets: {
@@ -36,7 +37,8 @@ export const context: ExtensionContext = {
 	subscriptions,
 	workspaceState: {
 		get: () => {},
-		update: (key, value) => Promise.resolve()
+		update: (key, value) => Promise.resolve(),
+		keys: () => []
 	},
 	extensionPath: '',
 	asAbsolutePath: relative => '',
@@ -57,7 +59,17 @@ export const context: ExtensionContext = {
 	extensionMode: ExtensionMode.Test,
 	globalStorageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
 	logUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
-	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring')
+	storageUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+	extension: {
+		exports: '',
+		extensionKind: ExtensionKind.Workspace,
+		extensionPath: '',
+		extensionUri: Uri.parse('https://github.com/microsoft/vscode-docs-authoring'),
+		id: '',
+		isActive: true,
+		packageJSON: '',
+		activate: () => Promise.resolve()
+	}
 };
 let disposable: Disposable;
 suite('Extension Tests', function () {

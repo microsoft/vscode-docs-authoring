@@ -27,7 +27,7 @@ export function addPeriodsToAlt(
 
 export function addPeriodsForMd(data: string) {
 	const regex = new RegExp(/\!\[(.*(?<!(\?|\!|\.)))\]\((.*)\)/g);
-	const altTextRegex = new RegExp(/\!\[(.*?(?<!(\?|\!|\.)))\]/);
+	const altTextRegex = new RegExp(/\!\[(.*?)\]/);
 	data = insertPeriod(data, regex, altTextRegex);
 	return data;
 }
@@ -36,7 +36,7 @@ export function addPeriodsForTripleColonImage(data: string) {
 	const regex = new RegExp(
 		/image\s+(((source|type|alt-text|lightbox|border|loc-scope)="([a-zA-Z0-9_.\/ -]+))"\s*)+:::/g
 	);
-	const altTextRegex = new RegExp(/alt-text="(.*?(?<!(\?|\!|\.)))"/);
+	const altTextRegex = new RegExp(/alt-text="(.*?)"/);
 	data = insertPeriod(data, regex, altTextRegex);
 	return data;
 }
@@ -47,11 +47,14 @@ function insertPeriod(data: string, regex: RegExp, altTextRegex: RegExp) {
 		matches.forEach(match => {
 			const groups = altTextRegex.exec(match);
 			if (groups && groups.length > 0) {
-				if (!isNullOrWhiteSpace(groups[1])) {
+				if (!isNullOrWhiteSpace(groups[1]) && !groups[1].endsWith('.')) {
 					let imageTagAltTextWithPuctuation;
 					const altTextExtraCharacterRegex = /[a-zA-Z](\".*)\]/g;
+					const altTextWhitespaceRegex = /(\.\s+)\]/g;
 					if (match.match(altTextExtraCharacterRegex)) {
-						imageTagAltTextWithPuctuation = match.replace(/\"(.\W|\S|)\]/g, '."]');
+						imageTagAltTextWithPuctuation = match.replace(/(?<!\.)\"(.\W|\S|)\]/g, '."]');
+					} else if (match.match(altTextWhitespaceRegex)) {
+						imageTagAltTextWithPuctuation = match.replace(/\.\s+/g, '.');
 					} else {
 						const insertAtPosition = groups.index + groups[0].length - 1;
 						imageTagAltTextWithPuctuation = splice(insertAtPosition, match, '.');

@@ -1,5 +1,36 @@
 # Change Log
 
+## 0.2.95 (June 10th, 2021)
+
+- Added metadata tree view in metadata explorer panel that displays the markdown metadata from the current .md file and docfx.json.
+
+## 0.2.94 (June 2nd, 2021)
+
+- Header link generator fix: [Issue 880](https://github.com/microsoft/vscode-docs-authoring/issues/880)
+
+## 0.2.93 (May 25th, 2021)
+
+- TOC entry bugfix.
+
+## 0.2.92 (May 17th, 2021)
+
+- Cleanup script bugfixes.
+
+## 0.2.91 (May 11th, 2021)
+
+- Add comment cleanup script.
+- Alt text lightbox bugfix.
+
+## 0.2.90 (May 7th, 2021)
+
+- Lightbox bugfix.
+
+## 0.2.89 (April 30th, 2021)
+
+- Support linking to YAML files from markdown.
+- Remove auth code.
+- Readme updates.
+
 ## 0.2.87 (April 20th, 2021)
 
 - Update alt text cleanup command to support quotes.

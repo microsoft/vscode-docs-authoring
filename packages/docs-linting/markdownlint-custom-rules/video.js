@@ -72,9 +72,9 @@ module.exports = {
 								if (sourceMatch) {
 									const source = sourceMatch[1];
 									if (
-										!source.includes('channel9.msdn.com') &&
-										!source.includes('youtube.com/embed') &&
-										!source.includes('microsoft.com/en-us/videoplayer/embed')
+										!common.channel9.test(source) &&
+										!common.youtube.test(source) &&
+										!common.videoplayer.test(source)
 									) {
 										onError({
 											lineNumber: text.lineNumber,
@@ -82,7 +82,8 @@ module.exports = {
 											context: text.line
 										});
 									}
-									if (source.includes('channel9.msdn.com') && !source.includes('/player')) {
+									let allowedHosts = ['channel9.msdn.com'];
+									if (allowedHosts.includes(source) && !source.includes('/player')) {
 										onError({
 											lineNumber: text.lineNumber,
 											detail: detailStrings.videoChannel9,

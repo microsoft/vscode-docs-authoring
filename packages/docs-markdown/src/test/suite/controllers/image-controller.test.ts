@@ -22,7 +22,8 @@ import {
 	loadDocumentAndGetItReady,
 	sleep,
 	extendedSleepTime,
-	longSleepTime
+	longSleepTime,
+	expectStringsToEqual
 } from '../../test.common/common';
 import { context } from '../../test.common/common';
 
@@ -218,11 +219,11 @@ suite('Image Controller', () => {
 		const item1: QuickPickItem = {
 			label: 'add link to image'
 		};
-		const item2: QuickPickItem = {
-			label: 'https://microsoft.com'
-		};
+
+		const stubShowInputBox = sinon.stub(window, 'showInputBox');
+		const input: string = 'https://microsoft.com';
 		stubShowQuickPick.onCall(0).resolves(item1);
-		stubShowQuickPick.onCall(1).resolves(item2);
+		stubShowInputBox.onCall(0).resolves(input);
 		const filePath = resolve(
 			__dirname,
 			'../../../../../src/test/data/repo/articles/image-controller6.md'
@@ -238,7 +239,7 @@ suite('Image Controller', () => {
 			os.EOL;
 		editor = window.activeTextEditor;
 		const actualText = editor?.document.getText();
-		assert.equal(expectedText, actualText);
+		expectStringsToEqual(expectedText, actualText);
 		stubShowQuickPick.restore();
 		stubAxios.restore();
 	});
