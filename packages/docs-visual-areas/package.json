@@ -1,0 +1,98 @@
+{
+	"name": "docs-visual-areas",
+	"displayName": "docs-visual-areas",
+	"description": "Docs Visual Areas: Visualize Microsoft Docs content inside tabs and zones in Visual Studio Code",
+	"icon": "images/icon.png",
+	"publisher": "docs-msft",
+	"version": "0.2.0",
+	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
+	"bugs": {
+		"url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
+	},
+	"engines": {
+		"vscode": "^1.55.0"
+	},
+	"repository": {
+		"url": "https://github.com/Microsoft/vscode-docs-authoring.git"
+	},
+	"keywords": [
+		"Markdown",
+		"Colors"
+	],
+	"categories": [
+		"Other"
+	],
+	"extensionKind": [
+		"ui",
+		"workspace"
+	],
+	"activationEvents": [
+		"onLanguage:markdown"
+	],
+	"main": "./dist/extension",
+	"contributes": {
+		"configuration": {
+			"properties": {
+				"docs-visual-areas.gutterIndicatorHeight": {
+					"type": "integer",
+					"default": 100,
+					"description": "The height the of gutter indicator."
+				},
+				"docs-visual-areas.gutterIndicatorOffset": {
+					"type": "integer",
+					"default": 12,
+					"maximum": 14,
+					"description": "The offset from the left for the gutter indicator."
+				},
+				"docs-visual-areas.gutterIndicatorOpacity": {
+					"type": "integer",
+					"default": 60,
+					"maximum": 100,
+					"description": "The opacity percentage of the gutter indicator."
+				},
+				"docs-visual-areas.gutterIndicatorWidth": {
+					"type": "integer",
+					"default": 4,
+					"description": "The width the of gutter indicator."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "webpack --mode production",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "yarn run compile && yarn run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js",
+		"prettier": "prettier --write \"**/*.{ts,js,json,yml}\"",
+		"prettier-check": "prettier --check \"**/*.{ts,js,json,yml}\" --loglevel debug",
+		"package": "npx vsce package"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.4",
+		"@types/node": "14.x",
+		"@types/vscode": "^1.55.0",
+		"@typescript-eslint/eslint-plugin": "^4.28.0",
+		"@typescript-eslint/eslint-plugin-tslint": "^4.28.0",
+		"@typescript-eslint/parser": "^4.28.0",
+		"eslint": "^7.29.0",
+		"eslint-import-resolver-webpack": "^0.12.1",
+		"eslint-plugin-import": "^2.20.2",
+		"glob": "^7.1.6",
+		"mocha": "^8.2.1",
+		"prettier": "2.0.5",
+		"pretty-quick": "^2.0.1",
+		"ts-loader": "^6.2.2",
+		"ts-node": "^8.8.1",
+		"typescript": "^4.1.3",
+		"vscode-test": "^1.5.0",
+		"webpack": "^4.42.1",
+		"webpack-bundle-analyzer": "^3.6.1",
+		"webpack-cli": "^3.3.11"
+	},
+	"license": "MIT"
+}
