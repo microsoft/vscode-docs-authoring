@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { resolve } from 'path';
 import {
 	commands,
@@ -50,6 +49,7 @@ let emptySecret: any;
 
 export const context: ExtensionContext = {
 	globalState: {
+		keys: () => [],
 		get: key => {},
 		update: (key, value) => Promise.resolve(),
 		setKeysForSync(keys: string[]): void {}
@@ -62,6 +62,7 @@ export const context: ExtensionContext = {
 	},
 	subscriptions,
 	workspaceState: {
+		keys: () => [],
 		get: () => {},
 		update: (key, value) => Promise.resolve()
 	},
