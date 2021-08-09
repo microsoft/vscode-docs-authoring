@@ -27,6 +27,13 @@
 				}
 			],
 			"group": "build"
+		},
+		{
+			"label": "mocha",
+			"type": "shell",
+			"args": ["run", "compile"],
+			"problemMatcher": [],
+			"group": "test"
 		}
 	]
 }

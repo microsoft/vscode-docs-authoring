@@ -1,15 +1,20 @@
-import * as assert from 'assert';
+import * as chai from 'chai';
+import * as spies from 'chai-spies';
+import { activate, deactivate } from '../../extension';
+import { sleep, sleepTime, context } from '../test.common/common';
+chai.use(spies);
+const expect = chai.expect;
 
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
-import * as vscode from 'vscode';
-// import * as myExtension from '../../extension';
-
-suite('Extension Test Suite', () => {
-	vscode.window.showInformationMessage('Start all tests.');
-
-	test('Sample test', () => {
-		assert.strictEqual(-1, [1, 2, 3].indexOf(5));
-		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
+suite('Extension.ts tests', () => {
+	test('activate', () => {
+		const spy = chai.spy(activate);
+		activate(context);
+		expect(spy).to.be.have.been.called;
+	});
+	test('deactivate', () => {
+		const spy = chai.spy(deactivate);
+		deactivate();
+		sleep(sleepTime);
+		expect(spy).to.be.have.been.called;
 	});
 });
