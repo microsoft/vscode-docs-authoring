@@ -64,7 +64,7 @@
 		"webpack-dev": "webpack --mode development --watch",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
-		"pretest": "yarn run compile && yarn run lint",
+		"pretest": "yarn run compile",
 		"lint": "eslint src --ext .ts",
 		"test": "node ./out/src/test/runTest.js",
 		"prettier": "prettier --write \"**/*.{ts,js,json,yml}\"",
