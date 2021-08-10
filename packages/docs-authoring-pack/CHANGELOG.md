@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.14 (August 9th, 2021)
+
+- [docs-visual-areas](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-visual-areas)
+
 ## 0.1.13 (February 25th, 2021)
 
 - [docs-scaffolding](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-scaffolding)
