@@ -13,8 +13,6 @@ export function activate(context: vscode.ExtensionContext) {
 	addSubscriptions();
 	addEventHandlers();
 
-	// context.subscriptions.push(disposable);
-
 	if (activeTextEditor) {
 		triggerUpdateDecorations();
 		updateStatusBarItem();
