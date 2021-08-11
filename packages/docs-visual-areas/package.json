@@ -4,7 +4,7 @@
 	"description": "Docs Visual Areas: Visualize Microsoft Docs content inside tabs and zones in Visual Studio Code",
 	"icon": "images/icon.png",
 	"publisher": "docsmsft",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
 	"bugs": {
 		"url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
