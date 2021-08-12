@@ -39,7 +39,7 @@ export function getAllEffectiveMetadata(docFxFileInfo: DocFxFileInfo): MetadataE
 		const result = results.find(r => !!r.groups && r.groups.metadata);
 		if (result) {
 			try {
-				const metadataJson = jsyaml.load(result.groups.metadata);
+				const metadataJson = jsyaml.load(result.groups.metadata, { skipInvalid: true });
 				if (metadataJson) {
 					const lines = result.groups.metadata.split(/\r\n|\n\r|\n|\r/);
 					for (const [key, value] of Object.entries(metadataJson)) {
