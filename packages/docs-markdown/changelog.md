@@ -2,7 +2,7 @@
 
 ## 0.2.97 (August 13th, 2021)
 
-- Small update the metadata tree view in metadata explorer.
+- Small update to the metadata tree view in metadata explorer.
 
 ## 0.2.95 (June 10th, 2021)
 
