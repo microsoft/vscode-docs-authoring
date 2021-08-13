@@ -4,7 +4,11 @@
 	"description": "Docs Markdown Extension",
 	"icon": "images/docs-logo-ms.png",
 	"aiKey": "0a0e5961-85c2-451a-bce8-6a54e37c93be",
+<<<<<<< HEAD
+	"version": "0.2.84",
+=======
 	"version": "0.2.96",
+>>>>>>> 2dffe0875d21d0f71b18cabcce02cdd573775b18
 	"publisher": "docsmsft",
 	"private": true,
 	"homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-markdown",
@@ -32,9 +36,15 @@
 	"contributes": {
 		"commands": [
 			{
+<<<<<<< HEAD
+				"command": "verify",
+				"title": "Run doc-index verification",
+				"category": "Docs"
+=======
 				"command": "effectiveMetadata.refreshEntry",
 				"title": "Refresh Metadata",
 				"icon": "$(refresh)"
+>>>>>>> 2dffe0875d21d0f71b18cabcce02cdd573775b18
 			},
 			{
 				"command": "insertMoniker",
@@ -118,11 +128,6 @@
 			{
 				"command": "distributeTable",
 				"title": "Evenly distribute selected table",
-				"category": "Docs"
-			},
-			{
-				"command": "convertTableToDataMatrix",
-				"title": "Convert table to data matrix",
 				"category": "Docs"
 			},
 			{
@@ -318,11 +323,6 @@
 				},
 				{
 					"when": "editorHasSelection",
-					"command": "convertTableToDataMatrix",
-					"group": "1_modification"
-				},
-				{
-					"when": "editorHasSelection",
 					"command": "consolidateTable",
 					"group": "1_modification"
 				}
@@ -410,11 +410,6 @@
 				},
 				{
 					"command": "distributeTable",
-					"group": "Docs",
-					"when": "resourceLangId == markdown"
-				},
-				{
-					"command": "convertTableToDataMatrix",
 					"group": "Docs",
 					"when": "resourceLangId == markdown"
 				},
@@ -815,7 +810,11 @@
 		"minimatch": "3.0.4",
 		"node-html-parser": "^2.1.0",
 		"recursive-readdir": "^2.2.2",
+<<<<<<< HEAD
+		"supports-color": "^9.0.0",
+=======
 		"remark-parse": "^9.0.0",
+>>>>>>> 2dffe0875d21d0f71b18cabcce02cdd573775b18
 		"typescript-collections": "^1.3.3",
 		"unified": "^8.4.2",
 		"vscode-extension-telemetry": "^0.1.1"
@@ -828,7 +827,7 @@
 		"@types/lodash.merge": "^4.6.6",
 		"@types/minimatch": "3.0.4",
 		"@types/mocha": "^7.0.2",
-		"@types/node": "^12.12.32",
+		"@types/node": "^12.20.6",
 		"@types/recursive-readdir": "^2.2.0",
 		"@types/vscode": "^1.55.0",
 		"@types/yamljs": "^0.2.30",

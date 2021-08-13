@@ -43,7 +43,7 @@ export function singleValueMetadata(data: any, variable: string) {
 
 /**
  * check if the data origin is the same as updated data
- * Write file if change occured. Calculate the percent complete
+ * Write file if change occurred. Calculate the percent complete
  * If the percentage complete has changed, report the value
  * And output percentage complete to output console.
  * @param index index of current loop used to get completed percentage

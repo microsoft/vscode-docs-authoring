@@ -20,6 +20,12 @@ import {
 	TextDocumentWillSaveEvent,
 	WorkspaceConfiguration
 } from 'vscode';
+import {
+	insertDocIndexCommand,
+	verify,
+	verifysilent,
+	docIndexActivate
+} from './controllers/doc-index/doc-index-controller';
 import { insertAlertCommand } from './controllers/alert-controller';
 import { boldFormattingCommand } from './controllers/bold-controller';
 import {
@@ -119,6 +125,7 @@ export async function activate(context: ExtensionContext) {
 		...quickPickMenuCommand,
 		...notebookControllerCommands
 	];
+	insertDocIndexCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertAlertCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertMonikerCommand().forEach(cmd => authoringCommands.push(cmd));
 	insertIncludeCommand().forEach(cmd => authoringCommands.push(cmd));
@@ -209,7 +216,9 @@ export async function activate(context: ExtensionContext) {
 
 	// When the document changes, find and replace target expressions (for example, smart quotes).
 	workspace.onDidChangeTextDocument(findAndReplaceTargetExpressions);
-
+	docIndexActivate();
+	workspace.onDidChangeTextDocument(verifysilent);
+	workspace.onDidOpenTextDocument(verifysilent);
 	workspace.onWillSaveTextDocument(willSaveTextDocument);
 	async function willSaveTextDocument(e: TextDocumentWillSaveEvent) {
 		e.waitUntil(metadataDateReminder());
@@ -295,7 +304,6 @@ export function setupAutoComplete() {
 	});
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() {
 	output.appendLine('Deactivating extension.');
 }
