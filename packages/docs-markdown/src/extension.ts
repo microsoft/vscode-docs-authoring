@@ -201,7 +201,9 @@ export async function activate(context: ExtensionContext) {
 			}
 		}
 	});
-	workspace.onDidChangeTextDocument(e => {
+
+	// Refresh when the active file is changed, including closing it.
+	window.onDidChangeActiveTextEditor(e => {
 		metadataTreeProvider.refresh();
 	});
 
