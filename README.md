@@ -1,3 +1,5 @@
+🚨 This project is archived and will no longer be publicly maintained. 🚨
+
 # vscode-docs-authoring
 
 This repo contains code for the Docs Markdown VS Code extension, which provides Markdown authoring assistance for contributing to docs.microsoft.com. The Docs Markdown extension ships in the VS Code Marketplace, either as an [individual extension](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-markdown) or bundled with other useful extensions as part of the [Docs Authoring Pack](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-authoring-pack).
