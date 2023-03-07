@@ -29,5 +29,3 @@ When creating your pull request, please include:
 - Release notes  
 
 Once the PR is submitted, it will be reviewed within one week. After the PR is accepted and merged, it will be included and released in the next deployment with release notes added to the changelog. PRs with bumped versions will be rejected.
-
-Thanks!
