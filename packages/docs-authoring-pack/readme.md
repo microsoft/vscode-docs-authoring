@@ -6,14 +6,9 @@ The Docs Authoring Pack provides a series of extensions to help docs.microsoft.c
 - [Docs Preview](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-preview), which uses the docs.microsoft.com CSS for more accurate Markdown preview, including custom Markdown.
 - [Docs YAML](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-yaml), which validates Docs .yml files against the appropriate YAML schemas.
 - [Docs Images](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-images), which compresses and resizes images.
-- [Docs Metadata](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-metadata), which speeds up editing of metadata throughout a Docs repository.
 - [Docs Article Templates](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-article-templates), which allows users to apply Markdown skeleton content to new files.
 - [Docs Scaffolding](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-scaffolding), which automatically generates Learn modules based on standard patterns and automates renaming, inserting, deleting, and reordering units.
-- [Docs Linting](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-linting), which provides markdown linting specific to docs.microsoft.com.
-- [Docs Visual Areas](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-visual-areas), which provides visualizations of tabs and zones specific to markdown files for docs.microsoft.com.
 - [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint), a popular linter by David Anson.
-- [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker), a fully offline spell checker by Street Side Software.
-- [LinkCheckMD](https://marketplace.visualstudio.com/items?itemName=blackmist.LinkCheckMD), which generates a report on the links in the document, including broken links.
 
 ## How to use the Docs Markdown extension
 
@@ -59,14 +54,6 @@ You can open Docs Preview by opening a markdown document and clicking on the pre
 
 For more information about the Docs Preview commands, see the [Docs Preview readme](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-preview).
 
-## How to use Docs Linting extension
-
-Docs Authoring Pack also supports comes with custom linting rules to aid in catching errors many run into when contributing to docs. This should automatically work with Docs Authoring Pack, and you will see the output in the "Problems" pane.
-
-![docs preview buttons](https://raw.githubusercontent.com/microsoft/vscode-docs-authoring/master/packages/docs-authoring-pack/images/docs-linting-problem.png)
-
-For more information about the Docs Linting commands, see the [Docs Linting readme](https://marketplace.visualstudio.com/items?itemName=docsmsft.docs-linting).
-
 ## Docs Markdown keyboard shortcuts and toolbar
 
 ### How to assign keyboard shortcuts
@@ -111,17 +98,7 @@ Users of the pre-release version of the extension will notice that the authoring
 
 ## Contributing
 
-This project welcomes contributions and suggestions. Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit [https://cla.microsoft.com](https://cla.microsoft.com).
-
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+This project is now closed source. We are no longer accepting contributions from outside contributors.
 
 ## License
 

@@ -1,5 +1,5 @@
 {
-  "name": "docs-authoring-pack",
+  "name": "learn-authoring-pack",
   "private": true,
   "workspaces": {
     "packages": [
@@ -22,22 +22,6 @@
   },
   "scripts": {
     "preinstall": "node ./cleanup-prepush.js",
-    "compile-docs-article-templates": "npm run --prefix packages/docs-article-templates compile",
-    "compile-docs-images": "npm run --prefix packages/docs-images compile",
-    "compile-docs-linting": "npm run --prefix packages/docs-linting compile",
-    "compile-docs-markdown": "npm run --prefix packages/docs-markdown compile",
-    "compile-docs-metadata": "npm run --prefix packages/docs-metadata compile",
-    "compile-docs-preview": "npm run --prefix packages/docs-preview compile",
-    "compile-docs-visual-areas": "npm run --prefix packages/docs-visual-areas compile",
-    "lint-docs-article-templates": "npm run --prefix packages/docs-article-templates lint",
-    "lint-docs-images": "npm run --prefix packages/docs-images lint",
-    "lint-docs-linting": "npm run --prefix packages/docs-linting lint",
-    "lint-docs-markdown": "npm run --prefix packages/docs-markdown lint",
-    "lint-docs-metadata": "npm run --prefix packages/docs-metadata lint",
-    "lint-docs-preview": "npm run --prefix packages/docs-preview lint",
-    "lint-docs-visual-areas": "npm run --prefix packages/docs-visual-areas lint",
-    "compile": "npm run compile-docs-article-templates && npm run compile-docs-images && npm run compile-docs-linting && npm run compile-docs-markdown && npm run compile-docs-metadata && npm run compile-docs-preview && npm run compile-docs-visual-areas",
-    "lint": "npm run lint-docs-article-templates && npm run lint-docs-images && npm run lint-docs-linting && npm run lint-docs-markdown && npm run lint-docs-metadata && npm run lint-docs-preview && npm run lint-docs-visual-areas",
     "pre-push": "npm run lint && npm run compile"
   },
   "husky": {
