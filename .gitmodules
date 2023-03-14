@@ -1,3 +1,0 @@
-[submodule "packages/docs-build"]
-	path = packages/docs-build
-	url = https://github.com/docascode/vscode-docs-build

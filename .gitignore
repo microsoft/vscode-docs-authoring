@@ -1,8 +1,2 @@
-
-*.vsix
-docs-metadata/install.Lock
-
-.vscode/*
 node_modules
-
-**/.DS_Store
+.vsix

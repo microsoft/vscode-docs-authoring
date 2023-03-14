@@ -1,33 +1,37 @@
 {
-  "name": "learn-authoring-pack",
+  "name": "docs-authoring-pack",
+  "displayName": "Docs Authoring Pack",
+  "description": "Collection of extensions to assist with content development for learn.microsoft.com",
+  "icon": "media/image/docs-logo-ms.png",
+  "version": "0.1.15",
+  "publisher": "docsmsft",
   "private": true,
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ],
-    "nohoist": [
-      "**/vscode",
-      "**/husky",
-      "**/jest",
-      "**/mocha",
-      "**/@types",
-      "**/@types/jest",
-      "**/@types/mocha"
-    ]
+  "engines": {
+    "vscode": "^1.20.0"
   },
-  "devDependencies": {
-    "husky": "^4.2.5",
-    "prettier": "2.0.5",
-    "pretty-quick": "2.0.1"
+  "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-authoring-pack",
+  "bugs": {
+    "url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
   },
-  "scripts": {
-    "preinstall": "node ./cleanup-prepush.js",
-    "pre-push": "npm run lint && npm run compile"
+  "repository": {
+    "url": "https://github.com/Microsoft/vscode-docs-authoring.git"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged --pattern \"**/*.{ts,js,json,yml}\"",
-      "pre-push": "npm run pre-push"
-    }
-  }
+  "categories": [
+    "Extension Packs"
+  ],
+  "keywords": [
+    "markdown",
+    "Microsoft Learn"
+  ],
+  "extensionPack": [
+    "DavidAnson.vscode-markdownlint",
+    "docsmsft.docs-images",
+    "docsmsft.docs-preview",
+    "docsmsft.docs-markdown",
+    "docsmsft.docs-article-templates",
+    "docsmsft.docs-build",
+    "docsmsft.docs-yaml",
+    "docsmsft.docs-scaffolding"
+  ],
+  "license": "MIT"
 }
