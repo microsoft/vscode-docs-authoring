@@ -9,7 +9,7 @@
   "engines": {
     "vscode": "^1.20.0"
   },
-  "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/master/docs-authoring-pack",
+  "homepage": "https://github.com/Microsoft/vscode-docs-authoring/tree/main/docs-authoring-pack",
   "bugs": {
     "url": "https://github.com/Microsoft/vscode-docs-authoring/issues"
   },
